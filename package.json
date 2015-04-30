@@ -1,0 +1,27 @@
+{
+  "name": "kc-coi",
+  "version": "1.0.0",
+  "description": "KualiCo Research Conflict of Interest",
+  "main": "server/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kualico/kc-coi"
+  },
+  "author": "KualiCo",
+  "license": "AGPL3",
+  "bugs": {
+    "url": "https://github.com/kualico/kc-coi/issues"
+  },
+  "homepage": "https://github.com/kualico/kc-coi",
+  "dependencies": {
+    "koa": "^0.19.1",
+    "koa-router": "^4.3.2",
+    "koa-static": "^1.4.9"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.4"
+  }
+}
