@@ -1,5 +1,5 @@
 const assert = require('assert');
-const financialEntity = require('../controllers/financialEntity');
+const financialEntity = require('../../server/controllers/financialEntity');
 
 describe('helloWorld_test',function(){
 	it ('should return hello world1 when the value is 1', function(){

@@ -4,7 +4,7 @@
   "description": "KualiCo Research Conflict of Interest",
   "main": "server/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/**/*.js --compilers js:babel/register",
     "start": "node server/app.js"
   },
   "repository": {
