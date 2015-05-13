@@ -1,4 +1,4 @@
-module.exports = function(initial, ...toMerge) {
+export function merge(initial, ...toMerge) {
 	let result = initial;
 	if (toMerge) {
 		for (let i = 0; i < toMerge.length; i++) {

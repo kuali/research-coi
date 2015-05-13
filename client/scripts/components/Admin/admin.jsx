@@ -1,12 +1,12 @@
-let React = require('react/addons');
-let Router = require('react-router');
+import React from 'react/addons';
+import Router from 'react-router';
 let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
-let merge = require('../../merge');
+import {merge} from '../../merge';
 
-let DetailView = require('./DetailView/DetailView');
-let ListView = require('./ListView/ListView');
+import {DetailView} from './DetailView/DetailView';
+import {ListView} from './ListView/ListView';
 
 let App = React.createClass({
 	render() {

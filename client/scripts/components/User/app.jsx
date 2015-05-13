@@ -1,13 +1,13 @@
-let React = require('react/addons');
-let Router = require('react-router');
+import React from 'react/addons';
+import Router from 'react-router';
 let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
-let merge = require('../../merge');
+import {merge} from '../../merge';
 
-let Dashboard = require('./Dashboard/Dashboard');
-let Disclosure = require('./Disclosure');
-let Archive = require('./Archive/Archive');
+import {Dashboard} from './Dashboard/Dashboard';
+import {Disclosure} from './Disclosure';
+import {Archive} from './Archive/Archive';
 
 let App = React.createClass({
 	render() {

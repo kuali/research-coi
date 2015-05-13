@@ -1,6 +1,6 @@
 let React = require('react/addons');
 
-class MixinComponent extends React.Component {
+export class MixinComponent extends React.Component {
 	constructor(mixins) {
 		super();
 		this._mixins = {};
@@ -43,5 +43,3 @@ class MixinComponent extends React.Component {
 		};
 	}
 }
-
-module.exports = MixinComponent;

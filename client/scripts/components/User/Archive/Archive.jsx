@@ -1,9 +1,9 @@
-let React = require('react/addons');
+import React from 'react/addons';
+import {merge} from '../../../merge';
+import {MixinComponent} from '../../../MixinComponent';
 let PureRenderMixin = React.addons.PureRenderMixin;
-let merge = require('../../../merge');
-let MixinComponent = require('../../../MixinComponent');
 
-class Archive extends MixinComponent {
+export class Archive extends MixinComponent {
 	constructor() {
 		super([PureRenderMixin]);
 	}
@@ -26,5 +26,3 @@ class Archive extends MixinComponent {
 		);
 	}
 }
-
-module.exports = Archive;

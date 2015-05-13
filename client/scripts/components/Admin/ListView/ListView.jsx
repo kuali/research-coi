@@ -1,9 +1,9 @@
-let React = require('react/addons');
+import React from 'react/addons';
+import {merge} from '../../../merge';
+import {MixinComponent} from '../../../MixinComponent';
 let PureRenderMixin = React.addons.PureRenderMixin;
-let MixinComponent = require('../../../MixinComponent');
-let merge = require('../../../merge');
 
-class ListView extends MixinComponent {
+export class ListView extends MixinComponent {
 	constructor() {
 		super([PureRenderMixin]);
 	}
@@ -26,5 +26,3 @@ class ListView extends MixinComponent {
 		);
 	}
 }
-
-module.exports = ListView;

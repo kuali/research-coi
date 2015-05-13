@@ -1,5 +1,5 @@
-var assert = require('assert');
-var MixinComponent = require('../../client/scripts/MixinComponent');
+import assert from 'assert';
+import {MixinComponent} from '../../client/scripts/MixinComponent';
 
 var testMixin1 = {
 	componentDidMount: function() {
