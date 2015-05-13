@@ -1,16 +1,20 @@
 let React = require('react/addons');
 let PureRenderMixin = React.addons.PureRenderMixin;
 let merge = require('../../../merge');
+let MixinComponent = require('../../../MixinComponent');
 
-module.exports = React.createClass({
+class Dashboard extends MixinComponent {
+	constructor() {
+		super([PureRenderMixin]);
+	}
+
 	propTypes: {
 		style: React.PropTypes.object
-	},
-	mixins: [PureRenderMixin],
+	}
+
 	render() {
 		let styles = {
 			container: {
-
 			}
 		};
 
@@ -20,4 +24,6 @@ module.exports = React.createClass({
 			</span>
 		);
 	}
-});
+}
+
+module.exports = Dashboard;

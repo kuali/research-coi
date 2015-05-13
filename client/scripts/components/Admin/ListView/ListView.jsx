@@ -1,12 +1,17 @@
 let React = require('react/addons');
 let PureRenderMixin = React.addons.PureRenderMixin;
+let MixinComponent = require('../../../MixinComponent');
 let merge = require('../../../merge');
 
-module.exports = React.createClass({
+class ListView extends MixinComponent {
+	constructor() {
+		super([PureRenderMixin]);
+	}
+
 	propTypes: {
 		style: React.PropTypes.object
-	},
-	mixins: [PureRenderMixin],
+	}
+
 	render() {
 		let styles = {
 			container: {
@@ -20,4 +25,6 @@ module.exports = React.createClass({
 			</span>
 		);
 	}
-});
+}
+
+module.exports = ListView;
