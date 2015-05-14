@@ -32,13 +32,16 @@ export class MixinComponent extends React.Component {
 		let componentImplementation = this[eventName];
 		this[eventName] = function(...args) {
 			// Call each mixin function in order
-			this._mixins[eventName].forEach((mixinFunction) => {
-				mixinFunction.bind(this)(args);
-			});
+			for (let i = 0; i < this._mixins[eventName].length; i++) {
+				let retVal = this._mixins[eventName][i].bind(this)(...args);
+				if (retVal !== undefined) {
+					return retVal;
+				}
+			}
 
 			// Now call the component's implemenation if defined
 			if (componentImplementation) {
-				return componentImplementation.bind(this)(args);
+				return componentImplementation.bind(this)(...args);
 			}
 		};
 	}
