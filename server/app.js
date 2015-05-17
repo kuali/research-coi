@@ -1,13 +1,20 @@
-'use strict';
-require('babel/register');
-const koa  = require('koa');
-const koaStatic = require('koa-static');
-let app = koa();
-let router = new require('koa-router')();
-require('./controllers/financialEntity').init(router);
+import koa from 'koa';
+import koaStatic from 'koa-static';
+import bodyParser from 'koa-bodyparser';
+import Router from 'koa-router';
+import * as ConfigController from './controllers/config';
+import * as DisclosureController from './controllers/disclosure';
 
-app.use(koaStatic('./client'));
-app.use(router.routes());
+export function run() {
+	let router = new Router();
+	let app = koa();
+	app.use(koaStatic('./client'));
+	app.use(bodyParser());
+	app.use(router.routes());
 
-app.listen(8090);	
-console.log("Listening on port 8090");
+  ConfigController.init(router);
+  DisclosureController.init(router);
+
+	app.listen(8090);	
+	console.log("Listening on port 8090");
+}

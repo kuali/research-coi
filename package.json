@@ -4,8 +4,8 @@
   "description": "KualiCo Research Conflict of Interest",
   "main": "server/app.js",
   "scripts": {
-    "test": "mocha test/**/*.js --compilers js:babel/register",
-    "start": "node server/app.js"
+    "test": "mocha --recursive --compilers js:babel/register",
+    "start": "node server/bootstrap.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   "dependencies": {
     "babel": "^5.2.17",
     "koa": "^0.19.1",
+    "koa-bodyparser": "^2.0.0",
     "koa-router": "^4.3.2",
     "koa-static": "^1.4.9",
     "react": "^0.13.3",
