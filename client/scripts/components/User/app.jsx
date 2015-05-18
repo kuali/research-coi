@@ -10,6 +10,17 @@ import {Disclosure} from './Disclosure';
 import {Archive} from './Archive/Archive';
 
 let App = React.createClass({
+	handleResize(e) {
+		window.size = window.innerWidth < 800 ? 'SMALL' : 'LARGE';
+		this.forceUpdate();
+		console.log('window size: ' + window.size);
+	},
+
+	componentWillMount() {
+		this.handleResize();
+		window.addEventListener('resize', this.handleResize);
+	},
+
 	render() {
 		let styles = {
 			container: {

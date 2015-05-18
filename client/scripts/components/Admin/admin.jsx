@@ -9,6 +9,17 @@ import {DetailView} from './DetailView/DetailView';
 import {ListView} from './ListView/ListView';
 
 let App = React.createClass({
+	handleResize(e) {
+		window.size = window.innerWidth < 800 ? 'SMALL' : 'LARGE';
+		this.forceUpdate();
+		console.log('window size: ' + window.size);
+	},
+
+	componentWillMount() {
+		this.handleResize();
+		window.addEventListener('resize', this.handleResize);
+	},
+
 	render() {
 		let styles = {
 			container: {
