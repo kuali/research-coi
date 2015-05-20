@@ -1,15 +1,11 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {MixinComponent} from '../../../MixinComponent';
 let PureRenderMixin = React.addons.PureRenderMixin;
 
-export class Dashboard extends MixinComponent {
+export class Dashboard extends React.Component {
 	constructor() {
-		super([PureRenderMixin]);
-	}
-
-	propTypes: {
-		style: React.PropTypes.object
+		super();
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate;
 	}
 
 	render() {
