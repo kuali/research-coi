@@ -1,0 +1,27 @@
+html {
+  box-sizing: border-box;
+  height: 100%;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}     
+
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Lato', sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  outline: 0;
+  cursor: pointer;
+}
+
+select, input, textarea {
+  outline: 0;
+}
