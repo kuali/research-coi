@@ -4,23 +4,15 @@ let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
+import request from 'superagent';
 
 import {Dashboard} from './Dashboard/Dashboard';
 import {Disclosure} from './Disclosure';
 import {Archive} from './Archive/Archive';
+import {AppHeader} from '../AppHeader';
+import {SizeAwareComponent} from '../SizeAwareComponent';
 
-let App = React.createClass({
-	handleResize(e) {
-		window.size = window.innerWidth < 800 ? 'SMALL' : 'LARGE';
-		this.forceUpdate();
-		console.log('window size: ' + window.size);
-	},
-
-	componentWillMount() {
-		this.handleResize();
-		window.addEventListener('resize', this.handleResize);
-	},
-
+class App extends SizeAwareComponent {
 	render() {
 		let styles = {
 			container: {
@@ -30,11 +22,12 @@ let App = React.createClass({
 
 		return (
 			<div style={merge(styles.container, this.props.style)}>
+				<AppHeader homelink="dashboard" />
 				<RouteHandler />
 			</div>
 		);
 	}
-});
+}
 
 let routes = (
 	<Route name="app" path="/" handler={App}>
@@ -45,6 +38,13 @@ let routes = (
 	</Route>
 );
 
-Router.run(routes, (Handler, state) => {
-	React.render(<Handler state={state} />, document.body);
+// Render loading page here?
+
+// Then load config and re-render
+request.get('/api/research/coi/config', (err, config) => {
+	window.config = config.body;
+	Router.run(routes, (Handler, state) => {
+		React.render(<Handler state={state} />, document.body);
+	});
 });
+

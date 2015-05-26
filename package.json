@@ -19,12 +19,15 @@
   "homepage": "https://github.com/kualico/kc-coi",
   "dependencies": {
     "babel": "^5.2.17",
+    "flux": "^2.0.3",
     "koa": "^0.19.1",
     "koa-bodyparser": "^2.0.0",
     "koa-router": "^4.3.2",
     "koa-static": "^1.4.9",
+    "object-assign": "^2.0.0",
     "react": "^0.13.3",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "superagent": "^1.2.0"
   },
   "devDependencies": {
     "babel-core": "^5.2.6",

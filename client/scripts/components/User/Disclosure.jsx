@@ -1,17 +1,11 @@
 import React from 'react/addons';
 import {merge} from '../../merge';
-let PureRenderMixin = React.addons.PureRenderMixin;
+import {ResponsiveComponent} from '../ResponsiveComponent';
 
-export class Disclosure extends React.Component {
-	constructor() {
-		super();
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate;
-	}
-
+export class Disclosure extends ResponsiveComponent {
 	render() {
 		let styles = {
 			container: {
-
 			}
 		};
 

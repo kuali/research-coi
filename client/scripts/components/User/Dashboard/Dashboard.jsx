@@ -1,13 +1,8 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-let PureRenderMixin = React.addons.PureRenderMixin;
+import {ResponsiveComponent} from '../../ResponsiveComponent';
 
-export class Dashboard extends React.Component {
-	constructor() {
-		super();
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate;
-	}
-
+export class Dashboard extends ResponsiveComponent {
 	render() {
 		let styles = {
 			container: {

@@ -3,13 +3,13 @@ import * as Config from '../../../server/db/config';
 
 describe('Config',() => {
   it('should get a config', () => {
-    let config = Config.getConfigFor('MIT');
-    assert.equal(config.colors.four, '#2BDEAD');
+    let config = Config.getConfigFor('UIT');
+    assert.equal(config.colors.four, '#EDF2F2');
   });
 
   it('should save a config', () =>  {
-    Config.setConfigFor('MIT', {frog: true, dog: false});
-    let config = Config.getConfigFor('MIT');
+    Config.setConfigFor('UIT', {frog: true, dog: false});
+    let config = Config.getConfigFor('UIT');
     assert.equal(config.frog, true);
     assert.equal(config.dog, false);
   });
@@ -39,5 +39,11 @@ describe('Config',() => {
     assert.equal(uw.mascot, 'Cowboys');
     assert.equal(csu.mascot, 'Rams');
     assert.equal(byu.mascot, 'Cougers');
+  });
+
+  it('should work in a case insensitive manner', () => {
+    let upper = Config.getConfigFor('UIT');
+    let lower = Config.getConfigFor('uit');
+    assert.equal(lower, upper);
   });
 });
