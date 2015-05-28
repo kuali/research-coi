@@ -4,11 +4,13 @@ let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
+import request from 'superagent';
 
 import {DetailView} from './DetailView/DetailView';
 import {ListView} from './ListView/ListView';
+import {SizeAwareComponent} from '../SizeAwareComponent';
 
-let App = React.createClass({
+class App extends SizeAwareComponent {
 	render() {
 		let styles = {
 			container: {
@@ -22,7 +24,7 @@ let App = React.createClass({
 			</div>
 		);
 	}
-});
+}
 
 let routes = (
 	<Route name="app" path="/" handler={App}>
@@ -32,6 +34,10 @@ let routes = (
 	</Route>
 );
 
-Router.run(routes, (Handler, state) => {
-	React.render(<Handler state={state} />, document.body);
+// Then load config and re-render
+request.get('/api/research/coi/config', (err, config) => {
+	window.config = config.body;
+	Router.run(routes, (Handler, state) => {
+		React.render(<Handler state={state} />, document.body);
+	});
 });
