@@ -1,40 +1,40 @@
 import assert from 'assert';
-import * as Config from '../../../server/db/config';
+import * as ConfigDB from '../../../server/db/ConfigDB';
 
 describe('Config',() => {
   it('should get a config', () => {
-    let config = Config.getConfigFor('UIT');
+    let config = ConfigDB.getConfigFor('UIT');
     assert.equal(config.colors.four, '#EDF2F2');
   });
 
   it('should save a config', () =>  {
-    Config.setConfigFor('UIT', {frog: true, dog: false});
-    let config = Config.getConfigFor('UIT');
+    ConfigDB.setConfigFor('UIT', {frog: true, dog: false});
+    let config = ConfigDB.getConfigFor('UIT');
     assert.equal(config.frog, true);
     assert.equal(config.dog, false);
   });
 
   it('should return undefined for a non existent school', () => {
-    let config = Config.getConfigFor('Monsters University');
+    let config = ConfigDB.getConfigFor('Monsters University');
     assert.equal(config, undefined);
   });
 
   it('should save a schools config without affecting other schools configs', () => {
-    Config.setConfigFor('CSU', {
+    ConfigDB.setConfigFor('CSU', {
       mascot: 'Rams'
     });
 
-    Config.setConfigFor('UW', {
+    ConfigDB.setConfigFor('UW', {
       mascot: 'Cowboys'
     });
 
-    Config.setConfigFor('BYU', {
+    ConfigDB.setConfigFor('BYU', {
       mascot: 'Cougers'
     });
 
-    let uw = Config.getConfigFor('UW');
-    let csu = Config.getConfigFor('CSU');
-    let byu = Config.getConfigFor('BYU');
+    let uw = ConfigDB.getConfigFor('UW');
+    let csu = ConfigDB.getConfigFor('CSU');
+    let byu = ConfigDB.getConfigFor('BYU');
 
     assert.equal(uw.mascot, 'Cowboys');
     assert.equal(csu.mascot, 'Rams');
@@ -42,8 +42,8 @@ describe('Config',() => {
   });
 
   it('should work in a case insensitive manner', () => {
-    let upper = Config.getConfigFor('UIT');
-    let lower = Config.getConfigFor('uit');
+    let upper = ConfigDB.getConfigFor('UIT');
+    let lower = ConfigDB.getConfigFor('uit');
     assert.equal(lower, upper);
   });
 });

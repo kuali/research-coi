@@ -2,8 +2,8 @@ import koa from 'koa';
 import koaStatic from 'koa-static';
 import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
-import * as ConfigController from './controllers/config';
-import * as DisclosureController from './controllers/disclosure';
+import * as ConfigController from './controllers/ConfigController';
+import * as DisclosureController from './controllers/DisclosureController';
 import SchoolParser from './middleware/SchoolParser';
 
 export function run() {
