@@ -11,8 +11,27 @@ import {Disclosure} from './Disclosure';
 import {Archive} from './Archive/Archive';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
+import DisclosureStore from '../../stores/DisclosureStore';
 
 class App extends SizeAwareComponent {
+	constructor() {
+		super();
+
+		this.state = DisclosureStore.getState();
+	}
+
+	componentDidMount() {
+		DisclosureStore.listen(this.onChange.bind(this));
+	}
+
+	componentWillUnmount() {
+		DisclosureStore.unlisten(this.onChange.bind(this));
+	}
+
+	onChange(state) {
+		this.setState(state);
+	}
+
 	render() {
 		let styles = {
 			container: {
