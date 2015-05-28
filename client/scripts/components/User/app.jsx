@@ -57,8 +57,6 @@ let routes = (
 	</Route>
 );
 
-// Render loading page here?
-
 // Then load config and re-render
 request.get('/api/research/coi/config', (err, config) => {
 	window.config = config.body;
