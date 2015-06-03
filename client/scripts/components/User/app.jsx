@@ -16,7 +16,6 @@ import DisclosureStore from '../../stores/DisclosureStore';
 class App extends SizeAwareComponent {
 	constructor() {
 		super();
-
 		this.state = DisclosureStore.getState();
 	}
 
@@ -35,7 +34,9 @@ class App extends SizeAwareComponent {
 	render() {
 		let styles = {
 			container: {
-				height: '100%'
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column'
 			}
 		};
 
@@ -50,6 +51,7 @@ class App extends SizeAwareComponent {
 
 let routes = (
 	<Route name="app" path="/" handler={App}>
+		<Route name="archiveview" path="/archiveview" handler={Dashboard} />
 		<Route name="dashboard" path="/dashboard" handler={Dashboard} />
 		<Route name="disclosure" path="/disclosure" handler={Disclosure} />
 		<Route name="archive" path="/archive" handler={Archive} />
