@@ -12,5 +12,14 @@ export class ResponsiveComponent extends React.Component {
     let shouldRender = PureRenderMixin.shouldComponentUpdate.apply(this, [nextProps, nextState]) || this.windowSize !== currentWindowSize;
     this.windowSize = currentWindowSize;
     return shouldRender;
-  };
-} 
+  }
+
+  render() {
+    if (window.size === 'SMALL') {
+      return this.renderMobile();
+    }
+    else {
+      return this.renderDesktop();
+    }
+  }
+}

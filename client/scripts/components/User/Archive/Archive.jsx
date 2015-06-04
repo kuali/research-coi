@@ -3,7 +3,21 @@ import {merge} from '../../../merge';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 
 export class Archive extends ResponsiveComponent {
-	render() {
+	renderMobile() {
+		let styles = {
+			container: {
+
+			}
+		};
+
+		return (
+			<span style={merge(styles.container, this.props.style)}>
+				Archive
+			</span>
+		);
+	}
+
+	renderDesktop() {
 		let styles = {
 			container: {
 
