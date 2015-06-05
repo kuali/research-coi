@@ -27,3 +27,5 @@ build/Release
 node_modules
 
 client/build
+
+COI.mwb.bak
