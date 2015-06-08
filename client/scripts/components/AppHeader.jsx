@@ -11,12 +11,9 @@ import {HeaderButton} from './HeaderButton';
 import {HamburgerIcon} from './DynamicIcons/HamburgerIcon';
 
 export class AppHeader extends ResponsiveComponent {
-  renderMobile() {
-    let styles = {
-      container: {
-        backgroundColor: '#202020',
-        padding: '0 10px 0 6px'
-      }, 
+  constructor() {
+    super();
+    this.commonStyles = {
       logo: {
         width: 37,
         height: 26,
@@ -65,6 +62,16 @@ export class AppHeader extends ResponsiveComponent {
         height: '100%'
       }
     };
+  }
+
+  renderMobile() {
+    let mobileStyles = {
+      container: {
+        backgroundColor: '#202020',
+        padding: '0 10px 0 6px'
+      }
+    };
+    let styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <header style={merge(styles.container, this.props.style)}>
@@ -83,59 +90,13 @@ export class AppHeader extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let styles = {
+    let desktopStyles = {
       container: {
         backgroundColor: '#202020',
         padding: '0 10px 0 50px'
       }, 
-      logo: {
-        width: 37,
-        height: 26,
-        verticalAlign: 'middle',
-        color: 'white'
-      },
-      kuali: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        marginTop: '-3px'
-      },
-      product: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: '300',
-        verticalAlign: 'middle',
-        paddingLeft: 5
-      },
-      modulename: {
-        color: 'white',
-        fontSize: 8,
-        fontWeight: '300',
-        verticalAlign: 'middle',
-        paddingLeft: 5,
-      },
-      searchIcon: {
-        width: '28px',
-        verticalAlign: 'middle',
-        padding: '0 10px',
-        cursor: 'pointer'
-      },
-      controls: {
-        'float': 'right',
-        cursor: 'pointer',
-        display: 'inline-block',
-        height: 42
-      },
-      icon: {
-        color: window.config.colors.one,
-        width: '65px',
-        verticalAlign: 'middle',
-        padding: '0 10px'
-      },
-      mobileMenu: {
-        color: 'white',
-        height: '100%'
-      }
     };
+    let styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <header style={merge(styles.container, this.props.style)}>

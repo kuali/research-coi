@@ -1,3 +1,5 @@
+import React from 'react/addons';
+
 export function merge(initial, ...toMerge) {
 	let result = initial;
 	if (toMerge) {

@@ -10,49 +10,89 @@ import {DisclosureTable} from './DisclosureTable';
 export class Dashboard extends ResponsiveComponent {
 	constructor() {
 		super();
+		this.commonStyles = {
+		};
+
+		// This is a stub until we have actual data flowing through
 		this.state = {
+			disclosures: [
+				{
+					type: 'Annual',
+					status: 'Update Required',
+					lastReviewed: '05/09/2014',
+					expiresOn: '05/09/2015'
+				},
+				{
+					type: 'Event',
+					status: 'Update Required',
+					lastReviewed: '01/12/2015',
+					title: 'Wilkerson Analysis'
+				},
+				{
+					type: 'Manual',
+					status: 'Incomplete',
+					lastReviewed: '01/01/2015',
+					title: 'Drawing a Blank'
+				},
+				{
+					type: 'Travel',
+					status: 'Incomplete',
+					lastReviewed: '04/15/2015',
+					title: 'COI Sub-Committee Party'
+				},
+				{
+					type: 'Travel',
+					status: 'Pending Review',
+					lastReviewed: '02/23/2015',
+					title: 'Sample Gathering'
+				},
+				{
+					type: 'Event',
+					status: 'Pending Review',
+					lastReviewed: '03/04/2015',
+					title: 'Thurman Experiment'
+				}
+			]
 		};
 	}
 
 	renderMobile() {
-		let styles = {
+		let mobileStyles = {
 			container: {
 				display: 'flex',
 				width: '100%',
 				background: '#DDD',
-				flex: '2',
+				height: '0',
+				flex: '1',
 				flexDirection: 'column'
-			},
-			sidebar: {
-				width: 200,
-				display: 'inline-block',
-				backgroundColor: '#202020',
-				verticalAlign: 'top',
-				paddingTop: 125
 			},
 			content: {
 				display: 'inline-block',
 				verticalAlign: 'top',
-				borderTop: '8px solid ' + window.config.colors.two,
-				flex: 1
+				flex: 1,
+				overflowY: 'auto',
+				overflowX: 'hidden'
 			},
 			header: {
 				backgroundColor: 'white',
-				padding: '17px 0 17px 50px',
 				position: 'relative',
-				borderBottom: '1px solid #e3e3e3'
+				borderBottom: '1px solid #e3e3e3',
+				padding: '6px 0',
+				marginBottom: 6
 			},
 			heading: {
-				fontSize: '33px',
+				textAlign: 'center',
+				fontSize: '21px',
 				margin: '0 0 0 0',
 				textTransform: 'uppercase',
 				fontWeight: 300,
-				color: window.config.colors.one
+				color: '#747474'
 			},
 			mobileMenu: {
 				width: '100%'
 			}
 		};
+		let styles = merge(this.commonStyles, mobileStyles);
 
 		let confirmationMessage;
 		if (this.state && this.state.confirmationShowing) {
@@ -69,7 +109,7 @@ export class Dashboard extends ResponsiveComponent {
 					</div>
 					{confirmationMessage}
 
-					<DisclosureTable />
+					<DisclosureTable disclosures={this.state.disclosures} />
 				</span>
 				<div style={styles.mobileMenu}>
 					<NewDisclosureButton type="Annual" />
@@ -83,7 +123,7 @@ export class Dashboard extends ResponsiveComponent {
 	}	
 
 	renderDesktop() {
-		let styles = {
+		let desktopStyles = {
 			container: {
 				display: 'flex',
 				width: '100%',
@@ -118,6 +158,7 @@ export class Dashboard extends ResponsiveComponent {
 				color: window.config.colors.one
 			}
 		};
+		let styles = merge(this.commonStyles, desktopStyles);
 
 		let confirmationMessage;
 		if (this.state && this.state.confirmationShowing) {
@@ -151,7 +192,7 @@ export class Dashboard extends ResponsiveComponent {
 					</div>
 					{confirmationMessage}
 
-					<DisclosureTable />
+					<DisclosureTable disclosures={this.state.disclosures} />
 				</span>
 			</span>
 		);

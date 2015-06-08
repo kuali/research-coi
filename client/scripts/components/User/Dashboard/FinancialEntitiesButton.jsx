@@ -4,8 +4,14 @@ import {merge} from '../../../merge';
 import {RefreshIcon} from '../../DynamicIcons/RefreshIcon';
 
 export class FinancialEntitiesButton extends ResponsiveComponent {
+  constructor() {
+    super();
+    this.commonStyles = {
+    };
+  }
+
   renderMobile() {
-    let styles = {
+    let mobileStyles = {
       container: {
         display: 'inline-block',
         backgroundColor: '#2e2e2e',
@@ -26,6 +32,7 @@ export class FinancialEntitiesButton extends ResponsiveComponent {
         height: 45
       }
     };
+    let styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <div style={merge(styles.container, this.props.style)}>
@@ -37,7 +44,7 @@ export class FinancialEntitiesButton extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let styles = {
+    let desktopStyles = {
       container: {
         display: 'block',
         backgroundColor: window.config.colors.three,
@@ -55,6 +62,7 @@ export class FinancialEntitiesButton extends ResponsiveComponent {
         fontSize: 22
       }
     };
+    let styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <div style={merge(styles.container, this.props.style)}>
