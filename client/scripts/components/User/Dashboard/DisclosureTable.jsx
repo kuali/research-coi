@@ -85,11 +85,11 @@ export class DisclosureTable extends ResponsiveComponent {
     });
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.headings}>
-          <span style={merge(styles.heading, styles.columnOne)}>DISCLOSURE TYPE</span>
-          <span style={merge(styles.heading, styles.columnTwo)}>STATUS</span>
-          <span style={merge(styles.heading, styles.columnThree)}>LAST REVIEWED</span>
+      <div role="grid" style={merge(styles.container, this.props.style)}>
+        <div role="row" style={styles.headings}>
+          <span role="columnheader" style={merge(styles.heading, styles.columnOne)}>DISCLOSURE TYPE</span>
+          <span role="columnheader" style={merge(styles.heading, styles.columnTwo)}>STATUS</span>
+          <span role="columnheader" style={merge(styles.heading, styles.columnThree)}>LAST REVIEWED</span>
         </div>
         {rows}
       </div>

@@ -180,18 +180,18 @@ export class DisclosureTableRow extends ResponsiveComponent {
     }
     
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <span style={merge(styles.cell, styles.one)}>
+      <div role="row" style={merge(styles.container, this.props.style)}>
+        <span role="gridcell" style={merge(styles.cell, styles.one)}>
           <div style={styles.type}>{this.props.type} Disclosure</div>
           {extraInfo}
         </span>
-        <span style={merge(styles.cell, styles.two)}>
+        <span role="gridcell" style={merge(styles.cell, styles.two)}>
           {this.props.status}
         </span>
-        <span style={merge(styles.cell, styles.three)}>
+        <span role="gridcell" style={merge(styles.cell, styles.three)}>
           {this.props.lastreviewed}
         </span>
-        <span style={merge(styles.cell, styles.four)}>
+        <span role="gridcell" style={merge(styles.cell, styles.four)}>
 
           <Link to="disclosure" query={{type: this.props.type }}>
             <KButton style={styles.button}>Update &gt;</KButton>
