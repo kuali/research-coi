@@ -6,8 +6,14 @@ let Link = Router.Link;
 import {PlusIcon} from '../../DynamicIcons/PlusIcon';
 
 export class NewDisclosureButton extends ResponsiveComponent {
+  constructor() {
+    super();
+    this.commonStyles = {
+    };
+  }
+
   renderMobile() {
-    let styles = {
+    let mobileStyles = {
       container: {
         display: 'inline-block',
         backgroundColor: '#2e2e2e',
@@ -28,6 +34,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
         height: 45
       }
     };
+    let styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <Link to="disclosure" query={{type: this.props['type']}} style={merge(styles.container, this.props.style)}>
@@ -45,7 +52,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let styles = {
+    let desktopStyles = {
       container: {
         display: 'block',
         backgroundColor: window.config.colors.three,
@@ -63,6 +70,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
         fontSize: 22
       }
     };
+    let styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <Link to="disclosure" query={{type: this.props['type']}} style={merge(styles.container, this.props.style)}>
