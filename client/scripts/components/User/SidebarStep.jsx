@@ -9,23 +9,17 @@ export class SidebarStep extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {
-      container: {
-        padding: '3px 0 3px 10px',
-        fontSize: 18,
-        textTransform: 'uppercase',
-        whiteSpace: 'nowrap'
-      },
-      image: {
-        width: 42,
-        height: 42,
-        verticalAlign: 'middle',
-        color: '#c1c1c1'
-      }
     }
   }
 
   renderMobile() {
     let mobileStyles = {
+      container: {
+        padding: '3px 0 3px 7px',
+        fontSize: 18,
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap'
+      },
       selected: {
         fontWeight: 'bold',
         backgroundColor: '#262626',
@@ -33,6 +27,16 @@ export class SidebarStep extends ResponsiveComponent {
       },
       incomplete: {
         color: '#C1C1C1'
+      },
+      stepName: {
+        verticalAlign: 'middle', 
+        paddingLeft: 5
+      },
+      image: {
+        width: 42,
+        height: 42,
+        verticalAlign: 'middle',
+        color: '#c1c1c1'
       }
     };
     let styles = merge(this.commonStyles, mobileStyles);
@@ -56,7 +60,7 @@ export class SidebarStep extends ResponsiveComponent {
     let li = (
       <li style={correctStyle}>
         {image}
-        <span style={{verticalAlign: 'middle', paddingLeft: 8}}>{this.props.label}</span>
+        <span style={styles.stepName}>{this.props.label}</span>
       </li>
     );
 

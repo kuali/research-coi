@@ -13,12 +13,6 @@ export class Sidebar extends ResponsiveComponent {
     };
 
     this.commonStyles = {
-      ul: {
-        marginTop: 130,
-        listStyleType: 'none',
-        padding: 0,
-        backgroundColor: '#2E2E2E'
-      }
     };
 
     this.close = this.close.bind(this);
@@ -35,7 +29,7 @@ export class Sidebar extends ResponsiveComponent {
       container: {
         display: 'inline-block',
         position: 'absolute',
-        width: '85%',
+        width: '86%',
         verticalAlign: 'top',
         backgroundColor: '#202020',
         height: '100%',
@@ -53,6 +47,15 @@ export class Sidebar extends ResponsiveComponent {
         position: 'absolute',
         right: 10,
         top: 10
+      },
+      wrapper: {
+        position: 'static'
+      },
+      ul: {
+        marginTop: 130,
+        listStyleType: 'none',
+        padding: 0,
+        backgroundColor: '#2E2E2E'
       }
     };
     let styles = merge(this.commonStyles, mobileStyles);
@@ -77,13 +80,11 @@ export class Sidebar extends ResponsiveComponent {
 
     return (
       <span style={merge(styles.container, this.props.style)}>
-        <div style={{position: 'static'}}>
+        <div style={styles.wrapper}>
           <CloseIcon style={styles.closeIcon} onClick={this.close} />
-          <div style={{flex: '1'}}>
-            <ul style={styles.ul}>
-              {steps}
-            </ul>
-          </div>
+          <ul style={styles.ul}>
+            {steps}
+          </ul>
         </div>
       </span>
     );

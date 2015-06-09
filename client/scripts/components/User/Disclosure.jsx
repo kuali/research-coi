@@ -2,8 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../merge';
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {Sidebar} from './Sidebar';
-import {RightArrowIcon} from '../DynamicIcons/RightArrowIcon';
-import {InstructionIcon} from '../DynamicIcons/InstructionIcon';
+import {DisclosureHeader} from './DisclosureHeader';
 
 export class Disclosure extends ResponsiveComponent {
 	constructor(props) {
@@ -37,13 +36,6 @@ export class Disclosure extends ResponsiveComponent {
 				height: 0,
 				position: 'relative'
 			},
-			headerIcon: {
-				position: 'absolute',
-				height: 29,
-				width: 29,
-				color: '#2E2E2E',
-				top: 7
-			},
 			content: {
 				backgroundColor: '#E8E9E6',
 				flex: 1
@@ -54,13 +46,7 @@ export class Disclosure extends ResponsiveComponent {
 		return (
 			<div style={merge(styles.container, this.props.style)}>
 				<Sidebar steps={this.steps} activestep={2} />
-
-				<header style={{position: 'relative', textAlign: 'center', padding: 8}}>
-					<RightArrowIcon style={merge(styles.headerIcon, {left: 10})} />
-					<span style={{fontSize: 21, fontWeight: 300}}>Financial Entirireeee</span>
-					<InstructionIcon style={merge(styles.headerIcon, {right: 10})} />
-				</header>
-
+				<DisclosureHeader />
 				<div style={styles.content}>
 					Disclosure stuff will be here
 				</div>
