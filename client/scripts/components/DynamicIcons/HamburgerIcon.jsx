@@ -1,13 +1,8 @@
 import React from 'react/addons';
 
 export class HamburgerIcon extends React.Component {
-  constructor() {
-    super();
-    this.props = {
-      style: {
-        color: 'white'
-      }
-    };
+  constructor(props) {
+    super(props);
   }
 
   render() {
@@ -19,4 +14,8 @@ export class HamburgerIcon extends React.Component {
   }
 }
 
-
+HamburgerIcon.defaultProps = {
+  style: {
+    color: 'white'
+  }
+};

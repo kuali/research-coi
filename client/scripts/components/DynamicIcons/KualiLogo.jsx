@@ -1,13 +1,8 @@
 import React from 'react/addons';
 
 export class KualiLogo extends React.Component {
-  constructor() {
-    super();
-    this.props = {
-      style: {
-        color: 'white'
-      }
-    };
+  constructor(props) {
+    super(props);
   }
 
   render() {
@@ -22,3 +17,9 @@ export class KualiLogo extends React.Component {
     );
   }
 }
+
+KualiLogo.defaultProps = {
+  style: {
+    color: 'white'
+  }
+};

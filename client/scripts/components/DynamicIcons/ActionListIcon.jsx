@@ -1,13 +1,8 @@
 import React from 'react/addons';
 
 export class ActionListIcon extends React.Component {
-  constructor() {
-    super();
-    this.props = {
-      style: {
-        color: 'white'
-      }
-    };
+  constructor(props) {
+    super(props);
   }
 
   render() {
@@ -18,3 +13,9 @@ export class ActionListIcon extends React.Component {
     );
   }
 }
+
+ActionListIcon.defaultProps = {
+  style: {
+    color: 'white'
+  }
+};
