@@ -24,6 +24,28 @@ export class Sidebar extends ResponsiveComponent {
     });
   }
 
+  generateSteps() {
+    let steps = [];
+    this.props.steps.forEach((step, index) => {
+      let stepState;
+      if (index < this.props.activestep) {
+        stepState = 'complete';
+      }
+      else if (index === this.props.activestep) {
+        stepState = 'active';
+      }
+      else if (index > this.props.activestep) {
+        stepState = 'incomplete';
+      }
+
+      steps.push(
+        <SidebarStep label={step.label} state={stepState} key={index} />
+      );
+    }); 
+
+    return steps;   
+  }
+
   renderMobile() {
     let mobileStyles = {
       container: {
@@ -60,24 +82,7 @@ export class Sidebar extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, mobileStyles);
 
-    let steps = [];
-    this.props.steps.forEach((step, index) => {
-      let stepState;
-      if (this.props.activestep > index) {
-        stepState = 'Complete';
-      }
-      else if (this.props.activestep === index) {
-        stepState = 'Active';
-      }
-      else if (this.props.activestep < index) {
-        stepState = 'Incomplete';
-      }
-
-      steps.push(
-        <SidebarStep label={step.label} state={stepState} key={index} />
-      );
-    });
-
+    let steps = this.generateSteps();
     return (
       <span style={merge(styles.container, this.props.style)}>
         <div style={styles.wrapper}>
@@ -92,11 +97,56 @@ export class Sidebar extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
+      container: {
+        display: 'inline-flex',
+        flexDirection: 'column',
+        verticalAlign: 'top',
+        backgroundColor: 'rgba(196, 196, 196, 0.2)'
+      },
+      ul: {
+        marginTop: 130,
+        listStyleType: 'none',
+        padding: 0,
+        backgroundColor: '#ffffff'
+      },
+      li: {
+        padding: '12px 0 12px 58px',
+        fontSize: 16,
+        textTransform: 'uppercase',
+        cursor: 'pointer',
+        whiteSpace: 'nowrap'
+      },
+      selected: {
+        fontWeight: 'bold',
+        backgroundColor: '#e0e0e0',
+        position: 'relative'
+      },
+      incomplete: {
+        color: '#bbb'
+      },
+      arrow: {
+        display: 'inline-block',
+        height: 0,
+        width: 0,
+        border: '10px solid transparent',
+        borderLeft: '18px solid #e0e0e0',
+        borderBottom: '21px solid transparent',
+        borderTop: '21px solid transparent',
+        position: 'absolute',
+        right: '-28px',
+        top: 0
+      }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
+    let steps = this.generateSteps();
     return (
-      <span style={merge(styles.container, this.props.style)}>sbd
+      <span style={merge(styles.container, this.props.style)}>
+        <div style={{flex: '1'}}>
+          <ul style={styles.ul}>
+            {steps}
+          </ul>
+        </div>
       </span>
     );  
   }

@@ -9,6 +9,13 @@ export class SidebarStep extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {
+      incomplete: {
+        color: '#C1C1C1'
+      },
+      stepName: {
+        verticalAlign: 'middle', 
+        paddingLeft: 5
+      }
     }
   }
 
@@ -25,70 +32,63 @@ export class SidebarStep extends ResponsiveComponent {
         backgroundColor: '#262626',
         position: 'relative'
       },
-      incomplete: {
-        color: '#C1C1C1'
-      },
-      stepName: {
-        verticalAlign: 'middle', 
-        paddingLeft: 5
-      },
       image: {
         width: 42,
         height: 42,
         verticalAlign: 'middle',
         color: '#c1c1c1'
-      }
+      }      
     };
     let styles = merge(this.commonStyles, mobileStyles);
 
-    let correctStyle;
-    let image;
-
-    if (this.props.state && this.props.state.toLowerCase() === 'complete') {
-      image = <CompletedStepIcon style={styles.image} />;
-      correctStyle = styles.container;
+    switch (this.props.state.toLowerCase()) {
+      case 'complete':
+        return (
+          <div onClick={this.navigate}>
+            <li style={styles.container}>
+              <CompletedStepIcon style={styles.image} />
+              <span style={styles.stepName}>{this.props.label}</span>
+            </li>
+          </div>
+        );
+        break;
+      case 'active':
+        return (
+          <div onClick={this.navigate}>
+            <li style={merge(styles.container, styles.selected)}>
+              <CurrentStepIcon style={styles.image} />
+              <span style={styles.stepName}>{this.props.label}</span>
+            </li>
+          </div>
+        );
+        break;
+      case 'incomplete':
+        return (
+          <li style={merge(styles.container, styles.incomplete)}>
+            <FutureStepIcon style={styles.image} />
+            <span style={styles.stepName}>{this.props.label}</span>
+          </li>
+        );
+        break;
     }
-    else if (this.props.state && this.props.state.toLowerCase() === 'active') {
-      image = <CurrentStepIcon style={styles.image} />;
-      correctStyle = merge(styles.container, styles.selected);
-    }
-    else {
-      image = <FutureStepIcon style={styles.image} />;
-      correctStyle = merge(styles.container, styles.incomplete);
-    }
-
-    let li = (
-      <li style={correctStyle}>
-        {image}
-        <span style={styles.stepName}>{this.props.label}</span>
-      </li>
-    );
-
-    let returnvalue = null;
-    if (this.props.complete || this.props.current) {
-      returnvalue = (
-        <div onClick={this.navigate}>
-          {li}
-        </div>
-      );
-    }
-    else {
-      returnvalue = li;
-    }
-
-    return returnvalue;
   }
 
   renderDesktop() {
     let desktopStyles = {
+      container: {
+        padding: '3px 0 3px 7px',
+        fontSize: 16,
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap'
+      },
       arrow: {
         display: 'inline-block',
         height: 0,
         width: 0,
         border: '10px solid transparent',
         borderLeft: '18px solid #ececec',
-        borderBottom: '22px solid transparent',
-        borderTop: '22px solid transparent',
+        borderBottom: '26px solid transparent',
+        borderTop: '26px solid transparent',
         position: 'absolute',
         right: '-27px',
         top: 0,
@@ -96,20 +96,57 @@ export class SidebarStep extends ResponsiveComponent {
       },
       selected: {
         fontWeight: 'bold',
-        backgroundColor: '#262626',
+        backgroundColor: '#ECECEC',
         position: 'relative',
         color: 'black',
         boxShadow: '0 0 8px #CDCDCD'
       },
       clickable: {
         cursor: 'pointer'
-      }
+      },
+      image: {
+        width: 42,
+        height: 42,
+        verticalAlign: 'middle',
+        color: window.config.colors.one
+      }      
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    return (
-      <span style={merge(styles.container, this.props.style)}>sbs -des
-      </span>
-    );  
+    switch (this.props.state.toLowerCase()) {
+      case 'complete':
+        return (
+          <div style={styles.clickable} onClick={this.navigate}>
+            <li style={styles.container}>
+              <CompletedStepIcon style={styles.image} />
+              <span style={styles.stepName}>{this.props.label}</span>
+            </li>
+          </div>
+        );
+        break;
+      case 'active':
+        return (
+          <div style={styles.clickable} onClick={this.navigate}>
+            <li style={merge(styles.container, styles.selected)}>
+              <CurrentStepIcon style={styles.image} />
+              <span style={styles.stepName}>{this.props.label}</span>
+              <div style={styles.arrow}></div>
+            </li>
+          </div>
+        );
+        break;
+      case 'incomplete':
+        return (
+          <li style={merge(styles.container, styles.incomplete)}>
+            {<FutureStepIcon style={styles.image} />}
+            <span style={styles.stepName}>{this.props.label}</span>
+          </li>
+        );
+        break;
+    }
   }
+}
+
+SidebarStep.defaultProps = {
+  state: ''
 }
