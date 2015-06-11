@@ -1,13 +1,8 @@
 import React from 'react/addons';
 
 export class ProfileIcon extends React.Component {
-  constructor() {
-    super();
-    this.props = {
-      style: {
-        color: 'white'
-      }
-    };
+  constructor(props) {
+    super(props);
   }
 
   render() {
@@ -21,3 +16,9 @@ export class ProfileIcon extends React.Component {
     );
   }
 }
+
+ProfileIcon.defaultProps = {
+  style: {
+    color: 'white'
+  }
+};
