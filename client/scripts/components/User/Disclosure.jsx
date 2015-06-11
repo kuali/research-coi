@@ -3,6 +3,7 @@ import {merge} from '../../merge';
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {Sidebar} from './Sidebar';
 import {DisclosureHeader} from './DisclosureHeader';
+import {ProgressIndicator} from './ProgressIndicator';
 
 export class Disclosure extends ResponsiveComponent {
 	constructor(props) {
@@ -25,6 +26,14 @@ export class Disclosure extends ResponsiveComponent {
 			this.steps.push({label: 'Project Declarations'});
 		}
 		this.steps.push({label: 'Certification'});
+
+		this.state = {percent:0};
+
+		this.advance = this.advance.bind(this);
+	}
+
+	advance() {
+		this.setState({percent:this.state.percent+9})
 	}
 
 	renderMobile() {
@@ -115,13 +124,14 @@ export class Disclosure extends ResponsiveComponent {
 					</span>
 
 					<span style={styles.navigation}>
-						<div>
+						<div onClick={this.advance}>
 							nav stuff here
+							<ProgressIndicator percent={this.state.percent}/>
 						</div>
 
 						<div style={{textAlign: 'left', display: 'inline-block'}}>
 							<div onClick={this.goBack} style={styles.prevquestion}>
-								
+
 								<span style={{verticalAlign: 'middle'}}>
 									Previous label here
 								</span>
