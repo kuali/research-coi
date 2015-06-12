@@ -41,7 +41,10 @@ export class ProgressIndicator extends React.Component {
 
 	animateTo(newValue) {
 		this.animated = true;
-		new TWEEN.Tween(this.percent)
+		if (this.tween) {
+			this.tween.stop(); // Stop any tweens already running
+		}
+		this.tween = new TWEEN.Tween(this.percent)
 			.to({value: newValue}, 750)
 			.easing(TWEEN.Easing.Bounce.Out)
 			.onComplete(() => {
