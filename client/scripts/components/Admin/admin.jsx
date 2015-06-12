@@ -6,6 +6,7 @@ let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
 import request from 'superagent';
 
+import {AppHeader} from '../AppHeader';
 import {DetailView} from './DetailView/DetailView';
 import {ListView} from './ListView/ListView';
 import {SizeAwareComponent} from '../SizeAwareComponent';
@@ -14,12 +15,15 @@ class App extends SizeAwareComponent {
 	render() {
 		let styles = {
 			container: {
-				height: '100%'
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column'
 			}
 		};
 
 		return (
 			<div style={merge(styles.container, this.props.style)}>
+				<AppHeader homelink="listview" />
 				<RouteHandler />
 			</div>
 		);

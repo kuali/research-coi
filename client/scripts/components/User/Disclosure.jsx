@@ -70,7 +70,6 @@ export class Disclosure extends ResponsiveComponent {
 			container: {
 				flex: '1',
 				padding: '0',
-				height: '90%',
 				display: 'flex',
 				flexDirection: 'row'
 			},
