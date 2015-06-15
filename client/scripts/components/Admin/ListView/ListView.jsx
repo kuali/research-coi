@@ -8,6 +8,7 @@ import {SearchBox} from '../../SearchBox';
 import {PageIndicator} from './PageIndicator'
 import {KButton} from '../../KButton';
 import {DisclosureTable} from './DisclosureTable';
+import {FilterBox} from '../FilterBox';
 
 export class ListView extends ResponsiveComponent {
 	constructor() {
@@ -72,15 +73,148 @@ export class ListView extends ResponsiveComponent {
 		}
 	}
 
+	hideMobileFilters() {
+		AdminActions.toggleMobileFilters();
+	}
+
 	renderMobile() {
 		let mobileStyles = {
+			container: {
+				flex: '1',
+				display: 'flex',
+				flexDirection: 'column',
+				position: 'relative'
+			},
+			disclosures: {
+				flex: 1,
+				overflow: 'auto'
+			},
+			paging: {
+				backgroundColor: '#202020',
+				minHeight: 100
+			},
+			pagingButton: {
+				padding: '7px 17px',
+				backgroundColor: '#2E2E2E',
+				color: 'white',
+				border: 0,
+				width: 114
+			},
+			buttonSymbol: {
+				fontSize: 50
+			},
+			buttonText: {
+				fontSize: 14,
+				fontWeight: '300',
+				padding: '5px 0',
+				textAlign: 'center'
+			},
+			nextButton: {
+				float: 'right'
+			},
+			filterMenu: {
+				position: 'absolute',
+				transform: this.state.data.applicationState.showFiltersOnMobile ? 'translateX(-0%)' : 'translateX(-100%)',
+				transition: 'transform .3s ease-out',
+				width: '100%',
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column'
+			},
+			transparent: {
+				height: 34
+			},
+			filters: {
+				flex: 1,
+				backgroundColor: '#3e3e3e',
+				overflow: 'auto'
+			},
+			filterButton: {
+				backgroundColor: '#2e2e2e',
+				padding: '24px 0',
+				color: 'white',
+				fontSize: 25,
+				textAlign: 'center',
+				borderBottom: '2px solid #4a4a4a'
+			},
+			arrow: {
+				'float': 'right',
+				marginRight: 25,
+				fontSize: 48,
+				verticalAlign: 'middle',
+				marginTop: -12
+			},
+			label: {
+				verticalAlign: 'middle'
+			},
+			doneButton: {
+				height: 75,
+				backgroundColor: 'white',
+				color: '#444',
+				textAlign: 'center',
+				fontWeight: 300,
+				fontSize: 23,
+				paddingTop: 20
+			}
 		};
 		let styles = merge(this.commonStyles, mobileStyles);
 
 		return (
-			<span style={merge(styles.container, this.props.style)}>
-				List View
-			</span>
+			<div style={merge(styles.container, this.props.style)}>
+				<div style={styles.filterMenu}>
+					<div style={styles.transparent} />
+					<div style={styles.filters}>
+						<div style={styles.filterButton}>
+							<span style={styles.label}>DATE/DATE RANGE</span>
+							<span style={styles.arrow}>&gt;</span>
+						</div>
+						<div style={styles.filterButton}>
+							<span style={styles.label}>TYPE</span>
+							<span style={styles.arrow}>&gt;</span>
+						</div>
+						<div style={styles.filterButton}>
+							<span style={styles.label}>DISPOSITION</span>
+							<span style={styles.arrow}>&gt;</span>
+						</div>
+						<div style={styles.filterButton}>
+							<span style={styles.label}>STATUS</span>
+							<span style={styles.arrow}>&gt;</span>
+						</div>
+						<div style={styles.filterButton}>
+							<span style={styles.label}>SUBMITTED BY</span>
+							<span style={styles.arrow}>&gt;</span>
+						</div>
+						<div style={styles.filterButton}>
+							<span style={styles.label}>REPORTER NAME</span>
+							<span style={styles.arrow}>&gt;</span>
+						</div>
+					</div>
+					<div style={styles.doneButton} onClick={this.hideMobileFilters}>DONE</div>
+				</div>
+
+				<FilterBox style={styles.filterBox} count={this.state.data.disclosures.length} />
+
+				<div style={styles.disclosures}>
+					<DisclosureTable 
+						sort={this.state.sort}
+						sortDirection={this.state.sortDirection}
+						changeSort={this.changeSort} 
+						page={this.state.page} 
+						style={styles.table} 
+						disclosures={this.state.data.disclosures} />
+				</div>
+
+				<div style={styles.paging}>
+					<button style={styles.pagingButton}>
+						<div style={styles.buttonSymbol}>&lt;</div>
+						<div style={styles.buttonText}>PREVIOUS</div>
+					</button>
+					<button style={merge(styles.pagingButton, styles.nextButton)}>
+						<div style={styles.buttonSymbol}>&gt;</div>
+						<div style={styles.buttonText}>NEXT</div>
+					</button>
+				</div>
+			</div>
 		);
 	}
 
@@ -92,7 +226,7 @@ export class ListView extends ResponsiveComponent {
 				flexDirection: 'row'
 			},
 			sidebar: {
-				width: 275,
+				width: 225,
 				backgroundColor: '#202020'
 			},
 			content: {
@@ -157,7 +291,6 @@ export class ListView extends ResponsiveComponent {
 
 					<div>
 						<DisclosureTable 
-							type={this.state.type}
 							sort={this.state.sort}
 							sortDirection={this.state.sortDirection}
 							changeSort={this.changeSort} 

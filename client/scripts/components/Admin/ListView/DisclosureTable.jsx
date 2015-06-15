@@ -1,7 +1,6 @@
 import React from 'react/addons';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-const PAGE_SIZE = 10;
 
 export class DisclosureTable extends ResponsiveComponent {
   constructor() {
@@ -13,22 +12,82 @@ export class DisclosureTable extends ResponsiveComponent {
   renderMobile() {
     let mobileStyles = {
       container: {
+        backgroundColor: '#D8D9D6'
+      },
+      disclosure: {
+        backgroundColor: 'white',
+        margin: '8px 0',
+        padding: '5px 25px 7px 25px',
+        fontSize: 14
+      },
+      name: {
+        fontWeight: 'bold',
+        fontSize: 16
+      },
+      details: {
+        display: 'inline-block',
+        width: '60%',
+        verticalAlign: 'top'
+      },
+      dates: {
+        display: 'inline-block',
+        width: '40%',
+        verticalAlign: 'top'
+      },
+      label: {
+        color: '#666'
       }
     };
     let styles = merge(this.commonStyles, mobileStyles);
 
+    let disclosures = [];
+    const PAGE_SIZE = 5;
+    let start = this.getStartIndex(PAGE_SIZE);
+    let stop = this.getStopIndex(PAGE_SIZE);
+    for (let i = start ; i < stop; i++) {
+      let disclosure = this.props.disclosures[i];
+
+      disclosures.push(
+        <div key={disclosure.id} style={styles.disclosure}>
+          <div style={styles.name}>{disclosure.projects[0].name}</div>
+          <span style={styles.details}>
+            <div>
+              {disclosure.submittedBy}
+            </div>
+            <div>
+              {disclosure.status}
+            </div>
+            <div>
+              {disclosure.disposition}
+            </div>
+          </span>
+          <span style={styles.dates}>
+            <div style={{marginBottom: 5}}>
+              <div style={styles.label}>Submitted:</div>
+              {new Date(disclosure.submittedOn).toLocaleDateString()}
+            </div>
+            <div>
+              <div style={styles.label}>Project Start Date:</div>
+              {new Date(disclosure.submittedOn).toLocaleDateString()}
+            </div>
+          </span>
+        </div>
+      );
+    }
+
     return (
-      <span style={merge(styles.container, this.props.style)}>
-      </span>
+      <div style={merge(styles.container, this.props.style)}>
+        {disclosures}
+      </div>
     );
   }
 
-  getStartIndex() {
-    return (this.props.page * PAGE_SIZE) - PAGE_SIZE;
+  getStartIndex(pageSize) {
+    return (this.props.page * pageSize) - pageSize;
   }
 
-  getStopIndex() {
-    let proposedStop = this.props.page * PAGE_SIZE - 1;
+  getStopIndex(pageSize) {
+    let proposedStop = this.props.page * pageSize - 1;
     if (!this.props.disclosures || this.props.disclosures.length === 0) {
       return 0;
     }
@@ -82,8 +141,9 @@ export class DisclosureTable extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let disclosures = [];
-    let start = this.getStartIndex();
-    let stop = this.getStopIndex();
+    const PAGE_SIZE = 10;
+    let start = this.getStartIndex(PAGE_SIZE);
+    let stop = this.getStopIndex(PAGE_SIZE);
     for (let i = start ; i < stop; i++) {
       let disclosure = this.props.disclosures[i];
 

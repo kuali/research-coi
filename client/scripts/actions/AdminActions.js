@@ -34,7 +34,11 @@ class _AdminActions {
 
   changeReporterFilter(newFilter) {
     this.dispatch(newFilter);
-  }  
+  }
+
+  toggleMobileFilters() {
+    this.dispatch();
+  }
 }
 
 export let AdminActions = alt.createActions(_AdminActions);

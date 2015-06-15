@@ -15,7 +15,8 @@ class _AdminStore {
         status: undefined,
         submittedBy: undefined,
         reporterName: undefined
-      }
+      },
+      showFiltersOnMobile: false
     };
 
     this.disclosures = [{
@@ -103,7 +104,8 @@ class _AdminStore {
       changeDispositionFilter: AdminActions.CHANGE_DISPOSITION_FILTER,
       changeStatusFilter: AdminActions.CHANGE_STATUS_FILTER,
       changeSubmittedByFilter: AdminActions.CHANGE_SUBMITTED_BY_FILTER,
-      changeReporterFilter: AdminActions.CHANGE_REPORTER_FILTER
+      changeReporterFilter: AdminActions.CHANGE_REPORTER_FILTER,
+      toggleMobileFilters: AdminActions.TOGGLE_MOBILE_FILTERS
     });
   }
 
@@ -138,6 +140,10 @@ class _AdminStore {
 
   changeReporterFilter(newFilter) {
     this.applicationState.filters.reporterName = newFilter;
+  }
+
+  toggleMobileFilters() {
+    this.applicationState.showFiltersOnMobile = !this.applicationState.showFiltersOnMobile;
   }
 }
 
