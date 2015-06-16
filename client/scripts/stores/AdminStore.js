@@ -1,5 +1,6 @@
 import {AdminActions} from '../actions/AdminActions';
 import alt from '../alt';
+import request from 'superagent';
 
 class _AdminStore {
   constructor() {
@@ -19,83 +20,13 @@ class _AdminStore {
       showFiltersOnMobile: false
     };
 
-    this.disclosures = [{
-      disposition: 222,
-      id: 34324234,
-      name: 'Research 1',
-      submittedBy: 'John Jack',
-      submittedOn: 1434148767062,
-      status: 'Ready',
-      projects: [{
-        'name': 'Project 1'
-      }]
-    }, 
-    {
-      disposition: 222,
-      id: 32432,
-      name: 'Research 2',
-      submittedBy: 'Kim Kiera',
-      submittedOn: 1434148767062,
-      status: 'Open',
-      projects: [{
-        'name': 'Project 1'
-      }]
-    }, 
-    {
-      disposition: 222,
-      id: 54364,
-      name: 'Research 3',
-      submittedBy: 'Lara Lant',
-      submittedOn: 1434148767062,
-      status: 'Open',
-      projects: [{
-        'name': 'Project 1'
-      }]
-    }, 
-    {
-      disposition: 222,
-      id: 76576,
-      name: 'Research 4',
-      submittedBy: 'Mark Millburn',
-      submittedOn: 1434148767062,
-      status: 'Open',
-      projects: [{
-        'name': 'Project 1'
-      }]
-    }, 
-    {
-      disposition: 222,
-      id: 9769,
-      name: 'Research 5',
-      submittedBy: 'Nate Niter',
-      submittedOn: 1434148767062,
-      status: 'Open',
-      projects: [{
-        'name': 'Project 1'
-      }]
-    }, 
-    {
-      disposition: 222,
-      id: 8987,
-      name: 'Research 6',
-      submittedBy: 'Oliver Osmond',
-      submittedOn: 1434148767062,
-      status: 'Open',
-      projects: [{
-        'name': 'Project 1'
-      }]
-    }, 
-    {
-      disposition: 222,
-      id: 113232,
-      name: 'Research 7',
-      submittedBy: 'Peter Pratan',
-      submittedOn: 1434148767062,
-      status: 'Open',
-      projects: [{
-        'name': 'Project 1'
-      }]
-    }];
+    this.disclosures = [];
+
+    request.get('/api/research/coi/disclosures', (err, disclosures) => {
+      if (!err) {
+        this.disclosures = disclosures.body;
+      }
+    });
 
     this.bindListeners({
       changeSort: AdminActions.CHANGE_SORT,

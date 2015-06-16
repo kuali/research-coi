@@ -73,10 +73,6 @@ export class ListView extends ResponsiveComponent {
 		}
 	}
 
-	hideMobileFilters() {
-		AdminActions.toggleMobileFilters();
-	}
-
 	renderMobile() {
 		let mobileStyles = {
 			container: {
@@ -112,85 +108,19 @@ export class ListView extends ResponsiveComponent {
 			nextButton: {
 				float: 'right'
 			},
-			filterMenu: {
+			filterGroup: {
 				position: 'absolute',
 				transform: this.state.data.applicationState.showFiltersOnMobile ? 'translateX(-0%)' : 'translateX(-100%)',
 				transition: 'transform .3s ease-out',
 				width: '100%',
-				height: '100%',
-				display: 'flex',
-				flexDirection: 'column'
-			},
-			transparent: {
-				height: 34
-			},
-			filters: {
-				flex: 1,
-				backgroundColor: '#3e3e3e',
-				overflow: 'auto'
-			},
-			filterButton: {
-				backgroundColor: '#2e2e2e',
-				padding: '24px 0',
-				color: 'white',
-				fontSize: 25,
-				textAlign: 'center',
-				borderBottom: '2px solid #4a4a4a'
-			},
-			arrow: {
-				'float': 'right',
-				marginRight: 25,
-				fontSize: 48,
-				verticalAlign: 'middle',
-				marginTop: -12
-			},
-			label: {
-				verticalAlign: 'middle'
-			},
-			doneButton: {
-				height: 75,
-				backgroundColor: 'white',
-				color: '#444',
-				textAlign: 'center',
-				fontWeight: 300,
-				fontSize: 23,
-				paddingTop: 20
+				height: '100%'
 			}
 		};
 		let styles = merge(this.commonStyles, mobileStyles);
 
 		return (
 			<div style={merge(styles.container, this.props.style)}>
-				<div style={styles.filterMenu}>
-					<div style={styles.transparent} />
-					<div style={styles.filters}>
-						<div style={styles.filterButton}>
-							<span style={styles.label}>DATE/DATE RANGE</span>
-							<span style={styles.arrow}>&gt;</span>
-						</div>
-						<div style={styles.filterButton}>
-							<span style={styles.label}>TYPE</span>
-							<span style={styles.arrow}>&gt;</span>
-						</div>
-						<div style={styles.filterButton}>
-							<span style={styles.label}>DISPOSITION</span>
-							<span style={styles.arrow}>&gt;</span>
-						</div>
-						<div style={styles.filterButton}>
-							<span style={styles.label}>STATUS</span>
-							<span style={styles.arrow}>&gt;</span>
-						</div>
-						<div style={styles.filterButton}>
-							<span style={styles.label}>SUBMITTED BY</span>
-							<span style={styles.arrow}>&gt;</span>
-						</div>
-						<div style={styles.filterButton}>
-							<span style={styles.label}>REPORTER NAME</span>
-							<span style={styles.arrow}>&gt;</span>
-						</div>
-					</div>
-					<div style={styles.doneButton} onClick={this.hideMobileFilters}>DONE</div>
-				</div>
+				<SearchFilterGroup style={styles.filterGroup} />
 
 				<FilterBox style={styles.filterBox} count={this.state.data.disclosures.length} />
 
@@ -200,7 +130,6 @@ export class ListView extends ResponsiveComponent {
 						sortDirection={this.state.sortDirection}
 						changeSort={this.changeSort} 
 						page={this.state.page} 
-						style={styles.table} 
 						disclosures={this.state.data.disclosures} />
 				</div>
 
@@ -291,10 +220,10 @@ export class ListView extends ResponsiveComponent {
 
 					<div>
 						<DisclosureTable 
-							sort={this.state.sort}
-							sortDirection={this.state.sortDirection}
+							sort={this.state.data.applicationState.sort}
+							sortDirection={this.state.data.applicationState.sortDirection}
 							changeSort={this.changeSort} 
-							page={this.state.page} 
+							page={this.state.data.applicationState.page} 
 							style={styles.table} 
 							disclosures={this.state.data.disclosures} />
 					</div>

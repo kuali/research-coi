@@ -1,4 +1,5 @@
 import alt from '../alt';
+import request from 'superagent';
 
 class _AdminActions {
   changeSort(newSort, newSortDirection) {

@@ -6,8 +6,11 @@ let getSchool = () => {
 };
 
 export let init = app => {
+  app.get('/api/research/coi/disclosures', function*(next) {
+    this.body = DisclosureDB.getReadyForReview(getSchool());
+  });
   app.get('/api/research/coi/disclosure/{query}', function*(next){
-    this.body = DisclosureDB.search(getSchool, this.params.query);
+    this.body = DisclosureDB.search(getSchool(), this.params.query);
   });
   app.get('/api/research/coi/disclosure/:id', function*(next){
     this.body = DisclosureDB.get(getSchool(), this.params.id);

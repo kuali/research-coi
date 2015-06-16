@@ -26,6 +26,86 @@ export let get = (school, disclosureId) => {
   return undefined;
 };
 
+export let getReadyForReview = (school) => {
+  return [{
+    disposition: 222,
+    id: 34324234,
+    name: 'Research 1',
+    submittedBy: 'John Jack',
+    submittedOn: 1434148767062,
+    status: 'Ready',
+    projects: [{
+      'name': 'Project 1'
+    }]
+  }, 
+  {
+    disposition: 222,
+    id: 32432,
+    name: 'Research 2',
+    submittedBy: 'Kim Kiera',
+    submittedOn: 1434148767062,
+    status: 'Open',
+    projects: [{
+      'name': 'Project 1'
+    }]
+  }, 
+  {
+    disposition: 222,
+    id: 54364,
+    name: 'Research 3',
+    submittedBy: 'Lara Lant',
+    submittedOn: 1434148767062,
+    status: 'Open',
+    projects: [{
+      'name': 'Project 1'
+    }]
+  }, 
+  {
+    disposition: 222,
+    id: 76576,
+    name: 'Research 4',
+    submittedBy: 'Mark Millburn',
+    submittedOn: 1434148767062,
+    status: 'Open',
+    projects: [{
+      'name': 'Project 1'
+    }]
+  }, 
+  {
+    disposition: 222,
+    id: 9769,
+    name: 'Research 5',
+    submittedBy: 'Nate Niter',
+    submittedOn: 1434148767062,
+    status: 'Open',
+    projects: [{
+      'name': 'Project 1'
+    }]
+  }, 
+  {
+    disposition: 222,
+    id: 8987,
+    name: 'Research 6',
+    submittedBy: 'Oliver Osmond',
+    submittedOn: 1434148767062,
+    status: 'Open',
+    projects: [{
+      'name': 'Project 1'
+    }]
+  }, 
+  {
+    disposition: 222,
+    id: 113232,
+    name: 'Research 7',
+    submittedBy: 'Peter Pratan',
+    submittedOn: 1434148767062,
+    status: 'Open',
+    projects: [{
+      'name': 'Project 1'
+    }]
+  }];
+};
+
 export let approve = (school, disclosureId) => {
   let disclosure = get(school, disclosureId);
   disclosure.status = 'APPROVED';

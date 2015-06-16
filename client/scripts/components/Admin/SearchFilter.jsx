@@ -12,13 +12,31 @@ export class SearchFilter extends ResponsiveComponent {
   renderMobile() {
     let mobileStyles = {
       container: {
+        backgroundColor: '#2e2e2e',
+        padding: '24px 0',
+        color: 'white',
+        fontSize: 25,
+        textAlign: 'center',
+        borderBottom: '2px solid #4a4a4a'
+      },
+      arrow: {
+        'float': 'right',
+        marginRight: 25,
+        fontSize: 48,
+        verticalAlign: 'middle',
+        marginTop: -12
+      },
+      label: {
+        verticalAlign: 'middle'
       }
     };
     let styles = merge(this.commonStyles, mobileStyles);
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
-      </span>
+      <div style={merge(styles.container, this.props.style)}>
+        <span style={styles.label}>{this.props.children}</span>
+        <span style={styles.arrow}>&gt;</span>
+      </div>
     );
   }
 

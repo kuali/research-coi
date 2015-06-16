@@ -6,9 +6,6 @@ import {AdminActions} from '../../actions/AdminActions';
 export class FilterBox extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
-
     this.showFilters = this.showFilters.bind(this);
   }
 
