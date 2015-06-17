@@ -7,7 +7,7 @@ class _AdminStore {
     // initialize state here
     this.applicationState = {
       sort: 'DATE_SUBMITTED',
-      sortDirection: 'ASCENDING',
+      sortDirection: 'DESCENDING',
       query: '',
       filters: {
         date: undefined,
@@ -22,14 +22,11 @@ class _AdminStore {
 
     this.disclosures = [];
 
-    request.get('/api/research/coi/disclosures', (err, disclosures) => {
-      if (!err) {
-        this.disclosures = disclosures.body;
-      }
-    });
+    this.refreshDisclosures();
 
     this.bindListeners({
       changeSort: AdminActions.CHANGE_SORT,
+      flipSortDirection: AdminActions.FLIP_SORT_DIRECTION,
       changeDateFilter: AdminActions.CHANGE_DATE_FILTER,
       changeTypeFilter: AdminActions.CHANGE_TYPE_FILTER,
       changeDispositionFilter: AdminActions.CHANGE_DISPOSITION_FILTER,
@@ -40,9 +37,35 @@ class _AdminStore {
     });
   }
 
-  changeSort(newValue) {
-    this.applicationState.sort = newValue.sort;
-    this.applicationState.sortDirection = newValue.direction;
+  refreshDisclosures() {
+    request.get('/api/research/coi/disclosures')
+           .query({sortColumn: this.applicationState.sort})
+           .query({sortDirection: this.applicationState.sortDirection})
+           .end((err, disclosures) => {
+             if (!err) {
+               this.disclosures = disclosures.body;
+               this.emitChange();
+             }
+           });
+  }
+
+  changeSort(newSortField) {
+    this.applicationState.sort = newSortField;
+    this.applicationState.sortDirection = 'ASCENDING';
+    this.refreshDisclosures();
+    return false;
+  }
+
+  flipSortDirection() {
+    if (this.applicationState.sortDirection === 'DESCENDING') {
+      this.applicationState.sortDirection = 'ASCENDING';
+    }
+    else {
+      this.applicationState.sortDirection = 'DESCENDING';
+    }
+
+    this.refreshDisclosures();
+    return false;
   }
 
   changeQuery(newQuery) {

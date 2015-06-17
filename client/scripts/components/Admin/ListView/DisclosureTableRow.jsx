@@ -101,7 +101,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
           {this.props.disposition}
         </span>
         <span style={merge(styles.startDate, styles.value)}>
-          {new Date(this.props.submittedOn).toLocaleDateString()}
+          {new Date(this.props.startDate).toLocaleDateString()}
         </span>
       </div>
     );  

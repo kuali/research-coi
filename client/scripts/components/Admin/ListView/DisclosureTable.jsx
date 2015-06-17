@@ -3,11 +3,19 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
 import {SortArrow} from './SortArrow';
+import {AdminActions} from '../../../actions/AdminActions';
 
 export class DisclosureTable extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
+
+    this.sortByTitle = this.sortByTitle.bind(this);
+    this.sortByPI = this.sortByPI.bind(this);
+    this.sortBySubmittedDate = this.sortBySubmittedDate.bind(this);
+    this.sortByStatus = this.sortByStatus.bind(this);
+    this.sortByDisposition = this.sortByDisposition.bind(this);
+    this.sortByStartDate = this.sortByStartDate.bind(this);
   }
 
   getStartIndex(pageSize) {
@@ -27,7 +35,37 @@ export class DisclosureTable extends ResponsiveComponent {
     }
   }
 
-  changeSort(evt) {
+  changeSort(field) {
+    if (this.props.sort === field) {
+      AdminActions.flipSortDirection();
+    }
+    else {
+      AdminActions.changeSort(field);
+    }
+  }
+
+  sortByTitle() {
+    this.changeSort('PROJECT_TITLE');
+  }
+
+  sortByPI() {
+    this.changeSort('PI');
+  }
+
+  sortBySubmittedDate() {
+    this.changeSort('DATE_SUBMITTED');
+  }
+
+  sortByStatus() {
+    this.changeSort('STATUS');
+  }
+
+  sortByDisposition() {
+    this.changeSort('DISPOSITION');
+  }
+
+  sortByStartDate() {
+    this.changeSort('PROJECT_START_DATE');
   }
 
   renderMobile() {
@@ -101,6 +139,7 @@ export class DisclosureTable extends ResponsiveComponent {
           submittedOn={disclosure.submittedOn}
           status={disclosure.status}
           disposition={disclosure.disposition}
+          startDate={disclosure.startDate}
         />
       );
     }
@@ -110,27 +149,27 @@ export class DisclosureTable extends ResponsiveComponent {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.headings}>
-          <span style={styles.heading} onClick={this.changeSort} value="PROJECT_TITLE">
+          <span style={styles.heading} onClick={this.sortByTitle} value="PROJECT_TITLE">
             PROJECT TITLE 
             {this.props.sort === 'PROJECT_TITLE' ? sortArrow : <span></span>}
           </span>
-          <span style={styles.heading} onClick={this.changeSort} value="PI">
+          <span style={styles.heading} onClick={this.sortByPI} value="PI">
             PI
             {this.props.sort === 'PI' ? sortArrow : <span></span>}
           </span>
-          <span style={styles.heading} onClick={this.changeSort} value="SUBMITTED_DATE">
+          <span style={styles.heading} onClick={this.sortBySubmittedDate} value="SUBMITTED_DATE">
             DATE SUBMITTED
             {this.props.sort === 'DATE_SUBMITTED' ? sortArrow : <span></span>}
           </span>
-          <span style={styles.heading} onClick={this.changeSort} value="STATUS">
+          <span style={styles.heading} onClick={this.sortByStatus} value="STATUS">
             STATUS
             {this.props.sort === 'STATUS' ? sortArrow : <span></span>}
           </span>
-          <span style={styles.heading} onClick={this.changeSort} value="DISPOSITION">
+          <span style={styles.heading} onClick={this.sortByDisposition} value="DISPOSITION">
             DISPOSITION
             {this.props.sort === 'DISPOSITION' ? sortArrow : <span></span>}
           </span>
-          <span style={styles.heading} onClick={this.changeSort} value="PROJECT_START_DATE">
+          <span style={styles.heading} onClick={this.sortByStartDate} value="PROJECT_START_DATE">
             PROJECT START DATE
             {this.props.sort === 'PROJECT_START_DATE' ? sortArrow : <span></span>}
           </span>

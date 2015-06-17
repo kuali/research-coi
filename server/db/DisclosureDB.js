@@ -26,13 +26,14 @@ export let get = (school, disclosureId) => {
   return undefined;
 };
 
-export let getReadyForReview = (school) => {
-  return [{
+export let getReadyForReview = (school, sortColumn, sortDirection) => {
+  let results = [{
     disposition: 222,
     id: 34324234,
     name: 'Research 1',
     submittedBy: 'John Jack',
     submittedOn: 1434148767062,
+    startDate: 1434148767062,
     status: 'Ready',
     projects: [{
       'name': 'Project 1'
@@ -43,10 +44,11 @@ export let getReadyForReview = (school) => {
     id: 32432,
     name: 'Research 2',
     submittedBy: 'Kim Kiera',
-    submittedOn: 1434148767062,
+    submittedOn: 1434948767062,
+    startDate: 1434143767062,
     status: 'Open',
     projects: [{
-      'name': 'Project 1'
+      'name': 'Project 2'
     }]
   }, 
   {
@@ -54,10 +56,11 @@ export let getReadyForReview = (school) => {
     id: 54364,
     name: 'Research 3',
     submittedBy: 'Lara Lant',
-    submittedOn: 1434148767062,
+    submittedOn: 1432148767062,
+    startDate: 1434448767062,
     status: 'Open',
     projects: [{
-      'name': 'Project 1'
+      'name': 'Project 3'
     }]
   }, 
   {
@@ -65,10 +68,11 @@ export let getReadyForReview = (school) => {
     id: 76576,
     name: 'Research 4',
     submittedBy: 'Mark Millburn',
-    submittedOn: 1434148767062,
+    submittedOn: 1434748767062,
+    startDate: 1434188767062,
     status: 'Open',
     projects: [{
-      'name': 'Project 1'
+      'name': 'Project 4'
     }]
   }, 
   {
@@ -76,10 +80,11 @@ export let getReadyForReview = (school) => {
     id: 9769,
     name: 'Research 5',
     submittedBy: 'Nate Niter',
-    submittedOn: 1434148767062,
+    submittedOn: 1432148767062,
+    startDate: 1434248767062,
     status: 'Open',
     projects: [{
-      'name': 'Project 1'
+      'name': 'Project 5'
     }]
   }, 
   {
@@ -87,10 +92,11 @@ export let getReadyForReview = (school) => {
     id: 8987,
     name: 'Research 6',
     submittedBy: 'Oliver Osmond',
-    submittedOn: 1434148767062,
+    submittedOn: 1432148767062,
+    startDate: 1434248767062,
     status: 'Open',
     projects: [{
-      'name': 'Project 1'
+      'name': 'Project 6'
     }]
   }, 
   {
@@ -98,12 +104,30 @@ export let getReadyForReview = (school) => {
     id: 113232,
     name: 'Research 7',
     submittedBy: 'Peter Pratan',
-    submittedOn: 1434148767062,
+    submittedOn: 1434948767062,
+    startDate: 1434548767062,
     status: 'Open',
     projects: [{
-      'name': 'Project 1'
+      'name': 'Project 7'
     }]
   }];
+
+  return results.sort((a, b) => {
+    switch (sortColumn) {
+      case 'DISPOSITION':
+        return sortDirection === 'DESCENDING' ? a.disposition < b.disposition : a.disposition > b.disposition;
+      case 'PROJECT_TITLE':
+        return sortDirection === 'DESCENDING' ? a.name < b.name : a.name > b.name;
+      case 'PI':
+        return sortDirection === 'DESCENDING' ? a.submittedBy < b.submittedBy : a.submittedBy > b.submittedBy;
+      case 'DATE_SUBMITTED':
+        return sortDirection === 'DESCENDING' ? a.submittedOn < b.submittedOn : a.submittedOn > b.submittedOn;
+      case 'STATUS':
+        return sortDirection === 'DESCENDING' ? a.status < b.status : a.status > b.status;
+      case 'PROJECT_START_DATE':
+        return sortDirection === 'DESCENDING' ? a.startDate < b.startDate : a.startDate > b.startDate;
+    }
+  });
 };
 
 export let approve = (school, disclosureId) => {

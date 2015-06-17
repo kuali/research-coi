@@ -7,7 +7,15 @@ let getSchool = () => {
 
 export let init = app => {
   app.get('/api/research/coi/disclosures', function*(next) {
-    this.body = DisclosureDB.getReadyForReview(getSchool());
+    let sortColumn = 'DATE_SUBMITTED';
+    if (this.request.query.sortColumn) {
+      sortColumn = this.request.query.sortColumn;
+    }
+    let sortDirection = 'ASCENDING';
+    if (this.request.query.sortDirection) {
+      sortDirection = this.request.query.sortDirection;
+    }
+    this.body = DisclosureDB.getReadyForReview(getSchool(), sortColumn, sortDirection);
   });
   app.get('/api/research/coi/disclosure/{query}', function*(next){
     this.body = DisclosureDB.search(getSchool(), this.params.query);

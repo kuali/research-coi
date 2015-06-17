@@ -2,11 +2,12 @@ import alt from '../alt';
 import request from 'superagent';
 
 class _AdminActions {
-  changeSort(newSort, newSortDirection) {
-    this.dispatch({
-      sort: newSort, 
-      direction: newSortDirection
-    });
+  changeSort(newSortField) {
+    this.dispatch(newSortField);
+  }
+
+  flipSortDirection() {
+    this.dispatch();
   }
 
   changeTypeFilter(newType) {
