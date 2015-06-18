@@ -22,6 +22,7 @@ export class ListView extends ResponsiveComponent {
 		}
 
 		this.changeSort = this.changeSort.bind(this);
+		this.changeQuery = this.changeQuery.bind(this);
 		this.onChange = this.onChange.bind(this);
 	}
 
@@ -51,7 +52,7 @@ export class ListView extends ResponsiveComponent {
 		AdminActions.changeTypeFilter(newType);
 	}
 
-	updateQuery(newQuery) {
+	changeQuery(newQuery) {
 		this.setState({
 			page: 1
 		});
@@ -208,14 +209,14 @@ export class ListView extends ResponsiveComponent {
 					<div>
 						<span style={styles.pageButtons}>
 							<PageIndicator 
-								current={this.state.page} 
+								current={this.state.page}
 								total={this.state.disclosures ? Math.ceil(this.state.disclosures.length / 10) : 0} 
 							/>
 
 							<KButton style={merge(styles.pageButton, styles.previousPage)} onClick={this.goBackPage}>&lt; PREVIOUS PAGE</KButton>
 							<KButton style={merge(styles.pageButton, styles.nextPage)} onClick={this.advancePages}>NEXT PAGE &gt;</KButton>
 						</span>
-						<SearchBox style={styles.searchbox} value={this.state.query} onChange={this.updateQuery} />
+						<SearchBox style={styles.searchbox} value={this.state.data.applicationState.query} onChange={this.changeQuery} />
 					</div>
 
 					<div>

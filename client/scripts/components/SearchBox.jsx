@@ -8,6 +8,12 @@ export class SearchBox extends ResponsiveComponent {
     super();
     this.commonStyles = {
     };
+
+    this.valueChanged = this.valueChanged.bind(this);
+  }
+
+  valueChanged() {
+    this.props.onChange(this.refs.input.getDOMNode().value);
   }
 
   renderMobile() {

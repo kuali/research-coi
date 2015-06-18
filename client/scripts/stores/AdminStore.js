@@ -26,6 +26,7 @@ class _AdminStore {
 
     this.bindListeners({
       changeSort: AdminActions.CHANGE_SORT,
+      changeQuery: AdminActions.CHANGE_QUERY,
       flipSortDirection: AdminActions.FLIP_SORT_DIRECTION,
       changeDateFilter: AdminActions.CHANGE_DATE_FILTER,
       changeTypeFilter: AdminActions.CHANGE_TYPE_FILTER,
@@ -41,6 +42,7 @@ class _AdminStore {
     request.get('/api/research/coi/disclosures')
            .query({sortColumn: this.applicationState.sort})
            .query({sortDirection: this.applicationState.sortDirection})
+           .query({query: this.applicationState.query})
            .end((err, disclosures) => {
              if (!err) {
                this.disclosures = disclosures.body;
@@ -69,7 +71,12 @@ class _AdminStore {
   }
 
   changeQuery(newQuery) {
+    let shouldRefresh = newQuery.length > 2 || this.applicationState.query.length > newQuery.length;
     this.applicationState.query = newQuery;
+    if (shouldRefresh) {
+      this.refreshDisclosures();
+      return false;      
+    }
   }
 
   changeTypeFilter(newFilter) {

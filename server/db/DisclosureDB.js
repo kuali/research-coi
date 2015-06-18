@@ -26,7 +26,7 @@ export let get = (school, disclosureId) => {
   return undefined;
 };
 
-export let getReadyForReview = (school, sortColumn, sortDirection) => {
+export let getReadyForReview = (school, sortColumn, sortDirection, query) => {
   let results = [{
     disposition: 222,
     id: 34324234,
@@ -111,6 +111,12 @@ export let getReadyForReview = (school, sortColumn, sortDirection) => {
       'name': 'Project 7'
     }]
   }];
+
+  let lowerCaseQuery = query.toLowerCase();
+  results = results.filter((disclosure) => {
+    return disclosure.name.toLowerCase().indexOf(lowerCaseQuery) === 0 ||
+           disclosure.submittedBy.toLowerCase().indexOf(lowerCaseQuery) === 0;
+  });
 
   return results.sort((a, b) => {
     switch (sortColumn) {
