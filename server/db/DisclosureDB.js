@@ -114,7 +114,7 @@ export let getReadyForReview = (school, sortColumn, sortDirection, query) => {
 
   let lowerCaseQuery = query.toLowerCase();
   results = results.filter((disclosure) => {
-    return disclosure.name.toLowerCase().indexOf(lowerCaseQuery) === 0 ||
+    return disclosure.projects[0].name.toLowerCase().indexOf(lowerCaseQuery) === 0 ||
            disclosure.submittedBy.toLowerCase().indexOf(lowerCaseQuery) === 0;
   });
 

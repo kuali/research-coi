@@ -7,10 +7,15 @@ export class FilterBox extends React.Component {
   constructor() {
     super();
     this.showFilters = this.showFilters.bind(this);
+    this.changeQuery = this.changeQuery.bind(this);
   }
 
   showFilters() {
     AdminActions.toggleMobileFilters();
+  }
+
+  changeQuery() {
+    AdminActions.changeQuery(this.refs.searchBox.getDOMNode().value);    
   }
 
   render() {
@@ -56,7 +61,7 @@ export class FilterBox extends React.Component {
             {this.props.count} Disclosures Shown
           </div>
           <div>
-            <input style={styles.searchBox} type="search" placeholder="Search..." />
+            <input style={styles.searchBox} type="search" placeholder="Search..." onChange={this.changeQuery} ref="searchBox" />
           </div>
         </span>
       </div>
