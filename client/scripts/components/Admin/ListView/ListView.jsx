@@ -21,7 +21,6 @@ export class ListView extends ResponsiveComponent {
 			page: 1
 		}
 
-		this.changeSort = this.changeSort.bind(this);
 		this.changeQuery = this.changeQuery.bind(this);
 		this.onChange = this.onChange.bind(this);
 	}
@@ -38,10 +37,6 @@ export class ListView extends ResponsiveComponent {
 		this.setState({
 			data: AdminStore.getState()
 		});
-	}
-
-	changeSort(newSort, newDirection) {
-		AdminActions.changeSort(newSort, newDirection);
 	}
 
 	changeType(newType) {
@@ -61,29 +56,19 @@ export class ListView extends ResponsiveComponent {
 	}
 
 	advancePages() {
-		this.setState({
-			page: this.state.page + 1
-		});
+		// server side paging will go here
 	}
 
 	goBackPage() {
-		if (this.state.page > 1) {
-			this.setState({
-				page: this.state.page - 1
-			});
-		}
+		// server side paging will go here
 	}
 
 	renderMobile() {
 		let mobileStyles = {
 			container: {
-				flex: '1',
-				display: 'flex',
-				flexDirection: 'column',
 				position: 'relative'
 			},
 			disclosures: {
-				flex: 1,
 				overflow: 'auto'
 			},
 			paging: {
@@ -120,16 +105,15 @@ export class ListView extends ResponsiveComponent {
 		let styles = merge(this.commonStyles, mobileStyles);
 
 		return (
-			<div style={merge(styles.container, this.props.style)}>
+			<div className="flexbox fill column" style={merge(styles.container, this.props.style)}>
 				<SearchFilterGroup style={styles.filterGroup} />
 
 				<FilterBox style={styles.filterBox} count={this.state.data.disclosures.length} />
 
-				<div style={styles.disclosures}>
+				<div className="fill" style={styles.disclosures}>
 					<DisclosureTable 
 						sort={this.state.sort}
 						sortDirection={this.state.sortDirection}
-						changeSort={this.changeSort} 
 						page={this.state.page} 
 						disclosures={this.state.data.disclosures} />
 				</div>
@@ -151,16 +135,12 @@ export class ListView extends ResponsiveComponent {
 	renderDesktop() {
 		let desktopStyles = {
 			container: {
-				flex: '1',
-				display: 'flex',
-				flexDirection: 'row'
 			},
 			sidebar: {
 				width: 225,
 				backgroundColor: '#202020'
 			},
 			content: {
-				flex: '1',
 				display: 'inline-block',
 				padding: '15px 30px',
 				borderTop: '6px solid ' + window.config.colors.three,
@@ -201,16 +181,16 @@ export class ListView extends ResponsiveComponent {
 		let styles = merge(this.commonStyles, desktopStyles);
 
 		return (
-			<div style={merge(styles.container, this.props.style)}>
+			<div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
 				<span style={styles.sidebar}>
 					<SearchFilterGroup style={styles.filterGroup} />
 				</span>
-				<span style={styles.content}>
+				<span className="fill" style={styles.content}>
 					<div>
 						<span style={styles.pageButtons}>
 							<PageIndicator 
 								current={this.state.page}
-								total={this.state.disclosures ? Math.ceil(this.state.disclosures.length / 10) : 0} 
+								total={this.state.disclosures ? Math.ceil(this.state.disclosures.length / 10) : 1} 
 							/>
 
 							<KButton style={merge(styles.pageButton, styles.previousPage)} onClick={this.goBackPage}>&lt; PREVIOUS PAGE</KButton>
@@ -223,7 +203,6 @@ export class ListView extends ResponsiveComponent {
 						<DisclosureTable 
 							sort={this.state.data.applicationState.sort}
 							sortDirection={this.state.data.applicationState.sortDirection}
-							changeSort={this.changeSort} 
 							page={this.state.data.applicationState.page} 
 							style={styles.table} 
 							disclosures={this.state.data.disclosures} />

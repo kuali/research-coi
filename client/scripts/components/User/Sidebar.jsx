@@ -142,7 +142,7 @@ export class Sidebar extends ResponsiveComponent {
     let steps = this.generateSteps();
     return (
       <span style={merge(styles.container, this.props.style)}>
-        <div style={{flex: '1'}}>
+        <div className="fill">
           <ul style={styles.ul}>
             {steps}
           </ul>

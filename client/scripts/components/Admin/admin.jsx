@@ -16,13 +16,11 @@ class App extends SizeAwareComponent {
 		let styles = {
 			container: {
 				height: '100%',
-				display: 'flex',
-				flexDirection: 'column'
 			}
 		};
 
 		return (
-			<div style={merge(styles.container, this.props.style)}>
+			<div className="flexbox column" style={merge(styles.container, this.props.style)}>
 				<AppHeader homelink="listview" />
 				<RouteHandler />
 			</div>

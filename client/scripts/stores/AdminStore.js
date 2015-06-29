@@ -24,18 +24,21 @@ class _AdminStore {
 
     this.refreshDisclosures();
 
-    this.bindListeners({
-      changeSort: AdminActions.CHANGE_SORT,
-      changeQuery: AdminActions.CHANGE_QUERY,
-      flipSortDirection: AdminActions.FLIP_SORT_DIRECTION,
-      changeDateFilter: AdminActions.CHANGE_DATE_FILTER,
-      changeTypeFilter: AdminActions.CHANGE_TYPE_FILTER,
-      changeDispositionFilter: AdminActions.CHANGE_DISPOSITION_FILTER,
-      changeStatusFilter: AdminActions.CHANGE_STATUS_FILTER,
-      changeSubmittedByFilter: AdminActions.CHANGE_SUBMITTED_BY_FILTER,
-      changeReporterFilter: AdminActions.CHANGE_REPORTER_FILTER,
-      toggleMobileFilters: AdminActions.TOGGLE_MOBILE_FILTERS
-    });
+    this.bindListeners(_AdminStore.getActionBindings());
+  }
+
+  static getActionBindings() {
+    let bindings = {};
+    for (let propName in AdminActions) {
+      if (propName.charCodeAt(0) < 91) {
+        let fixedName = propName.toLowerCase().replace(/_([a-z])/gi, function(s, group1) {
+            return group1.toUpperCase();
+        });
+        bindings[fixedName] = AdminActions[propName];
+      }
+    }
+
+    return bindings;
   }
 
   refreshDisclosures() {

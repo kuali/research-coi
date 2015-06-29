@@ -41,14 +41,11 @@ export class SearchFilterGroup extends ResponsiveComponent {
   renderMobile() {
     let mobileStyles = {
       container: {
-        display: 'flex',
-        flexDirection: 'column'
       },
       transparent: {
         height: 34
       },
       filters: {
-        flex: 1,
         backgroundColor: '#3e3e3e',
         overflow: 'auto'
       },
@@ -73,9 +70,9 @@ export class SearchFilterGroup extends ResponsiveComponent {
     });
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.transparent} />
-        <div style={styles.filters}>
+        <div className="fill" style={styles.filters}>
           {searchFilters}
         </div>
         <div style={styles.doneButton} onClick={this.hideMobileFilters}>DONE</div>

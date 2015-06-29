@@ -1,6 +1,7 @@
 import React from 'react/addons';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
+import {formatDate} from '../../../formatDate';
 
 export class DisclosureTableRow extends ResponsiveComponent {
   constructor() {
@@ -53,11 +54,11 @@ export class DisclosureTableRow extends ResponsiveComponent {
         <span style={styles.dates}>
           <div style={{marginBottom: 5}}>
             <div style={styles.label}>Submitted:</div>
-            {new Date(this.props.submittedOn).toLocaleDateString()}
+            {formatDate(this.props.submittedOn)}
           </div>
           <div>
             <div style={styles.label}>Project Start Date:</div>
-            {new Date(this.props.submittedOn).toLocaleDateString()}
+            {formatDate(this.props.submittedOn)}
           </div>
         </span>
       </div>
@@ -84,24 +85,24 @@ export class DisclosureTableRow extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <span style={styles.value}>
+      <div role="row" style={merge(styles.container, this.props.style)}>
+        <span role="gridcell" style={styles.value}>
           {this.props.name}
         </span>
-        <span style={styles.value}>
+        <span role="gridcell" style={styles.value}>
           {this.props.submittedBy}
         </span>
-        <span style={styles.value}>
-          {new Date(this.props.submittedOn).toLocaleDateString()}
+        <span role="gridcell" style={styles.value}>
+          {formatDate(this.props.submittedOn)}
         </span>
-        <span style={styles.value}>
+        <span role="gridcell" style={styles.value}>
           {this.props.status}
         </span>
-        <span style={styles.value}>
+        <span role="gridcell" style={styles.value}>
           {this.props.disposition}
         </span>
-        <span style={merge(styles.startDate, styles.value)}>
-          {new Date(this.props.startDate).toLocaleDateString()}
+        <span role="gridcell" style={merge(styles.startDate, styles.value)}>
+          {formatDate(this.props.startDate)}
         </span>
       </div>
     );  

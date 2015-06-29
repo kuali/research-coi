@@ -59,17 +59,13 @@ export class Dashboard extends ResponsiveComponent {
 	renderMobile() {
 		let mobileStyles = {
 			container: {
-				display: 'flex',
 				width: '100%',
 				background: '#DDD',
-				height: '0',
-				flex: '1',
-				flexDirection: 'column'
+				height: '0'
 			},
 			content: {
 				display: 'inline-block',
 				verticalAlign: 'top',
-				flex: 1,
 				overflowY: 'auto',
 				overflowX: 'hidden'
 			},
@@ -102,8 +98,8 @@ export class Dashboard extends ResponsiveComponent {
 		}
 
 		return (
-			<span style={merge(styles.container, this.props.style)}>
-				<span style={styles.content}>
+			<span className="flexbox column fill" style={merge(styles.container, this.props.style)}>
+				<span className="fill" style={styles.content}>
 					<div style={styles.header}>
 						<h2 style={styles.heading}>MY COI DASHBOARD</h2>
 					</div>
@@ -125,11 +121,8 @@ export class Dashboard extends ResponsiveComponent {
 	renderDesktop() {
 		let desktopStyles = {
 			container: {
-				display: 'flex',
 				width: '100%',
-				background: '#DDD',
-				flex: '2',
-				flexDirection: 'row'
+				background: '#DDD'
 			},
 			sidebar: {
 				width: 200,
@@ -141,8 +134,7 @@ export class Dashboard extends ResponsiveComponent {
 			content: {
 				display: 'inline-block',
 				verticalAlign: 'top',
-				borderTop: '8px solid ' + window.config.colors.two,
-				flex: 1
+				borderTop: '8px solid ' + window.config.colors.two
 			},
 			header: {
 				backgroundColor: 'white',
@@ -168,7 +160,7 @@ export class Dashboard extends ResponsiveComponent {
 		}
 
 		return (
-			<span style={merge(styles.container, this.props.style)}>
+			<span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
 				<span style={styles.sidebar}>
 					<div>
 						<NewDisclosureButton type="Annual" />
@@ -186,7 +178,7 @@ export class Dashboard extends ResponsiveComponent {
 						<DisclosureArchiveButton />
 					</div>
 				</span>
-				<span style={styles.content}>
+				<span className="fill" style={styles.content}>
 					<div style={styles.header}>
 						<h2 style={styles.heading}>MY COI DASHBOARD</h2>
 					</div>

@@ -12,8 +12,8 @@ export class SearchBox extends ResponsiveComponent {
     this.valueChanged = this.valueChanged.bind(this);
   }
 
-  valueChanged() {
-    this.props.onChange(this.refs.input.getDOMNode().value);
+  valueChanged(evt) {
+    this.props.onChange(evt.target.value);
   }
 
   renderMobile() {
@@ -32,8 +32,6 @@ export class SearchBox extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        display: 'flex',
-        flexDirection: 'row',
         borderRadius: 4,
         overflow: 'hidden'
       },
@@ -41,14 +39,13 @@ export class SearchBox extends ResponsiveComponent {
         display: 'inline-block',
         backgroundColor: window.config.colors.three,
         height: 40,
-        padding: '7px 11px 0 11px',
+        padding: '10px 11px 0 11px',
         verticalAlign: 'middle',
         border: 0,
         width: 37
       },
       textbox: {
         display: 'inline-block',
-        flex: 1,
         height: 40,
         outline: 0,
         verticalAlign: 'middle',
@@ -69,11 +66,11 @@ export class SearchBox extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
-        <button style={styles.button}>
+      <span className="flexbox row" style={merge(styles.container, this.props.style)}>
+        <span style={styles.button}>
           <SearchIcon style={styles.searchIcon} />
-        </button>
-        <input ref="input" value={this.props.value} onChange={this.valueChanged} style={styles.textbox} type="text" / >
+        </span>
+        <input className="fill" aria-label="Search here" value={this.props.value} onChange={this.valueChanged} style={styles.textbox} type="text" / >
       </span>
     );  
   }
