@@ -1,31 +1,40 @@
-import DisclosureActions from '../actions/DisclosureActions';
+import {DisclosureActions} from '../actions/DisclosureActions';
+import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
+import request from 'superagent';
 
-class DisclosureStore {
+class _DisclosureStore extends AutoBindingStore {
   constructor() {
+    super (DisclosureActions);
+
     // initialize state here
     this.disclosures = [];
 
-    this.bindListeners(DisclosureStore.getActionBindings());
+    this.applicationState = {
+      archiveFilter: 'ALL'
+    };
+
+    this.archivedDisclosures = [];
   }
 
-  static getActionBindings() {
-    let bindings = {};
-    for (let propName in DisclosureActions) {
-      if (propName.charCodeAt(0) < 91) {
-        let fixedName = propName.toLowerCase().replace(/_([a-z])/gi, function(s, group1) {
-            return group1.toUpperCase();
-        });
-        bindings[fixedName] = DisclosureActions[propName];
-      }
-    }
-
-    return bindings;
+  refreshArchivedDisclosures() {
+    request.get('/api/research/coi/disclosures/archived')
+           .end((err, disclosures) => {
+             if (!err) {
+               this.archivedDisclosures = disclosures.body;
+               this.emitChange();
+             }
+           });
   }
 
-  doSomething(theParams) {
-    this.disclosures = theParams;
+  loadArchivedDisclosures() {
+    this.refreshArchivedDisclosures();
+  }
+
+  changeArchiveFilter(newValue) {
+    this.applicationState.archiveFilter = newValue;
+    this.refreshArchivedDisclosures();
   }
 }
 
-export default alt.createStore(DisclosureStore, 'DisclosureStore');
+export let DisclosureStore = alt.createStore(_DisclosureStore, 'DisclosureStore');

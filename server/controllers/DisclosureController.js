@@ -6,6 +6,11 @@ let getSchool = () => {
 };
 
 export let init = app => {
+  app.get('/api/research/coi/disclosures/archived', function*(next) {
+    let userId = 0; // Use real user id once we have it
+    this.body = DisclosureDB.getArchivedDisclosures(getSchool(), userId);
+  });
+
   app.get('/api/research/coi/disclosures', function*(next) {
     let sortColumn = 'DATE_SUBMITTED';
     if (this.request.query.sortColumn) {
