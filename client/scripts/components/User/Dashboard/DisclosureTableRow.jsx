@@ -3,6 +3,7 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import Router from 'react-router';
+import {formatDate} from '../../../formatDate';
 let Link = Router.Link;
 
 export class DisclosureTableRow extends ResponsiveComponent {
@@ -57,8 +58,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
         display: 'inline-block',
         width: '75%',
         lineHeight: '20px',
-        verticalAlign: 'middle',
-        flex: 1
+        verticalAlign: 'middle'
       },
       type: {
         fontWeight: 'bold',
@@ -101,7 +101,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <span style={styles.disclosureRow} onClick={this.touch}>
-          <span style={styles.data}>
+          <span className="fill" style={styles.data}>
             <div style={styles.type}>
               {this.props.type} Disclosure
             </div>
@@ -189,7 +189,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
           {this.props.status}
         </span>
         <span role="gridcell" style={merge(styles.cell, styles.three)}>
-          {this.props.lastreviewed}
+          {formatDate(this.props.lastreviewed)}
         </span>
         <span role="gridcell" style={merge(styles.cell, styles.four)}>
 

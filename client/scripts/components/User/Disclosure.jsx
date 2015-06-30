@@ -39,24 +39,20 @@ export class Disclosure extends ResponsiveComponent {
 	renderMobile() {
 		let mobileStyles = {
 			container: {
-				flex: '1',
-				flexDirection: 'column',
-				display: 'flex',
 				height: 0,
 				position: 'relative'
 			},
 			content: {
-				backgroundColor: '#E8E9E6',
-				flex: 1
+				backgroundColor: '#E8E9E6'
 			}
 		};
 		let styles = merge(this.commonStyles, mobileStyles);
 
 		return (
-			<div style={merge(styles.container, this.props.style)}>
+			<div className="flexbox column fill" style={merge(styles.container, this.props.style)}>
 				<Sidebar steps={this.steps} activestep={2} />
 				<DisclosureHeader>Financial Entities</DisclosureHeader>
-				<div style={styles.content}>
+				<div className="fill" style={styles.content}>
 					Disclosure stuff will be here
 				</div>
 			</div>
@@ -68,14 +64,9 @@ export class Disclosure extends ResponsiveComponent {
 
 		let desktopStyles = {
 			container: {
-				flex: '1',
-				padding: '0',
-				height: '90%',
-				display: 'flex',
-				flexDirection: 'row'
+				padding: '0'
 			},
 			content: {
-				flex: '1',
 				verticalAlign: 'top',
 				width: '80%',
 				display: 'inline-block',
@@ -113,10 +104,10 @@ export class Disclosure extends ResponsiveComponent {
 		let styles = merge(this.commonStyles, desktopStyles);
 
 		return (
-			<div style={merge(styles.container, this.props.style)}>
+			<div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
 				<Sidebar style={styles.sidebar} steps={this.steps} activestep={2} />
 
-				<span style={styles.content}>
+				<span className="fill" style={styles.content}>
 					<DisclosureHeader>Financial Entities</DisclosureHeader>
 
 					<span style={styles.middle}>

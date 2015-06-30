@@ -6,12 +6,24 @@ class DisclosureStore {
     // initialize state here
     this.disclosures = [];
 
-    this.bindListeners({
-      handleSomethingBeingDone: DisclosureActions.DO_SOMETHING
-    });
+    this.bindListeners(DisclosureStore.getActionBindings());
   }
 
-  handleSomethingBeingDone(theParams) {
+  static getActionBindings() {
+    let bindings = {};
+    for (let propName in DisclosureActions) {
+      if (propName.charCodeAt(0) < 91) {
+        let fixedName = propName.toLowerCase().replace(/_([a-z])/gi, function(s, group1) {
+            return group1.toUpperCase();
+        });
+        bindings[fixedName] = DisclosureActions[propName];
+      }
+    }
+
+    return bindings;
+  }
+
+  doSomething(theParams) {
     this.disclosures = theParams;
   }
 }

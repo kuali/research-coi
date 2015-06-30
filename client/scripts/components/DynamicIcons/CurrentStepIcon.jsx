@@ -7,7 +7,8 @@ export class CurrentStepIcon extends React.Component {
 
   render() {
     return (
-      <svg style={this.props.style} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 42 42" enable-background="new 0 0 42 42">
+      <svg style={this.props.style} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 42 42" enable-background="new 0 0 42 42" role="img" aria-labelledby="title">
+        <title id="title">Current Step Icon</title>
         <g>
           <circle fill="#666666" cx="21" cy="20.9" r="6.1"/>
             <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="-2103.2007" y1="-11432.2627" x2="-2096.5986" y2="-11439.167" gradientTransform="matrix(2.9636 0 0 -2.9636 6240.5415 -33873.1328)">
