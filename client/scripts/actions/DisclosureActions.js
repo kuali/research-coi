@@ -1,9 +1,13 @@
 import alt from '../alt';
 
-class DisclosureActions {
-  doSomething(someParam) {
-    this.dispatch(someParam);
+class _DisclosureActions {
+  changeArchiveFilter(newValue) {
+    this.dispatch(newValue);
+  }
+
+  loadArchivedDisclosures() {
+    this.dispatch();
   }
 }
 
-export default alt.createActions(DisclosureActions);
+export let DisclosureActions = alt.createActions(_DisclosureActions);

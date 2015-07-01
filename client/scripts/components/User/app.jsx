@@ -11,7 +11,7 @@ import {Disclosure} from './Disclosure';
 import {Archive} from './Archive/Archive';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
-import DisclosureStore from '../../stores/DisclosureStore';
+import {DisclosureStore} from '../../stores/DisclosureStore';
 
 class App extends SizeAwareComponent {
 	constructor() {
@@ -49,7 +49,7 @@ class App extends SizeAwareComponent {
 
 let routes = (
 	<Route name="app" path="/" handler={App}>
-		<Route name="archiveview" path="/archiveview" handler={Dashboard} />
+		<Route name="archiveview" path="/archiveview" handler={Archive} />
 		<Route name="dashboard" path="/dashboard" handler={Dashboard} />
 		<Route name="disclosure" path="/disclosure" handler={Disclosure} />
 		<Route name="archive" path="/archive" handler={Archive} />
