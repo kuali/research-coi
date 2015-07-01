@@ -5,6 +5,11 @@ import {FilterType} from './FilterType';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+const DISCLOSURE_TYPE = {
+	PROJECT: 'PROJECT',
+	ANNUAL: 'ANNUAL',
+	ALL: 'ALL'
+};
 
 export class Archive extends ResponsiveComponent {
 	constructor() {
@@ -40,17 +45,7 @@ export class Archive extends ResponsiveComponent {
 
 	shouldComponentUpdate() {return true;}
 
-	renderMobile() {
-		// let mobileStyles = {
-		// };
-		// let styles = merge(this.commonStyles, mobileStyles);
-
-		// return (
-		// 	<span style={merge(styles.container, this.props.style)}>
-		// 		Archive
-		// 	</span>
-		// );
-	}
+	renderMobile() {}
 
 	renderDesktop() {
 		let desktopStyles = {
@@ -90,31 +85,26 @@ export class Archive extends ResponsiveComponent {
 		let styles = merge(this.commonStyles, desktopStyles);
 
 		let disclosures;
-		if (this.state.applicationState.archiveFilter === 'PROJECT') {
-			disclosures = this.state.archivedDisclosures.filter((disclosure) => {
-				return disclosure.type === 'PROJECT';
-			});
-		}
-		else if (this.state.applicationState.archiveFilter === 'ANNUAL') {
-			disclosures = this.state.archivedDisclosures.filter((disclosure) => {
-				return disclosure.type === 'ANNUAL';
-			});
+		if (this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.ALL) {
+			disclosures = this.state.archivedDisclosures;
 		}
 		else {
-			disclosures = this.state.archivedDisclosures;
+			disclosures = this.state.archivedDisclosures.filter((disclosure) => {
+				return disclosure.type === this.state.applicationState.archiveFilter;
+			});
 		}
 
 		return (
 			<span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
 				<span style={styles.sidebar}>
 
-					<FilterType type="ALL" active={this.state.applicationState.archiveFilter === 'ALL'}>
+					<FilterType type={DISCLOSURE_TYPE.ALL} active={this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.ALL}>
 						ALL DISCLOSURES
 					</FilterType>
-					<FilterType type="PROJECT" active={this.state.applicationState.archiveFilter === 'PROJECT'}>
+					<FilterType type={DISCLOSURE_TYPE.PROJECT} active={this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.PROJECT}>
 						PROJECT DISCLOSURES
 					</FilterType>
-					<FilterType type="ANNUAL" active={this.state.applicationState.archiveFilter === 'ANNUAL'}>
+					<FilterType type={DISCLOSURE_TYPE.ANNUAL} active={this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.ANNUAL}>
 						ANNUAL DISCLOSURES
 					</FilterType>
 				</span>

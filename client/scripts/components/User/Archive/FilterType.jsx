@@ -16,18 +16,7 @@ export class FilterType extends ResponsiveComponent {
     DisclosureActions.changeArchiveFilter(this.props.type);
   }
 
-  renderMobile() {
-    let mobileStyles = {
-      container: {
-      }
-    };
-    let styles = merge(this.commonStyles, mobileStyles);
-
-    return (
-      <span style={merge(styles.container, this.props.style)}>
-      </span>
-    );
-  }
+  renderMobile() {}
 
   renderDesktop() {
     let desktopStyles = {
