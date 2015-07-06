@@ -11,7 +11,7 @@ export let init = app => {
     this.body = DisclosureDB.getArchivedDisclosures(getSchool(), userId);
   });
 
-  app.get('/api/research/coi/disclosures', function*(next) {
+  app.get('/api/research/coi/disclosure-summaries', function*(next) {
     let sortColumn = 'DATE_SUBMITTED';
     if (this.request.query.sortColumn) {
       sortColumn = this.request.query.sortColumn;
@@ -24,7 +24,7 @@ export let init = app => {
     if (this.request.query.query) {
       query = this.request.query.query;
     }
-    this.body = DisclosureDB.getReadyForReview(getSchool(), sortColumn, sortDirection, query);
+    this.body = DisclosureDB.getSummariesForReview(getSchool(), sortColumn, sortDirection, query);
   });
 
   app.get('/api/research/coi/disclosure/{query}', function*(next){

@@ -13,29 +13,55 @@ class _AdminStore extends AutoBindingStore {
       sortDirection: 'DESCENDING',
       query: '',
       filters: {
-        date: undefined,
-        type: undefined,
+        date: {
+          start: undefined,
+          end: undefined
+        },
+        type: {
+          annual: true,
+          project: true
+        },
         disposition: undefined,
-        status: undefined,
+        status: {
+          inProgress: true,
+          awaitingReview: true,
+          revisionNecessary: true
+        },
         submittedBy: undefined,
         reporterName: undefined
       },
-      showFiltersOnMobile: false
+      showFiltersOnMobile: false,
+      showingApproval: false,
+      showingRejection: false,
+      showingQuestionnaireComments: false,
+      showingEntitiesComments: false,
+      showingProjectComments: false,
+      selectedDisclosure: undefined
     };
 
-    this.disclosures = [];
+    this.disclosureSummaries = [];
 
     this.refreshDisclosures();
   }
 
   refreshDisclosures() {
-    request.get('/api/research/coi/disclosures')
+    request.get('/api/research/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})
            .query({sortDirection: this.applicationState.sortDirection})
            .query({query: this.applicationState.query})
-           .end((err, disclosures) => {
+           .end((err, summaries) => {
              if (!err) {
-               this.disclosures = disclosures.body;
+               this.disclosureSummaries = summaries.body;
+               this.emitChange();
+             }
+           });
+  }
+
+  loadDisclosure(id) {
+    request.get('/api/research/coi/disclosure/' + id)
+           .end((err, disclosure) => {
+             if (!err) {
+               this.applicationState.selectedDisclosure = disclosure.body;
                this.emitChange();
              }
            });
@@ -60,6 +86,10 @@ class _AdminStore extends AutoBindingStore {
     return false;
   }
 
+  setSortDirection(newDirection) {
+    this.applicationState.sortDirection = newDirection;
+  }
+
   changeQuery(newQuery) {
     let shouldRefresh = newQuery.length > 2 || this.applicationState.query.length > newQuery.length;
     this.applicationState.query = newQuery;
@@ -73,12 +103,17 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.filters.type = newFilter;
   }
 
-  changeDateFilter(newFilter) {
-    this.applicationState.filters.date = newFilter;
+  setStartDateFilter(newValue) {
+    this.applicationState.filters.date.start = newValue;
   }
 
-  changeDispositionFilter(newFilter) {
-    this.applicationState.filters.disposition = newFilter;
+  setEndDateFilter(newValue) {
+    this.applicationState.filters.date.end = newValue;
+  }
+
+  clearDateFilter() {
+    this.applicationState.filters.date.start = undefined;
+    this.applicationState.filters.date.end = undefined;
   }
 
   changeStatusFilter(newFilter) {
@@ -96,6 +131,74 @@ class _AdminStore extends AutoBindingStore {
   toggleMobileFilters() {
     this.applicationState.showFiltersOnMobile = !this.applicationState.showFiltersOnMobile;
   }
+
+  toggleApprovalConfirmation() {
+    this.applicationState.showingApproval = !this.applicationState.showingApproval;
+  }
+
+  toggleRejectionConfirmation() {
+    this.applicationState.showingRejection = !this.applicationState.showingRejection;
+  }
+
+  showProjectComments() {
+    this.applicationState.showingProjectComments = true;
+  }
+
+  showQuestionnaireComments() {
+    this.applicationState.showingQuestionnaireComments = true;
+  }
+
+  showEntitiesComments() {
+    this.applicationState.showingEntitiesComments = true;
+  }
+
+  hideProjectComments() {
+    this.applicationState.showingProjectComments = false;
+  }
+
+  hideQuestionnaireComments() {
+    this.applicationState.showingQuestionnaireComments = false;
+  }
+
+  hideEntitiesComments() {
+    this.applicationState.showingEntitiesComments = false;
+  }
+
+  toggleProjectTypeFilter() {
+    this.applicationState.filters.type.project = !this.applicationState.filters.type.project;
+  }
+
+  toggleAnnualTypeFilter() {
+    this.applicationState.filters.type.annual = !this.applicationState.filters.type.annual;
+  }
+
+  clearTypeFilter() {
+    this.applicationState.filters.type = {
+      annual: true,
+      project: true
+    };
+  }
+
+  clearStatusFilter() {
+    this.applicationState.filters.status = {
+      inProgress: true,
+      awaitingReview: true,
+      revisionNecessary: true
+    };
+  }
+
+  toggleInProgressStatusFilter() {
+    this.applicationState.filters.status.inProgress = !this.applicationState.filters.status.inProgress;
+  }
+
+  toggleAwaitingReviewStatusFilter() {
+    this.applicationState.filters.status.awaitingReview = !this.applicationState.filters.status.awaitingReview;
+  }
+
+  toggleRevisionNecessaryStatusFilter() {
+    this.applicationState.filters.status.revisionNecessary = !this.applicationState.filters.status.revisionNecessary;    
+  }
+
 }
 
 export let AdminStore = alt.createStore(_AdminStore, 'AdminStore');

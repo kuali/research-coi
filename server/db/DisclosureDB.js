@@ -23,90 +23,153 @@ export let get = (school, disclosureId) => {
   if (mockDB.has(school) && mockDB.get(school).has(+disclosureId)) {
     return mockDB.get(school).get(+disclosureId);
   }
-  return undefined;
+
+  return {
+    "id":57856,
+    "type":"ANNUAL",
+    "submittedOn":1426148994124,
+    "revisedOn":null,
+    "submittedBy":"Denae Clancy",
+    "status":"Revision Necessary",
+    "homeDepartment":"Physics",
+    "disposition":"320",
+    "questionnaire":{
+      "1":"Yes",
+      "2":"No",
+      "3":"Yes"
+    },
+    "entities":[
+      {
+        "id":61709,
+        "name":"Avaya Inc.",
+        "status":"Active",
+        "public":true,
+        "type":"Large Corporation",
+        "sponsorResearch":false,
+        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
+        "relationships":[
+          {
+            "person":"Self",
+            "relationship":"Other",
+            "type":"Other Transactions",
+            "amount":"$1-$5,000",
+            "comments":"This organization consults with me weekly via phone"
+          }
+        ]
+      }
+    ],
+    "projects":[
+      {
+        "name":"Glyphosate as carcinogen",
+        "conflicts":[
+          {
+            "id":61709,
+            "conflict":false,
+            "comments":"I may need to discuss this with someone."
+          }
+        ]
+      },{
+        "name":"Molecular disentropization",
+        "conflicts":[
+          {
+            "id":61709,
+            "conflict":true,
+            "comments":"I foresee no problems."
+          }
+        ]
+      }
+    ]
+  };
 };
 
-export let getReadyForReview = (school, sortColumn, sortDirection, query) => {
+export let getSummariesForReview = (school, sortColumn, sortDirection, query) => {
   let results = [{
+    type: 'ANNUAL',
     disposition: 222,
     id: 34324234,
     name: 'Research 1',
     submittedBy: 'John Jack',
     submittedOn: 1434148767062,
     startDate: 1434148767062,
-    status: 'Ready',
+    status: 'IN_PROGRESS',
     projects: [{
       'name': 'Project 1'
     }]
   }, 
   {
+    type: 'ANNUAL',
     disposition: 222,
     id: 32432,
     name: 'Research 2',
     submittedBy: 'Kim Kiera',
     submittedOn: 1434948767062,
     startDate: 1434143767062,
-    status: 'Open',
+    status: 'AWAITING_REVIEW',
     projects: [{
       'name': 'Project 2'
     }]
   }, 
   {
+    type: 'PROJECT',
     disposition: 222,
     id: 54364,
     name: 'Research 3',
     submittedBy: 'Lara Lant',
     submittedOn: 1432148767062,
     startDate: 1434448767062,
-    status: 'Open',
+    status: 'IN_PROGRESS',
     projects: [{
       'name': 'Project 3'
     }]
   }, 
   {
+    type: 'ANNUAL',
     disposition: 222,
     id: 76576,
     name: 'Research 4',
     submittedBy: 'Mark Millburn',
     submittedOn: 1434748767062,
     startDate: 1434188767062,
-    status: 'Open',
+    status: 'REVISION_NECESSARY',
     projects: [{
       'name': 'Project 4'
     }]
   }, 
   {
+    type: 'PROJECT',
     disposition: 222,
     id: 9769,
     name: 'Research 5',
     submittedBy: 'Nate Niter',
     submittedOn: 1432148767062,
     startDate: 1434248767062,
-    status: 'Open',
+    status: 'REVISION_NECESSARY',
     projects: [{
       'name': 'Project 5'
     }]
   }, 
   {
+    type: 'ANNUAL',
     disposition: 222,
     id: 8987,
     name: 'Research 6',
     submittedBy: 'Oliver Osmond',
     submittedOn: 1432148767062,
     startDate: 1434248767062,
-    status: 'Open',
+    status: 'AWAITING_REVIEW',
     projects: [{
       'name': 'Project 6'
     }]
   }, 
   {
+    type: 'PROJECT',
     disposition: 222,
     id: 113232,
     name: 'Research 7',
     submittedBy: 'Peter Pratan',
     submittedOn: 1434948767062,
     startDate: 1434548767062,
-    status: 'Open',
+    status: 'REVISION_NECESSARY',
     projects: [{
       'name': 'Project 7'
     }]
