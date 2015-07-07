@@ -1,6 +1,7 @@
 import React from 'react/addons';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
+import {getStatusText} from '../../../statusText';
 import {formatDate} from '../../../formatDate';
 
 export class DisclosureTableRow extends ResponsiveComponent {
@@ -45,7 +46,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
             {this.props.submittedBy}
           </div>
           <div>
-            {this.props.status}
+            {getStatusText(this.props.status)}
           </div>
           <div>
             {this.props.disposition}
@@ -96,7 +97,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
           {formatDate(this.props.submittedOn)}
         </span>
         <span role="gridcell" style={styles.value}>
-          {this.props.status}
+          {getStatusText(this.props.status)}
         </span>
         <span role="gridcell" style={styles.value}>
           {this.props.disposition}

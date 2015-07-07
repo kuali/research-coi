@@ -52,7 +52,7 @@ export class DisclosureFilterByType extends ResponsiveComponent {
             type="checkbox" 
             value="Annual"
             checked={this.props.annual}
-            onChange={this.toggleAnnualTypeFilter}
+            onClick={this.toggleAnnualTypeFilter}
           >
             <label>Annual Disclosures</label>
           </input>
@@ -63,7 +63,7 @@ export class DisclosureFilterByType extends ResponsiveComponent {
             type="checkbox" 
             value="Project"
             checked={this.props.project}
-            onChange={this.toggleProjectTypeFilter}
+            onClick={this.toggleProjectTypeFilter}
           >
             <label>Project Disclosures</label>
           </input>
