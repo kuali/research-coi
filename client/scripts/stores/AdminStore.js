@@ -57,7 +57,7 @@ class _AdminStore extends AutoBindingStore {
            });
   }
 
-  loadDisclosure(id) {debugger;
+  loadDisclosure(id) {
     request.get('/api/research/coi/disclosure/' + id)
            .end((err, disclosure) => {
              if (!err) {

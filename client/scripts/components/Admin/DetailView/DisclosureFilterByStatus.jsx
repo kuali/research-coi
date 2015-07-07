@@ -55,7 +55,7 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
           <input type="checkbox" 
             value="In Progress" 
             checked={this.props.inProgress}
-            onClick={this.toggleInProgressStatusFilter}
+            onChange={this.toggleInProgressStatusFilter}
           >
             <label>In Progress</label>
           </input>
@@ -65,7 +65,7 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
           <input type="checkbox" 
             value="Awaiting Review" 
             checked={this.props.awaitingReview}
-            onClick={this.toggleAwaitingReviewStatusFilter}
+            onChange={this.toggleAwaitingReviewStatusFilter}
           >
             <label>Awaiting Review</label>
           </input>
@@ -75,7 +75,7 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
           <input type="checkbox" 
             value="Revision Necessary" 
             checked={this.props.revisionNecessary}
-            onClick={this.toggleRevisionNecessaryStatusFilter}
+            onChange={this.toggleRevisionNecessaryStatusFilter}
           >
             <label>Revision Necessary</label>
           </input>
