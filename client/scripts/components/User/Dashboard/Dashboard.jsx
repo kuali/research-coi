@@ -6,15 +6,18 @@ import {DisclosureArchiveButton} from './DisclosureArchiveButton';
 import {FinancialEntitiesButton} from './FinancialEntitiesButton';
 import {ConfirmationMessage} from './ConfirmationMessage';
 import {DisclosureTable} from './DisclosureTable';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
 
 export class Dashboard extends ResponsiveComponent {
 	constructor() {
 		super();
-		this.commonStyles = {
-		};
+		this.commonStyles = {};
 
-		// This is a stub until we have actual data flowing through
+		let storeState = DisclosureStore.getState();
+
 		this.state = {
+			applicationState: storeState.applicationState,
+
 			disclosures: [
 				{
 					type: 'Annual',
@@ -54,6 +57,25 @@ export class Dashboard extends ResponsiveComponent {
 				}
 			]
 		};
+
+		this.onChange = this.onChange.bind(this);
+	}
+
+	shouldComponentUpdate() {return true;}
+
+	componentDidMount() {
+		DisclosureStore.listen(this.onChange);
+	}
+
+	componentWillUnmount() {
+		DisclosureStore.unlisten(this.onChange);
+	}
+
+	onChange() {
+		let storeState = DisclosureStore.getState();
+		this.setState({
+			applicationState: storeState.applicationState
+		});
 	}
 
 	renderMobile() {
@@ -153,7 +175,7 @@ export class Dashboard extends ResponsiveComponent {
 		let styles = merge(this.commonStyles, desktopStyles);
 
 		let confirmationMessage;
-		if (this.state && this.state.confirmationShowing) {
+		if (this.state && this.state.applicationState && this.state.applicationState.confirmationShowing) {
 			confirmationMessage = (
 				<ConfirmationMessage />
 			);

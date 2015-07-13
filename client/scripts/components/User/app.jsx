@@ -16,19 +16,6 @@ import {DisclosureStore} from '../../stores/DisclosureStore';
 class App extends SizeAwareComponent {
 	constructor() {
 		super();
-		this.state = DisclosureStore.getState();
-	}
-
-	componentDidMount() {
-		DisclosureStore.listen(this.onChange.bind(this));
-	}
-
-	componentWillUnmount() {
-		DisclosureStore.unlisten(this.onChange.bind(this));
-	}
-
-	onChange(state) {
-		this.setState(state);
 	}
 
 	render() {

@@ -1,6 +1,7 @@
 import React from 'react/addons';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
+import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class ConfirmationMessage extends ResponsiveComponent {
   constructor() {
@@ -26,6 +27,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
   }
 
   close() {
+    DisclosureActions.toggleConfirmationMessage();
   }
 
   renderMobile() {
