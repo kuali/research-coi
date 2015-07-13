@@ -31,7 +31,9 @@ export class ManualEvent extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
-      container: {},
+      container: {
+        overflow: 'hidden'
+      },
       content: {
         padding: '46px 0 0 50px'
       }
