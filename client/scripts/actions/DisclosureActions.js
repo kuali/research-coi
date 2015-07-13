@@ -122,8 +122,9 @@ class _DisclosureActions {
     });
   }
 
-  setAllForProject(projectId, newValue) {
+  setAllForProject(type, projectId, newValue) {
     this.dispatch({
+      type: type,
       projectId: projectId,
       newValue: newValue
     });
@@ -132,6 +133,29 @@ class _DisclosureActions {
   resetDisclosure() { this.dispatch(); }
 
   toggleConfirmationMessage() {this.dispatch();}
+
+  manualTypeSelected(disclosureId, manualType) {
+    this.dispatch({
+      disclosureId: disclosureId,
+      manualType: manualType
+    });
+  }
+
+  saveManualEvent(disclosureId, id, title, sponsor, role, amount, projectType, startDate, endDate) {
+    this.dispatch({
+      disclosureId: disclosureId, 
+      id: id, 
+      title: title, 
+      sponsor: sponsor, 
+      role: role, 
+      amount: amount, 
+      projectType: projectType, 
+      startDate: startDate, 
+      endDate: endDate
+    });
+  }
+
+  doneEditingManualEvent(disclosureId) {this.dispatch(disclosureId);}
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

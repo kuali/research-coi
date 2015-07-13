@@ -56,6 +56,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
 
   setAll() {
     DisclosureActions.setAllForProject(
+      'PROJECT',
       this.props.projectid, 
       this.refs.setAllSelect.getDOMNode().value
     );

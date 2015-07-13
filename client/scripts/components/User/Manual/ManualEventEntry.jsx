@@ -15,28 +15,31 @@ export class ManualEventEntry extends ResponsiveComponent {
     this.nextScreen = this.nextScreen.bind(this);
   }
 
+  shouldComponentUpdate() {return true;}
+
   typeSelected() {
-    // DisclosureActions.manualTypeSelected(
-    //   this.props.disclosure.id,
-    //   this.refs.manualType.getDOMNode().value
-    // );
+    DisclosureActions.manualTypeSelected(
+      this.props.disclosure.id,
+      this.refs.manualType.getDOMNode().value
+    );
   }
 
   saveProject() {
-    // DisclosureActions.saveManualEvent(this.props.disclosure.id, {
-    //   id: this.refs.id.getDOMNode().value,
-    //   title: this.refs.title.getDOMNode().value,
-    //   sponsor: this.refs.sponsor.getDOMNode().value,
-    //   role: this.refs.role.getDOMNode().value,
-    //   amount: this.refs.amount.getDOMNode().value,
-    //   projectType: this.refs.projectType.getDOMNode().value,
-    //   startdate: this.refs.startdate.getDOMNode().value,
-    //   enddate: this.refs.enddate.getDOMNode().value
-    // });
+    DisclosureActions.saveManualEvent(
+      this.props.disclosure.id,
+      this.refs.id.getDOMNode().value,
+      this.refs.title.getDOMNode().value,
+      this.refs.sponsor.getDOMNode().value,
+      this.refs.role.getDOMNode().value,
+      this.refs.amount.getDOMNode().value,
+      this.refs.projectType.getDOMNode().value,
+      this.refs.startdate.getDOMNode().value,
+      this.refs.enddate.getDOMNode().value
+    );
   }
 
   nextScreen() {
-    // DisclosureActions.doneEditingManualEvent(this.props.disclosure.id);
+    DisclosureActions.doneEditingManualEvent(this.props.disclosure.id);
   }
 
   renderMobile() {}
@@ -57,8 +60,8 @@ export class ManualEventEntry extends ResponsiveComponent {
         display: 'block',
         width: 300,
         height: 300,
-        colorOne: this.state.config.colors.one,
-        colorTwo: this.state.config.colors.two,
+        colorOne: window.config.colors.one,
+        colorTwo: window.config.colors.two,
         margin: '-12px auto 0 auto'
       },
       instructions: {
@@ -73,7 +76,7 @@ export class ManualEventEntry extends ResponsiveComponent {
       },
       cellLabel: {
         fontSize: 12,
-        color: this.state.config.colors.one
+        color: window.config.colors.one
       },
       saveButton: {
         padding: '6px 12px',

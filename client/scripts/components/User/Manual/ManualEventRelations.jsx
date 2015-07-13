@@ -18,8 +18,10 @@ export class ManualEventRelations extends ResponsiveComponent {
     this.editProject = this.editProject.bind(this);
   }
 
+  shouldComponentUpdate() {return true;}
+
   toggleDialog() {
-    // COIActions.toggleDeclaration(this.props.disclosure.id, 'MANUAL');
+    DisclosureActions.toggleDeclaration(this.props.disclosure.id, 'MANUAL');
   }
 
   undefinedRelationExists() {

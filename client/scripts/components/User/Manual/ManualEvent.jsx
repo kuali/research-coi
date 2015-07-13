@@ -15,6 +15,8 @@ export class ManualEvent extends ResponsiveComponent {
     this.isDeclarationOpen = this.isDeclarationOpen.bind(this);
   }
 
+  shouldComponentUpdate() {return true;}
+
   isDeclarationOpen(id) {
     if (this.props.declarationStates && this.props.declarationStates.manual) {
       let state = this.props.declarationStates.manual[id];

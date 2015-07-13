@@ -8,6 +8,10 @@ class _DisclosureStore extends AutoBindingStore {
   constructor() {
     super (DisclosureActions);
 
+    this.exportPublicMethods({
+      getDisclosure: this.getDisclosure
+    });
+
     // initialize state here
     this.disclosures = [];
 
@@ -15,8 +19,7 @@ class _DisclosureStore extends AutoBindingStore {
       archiveFilter: 'ALL',
       instructionsShowing: false,
       currentDisclosureState: {
-        // step: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
-        step: COIConstants.DISCLOSURE_STEP.ENTITIES,
+        step: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
         question: 1,
         disclosure: {
           id: 222
@@ -427,7 +430,7 @@ class _DisclosureStore extends AutoBindingStore {
   setAllForProject(params) {
     this.entities.forEach(entity => {
       this.entityRelationChosen({
-        relationType: 'PROJECT',
+        relationType: params.type,
         entityId: entity.id,
         projectId: params.projectId,
         relation: params.newValue
@@ -445,6 +448,28 @@ class _DisclosureStore extends AutoBindingStore {
 
   toggleConfirmationMessage() {
     this.applicationState.confirmationShowing = !this.applicationState.confirmationShowing;
+  }
+
+  manualTypeSelected(params) {
+    this.applicationState.manualStep = 2;
+  }
+
+  saveManualEvent(params) {
+    let disclosure = this.applicationState.currentDisclosureState.disclosure;
+    if (disclosure) {
+      disclosure.amount = params.amount;
+      disclosure.enddate = params.endDate;
+      disclosure.projectId = params.id;
+      disclosure.projectType = params.projectType;
+      disclosure.role = params.role;
+      disclosure.sponsor = params.sponsor;
+      disclosure.startdate = params.startDate;
+      disclosure.title = params.title;
+    }
+  }
+
+  doneEditingManualEvent(disclosureId) {
+    this.applicationState.manualStep = 3;
   }
 }
 

@@ -15,7 +15,9 @@ export class ManualRelationDialog extends ResponsiveComponent {
     this.findCommentByEntity = this.findCommentByEntity.bind(this);
     this.setAll = this.setAll.bind(this);
   }
-  
+
+  shouldComponentUpdate() {return true;}
+
   findRelationByEntity(id) {
     let relation = this.props.relations.find((element, index, array) => {
       return element.entityId === id;
