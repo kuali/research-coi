@@ -39,7 +39,12 @@ export class Sidebar extends ResponsiveComponent {
       }
 
       steps.push(
-        <SidebarStep label={step.label} state={stepState} key={index} />
+        <SidebarStep 
+          label={step.label} 
+          state={stepState} 
+          key={index} 
+          step={step.value}
+        />
       );
     }); 
 

@@ -156,6 +156,10 @@ class _DisclosureActions {
   }
 
   doneEditingManualEvent(disclosureId) {this.dispatch(disclosureId);}
+
+  jumpToStep(step) {
+    this.dispatch(step);
+  }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

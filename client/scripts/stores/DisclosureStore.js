@@ -471,6 +471,10 @@ class _DisclosureStore extends AutoBindingStore {
   doneEditingManualEvent(disclosureId) {
     this.applicationState.manualStep = 3;
   }
+
+  jumpToStep(step) {
+    this.applicationState.currentDisclosureState.step = step;
+  }
 }
 
 let cloneObject = original => {

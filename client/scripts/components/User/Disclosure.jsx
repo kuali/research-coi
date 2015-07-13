@@ -21,19 +21,16 @@ export class Disclosure extends ResponsiveComponent {
 
 		// Set up steps for the sidebar
 		this.steps = [
-			{label: 'Questionnaire'},
-			{label: 'Financial Entities'}
+			{label: 'Questionnaire', value: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE},
+			{label: 'Financial Entities', value: COIConstants.DISCLOSURE_STEP.ENTITIES}
 		];
 		if (props.disclosuretype && props.disclosuretype.toLowerCase() === 'manual') {
-			this.steps.push({label: 'Manual Event'});
-		}
-		if (props.disclosuretype && props.disclosuretype.toLowerCase() === 'travel') {
-			this.steps.push({label: 'Travel Info'});
+			this.steps.push({label: 'Manual Event', value: COIConstants.DISCLOSURE_STEP.MANUAL});
 		}
 		else {
-			this.steps.push({label: 'Project Declarations'});
+			this.steps.push({label: 'Project Declarations', value: COIConstants.DISCLOSURE_STEP.PROJECTS});
 		}
-		this.steps.push({label: 'Certification'});
+		this.steps.push({label: 'Certification', value: COIConstants.DISCLOSURE_STEP.CERTIFY});
 
 		let storeState = DisclosureStore.getState();
 		this.state = {

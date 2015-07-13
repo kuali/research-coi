@@ -4,6 +4,7 @@ import {merge} from '../../merge';
 import {FutureStepIcon} from '../DynamicIcons/FutureStepIcon';
 import {CurrentStepIcon} from '../DynamicIcons/CurrentStepIcon';
 import {CompletedStepIcon} from '../DynamicIcons/CompletedStepIcon';
+import {DisclosureActions} from '../../actions/DisclosureActions';
 
 export class SidebarStep extends ResponsiveComponent {
   constructor() {
@@ -17,6 +18,12 @@ export class SidebarStep extends ResponsiveComponent {
         paddingLeft: 5
       }
     }
+
+    this.navigate = this.navigate.bind(this);
+  }
+
+  navigate() {
+    DisclosureActions.jumpToStep(this.props.step);
   }
 
   renderMobile() {
