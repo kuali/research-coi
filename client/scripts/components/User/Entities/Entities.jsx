@@ -126,7 +126,6 @@ export class Entities extends ResponsiveComponent {
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY];
     let instructions = (
       <Instructions 
-        style={{marginBottom: 0}} 
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />

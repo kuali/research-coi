@@ -14,10 +14,15 @@ export class Questionnaire extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
+    let percentToSlide = 0;
+    if (this.props.currentquestion) {
+      percentToSlide = (this.props.currentquestion - 1) * -100;
+    }
+
     let desktopStyles = {
       container: {
         whiteSpace: 'nowrap',
-        overflow: 'hidden'        
+        overflow: 'hidden'
       },
       questionArea: {
         margin: '46px 0 0 50px',
@@ -29,8 +34,8 @@ export class Questionnaire extends ResponsiveComponent {
         verticalAlign: 'top'
       },
       slider: {
-        transform: 'translateX(-0%)',
-        transition: 'all .3s ease-in-out'
+        transition: 'all .3s ease-in-out',
+        transform: 'translateX(' + percentToSlide + '%)'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -52,15 +57,9 @@ export class Questionnaire extends ResponsiveComponent {
       });
     }
 
-    let percentToSlide = 0;
-    if (this.props.currentquestion) {
-      percentToSlide = (this.props.currentquestion - 1) * -100;
-    }
-
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE];
     let instructions = (
       <Instructions 
-        style={{marginBottom: 0}} 
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />
@@ -71,7 +70,7 @@ export class Questionnaire extends ResponsiveComponent {
         {instructions}
 
         <div style={styles.questionArea}>
-          <div style={merge(styles.slider, {transform: 'translateX(' + percentToSlide + '%)'})}>
+          <div style={styles.slider}>
             {questions}
           </div>
         </div>

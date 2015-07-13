@@ -64,7 +64,6 @@ export class ManualEvent extends ResponsiveComponent {
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
     let instructions = (
       <Instructions 
-        style={{marginBottom: 0}} 
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />

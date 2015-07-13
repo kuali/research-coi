@@ -20,7 +20,7 @@ export class QuestionnaireSummary extends ResponsiveComponent {
         overflow: 'hidden'
       },
       summaryArea: {
-        padding: '46px 0 0 50px'        
+        padding: '46px 0 0 50px'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -47,7 +47,6 @@ export class QuestionnaireSummary extends ResponsiveComponent {
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY];
     let instructions = (
       <Instructions 
-        style={{marginBottom: 0}} 
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />
