@@ -3,33 +3,33 @@ import {merge} from '../../../merge';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 
 export class DetailView extends ResponsiveComponent {
-	constructor() {
-		super();
-		this.commonStyles = {
-		};
-	}
+  constructor() {
+    super();
+    this.commonStyles = {
+    };
+  }
 
-	renderMobile() {
-		let mobileStyles = {
-		};
-		let styles = merge(this.commonStyles, mobileStyles);
+  renderMobile() {
+    let mobileStyles = {
+    };
+    let styles = merge(this.commonStyles, mobileStyles);
 
-		return (
-			<span style={merge(styles.container, this.props.style)}>
-				Detail View
-			</span>
-		);
-	}
+    return (
+      <span style={merge(styles.container, this.props.style)}>
+        Detail View
+      </span>
+    );
+  }
 
-	renderDesktop() {
-		let desktopStyles = {
-		};
-		let styles = merge(this.commonStyles, desktopStyles);
+  renderDesktop() {
+    let desktopStyles = {
+    };
+    let styles = merge(this.commonStyles, desktopStyles);
 
-		return (
-			<span style={merge(styles.container, this.props.style)}>
-				Detail View
-			</span>
-		);
-	}
+    return (
+      <span style={merge(styles.container, this.props.style)}>
+        Detail View
+      </span>
+    );
+  }
 }

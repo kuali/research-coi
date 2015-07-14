@@ -3,17 +3,17 @@ import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {RightArrowIcon} from '../DynamicIcons/RightArrowIcon';
 import {InstructionIcon} from '../DynamicIcons/InstructionIcon';
+import {DisclosureActions} from '../../actions/DisclosureActions';
 
 export class DisclosureHeader extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {
     };
-
-    this.showInstructions = this.showInstructions.bind(this);
   }
 
   showInstructions() {
+    DisclosureActions.toggleInstructions();
   }
 
   renderMobile() {
