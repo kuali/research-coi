@@ -17,16 +17,7 @@ class _AdminStore extends AutoBindingStore {
           start: undefined,
           end: undefined
         },
-        type: {
-          annual: true,
-          project: true
-        },
         disposition: undefined,
-        status: {
-          inProgress: true,
-          awaitingReview: true,
-          revisionNecessary: true
-        },
         submittedBy: undefined,
         reporterName: undefined
       },
@@ -38,6 +29,9 @@ class _AdminStore extends AutoBindingStore {
       showingProjectComments: false,
       selectedDisclosure: undefined
     };
+
+    this.clearTypeFilter();
+    this.clearStatusFilter();
 
     this.disclosureSummaries = [];
 
