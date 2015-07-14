@@ -17,6 +17,13 @@ export class DetailView extends ResponsiveComponent {
       summaries: store.disclosureSummaries,
       applicationState: store.applicationState
     };
+
+    this.searchFilter = this.searchFilter.bind(this);
+    this.startDateFilter = this.startDateFilter.bind(this);
+    this.endDateFilter = this.endDateFilter.bind(this);
+    this.typeFilter = this.typeFilter.bind(this);
+    this.statusFilter = this.statusFilter.bind(this);
+    this.sortFunction = this.sortFunction.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {return true;}
@@ -40,99 +47,117 @@ export class DetailView extends ResponsiveComponent {
     });
   }
 
-  filterDisclosures() {
-    let dateFilter = this.state.applicationState.filters.date;
-    let typeFilter = this.state.applicationState.filters.type;
-    let statusFilter = this.state.applicationState.filters.status;
+  searchFilter(disclosure) {
     let query = this.state.applicationState.query ? this.state.applicationState.query.toLowerCase() : '';
+    if (disclosure.submittedBy.toLowerCase().startsWith(query)) {
+      return true;
+    }
+    else if (disclosure.type.toLowerCase().startsWith(query)) {
+      return true;
+    }
+  }
 
-    let filtered =  this.state.summaries.filter((disclosure) => {
-      if (disclosure.submittedBy.toLowerCase().startsWith(query)) {
+  startDateFilter(disclosure) {
+    let dateFilter = this.state.applicationState.filters.date;
+    let dateToUse = disclosure.revisedOn;
+    if (!dateToUse) {
+      dateToUse = disclosure.submittedOn;
+    }
+
+    if (dateFilter.start) {
+      return dateToUse >= dateFilter.start;
+    }
+    else {
+      return true;
+    }
+  }
+
+  endDateFilter(disclosure) {
+    let dateFilter = this.state.applicationState.filters.date;
+    let dateToUse = disclosure.revisedOn;
+    if (!dateToUse) {
+      dateToUse = disclosure.submittedOn;
+    }
+
+    if (dateFilter.end) {
+      return dateToUse <= dateFilter.end;
+    }
+    else {
+      return true;
+    }
+  }
+
+  typeFilter(disclosure) {
+    let typeFilter = this.state.applicationState.filters.type;
+    if (typeFilter) {
+      if (typeFilter.annual && disclosure.type === 'ANNUAL') {
         return true;
       }
-      else if (disclosure.type.toLowerCase().startsWith(query)) {
+      else if (typeFilter.project && disclosure.type === 'PROJECT') {
         return true;
-      }
-    }).filter((disclosure) => { // Start date filter
-      let dateToUse = disclosure.revisedOn;
-      if (!dateToUse) {
-        dateToUse = disclosure.submittedOn;
-      }
-
-      if (dateFilter.start) {
-        return dateToUse >= dateFilter.start;
       }
       else {
-        return true;
+        return false;
       }
-    }).filter((disclosure) => { // End date filter
-      let dateToUse = disclosure.revisedOn;
-      if (!dateToUse) {
-        dateToUse = disclosure.submittedOn;
-      }
+    }
+    else {
+      return true;
+    }
+  }
 
-      if (dateFilter.end) {
-        return dateToUse <= dateFilter.end;
-      }
-      else {
+  statusFilter(disclosure) {
+    let statusFilter = this.state.applicationState.filters.status;
+    if (statusFilter) {
+      if (statusFilter.inProgress && disclosure.status === 'IN_PROGRESS') {
         return true;
       }
-    }).filter((disclosure) => { // Type filter
-      if (typeFilter) {
-        if (typeFilter.annual && disclosure.type === 'ANNUAL') {
-          return true;
-        }
-        else if (typeFilter.project && disclosure.type === 'PROJECT') {
-          return true;
-        }
-        else {
-          return false;
-        }
-      }
-      else {
+      else if (statusFilter.awaitingReview && disclosure.status === 'AWAITING_REVIEW') {
         return true;
       }
-    }).filter((disclosure) => { // Status filter
-      if (statusFilter) {
-        if (statusFilter.inProgress && disclosure.status === 'IN_PROGRESS') {
-          return true;
-        }
-        else if (statusFilter.awaitingReview && disclosure.status === 'AWAITING_REVIEW') {
-          return true;
-        }
-        else if (statusFilter.revisionNecessary && disclosure.status === 'REVISION_NECESSARY') {
-          return true;
-        }
-        else {
-          return false;
-        }
-      }
-      else {
+      else if (statusFilter.revisionNecessary && disclosure.status === 'REVISION_NECESSARY') {
         return true;
       }
-    }).sort((a, b) => {
-      let aDateToUse = a.revisedOn;
-      if (!aDateToUse) {
-        aDateToUse = a.submittedOn;
+      else {
+        return false;
       }
+    }
+    else {
+      return true;
+    }
+  }
 
-      let bDateToUse = b.revisedOn;
-      if (!bDateToUse) {
-        bDateToUse = b.submittedOn;
-      }
+  sortFunction(a, b) {
+    let aDateToUse = a.revisedOn;
+    if (!aDateToUse) {
+      aDateToUse = a.submittedOn;
+    }
 
-      if (aDateToUse && bDateToUse) {
-        if (this.state.applicationState.sortDirection === 'DESCENDING') {
-          return bDateToUse - aDateToUse;
-        }
-        else {
-          return aDateToUse - bDateToUse;
-        }
+    let bDateToUse = b.revisedOn;
+    if (!bDateToUse) {
+      bDateToUse = b.submittedOn;
+    }
+
+    if (aDateToUse && bDateToUse) {
+      if (this.state.applicationState.sortDirection === 'DESCENDING') {
+        return bDateToUse - aDateToUse;
       }
       else {
-        return 0;
+        return aDateToUse - bDateToUse;
       }
-    });
+    }
+    else {
+      return 0;
+    }
+  }
+
+  filterDisclosures() {
+    let filtered =  this.state.summaries
+    .filter(this.searchFilter)
+    .filter(this.startDateFilter)
+    .filter(this.endDateFilter)
+    .filter(this.typeFilter)
+    .filter(this.statusFilter)
+    .sort(this.sortFunction);
 
     return filtered;
   }
