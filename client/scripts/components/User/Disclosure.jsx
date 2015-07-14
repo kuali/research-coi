@@ -169,10 +169,11 @@ export class Disclosure extends ResponsiveComponent {
     let heading;
     let currentStep;
     let projectNextDisabled;
+    const QUESTIONNAIRE_PERCENTAGE = 25;
     switch (currentDisclosureStep) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE:
         if (window.config.questions) {
-          percent = Math.floor(((currentQuestion - 1) / window.config.questions.length) * 25);
+          percent = Math.floor(((currentQuestion - 1) / window.config.questions.length) * QUESTIONNAIRE_PERCENTAGE);
         }
 
         let question = currentQuestion;
@@ -187,7 +188,6 @@ export class Disclosure extends ResponsiveComponent {
         heading = 'Questionnaire';
         break;
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
-        const QUESTIONNAIRE_PERCENTAGE = 25;
         percent = QUESTIONNAIRE_PERCENTAGE;
         currentStep = (
           <QuestionnaireSummary 
