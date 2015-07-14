@@ -41,7 +41,6 @@ export class Disclosure extends ResponsiveComponent {
       declarations: storeState.declarations
     };
 
-    this.advance = this.advance.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
@@ -92,10 +91,6 @@ export class Disclosure extends ResponsiveComponent {
     });
 
     return undefinedFound;
-  }
-
-  advance() {
-    this.setState({percent:this.state.percent+9})
   }
 
   shouldComponentUpdate() {return true;}
@@ -192,7 +187,8 @@ export class Disclosure extends ResponsiveComponent {
         heading = 'Questionnaire';
         break;
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
-        percent = 25;
+        const QUESTIONNAIRE_PERCENTAGE = 25;
+        percent = QUESTIONNAIRE_PERCENTAGE;
         currentStep = (
           <QuestionnaireSummary 
             questions={window.config.questions} 
@@ -204,7 +200,8 @@ export class Disclosure extends ResponsiveComponent {
         break;
       case COIConstants.DISCLOSURE_STEP.ENTITIES:
         stepNumber = 1;
-        percent = 50;
+        const ENTITIES_PERCENTAGE = 50;
+        percent = ENTITIES_PERCENTAGE;
         currentStep = (
           <Entities 
             applicationState={this.state.applicationState}
@@ -217,7 +214,8 @@ export class Disclosure extends ResponsiveComponent {
         break;
       case COIConstants.DISCLOSURE_STEP.PROJECTS:
         stepNumber = 2;
-        percent = 75;
+        const PROJECTS_PERCENTAGE = 75;
+        percent = PROJECTS_PERCENTAGE;
         let disclosureType = this.context.router.getCurrentQuery().type;
         if (disclosureType === 'Manual') {
           let disclosure = this.state.applicationState.currentDisclosureState.disclosure;
@@ -260,7 +258,8 @@ export class Disclosure extends ResponsiveComponent {
         break;
       case COIConstants.DISCLOSURE_STEP.CERTIFY:
         stepNumber = 3;
-        percent = 99;
+        const CERTIFY_PERCENTAGE = 99;
+        percent = CERTIFY_PERCENTAGE;
         currentStep = (
           <Certify 
             instructionsShowing={this.state.applicationState.instructionsShowing}

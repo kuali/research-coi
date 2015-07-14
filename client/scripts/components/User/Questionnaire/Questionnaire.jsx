@@ -16,7 +16,8 @@ export class Questionnaire extends ResponsiveComponent {
   renderDesktop() {
     let percentToSlide = 0;
     if (this.props.currentquestion) {
-      percentToSlide = (this.props.currentquestion - 1) * -100;
+      const FULL_WIDTH_IN_PERCENT = 100;
+      percentToSlide = (this.props.currentquestion - 1) * -FULL_WIDTH_IN_PERCENT;
     }
 
     let desktopStyles = {
