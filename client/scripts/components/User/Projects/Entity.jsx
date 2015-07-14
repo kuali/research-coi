@@ -5,6 +5,7 @@ import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {EntityRelationDialog} from './EntityRelationDialog';
 import {Flag} from '../Flag';
 import {KButton} from '../../KButton';
+import {undefinedRelationExists} from '../undefinedRelationExists';
 
 export class Entity extends ResponsiveComponent {
   constructor() {
@@ -12,7 +13,6 @@ export class Entity extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.undefinedRelationExists = this.undefinedRelationExists.bind(this);
     this.getFlagStatus = this.getFlagStatus.bind(this);
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
   }
@@ -23,21 +23,8 @@ export class Entity extends ResponsiveComponent {
     DisclosureActions.toggleDeclaration(this.props.entity.id, 'ENTITY');
   }
 
-  undefinedRelationExists() {
-    // See if there are any projects without a declaration (relation)
-    let undeclaredRelation = this.props.projects.find(project => {
-     let existingRelation = this.props.relations.find(relation => {
-       return relation.projectId === project.projectid;
-     });
-
-     return !existingRelation;
-    });
-
-    return undeclaredRelation !== undefined; // is this confusing?
-  }
-
   getFlagStatus() {
-    if (this.undefinedRelationExists()) {
+    if (undefinedRelationExists('PROJECT', this.props.projects, this.props.relations)) {
      return 'ATTENTION';
     }
     else {
