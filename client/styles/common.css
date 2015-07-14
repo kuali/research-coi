@@ -35,6 +35,14 @@ select, input, textarea {
   display: flex;         /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
 
+.inline-flexbox {
+  display: -webkit-inline-box;
+  display: -moz-inline-box;
+  display: -ms-inline-flexbox;
+  display: -webkit-inline-flex;
+  display: inline-flex;
+}
+
 .fill {
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
