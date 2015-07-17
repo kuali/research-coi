@@ -1,0 +1,14 @@
+drop schema coi;
+CREATE SCHEMA IF NOT EXISTS coi DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;
+USE coi ;
+
+CREATE TABLE IF NOT EXISTS coi.disclosure (
+  id INT NOT NULL AUTO_INCREMENT,
+  submitted_date DATETIME NULL,
+  type VARCHAR(45) NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  disposition VARCHAR(45) NULL,
+  start_date DATETIME NOT NULL,
+  PRIMARY KEY (id)
+)
+ENGINE = InnoDB;
