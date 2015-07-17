@@ -8,7 +8,9 @@ let getSchool = () => {
 export let init = app => {
   app.get('/api/research/coi/disclosures/archived', function(req, res, next) {
     let userId = 0; // Use real user id once we have it
-    res.send(DisclosureDB.getArchivedDisclosures(getSchool(), userId));
+    DisclosureDB.getArchivedDisclosures(getSchool(), userId, function(disclosures) {
+      res.send(disclosures);
+    });
   });
 
   app.get('/api/research/coi/disclosure-summaries', function(req, res, next) {

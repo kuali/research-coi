@@ -1,3 +1,5 @@
+import mysql from 'mysql';
+
 let mockDB = new Map();
 let lastId = 0;
 
@@ -199,58 +201,19 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
   });
 };
 
-export let getArchivedDisclosures = (school, userId) => {
-  return [
-    {
-      type: 'ANNUAL',
-      title: 'Petroleum extraction in deep water',
-      submittedOn: 1427702066237,
-      disposition: 'No Conflict Exists',
-      startDate: 1428702066237
-    },
-    {
-      type: 'PROJECT',
-      title: 'Glyphosate as a carcinogen',
-      submittedOn: 1425702086724,
-      disposition: 'Relationship Identified',
-      startDate: 1426702086724
-    },
-    {
-      type: 'ANNUAL',
-      title: 'Copper transformation rates',
-      submittedOn: 1422702104379,
-      disposition: 'No Conflict Exists',
-      startDate: 1423702104379
-    },
-    {
-      type: 'ANNUAL',
-      title: 'Shocking bunnies for fun',
-      submittedOn: 1421702117291,
-      disposition: 'Potential Relationship',
-      startDate: 1422702117291
-    },
-    {
-      type: 'PROJECT',
-      title: 'Pigeon navigation sources',
-      submittedOn: 1418702132586,
-      disposition: 'Relationship Identified',
-      startDate: 1419702132586
-    },
-    {
-      type: 'ANNUAL',
-      title: 'Investment strategies for Africa',
-      submittedOn: 1417702150921,
-      disposition: 'No Conflict Exists',
-      startDate: 1418702150921
-    },
-    {
-      type: 'PROJECT',
-      title: 'Celery and peanut butter',
-      submittedOn: 1413702150921,
-      disposition: 'Relationship Identified',
-      startDate: 1414702150921
-    },
-  ];
+export let getArchivedDisclosures = (school, userId, callback) => {
+  var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'coi'
+  });
+
+  connection.connect();
+
+  connection.query('SELECT * FROM disclosure', function(err, rows) {
+    callback(rows);
+  });
 };
 
 export let approve = (school, disclosureId) => {
