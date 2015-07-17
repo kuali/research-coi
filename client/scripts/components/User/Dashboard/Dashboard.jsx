@@ -7,6 +7,7 @@ import {FinancialEntitiesButton} from './FinancialEntitiesButton';
 import {ConfirmationMessage} from './ConfirmationMessage';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
+import {TravelLogButton} from "./TravelLogButton"
 
 export class Dashboard extends ResponsiveComponent {
   constructor() {
@@ -36,18 +37,6 @@ export class Dashboard extends ResponsiveComponent {
           status: 'Incomplete',
           lastReviewed: '01/01/2015',
           title: 'Drawing a Blank'
-        },
-        {
-          type: 'Travel',
-          status: 'Incomplete',
-          lastReviewed: '04/15/2015',
-          title: 'COI Sub-Committee Party'
-        },
-        {
-          type: 'Travel',
-          status: 'Pending Review',
-          lastReviewed: '02/23/2015',
-          title: 'Sample Gathering'
         },
         {
           type: 'Event',
@@ -131,7 +120,7 @@ export class Dashboard extends ResponsiveComponent {
         </span>
         <div style={styles.mobileMenu}>
           <NewDisclosureButton type="Annual" />
-          <NewDisclosureButton type="Travel" />
+          <TravelLogButton />
           <NewDisclosureButton type="Manual" />
           <FinancialEntitiesButton />
           <DisclosureArchiveButton />
@@ -188,7 +177,7 @@ export class Dashboard extends ResponsiveComponent {
             <NewDisclosureButton type="Annual" />
           </div>
           <div>
-            <NewDisclosureButton type="Travel" />
+          <TravelLogButton />
           </div>
           <div>
             <NewDisclosureButton type="Manual" />
