@@ -1,21 +1,16 @@
-import koa from 'koa';
-import koaStatic from 'koa-static';
-import bodyParser from 'koa-bodyparser';
-import Router from 'koa-router';
 import * as ConfigController from './controllers/ConfigController';
 import * as DisclosureController from './controllers/DisclosureController';
 import SchoolParser from './middleware/SchoolParser';
+import express from 'express';
+import bodyParser from 'body-parser';
 
 export function run() {
-  let router = new Router();
-  let app = koa();
-  app.use(koaStatic('./client'));
+  let app = express();
+  app.use(express.static('client'));
   app.use(SchoolParser);
-  app.use(bodyParser());
-  app.use(router.routes());
-
-  ConfigController.init(router);
-  DisclosureController.init(router);
+  app.use(bodyParser.json());
+  ConfigController.init(app);
+  DisclosureController.init(app);
 
   app.listen(8090); 
   console.log("Listening on port 8090");
