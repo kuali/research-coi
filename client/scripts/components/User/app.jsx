@@ -8,6 +8,7 @@ import request from 'superagent';
 
 import {Dashboard} from './Dashboard/Dashboard';
 import {Disclosure} from './Disclosure';
+import {TravelLog} from './TravelLog/TravelLog';
 import {Archive} from './Archive/Archive';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
@@ -39,6 +40,7 @@ let routes = (
     <Route name="archiveview" path="/archiveview" handler={Archive} />
     <Route name="dashboard" path="/dashboard" handler={Dashboard} />
     <Route name="disclosure" path="/disclosure" handler={Disclosure} />
+    <Route name="travelLog" path="/travelLog" handler={TravelLog} />
     <Route name="archive" path="/archive" handler={Archive} />
     <DefaultRoute handler={Dashboard} />
   </Route>
