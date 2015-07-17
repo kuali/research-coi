@@ -1,6 +1,6 @@
-function* SchoolDetector (next) {
-  this.request.school = this.request.hostname.replace('.kuali.co', '');
-  yield next;
+function SchoolDetector (req, res, next) {
+  req.school = req.hostname.replace('.kuali.co', '');
+  next();
 }
 
 export default SchoolDetector;
