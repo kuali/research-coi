@@ -34,5 +34,8 @@
     "babel-loader": "^5.0.0",
     "mocha": "^2.2.4",
     "webpack": "^1.8.11"
+  },
+  "optionalDependencies": {
+    "research-extenstions": "^0.0.1"
   }
 }

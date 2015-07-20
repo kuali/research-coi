@@ -1,4 +1,5 @@
 import mysql from 'mysql';
+import {ConnectionManager} from './ConnectionManager';
 
 let mockDB = new Map();
 let lastId = 0;
@@ -229,27 +230,30 @@ export let getSummariesForUser = (school, userId, callback) => {
   }); 
 };
 
-export let getArchivedDisclosures = (school, userId, callback) => {
-  var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'coi'
-  });
-
-  connection.connect();
-
-  connection.query(`
-    SELECT 
-      title, 
-      UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date, 
-      disposition, 
-      start_date 
-    FROM 
-      disclosure`, function(err, rows) {
-    callback(rows);
-    connection.end();
-  });
+export let getArchivedDisclosures = (req, userId, callback) => {
+  ConnectionManager.getConnection((err, connection) => {
+    if (err) {
+      callback(err);
+    }
+    else {
+      connection.query(`
+        SELECT 
+          title, 
+          UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date, 
+          disposition, 
+          start_date 
+        FROM 
+          disclosure`, (err, rows) => {
+        if (err) {
+          callback(err);
+        }
+        else {
+          callback(undefined, rows);
+        }
+        connection.release();
+      });
+    }
+  }, req);
 };
 
 export let approve = (school, disclosureId) => {
