@@ -1,16 +1,15 @@
 import * as ConfigController from './controllers/ConfigController';
 import * as DisclosureController from './controllers/DisclosureController';
-
-let express = require('express');
-try {
-  let extensions = require('research-extensions');
-  express = extensions.express(express);
-} catch (e) {console.log(e);}
+import express from 'express';
 import bodyParser from 'body-parser';
 
 export function run() {
   let app = express();
   app.disable('x-powered-by');
+  try {
+    let extensions = require('research-extensions');
+    extensions.express(app);
+  } catch (e) {}
   app.use(express.static('client'));
   app.use(bodyParser.json());
   ConfigController.init(app);
