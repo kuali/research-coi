@@ -201,6 +201,23 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
   });
 };
 
+export let getSummariesForUser = (school, userId, callback) => {
+  var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'coi'
+  });
+
+  connection.connect();
+
+  connection.query(`SELECT t.description as type, d.expired_date, d.title, s.description as status, d.last_review_date, d.id
+    FROM disclosure d, disclosure_status s, disclosure_type t
+    WHERE d.type_cd = t.type_cd and d.status_cd = s.status_cd`, function(err, rows) {
+    callback(rows);
+  }); 
+};
+
 export let getArchivedDisclosures = (school, userId, callback) => {
   var connection = mysql.createConnection({
     host: 'localhost',
@@ -211,7 +228,7 @@ export let getArchivedDisclosures = (school, userId, callback) => {
 
   connection.connect();
 
-  connection.query('SELECT * FROM disclosure', function(err, rows) {
+  connection.query('SELECT title, submitted_date, disposition, start_date FROM disclosure', function(err, rows) {
     callback(rows);
   });
 };

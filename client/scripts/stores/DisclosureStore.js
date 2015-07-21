@@ -67,6 +67,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     this.entities = [];
     this.archivedDisclosures = [];
+    this.disclosureSummariesForUser = [];
   }
 
   refreshArchivedDisclosures() {
@@ -81,6 +82,20 @@ class _DisclosureStore extends AutoBindingStore {
 
   loadArchivedDisclosures() {
     this.refreshArchivedDisclosures();
+  }
+
+  refreshDisclosureSummaries() {
+    request.get('/api/research/coi/disclosure-user-summaries')
+           .end((err, disclosures) => {
+             if (!err) {
+               this.disclosureSummariesForUser = disclosures.body;
+               this.emitChange();
+             }
+           });
+  }
+
+  loadDisclosureSummaries() {
+    this.refreshDisclosureSummaries();
   }
 
   changeArchiveFilter(newValue) {

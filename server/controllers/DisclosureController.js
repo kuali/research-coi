@@ -29,6 +29,13 @@ export let init = app => {
     res.send(DisclosureDB.getSummariesForReview(getSchool(), sortColumn, sortDirection, query));
   });
 
+  app.get('/api/research/coi/disclosure-user-summaries', function(req, res, next) {
+    let userId = 0; // Use real user id once we have it
+    DisclosureDB.getSummariesForUser(getSchool(), userId, function(disclosures) {
+      res.send(disclosures);
+    });  
+  });
+
   app.get('/api/research/coi/disclosure/{query}', function(req, res, next){
     res.send(DisclosureDB.search(getSchool(), req.params.query));
   });

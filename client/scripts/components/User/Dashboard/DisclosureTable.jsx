@@ -24,9 +24,9 @@ export class DisclosureTable extends ResponsiveComponent {
         <DisclosureTableRow
           type={disclosure.type}
           status={disclosure.status}
-          lastreviewed={disclosure.lastReviewed}
+          lastreviewed={disclosure.last_review_date}
           title={disclosure.title}
-          expiresOn={disclosure.expiresOn}
+          expiresOn={disclosure.expired_date}
           key={index}
         />
       );
@@ -71,7 +71,7 @@ export class DisclosureTable extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let rows = this.props.disclosures.map((disclosure, index) => {
+    let rows = this.props.disclosures ? this.props.disclosures.map((disclosure, index) => {
       return (
         <DisclosureTableRow
           type={disclosure.type}
@@ -82,7 +82,7 @@ export class DisclosureTable extends ResponsiveComponent {
           key={index}
         />
       );
-    });
+    }) : null;
 
     return (
       <div role="grid" style={merge(styles.container, this.props.style)}>

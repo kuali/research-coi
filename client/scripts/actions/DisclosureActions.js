@@ -5,6 +5,8 @@ class _DisclosureActions {
 
   loadArchivedDisclosures() {this.dispatch();}
 
+  loadDisclosureSummaries() {this.dispatch();}
+
   toggleInstructions() {this.dispatch();}
 
   answerQuestion(question) {this.dispatch(question);}
