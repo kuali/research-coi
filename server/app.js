@@ -4,7 +4,7 @@ import * as DisclosureController from './controllers/DisclosureController';
 let express = require('express');
 try {
   let extensions = require('research-extensions');
-  express = extensions.Express(express);
+  express = extensions.express(express);
 } catch (e) {console.log(e);}
 import bodyParser from 'body-parser';
 
