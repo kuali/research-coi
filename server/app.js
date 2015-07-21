@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 
 export function run() {
   let app = express();
+  app.disable('x-powered-by');
   app.use(express.static('client'));
   app.use(SchoolParser);
   app.use(bodyParser.json());
