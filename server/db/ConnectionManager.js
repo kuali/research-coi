@@ -1,7 +1,4 @@
 let mysql = require('mysql');
-const POOL_SIZE = 70;
-const DB_NAME = 'coi';
-
 try {
   let extensions = require('research-extensions');
   mysql = extensions.mysql(mysql);
@@ -10,11 +7,11 @@ try {
 class _ConnectionManager {
   constructor() {
     this.pool = mysql.createPool({
-      connectionLimit: POOL_SIZE,
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'coi'
+      connectionLimit: process.env.CONNECTION_POOL_SIZE || 70,
+      host: process.env.DB_HOST || 'localhost',
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || 'coi'
     });
   }
 
@@ -30,4 +27,4 @@ class _ConnectionManager {
   }
 }
 
-export let ConnectionManager = new _ConnectionManager()
+export let ConnectionManager = new _ConnectionManager();

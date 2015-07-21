@@ -1,5 +1,6 @@
 import * as ConfigController from './controllers/ConfigController';
 import * as DisclosureController from './controllers/DisclosureController';
+
 let express = require('express');
 try {
   let extensions = require('research-extensions');
