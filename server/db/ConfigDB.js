@@ -43,10 +43,10 @@ let mockDB = {
   }
 };
 
-export let getConfigFor = school => {
-  return mockDB[school.toUpperCase()];
+export let getConfig = (req) => {
+  return mockDB['UIT'];
 };
 
-export let setConfigFor = (school, newConfig) => {
-  mockDB[school.toUpperCase()] = newConfig;
+export let setConfig = (req) => {
+  mockDB['UIT'] = req.body;
 };

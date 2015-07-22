@@ -1,15 +1,16 @@
 import * as DisclosureDB from '../db/DisclosureDB';
 
-let getSchool = () => {
-  // This should look at the request and figure out what school is being used.
-  return 'UIT'; // Stub
-};
-
 export let init = app => {
   app.get('/api/research/coi/disclosures/archived', function(req, res, next) {
     let userId = 0; // Use real user id once we have it
-    DisclosureDB.getArchivedDisclosures(getSchool(), userId, function(disclosures) {
-      res.send(disclosures);
+    DisclosureDB.getArchivedDisclosures(req.dbInfo, userId, function(err, disclosures) {
+      if (err) {
+        console.error(err);
+        next(err);
+      }
+      else {
+        res.send(disclosures);
+      }
     });
   });
 
@@ -26,70 +27,76 @@ export let init = app => {
     if (req.query.query) {
       query = req.query.query;
     }
-    res.send(DisclosureDB.getSummariesForReview(getSchool(), sortColumn, sortDirection, query));
+    res.send(DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, query));
   });
 
   app.get('/api/research/coi/disclosure-user-summaries', function(req, res, next) {
     let userId = 0; // Use real user id once we have it
-    DisclosureDB.getSummariesForUser(getSchool(), userId, function(disclosures) {
-      res.send(disclosures);
+    DisclosureDB.getSummariesForUser(req.dbInfo, userId, function(err, disclosures) {
+      if (err) {
+        console.error(err);
+        next(err);
+      }
+      else {
+        res.send(disclosures);
+      }
     });  
   });
 
   app.get('/api/research/coi/disclosure/{query}', function(req, res, next){
-    res.send(DisclosureDB.search(getSchool(), req.params.query));
+    res.send(DisclosureDB.search(req.dbInfo, req.params.query));
   });
 
   app.get('/api/research/coi/disclosure/:id', function(req, res, next){
-    res.send(DisclosureDB.get(getSchool(), req.params.id));
+    res.send(DisclosureDB.get(req.dbInfo, req.params.id));
   });
 
   app.put('/api/research/coi/disclosure/:id', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.saveExisting(getSchool(), req.params.id, req.body));
+    res.send(DisclosureDB.saveExisting(req.dbInfo, req.params.id, req.body));
    
   });
 
   app.post('/api/research/coi/disclosure', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.save(getSchool(), req.body));
+    res.send(DisclosureDB.save(req.dbInfo, req.body));
   });
 
   app.post('/api/research/coi/disclosure/:id/approve', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.approve(getSchool(), req.params.id));
+    res.send(DisclosureDB.approve(req.dbInfo, req.params.id));
   });
 
   app.post('/api/research/coi/disclosure/:id/sendback', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.sendBack(getSchool(), req.params.id));
+    res.send(DisclosureDB.sendBack(req.dbInfo, req.params.id));
   });
 
   app.post('/api/research/coi/disclosure/:id/reviewer', function(req, res, next){
     if (req.body && req.body.name) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addReviewer(getSchool(), req.params.id, req.body.name));
+      res.send(DisclosureDB.addReviewer(req.dbInfo, req.params.id, req.body.name));
     }
   });
 
   app.post('/api/research/coi/disclosure/:id/comment/questionnaire', function(req, res, next){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addQuestionnaireComment(getSchool(), req.params.id, req.body.comment));
+      res.send(DisclosureDB.addQuestionnaireComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 
   app.post('/api/research/coi/disclosure/:id/comment/entities', function(req, res, next){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addEntityComment(getSchool(), req.params.id, req.body.comment));
+      res.send(DisclosureDB.addEntityComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 
   app.post('/api/research/coi/disclosure/:id/comment/declarations', function(req, res, next){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addDeclarationComment(getSchool(), req.params.id, req.body.comment));
+      res.send(DisclosureDB.addDeclarationComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 };
