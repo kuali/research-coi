@@ -15,7 +15,7 @@ class _ConnectionManager {
     });
   }
 
-  getConnection(callback, req) {
+  getConnection(callback, dbInfo) {
     this.pool.getConnection((err, connection) => {
       if (err) {
         callback(err);
@@ -23,7 +23,7 @@ class _ConnectionManager {
       else {
         callback(undefined, connection);
       }
-    }, req);
+    }, dbInfo);
   }
 }
 

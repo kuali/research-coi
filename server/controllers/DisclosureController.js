@@ -3,7 +3,7 @@ import * as DisclosureDB from '../db/DisclosureDB';
 export let init = app => {
   app.get('/api/research/coi/disclosures/archived', function(req, res, next) {
     let userId = 0; // Use real user id once we have it
-    DisclosureDB.getArchivedDisclosures(req, userId, function(err, disclosures) {
+    DisclosureDB.getArchivedDisclosures(req.dbInfo, userId, function(err, disclosures) {
       if (err) {
         console.error(err);
         next(err);
@@ -27,12 +27,12 @@ export let init = app => {
     if (req.query.query) {
       query = req.query.query;
     }
-    res.send(DisclosureDB.getSummariesForReview(req.school, sortColumn, sortDirection, query));
+    res.send(DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, query));
   });
 
   app.get('/api/research/coi/disclosure-user-summaries', function(req, res, next) {
     let userId = 0; // Use real user id once we have it
-    DisclosureDB.getSummariesForUser(req, userId, function(err, disclosures) {
+    DisclosureDB.getSummariesForUser(req.dbInfo, userId, function(err, disclosures) {
       if (err) {
         console.error(err);
         next(err);

@@ -202,7 +202,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
   });
 };
 
-export let getSummariesForUser = (req, userId, callback) => {
+export let getSummariesForUser = (dbInfo, userId, callback) => {
   ConnectionManager.getConnection((err, connection) => {
     if (err) {
       callback(err);
@@ -230,10 +230,10 @@ export let getSummariesForUser = (req, userId, callback) => {
         connection.release();
       }); 
     }
-  }, req);
+  }, dbInfo);
 };
 
-export let getArchivedDisclosures = (req, userId, callback) => {
+export let getArchivedDisclosures = (dbInfo, userId, callback) => {
   ConnectionManager.getConnection((err, connection) => {
     if (err) {
       callback(err);
@@ -256,7 +256,7 @@ export let getArchivedDisclosures = (req, userId, callback) => {
         connection.release();
       });
     }
-  }, req);
+  }, dbInfo);
 };
 
 export let approve = (school, disclosureId) => {
