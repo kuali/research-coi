@@ -7,7 +7,8 @@ import {FinancialEntitiesButton} from './FinancialEntitiesButton';
 import {ConfirmationMessage} from './ConfirmationMessage';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {TravelLogButton} from "./TravelLogButton"
+import {TravelLogButton} from "./TravelLogButton";
+import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class Dashboard extends ResponsiveComponent {
   constructor() {
@@ -18,33 +19,7 @@ export class Dashboard extends ResponsiveComponent {
 
     this.state = {
       applicationState: storeState.applicationState,
-
-      disclosures: [
-        {
-          type: 'Annual',
-          status: 'Update Required',
-          lastReviewed: '05/09/2014',
-          expiresOn: '05/09/2015'
-        },
-        {
-          type: 'Event',
-          status: 'Update Required',
-          lastReviewed: '01/12/2015',
-          title: 'Wilkerson Analysis'
-        },
-        {
-          type: 'Manual',
-          status: 'Incomplete',
-          lastReviewed: '01/01/2015',
-          title: 'Drawing a Blank'
-        },
-        {
-          type: 'Event',
-          status: 'Pending Review',
-          lastReviewed: '03/04/2015',
-          title: 'Thurman Experiment'
-        }
-      ]
+      disclosureSummaries: storeState.disclosureSummariesForUser
     };
 
     this.onChange = this.onChange.bind(this);
@@ -54,6 +29,7 @@ export class Dashboard extends ResponsiveComponent {
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
+    DisclosureActions.loadDisclosureSummaries();
   }
 
   componentWillUnmount() {
@@ -63,7 +39,8 @@ export class Dashboard extends ResponsiveComponent {
   onChange() {
     let storeState = DisclosureStore.getState();
     this.setState({
-      applicationState: storeState.applicationState
+      applicationState: storeState.applicationState,
+      disclosureSummaries: storeState.disclosureSummariesForUser
     });
   }
 
@@ -107,7 +84,6 @@ export class Dashboard extends ResponsiveComponent {
         <ConfirmationMessage />
       );
     }
-
     return (
       <span className="flexbox column fill" style={merge(styles.container, this.props.style)}>
         <span className="fill" style={styles.content}>
@@ -116,7 +92,7 @@ export class Dashboard extends ResponsiveComponent {
           </div>
           {confirmationMessage}
 
-          <DisclosureTable disclosures={this.state.disclosures} />
+          <DisclosureTable disclosures={this.state.disclosureSummaries} />
         </span>
         <div style={styles.mobileMenu}>
           <NewDisclosureButton type="Annual" />
@@ -195,7 +171,7 @@ export class Dashboard extends ResponsiveComponent {
           </div>
           {confirmationMessage}
 
-          <DisclosureTable disclosures={this.state.disclosures} />
+          <DisclosureTable disclosures={this.state.disclosureSummaries} />
         </span>
       </span>
     );
