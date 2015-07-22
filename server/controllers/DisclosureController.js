@@ -44,59 +44,59 @@ export let init = app => {
   });
 
   app.get('/api/research/coi/disclosure/{query}', function(req, res, next){
-    res.send(DisclosureDB.search(req.school, req.params.query));
+    res.send(DisclosureDB.search(req.dbInfo, req.params.query));
   });
 
   app.get('/api/research/coi/disclosure/:id', function(req, res, next){
-    res.send(DisclosureDB.get(req.school, req.params.id));
+    res.send(DisclosureDB.get(req.dbInfo, req.params.id));
   });
 
   app.put('/api/research/coi/disclosure/:id', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.saveExisting(req.school, req.params.id, req.body));
+    res.send(DisclosureDB.saveExisting(req.dbInfo, req.params.id, req.body));
    
   });
 
   app.post('/api/research/coi/disclosure', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.save(req.school, req.body));
+    res.send(DisclosureDB.save(req.dbInfo, req.body));
   });
 
   app.post('/api/research/coi/disclosure/:id/approve', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.approve(req.school, req.params.id));
+    res.send(DisclosureDB.approve(req.dbInfo, req.params.id));
   });
 
   app.post('/api/research/coi/disclosure/:id/sendback', function(req, res, next){
     res.sendStatus(202);
-    res.send(DisclosureDB.sendBack(req.school, req.params.id));
+    res.send(DisclosureDB.sendBack(req.dbInfo, req.params.id));
   });
 
   app.post('/api/research/coi/disclosure/:id/reviewer', function(req, res, next){
     if (req.body && req.body.name) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addReviewer(req.school, req.params.id, req.body.name));
+      res.send(DisclosureDB.addReviewer(req.dbInfo, req.params.id, req.body.name));
     }
   });
 
   app.post('/api/research/coi/disclosure/:id/comment/questionnaire', function(req, res, next){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addQuestionnaireComment(req.school, req.params.id, req.body.comment));
+      res.send(DisclosureDB.addQuestionnaireComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 
   app.post('/api/research/coi/disclosure/:id/comment/entities', function(req, res, next){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addEntityComment(req.school, req.params.id, req.body.comment));
+      res.send(DisclosureDB.addEntityComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 
   app.post('/api/research/coi/disclosure/:id/comment/declarations', function(req, res, next){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
-      res.send(DisclosureDB.addDeclarationComment(req.school, req.params.id, req.body.comment));
+      res.send(DisclosureDB.addDeclarationComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 };
