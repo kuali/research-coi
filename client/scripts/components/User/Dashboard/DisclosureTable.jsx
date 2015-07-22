@@ -76,9 +76,9 @@ export class DisclosureTable extends ResponsiveComponent {
         <DisclosureTableRow
           type={disclosure.type}
           status={disclosure.status}
-          lastreviewed={disclosure.lastReviewed}
+          lastreviewed={disclosure.last_review_date}
           title={disclosure.title}
-          expiresOn={disclosure.expiresOn}
+          expiresOn={disclosure.expired_date}
           key={index}
         />
       );

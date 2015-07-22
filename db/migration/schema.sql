@@ -19,23 +19,23 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS coi.disclosure (
   id INT NOT NULL AUTO_INCREMENT,
   submitted_date DATETIME NULL,
-  type INT NOT NULL,
+  type_cd INT NOT NULL,
   title VARCHAR(200) NULL,
   disposition VARCHAR(45) NULL,
   start_date DATETIME NOT NULL,
   expired_date DATETIME NULL,
-  status INT NOT NULL,
+  status_cd INT NOT NULL,
   last_review_date DATETIME NULL, 
   PRIMARY KEY (id),
     CONSTRAINT fk_disclosure_type
     FOREIGN KEY (type_cd)
-    REFERENCES coi.status (type_cd)
+    REFERENCES coi.disclosure_type (type_cd)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION),
+    ON UPDATE NO ACTION,
   CONSTRAINT fk_disclosure_status
     FOREIGN KEY (status_cd)
-    REFERENCES coi.status (status_cd)
+    REFERENCES coi.disclosure_status (status_cd)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION) 
+    ON UPDATE NO ACTION
 )
 ENGINE = InnoDB;

@@ -170,7 +170,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
     let extraInfo;
     if (this.props.type === 'Annual') {
       extraInfo = (
-        <div style={styles.extra}>Expires On: {this.props.expiresOn}</div>
+        <div style={styles.extra}>Expires On: {formatDate(this.props.expiresOn)}</div>
       );
     }
     else {
