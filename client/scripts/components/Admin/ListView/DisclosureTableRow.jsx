@@ -3,6 +3,8 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {getStatusText} from '../../../statusText';
 import {formatDate} from '../../../formatDate';
+import ReactRouter from 'react-router';
+let Link = ReactRouter.Link;
 
 export class DisclosureTableRow extends ResponsiveComponent {
   constructor() {
@@ -88,7 +90,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={styles.value}>
-          {this.props.name}
+          <Link to={`/detailview/${this.props.id}`}>{this.props.name}</Link>
         </span>
         <span role="gridcell" style={styles.value}>
           {this.props.submittedBy}

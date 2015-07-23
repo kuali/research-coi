@@ -30,8 +30,9 @@ export class DetailView extends ResponsiveComponent {
 
   componentDidMount() {
     AdminStore.listen(this.onChange);
-    if (this.state.summaries.length > 0 && !this.state.applicationState.selected) {
-      AdminActions.loadDisclosure(this.state.summaries[0].id);
+    if (this.props.params !== undefined && 
+        this.props.params.id !== undefined) {
+      AdminActions.loadDisclosure(this.props.params.id);
     }
   }
 
@@ -181,7 +182,6 @@ export class DetailView extends ResponsiveComponent {
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
-
     let disclosureDetail;
     if (this.state.applicationState.selectedDisclosure) {
       disclosureDetail = (

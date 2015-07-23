@@ -17,8 +17,10 @@ export class DisclosureDetail extends ResponsiveComponent {
 
   makeEntityMap(entities) {
     let result = {};
-    for (let i = 0; i < entities.length; i++) {
-      result[entities[i].id] = entities[i].name;
+    if (entities !== undefined) {
+      for (let i = 0; i < entities.length; i++) {
+        result[entities[i].id] = entities[i].name;
+      }
     }
 
     return result;

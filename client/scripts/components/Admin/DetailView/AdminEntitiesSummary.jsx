@@ -127,23 +127,24 @@ export class AdminEntitiesSummary extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let entities = [];
-    for (let i = 0; i < this.props.entities.length; i++) {
-      let relationships = [];
-      for (let j = 0; j < this.props.entities[i].relationships.length; j++) {
-        relationships.push(
-          <EntityRelationshipSummary 
-            key={i + ':' + j}
-            style={styles.relationshipSummary} 
-            relationship={this.props.entities[i].relationships[j]} 
-          />
-        );
-      }
+    if(this.props.entities !== undefined) {
+      for (let i = 0; i < this.props.entities.length; i++) {
+        let relationships = [];
+        for (let j = 0; j < this.props.entities[i].relationships.length; j++) {
+          relationships.push(
+            <EntityRelationshipSummary 
+              key={i + ':' + j}
+              style={styles.relationshipSummary} 
+              relationship={this.props.entities[i].relationships[j]} 
+            />
+          );
+        }
 
-      entities.push(
-        <div 
-          key={i}
-          style={(i === this.props.entities.length - 1) ? styles.lastEntity : styles.entity}
-        >
+        entities.push(
+          <div 
+            key={i}
+            style={(i === this.props.entities.length - 1) ? styles.lastEntity : styles.entity}
+          >
           <div style={styles.name}>{this.props.entities[i].name}</div>
           <div>
             <span style={styles.left}>
@@ -173,6 +174,7 @@ export class AdminEntitiesSummary extends ResponsiveComponent {
           </div>
         </div>
       );
+      }
     }
 
     return (
