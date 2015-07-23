@@ -102,6 +102,7 @@ export class AdminQuestionnaireSummary extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let questions = [];
+    if(this.props.questions !== undefined) {
     for (let i = 1; i <= 3; i++) {
       questions.push(
         <div key={i} className="flexbox row" style={styles.question}>
@@ -115,6 +116,7 @@ export class AdminQuestionnaireSummary extends ResponsiveComponent {
         </div>
       );
     }
+  }
 
     return (
       <div style={merge(styles.container, this.props.style)} >

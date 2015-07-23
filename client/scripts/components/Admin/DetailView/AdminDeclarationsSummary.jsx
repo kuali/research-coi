@@ -119,42 +119,45 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let relationships = [];
-    for (let i = 0; i < this.props.relationships.length; i++) {
-      let conflicts = [];
-      for (let j = 0; j < this.props.relationships[i].conflicts.length; j++) {
-        conflicts.push(
-          <div 
-            key={this.props.relationships[i].conflicts[j].id} 
-            style={styles.declaration}
+    if(this.props.relationships !== undefined && 
+      this.props.relationships.conflicts !== undefined) {
+      for (let i = 0; i < this.props.relationships.length; i++) {
+        let conflicts = [];
+        for (let j = 0; j < this.props.relationships[i].conflicts.length; j++) {
+          conflicts.push(
+            <div 
+              key={this.props.relationships[i].conflicts[j].id} 
+              style={styles.declaration}
+            >
+              <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
+                {findEntityName(this.props.relationships[i].conflicts[j].id)}
+              </span>
+              <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
+                {this.props.relationships[i].conflicts[j].conflict ? 'Conflict' : 'No Conflict'}
+              </span>
+              <span style={merge(styles.comments, {fontStyle: 'italic'})}>
+                {this.props.relationships[i].conflicts[j].comments}
+              </span>
+            </div>
+          );
+        }
+
+        let projectName = this.props.relationships[i].name;
+        relationships.push(
+          <div
+            key={projectName} 
+          stylestyle={i === this.props.relationships.length - 1 ? styles.lastrelationship : styles.relationship}
           >
-            <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
-              {findEntityName(this.props.relationships[i].conflicts[j].id)}
-            </span>
-            <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
-              {this.props.relationships[i].conflicts[j].conflict ? 'Conflict' : 'No Conflict'}
-            </span>
-            <span style={merge(styles.comments, {fontStyle: 'italic'})}>
-              {this.props.relationships[i].conflicts[j].comments}
-            </span>
+            <div style={styles.name}>{projectName}</div>
+            <div style={styles.titles}>
+              <span style={styles.entityName}>FINANCIAL ENTITY</span>
+              <span style={styles.conflict}>REPORTER RELATIONSHIP</span>
+              <span style={styles.comments}>REPORTER COMMENTS</span>
+            </div>
+            {conflicts}
           </div>
         );
       }
-
-      let projectName = this.props.relationships[i].name;
-      relationships.push(
-        <div
-          key={projectName} 
-          style={i === this.props.relationships.length - 1 ? styles.lastrelationship : styles.relationship}
-        >
-          <div style={styles.name}>{projectName}</div>
-          <div style={styles.titles}>
-            <span style={styles.entityName}>FINANCIAL ENTITY</span>
-            <span style={styles.conflict}>REPORTER RELATIONSHIP</span>
-            <span style={styles.comments}>REPORTER COMMENTS</span>
-          </div>
-          {conflicts}
-        </div>
-      );
     }
 
     return (

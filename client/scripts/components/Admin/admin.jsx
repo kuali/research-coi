@@ -30,7 +30,9 @@ class App extends SizeAwareComponent {
 
 let routes = (
   <Route name="app" path="/" handler={App}>
-    <Route name="detailview" path="/detailview" handler={DetailView} />
+    <Route name="detailview" path="/detailview" handler={DetailView}>
+      <Route name="detailidview" path="/detailview/:id" handler={DetailView}/>
+    </Route>
     <Route name="listview" path="/listview" handler={ListView} />
     <DefaultRoute handler={ListView} />
   </Route>
