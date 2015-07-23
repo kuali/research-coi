@@ -6,8 +6,8 @@ import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 const DISCLOSURE_TYPE = {
-  PROJECT: 'PROJECT',
-  ANNUAL: 'ANNUAL',
+  PROJECT: '3',
+  ANNUAL: '2',
   ALL: 'ALL'
 };
 
@@ -90,7 +90,7 @@ export class Archive extends ResponsiveComponent {
     }
     else {
       disclosures = this.state.archivedDisclosures.filter((disclosure) => {
-        return disclosure.type === this.state.applicationState.archiveFilter;
+        return disclosure.type.toString() === this.state.applicationState.archiveFilter;
       });
     }
 

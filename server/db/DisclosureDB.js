@@ -240,7 +240,8 @@ export let getArchivedDisclosures = (dbInfo, userId, callback) => {
     }
     else {
       connection.query(`
-        SELECT 
+        SELECT
+          type_cd as type, 
           title, 
           UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date, 
           disposition, 
