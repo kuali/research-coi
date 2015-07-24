@@ -1,8 +1,8 @@
 import React from 'react/addons';
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
+import {ResponsiveComponent} from './ResponsiveComponent.jsx';
+import {merge} from '../merge.js';
 import DayPicker from 'react-day-picker';
-import {formatDate} from '../../../formatDate';
+import {formatDate} from '../formatDate.js';
 
 export class DatePicker extends ResponsiveComponent {
   constructor() {
@@ -63,7 +63,7 @@ export class DatePicker extends ResponsiveComponent {
           value={this.props.value ? formatDate(this.props.value) : ''}
           placeholder="Select a date"
           onFocus={this.showCalendar}
-          style={styles.textField} />
+          style={merge(styles.textField, this.props.textFieldStyle)} />
 
         <DayPicker
           style={styles.calendar}

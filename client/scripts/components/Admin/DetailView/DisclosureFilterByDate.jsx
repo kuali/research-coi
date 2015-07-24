@@ -1,7 +1,7 @@
 import React from 'react/addons';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {DatePicker} from './DatePicker';
+import {DatePicker} from '../../DatePicker.jsx';
 import {KButton} from '../../KButton';
 import {AdminActions} from '../../../actions/AdminActions';
 

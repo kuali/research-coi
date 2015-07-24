@@ -2,6 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import {ProminentButton} from '../../ProminentButton.jsx'
 import {TravelLogActions} from '../../../actions/TravelLogActions.js'
+import {DatePicker} from "../../DatePicker.jsx"
 
 export class TravelLogForm extends React.Component {
     constructor() {
@@ -9,17 +10,35 @@ export class TravelLogForm extends React.Component {
         this.commonStyles = {
         };
 
+        this.state = {
+            startDate : '',
+            endDate : ''
+        };
         this.addEntry = this.addEntry.bind(this);
+        this.setStartDate = this.setStartDate.bind(this);
+        this.setEndDate = this.setEndDate.bind(this);
     }
 
     addEntry() {
         TravelLogActions.addEntry(
             this.refs.entityName.getDOMNode().value,
             this.refs.amount.getDOMNode().value,
-            this.refs.startDate.getDOMNode().value,
-            this.refs.endDate.getDOMNode().value,
+            this.state.startDate,
+            this.state.endDate,
             this.refs.reason.getDOMNode().value,
             this.refs.destination.getDOMNode().value);
+    }
+
+    setStartDate(newValue) {
+        this.setState({
+           startDate:newValue
+        });
+    }
+
+    setEndDate(newValue) {
+        this.setState({
+            endDate:newValue
+        });
     }
 
     render() {
@@ -90,11 +109,11 @@ export class TravelLogForm extends React.Component {
                         <span style={styles.field}>
                             <div style={{marginBottom: 5, fontWeight: '500'}}>TIME</div>
                             <div style={styles.date}>
-                                <input required ref="startDate" type="text" style={styles.input}/>
+                                <DatePicker required id="startDate" onChange={this.setStartDate} value={this.state.startDate} textFieldStyle={styles.input}/>
                             </div>
                             <div style={styles.dateMiddle}>TO</div>
                               <div style={styles.date}>
-                                  <input required ref="endDate" type="text" style={styles.input}/>
+                                  <DatePicker required id="endDate" onChange={this.setEndDate} value={this.state.endDate} textFieldStyle={styles.input}/>
                               </div>
                         </span>
                     </div>

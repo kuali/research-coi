@@ -1,6 +1,7 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 import {ProminentButton} from '../../ProminentButton.jsx'
+import {formatDate} from '../../../formatDate.js';
 
 export class Entry extends React.Component {
 
@@ -50,7 +51,7 @@ export class Entry extends React.Component {
                 <div style={styles.left}>
                 <div style={styles.entityName}>{this.props.travelLog.entityName}</div>
                 <div style={styles.field}>
-                    <div style={styles.date}>Dates: {this.props.travelLog.startDate} - {this.props.travelLog.endDate}</div>
+                    <div style={styles.date}>Dates: {formatDate(this.props.travelLog.startDate)} - {formatDate(this.props.travelLog.endDate)}</div>
                     <div style={styles.date}>Amount: ${this.props.travelLog.amount}</div>
                 </div>
 
