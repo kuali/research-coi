@@ -241,13 +241,15 @@ export let getArchivedDisclosures = (dbInfo, userId, callback) => {
     else {
       connection.query(`
         SELECT
-          type_cd as type, 
-          title, 
+          de.type_cd as type, 
+          de.title, 
           UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date, 
-          disposition, 
-          start_date 
+          dn.description as disposition, 
+          de.start_date 
         FROM 
-          disclosure`, (err, rows) => {
+          disclosure de,
+          disposition_type dn
+        WHERE de.disposition_type_cd = dn.type_cd`, (err, rows) => {
         if (err) {
           callback(err);
         }
