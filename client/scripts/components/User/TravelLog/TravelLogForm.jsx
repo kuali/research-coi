@@ -51,7 +51,6 @@ export class TravelLogForm extends React.Component {
           display: 'inline-block',
           marginRight: 20,
           width: 275
-          // color: this.state.validStatus.entityName === false ? 'red' : 'inherit'
         },
         top: {
           marginTop: 20
@@ -79,7 +78,6 @@ export class TravelLogForm extends React.Component {
           border: '1px solid #ccc',
           height: 30,
           width: '100%'
-          //borderBottom: this.state.validStatus.entityName === false ? '3px solid red' : '1px solid #ccc'
         },
         date: {
           width: '40%',
