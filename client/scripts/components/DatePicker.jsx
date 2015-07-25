@@ -1,8 +1,8 @@
 import React from 'react/addons';
-import {ResponsiveComponent} from './ResponsiveComponent.jsx';
-import {merge} from '../merge.js';
+import {ResponsiveComponent} from './ResponsiveComponent';
+import {merge} from '../merge';
 import DayPicker from 'react-day-picker';
-import {formatDate} from '../formatDate.js';
+import {formatDate} from '../formatDate';
 
 export class DatePicker extends ResponsiveComponent {
   constructor() {

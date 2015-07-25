@@ -1,10 +1,10 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 import {TravelLogHeader} from './TravelLogHeader'
-import {TravelLogForm} from './TravelLogForm.jsx'
-import {BackToDashBoardButton} from './BackToDashBoardButton.jsx'
-import {TravelLogStore} from '../../../stores/TravelLogStore.js'
-import {Entry} from './Entry.jsx'
+import {TravelLogForm} from './TravelLogForm'
+import {BackToDashBoardButton} from './BackToDashBoardButton'
+import {TravelLogStore} from '../../../stores/TravelLogStore'
+import {Entry} from './Entry'
 let Link = Router.Link;
 import Router from 'react-router';
 

@@ -1,8 +1,8 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {ProminentButton} from '../../ProminentButton.jsx'
-import {TravelLogActions} from '../../../actions/TravelLogActions.js'
-import {DatePicker} from "../../DatePicker.jsx"
+import {ProminentButton} from '../../ProminentButton'
+import {TravelLogActions} from '../../../actions/TravelLogActions'
+import {DatePicker} from "../../DatePicker"
 
 export class TravelLogForm extends React.Component {
     constructor() {

@@ -1,7 +1,7 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {ProminentButton} from '../../ProminentButton.jsx'
-import {formatDate} from '../../../formatDate.js';
+import {ProminentButton} from '../../ProminentButton'
+import {formatDate} from '../../../formatDate';
 
 export class Entry extends React.Component {
 
