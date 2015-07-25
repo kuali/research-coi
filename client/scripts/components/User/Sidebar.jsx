@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {SidebarStep} from './SidebarStep';
@@ -39,16 +39,16 @@ export class Sidebar extends ResponsiveComponent {
       }
 
       steps.push(
-        <SidebarStep 
-          label={step.label} 
-          state={stepState} 
-          key={index} 
+        <SidebarStep
+          label={step.label}
+          state={stepState}
+          key={index}
           step={step.value}
         />
       );
-    }); 
+    });
 
-    return steps;   
+    return steps;
   }
 
   renderMobile() {
@@ -153,11 +153,11 @@ export class Sidebar extends ResponsiveComponent {
           </ul>
         </div>
       </span>
-    );  
+    );
   }
 }
 
 Sidebar.defaultProps = {
   steps: [],
   activestep: 0
-}
+};

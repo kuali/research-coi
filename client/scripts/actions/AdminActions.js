@@ -1,62 +1,61 @@
 import alt from '../alt';
-import request from 'superagent';
 
 class _AdminActions {
-  changeSort(newSortField) {this.dispatch(newSortField);}
+  changeSort(newSortField) { this.dispatch(newSortField); }
 
-  flipSortDirection() {this.dispatch();}
+  flipSortDirection() { this.dispatch(); }
 
-  changeTypeFilter(newType) {this.dispatch(newType);}
+  changeTypeFilter(newType) { this.dispatch(newType); }
 
-  changeQuery(newQuery) {this.dispatch(newQuery);}
+  changeQuery(newQuery) { this.dispatch(newQuery); }
 
-  setStartDateFilter(newValue) {this.dispatch(newValue);}
+  setStartDateFilter(newValue) { this.dispatch(newValue); }
 
-  setEndDateFilter(newValue) {this.dispatch(newValue);}
+  setEndDateFilter(newValue) { this.dispatch(newValue); }
 
-  clearDateFilter() {this.dispatch();}
+  clearDateFilter() { this.dispatch(); }
 
-  changeStatusFilter(newFilter) {this.dispatch(newFilter);}
+  changeStatusFilter(newFilter) { this.dispatch(newFilter); }
 
-  changeSubmittedByFilter(newFilter) {this.dispatch(newFilter);}
+  changeSubmittedByFilter(newFilter) { this.dispatch(newFilter); }
 
-  changeReporterFilter(newFilter) {this.dispatch(newFilter);}
+  changeReporterFilter(newFilter) { this.dispatch(newFilter); }
 
-  toggleMobileFilters() {this.dispatch();}
+  toggleMobileFilters() { this.dispatch(); }
 
-  loadDisclosure(id) {this.dispatch(id);}
+  loadDisclosure(id) { this.dispatch(id); }
 
-  toggleApprovalConfirmation() {this.dispatch();}
+  toggleApprovalConfirmation() { this.dispatch(); }
 
-  toggleRejectionConfirmation() {this.dispatch();}
+  toggleRejectionConfirmation() { this.dispatch(); }
 
-  showProjectComments() {this.dispatch();}
+  showProjectComments() { this.dispatch(); }
 
-  showQuestionnaireComments() {this.dispatch();}
+  showQuestionnaireComments() { this.dispatch(); }
 
-  showEntitiesComments() {this.dispatch();}
+  showEntitiesComments() { this.dispatch(); }
 
-  hideProjectComments() {this.dispatch();}
+  hideProjectComments() { this.dispatch(); }
 
-  hideQuestionnaireComments() {this.dispatch();}
+  hideQuestionnaireComments() { this.dispatch(); }
 
-  hideEntitiesComments() {this.dispatch();}
+  hideEntitiesComments() { this.dispatch(); }
 
-  toggleAnnualTypeFilter() {this.dispatch();}
+  toggleAnnualTypeFilter() { this.dispatch(); }
 
-  toggleProjectTypeFilter() {this.dispatch();}
+  toggleProjectTypeFilter() { this.dispatch(); }
 
-  clearTypeFilter() {this.dispatch();}
+  clearTypeFilter() { this.dispatch(); }
 
-  clearStatusFilter() {this.dispatch();}
+  clearStatusFilter() { this.dispatch(); }
 
-  toggleInProgressStatusFilter() {this.dispatch();}
+  toggleInProgressStatusFilter() { this.dispatch(); }
 
-  toggleAwaitingReviewStatusFilter() {this.dispatch();}
+  toggleAwaitingReviewStatusFilter() { this.dispatch(); }
 
-  toggleRevisionNecessaryStatusFilter() {this.dispatch();}
+  toggleRevisionNecessaryStatusFilter() { this.dispatch(); }
 
-  setSortDirection(newDirection) {this.dispatch(newDirection);}
+  setSortDirection(newDirection) { this.dispatch(newDirection); }
 }
 
 export let AdminActions = alt.createActions(_AdminActions);

@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from './ResponsiveComponent';
 import {merge} from '../merge';
 import ReactRouter from 'react-router';
@@ -37,7 +37,7 @@ export class AppHeader extends ResponsiveComponent {
         fontSize: 8,
         fontWeight: '300',
         verticalAlign: 'middle',
-        paddingLeft: 5,
+        paddingLeft: 5
       },
       searchIcon: {
         width: '28px',
@@ -94,7 +94,7 @@ export class AppHeader extends ResponsiveComponent {
       container: {
         backgroundColor: '#202020',
         padding: '0 10px 0 50px'
-      }, 
+      }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
@@ -118,5 +118,5 @@ export class AppHeader extends ResponsiveComponent {
         </span>
       </header>
     );
-  }  
+  }
 }

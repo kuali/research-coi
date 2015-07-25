@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
@@ -6,7 +6,7 @@ import {formatDate} from '../../../formatDate';
 export class DisclosureTableRow extends ResponsiveComponent {
   constructor() {
     super();
-    this.commonStyles = {}
+    this.commonStyles = {};
   }
 
   renderMobile() {
@@ -68,7 +68,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        display: 'table-row', 
+        display: 'table-row',
         height: 50
       },
       value: {

@@ -1,7 +1,6 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ManualEventEntry} from './ManualEventEntry';
 import {ManualEventRelations} from './ManualEventRelations';
 import {Instructions} from '../Instructions';
@@ -15,7 +14,7 @@ export class ManualEvent extends ResponsiveComponent {
     this.isDeclarationOpen = this.isDeclarationOpen.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   isDeclarationOpen(id) {
     if (this.props.declarationStates && this.props.declarationStates.manual) {
@@ -63,11 +62,11 @@ export class ManualEvent extends ResponsiveComponent {
 
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
     let instructions = (
-      <Instructions 
+      <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />
-    );    
+    );
 
     return (
       <div style={merge(styles.container, this.props.style)}>

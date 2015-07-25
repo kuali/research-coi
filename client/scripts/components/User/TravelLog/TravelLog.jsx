@@ -1,12 +1,10 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {TravelLogHeader} from './TravelLogHeader'
-import {TravelLogForm} from './TravelLogForm'
-import {BackToDashBoardButton} from './BackToDashBoardButton'
-import {TravelLogStore} from '../../../stores/TravelLogStore'
-import {Entry} from './Entry'
-let Link = Router.Link;
-import Router from 'react-router';
+import {TravelLogHeader} from './TravelLogHeader';
+import {TravelLogForm} from './TravelLogForm';
+import {BackToDashBoardButton} from './BackToDashBoardButton';
+import {TravelLogStore} from '../../../stores/TravelLogStore';
+import {Entry} from './Entry';
 
 export class TravelLog extends React.Component {
   constructor() {
@@ -63,14 +61,13 @@ export class TravelLog extends React.Component {
     let travelLogs;
     if (this.state.entries.length > 0) {
       travelLogs = this.state.entries.map(travelLog => {
-            return (
-                <Entry travelLog={travelLog}/>
-            );
-          }
-      );
+        return (
+          <Entry travelLog={travelLog}/>
+        );
+      });
     }
 
-    return(
+    return (
       <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
           <BackToDashBoardButton/>
@@ -82,6 +79,6 @@ export class TravelLog extends React.Component {
         </span>
 
       </span>
-    )
+    );
   }
- }
+}

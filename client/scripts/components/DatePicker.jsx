@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from './ResponsiveComponent';
 import {merge} from '../merge';
 import DayPicker from 'react-day-picker';
@@ -14,7 +14,7 @@ export class DatePicker extends ResponsiveComponent {
     };
 
     this.showCalendar = this.showCalendar.bind(this);
-    this.dayClicked = this.dayClicked.bind(this);    
+    this.dayClicked = this.dayClicked.bind(this);
   }
 
   showCalendar() {
@@ -35,8 +35,8 @@ export class DatePicker extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
-      container : {
-        position : 'relative',
+      container: {
+        position: 'relative'
       },
       textField: {
         fontFamily: 'Lato',
@@ -73,6 +73,6 @@ export class DatePicker extends ResponsiveComponent {
           canChangeMonth={true}
           onDayClick={this.dayClicked} />
       </div>
-    );  
+    );
   }
 }

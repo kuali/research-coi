@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {ProgressIndicator} from './ProgressIndicator';
@@ -32,7 +32,7 @@ export class NavSidebar extends ResponsiveComponent {
   }
 
   nextStep() {
-    DisclosureActions.nextStep();    
+    DisclosureActions.nextStep();
   }
 
   renderMobile() {}
@@ -54,10 +54,10 @@ export class NavSidebar extends ResponsiveComponent {
         display: this.props.question <= 1 && this.props.step === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE ? 'none' : 'block'
       },
       icon: {
-        color: window.config.colors.one, 
-        marginRight: 3, 
-        width: 33, 
-        height: 33, 
+        color: window.config.colors.one,
+        marginRight: 3,
+        width: 33,
+        height: 33,
         verticalAlign: 'middle'
       },
       nextquestion: {
@@ -77,7 +77,7 @@ export class NavSidebar extends ResponsiveComponent {
         verticalAlign: 'middle'
       },
       stepButtons: {
-        textAlign: 'left', 
+        textAlign: 'left',
         display: 'inline-block'
       }
     };
@@ -85,7 +85,7 @@ export class NavSidebar extends ResponsiveComponent {
 
     let nextStep;
     if (
-      this.props.step !== COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE && 
+      this.props.step !== COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE &&
       this.props.step !== COIConstants.DISCLOSURE_STEP.CERTIFY &&
       !this.props.nextDisabled
     ) {
@@ -149,6 +149,6 @@ export class NavSidebar extends ResponsiveComponent {
           {cancel}
         </div>
       </span>
-    );  
+    );
   }
 }

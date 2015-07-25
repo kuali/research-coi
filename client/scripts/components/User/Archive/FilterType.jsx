@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -7,7 +7,7 @@ export class FilterType extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {
-    }
+    };
 
     this.activateThisFilter = this.activateThisFilter.bind(this);
   }
@@ -37,6 +37,6 @@ export class FilterType extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)} onClick={this.activateThisFilter}>
         {this.props.children}
       </div>
-    );  
+    );
   }
 }

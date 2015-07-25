@@ -1,7 +1,6 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 
-
 export class TravelLogHeader extends React.Component {
   constructor() {
     super();
@@ -15,7 +14,7 @@ export class TravelLogHeader extends React.Component {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
         position: 'relative',
-        borderBottom: '1px solid #e3e3e3'        
+        borderBottom: '1px solid #e3e3e3'
       },
       heading: {
         fontSize: '33px',
@@ -23,7 +22,7 @@ export class TravelLogHeader extends React.Component {
         'textTransform': 'uppercase',
         fontWeight: 300,
         color: window.config.colors.one
-      }      
+      }
     };
     styles = merge(this.commonStyles, styles);
 
@@ -32,7 +31,7 @@ export class TravelLogHeader extends React.Component {
         <h2 style={styles.heading}>
          Travel Log
         </h2>
-      </div>      
-    );  
+      </div>
+    );
   }
 }

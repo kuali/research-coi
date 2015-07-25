@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
@@ -54,42 +54,42 @@ export class EntityRelation extends ResponsiveComponent {
         </span>
         <span style={{width: '30%', display: 'inline-block', verticalAlign: 'top'}}>
           <div>
-            <input 
-              type="radio" 
-              ref="none" 
-              checked={this.props.relation === 'NONE'} 
-              onChange={this.relationChosen} 
-              name={this.props.entity.id + 'relation' + this.props.projectId} 
-            /> 
+            <input
+              type="radio"
+              ref="none"
+              checked={this.props.relation === 'NONE'}
+              onChange={this.relationChosen}
+              name={this.props.entity.id + 'relation' + this.props.projectId}
+            />
             <span style={{fontSize: 14, marginLeft: 6}}>No Conflict</span>
           </div>
           <div>
-            <input 
-              type="radio" 
-              ref="potential" 
-              checked={this.props.relation === 'POTENTIAL'} 
-              onChange={this.relationChosen} 
-              name={this.props.entity.id + 'relation' + this.props.projectId} 
-            /> 
+            <input
+              type="radio"
+              ref="potential"
+              checked={this.props.relation === 'POTENTIAL'}
+              onChange={this.relationChosen}
+              name={this.props.entity.id + 'relation' + this.props.projectId}
+            />
             <span style={{fontSize: 14, marginLeft: 6}}>Potential Relationship</span>
           </div>
           <div>
-            <input 
-              type="radio" 
-              ref="managed" 
-              checked={this.props.relation === 'MANAGED'} 
-              onChange={this.relationChosen} 
-              name={this.props.entity.id + 'relation' + this.props.projectId} 
-            /> 
+            <input
+              type="radio"
+              ref="managed"
+              checked={this.props.relation === 'MANAGED'}
+              onChange={this.relationChosen}
+              name={this.props.entity.id + 'relation' + this.props.projectId}
+            />
             <span style={{fontSize: 14, marginLeft: 6}}>Managed Relationship</span>
           </div>
         </span>
         <span style={{width: '45%', display: 'inline-block'}}>
-          <input 
-            type="text" 
-            ref="comment" 
-            value={this.props.comments} 
-            onChange={this.commentMade} 
+          <input
+            type="text"
+            ref="comment"
+            value={this.props.comments}
+            onChange={this.commentMade}
             style={styles.commentBox}
           />
         </span>

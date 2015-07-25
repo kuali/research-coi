@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {RightArrowIcon} from '../DynamicIcons/RightArrowIcon';
@@ -19,8 +19,8 @@ export class DisclosureHeader extends ResponsiveComponent {
   renderMobile() {
     let mobileStyles = {
       container: {
-        position: 'relative', 
-        textAlign: 'center', 
+        position: 'relative',
+        textAlign: 'center',
         padding: 8
       },
       headerIcon: {
@@ -52,7 +52,7 @@ export class DisclosureHeader extends ResponsiveComponent {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
         position: 'relative',
-        borderBottom: '1px solid #e3e3e3'        
+        borderBottom: '1px solid #e3e3e3'
       },
       instructionButton: {
         top: 0,
@@ -72,7 +72,7 @@ export class DisclosureHeader extends ResponsiveComponent {
         'textTransform': 'uppercase',
         fontWeight: 300,
         color: window.config.colors.one
-      }      
+      }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
@@ -82,7 +82,7 @@ export class DisclosureHeader extends ResponsiveComponent {
         <h2 style={styles.heading}>
           {this.props.children}
         </h2>
-      </div>      
-    );  
+      </div>
+    );
   }
 }

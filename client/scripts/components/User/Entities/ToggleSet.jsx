@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {Toggle} from './Toggle';
@@ -39,11 +39,11 @@ export class ToggleSet extends ResponsiveComponent {
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
-    
+
     let toggles = this.props.values.map(value => {
       return (
-        <Toggle 
-          style={styles.toggle} 
+        <Toggle
+          style={styles.toggle}
           text={value}
           selected={this.state.value === value}
           onClick={this.change}
@@ -56,6 +56,6 @@ export class ToggleSet extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)}>
         {toggles}
       </div>
-    ); 
+    );
   }
 }

@@ -35,7 +35,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
     if (!this.formIsValid()) {
       return;
     }
-    
+
     let personSelect = this.refs.personSelect.getDOMNode();
     let commentTextArea = this.refs.commentTextArea.getDOMNode();
     let typeSelect = React.findDOMNode(this.refs.typeSelect);
@@ -143,7 +143,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           ]
         });
         break;
-      default: 
+      default:
         this.setState({
           typeOptions: []
         });
@@ -157,18 +157,15 @@ export class EntityFormPartTwo extends ResponsiveComponent {
         return this.state.validStatus.type &&
                this.state.validStatus.person &&
                this.state.validStatus.relationship;
-        break;
       case 'Paid Activities':
         return this.state.validStatus.amount &&
                this.state.validStatus.person &&
                this.state.validStatus.relationship;
-        break;
       default:
         return this.state.validStatus.type &&
                this.state.validStatus.amount &&
                this.state.validStatus.person &&
                this.state.validStatus.relationship;
-        break;
     }
   }
 
@@ -292,7 +289,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
     if (this.props.relations) {
       relationshipSummaries = this.props.relations.map(relation => {
         return (
-          <RelationshipSummary 
+          <RelationshipSummary
             readonly={this.props.readonly}
             entityId={this.props.id}
             style={{marginBottom: 20}}
@@ -349,16 +346,16 @@ export class EntityFormPartTwo extends ResponsiveComponent {
             <span style={styles.right}>
               <div>Relationship</div>
               <div>
-                <ToggleSet 
+                <ToggleSet
                   selected={this.state.relation}
-                  onChoose={this.relationChosen} 
+                  onChoose={this.relationChosen}
                   values={[
-                    'Ownership', 
-                    'Offices/Positions', 
-                    'Paid Activities', 
-                    'Intellectual Property', 
+                    'Ownership',
+                    'Offices/Positions',
+                    'Paid Activities',
+                    'Intellectual Property',
                     'Other'
-                  ]} 
+                  ]}
                 />
               </div>
 
@@ -386,6 +383,6 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           {relationshipSummaries}
         </div>
       </div>
-    );  
+    );
   }
 }

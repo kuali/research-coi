@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {NewEntityButton} from './NewEntityButton';
@@ -16,7 +16,7 @@ export class Entities extends ResponsiveComponent {
     this.commonStyles = {};
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   startNewEntity() {
     DisclosureActions.newEntityInitiated();
@@ -37,7 +37,7 @@ export class Entities extends ResponsiveComponent {
         padding: '46px 0 0 50px'
       },
       newentitybutton: {
-        margin: '0 30px 30px 0',
+        margin: '0 30px 30px 0'
       },
       newentityform: {
         verticalAlign: 'top',
@@ -49,10 +49,10 @@ export class Entities extends ResponsiveComponent {
         marginTop: 111
       },
       placeholder: {
-        colorOne: window.config.colors.one, 
-        colorTwo: window.config.colors.two, 
-        width: 300, 
-        height: 300, 
+        colorOne: window.config.colors.one,
+        colorTwo: window.config.colors.two,
+        width: 300,
+        height: 300,
         marginTop: -61
       }
     };
@@ -81,9 +81,9 @@ export class Entities extends ResponsiveComponent {
 
       if (this.props.applicationState.newEntityFormStep < 0 && this.props.entities.length > 0) {
         viewToggle = (
-          <Toggle 
+          <Toggle
             values={[
-              COIConstants.DISCLOSURE_STATUS.ACTIVE, 
+              COIConstants.DISCLOSURE_STATUS.ACTIVE,
               COIConstants.DISCLOSURE_STATUS.INACTIVE
             ]}
             selected={this.props.applicationState.activeEntityView}
@@ -114,10 +114,10 @@ export class Entities extends ResponsiveComponent {
     }
     else {
       entityForm = (
-        <EntityForm 
-          step={this.props.applicationState.newEntityFormStep} 
+        <EntityForm
+          step={this.props.applicationState.newEntityFormStep}
           style={styles.newentityform}
-          entity={this.props.inProgress} 
+          entity={this.props.inProgress}
           editing={true}
         />
       );
@@ -125,7 +125,7 @@ export class Entities extends ResponsiveComponent {
 
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY];
     let instructions = (
-      <Instructions 
+      <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />
@@ -148,6 +148,6 @@ export class Entities extends ResponsiveComponent {
           {placeholder}
         </div>
       </div>
-    );  
+    );
   }
 }

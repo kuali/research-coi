@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -15,7 +15,7 @@ export class Question extends ResponsiveComponent {
     DisclosureActions.answerQuestion({id: this.props.id, answer: evt.target.value});
     DisclosureActions.advanceQuestion();
   }
-  
+
   renderMobile() {}
 
   renderDesktop() {
@@ -63,24 +63,24 @@ export class Question extends ResponsiveComponent {
         <div style={styles.controls}>
           <span style={styles.option}>
             <div>
-              <input 
-                id="yesradio" 
-                value="yes" 
-                onClick={this.answer} 
-                type="radio" 
-                name="answer" 
+              <input
+                id="yesradio"
+                value="yes"
+                onClick={this.answer}
+                type="radio"
+                name="answer"
                 style={styles.radio} />
             </div>
             <label htmlFor="yesradio" style={styles.label}>YES</label>
           </span>
           <span style={styles.option}>
             <div>
-              <input 
-                id="noradio" 
-                value="no" 
-                onClick={this.answer} 
-                type="radio" 
-                name="answer" 
+              <input
+                id="noradio"
+                value="no"
+                onClick={this.answer}
+                type="radio"
+                name="answer"
                 style={styles.radio} />
             </div>
             <label htmlFor="noradio" style={styles.label}>NO</label>
@@ -93,6 +93,6 @@ export class Question extends ResponsiveComponent {
           </span>
         </div>
       </span>
-    );  
+    );
   }
 }

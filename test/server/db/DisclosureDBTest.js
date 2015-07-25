@@ -1,7 +1,8 @@
+/*global describe, beforeEach, it */
 import assert from 'assert';
 import * as DisclosureDB from '../../../server/db/DisclosureDB';
 
-describe('Disclosure',() => {
+describe('Disclosure', () => {
   beforeEach(() => {
     DisclosureDB.wipeAll();
   });

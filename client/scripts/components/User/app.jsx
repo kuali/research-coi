@@ -12,7 +12,6 @@ import {TravelLog} from './TravelLog/TravelLog';
 import {Archive} from './Archive/Archive';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
-import {DisclosureStore} from '../../stores/DisclosureStore';
 
 class App extends SizeAwareComponent {
   constructor() {
@@ -48,9 +47,11 @@ let routes = (
 
 // Then load config and re-render
 request.get('/api/research/coi/config', (err, config) => {
-  window.config = config.body;
-  Router.run(routes, (Handler, state) => {
-    React.render(<Handler state={state} />, document.body);
-  });
+  if (!err) {
+    window.config = config.body;
+    Router.run(routes, (Handler, state) => {
+      React.render(<Handler state={state} />, document.body);
+    });
+  }
 });
 

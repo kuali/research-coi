@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {EntityRelationshipSummary} from './EntityRelationshipSummary';
@@ -78,16 +78,16 @@ export class AdminEntitiesSummary extends ResponsiveComponent {
         display: 'inline-block'
       },
       descriptionLabel: {
-        fontWeight: 'bold', 
-        marginTop: 10, 
+        fontWeight: 'bold',
+        marginTop: 10,
         marginBottom: 2
       },
       relationshipDescription: {
-        fontSize: 11, 
+        fontSize: 11,
         fontStyle: 'italic'
       },
       relationshipsLabel: {
-        fontSize: 15, 
+        fontSize: 15,
         marginBottom: 8
       },
       name: {
@@ -132,16 +132,16 @@ export class AdminEntitiesSummary extends ResponsiveComponent {
         let relationships = [];
         for (let j = 0; j < this.props.entities[i].relationships.length; j++) {
           relationships.push(
-            <EntityRelationshipSummary 
+            <EntityRelationshipSummary
               key={i + ':' + j}
-              style={styles.relationshipSummary} 
-              relationship={this.props.entities[i].relationships[j]} 
+              style={styles.relationshipSummary}
+              relationship={this.props.entities[i].relationships[j]}
             />
           );
         }
 
         entities.push(
-          <div 
+          <div
             key={i}
             style={(i === this.props.entities.length - 1) ? styles.lastEntity : styles.entity}
           >
@@ -184,23 +184,23 @@ export class AdminEntitiesSummary extends ResponsiveComponent {
           {entities}
         </div>
         <div style={styles.footer}>
-          <KButton 
-            onClick={this.showCommentSection} 
+          <KButton
+            onClick={this.showCommentSection}
             style={merge(styles.button, {display: this.props.comment && !this.props.expandedComments ? 'inline-block' : 'none'})}>
             EDIT
           </KButton>
-          <KButton 
-            onClick={this.saveComment} 
+          <KButton
+            onClick={this.saveComment}
             style={merge(styles.button, {display: this.props.expandedComments ? 'inline-block' : 'none'})}>
             SAVE
           </KButton>
-          <KButton 
-            onClick={this.hideCommentSection} 
+          <KButton
+            onClick={this.hideCommentSection}
             style={merge(styles.button, {display: this.props.expandedComments ? 'inline-block' : 'none'})}>
             CANCEL
           </KButton>
-          <KButton 
-            onClick={this.showCommentSection} 
+          <KButton
+            onClick={this.showCommentSection}
             style={merge(styles.button, {display: this.props.expandedComments || this.props.comment ? 'none' : 'inline-block'})}>
             COMMENT
           </KButton>

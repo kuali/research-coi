@@ -1,3 +1,4 @@
+/*global moment*/
 
 if (window.navigator.language) {
   moment.locale(window.navigator.language);

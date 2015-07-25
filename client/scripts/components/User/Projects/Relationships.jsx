@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -22,14 +22,14 @@ export class Relationships extends ResponsiveComponent {
     this.viewChanged = this.viewChanged.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   openNext(currentIndex, type) {
     if (type === 'PROJECT') {
       let currentId = this.props.projects[currentIndex].projectid;
       DisclosureActions.toggleDeclaration(currentId, type);
       let nextId;
-      if (this.props.projects[currentIndex + 1])  {
+      if (this.props.projects[currentIndex + 1]) {
         nextId = this.props.projects[currentIndex + 1].projectid;
         DisclosureActions.toggleDeclaration(nextId, type);
       }
@@ -38,7 +38,7 @@ export class Relationships extends ResponsiveComponent {
       let currentId = this.props.entities[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let nextId;
-      if (this.props.entities[currentIndex + 1])  {
+      if (this.props.entities[currentIndex + 1]) {
         nextId = this.props.entities[currentIndex + 1].id;
         DisclosureActions.toggleDeclaration(nextId, type);
       }
@@ -50,7 +50,7 @@ export class Relationships extends ResponsiveComponent {
       let currentId = this.props.projects[currentIndex].projectid;
       DisclosureActions.toggleDeclaration(currentId, type);
       let previousId;
-      if (this.props.projects[currentIndex - 1])  {
+      if (this.props.projects[currentIndex - 1]) {
         previousId = this.props.projects[currentIndex - 1].projectid;
         DisclosureActions.toggleDeclaration(previousId, type);
       }
@@ -59,7 +59,7 @@ export class Relationships extends ResponsiveComponent {
       let currentId = this.props.entities[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let previousId;
-      if (this.props.entities[currentIndex - 1])  {
+      if (this.props.entities[currentIndex - 1]) {
         previousId = this.props.entities[currentIndex - 1].id;
         DisclosureActions.toggleDeclaration(previousId, type);
       }
@@ -68,8 +68,8 @@ export class Relationships extends ResponsiveComponent {
 
   getEntityRelations(id) {
     if (this.props.relations) {
-      return this.props.relations.filter((element, index, array) => {
-        return element.entityId == id;
+      return this.props.relations.filter(element => {
+        return element.entityId === id;
       });
     }
     else {
@@ -79,8 +79,8 @@ export class Relationships extends ResponsiveComponent {
 
   getProjectRelations(id) {
     if (this.props.relations) {
-      return this.props.relations.filter((element, index, array) => {
-        return element.projectId == id;
+      return this.props.relations.filter(element => {
+        return element.projectId === id;
       });
     }
     else {
@@ -153,7 +153,7 @@ export class Relationships extends ResponsiveComponent {
     }
     else {
       for (let i = 0; i < this.props.entities.length; i++) {
-        relations = this.getEntityRelations(this.props.entities[i].id)
+        relations = this.getEntityRelations(this.props.entities[i].id);
 
         relationshipNodes.push(
           <Entity
@@ -173,11 +173,11 @@ export class Relationships extends ResponsiveComponent {
 
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.PROJECTS];
     let instructions = (
-      <Instructions 
+      <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />
-    );    
+    );
 
     return (
       <div style={merge(styles.container, this.props.style)}>

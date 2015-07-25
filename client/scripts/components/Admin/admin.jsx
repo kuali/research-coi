@@ -15,7 +15,7 @@ class App extends SizeAwareComponent {
   render() {
     let styles = {
       container: {
-        height: '100%',
+        height: '100%'
       }
     };
 
@@ -40,8 +40,10 @@ let routes = (
 
 // Then load config and re-render
 request.get('/api/research/coi/config', (err, config) => {
-  window.config = config.body;
-  Router.run(routes, (Handler, state) => {
-    React.render(<Handler state={state} />, document.body);
-  });
+  if (!err) {
+    window.config = config.body;
+    Router.run(routes, (Handler, state) => {
+      React.render(<Handler state={state} />, document.body);
+    });
+  }
 });

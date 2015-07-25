@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
@@ -90,7 +90,7 @@ export class DisclosureTable extends ResponsiveComponent {
       headings: {
         color: window.config.colors.three,
         fontSize: 14,
-        backgroundColor: 'white', 
+        backgroundColor: 'white',
         display: 'table-row',
         cursor: 'pointer',
         padding: 10
@@ -113,8 +113,6 @@ export class DisclosureTable extends ResponsiveComponent {
       );
     });
 
-    let sortArrow = <SortArrow direction={this.props.sortDirection} />;
-
     return (
       <div role="grid" style={merge(styles.container, this.props.style)}>
         <div role="row" style={styles.headings}>
@@ -129,6 +127,6 @@ export class DisclosureTable extends ResponsiveComponent {
           {disclosures}
         </div>
       </div>
-    );  
+    );
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {AdminStore} from '../../../stores/AdminStore';
@@ -26,11 +26,11 @@ export class DetailView extends ResponsiveComponent {
     this.sortFunction = this.sortFunction.bind(this);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {return true;}
+  shouldComponentUpdate() { return true; }
 
   componentDidMount() {
     AdminStore.listen(this.onChange);
-    if (this.props.params !== undefined && 
+    if (this.props.params !== undefined &&
         this.props.params.id !== undefined) {
       AdminActions.loadDisclosure(this.props.params.id);
     }
@@ -152,7 +152,7 @@ export class DetailView extends ResponsiveComponent {
   }
 
   filterDisclosures() {
-    let filtered =  this.state.summaries
+    let filtered = this.state.summaries
     .filter(this.searchFilter)
     .filter(this.startDateFilter)
     .filter(this.endDateFilter)
@@ -161,10 +161,6 @@ export class DetailView extends ResponsiveComponent {
     .sort(this.sortFunction);
 
     return filtered;
-  }
-
-  getDisclosure(id) {
-    this.state
   }
 
   renderMobile() {}
@@ -198,9 +194,9 @@ export class DetailView extends ResponsiveComponent {
 
     return (
       <div className="flexbox row fill" style={merge(styles.container, this.props.style)} >
-        <DisclosureList 
-          className="inline-flexbox column" 
-          summaries={this.filterDisclosures()} 
+        <DisclosureList
+          className="inline-flexbox column"
+          summaries={this.filterDisclosures()}
           style={styles.list}
           selected={this.state.applicationState.selectedDisclosure}
           query={this.state.applicationState.query}

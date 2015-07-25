@@ -1,17 +1,18 @@
+var path = require('path');
+
 module.exports = {
   entry: {
     user: './client/scripts/components/User/app.jsx',
     admin: ['./client/scripts/components/Admin/admin.jsx']
   },
   output: {
-    path: __dirname + '/client/build',
+    path: path.join(__dirname, 'client/build'),
     filename: '[name].js',
     sourceMapFilename: '[file].map'
   },
   resolve: {
     extensions: ['', '.jsx', '.css', '.js']
   },
-
   module: {
     loaders: [
       {test: /\.js/, loader: 'babel-loader?cacheDirectory=true'},
@@ -19,4 +20,4 @@ module.exports = {
       {test: /\.css/, loader: 'style!css'}
     ]
   }
-}; 
+};

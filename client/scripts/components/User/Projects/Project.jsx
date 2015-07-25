@@ -1,9 +1,8 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ProjectRelationDialog} from './ProjectRelationDialog';
-import {Flag} from '../Flag';
 import {KButton} from '../../KButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
 
@@ -17,7 +16,7 @@ export class Project extends ResponsiveComponent {
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   toggleDialog() {
     DisclosureActions.toggleDeclaration(this.props.projectid, 'PROJECT');
@@ -29,7 +28,7 @@ export class Project extends ResponsiveComponent {
     }
     else {
       let worstRelation = 'NONE';
-      
+
       this.props.relations.forEach(element => {
         if (element.relation === 'MANAGED') {
           worstRelation = 'MANAGED';
@@ -116,7 +115,7 @@ export class Project extends ResponsiveComponent {
         <ProjectRelationDialog
           relations={this.props.relations}
           entities={this.props.entities}
-          style={{display: this.props.open ? 'block': 'none'}}
+          style={{display: this.props.open ? 'block' : 'none'}}
           title={this.props.title}
           type={this.props.type}
           role={this.props.role}
@@ -125,8 +124,8 @@ export class Project extends ResponsiveComponent {
           projectid={this.props.projectid}
           id={this.props.id}
           onSave={this.toggleDialog}
-          onCancel={this.toggleDialog} 
-          onNext={this.props.onNext} 
+          onCancel={this.toggleDialog}
+          onNext={this.props.onNext}
           onPrevious={this.props.onPrevious} />
       );
     }
@@ -159,19 +158,19 @@ export class Project extends ResponsiveComponent {
           <div>
             <span style={styles.left}>
               <div style={styles.item}>
-                Project Type: 
+                Project Type:
                 <span style={styles.value}>
                   {this.props.type}
                 </span>
               </div>
               <div style={styles.item}>
-                Project Role: 
+                Project Role:
                 <span style={styles.value}>
                   {this.props.role}
                 </span>
               </div>
               <div style={styles.item}>
-                Sponsor: 
+                Sponsor:
                 <span style={styles.value}>
                   {this.props.sponsor}
                 </span>
@@ -192,6 +191,6 @@ export class Project extends ResponsiveComponent {
 
         {relationshipDialog}
       </div>
-    );  
+    );
   }
 }

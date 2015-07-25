@@ -16,11 +16,11 @@ export class DisclosureListFilter extends ResponsiveComponent {
   }
 
   click() {
-    this.setState({active : !this.state.active});
+    this.setState({active: !this.state.active});
   }
 
   handleClickOutside() {
-    this.setState({active : false});
+    this.setState({active: false});
   }
 
   componentDidMount() {
@@ -38,16 +38,16 @@ export class DisclosureListFilter extends ResponsiveComponent {
       eventHandler(evt);
     };
 
-    document.addEventListener("mousedown", fn);
-    document.addEventListener("touchstart", fn);
+    document.addEventListener('mousedown', fn);
+    document.addEventListener('touchstart', fn);
 
     this.clickListener = fn;
   }
 
   componentWillUnmount() {
     if(this.clickListener) {
-      document.removeEventListener("mousedown", this.clickListener);
-      document.removeEventListener("touchstart", this.clickListener);
+      document.removeEventListener('mousedown', this.clickListener);
+      document.removeEventListener('touchstart', this.clickListener);
     }
   }
 
@@ -55,10 +55,10 @@ export class DisclosureListFilter extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
-      container : {
-        cursor : 'pointer',
+      container: {
+        cursor: 'pointer'
       },
-      popOut : {
+      popOut: {
         position: 'absolute',
         top: 0,
         left: '100%',

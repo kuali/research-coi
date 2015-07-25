@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -57,17 +57,17 @@ export class QuestionSummary extends ResponsiveComponent {
         textAlign: 'right'
       },
       editlink: {
-        fontSize: 12, 
+        fontSize: 12,
         margin: '10px 0 0 8px',
         color: window.config.colors.one,
         cursor: 'pointer',
         borderBottom: '1px dotted ' + window.config.colors.one,
         display: 'inline-block'
-      }    
+      }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let answer = this.props.answer == 'yes' ? 'YES' : 'NO';
+    let answer = this.props.answer === 'yes' ? 'YES' : 'NO';
 
     return (
       <div style={merge(styles.container, this.props.style)}>

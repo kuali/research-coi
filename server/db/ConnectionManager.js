@@ -2,7 +2,9 @@ let mysql = require('mysql');
 try {
   let extensions = require('research-extensions');
   mysql = extensions.mysql(mysql);
-} catch (e) {}
+} catch (e) {
+  // not found, move on
+}
 
 class _ConnectionManager {
   constructor() {

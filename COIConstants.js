@@ -5,7 +5,7 @@ export let COIConstants = {
     ENTITIES: 'entities',
     PROJECTS: 'projects',
     MANUAL: 'manual',
-    CERTIFY: 'certify',
+    CERTIFY: 'certify'
   },
   DISCLOSURE_STATUS: {
     ACTIVE: 'ACTIVE',

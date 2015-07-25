@@ -1,4 +1,3 @@
-import mysql from 'mysql';
 import {ConnectionManager} from './ConnectionManager';
 
 let mockDB = new Map();
@@ -22,26 +21,10 @@ export let saveExisting = (school, disclosureId, newDisclosure) => {
   }
 };
 
-export let get = (school, disclosureId) => {
-
-  if (mockDB.has(school) && mockDB.get(school).has(+disclosureId)) {
-    return mockDB.get(school).get(+disclosureId);
-  }
-  
-  let disclosures = getSampleDisclosures();
-  let selectedDisclosure;
-  disclosures.forEach((disclosure) => {
-    if (disclosureId == disclosure.id) {
-      selectedDisclosure = disclosure;
-    }
-  });
-  return selectedDisclosure;
-};
-
 // this need not be implemented, just demo data for now
 // until get by disclosure id is implemented.
 export let getSampleDisclosures = () => {
-let results = [{
+  let results = [{
     type: 'ANNUAL',
     disposition: 222,
     id: 34324234,
@@ -50,27 +33,27 @@ let results = [{
     submittedOn: 1434148767062,
     startDate: 1434148767062,
     status: 'IN_PROGRESS',
-    questionnaire:{
-      "1":"Yes",
-      "2":"No",
-      "3":"Yes"
+    questionnaire: {
+      '1': 'Yes',
+      '2': 'No',
+      '3': 'Yes'
      },
-    entities:[
+    entities: [
       {
-        "id":61709,
-        "name":"Avaya Inc.",
-        "status":"Active",
-        "public":true,
-        "type":"Large Corporation",
-        "sponsorResearch":false,
-        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
-        "relationships":[
+        'id': 61709,
+        'name': 'Avaya Inc.',
+        'status': 'Active',
+        'public': true,
+        'type': 'Large Corporation',
+        'sponsorResearch': false,
+        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
+        'relationships': [
           {
-            "person":"Self",
-            "relationship":"Other",
-            "type":"Other Transactions",
-            "amount":"$1-$5,000",
-            "comments":"This organization consults with me weekly via phone"
+            'person': 'Self',
+            'relationship': 'Other',
+            'type': 'Other Transactions',
+            'amount': '$1-$5,000',
+            'comments': 'This organization consults with me weekly via phone'
           }
         ]
       }
@@ -78,7 +61,7 @@ let results = [{
     projects: [{
       'name': 'Project 1'
     }]
-  }, 
+  },
   {
     type: 'ANNUAL',
     disposition: 222,
@@ -88,27 +71,27 @@ let results = [{
     submittedOn: 1434948767062,
     startDate: 1434143767062,
     status: 'AWAITING_REVIEW',
-    questionnaire:{
-      "1":"Yes",
-      "2":"No",
-      "3":"Yes"
+    questionnaire: {
+      '1': 'Yes',
+      '2': 'No',
+      '3': 'Yes'
      },
-    entities:[
+    entities: [
       {
-        "id":61709,
-        "name":"Avaya Inc.",
-        "status":"Active",
-        "public":true,
-        "type":"Large Corporation",
-        "sponsorResearch":false,
-        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
-        "relationships":[
+        'id': 61709,
+        'name': 'Avaya Inc.',
+        'status': 'Active',
+        'public': true,
+        'type': 'Large Corporation',
+        'sponsorResearch': false,
+        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
+        'relationships': [
           {
-            "person":"Self",
-            "relationship":"Other",
-            "type":"Other Transactions",
-            "amount":"$1-$5,000",
-            "comments":"This organization consults with me weekly via phone"
+            'person': 'Self',
+            'relationship': 'Other',
+            'type': 'Other Transactions',
+            'amount': '$1-$5,000',
+            'comments': 'This organization consults with me weekly via phone'
           }
         ]
       }
@@ -116,7 +99,7 @@ let results = [{
     projects: [{
       'name': 'Project 2'
     }]
-  }, 
+  },
   {
     type: 'PROJECT',
     disposition: 222,
@@ -126,27 +109,27 @@ let results = [{
     submittedOn: 1432148767062,
     startDate: 1434448767062,
     status: 'IN_PROGRESS',
-    questionnaire:{
-      "1":"Yes",
-      "2":"No",
-      "3":"Yes"
+    questionnaire: {
+      '1': 'Yes',
+      '2': 'No',
+      '3': 'Yes'
      },
-    entities:[
+    entities: [
       {
-        "id":61709,
-        "name":"Avaya Inc.",
-        "status":"Active",
-        "public":true,
-        "type":"Large Corporation",
-        "sponsorResearch":false,
-        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
-        "relationships":[
+        'id': 61709,
+        'name': 'Avaya Inc.',
+        'status': 'Active',
+        'public': true,
+        'type': 'Large Corporation',
+        'sponsorResearch': false,
+        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
+        'relationships': [
           {
-            "person":"Self",
-            "relationship":"Other",
-            "type":"Other Transactions",
-            "amount":"$1-$5,000",
-            "comments":"This organization consults with me weekly via phone"
+            'person': 'Self',
+            'relationship': 'Other',
+            'type': 'Other Transactions',
+            'amount': '$1-$5,000',
+            'comments': 'This organization consults with me weekly via phone'
           }
         ]
       }
@@ -154,7 +137,7 @@ let results = [{
     projects: [{
       'name': 'Project 3'
     }]
-  }, 
+  },
   {
     type: 'ANNUAL',
     disposition: 222,
@@ -164,27 +147,27 @@ let results = [{
     submittedOn: 1434748767062,
     startDate: 1434188767062,
     status: 'REVISION_NECESSARY',
-    "questionnaire":{
-      "1":"Yes",
-      "2":"No",
-      "3":"Yes"
+    'questionnaire': {
+      '1': 'Yes',
+      '2': 'No',
+      '3': 'Yes'
      },
-    "entities":[
+    'entities': [
       {
-        "id":61709,
-        "name":"Avaya Inc.",
-        "status":"Active",
-        "public":true,
-        "type":"Large Corporation",
-        "sponsorResearch":false,
-        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
-        "relationships":[
+        'id': 61709,
+        'name': 'Avaya Inc.',
+        'status': 'Active',
+        'public': true,
+        'type': 'Large Corporation',
+        'sponsorResearch': false,
+        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
+        'relationships': [
           {
-            "person":"Self",
-            "relationship":"Other",
-            "type":"Other Transactions",
-            "amount":"$1-$5,000",
-            "comments":"This organization consults with me weekly via phone"
+            'person': 'Self',
+            'relationship': 'Other',
+            'type': 'Other Transactions',
+            'amount': '$1-$5,000',
+            'comments': 'This organization consults with me weekly via phone'
           }
         ]
       }
@@ -192,7 +175,7 @@ let results = [{
     projects: [{
       'name': 'Project 4'
     }]
-  }, 
+  },
   {
     type: 'PROJECT',
     disposition: 222,
@@ -202,27 +185,27 @@ let results = [{
     submittedOn: 1432148767062,
     startDate: 1434248767062,
     status: 'REVISION_NECESSARY',
-    "questionnaire":{
-      "1":"Yes",
-      "2":"No",
-      "3":"Yes"
+    'questionnaire': {
+      '1': 'Yes',
+      '2': 'No',
+      '3': 'Yes'
      },
-    "entities":[
+    'entities': [
       {
-        "id":61709,
-        "name":"Avaya Inc.",
-        "status":"Active",
-        "public":true,
-        "type":"Large Corporation",
-        "sponsorResearch":false,
-        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
-        "relationships":[
+        'id': 61709,
+        'name': 'Avaya Inc.',
+        'status': 'Active',
+        'public': true,
+        'type': 'Large Corporation',
+        'sponsorResearch': false,
+        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
+        'relationships': [
           {
-            "person":"Self",
-            "relationship":"Other",
-            "type":"Other Transactions",
-            "amount":"$1-$5,000",
-            "comments":"This organization consults with me weekly via phone"
+            'person': 'Self',
+            'relationship': 'Other',
+            'type': 'Other Transactions',
+            'amount': '$1-$5,000',
+            'comments': 'This organization consults with me weekly via phone'
           }
         ]
       }
@@ -230,7 +213,7 @@ let results = [{
     projects: [{
       'name': 'Project 5'
     }]
-  }, 
+  },
   {
     type: 'ANNUAL',
     disposition: 222,
@@ -240,27 +223,27 @@ let results = [{
     submittedOn: 1432148767062,
     startDate: 1434248767062,
     status: 'AWAITING_REVIEW',
-    "questionnaire":{
-      "1":"Yes",
-      "2":"No",
-      "3":"Yes"
+    'questionnaire': {
+      '1': 'Yes',
+      '2': 'No',
+      '3': 'Yes'
      },
-    "entities":[
+    'entities': [
       {
-        "id":61709,
-        "name":"Avaya Inc.",
-        "status":"Active",
-        "public":true,
-        "type":"Large Corporation",
-        "sponsorResearch":false,
-        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
-        "relationships":[
+        'id': 61709,
+        'name': 'Avaya Inc.',
+        'status': 'Active',
+        'public': true,
+        'type': 'Large Corporation',
+        'sponsorResearch': false,
+        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
+        'relationships': [
           {
-            "person":"Self",
-            "relationship":"Other",
-            "type":"Other Transactions",
-            "amount":"$1-$5,000",
-            "comments":"This organization consults with me weekly via phone"
+            'person': 'Self',
+            'relationship': 'Other',
+            'type': 'Other Transactions',
+            'amount': '$1-$5,000',
+            'comments': 'This organization consults with me weekly via phone'
           }
         ]
       }
@@ -268,7 +251,7 @@ let results = [{
     projects: [{
       'name': 'Project 6'
     }]
-  }, 
+  },
   {
     type: 'PROJECT',
     disposition: 222,
@@ -278,27 +261,27 @@ let results = [{
     submittedOn: 1434948767062,
     startDate: 1434548767062,
     status: 'REVISION_NECESSARY',
-    "questionnaire":{
-      "1":"Yes",
-      "2":"No",
-      "3":"Yes"
+    'questionnaire': {
+      '1': 'Yes',
+      '2': 'No',
+      '3': 'Yes'
      },
-    "entities":[
+    'entities': [
       {
-        "id":61709,
-        "name":"Avaya Inc.",
-        "status":"Active",
-        "public":true,
-        "type":"Large Corporation",
-        "sponsorResearch":false,
-        "description":"A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS",
-        "relationships":[
+        'id': 61709,
+        'name': 'Avaya Inc.',
+        'status': 'Active',
+        'public': true,
+        'type': 'Large Corporation',
+        'sponsorResearch': false,
+        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
+        'relationships': [
           {
-            "person":"Self",
-            "relationship":"Other",
-            "type":"Other Transactions",
-            "amount":"$1-$5,000",
-            "comments":"This organization consults with me weekly via phone"
+            'person': 'Self',
+            'relationship': 'Other',
+            'type': 'Other Transactions',
+            'amount': '$1-$5,000',
+            'comments': 'This organization consults with me weekly via phone'
           }
         ]
       }
@@ -308,6 +291,21 @@ let results = [{
     }]
   }];
   return results;
+};
+
+export let get = (school, disclosureId) => {
+  if (mockDB.has(school) && mockDB.get(school).has(+disclosureId)) {
+    return mockDB.get(school).get(+disclosureId);
+  }
+
+  let disclosures = getSampleDisclosures();
+  let selectedDisclosure;
+  disclosures.forEach((disclosure) => {
+    if (disclosureId === disclosure.id) {
+      selectedDisclosure = disclosure;
+    }
+  });
+  return selectedDisclosure;
 };
 
 export let getSummariesForReview = (school, sortColumn, sortDirection, query) => {
@@ -323,7 +321,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
     projects: [{
       'name': 'Project 1'
     }]
-  }, 
+  },
   {
     type: 'ANNUAL',
     disposition: 222,
@@ -336,7 +334,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
     projects: [{
       'name': 'Project 2'
     }]
-  }, 
+  },
   {
     type: 'PROJECT',
     disposition: 222,
@@ -349,7 +347,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
     projects: [{
       'name': 'Project 3'
     }]
-  }, 
+  },
   {
     type: 'ANNUAL',
     disposition: 222,
@@ -362,7 +360,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
     projects: [{
       'name': 'Project 4'
     }]
-  }, 
+  },
   {
     type: 'PROJECT',
     disposition: 222,
@@ -375,7 +373,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
     projects: [{
       'name': 'Project 5'
     }]
-  }, 
+  },
   {
     type: 'ANNUAL',
     disposition: 222,
@@ -388,7 +386,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
     projects: [{
       'name': 'Project 6'
     }]
-  }, 
+  },
   {
     type: 'PROJECT',
     disposition: 222,
@@ -428,61 +426,63 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
 };
 
 export let getSummariesForUser = (dbInfo, userId, callback) => {
-  ConnectionManager.getConnection((err, connection) => {
-    if (err) {
-      callback(err);
+  ConnectionManager.getConnection((connectionErr, connection) => {
+    if (connectionErr) {
+      callback(connectionErr);
     }
     else {
       connection.query(`
-        SELECT 
-          t.description as type, 
-          UNIX_TIMESTAMP(d.expired_date)*1000 as expired_date, 
-          d.title, 
-          s.description as status, 
-          UNIX_TIMESTAMP(d.last_review_date)*1000 as last_review_date, 
+        SELECT
+          t.description as type,
+          UNIX_TIMESTAMP(d.expired_date)*1000 as expired_date,
+          d.title,
+          s.description as status,
+          UNIX_TIMESTAMP(d.last_review_date)*1000 as last_review_date,
           d.id
-        FROM 
+        FROM
           disclosure d, disclosure_status s, disclosure_type t
-        WHERE 
-          d.type_cd = t.type_cd and 
-          d.status_cd = s.status_cd`, (err, rows) => {
-        if (err) {
-          callback(err);
-        }
-        else {
-          callback(undefined, rows);
-        }
-        connection.release();
-      }); 
+        WHERE
+          d.type_cd = t.type_cd and
+          d.status_cd = s.status_cd`, (queryErr, rows) => {
+            if(queryErr) {
+              callback(queryErr);
+            }
+            else {
+              callback(undefined, rows);
+            }
+            connection.release();
+          }
+      );
     }
   }, dbInfo);
 };
 
 export let getArchivedDisclosures = (dbInfo, userId, callback) => {
-  ConnectionManager.getConnection((err, connection) => {
-    if (err) {
-      callback(err);
+  ConnectionManager.getConnection((connectionErr, connection) => {
+    if (connectionErr) {
+      callback(connectionErr);
     }
     else {
       connection.query(`
         SELECT
-          de.type_cd as type, 
-          de.title, 
-          UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date, 
-          dn.description as disposition, 
-          de.start_date 
-        FROM 
+          de.type_cd as type,
+          de.title,
+          UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date,
+          dn.description as disposition,
+          de.start_date
+        FROM
           disclosure de,
           disposition_type dn
-        WHERE de.disposition_type_cd = dn.type_cd`, (err, rows) => {
-        if (err) {
-          callback(err);
+        WHERE de.disposition_type_cd = dn.type_cd`, (queryErr, rows) => {
+          if (queryErr) {
+            callback(queryErr);
+          }
+          else {
+            callback(undefined, rows);
+          }
+          connection.release();
         }
-        else {
-          callback(undefined, rows);
-        }
-        connection.release();
-      });
+      );
     }
   }, dbInfo);
 };
@@ -499,25 +499,25 @@ export let sendBack = (school, disclosureId) => {
 
 export let addReviewer = (school, disclosureId, reviewerName) => {
   let disclosure = get(school, disclosureId);
-  if (!disclosure.reviewers) disclosure.reviewers = [];
+  if (!disclosure.reviewers) { disclosure.reviewers = []; }
   disclosure.reviewers.push(reviewerName);
 };
 
 export let addQuestionnaireComment = (school, disclosureId, comment) => {
   let disclosure = get(school, disclosureId);
-  if (!disclosure.questionnaire) disclosure.questionnaire = {comments: []};
+  if (!disclosure.questionnaire) { disclosure.questionnaire = {comments: []}; }
   disclosure.questionnaire.comments.push(comment);
 };
 
 export let addEntityComment = (school, disclosureId, comment) => {
   let disclosure = get(school, disclosureId);
-  if (!disclosure.entity) disclosure.entity = {comments: []};
+  if (!disclosure.entity) { disclosure.entity = {comments: []}; }
   disclosure.entity.comments.push(comment);
 };
 
 export let addDeclarationComment = (school, disclosureId, comment) => {
   let disclosure = get(school, disclosureId);
-  if (!disclosure.declarations) disclosure.declarations = {comments: []};
+  if (!disclosure.declarations) { disclosure.declarations = {comments: []}; }
   disclosure.declarations.comments.push(comment);
 };
 

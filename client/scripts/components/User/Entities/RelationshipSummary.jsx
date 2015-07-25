@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -59,7 +59,7 @@ export class RelationshipSummary extends ResponsiveComponent {
           {removeButton}
           <span style={{fontWeight: 'bold'}}>
             {this.props.person + ' • '}
-            {this.props.relationship + ' • '} 
+            {this.props.relationship + ' • '}
             {this.props.type ? this.props.type + ' • ' : ''}
             {this.props.amount ? this.props.amount : ''}
           </span>

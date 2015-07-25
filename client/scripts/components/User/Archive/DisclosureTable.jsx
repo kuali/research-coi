@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
@@ -9,7 +9,7 @@ export class DisclosureTable extends ResponsiveComponent {
     this.commonStyles = {};
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   renderMobile() {
     let mobileStyles = {
@@ -20,9 +20,9 @@ export class DisclosureTable extends ResponsiveComponent {
     let styles = merge(this.commonStyles, mobileStyles);
 
     let disclosures = this.props.disclosures.sort((a, b) => {
-      if (a.submittedOn > b.submittedOn) return -1;
-      else if (a.submittedOn === b.submittedOn) return 0;
-      else return 1;
+      if (a.submittedOn > b.submittedOn) { return -1; }
+      else if (a.submittedOn === b.submittedOn) { return 0; }
+      else { return 1; }
     }).map((disclosure) => {
       return (
         <DisclosureTableRow
@@ -56,14 +56,14 @@ export class DisclosureTable extends ResponsiveComponent {
       headings: {
         color: 'black',
         fontSize: 14,
-        backgroundColor: 'white', 
+        backgroundColor: 'white',
         display: 'table-row',
         cursor: 'pointer',
         padding: 10,
         fontWeight: 300
       },
       heading: {
-        padding: '15px 20px', 
+        padding: '15px 20px',
         display: 'table-cell',
         borderBottom: '1px solid #aaa',
         whiteSpace: 'nowrap'
@@ -72,9 +72,9 @@ export class DisclosureTable extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let disclosures = this.props.disclosures.sort((a, b) => {
-      if (a.submittedOn > b.submittedOn) return -1;
-      else if (a.submittedOn === b.submittedOn) return 0;
-      else return 1;
+      if (a.submittedOn > b.submittedOn) { return -1; }
+      else if (a.submittedOn === b.submittedOn) { return 0; }
+      else { return 1; }
     }).map((disclosure) => {
       return (
         <DisclosureTableRow
@@ -99,6 +99,6 @@ export class DisclosureTable extends ResponsiveComponent {
           {disclosures}
         </div>
       </div>
-    );  
+    );
   }
 }

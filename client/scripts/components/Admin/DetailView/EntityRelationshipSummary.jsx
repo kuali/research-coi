@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 
@@ -26,7 +26,7 @@ export class EntityRelationshipSummary extends ResponsiveComponent {
         marginTop: 7
       },
       commentValue: {
-        fontStyle: 'italic', 
+        fontStyle: 'italic',
         fontSize: 11
       }
     };
@@ -35,8 +35,8 @@ export class EntityRelationshipSummary extends ResponsiveComponent {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.summary}>
-          {this.props.relationship.person} • 
-          {this.props.relationship.relationship} • 
+          {this.props.relationship.person} •
+          {this.props.relationship.relationship} •
           {this.props.relationship.type ? this.props.relationship.type + ' • ' : ''}{this.props.relationship.amount}
         </div>
         <div style={styles.commentLabel}>Comments:</div>
@@ -44,6 +44,6 @@ export class EntityRelationshipSummary extends ResponsiveComponent {
           {this.props.relationship.comments}
         </div>
       </div>
-    );  
+    );
   }
 }

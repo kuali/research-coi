@@ -2,18 +2,18 @@ import * as DisclosureDB from '../db/DisclosureDB';
 
 export let init = app => {
   // Returns summaries of all archived disclosures for the user
-  /* 
+  /*
     [
       {
-        id, 
-        type, 
-        title, 
-        date_submitted, 
-        date_approved, 
-        project_start_date, 
+        id,
+        type,
+        title,
+        date_submitted,
+        date_approved,
+        project_start_date,
         project_type
       }
-    ]  
+    ]
   */
   app.get('/api/research/coi/disclosures/archived', function(req, res, next) {
     let userId = 0; // Use real user id once we have it
@@ -32,11 +32,11 @@ export let init = app => {
   /*
     [
       {
-        id, 
-        type, 
-        title, 
-        expiration_date, 
-        status, 
+        id,
+        type,
+        title,
+        expiration_date,
+        status,
         last_review_date
       }
     ]
@@ -51,11 +51,11 @@ export let init = app => {
       else {
         res.send(disclosures);
       }
-    });  
+    });
   });
 
   // I'm not sure we need this route anymore...
-  app.get('/api/research/coi/disclosure/{query}', function(req, res, next){
+  app.get('/api/research/coi/disclosure/{query}', function(req, res){
     res.send(DisclosureDB.search(req.dbInfo, req.params.query));
   });
 
@@ -101,7 +101,7 @@ export let init = app => {
       ]
     }
   */
-  app.get('/api/research/coi/disclosure/:id', function(req, res, next){
+  app.get('/api/research/coi/disclosure/:id', function(req, res){
     res.send(DisclosureDB.get(req.dbInfo, req.params.id));
   });
 
@@ -147,7 +147,7 @@ export let init = app => {
       ]
     }
   */
-  app.put('/api/research/coi/disclosure/:id', function(req, res, next){
+  app.put('/api/research/coi/disclosure/:id', function(req, res){
     res.sendStatus(202);
     res.send(DisclosureDB.saveExisting(req.dbInfo, req.params.id, req.body));
   });
@@ -194,13 +194,13 @@ export let init = app => {
       ]
     }
   */
-  app.post('/api/research/coi/disclosure', function(req, res, next){
+  app.post('/api/research/coi/disclosure', function(req, res){
     res.sendStatus(202);
     res.send(DisclosureDB.save(req.dbInfo, req.body));
   });
 
-  // Admin stuff 
-  app.get('/api/research/coi/disclosure-summaries', function(req, res, next) {
+  // Admin stuff
+  app.get('/api/research/coi/disclosure-summaries', function(req, res) {
     let sortColumn = 'DATE_SUBMITTED';
     if (req.query.sortColumn) {
       sortColumn = req.query.sortColumn;
@@ -216,38 +216,38 @@ export let init = app => {
     res.send(DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, query));
   });
 
-  app.post('/api/research/coi/disclosure/:id/approve', function(req, res, next){
+  app.post('/api/research/coi/disclosure/:id/approve', function(req, res){
     res.sendStatus(202);
     res.send(DisclosureDB.approve(req.dbInfo, req.params.id));
   });
 
-  app.post('/api/research/coi/disclosure/:id/sendback', function(req, res, next){
+  app.post('/api/research/coi/disclosure/:id/sendback', function(req, res){
     res.sendStatus(202);
     res.send(DisclosureDB.sendBack(req.dbInfo, req.params.id));
   });
 
-  app.post('/api/research/coi/disclosure/:id/reviewer', function(req, res, next){
+  app.post('/api/research/coi/disclosure/:id/reviewer', function(req, res){
     if (req.body && req.body.name) {
       res.sendStatus(202);
       res.send(DisclosureDB.addReviewer(req.dbInfo, req.params.id, req.body.name));
     }
   });
 
-  app.post('/api/research/coi/disclosure/:id/comment/questionnaire', function(req, res, next){
+  app.post('/api/research/coi/disclosure/:id/comment/questionnaire', function(req, res){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
       res.send(DisclosureDB.addQuestionnaireComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 
-  app.post('/api/research/coi/disclosure/:id/comment/entities', function(req, res, next){
+  app.post('/api/research/coi/disclosure/:id/comment/entities', function(req, res){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
       res.send(DisclosureDB.addEntityComment(req.dbInfo, req.params.id, req.body.comment));
     }
   });
 
-  app.post('/api/research/coi/disclosure/:id/comment/declarations', function(req, res, next){
+  app.post('/api/research/coi/disclosure/:id/comment/declarations', function(req, res){
     if (req.body && req.body.comment) {
       res.sendStatus(202);
       res.send(DisclosureDB.addDeclarationComment(req.dbInfo, req.params.id, req.body.comment));

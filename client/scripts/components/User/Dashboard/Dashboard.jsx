@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {NewDisclosureButton} from './NewDisclosureButton';
@@ -7,7 +7,7 @@ import {FinancialEntitiesButton} from './FinancialEntitiesButton';
 import {ConfirmationMessage} from './ConfirmationMessage';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {TravelLogButton} from "./TravelLogButton";
+import {TravelLogButton} from './TravelLogButton';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class Dashboard extends ResponsiveComponent {
@@ -25,7 +25,7 @@ export class Dashboard extends ResponsiveComponent {
     this.onChange = this.onChange.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
@@ -103,7 +103,7 @@ export class Dashboard extends ResponsiveComponent {
         </div>
       </span>
     );
-  } 
+  }
 
   renderDesktop() {
     let desktopStyles = {

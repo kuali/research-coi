@@ -15,7 +15,7 @@ export class FilterBox extends React.Component {
   }
 
   changeQuery() {
-    AdminActions.changeQuery(this.refs.searchBox.getDOMNode().value);    
+    AdminActions.changeQuery(this.refs.searchBox.getDOMNode().value);
   }
 
   render() {

@@ -8,13 +8,13 @@ export class SearchIcon extends React.Component {
   render() {
     return (
       <svg
-        style={this.props.style} 
+        style={this.props.style}
         width="210mm"
         height="297mm"
         viewBox="0 0 744.09448819 1052.3622047"
         id="svg2"
-        version="1.1" 
-        role="img" 
+        version="1.1"
+        role="img"
         aria-labelledby="title">
         <title id="title">Search Icon</title>
         <g id="layer1">

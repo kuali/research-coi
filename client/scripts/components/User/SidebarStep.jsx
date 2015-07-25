@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {FutureStepIcon} from '../DynamicIcons/FutureStepIcon';
@@ -14,10 +14,10 @@ export class SidebarStep extends ResponsiveComponent {
         color: '#C1C1C1'
       },
       stepName: {
-        verticalAlign: 'middle', 
+        verticalAlign: 'middle',
         paddingLeft: 5
       }
-    }
+    };
 
     this.navigate = this.navigate.bind(this);
   }
@@ -44,7 +44,7 @@ export class SidebarStep extends ResponsiveComponent {
         height: 42,
         verticalAlign: 'middle',
         color: '#c1c1c1'
-      }      
+      }
     };
     let styles = merge(this.commonStyles, mobileStyles);
 
@@ -58,7 +58,6 @@ export class SidebarStep extends ResponsiveComponent {
             </li>
           </div>
         );
-        break;
       case 'active':
         return (
           <div onClick={this.navigate}>
@@ -68,7 +67,6 @@ export class SidebarStep extends ResponsiveComponent {
             </li>
           </div>
         );
-        break;
       case 'incomplete':
         return (
           <li style={merge(styles.container, styles.incomplete)}>
@@ -76,7 +74,6 @@ export class SidebarStep extends ResponsiveComponent {
             <span style={styles.stepName}>{this.props.label}</span>
           </li>
         );
-        break;
     }
   }
 
@@ -116,7 +113,7 @@ export class SidebarStep extends ResponsiveComponent {
         height: 42,
         verticalAlign: 'middle',
         color: window.config.colors.one
-      }      
+      }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
@@ -130,7 +127,6 @@ export class SidebarStep extends ResponsiveComponent {
             </li>
           </div>
         );
-        break;
       case 'active':
         return (
           <div style={styles.clickable} onClick={this.navigate}>
@@ -141,7 +137,6 @@ export class SidebarStep extends ResponsiveComponent {
             </li>
           </div>
         );
-        break;
       case 'incomplete':
         return (
           <li style={merge(styles.container, styles.incomplete)}>
@@ -149,11 +144,10 @@ export class SidebarStep extends ResponsiveComponent {
             <span style={styles.stepName}>{this.props.label}</span>
           </li>
         );
-        break;
     }
   }
 }
 
 SidebarStep.defaultProps = {
   state: ''
-}
+};

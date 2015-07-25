@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {SearchFilter} from './SearchFilter';
@@ -101,6 +101,6 @@ export class SearchFilterGroup extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)}>
         {searchFilters}
       </div>
-    );  
+    );
   }
 }

@@ -22,17 +22,17 @@ export class ManualPlaceholder extends React.Component {
                 c-1.3,0.7-2.6,1.3-3.9,1.9c-15,7.1-31.6,11.1-49.2,11.3c-0.5,0-1,0-1.5,0c-3.7,0-7.3-0.2-10.9-0.5c-11-1-21.5-3.5-31.4-7.2
                 c-45-17.1-77-60.6-77-111.5c0-65.9,53.4-119.2,119.2-119.2C240.6,54.5,293.9,107.9,293.9,173.7z"/>
           <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="107.273" y1="116.9899" x2="280.3564" y2="290.0733">
-                <stop  offset="0" style={{stopColor:'#000000'}} />
-                <stop  offset="0.2778" style={{stopColor:'#020202', stopOpacity:'0.7222'}} />
-                <stop  offset="0.4155" style={{stopColor:'#0A0A0A', stopOpacity:'0.5845'}} />
-                <stop  offset="0.5223" style={{stopColor:'#171717', stopOpacity:'0.4777'}} />
-                <stop  offset="0.6133" style={{stopColor:'#2A2A2A', stopOpacity:'0.3867'}} />
-                <stop  offset="0.6943" style={{stopColor:'#424242', stopOpacity:'0.3057'}} />
-                <stop  offset="0.768" style={{stopColor:'#606060', stopOpacity:'0.232'}} />
-                <stop  offset="0.8364" style={{stopColor:'#848484', stopOpacity:'0.1636'}} />
-                <stop  offset="0.9005" style={{stopColor:'#ADADAD', stopOpacity:'9.945846e-02'}} />
-                <stop  offset="0.959" style={{stopColor:'#DADADA', stopOpacity:'4.098219e-02'}} />
-                <stop  offset="1" style={{stopColor:'#FFFFFF', stopOpacity:'0'}} />
+                <stop offset="0" style={{stopColor: '#000000'}} />
+                <stop offset="0.2778" style={{stopColor: '#020202', stopOpacity: '0.7222'}} />
+                <stop offset="0.4155" style={{stopColor: '#0A0A0A', stopOpacity: '0.5845'}} />
+                <stop offset="0.5223" style={{stopColor: '#171717', stopOpacity: '0.4777'}} />
+                <stop offset="0.6133" style={{stopColor: '#2A2A2A', stopOpacity: '0.3867'}} />
+                <stop offset="0.6943" style={{stopColor: '#424242', stopOpacity: '0.3057'}} />
+                <stop offset="0.768" style={{stopColor: '#606060', stopOpacity: '0.232'}} />
+                <stop offset="0.8364" style={{stopColor: '#848484', stopOpacity: '0.1636'}} />
+                <stop offset="0.9005" style={{stopColor: '#ADADAD', stopOpacity: '9.945846e-02'}} />
+                <stop offset="0.959" style={{stopColor: '#DADADA', stopOpacity: '4.098219e-02'}} />
+                <stop offset="1" style={{stopColor: '#FFFFFF', stopOpacity: '0'}} />
           </linearGradient>
           <path opacity="0.25" fill="url(#SVGID_1_)" d="M209.5,113.3c0.2,0,0.4,0.1,0.5,0.2C209.9,113.4,209.7,113.4,209.5,113.3z
                  M305.5,223.7c1,1.2,1.5,1.7,1.6,1.8C306.9,225.3,305.7,223.8,305.5,223.7z M271.4,180.4c-14.9-19-30.8-36.7-47.8-53.8
@@ -58,32 +58,32 @@ export class ManualPlaceholder extends React.Component {
                 C271,294.8,271.1,295,271,294.8z M271,294.6C271,294.6,271.1,295,271,294.6C271,294.6,271,294.7,271,294.6z M254.2,304.7
                 C254.2,304.7,254.3,304.7,254.2,304.7C254.2,304.6,254.2,304.6,254.2,304.7z"/>
           <linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="271.6869" y1="299.7252" x2="271.8177" y2="299.8561">
-                <stop  offset="0" style={{stopColor:'#000000'}} />
-                <stop  offset="0.2778" style={{stopColor:'#020202', stopOpacity:'0.7222'}} />
-                <stop  offset="0.4155" style={{stopColor:'#0A0A0A', stopOpacity:'0.5845'}} />
-                <stop  offset="0.5223" style={{stopColor:'#171717', stopOpacity:'0.4777'}} />
-                <stop  offset="0.6133" style={{stopColor:'#2A2A2A', stopOpacity:'0.3867'}} />
-                <stop  offset="0.6943" style={{stopColor:'#424242', stopOpacity:'0.3057'}} />
-                <stop  offset="0.768" style={{stopColor:'#606060', stopOpacity:'0.232'}} />
-                <stop  offset="0.8364" style={{stopColor:'#848484', stopOpacity:'0.1636'}} />
-                <stop  offset="0.9005" style={{stopColor:'#ADADAD', stopOpacity:'9.945846e-02'}} />
-                <stop  offset="0.959" style={{stopColor:'#DADADA', stopOpacity:'4.098219e-02'}} />
-                <stop  offset="1" style={{stopColor:'#FFFFFF', stopOpacity:'0'}} />
+                <stop offset="0" style={{stopColor: '#000000'}} />
+                <stop offset="0.2778" style={{stopColor: '#020202', stopOpacity: '0.7222'}} />
+                <stop offset="0.4155" style={{stopColor: '#0A0A0A', stopOpacity: '0.5845'}} />
+                <stop offset="0.5223" style={{stopColor: '#171717', stopOpacity: '0.4777'}} />
+                <stop offset="0.6133" style={{stopColor: '#2A2A2A', stopOpacity: '0.3867'}} />
+                <stop offset="0.6943" style={{stopColor: '#424242', stopOpacity: '0.3057'}} />
+                <stop offset="0.768" style={{stopColor: '#606060', stopOpacity: '0.232'}} />
+                <stop offset="0.8364" style={{stopColor: '#848484', stopOpacity: '0.1636'}} />
+                <stop offset="0.9005" style={{stopColor: '#ADADAD', stopOpacity: '9.945846e-02'}} />
+                <stop offset="0.959" style={{stopColor: '#DADADA', stopOpacity: '4.098219e-02'}} />
+                <stop offset="1" style={{stopColor: '#FFFFFF', stopOpacity: '0'}} />
           </linearGradient>
           <path fill="url(#SVGID_2_)" d="M271.8,299.7C271.8,299.7,271.8,299.7,271.8,299.7L271.8,299.7C271.7,300,271.7,300,271.8,299.7
                 C271.8,299.7,271.7,300,271.8,299.7z"/>
           <linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="271.5913" y1="297.4818" x2="271.851" y2="297.7415">
-                <stop  offset="0" style={{stopColor:'#000000'}}/>
-                <stop  offset="0.2778" style={{stopColor:'#020202', stopOpacity:'0.7222'}} />
-                <stop  offset="0.4155" style={{stopColor:'#0A0A0A', stopOpacity:'0.5845'}} />
-                <stop  offset="0.5223" style={{stopColor:'#171717', stopOpacity:'0.4777'}} />
-                <stop  offset="0.6133" style={{stopColor:'#2A2A2A', stopOpacity:'0.3867'}} />
-                <stop  offset="0.6943" style={{stopColor:'#424242', stopOpacity:'0.3057'}} />
-                <stop  offset="0.768" style={{stopColor:'#606060', stopOpacity:'0.232'}} />
-                <stop  offset="0.8364" style={{stopColor:'#848484', stopOpacity:'0.1636'}} />
-                <stop  offset="0.9005" style={{stopColor:'#ADADAD', stopOpacity:'9.945846e-02'}} />
-                <stop  offset="0.959" style={{stopColor:'#DADADA', stopOpacity:'4.098219e-02'}} />
-                <stop  offset="1" style={{stopColor:'#FFFFFF', stopOpacity:'0'}} />
+                <stop offset="0" style={{stopColor: '#000000'}}/>
+                <stop offset="0.2778" style={{stopColor: '#020202', stopOpacity: '0.7222'}} />
+                <stop offset="0.4155" style={{stopColor: '#0A0A0A', stopOpacity: '0.5845'}} />
+                <stop offset="0.5223" style={{stopColor: '#171717', stopOpacity: '0.4777'}} />
+                <stop offset="0.6133" style={{stopColor: '#2A2A2A', stopOpacity: '0.3867'}} />
+                <stop offset="0.6943" style={{stopColor: '#424242', stopOpacity: '0.3057'}} />
+                <stop offset="0.768" style={{stopColor: '#606060', stopOpacity: '0.232'}} />
+                <stop offset="0.8364" style={{stopColor: '#848484', stopOpacity: '0.1636'}} />
+                <stop offset="0.9005" style={{stopColor: '#ADADAD', stopOpacity: '9.945846e-02'}} />
+                <stop offset="0.959" style={{stopColor: '#DADADA', stopOpacity: '4.098219e-02'}} />
+                <stop offset="1" style={{stopColor: '#FFFFFF', stopOpacity: '0'}} />
           </linearGradient>
           <path fill="url(#SVGID_3_)" d="M271.7,297.7c0-0.1,0-0.2,0-0.3c0,0.2,0,0.3,0.1,0.5C271.8,297.8,271.7,297.7,271.7,297.7
                 C271.7,297.7,271.7,297.7,271.7,297.7z"/>
@@ -125,7 +125,7 @@ export class ManualPlaceholder extends React.Component {
                       c-0.3,0.3-0.6,0.7-0.9,1.1c0,0.1-0.1,0.2-0.1,0.2c-0.9,1.6-1,3.5-0.6,5.5c0.5,2.2,1.7,4.5,3.5,6.5c0.1,0.1,0.1,0.1,0.2,0.2
                       c0.1,0.1,0.2,0.2,0.3,0.2l0.1,0v0l2.7,2.7l0,0l26.3,26.3c0.1,0.1,0.1,0.1,0.2,0.2c0,0,0,0.1,0.1,0.1c0.3,0.3,0.6,0.5,0.8,0.8
                       c3.1,2.6,6.9,3.6,9.8,2.8c0,0,0-0.1,0-0.1h0c0.2,0,0.3,0,0.5,0h0L213.1,232.2z"/>
-                <polygon fill="#666666" points="128.3,144.8 127.2,145.9 126.7,145.6 117.2,139.1 113,136.2 103.3,122.1 104.6,120.9 118.2,130.2 
+                <polygon fill="#666666" points="128.3,144.8 127.2,145.9 126.7,145.6 117.2,139.1 113,136.2 103.3,122.1 104.6,120.9 118.2,130.2
                       121.8,135.4 127.9,144.4             "/>
                 <path fill="#666666" d="M176.1,188.9c-0.1,0.3-0.3,0.6-0.6,0.8c-0.8,0.8-1.9,1.1-2.9,0.9c-0.6-0.1-1.1-0.4-1.6-0.9
                       c0,0-0.1-0.1-0.1-0.1l0,0l-2.7-2.7l-5.5-5.5l-0.1-0.1l-35.5-35.5l-0.4-0.4l-7.5-7.5l1.1-1.1l1.4-1.4l6.1,8.9l0.4,0.4l35.5,35.5
@@ -138,7 +138,7 @@ export class ManualPlaceholder extends React.Component {
                 l0.3,0.3l2.7,2.7l26.1,26.1c0.4,0.4,0.7,0.8,1,1.2C215.4,223.3,215.8,228.6,213.1,232.2z"/>
           <path fill="#BC6F6F" d="M179.6,191.6l29.1,29.1c0.4,0.4,0.7,0.8,1,1.1c3.6,4.3,4.2,9.7,1.3,12.6c-2.9,2.9-8.3,2.2-12.6-1.3
                 c-0.4-0.3-0.8-0.7-1.1-1L168.1,203c-4.4-4.4-5.5-10.6-2.3-13.7C169,186.1,175.1,187.1,179.6,191.6z"/>
-          <polygon fill="#B3B3B3" points="127.9,144.4 126.7,145.5 126.7,145.6 123.4,148.8 109.2,139.1 99.6,125 104,120.5 104.6,120.9 
+          <polygon fill="#B3B3B3" points="127.9,144.4 126.7,145.5 126.7,145.6 123.4,148.8 109.2,139.1 99.6,125 104,120.5 104.6,120.9
                 118.2,130.2 121.8,135.4       "/>
           <path fill="#B3B3B3" d="M172.6,190.6c0,0.7-0.3,1.5-0.9,2c-0.9,0.9-2.2,1.1-3.3,0.7c-0.1,0-0.3-0.1-0.4-0.2
                 c-0.3-0.1-0.5-0.3-0.8-0.6c0,0-0.1-0.1-0.1-0.1l0,0l-7.9-7.9l-35.8-35.8l-7.9-7.9l1.8-1.8l2.7-2.7l0.4,0.4l7.5,7.5l0.4,0.4

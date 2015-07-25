@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -66,8 +66,8 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
         marginBottom: 11
       },
       titles: {
-        borderBottom: '1px solid #ccc', 
-        color: '#888', 
+        borderBottom: '1px solid #ccc',
+        color: '#888',
         fontSize: 12,
         marginBottom: 10
       },
@@ -85,7 +85,7 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
         verticalAlign: 'top'
       },
       relationship: {
-        marginBottom: 15, 
+        marginBottom: 15,
         paddingBottom: 15,
         borderBottom: '2px solid #666'
       },
@@ -112,21 +112,21 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
         color: 'black'
       },
       declaration: {
-        fontSize: 12, 
+        fontSize: 12,
         marginBottom: 10
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
     let relationships = [];
-    if(this.props.relationships !== undefined && 
+    if(this.props.relationships !== undefined &&
       this.props.relationships.conflicts !== undefined) {
       for (let i = 0; i < this.props.relationships.length; i++) {
         let conflicts = [];
         for (let j = 0; j < this.props.relationships[i].conflicts.length; j++) {
           conflicts.push(
-            <div 
-              key={this.props.relationships[i].conflicts[j].id} 
+            <div
+              key={this.props.relationships[i].conflicts[j].id}
               style={styles.declaration}
             >
               <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
@@ -145,7 +145,7 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
         let projectName = this.props.relationships[i].name;
         relationships.push(
           <div
-            key={projectName} 
+            key={projectName}
           stylestyle={i === this.props.relationships.length - 1 ? styles.lastrelationship : styles.relationship}
           >
             <div style={styles.name}>{projectName}</div>
@@ -167,23 +167,23 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
           {relationships}
         </div>
         <div style={styles.footer}>
-          <KButton 
-            onClick={this.showCommentSection} 
+          <KButton
+            onClick={this.showCommentSection}
             style={merge(styles.button, {display: this.props.comment && !this.props.expandedComments ? 'inline-block' : 'none'})}>
             EDIT
           </KButton>
-          <KButton 
-            onClick={this.saveComment} 
+          <KButton
+            onClick={this.saveComment}
             style={merge(styles.button, {display: this.props.expandedComments ? 'inline-block' : 'none'})}>
             SAVE
           </KButton>
-          <KButton 
-            onClick={this.hideCommentSection} 
+          <KButton
+            onClick={this.hideCommentSection}
             style={merge(styles.button, {display: this.props.expandedComments ? 'inline-block' : 'none'})}>
             CANCEL
           </KButton>
-          <KButton 
-            onClick={this.showCommentSection} 
+          <KButton
+            onClick={this.showCommentSection}
             style={merge(styles.button, {display: this.props.expandedComments || this.props.comment ? 'none' : 'inline-block'})}>
             COMMENT
           </KButton>

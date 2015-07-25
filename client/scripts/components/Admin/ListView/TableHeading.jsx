@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {SortArrow} from './SortArrow';
@@ -7,7 +7,7 @@ export class TableHeading extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {
-    }
+    };
   }
 
   renderMobile() {
@@ -26,7 +26,7 @@ export class TableHeading extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        padding: '15px 20px', 
+        padding: '15px 20px',
         display: 'table-cell',
         borderBottom: '1px solid #aaa',
         whiteSpace: 'nowrap'

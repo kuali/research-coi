@@ -1,9 +1,8 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {EntityRelationDialog} from './EntityRelationDialog';
-import {Flag} from '../Flag';
 import {KButton} from '../../KButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
 
@@ -17,7 +16,7 @@ export class Entity extends ResponsiveComponent {
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   toggleDialog() {
     DisclosureActions.toggleDeclaration(this.props.entity.id, 'ENTITY');
@@ -25,30 +24,30 @@ export class Entity extends ResponsiveComponent {
 
   getFlagStatus() {
     if (undefinedRelationExists('PROJECT', this.props.projects, this.props.relations)) {
-     return 'ATTENTION';
+      return 'ATTENTION';
     }
     else {
-     let worstRelation = 'NONE';
-      
-     this.props.relations.forEach(element => {
-       if (element.relation === 'MANAGED') {
-         worstRelation = 'MANAGED';
-       }
-       else if (worstRelation !== 'MANAGED' && element.relation === 'POTENTIAL') {
-         worstRelation = 'POTENTIAL';
-       }
-     });
+      let worstRelation = 'NONE';
 
-     return worstRelation;
+      this.props.relations.forEach(element => {
+        if (element.relation === 'MANAGED') {
+          worstRelation = 'MANAGED';
+        }
+        else if (worstRelation !== 'MANAGED' && element.relation === 'POTENTIAL') {
+          worstRelation = 'POTENTIAL';
+        }
+      });
+
+      return worstRelation;
     }
   }
 
   getDisplayStatus() {
     switch (this.getFlagStatus()) {
-     case 'ATTENTION': return 'Action Required';
-     case 'MANAGED': return 'Managed Relationship';
-     case 'POTENTIAL': return 'Potential Relationship';
-     case 'NONE': return 'No Conflict';
+      case 'ATTENTION': return 'Action Required';
+      case 'MANAGED': return 'Managed Relationship';
+      case 'POTENTIAL': return 'Potential Relationship';
+      case 'NONE': return 'No Conflict';
     }
   }
 
@@ -97,12 +96,12 @@ export class Entity extends ResponsiveComponent {
       },
       value: {
         fontWeight: 'bold',
-        marginLeft: 7, 
-        display: 'inline-block', 
+        marginLeft: 7,
+        display: 'inline-block',
         verticalAlign: 'top'
       },
       flag: {
-        float: 'right', 
+        float: 'right',
         position: 'relative',
         zIndex: 11
       },
@@ -119,7 +118,7 @@ export class Entity extends ResponsiveComponent {
         <EntityRelationDialog
           relations={this.props.relations}
           projects={this.props.projects}
-          style={{display: this.props.open ? 'block': 'none'}}
+          style={{display: this.props.open ? 'block' : 'none'}}
           title={this.props.title}
           type={this.props.type}
           role={this.props.role}
@@ -128,8 +127,8 @@ export class Entity extends ResponsiveComponent {
           entityId={this.props.entity.id}
           id={this.props.id}
           onSave={this.toggleDialog}
-          onCancel={this.toggleDialog} 
-          onNext={this.props.onNext} 
+          onCancel={this.toggleDialog}
+          onNext={this.props.onNext}
           onPrevious={this.props.onPrevious} />
       );
     }
@@ -187,6 +186,6 @@ export class Entity extends ResponsiveComponent {
 
         {relationshipDialog}
       </div>
-    );  
+    );
   }
 }

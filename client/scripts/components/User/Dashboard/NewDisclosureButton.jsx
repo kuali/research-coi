@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import Router from 'react-router';
@@ -37,11 +37,11 @@ export class NewDisclosureButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, mobileStyles);
 
     return (
-      <Link to="disclosure" query={{type: this.props['type']}} style={merge(styles.container, this.props.style)}>
+      <Link to="disclosure" query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <PlusIcon style={styles.icon} />
           <div>
-            {this.props['type']}
+            {this.props.type}
           </div>
           <div>
             Disclosure
@@ -73,14 +73,14 @@ export class NewDisclosureButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <Link to="disclosure" query={{type: this.props['type']}} style={merge(styles.container, this.props.style)}>
+      <Link to="disclosure" query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
             <div style={styles.primary}>{this.props.type === 'Annual' ? 'Update' : 'New'}</div>
-            <div style={styles.secondary}>{this.props['type']} Disclosure</div>
+            <div style={styles.secondary}>{this.props.type} Disclosure</div>
           </span>
         </div>
       </Link>
     );
-  }  
+  }
 }

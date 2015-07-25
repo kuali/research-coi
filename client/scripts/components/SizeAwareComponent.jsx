@@ -1,15 +1,14 @@
 import React from 'react/addons';
 
 export class SizeAwareComponent extends React.Component {
-  handleResize(e) {
+  handleResize() {
     window.size = window.innerWidth < 100 ? 'SMALL' : 'LARGE'; // disabled for now, 800 probably a good size
     this.updateBodyOverflow();
-    
     this.forceUpdate();
   }
 
   updateBodyOverflow() {
-    document.body.style.overflow = window.size === 'SMALL' ? 'hidden' : 'initial';    
+    document.body.style.overflow = window.size === 'SMALL' ? 'hidden' : 'initial';
   }
 
   componentWillMount() {

@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from './ResponsiveComponent';
 import {merge} from '../merge';
 import {SearchIcon} from './DynamicIcons/SearchIcon';
@@ -72,6 +72,6 @@ export class SearchBox extends ResponsiveComponent {
         </span>
         <input className="fill" aria-label="Search here" value={this.props.value} onChange={this.valueChanged} style={styles.textbox} type="text" / >
       </span>
-    );  
+    );
   }
 }

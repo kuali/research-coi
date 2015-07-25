@@ -124,8 +124,8 @@ export class FEPlaceHolder extends React.Component {
           <path fill={this.props.style.colorTwo} d="M296.8,174.7c0,3.1-0.1,6.2-0.3,9.2c0,0.1,0,0.1,0,0.1c0,0,0,0.1,0,0.1C291.6,247.3,238.9,297,174.6,297
             c-3.8,0-7.5-0.2-11.2-0.5c-62.3-5.6-111.1-58-111.1-121.7c0-67.5,54.7-122.2,122.2-122.2C242.1,52.5,296.8,107.2,296.8,174.7z"/>
           <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="117.4805" y1="132.6119" x2="256.5151" y2="265.2549">
-            <stop  offset="0.2044" style={{stopColor: '#000000'}}/>
-            <stop  offset="1" style={{stopColor:'#FFFFFF', stopOpacity:0}}/>
+            <stop offset="0.2044" style={{stopColor: '#000000'}}/>
+            <stop offset="1" style={{stopColor: '#FFFFFF', stopOpacity: 0}}/>
           </linearGradient>
           <path opacity="0.35" fill="url(#SVGID_1_)" d="M293.1,203c-1.6,6.6-3.7,13.1-6.4,19.4c-5.2,12.3-12.5,23.7-21.5,33.7
             c-18,20.1-42.6,33.9-69.2,38.7c-8.1,1.5-16.4,2.1-24.6,1.9c-2.8-0.1-6.6,0.1-8.7-0.9c-0.8-0.4,0.2-0.9-1.1-1c-0.4,0-0.4,0-0.9,0

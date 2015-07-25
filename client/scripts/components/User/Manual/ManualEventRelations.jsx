@@ -1,9 +1,8 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ManualRelationDialog} from './ManualRelationDialog';
-import {Flag} from '../Flag';
 import {KButton} from '../../KButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
 
@@ -18,7 +17,7 @@ export class ManualEventRelations extends ResponsiveComponent {
     this.editProject = this.editProject.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   toggleDialog() {
     DisclosureActions.toggleDeclaration(this.props.disclosure.id, 'MANUAL');
@@ -30,7 +29,7 @@ export class ManualEventRelations extends ResponsiveComponent {
     }
     else {
       let worstRelation = 'NONE';
-      
+
       if (this.props.relations) {
         this.props.relations.forEach(element => {
           if (element.relation === 'MANAGED') {
@@ -124,7 +123,7 @@ export class ManualEventRelations extends ResponsiveComponent {
           title={this.props.disclosure.title}
           projectId={this.props.disclosure.projectId}
           onSave={this.toggleDialog}
-          onCancel={this.toggleDialog} 
+          onCancel={this.toggleDialog}
         />
       );
     }
@@ -150,7 +149,7 @@ export class ManualEventRelations extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.content}>
           <div style={styles.title}>
-            Project Title: 
+            Project Title:
             <span style={styles.value}>
               {this.props.disclosure.title}
             </span>
@@ -158,19 +157,19 @@ export class ManualEventRelations extends ResponsiveComponent {
           <div>
             <span style={styles.left}>
               <div style={styles.item}>
-                Project Type: 
+                Project Type:
                 <span style={styles.value}>
                   {this.props.disclosure.projectType}
                 </span>
               </div>
               <div style={styles.item}>
-                Project Role: 
+                Project Role:
                 <span style={styles.value}>
                   {this.props.disclosure.role}
                 </span>
               </div>
               <div style={styles.item}>
-                Sponsor: 
+                Sponsor:
                 <span style={styles.value}>
                   {this.props.disclosure.sponsor}
                 </span>
