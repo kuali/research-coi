@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {COIConstants} from '../../../../../COIConstants';
@@ -10,7 +10,7 @@ export class Certify extends ResponsiveComponent {
     this.commonStyles = {};
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   renderMobile() {}
 
@@ -34,7 +34,7 @@ export class Certify extends ResponsiveComponent {
 
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.CERTIFY];
     let instructions = (
-      <Instructions 
+      <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />

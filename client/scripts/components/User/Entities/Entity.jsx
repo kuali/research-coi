@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -15,7 +15,7 @@ export class Entity extends ResponsiveComponent {
     this.showForm = this.showForm.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   showForm() {
     DisclosureActions.updateEntityFormOpened(this.props.id);
@@ -66,21 +66,21 @@ export class Entity extends ResponsiveComponent {
         margin: '7px 10px 7px 0'
       },
       relationships: {
-        fontWeight: 'bold', 
-        marginLeft: 7, 
-        display: 'inline-block', 
+        fontWeight: 'bold',
+        marginLeft: 7,
+        display: 'inline-block',
         verticalAlign: 'top'
       },
       entityForm: {
-        display: this.props.step >= 0 ? 'block': 'none', 
+        display: this.props.step >= 0 ? 'block' : 'none',
         transition: 'margin-top .3s ease-in-out'
       },
       buttonCell: {
-        width: '21%', 
+        width: '21%',
         display: 'inline-block'
       },
       relationshipLabel: {
-        display: 'inline-block', 
+        display: 'inline-block',
         verticalAlign: 'top'
       }
     };
@@ -121,7 +121,7 @@ export class Entity extends ResponsiveComponent {
           </div>
         </div>
 
-        <EntityForm 
+        <EntityForm
           update="true"
           step={this.props.step}
           style={styles.entityForm}
@@ -130,6 +130,6 @@ export class Entity extends ResponsiveComponent {
           snapshot={this.props.snapshot}
         />
       </div>
-    );  
+    );
   }
 }

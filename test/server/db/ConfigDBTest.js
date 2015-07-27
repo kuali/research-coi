@@ -1,13 +1,14 @@
+/*global describe, it */
 import assert from 'assert';
 import * as ConfigDB from '../../../server/db/ConfigDB';
 
-describe('Config',() => {
+describe('Config', () => {
   it('should get a config', () => {
     let config = ConfigDB.getConfigFor('UIT');
     assert.equal(config.colors.four, '#EDF2F2');
   });
 
-  it('should save a config', () =>  {
+  it('should save a config', () => {
     ConfigDB.setConfigFor('UIT', {frog: true, dog: false});
     let config = ConfigDB.getConfigFor('UIT');
     assert.equal(config.frog, true);

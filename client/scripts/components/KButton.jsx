@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from './ResponsiveComponent';
 import {merge} from '../merge';
 
@@ -26,8 +26,8 @@ export class KButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, mobileStyles);
 
     return (
-      <button 
-        {...this.props} 
+      <button
+        {...this.props}
         style={merge(styles.container, this.props.style)}
       >
         {this.props.children}
@@ -41,12 +41,12 @@ export class KButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <button 
-        {...this.props} 
+      <button
+        {...this.props}
         style={merge(styles.container, this.props.style)}
       >
         {this.props.children}
       </button>
-    );  
+    );
   }
 }

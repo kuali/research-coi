@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
@@ -88,6 +88,6 @@ export class Instructions extends ResponsiveComponent {
           <KButton style={styles.closeButton} onClick={this.close}>CLOSE</KButton>
         </div>
       </div>
-    );  
+    );
   }
 }

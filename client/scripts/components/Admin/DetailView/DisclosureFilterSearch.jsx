@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {SearchIcon} from '../../DynamicIcons/SearchIcon';
@@ -20,9 +20,9 @@ export class DisclosureFilterSearch extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         width: '100%',
-        backgroundColor : window.config.colors.one,
+        backgroundColor: window.config.colors.one,
         padding: '13px 10px',
-        textAlign: 'center',
+        textAlign: 'center'
       },
       input: {
         border: 0,

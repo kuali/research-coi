@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {ProminentButton} from '../../ProminentButton';
 import {merge} from '../../../merge';
@@ -13,7 +13,7 @@ export class EntityForm extends ResponsiveComponent {
     this.commonStyles = {};
     this.state = {
       submitEnabled: props.update,
-      invalid: props.update ? false: true
+      invalid: props.update ? false : true
     };
 
     this.next = this.next.bind(this);
@@ -26,7 +26,7 @@ export class EntityForm extends ResponsiveComponent {
     this.undo = this.undo.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   next() {
     if (!this.state.invalid) {
@@ -61,7 +61,7 @@ export class EntityForm extends ResponsiveComponent {
   enableSubmit() {
     this.setState({
       submitEnabled: true
-    })
+    });
   }
 
   formValidation(isValid) {
@@ -118,8 +118,8 @@ export class EntityForm extends ResponsiveComponent {
           <EntityFormPartOne
             id={entity.id}
             readonly={!this.props.editing}
-            update={this.props.update} 
-            name={entity.name} 
+            update={this.props.update}
+            name={entity.name}
             status={entity.status}
             type={entity.type}
             isPublic={entity.isPublic}
@@ -130,11 +130,11 @@ export class EntityForm extends ResponsiveComponent {
           <EntityFormPartTwo
             id={entity.id}
             readonly={!this.props.editing}
-            update={this.props.update} 
+            update={this.props.update}
             onRelationAdded={this.enableSubmit}
             relations={this.props.entity.relationships}
             name={this.props.entity.name}
-            style={{borderTop: '1px solid #888',marginTop: 16, paddingTop: 16}}
+            style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
             onValidation={this.formValidation}
           />
         </div>
@@ -162,7 +162,7 @@ export class EntityForm extends ResponsiveComponent {
       switch (this.props.step) {
         case 0:
           currentStep = (
-            <EntityFormPartZero 
+            <EntityFormPartZero
               entityName={entity.name}
               onValidation={this.formValidation}
             />
@@ -171,8 +171,8 @@ export class EntityForm extends ResponsiveComponent {
         case 1:
           currentStep = (
             <EntityFormPartOne
-              update={this.props.update} 
-              name={entity.name} 
+              update={this.props.update}
+              name={entity.name}
               status={entity.status}
               type={entity.type}
               isPublic={entity.isPublic}
@@ -185,7 +185,7 @@ export class EntityForm extends ResponsiveComponent {
         default:
           currentStep = (
             <EntityFormPartTwo
-              update={this.props.update} 
+              update={this.props.update}
               onRelationAdded={this.enableSubmit}
               relations={this.props.entity.relationships}
               name={this.props.entity.name}

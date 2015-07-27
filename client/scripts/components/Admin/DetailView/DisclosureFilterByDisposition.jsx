@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -21,13 +21,13 @@ export class DisclosureFilterByDisposition extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
-      container : {
-        whiteSpace : 'nowrap',
-        color : 'black',
+      container: {
+        whiteSpace: 'nowrap',
+        color: 'black'
       },
-      checkbox : {
-        textAlign : 'left',
-        padding : 10,
+      checkbox: {
+        textAlign: 'left',
+        padding: 10
       },
       clearButton: {
         backgroundColor: '#444',
@@ -47,10 +47,10 @@ export class DisclosureFilterByDisposition extends ResponsiveComponent {
           <div style={styles.checkbox}
            key={key}
           >
-            <input 
-              type="checkbox" 
-              value={key} 
-              onChange={this.toggleFilter} 
+            <input
+              type="checkbox"
+              value={key}
+              onChange={this.toggleFilter}
               checked={this.filterActive(key)}
               key={key}
             >
@@ -61,7 +61,7 @@ export class DisclosureFilterByDisposition extends ResponsiveComponent {
         </div>
       );
     });
-    
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         {dispositionCheckBoxes}

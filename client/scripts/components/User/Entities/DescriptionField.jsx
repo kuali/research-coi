@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 
@@ -55,10 +55,10 @@ export class DescriptionField extends ResponsiveComponent {
     }
     else {
       dom = (
-        <textarea 
+        <textarea
           required
-          ref="description" 
-          onChange={this.setDescription} 
+          ref="description"
+          onChange={this.setDescription}
           style={styles.description}
           value={this.props.value}
         />

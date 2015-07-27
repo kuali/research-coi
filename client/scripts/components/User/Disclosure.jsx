@@ -3,7 +3,6 @@ import {merge} from '../../merge';
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {Sidebar} from './Sidebar';
 import {DisclosureHeader} from './DisclosureHeader';
-import {Instructions} from './Instructions';
 import {DisclosureStore} from '../../stores/DisclosureStore';
 import {COIConstants} from '../../../../COIConstants';
 import {Questionnaire} from './Questionnaire/Questionnaire';
@@ -34,7 +33,7 @@ export class Disclosure extends ResponsiveComponent {
 
     let storeState = DisclosureStore.getState();
     this.state = {
-      percent:0,
+      percent: 0,
       applicationState: storeState.applicationState,
       entities: storeState.entities,
       projects: storeState.projects,
@@ -56,10 +55,10 @@ export class Disclosure extends ResponsiveComponent {
     entities.forEach(entity => {
       projects.forEach(project => {
         let existingRelation = relations.find(relation => {
-          return relation.entityId === entity.id && 
-                 (
-                  relation.projectId == project.projectid
-                 );
+          return relation.entityId === entity.id &&
+            (
+              relation.projectId === project.projectid
+            );
         });
 
         if (!existingRelation) {
@@ -82,7 +81,7 @@ export class Disclosure extends ResponsiveComponent {
     let undefinedFound = false;
     entities.forEach(entity => {
       let existingRelation = relations.find(relation => {
-        return relation.entityId === entity.id && relation.manualId == disclosure.projectId;
+        return relation.entityId === entity.id && relation.manualId === disclosure.projectId;
       });
 
       if (!existingRelation) {
@@ -93,7 +92,7 @@ export class Disclosure extends ResponsiveComponent {
     return undefinedFound;
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
@@ -178,9 +177,9 @@ export class Disclosure extends ResponsiveComponent {
 
         let question = currentQuestion;
         currentStep = (
-          <Questionnaire 
-            questions={window.config.questions} 
-            currentquestion={question} 
+          <Questionnaire
+            questions={window.config.questions}
+            currentquestion={question}
             disclosureid={currentDisclosureId}
             instructionsShowing={this.state.applicationState.instructionsShowing}
           />
@@ -190,8 +189,8 @@ export class Disclosure extends ResponsiveComponent {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
         percent = QUESTIONNAIRE_PERCENTAGE;
         currentStep = (
-          <QuestionnaireSummary 
-            questions={window.config.questions} 
+          <QuestionnaireSummary
+            questions={window.config.questions}
             instructionsShowing={this.state.applicationState.instructionsShowing}
             answers={this.state.applicationState.currentDisclosureState.disclosure.answers}
           />
@@ -203,9 +202,9 @@ export class Disclosure extends ResponsiveComponent {
         const ENTITIES_PERCENTAGE = 50;
         percent = ENTITIES_PERCENTAGE;
         currentStep = (
-          <Entities 
+          <Entities
             applicationState={this.state.applicationState}
-            entities={this.state.entities} 
+            entities={this.state.entities}
             inProgress={this.state.applicationState.entityInProgress}
             instructionsShowing={this.state.applicationState.instructionsShowing}
           />
@@ -239,8 +238,8 @@ export class Disclosure extends ResponsiveComponent {
         }
         else {
           currentStep = (
-            <Relationships 
-              projects={this.state.projects} 
+            <Relationships
+              projects={this.state.projects}
               entities={this.state.entities}
               relations={this.state.declarations}
               declarationStates={this.state.applicationState.declarationStates}
@@ -261,7 +260,7 @@ export class Disclosure extends ResponsiveComponent {
         const CERTIFY_PERCENTAGE = 99;
         percent = CERTIFY_PERCENTAGE;
         currentStep = (
-          <Certify 
+          <Certify
             instructionsShowing={this.state.applicationState.instructionsShowing}
           />
         );
@@ -280,7 +279,7 @@ export class Disclosure extends ResponsiveComponent {
             {currentStep}
           </span>
 
-          <NavSidebar 
+          <NavSidebar
             percent={percent}
             step={currentDisclosureStep}
             question={currentQuestion}

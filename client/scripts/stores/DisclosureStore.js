@@ -4,9 +4,13 @@ import alt from '../alt';
 import request from 'superagent';
 import {COIConstants} from '../../../COIConstants';
 
+let cloneObject = original => {
+  return JSON.parse(JSON.stringify(original));
+};
+
 class _DisclosureStore extends AutoBindingStore {
   constructor() {
-    super (DisclosureActions);
+    super(DisclosureActions);
 
     this.exportPublicMethods({
       getDisclosure: this.getDisclosure
@@ -40,28 +44,28 @@ class _DisclosureStore extends AutoBindingStore {
 
     this.projects = [
       {
-        title: "Molecular Disentropization",
-        type: "Research",
-        role: "PI",
-        sponsor: "NIH",
-        cosponsor: "Quest Diagnostics Inc.",
-        projectid: "250240"
+        title: 'Molecular Disentropization',
+        type: 'Research',
+        role: 'PI',
+        sponsor: 'NIH',
+        cosponsor: 'Quest Diagnostics Inc.',
+        projectid: '250240'
       },
       {
-        title: "Adolescent Diabetes Recurrence",
-        type: "Research",
-        role: "PI",
-        sponsor: "NIH",
-        cosponsor: "W.W. Grainger Inc",
-        projectid: "250499"
+        title: 'Adolescent Diabetes Recurrence',
+        type: 'Research',
+        role: 'PI',
+        sponsor: 'NIH',
+        cosponsor: 'W.W. Grainger Inc',
+        projectid: '250499'
       },
       {
-        title: "Photosynthesis and Salinity",
-        type: "Research",
-        role: "PI",
-        sponsor: "NSA",
-        cosponsor: "Sempra Energy",
-        projectid: "287110"
+        title: 'Photosynthesis and Salinity',
+        type: 'Research',
+        role: 'PI',
+        sponsor: 'NSA',
+        cosponsor: 'Sempra Energy',
+        projectid: '287110'
       }
     ];
 
@@ -109,18 +113,17 @@ class _DisclosureStore extends AutoBindingStore {
 
   answerQuestion(question) {
     let questionId = question.id;
-    let answer = question.answer;
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
-    let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find((answer) => {
+    let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
       return answer.id === question.id;
     });
     if (existingAnswer) {
       existingAnswer.value = question.answer;
     }
     else {
-      this.applicationState.currentDisclosureState.disclosure.answers.push({id: questionId, value: answer});
+      this.applicationState.currentDisclosureState.disclosure.answers.push({id: questionId, value: question.answer});
     }
 
     request.put('/api/research/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id)
@@ -162,7 +165,7 @@ class _DisclosureStore extends AutoBindingStore {
   setCurrentQuestion(newQuestionId) {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = newQuestionId;
-  }  
+  }
 
   nextStep() {
     switch (this.applicationState.currentDisclosureState.step) {
@@ -256,8 +259,6 @@ class _DisclosureStore extends AutoBindingStore {
 
   removeEntityRelationship(params) {
     let relationId = params.relationId;
-    let entityId = params.entityId;
-
     let entity = this.applicationState.entityInProgress;
 
     entity.relationships = entity.relationships.filter((relationship) => {
@@ -357,7 +358,7 @@ class _DisclosureStore extends AutoBindingStore {
     else {
       collectionToUse[params.entityId] = {
         open: true
-      }
+      };
     }
   }
 
@@ -372,10 +373,10 @@ class _DisclosureStore extends AutoBindingStore {
 
     let field;
     switch (params.relationType) {
-      case 'PROJECT': 
+      case 'PROJECT':
         field = 'projectId';
         break;
-      case 'MANUAL': 
+      case 'MANUAL':
         field = 'manualId';
         break;
     }
@@ -395,7 +396,7 @@ class _DisclosureStore extends AutoBindingStore {
       };
       newRelation[field] = params.projectId;
       this.declarations.push(newRelation);
-    }    
+    }
   }
 
   declarationCommentedOn(params) {
@@ -405,10 +406,10 @@ class _DisclosureStore extends AutoBindingStore {
 
     let field;
     switch (params.relationType) {
-      case 'PROJECT': 
+      case 'PROJECT':
         field = 'projectId';
         break;
-      case 'MANUAL': 
+      case 'MANUAL':
         field = 'manualId';
         break;
     }
@@ -428,7 +429,7 @@ class _DisclosureStore extends AutoBindingStore {
       };
       newRelation[field] = params.projectId;
       this.declarations.push(newRelation);
-    }    
+    }
   }
 
   setAllForEntity(params) {
@@ -453,8 +454,7 @@ class _DisclosureStore extends AutoBindingStore {
     });
   }
 
-  resetDisclosure() { 
-    let id = this.applicationState.currentDisclosureState.disclosure.id;
+  resetDisclosure() {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = 1;
     this.applicationState.entityInProgress = {};
@@ -465,7 +465,7 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.confirmationShowing = !this.applicationState.confirmationShowing;
   }
 
-  manualTypeSelected(params) {
+  manualTypeSelected() {
     this.applicationState.manualStep = 2;
   }
 
@@ -483,17 +483,13 @@ class _DisclosureStore extends AutoBindingStore {
     }
   }
 
-  doneEditingManualEvent(disclosureId) {
+  doneEditingManualEvent() {
     this.applicationState.manualStep = 3;
   }
 
   jumpToStep(step) {
     this.applicationState.currentDisclosureState.step = step;
   }
-}
-
-let cloneObject = original => {
-  return JSON.parse(JSON.stringify(original));
 }
 
 export let DisclosureStore = alt.createStore(_DisclosureStore, 'DisclosureStore');

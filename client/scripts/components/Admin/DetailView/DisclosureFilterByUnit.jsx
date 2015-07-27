@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -18,10 +18,10 @@ export class DisclosureFilterByUnit extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
-      container : {
-        whiteSpace : 'nowrap',
-        color : 'black',
-        textAlign : 'left',
+      container: {
+        whiteSpace: 'nowrap',
+        color: 'black',
+        textAlign: 'left'
       },
       clearButton: {
         backgroundColor: '#444',
@@ -34,11 +34,11 @@ export class DisclosureFilterByUnit extends ResponsiveComponent {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <label htmlFor="units" style={{display: 'block', fontSize: 13}}>Department</label>
-        <select 
-          id="units" 
-          multiple="true" 
+        <select
+          id="units"
+          multiple="true"
           size="5"
-          style={{display : 'block', fontSize: 15, marginBottom: 19}}
+          style={{display: 'block', fontSize: 15, marginBottom: 19}}
         >
         </select>
         <KButton style={styles.clearButton} onClick={this.clearFilter}>CLEAR FILTER</KButton>

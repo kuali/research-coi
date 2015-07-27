@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {Question} from './Question';
@@ -45,12 +45,12 @@ export class Questionnaire extends ResponsiveComponent {
     if (this.props.questions) {
       questions = this.props.questions.map((question, index) => {
         return (
-          <Question 
+          <Question
             id={question.id}
             style={styles.question}
-            number={index + 1} 
-            of={this.props.questions.length} 
-            text={question.text} 
+            number={index + 1}
+            of={this.props.questions.length}
+            text={question.text}
             disclosureid={this.props.disclosureid}
             key={index}
           />
@@ -60,7 +60,7 @@ export class Questionnaire extends ResponsiveComponent {
 
     let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE];
     let instructions = (
-      <Instructions 
+      <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}
       />
@@ -76,6 +76,6 @@ export class Questionnaire extends ResponsiveComponent {
           </div>
         </div>
       </div>
-    );  
+    );
   }
 }

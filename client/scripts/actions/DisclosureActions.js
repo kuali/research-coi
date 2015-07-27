@@ -1,29 +1,29 @@
 import alt from '../alt';
 
 class _DisclosureActions {
-  changeArchiveFilter(newValue) {this.dispatch(newValue);}
+  changeArchiveFilter(newValue) { this.dispatch(newValue); }
 
-  loadArchivedDisclosures() {this.dispatch();}
+  loadArchivedDisclosures() { this.dispatch(); }
 
-  loadDisclosureSummaries() {this.dispatch();}
+  loadDisclosureSummaries() { this.dispatch(); }
 
-  toggleInstructions() {this.dispatch();}
+  toggleInstructions() { this.dispatch(); }
 
-  answerQuestion(question) {this.dispatch(question);}
+  answerQuestion(question) { this.dispatch(question); }
 
-  advanceQuestion() {this.dispatch();}
+  advanceQuestion() { this.dispatch(); }
 
-  previousQuestion() {this.dispatch();}
+  previousQuestion() { this.dispatch(); }
 
-  setCurrentQuestion(newQuestionId) {this.dispatch(newQuestionId);}
+  setCurrentQuestion(newQuestionId) { this.dispatch(newQuestionId); }
 
-  nextStep() {this.dispatch();}
+  nextStep() { this.dispatch(); }
 
-  newEntityInitiated() {this.dispatch();}
+  newEntityInitiated() { this.dispatch(); }
 
-  setInProgressEntityName(newNameValue) {this.dispatch(newNameValue);}
+  setInProgressEntityName(newNameValue) { this.dispatch(newNameValue); }
 
-  entityFormNextClicked(entityId) {this.dispatch(entityId);}
+  entityFormNextClicked(entityId) { this.dispatch(entityId); }
 
   setEntityStatus(newStatus, id) {
     this.dispatch({
@@ -78,17 +78,17 @@ class _DisclosureActions {
     });
   }
 
-  entityFormClosed(entityId) {this.dispatch(entityId);}
+  entityFormClosed(entityId) { this.dispatch(entityId); }
 
-  saveInProgressEntity(entity) {this.dispatch(entity);}
+  saveInProgressEntity(entity) { this.dispatch(entity); }
 
-  changeActiveEntityView(newView) {this.dispatch(newView);}
+  changeActiveEntityView(newView) { this.dispatch(newView); }
 
-  updateEntityFormOpened(id) {this.dispatch(id);}
+  updateEntityFormOpened(id) { this.dispatch(id); }
 
-  editEntity(id) {this.dispatch(id);}
+  editEntity(id) { this.dispatch(id); }
 
-  undoEntityChanges(snapshot) {this.dispatch(snapshot);}
+  undoEntityChanges(snapshot) { this.dispatch(snapshot); }
 
   toggleDeclaration(id, type) {
     this.dispatch({
@@ -97,7 +97,7 @@ class _DisclosureActions {
     });
   }
 
-  changeDeclarationView(newView) {this.dispatch(newView);}
+  changeDeclarationView(newView) { this.dispatch(newView); }
 
   entityRelationChosen(relationType, entityId, projectId, relation) {
     this.dispatch({
@@ -134,7 +134,7 @@ class _DisclosureActions {
 
   resetDisclosure() { this.dispatch(); }
 
-  toggleConfirmationMessage() {this.dispatch();}
+  toggleConfirmationMessage() { this.dispatch(); }
 
   manualTypeSelected(disclosureId, manualType) {
     this.dispatch({
@@ -145,19 +145,19 @@ class _DisclosureActions {
 
   saveManualEvent(disclosureId, id, title, sponsor, role, amount, projectType, startDate, endDate) {
     this.dispatch({
-      disclosureId: disclosureId, 
-      id: id, 
-      title: title, 
-      sponsor: sponsor, 
-      role: role, 
-      amount: amount, 
-      projectType: projectType, 
-      startDate: startDate, 
+      disclosureId: disclosureId,
+      id: id,
+      title: title,
+      sponsor: sponsor,
+      role: role,
+      amount: amount,
+      projectType: projectType,
+      startDate: startDate,
       endDate: endDate
     });
   }
 
-  doneEditingManualEvent(disclosureId) {this.dispatch(disclosureId);}
+  doneEditingManualEvent(disclosureId) { this.dispatch(disclosureId); }
 
   jumpToStep(step) {
     this.dispatch(step);

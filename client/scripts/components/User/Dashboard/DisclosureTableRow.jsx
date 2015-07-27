@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -97,7 +97,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
         </div>
       );
     }
-    
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         <span style={styles.disclosureRow} onClick={this.touch}>
@@ -178,7 +178,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
         <div style={styles.extra}>Event Title: {this.props.title}</div>
       );
     }
-    
+
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={merge(styles.cell, styles.one)}>

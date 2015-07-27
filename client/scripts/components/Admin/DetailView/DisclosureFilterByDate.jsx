@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DatePicker} from '../../DatePicker';
@@ -11,8 +11,8 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.state = {
-      fromDate : '',
-      toDate : '',
+      fromDate: '',
+      toDate: '',
       showingStartCalendar: false,
       showingEndCalendar: false
     };
@@ -38,20 +38,20 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
-      container : {
-        whiteSpace : 'nowrap',
-        color : 'black',
-        position : 'relative',
+      container: {
+        whiteSpace: 'nowrap',
+        color: 'black',
+        position: 'relative'
       },
-      inputDivs : {
+      inputDivs: {
         textAlign: 'left',
-        padding : 10,
+        padding: 10
       },
-      label : {
+      label: {
         display: 'block',
         fontSize: 13
       },
-      datesContainer : {
+      datesContainer: {
       },
       dropDown: {
         width: 176,
@@ -67,7 +67,6 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let filter = this.props.filter || this.state.filter;
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div className="flexbox row" style={styles.datesContainer}>

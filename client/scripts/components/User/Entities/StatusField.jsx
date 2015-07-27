@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {COIConstants} from '../../../../../COIConstants';
@@ -27,9 +27,9 @@ export class StatusField extends ResponsiveComponent {
         fontWeight: 'bold'
       },
       select: {
-        width: 175, 
-        height: 27, 
-        backgroundColor: 'transparent', 
+        width: 175,
+        height: 27,
+        backgroundColor: 'transparent',
         fontSize: 14,
         borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa'
       },

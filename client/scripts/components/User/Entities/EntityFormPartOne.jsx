@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {StatusField} from './StatusField';
@@ -76,7 +76,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
 
   formIsValid() {
     let fieldValid = field => {
-      return (this.props.update && this.state.validStatus[field] === 'undefined') || this.state.validStatus[field]
+      return (this.props.update && this.state.validStatus[field] === 'undefined') || this.state.validStatus[field];
     };
 
     return fieldValid('status') &&
@@ -133,7 +133,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
         );
       }
     }
-    
+
     let status;
     let type;
     let isPublic;
@@ -163,17 +163,17 @@ export class EntityFormPartOne extends ResponsiveComponent {
         <div style={{marginTop: this.props.update ? 0 : 20}}>
           <span style={styles.left}>
             <div style={{marginBottom: 20}}>
-              <StatusField 
-                value={status} 
+              <StatusField
+                value={status}
                 readonly={this.props.readonly}
                 onChange={this.setStatus}
                 invalid={this.state.validStatus.status === false}
               />
             </div>
             <div>
-              <SponsorField 
-                value={sponsorValue} 
-                readonly={this.props.readonly} 
+              <SponsorField
+                value={sponsorValue}
+                readonly={this.props.readonly}
                 onChange={this.setSponsor}
                 invalid={this.state.validStatus.sponsor === false}
               />

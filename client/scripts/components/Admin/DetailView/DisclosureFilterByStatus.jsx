@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -30,13 +30,13 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
 
   renderDesktop() {
     let desktopStyles = {
-      container : {
-        whiteSpace : 'nowrap',
-        color : 'black',
+      container: {
+        whiteSpace: 'nowrap',
+        color: 'black'
       },
-      checkbox : {
-        textAlign : 'left',
-        padding : 10,
+      checkbox: {
+        textAlign: 'left',
+        padding: 10
       },
       clearButton: {
         backgroundColor: '#444',
@@ -52,8 +52,8 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.checkbox}>
-          <input type="checkbox" 
-            value="In Progress" 
+          <input type="checkbox"
+            value="In Progress"
             checked={this.props.inProgress}
             onChange={this.toggleInProgressStatusFilter}
           >
@@ -62,8 +62,8 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
         </div>
         <hr style={styles.hr} />
         <div style={styles.checkbox}>
-          <input type="checkbox" 
-            value="Awaiting Review" 
+          <input type="checkbox"
+            value="Awaiting Review"
             checked={this.props.awaitingReview}
             onChange={this.toggleAwaitingReviewStatusFilter}
           >
@@ -72,8 +72,8 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
         </div>
         <hr style={styles.hr} />
         <div style={merge(styles.checkbox, {marginBottom: 10})}>
-          <input type="checkbox" 
-            value="Revision Necessary" 
+          <input type="checkbox"
+            value="Revision Necessary"
             checked={this.props.revisionNecessary}
             onChange={this.toggleRevisionNecessaryStatusFilter}
           >

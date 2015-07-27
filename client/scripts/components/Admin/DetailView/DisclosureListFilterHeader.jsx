@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureListFilter} from './DisclosureListFilter';
@@ -6,7 +6,6 @@ import {DisclosureFilterByType} from './DisclosureFilterByType';
 import {DisclosureFilterByDate} from './DisclosureFilterByDate';
 import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
 import {DisclosureFilterByUnit} from './DisclosureFilterByUnit';
-import {DisclosureFilterByDisposition} from './DisclosureFilterByDisposition';
 import {DisclosureFilterSearch} from './DisclosureFilterSearch';
 
 export class DisclosureListFilterHeader extends ResponsiveComponent {
@@ -15,14 +14,14 @@ export class DisclosureListFilterHeader extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.state = {
-      showFilters : true
+      showFilters: true
     };
 
     this.toggleFilters = this.toggleFilters.bind(this);
   }
 
   toggleFilters() {
-    this.setState({showFilters : !this.state.showFilters});
+    this.setState({showFilters: !this.state.showFilters});
   }
 
   renderMobile() {}
@@ -47,19 +46,19 @@ export class DisclosureListFilterHeader extends ResponsiveComponent {
         color: 'white',
         width: '100%',
         position: 'relative',
-        display: this.state.showFilters ? 'inline-block': 'none',
+        display: this.state.showFilters ? 'inline-block' : 'none'
       },
       filter: {
         padding: 7,
         paddingRight: 100,
         fontSize: '.8em',
-        color: 'white',
+        color: 'white'
       },
       arrows: {
         fontSize: 7,
         marginLeft: 4,
         verticalAlign: 'middle'
-      }      
+      }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
@@ -79,7 +78,7 @@ export class DisclosureListFilterHeader extends ResponsiveComponent {
             />
           </DisclosureListFilter>
           <DisclosureListFilter style={styles.filter} label='TYPE' >
-            <DisclosureFilterByType 
+            <DisclosureFilterByType
               annual={this.props.filters.type.annual}
               project={this.props.filters.type.project}
             />
@@ -96,6 +95,6 @@ export class DisclosureListFilterHeader extends ResponsiveComponent {
           </DisclosureListFilter>
         </div>
       </div>
-    ); 
+    );
   }
 }

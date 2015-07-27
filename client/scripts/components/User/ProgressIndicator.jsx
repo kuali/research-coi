@@ -1,3 +1,4 @@
+/*global TWEEN*/
 import React from 'react/addons';
 import {merge} from '../../merge';
 
@@ -14,7 +15,7 @@ export class ProgressIndicator extends React.Component {
   componentDidMount() {
     var cnvsElement = this.refs.theCanvas.getDOMNode();
     var context = cnvsElement.getContext('2d');
-    context.font = "65px Arial"
+    context.font = '65px Arial';
 
     this.canvasContext = context;
 
@@ -27,9 +28,7 @@ export class ProgressIndicator extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return false;
-  }
+  shouldComponentUpdate() { return false; }
 
   animate() {
     if (this.animated) {

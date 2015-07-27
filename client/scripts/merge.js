@@ -10,4 +10,4 @@ export function merge(initial, ...toMerge) {
     }
   }
   return result;
-};
+}

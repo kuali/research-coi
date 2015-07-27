@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import Router from 'react-router';
@@ -36,7 +36,7 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, mobileStyles);
 
     return (
-      <Link to="archiveview" query={{type: this.props['type']}} style={merge(styles.container, this.props.style)}>
+      <Link to="archiveview" query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <RefreshIcon style={styles.icon} />
           <div>Disclosure</div>
@@ -67,12 +67,12 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <Link to="archiveview" query={{type: this.props['type']}} style={merge(styles.container, this.props.style)}>
+      <Link to="archiveview" query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <div style={styles.primary}>View</div>
           <div style={styles.secondary}>Disclosure Archives</div>
         </div>
       </Link>
     );
-  }  
+  }
 }

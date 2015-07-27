@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -18,7 +18,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
     this.setAll = this.setAll.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   onNext() {
     this.props.onNext(this.props.id, 'PROJECT');
@@ -29,7 +29,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
   }
 
   findRelationByEntity(id) {
-    let relation = this.props.relations.find((element, index, array) => {
+    let relation = this.props.relations.find(element => {
       return element.entityId === id;
     });
 
@@ -42,7 +42,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
   }
 
   findCommentByEntity(id) {
-    let relation = this.props.relations.find((element, index, array) => {
+    let relation = this.props.relations.find(element => {
       return element.entityId === id;
     });
 
@@ -57,7 +57,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
   setAll() {
     DisclosureActions.setAllForProject(
       'PROJECT',
-      this.props.projectid, 
+      this.props.projectid,
       this.refs.setAllSelect.getDOMNode().value
     );
   }
@@ -118,7 +118,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
     let entityRelations = [];
     this.props.entities.forEach((element) => {
       entityRelations.push(
-        <EntityRelation 
+        <EntityRelation
           entity={element}
           relationType="PROJECT"
           projectId={this.props.projectid}
@@ -137,7 +137,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
           </div>
           <div>
             <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
-            to: 
+            to:
             <select ref="setAllSelect" defaultValue={'NONE'} style={{marginLeft: 10}}>
               <option value="NONE">No Conflict</option>
               <option value="POTENTIAL">Potential Relationship</option>

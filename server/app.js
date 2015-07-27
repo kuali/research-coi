@@ -1,3 +1,5 @@
+/*eslint no-process-exit:0 */
+
 import * as ConfigController from './controllers/ConfigController';
 import * as DisclosureController from './controllers/DisclosureController';
 import express from 'express';
@@ -9,14 +11,16 @@ export function run() {
   try {
     let extensions = require('research-extensions');
     extensions.express(app);
-  } catch (e) {}
+  } catch (e) {
+    // not found, move on
+  }
   app.use(express.static('client'));
   app.use(bodyParser.json());
   ConfigController.init(app);
   DisclosureController.init(app);
 
-  let server = app.listen(8090); 
-  console.log("Listening on port 8090");
+  let server = app.listen(8090);
+  console.log('Listening on port 8090');
 
   process.on('uncaughtException', function(err) {
     console.error('Uncaught exception: ' + err);

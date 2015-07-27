@@ -1,0 +1,5 @@
+client/build/
+client/scripts/lib
+npm-debug.log
+**/*.mwb
+**/*.png

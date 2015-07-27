@@ -6,9 +6,9 @@ export class ProgressBar extends React.Component {
     let styles = {
       container: {
         width: '100%',
-        height: 15,
+        height: 15
       },
-      bar : {
+      bar: {
         width: this.props.percentage + '%',
         backgroundColor: window.config.colors.two,
         height: '100%',
@@ -21,4 +21,4 @@ export class ProgressBar extends React.Component {
       </div>
     );
   }
-};
+}

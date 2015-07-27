@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -15,7 +15,7 @@ export class ManualEventEntry extends ResponsiveComponent {
     this.nextScreen = this.nextScreen.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   typeSelected() {
     DisclosureActions.manualTypeSelected(
@@ -185,6 +185,6 @@ export class ManualEventEntry extends ResponsiveComponent {
 
         {middle}
       </div>
-    ); 
+    );
   }
 }

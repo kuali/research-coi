@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {FilterType} from './FilterType';
@@ -43,7 +43,7 @@ export class Archive extends ResponsiveComponent {
     });
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   renderMobile() {}
 

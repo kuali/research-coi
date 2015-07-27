@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 
@@ -45,11 +45,11 @@ export class Toggle extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <button 
+      <button
         onClick={this.toggle}
         style={merge(this.props.selected ? styles.selected : styles.container, this.props.style)}>
         {this.props.text}
       </button>
-    );  
+    );
   }
 }

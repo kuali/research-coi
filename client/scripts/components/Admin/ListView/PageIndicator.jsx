@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 
@@ -39,6 +39,6 @@ export class PageIndicator extends ResponsiveComponent {
         PAGE
         <span style={styles.numbers}>{this.props.current}/{this.props.total}</span>
       </span>
-    );  
+    );
   }
 }

@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -50,6 +50,6 @@ export class ApprovalConfirmation extends ResponsiveComponent {
         <KButton onClick={this.approve} style={styles.button}>YES, CONFIRM</KButton>
         <KButton onClick={this.cancel} style={styles.button}>NO, CANCEL</KButton>
       </div>
-    );  
+    );
   }
 }

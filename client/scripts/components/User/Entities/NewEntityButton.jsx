@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {PlusIcon} from '../../DynamicIcons/PlusIcon';
@@ -52,7 +52,7 @@ export class NewEntityButton extends ResponsiveComponent {
         color: window.config.colors.two
       },
       text: {
-        verticalAlign: 'middle', 
+        verticalAlign: 'middle',
         marginTop: 43
       }
     };
@@ -69,6 +69,6 @@ export class NewEntityButton extends ResponsiveComponent {
           <PlusIcon style={styles.img} />
         </span>
       </span>
-    );  
+    );
   }
 }

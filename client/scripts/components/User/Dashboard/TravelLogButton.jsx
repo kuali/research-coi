@@ -40,5 +40,5 @@ export class TravelLogButton extends React.Component {
         </div>
       </Link>
     );
-  }  
+  }
 }

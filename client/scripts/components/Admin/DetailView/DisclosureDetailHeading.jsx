@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 
@@ -25,11 +25,11 @@ export class DisclosureDetailHeading extends ResponsiveComponent {
         marginBottom: 3
       },
       disclosure: {
-        fontWeight: 'bold', 
+        fontWeight: 'bold',
         marginRight: 5
       },
       id: {
-        fontWeight: 'bold', 
+        fontWeight: 'bold',
         marginLeft: 5
       },
       label: {
@@ -39,8 +39,7 @@ export class DisclosureDetailHeading extends ResponsiveComponent {
         fontWeight: 'bold'
       },
       details: {
-        fontSize: 15, 
-        
+        fontSize: 15
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);

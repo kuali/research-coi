@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -16,10 +16,10 @@ export class ManualRelationDialog extends ResponsiveComponent {
     this.setAll = this.setAll.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   findRelationByEntity(id) {
-    let relation = this.props.relations.find((element, index, array) => {
+    let relation = this.props.relations.find((element) => {
       return element.entityId === id;
     });
 
@@ -32,7 +32,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
   }
 
   findCommentByEntity(id) {
-    let relation = this.props.relations.find((element, index, array) => {
+    let relation = this.props.relations.find((element) => {
       return element.entityId === id;
     });
 
@@ -47,7 +47,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
   setAll() {
     DisclosureActions.setAllForProject(
       'MANUAL',
-      this.props.projectId, 
+      this.props.projectId,
       this.refs.setAllSelect.getDOMNode().value
     );
   }
@@ -100,7 +100,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
     let entityRelations = [];
     this.props.entities.forEach((element) => {
       entityRelations.push(
-        <EntityRelation 
+        <EntityRelation
           entity={element}
           relationType="MANUAL"
           projectId={this.props.projectId}
@@ -119,7 +119,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
           </div>
           <div>
             <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
-            to: 
+            to:
             <select ref="setAllSelect" defaultValue={'NONE'} style={{marginLeft: 10}}>
               <option value="NONE">No Conflict</option>
               <option value="POTENTIAL">Potential Relationship</option>

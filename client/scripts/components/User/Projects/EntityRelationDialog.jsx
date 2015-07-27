@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -18,7 +18,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
     this.setAll = this.setAll.bind(this);
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   onNext() {
     this.props.onNext(this.props.id, 'ENTITY');
@@ -30,27 +30,27 @@ export class EntityRelationDialog extends ResponsiveComponent {
 
   findRelationByProject(id) {
     let relation = this.props.relations.find((element) => {
-     return element.projectId === id;
+      return element.projectId === id;
     });
 
     if (relation) {
-     return relation.relation;
+      return relation.relation;
     }
     else {
-     return null;
+      return null;
     }
   }
 
   findCommentByProject(id) {
     let relation = this.props.relations.find((element) => {
-     return element.projectId === id;
+      return element.projectId === id;
     });
 
     if (relation) {
-     return relation.comment;
+      return relation.comment;
     }
     else {
-     return null;
+      return null;
     }
   }
 
@@ -113,7 +113,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
     let projectRelations = [];
     this.props.projects.forEach((element) => {
       projectRelations.push(
-        <ProjectRelation 
+        <ProjectRelation
           project={element}
           entityId={this.props.entityId}
           relation={this.findRelationByProject(element.projectid)}
@@ -131,7 +131,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
           </div>
           <div>
             <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
-            to: 
+            to:
             <select ref="setAllSelect" defaultValue={'NONE'} style={{marginLeft: 10}}>
               <option value="NONE">No Conflict</option>
               <option value="POTENTIAL">Potential Relationship</option>

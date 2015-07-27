@@ -89,7 +89,7 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.query = newQuery;
     if (shouldRefresh) {
       this.refreshDisclosures();
-      return false;      
+      return false;
     }
   }
 
@@ -190,9 +190,8 @@ class _AdminStore extends AutoBindingStore {
   }
 
   toggleRevisionNecessaryStatusFilter() {
-    this.applicationState.filters.status.revisionNecessary = !this.applicationState.filters.status.revisionNecessary;    
+    this.applicationState.filters.status.revisionNecessary = !this.applicationState.filters.status.revisionNecessary;
   }
-
 }
 
 export let AdminStore = alt.createStore(_AdminStore, 'AdminStore');

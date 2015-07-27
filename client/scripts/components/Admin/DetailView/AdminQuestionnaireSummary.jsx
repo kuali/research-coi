@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
@@ -103,20 +103,20 @@ export class AdminQuestionnaireSummary extends ResponsiveComponent {
 
     let questions = [];
     if(this.props.questions !== undefined) {
-    for (let i = 1; i <= 3; i++) {
-      questions.push(
-        <div key={i} className="flexbox row" style={styles.question}>
-          <span style={styles.left}>
-            <div>{i}/3</div>
-            <div style={styles.answer}>{this.props.questions[i]}</div>
-          </span>
-          <span className="fill" style={styles.text}>
-            {this.questionText[i-1]}
-          </span>
-        </div>
-      );
+      for (let i = 1; i <= 3; i++) {
+        questions.push(
+          <div key={i} className="flexbox row" style={styles.question}>
+            <span style={styles.left}>
+              <div>{i}/3</div>
+              <div style={styles.answer}>{this.props.questions[i]}</div>
+            </span>
+            <span className="fill" style={styles.text}>
+              {this.questionText[i - 1]}
+            </span>
+          </div>
+        );
+      }
     }
-  }
 
     return (
       <div style={merge(styles.container, this.props.style)} >
@@ -125,23 +125,23 @@ export class AdminQuestionnaireSummary extends ResponsiveComponent {
           {questions}
         </div>
         <div style={styles.footer}>
-          <KButton 
-            onClick={this.showCommentSection} 
+          <KButton
+            onClick={this.showCommentSection}
             style={merge(styles.button, {display: this.props.comment && !this.props.expandedComments ? 'inline-block' : 'none'})}>
             EDIT
           </KButton>
-          <KButton 
-            onClick={this.saveComment} 
+          <KButton
+            onClick={this.saveComment}
             style={merge(styles.button, {display: this.props.expandedComments ? 'inline-block' : 'none'})}>
             SAVE
           </KButton>
-          <KButton 
-            onClick={this.hideCommentSection} 
+          <KButton
+            onClick={this.hideCommentSection}
             style={merge(styles.button, {display: this.props.expandedComments ? 'inline-block' : 'none'})}>
             CANCEL
           </KButton>
-          <KButton 
-            onClick={this.showCommentSection} 
+          <KButton
+            onClick={this.showCommentSection}
             style={merge(styles.button, {display: this.props.expandedComments || this.props.comment ? 'none' : 'inline-block'})}>
             COMMENT
           </KButton>
@@ -153,6 +153,6 @@ export class AdminQuestionnaireSummary extends ResponsiveComponent {
           </div>
         </div>
       </div>
-    ); 
+    );
   }
 }

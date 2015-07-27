@@ -1,4 +1,4 @@
-import React from 'react/addons';
+import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureDetailHeading} from './DisclosureDetailHeading';
@@ -30,7 +30,7 @@ export class DisclosureDetail extends ResponsiveComponent {
 
   renderDesktop() {
     let nameMap = this.makeEntityMap(this.props.disclosure.entities);
-    
+
     let desktopStyles = {
       container: {},
       actionButtons: {
@@ -72,20 +72,20 @@ export class DisclosureDetail extends ResponsiveComponent {
           <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
           <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
           <ActionButtons style={styles.actionButtons} />
-          <AdminQuestionnaireSummary 
-            questions={this.props.disclosure.questionnaire} 
-            style={styles.questionnaire} 
+          <AdminQuestionnaireSummary
+            questions={this.props.disclosure.questionnaire}
+            style={styles.questionnaire}
             id={this.props.disclosure.id}
             comment={this.props.disclosure.comments ? this.props.disclosure.comments.questionnaire : null}
             expandedComments={this.props.showingQuestionnaireComments} />
-          <AdminEntitiesSummary 
-            entities={this.props.disclosure.entities} 
+          <AdminEntitiesSummary
+            entities={this.props.disclosure.entities}
             style={styles.entities}
             id={this.props.disclosure.id}
             comment={this.props.disclosure.comments ? this.props.disclosure.comments.entities : null}
             expandedComments={this.props.showingEntitiesComments} />
-          <AdminDeclarationsSummary 
-            names={nameMap} 
+          <AdminDeclarationsSummary
+            names={nameMap}
             relationships={this.props.disclosure.projects}
             id={this.props.disclosure.id}
             comment={this.props.disclosure.comments ? this.props.disclosure.comments.projects : null}
