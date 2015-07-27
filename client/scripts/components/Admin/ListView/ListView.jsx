@@ -9,6 +9,8 @@ import {PageIndicator} from './PageIndicator';
 import {KButton} from '../../KButton';
 import {DisclosureTable} from './DisclosureTable';
 import {FilterBox} from '../FilterBox';
+import {isAfterStartDate, isBeforeEndDate, sortFunction,
+        typeFilter, statusFilter} from '../AdminFilters';
 
 export class ListView extends ResponsiveComponent {
   constructor() {
@@ -103,10 +105,9 @@ export class ListView extends ResponsiveComponent {
       }
     };
     let styles = merge(this.commonStyles, mobileStyles);
-
     return (
       <div className="flexbox fill column" style={merge(styles.container, this.props.style)}>
-        <SearchFilterGroup style={styles.filterGroup} />
+        <SearchFilterGroup style={styles.filterGroup} filters={this.state.applicationState.filters}/>
 
         <FilterBox style={styles.filterBox} count={this.state.data.disclosureSummaries.length} />
 
@@ -178,12 +179,23 @@ export class ListView extends ResponsiveComponent {
         'float': 'right'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
+    let filtered = this.state.data.disclosureSummaries
+      .filter(isAfterStartDate(this.state.data.applicationState.filters.date))
+      .filter(isBeforeEndDate(this.state.data.applicationState.filters.date))
+      .filter(typeFilter(this.state.data.applicationState.filters.type))
+      .filter(statusFilter(this.state.data.applicationState.filters.status))
+      .sort(sortFunction(this.state.data.applicationState.sortDirection));
+
+    let styles = merge(this.commonStyles, desktopStyles);
     return (
+
       <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
-          <SearchFilterGroup style={styles.filterGroup} />
+          <SearchFilterGroup style={styles.filterGroup}
+          filters={this.state.data.applicationState.filters}
+          />
+
         </span>
         <span className="fill" style={styles.content}>
           <div>
@@ -205,7 +217,7 @@ export class ListView extends ResponsiveComponent {
               sortDirection={this.state.data.applicationState.sortDirection}
               page={this.state.data.applicationState.page}
               style={styles.table}
-              disclosures={this.state.data.disclosureSummaries} />
+              disclosures={filtered} />
           </div>
         </span>
       </div>

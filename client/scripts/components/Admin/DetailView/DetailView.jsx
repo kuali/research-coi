@@ -5,6 +5,9 @@ import {AdminStore} from '../../../stores/AdminStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
+import {isAfterStartDate, isBeforeEndDate, sortFunction, typeFilter,
+        statusFilter} from '../AdminFilters';
+
 
 export class DetailView extends ResponsiveComponent {
   constructor() {
@@ -19,11 +22,6 @@ export class DetailView extends ResponsiveComponent {
     };
 
     this.searchFilter = this.searchFilter.bind(this);
-    this.startDateFilter = this.startDateFilter.bind(this);
-    this.endDateFilter = this.endDateFilter.bind(this);
-    this.typeFilter = this.typeFilter.bind(this);
-    this.statusFilter = this.statusFilter.bind(this);
-    this.sortFunction = this.sortFunction.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -58,108 +56,14 @@ export class DetailView extends ResponsiveComponent {
     }
   }
 
-  startDateFilter(disclosure) {
-    let dateFilter = this.state.applicationState.filters.date;
-    let dateToUse = disclosure.revisedOn;
-    if (!dateToUse) {
-      dateToUse = disclosure.submittedOn;
-    }
-
-    if (dateFilter.start) {
-      return dateToUse >= dateFilter.start;
-    }
-    else {
-      return true;
-    }
-  }
-
-  endDateFilter(disclosure) {
-    let dateFilter = this.state.applicationState.filters.date;
-    let dateToUse = disclosure.revisedOn;
-    if (!dateToUse) {
-      dateToUse = disclosure.submittedOn;
-    }
-
-    if (dateFilter.end) {
-      return dateToUse <= dateFilter.end;
-    }
-    else {
-      return true;
-    }
-  }
-
-  typeFilter(disclosure) {
-    let typeFilter = this.state.applicationState.filters.type;
-    if (typeFilter) {
-      if (typeFilter.annual && disclosure.type === 'ANNUAL') {
-        return true;
-      }
-      else if (typeFilter.project && disclosure.type === 'PROJECT') {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else {
-      return true;
-    }
-  }
-
-  statusFilter(disclosure) {
-    let statusFilter = this.state.applicationState.filters.status;
-    if (statusFilter) {
-      if (statusFilter.inProgress && disclosure.status === 'IN_PROGRESS') {
-        return true;
-      }
-      else if (statusFilter.awaitingReview && disclosure.status === 'AWAITING_REVIEW') {
-        return true;
-      }
-      else if (statusFilter.revisionNecessary && disclosure.status === 'REVISION_NECESSARY') {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else {
-      return true;
-    }
-  }
-
-  sortFunction(a, b) {
-    let aDateToUse = a.revisedOn;
-    if (!aDateToUse) {
-      aDateToUse = a.submittedOn;
-    }
-
-    let bDateToUse = b.revisedOn;
-    if (!bDateToUse) {
-      bDateToUse = b.submittedOn;
-    }
-
-    if (aDateToUse && bDateToUse) {
-      if (this.state.applicationState.sortDirection === 'DESCENDING') {
-        return bDateToUse - aDateToUse;
-      }
-      else {
-        return aDateToUse - bDateToUse;
-      }
-    }
-    else {
-      return 0;
-    }
-  }
-
   filterDisclosures() {
     let filtered = this.state.summaries
     .filter(this.searchFilter)
-    .filter(this.startDateFilter)
-    .filter(this.endDateFilter)
-    .filter(this.typeFilter)
-    .filter(this.statusFilter)
-    .sort(this.sortFunction);
-
+    .filter(isAfterStartDate(this.state.applicationState.filters.date))
+    .filter(isBeforeEndDate(this.state.applicationState.filters.date))
+    .filter(typeFilter(this.state.applicationState.filters.type))
+    .filter(statusFilter(this.state.applicationState.filters.status))
+    .sort(sortFunction(this.state.applicationState.sortDirection));
     return filtered;
   }
 

@@ -1,8 +1,8 @@
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {SearchIcon} from '../../DynamicIcons/SearchIcon';
-import {AdminActions} from '../../../actions/AdminActions';
+import React from 'react/addons';
+import {ResponsiveComponent} from '../ResponsiveComponent';
+import {merge} from '../../merge';
+import {SearchIcon} from '../DynamicIcons/SearchIcon';
+import {AdminActions} from '../../actions/AdminActions';
 
 export class DisclosureFilterSearch extends ResponsiveComponent {
   constructor() {

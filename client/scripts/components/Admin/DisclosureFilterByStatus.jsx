@@ -1,8 +1,8 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {KButton} from '../../KButton';
-import {AdminActions} from '../../../actions/AdminActions';
+import {ResponsiveComponent} from '../ResponsiveComponent';
+import {merge} from '../../merge';
+import {KButton} from '../KButton';
+import {AdminActions} from '../../actions/AdminActions';
 
 export class DisclosureFilterByStatus extends ResponsiveComponent {
   constructor() {
