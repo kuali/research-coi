@@ -27,6 +27,16 @@ export class TravelLogForm extends React.Component {
         this.state.endDate,
         this.refs.reason.getDOMNode().value,
         this.refs.destination.getDOMNode().value);
+
+      this.refs.entityName.getDOMNode().value = '';
+      this.refs.amount.getDOMNode().value = '';
+      this.refs.reason.getDOMNode().value = '';
+      this.refs.destination.getDOMNode().value = '';
+      this.setState({
+        startDate: '',
+        endDate: ''
+      });
+
     }
 
     setStartDate(newValue) {
