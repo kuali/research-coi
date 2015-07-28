@@ -440,7 +440,6 @@ export let getSummariesForUser = (dbInfo, userId, callback) => {
     .innerJoin('disposition_type as t', 'd.disposition_type_cd', 't.type_cd')
     .innerJoin('disclosure_status as s', 'd.status_cd', 's.status_cd')
     .catch(function (err) {
-      console.out(err)
       callback(err);
     }).
     then(function (rows) {
@@ -454,7 +453,6 @@ export let getArchivedDisclosures = (dbInfo, userId, callback) => {
     .from('disclosure as de')
     .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
     .catch(function (err) {
-      console.out(err)
       callback(err);
     }).
     then(function (rows) {
