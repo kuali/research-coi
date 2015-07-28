@@ -1,6 +1,3 @@
-import {ConnectionManager} from './ConnectionManager';
-import _ from 'lodash';
-
 let mockDB = new Map();
 let lastId = 0;
 
@@ -438,35 +435,17 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
 };
 
 export let getSummariesForUser = (dbInfo, userId, callback) => {
-  ConnectionManager.getConnection((connectionErr, connection) => {
-    if (connectionErr) {
-      callback(connectionErr);
-    }
-    else {
-      connection.query(`
-        SELECT
-          t.description as type,
-          UNIX_TIMESTAMP(d.expired_date)*1000 as expired_date,
-          d.title,
-          s.description as status,
-          UNIX_TIMESTAMP(d.last_review_date)*1000 as last_review_date,
-          d.id
-        FROM
-          disclosure d, disclosure_status s, disclosure_type t
-        WHERE
-          d.type_cd = t.type_cd and
-          d.status_cd = s.status_cd`, (queryErr, rows) => {
-            if(queryErr) {
-              callback(queryErr);
-            }
-            else {
-              callback(undefined, rows);
-            }
-            connection.release();
-          }
-      );
-    }
-  }, dbInfo);
+  knex.select('t.description as type', knex.raw('UNIX_TIMESTAMP(d.expired_date)*1000 as expired_date'), 'd.title', 's.description as status', knex.raw('UNIX_TIMESTAMP(d.last_review_date)*1000 as last_review_date'), 'd.id')
+    .from('disclosure as d')
+    .innerJoin('disposition_type as t', 'd.disposition_type_cd', 't.type_cd')
+    .innerJoin('disclosure_status as s', 'd.status_cd', 's.status_cd')
+    .catch(function (err) {
+      console.out(err)
+      callback(err);
+    }).
+    then(function (rows) {
+      callback(undefined, rows);
+    });
 };
 
 export let getArchivedDisclosures = (dbInfo, userId, callback) => {
