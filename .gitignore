@@ -31,3 +31,6 @@ client/build
 COI.mwb.bak
 
 .DS_Store
+
+*.sublime-workspace
+*.sublime-project
