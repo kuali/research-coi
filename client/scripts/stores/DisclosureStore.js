@@ -21,6 +21,9 @@ class _DisclosureStore extends AutoBindingStore {
 
     this.applicationState = {
       archiveFilter: 'ALL',
+      archiveQuery: '',
+      archiveSortField: COIConstants.ARCHIVE_SORT_FIELD.START,
+      archiveSortDirection: COIConstants.SORT_DIRECTION.DESCENDING,
       instructionsShowing: false,
       currentDisclosureState: {
         step: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
@@ -104,7 +107,10 @@ class _DisclosureStore extends AutoBindingStore {
 
   changeArchiveFilter(newValue) {
     this.applicationState.archiveFilter = newValue;
-    this.refreshArchivedDisclosures();
+  }
+
+  changeArchivedQuery(newQuery) {
+    this.applicationState.archiveQuery = newQuery;
   }
 
   toggleInstructions() {
@@ -489,6 +495,11 @@ class _DisclosureStore extends AutoBindingStore {
 
   jumpToStep(step) {
     this.applicationState.currentDisclosureState.step = step;
+  }
+
+  setArchiveSort(params) {
+    this.applicationState.archiveSortField = params.field;
+    this.applicationState.archiveSortDirection = params.direction;
   }
 }
 

@@ -83,7 +83,6 @@ export class DisclosureTableRow extends ResponsiveComponent {
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
-
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={styles.value}>
@@ -93,10 +92,13 @@ export class DisclosureTableRow extends ResponsiveComponent {
           {formatDate(this.props.submittedOn)}
         </span>
         <span role="gridcell" style={styles.value}>
-          {this.props.disposition}
+          {formatDate(this.props.approvedDate)}
         </span>
         <span role="gridcell" style={merge(styles.startDate, styles.value)}>
           {formatDate(this.props.startDate)}
+        </span>
+        <span role="gridcell" style={styles.value}>
+          {this.props.type}
         </span>
       </div>
     );

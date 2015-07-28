@@ -70,7 +70,7 @@ export class SearchBox extends ResponsiveComponent {
         <span style={styles.button}>
           <SearchIcon style={styles.searchIcon} />
         </span>
-        <input className="fill" aria-label="Search here" value={this.props.value} onChange={this.valueChanged} style={styles.textbox} type="text" / >
+        <input className="fill" placeholder={this.props.placeholder} aria-label="Search here" value={this.props.value} onChange={this.valueChanged} style={styles.textbox} type="text" / >
       </span>
     );
   }
