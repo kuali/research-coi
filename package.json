@@ -20,9 +20,11 @@
   "dependencies": {
     "alt": "^0.16.6",
     "babel": "^5.2.17",
+    "bluebird": "^2.9.34",
     "body-parser": "^1.13.2",
     "express": "^4.13.1",
     "knex": "^0.8.6",
+    "lodash": "^3.10.0",
     "mysql": "^2.8.0",
     "object-assign": "^2.0.0",
     "react": "^0.13.3",
