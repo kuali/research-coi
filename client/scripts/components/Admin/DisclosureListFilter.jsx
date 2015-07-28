@@ -1,6 +1,6 @@
 import React from 'react/addons';
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
+import {ResponsiveComponent} from '../ResponsiveComponent';
+import {merge} from '../../merge';
 
 export class DisclosureListFilter extends ResponsiveComponent {
   constructor() {

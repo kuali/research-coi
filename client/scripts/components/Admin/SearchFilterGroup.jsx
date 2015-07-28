@@ -3,6 +3,10 @@ import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {SearchFilter} from './SearchFilter';
 import {AdminActions} from '../../actions/AdminActions';
+import {DisclosureFilterByType} from './DisclosureFilterByType';
+import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
+import {DisclosureFilterByDate} from './DisclosureFilterByDate';
+import {DisclosureListFilter} from './DisclosureListFilter';
 
 export class SearchFilterGroup extends ResponsiveComponent {
   constructor() {
@@ -85,21 +89,45 @@ export class SearchFilterGroup extends ResponsiveComponent {
       container: {
         backgroundColor: '#2E2E2E',
         padding: '12px 42px'
+      },
+      filters: {
+        backgroundColor: window.config.colors.three,
+        textAlign: 'right',
+        color: 'white',
+        width: '100%',
+        position: 'relative'
+      },
+      filter: {
+        padding: 7,
+        paddingRight: 100,
+        fontSize: '.8em',
+        color: 'white'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let searchFilters = this.filters.map((filter) => {
-      return (
-        <SearchFilter key={filter.label}>
-          {filter.label}
-        </SearchFilter>
-      );
-    });
-
     return (
       <div style={merge(styles.container, this.props.style)}>
-        {searchFilters}
+        <DisclosureListFilter style={styles.filter} label='DATE/DATE RANGE'>
+            <DisclosureFilterByDate
+              startDate={this.props.filters.date.start}
+              endDate={this.props.filters.date.end}
+              sortDirection={this.props.sortDirection}
+            />
+        </DisclosureListFilter>
+        <DisclosureListFilter style={styles.filter} label='TYPE' >
+              <DisclosureFilterByType
+                annual={this.props.filters.type.annual}
+                project={this.props.filters.type.project}
+              />
+        </DisclosureListFilter>
+        <DisclosureListFilter style={styles.filter} label='STATUS'>
+            <DisclosureFilterByStatus
+              inProgress={this.props.filters.status.inProgress}
+              awaitingReview={this.props.filters.status.awaitingReview}
+              revisionNecessary={this.props.filters.status.revisionNecessary}
+            />
+        </DisclosureListFilter>
       </div>
     );
   }
