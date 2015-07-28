@@ -1,7 +1,19 @@
 import {ConnectionManager} from './ConnectionManager';
+import _ from 'lodash';
 
 let mockDB = new Map();
 let lastId = 0;
+
+//not using dbInfo
+var knex = require('knex')({
+  client: 'mysql',
+  connection: {
+    host     : '127.0.0.1',
+    user     : 'root',
+    password : '',
+    database : 'coi'
+  }   
+});
 
 export let wipeAll = () => {
   mockDB.clear();
@@ -458,33 +470,17 @@ export let getSummariesForUser = (dbInfo, userId, callback) => {
 };
 
 export let getArchivedDisclosures = (dbInfo, userId, callback) => {
-  ConnectionManager.getConnection((connectionErr, connection) => {
-    if (connectionErr) {
-      callback(connectionErr);
-    }
-    else {
-      connection.query(`
-        SELECT
-          de.type_cd as type,
-          de.title,
-          UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date,
-          dn.description as disposition,
-          de.start_date
-        FROM
-          disclosure de,
-          disposition_type dn
-        WHERE de.disposition_type_cd = dn.type_cd`, (queryErr, rows) => {
-          if (queryErr) {
-            callback(queryErr);
-          }
-          else {
-            callback(undefined, rows);
-          }
-          connection.release();
-        }
-      );
-    }
-  }, dbInfo);
+
+  knex.select('de.type_cd as type', 'de.title', knex.raw('UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date'), 'dn.description as disposition', 'de.start_date')
+    .from('disclosure as de')
+    .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
+    .catch(function (err) {
+      console.out(err)
+      callback(err);
+    }).
+    then(function (rows) {
+      callback(undefined, rows);
+    });
 };
 
 export let approve = (school, disclosureId) => {
