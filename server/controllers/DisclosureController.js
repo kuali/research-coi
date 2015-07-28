@@ -101,8 +101,16 @@ export let init = app => {
       ]
     }
   */
-  app.get('/api/research/coi/disclosure/:id', function(req, res){
-    res.send(DisclosureDB.get(req.dbInfo, req.params.id));
+  app.get('/api/research/coi/disclosures/:id', function(req, res, next){
+    // Use real user id once we have it
+    DisclosureDB.get(req.dbInfo, req.params.id, function(err, disclosure) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(disclosure);
+      }
+    });
   });
 
   // Save existing disclosure with this data

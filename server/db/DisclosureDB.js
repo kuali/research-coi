@@ -1,3 +1,6 @@
+import _ from 'lodash';
+import {camelizeJson} from './JsonUtils';
+
 let mockDB = new Map();
 let lastId = 0;
 
@@ -302,20 +305,45 @@ export let getSampleDisclosures = () => {
   return results;
 };
 
-export let get = (school, disclosureId) => {
-  if (mockDB.has(school) && mockDB.get(school).has(+disclosureId)) {
-    return mockDB.get(school).get(+disclosureId);
-  }
+export let get = (dbInfo, disclosureId, callback) => {
+  var disclosure;
+  knex.select('de.type_cd', 'de.disposition_type_cd', 'de.id', 'de.title', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.status_cd')
+    .from('disclosure as de')
+    .where('id', disclosureId)
+    .then(function (disclosures) {
+      disclosure = _.first(disclosures);
+      return knex.select('e.id', 'e.name', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.description')
+      .from('coi.fin_entity as e')
+      .where('disclosure_id', disclosureId);
+    })
+    .then(function (entities) {
+      disclosure.entities = entities;
+      return knex.select('id', 'fin_entity_id', 'person_type_cd', 'type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
+      .from('relationship')
+      .whereIn('fin_entity_id', _.pluck(entities, 'fin_entity_id'));
+    })
+    .then(function(relationships) {
+      _.forEach(disclosure.entities, function(entity) {
+        entity.relationships = _.filter(relationships, function(relationship){
+          return relationship.fin_entity_id === entity.id;
+        });
+      });
 
-  let disclosures = getSampleDisclosures();
-  let selectedDisclosure;
-  disclosures.forEach((disclosure) => {
-    if (disclosureId === disclosure.id) {
-      selectedDisclosure = disclosure;
-    }
-  });
-  return selectedDisclosure;
+      return knex.select('project.name')
+      .from('declaration')
+      .innerJoin('project', 'project.id', 'declaration.project_id')
+      .whereIn('fin_entity_id', _.pluck(disclosure.entities, 'fin_entity_id'));
+    })
+    .then(function(projects) {
+      disclosure.projects = projects;
+      callback(undefined, camelizeJson(disclosure));
+    })
+    .catch(function (err) {
+      callback(err);
+    });
 };
+
+
 
 export let getSummariesForReview = (school, sortColumn, sortDirection, query) => {
   let results = [{
