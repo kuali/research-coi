@@ -1,19 +1,16 @@
 import _ from 'lodash';
 import {camelizeJson} from './JsonUtils';
+let getKnex;
+try {
+  let extensions = require('research-extensions');
+  getKnex = extensions.getKnex;
+}
+catch (err) {
+  getKnex = require('./ConnectionManager');
+}
 
 let mockDB = new Map();
 let lastId = 0;
-
-//not using dbInfo
-var knex = require('knex')({
-  client: 'mysql',
-  connection: {
-    host     : '127.0.0.1',
-    user     : 'root',
-    password : '',
-    database : 'coi'
-  }   
-});
 
 export let wipeAll = () => {
   mockDB.clear();
@@ -307,6 +304,7 @@ export let getSampleDisclosures = () => {
 
 export let get = (dbInfo, disclosureId, callback) => {
   var disclosure;
+  let knex = getKnex(dbInfo);
   knex.select('de.type_cd', 'de.disposition_type_cd', 'de.id', 'de.title', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.status_cd')
     .from('disclosure as de')
     .where('id', disclosureId)
@@ -463,6 +461,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
 };
 
 export let getSummariesForUser = (dbInfo, userId, callback) => {
+  let knex = getKnex(dbInfo);
   knex.select('t.description as type', knex.raw('UNIX_TIMESTAMP(d.expired_date)*1000 as expired_date'), 'd.title', 's.description as status', knex.raw('UNIX_TIMESTAMP(d.last_review_date)*1000 as last_review_date'), 'd.id')
     .from('disclosure as d')
     .innerJoin('disposition_type as t', 'd.disposition_type_cd', 't.type_cd')
@@ -476,7 +475,7 @@ export let getSummariesForUser = (dbInfo, userId, callback) => {
 };
 
 export let getArchivedDisclosures = (dbInfo, userId, callback) => {
-
+  let knex = getKnex(dbInfo);
   knex.select('de.type_cd as type', 'de.title', knex.raw('UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date'), 'dn.description as disposition', 'de.start_date')
     .from('disclosure as de')
     .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
