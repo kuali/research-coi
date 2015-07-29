@@ -309,7 +309,7 @@ export let get = (dbInfo, disclosureId, callback) => {
     knex.select('de.type_cd', 'de.disposition_type_cd', 'de.id', 'de.title', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.status_cd')
       .from('disclosure as de')
       .where('id', disclosureId),
-      knex.select('e.id', 'e.name', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.description')
+    knex.select('e.id', 'e.name', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.description')
       .from('coi.fin_entity as e')
       .where('disclosure_id', disclosureId)
   ]).then(result => {
