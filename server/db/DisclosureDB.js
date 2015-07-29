@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {camelizeJson} from './JsonUtils';
 let getKnex;
 try {
@@ -305,40 +304,40 @@ export let getSampleDisclosures = () => {
 export let get = (dbInfo, disclosureId, callback) => {
   var disclosure;
   let knex = getKnex(dbInfo);
-  knex.select('de.type_cd', 'de.disposition_type_cd', 'de.id', 'de.title', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.status_cd')
-    .from('disclosure as de')
-    .where('id', disclosureId)
-    .then(function (disclosures) {
-      disclosure = _.first(disclosures);
-      return knex.select('e.id', 'e.name', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.description')
-      .from('coi.fin_entity as e')
-      .where('disclosure_id', disclosureId);
-    })
-    .then(function (entities) {
-      disclosure.entities = entities;
-      return knex.select('id', 'fin_entity_id', 'person_type_cd', 'type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
-      .from('relationship')
-      .whereIn('fin_entity_id', _.pluck(entities, 'fin_entity_id'));
-    })
-    .then(function(relationships) {
-      _.forEach(disclosure.entities, function(entity) {
-        entity.relationships = _.filter(relationships, function(relationship){
-          return relationship.fin_entity_id === entity.id;
-        });
-      });
 
-      return knex.select('project.name')
-      .from('declaration')
-      .innerJoin('project', 'project.id', 'declaration.project_id')
-      .whereIn('fin_entity_id', _.pluck(disclosure.entities, 'fin_entity_id'));
-    })
-    .then(function(projects) {
-      disclosure.projects = projects;
-      callback(undefined, camelizeJson(disclosure));
-    })
-    .catch(function (err) {
-      callback(err);
-    });
+  Promise.all([
+    knex.select('de.type_cd', 'de.disposition_type_cd', 'de.id', 'de.title', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.status_cd')
+      .from('disclosure as de')
+      .where('id', disclosureId),
+    knex.select('e.id', 'e.name', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.description')
+      .from('coi.fin_entity as e')
+      .where('disclosure_id', disclosureId)
+  ]).then(result => {
+    disclosure = result[0][0];
+    disclosure.entities = result[1];
+    knex.select('id', 'fin_entity_id', 'person_type_cd', 'type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
+      .from('relationship')
+      .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.fin_entity_id; }))
+      .then(relationships => {
+        disclosure.entities.forEach(entity => {
+          entity.relationships = relationships.filter(relationship => {
+            return relationship.fin_entity_id === entity.id;
+          });
+        });
+
+        return knex.select('project.name')
+          .from('declaration')
+          .innerJoin('project', 'project.id', 'declaration.project_id')
+          .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.fin_entity_id; }));
+      })
+      .then(projects => {
+        disclosure.projects = projects;
+        callback(undefined, camelizeJson(disclosure));
+      })
+      .catch(err => {
+        callback(err);
+      });
+  });
 };
 
 

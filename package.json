@@ -20,7 +20,6 @@
   "dependencies": {
     "alt": "^0.16.6",
     "babel": "^5.2.17",
-    "bluebird": "^2.9.34",
     "body-parser": "^1.13.2",
     "express": "^4.13.1",
     "knex": "^0.8.6",
