@@ -104,7 +104,7 @@ export class TravelLogForm extends React.Component {
       };
       styles = merge(this.commonStyles, styles);
 
-      return(
+      return (
         <div style={styles.container}>
           <div style={styles.left}>
             <div style={styles.top}>

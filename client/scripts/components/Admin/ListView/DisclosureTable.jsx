@@ -2,7 +2,6 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
-import {SortArrow} from './SortArrow';
 import {TableHeading} from './TableHeading';
 import {AdminActions} from '../../../actions/AdminActions';
 

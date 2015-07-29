@@ -79,6 +79,6 @@ export class ActionButtons extends ResponsiveComponent {
           </span>
         </div>
       </div>
-    );  
+    );
   }
 }
