@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {camelizeJson} from './JsonUtils';
 let getKnex;
 try {
