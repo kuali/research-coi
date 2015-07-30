@@ -12,7 +12,7 @@ export function run() {
     extensions.express(app);
     config = extensions.config;
   } catch (e) {
-    // not found, move on
+    console.log('extensions not found');
   }
   app.use(express.static('client'));
   app.use(bodyParser.json());
