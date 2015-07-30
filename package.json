@@ -40,6 +40,6 @@
     "webpack": "^1.8.11"
   },
   "optionalDependencies": {
-    "research-extenstions": "^0.0.1"
+    "research-extensions": "^0.0.1"
   }
 }
