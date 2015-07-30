@@ -27,6 +27,7 @@
     "mysql": "^2.8.0",
     "object-assign": "^2.0.0",
     "react": "^0.13.3",
+    "react-autosuggest": "^1.18.3",
     "react-day-picker": "^1.0.1",
     "react-router": "^0.13.3",
     "superagent": "^1.2.0"
