@@ -3,6 +3,14 @@ import {merge} from '../../../merge';
 import {ProminentButton} from '../../ProminentButton';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
 import {DatePicker} from '../../DatePicker';
+import AutoSuggest from 'react-autosuggest';
+
+var entitySuggestions = [
+  {entityId: '1', entityName: 'Pfizer'},
+  {entityId: '2', entityName: 'Johnson & Johnson'},
+  {entityId: '3', entityName: 'Phillip Morris'},
+  {entityId: '4', entityName: 'Pacific Life'},
+  {entityId: '5', entityName: 'PepsiCo'}];
 
 export class TravelLogForm extends React.Component {
     constructor() {
@@ -11,32 +19,45 @@ export class TravelLogForm extends React.Component {
       };
 
       this.state = {
+        entityName: '',
         startDate: '',
         endDate: ''
       };
       this.addEntry = this.addEntry.bind(this);
       this.setStartDate = this.setStartDate.bind(this);
       this.setEndDate = this.setEndDate.bind(this);
+      this.onEntityNameChange = this.onEntityNameChange.bind(this);
     }
 
     addEntry() {
       TravelLogActions.addEntry(
-        this.refs.entityName.getDOMNode().value,
+        this.state.entityName,
         this.refs.amount.getDOMNode().value,
         this.state.startDate,
         this.state.endDate,
         this.refs.reason.getDOMNode().value,
         this.refs.destination.getDOMNode().value);
 
-      this.refs.entityName.getDOMNode().value = '';
       this.refs.amount.getDOMNode().value = '';
       this.refs.reason.getDOMNode().value = '';
       this.refs.destination.getDOMNode().value = '';
       this.setState({
+        entityName: '',
         startDate: '',
         endDate: ''
       });
 
+    }
+
+    getSuggestions(input, callback) {
+      let escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let suburbMatchRegex = new RegExp('\\b' + escapedInput, 'i');
+      let suggestions = entitySuggestions
+        .filter( entity => suburbMatchRegex.test(entity.entityName) )
+        .map( entity => entity.entityName )
+        .sort();
+
+      setTimeout(() => callback(null, suggestions), 300);
     }
 
     setStartDate(newValue) {
@@ -48,6 +69,12 @@ export class TravelLogForm extends React.Component {
     setEndDate(newValue) {
       this.setState({
        endDate: newValue
+      });
+    }
+
+    onEntityNameChange(newValue) {
+      this.setState({
+        entityName: newValue
       });
     }
 
@@ -104,6 +131,10 @@ export class TravelLogForm extends React.Component {
       };
       styles = merge(this.commonStyles, styles);
 
+      let inputAttributes = {
+        onChange: this.onEntityNameChange
+      };
+
       return (
         <div style={styles.container}>
           <div style={styles.left}>
@@ -111,7 +142,7 @@ export class TravelLogForm extends React.Component {
               <span style={styles.field}>
                 <div style={{marginBottom: 5, fontWeight: '500'}}>ENTITY NAME</div>
                 <div>
-                  <input required ref="entityName" type="text" style={styles.input}/>
+                  <AutoSuggest suggestions={this.getSuggestions} inputAttributes={inputAttributes}/>
                 </div>
               </span>
             </div>
