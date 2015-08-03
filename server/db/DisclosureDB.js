@@ -1,4 +1,6 @@
 import {camelizeJson} from './JsonUtils';
+import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
+
 let getKnex;
 try {
   let extensions = require('research-extensions');
@@ -23,11 +25,78 @@ export let save = (school, newDisclosure) => {
   return lastId++;
 };
 
-export let saveExisting = (school, disclosureId, newDisclosure) => {
-  if (mockDB.has(school) && mockDB.get(school).has(disclosureId)) {
-    mockDB.get(school).set(disclosureId, newDisclosure);
-  }
+export let saveDisclosure = (dbInfo, record, callback, optionalTrx) => {
+  saveSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
 };
+
+export let getExistingDisclosure = (dbInfo, record, callback, optionalTrx) => {
+  getExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
+};
+
+export let saveExistingDisclosure = (dbInfo, record, callback, optionalTrx) => {
+  saveExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
+};
+
+export let deleteExistingDisclosure = (dbInfo, record, callback, optionalTrx) => {
+  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
+};
+
+export let saveFinEntity = (dbInfo, record, callback, optionalTrx) => {
+  saveSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
+};
+
+export let getExistingEntity = (dbInfo, record, callback, optionalTrx) => {
+  getExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
+};
+
+export let saveExistingFinEntity = (dbInfo, record, callback, optionalTrx) => {
+  saveExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
+};
+
+export let deleteExistingEntity = (dbInfo, record, callback, optionalTrx) => {
+  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
+};
+
+export let saveRelationship = (dbInfo, record, callback, optionalTrx) => {
+  saveSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
+};
+
+export let getExistingRelationship = (dbInfo, record, callback, optionalTrx) => {
+  getExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
+};
+
+export let saveExistingRelationship = (dbInfo, record, callback, optionalTrx) => {
+  saveExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
+};
+
+export let deleteExistingRelationship = (dbInfo, record, callback, optionalTrx) => {
+  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
+};
+
+export let saveDeclaration = (dbInfo, record, callback, optionalTrx) => {
+  saveSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
+};
+
+export let getExistingDeclaration = (dbInfo, record, callback, optionalTrx) => {
+  getExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
+};
+
+export let saveExistingDeclaration = (dbInfo, record, callback, optionalTrx) => {
+  saveExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
+};
+
+export let deleteExistingDeclaration = (dbInfo, record, callback, optionalTrx) => {
+  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
+};
+
+export let saveDisclosureNested = (dbInfo, record, callback) => {
+  //implement
+};
+
+export let saveExistingDisclosureNested = (dbInfo, record, callback) => {
+  //implement
+};
+
 
 // this need not be implemented, just demo data for now
 // until get by disclosure id is implemented.
@@ -306,16 +375,16 @@ export let get = (dbInfo, disclosureId, callback) => {
   let knex = getKnex(dbInfo);
 
   Promise.all([
-    knex.select('de.type_cd', 'de.disposition_type_cd', 'de.id', 'de.title', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.status_cd')
+    knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
       .from('disclosure as de')
       .where('id', disclosureId),
-    knex.select('e.id', 'e.name', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.description')
+    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.name', 'e.description')
       .from('coi.fin_entity as e')
       .where('disclosure_id', disclosureId)
   ]).then(result => {
     disclosure = result[0][0];
     disclosure.entities = result[1];
-    knex.select('id', 'fin_entity_id', 'person_type_cd', 'type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
+    knex.select('id', 'fin_entity_id', 'type_cd', 'person_type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
       .from('relationship')
       .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.fin_entity_id; }))
       .then(relationships => {
@@ -325,13 +394,16 @@ export let get = (dbInfo, disclosureId, callback) => {
           });
         });
 
-        return knex.select('project.name')
+        return knex.select('id', 'fin_entity_id', 'project_id', 'relationship_status_cd')
           .from('declaration')
-          .innerJoin('project', 'project.id', 'declaration.project_id')
           .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.fin_entity_id; }));
       })
-      .then(projects => {
-        disclosure.projects = projects;
+      .then(declarations => {
+        disclosure.entities.forEach(entity => {
+          entity.declarations = declarations.filter(declaration => {
+            return declaration.fin_entity_id === entity.id;
+          });
+        });
         callback(undefined, camelizeJson(disclosure));
       })
       .catch(err => {
@@ -339,8 +411,6 @@ export let get = (dbInfo, disclosureId, callback) => {
       });
   });
 };
-
-
 
 export let getSummariesForReview = (school, sortColumn, sortDirection, query) => {
   let results = [{
