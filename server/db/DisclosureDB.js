@@ -42,19 +42,19 @@ export let deleteExistingDisclosure = (dbInfo, record, callback, optionalTrx) =>
 };
 
 export let saveFinEntity = (dbInfo, record, callback, optionalTrx) => {
-  saveSingleRecord(dbInfo, record, callback, {table: 'fin_etity', pk: 'id'}, optionalTrx);
+  saveSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
 export let getExistingEntity = (dbInfo, record, callback, optionalTrx) => {
-  getExistingSingleRecord(dbInfo, record, callback, {table: 'fin_etity', pk: 'id'}, optionalTrx);
+  getExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
 export let saveExistingFinEntity = (dbInfo, record, callback, optionalTrx) => {
-  saveExistingSingleRecord(dbInfo, record, callback, {table: 'fin_etity', pk: 'id'}, optionalTrx);
+  saveExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
 export let deleteExistingEntity = (dbInfo, record, callback, optionalTrx) => {
-  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'fin_etity', pk: 'id'}, optionalTrx);
+  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
 export let saveRelationship = (dbInfo, record, callback, optionalTrx) => {
