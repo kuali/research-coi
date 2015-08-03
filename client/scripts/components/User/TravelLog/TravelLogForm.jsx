@@ -21,32 +21,37 @@ export class TravelLogForm extends React.Component {
       this.state = {
         entityName: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        isValid: false
       };
       this.addEntry = this.addEntry.bind(this);
       this.setStartDate = this.setStartDate.bind(this);
       this.setEndDate = this.setEndDate.bind(this);
-      this.onEntityNameChange = this.onEntityNameChange.bind(this);
+      this.setEntityName = this.setEntityName.bind(this);
+      this.validateForm = this.validateForm.bind(this);
+      this.validateNumeric = this.validateNumeric.bind(this);
     }
 
     addEntry() {
-      TravelLogActions.addEntry(
-        this.state.entityName,
-        this.refs.amount.getDOMNode().value,
-        this.state.startDate,
-        this.state.endDate,
-        this.refs.reason.getDOMNode().value,
-        this.refs.destination.getDOMNode().value);
+      if (this.state.isValid) {
+        TravelLogActions.addEntry(
+            this.state.entityName,
+            this.refs.amount.getDOMNode().value,
+            this.state.startDate,
+            this.state.endDate,
+            this.refs.reason.getDOMNode().value,
+            this.refs.destination.getDOMNode().value);
 
-      this.refs.amount.getDOMNode().value = '';
-      this.refs.reason.getDOMNode().value = '';
-      this.refs.destination.getDOMNode().value = '';
-      this.setState({
+        this.refs.amount.getDOMNode().value = '';
+        this.refs.reason.getDOMNode().value = '';
+        this.refs.destination.getDOMNode().value = '';
+        this.setState({
         entityName: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        isValid: false
       });
-
+      }
     }
 
     getSuggestions(input, callback) {
@@ -64,18 +69,47 @@ export class TravelLogForm extends React.Component {
       this.setState({
         startDate: newValue
       });
+      this.validateForm();
     }
 
     setEndDate(newValue) {
       this.setState({
        endDate: newValue
       });
+      this.validateForm();
     }
 
-    onEntityNameChange(newValue) {
+    setEntityName(newValue) {
       this.setState({
         entityName: newValue
       });
+      this.validateForm();
+    }
+
+    validateForm() {
+      let isValid = this.state.entityName !== ''
+        && this.refs.amount.getDOMNode().value !== ''
+        && this.state.startDate !== ''
+        && this.state.endDate !== ''
+        && this.refs.reason.getDOMNode().value !== ''
+        && this.refs.destination.getDOMNode().value !== '';
+
+      this.setState({
+        isValid: isValid
+      });
+    }
+
+    validateNumeric(e) {
+      var event = e || window.event;
+      var key = event.keyCode || event.which;
+      key = String.fromCharCode( key );
+      var regex = /[0-9]|\./;
+      if( !regex.test(key) ) {
+        event.returnValue = false;
+        if(event.preventDefault) {
+          event.preventDefault();
+        }
+      }
     }
 
     render() {
@@ -124,6 +158,10 @@ export class TravelLogForm extends React.Component {
           display: 'inline-block',
           textAlign: 'center'
         },
+        disabled: {
+          color: '#AAA',
+          cursor: 'default'
+        },
         invalidError: {
           fontSize: 10,
           marginTop: 2
@@ -132,8 +170,11 @@ export class TravelLogForm extends React.Component {
       styles = merge(this.commonStyles, styles);
 
       let inputAttributes = {
-        onChange: this.onEntityNameChange
+        onChange: this.setEntityName,
+        value: ''
       };
+
+      let addButtonStyle = this.state.isValid ? '' : styles.disabled;
 
       return (
         <div style={styles.container}>
@@ -162,7 +203,7 @@ export class TravelLogForm extends React.Component {
               <span style={styles.field}>
                 <div style={{marginBottom: 5, fontWeight: '500'}}>DESTINATION</div>
                 <div>
-                  <input required ref="destination" type="text" style={styles.input}/>
+                  <input required ref="destination" onChange={this.validateForm} type="text" style={styles.input}/>
                 </div>
               </span>
             </div>
@@ -172,7 +213,7 @@ export class TravelLogForm extends React.Component {
               <span style={styles.field}>
                 <div style={{marginBottom: 5, fontWeight: '500'}}>AMOUNT</div>
                 <div>
-                  <input required ref="amount" type="text" style={styles.input}/>
+                  <input required ref="amount" onChange={this.validateForm} onKeyPress={this.validateNumeric} type="text" style={styles.input}/>
                 </div>
               </span>
             </div>
@@ -181,13 +222,14 @@ export class TravelLogForm extends React.Component {
               <span style={styles.field}>
                 <div style={{marginBottom: 5, fontWeight: '500'}}>REASON</div>
                 <div>
-                  <input required ref="reason" type="text" style={styles.input}/>
+                  <input required ref="reason" onChange={this.validateForm} type="text" style={styles.input}/>
                 </div>
               </span>
             </div>
           </div>
           <div style={styles.right}>
-            <ProminentButton onClick={this.addEntry}>ADD</ProminentButton>
+
+            <ProminentButton onClick={this.addEntry} style={addButtonStyle}>ADD</ProminentButton>
           </div>
         </div>
       );
