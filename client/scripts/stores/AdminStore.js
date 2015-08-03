@@ -39,7 +39,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   refreshDisclosures() {
-    request.get('/api/research/coi/disclosure-summaries')
+    request.get('/api/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})
            .query({sortDirection: this.applicationState.sortDirection})
            .query({query: this.applicationState.query})
@@ -52,7 +52,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   loadDisclosure(id) {
-    request.get('/api/research/coi/disclosure/' + id)
+    request.get('/api/coi/disclosure/' + id)
            .end((err, disclosure) => {
              if (!err) {
                this.applicationState.selectedDisclosure = disclosure.body;

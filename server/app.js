@@ -14,7 +14,7 @@ export function run() {
   } catch (e) {
     console.log('extensions not found');
   }
-  app.use(express.static('client'));
+  app.use('/coi', express.static('client'));
   app.use(bodyParser.json());
   ConfigController.init(app);
   DisclosureController.init(app);

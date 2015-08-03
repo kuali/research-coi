@@ -39,7 +39,7 @@ let routes = (
 );
 
 // Then load config and re-render
-request.get('/api/research/coi/config', (err, config) => {
+request.get('/api/coi/config', (err, config) => {
   if (!err) {
     window.config = config.body;
     Router.run(routes, (Handler, state) => {
