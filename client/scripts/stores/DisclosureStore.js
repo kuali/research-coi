@@ -75,7 +75,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   refreshArchivedDisclosures() {
-    request.get('/api/research/coi/disclosures/archived')
+    request.get('/api/coi/disclosures/archived')
            .end((err, disclosures) => {
              if (!err) {
                this.archivedDisclosures = disclosures.body;
@@ -89,7 +89,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   refreshDisclosureSummaries() {
-    request.get('/api/research/coi/disclosure-user-summaries')
+    request.get('/api/coi/disclosure-user-summaries')
            .end((err, disclosures) => {
              if (!err) {
                this.disclosureSummariesForUser = disclosures.body;
@@ -126,7 +126,7 @@ class _DisclosureStore extends AutoBindingStore {
       this.applicationState.currentDisclosureState.disclosure.answers.push({id: questionId, value: question.answer});
     }
 
-    request.put('/api/research/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id)
+    request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id)
            .send(this.applicationState.currentDisclosureState.disclosure);
   }
 
