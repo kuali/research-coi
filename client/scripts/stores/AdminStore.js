@@ -52,7 +52,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   loadDisclosure(id) {
-    request.get('/api/coi/disclosure/' + id)
+    request.get('/api/coi/disclosures/' + id)
            .end((err, disclosure) => {
              if (!err) {
                this.applicationState.selectedDisclosure = disclosure.body;

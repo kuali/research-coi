@@ -15,10 +15,11 @@ export class EntitiesSummary extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         border: '1px solid #999',
-        boxShadow: '0 0 15px #E6E6E6'
+        boxShadow: '0 0 15px #E6E6E6',
+        backgroundColor: 'white'
       },
       heading: {
-        backgroundColor: window.config.colors.one,
+        backgroundColor: '#202020',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',
@@ -29,7 +30,7 @@ export class EntitiesSummary extends ResponsiveComponent {
       },
       footer: {
         borderTop: '1px solid #999',
-        backgroundColor: window.config.colors.one,
+        backgroundColor: '#202020',
         padding: '4px 15px',
         minHeight: 33,
         color: 'white'
@@ -62,16 +63,16 @@ export class EntitiesSummary extends ResponsiveComponent {
         display: 'inline-block'
       },
       descriptionLabel: {
-        fontWeight: 'bold', 
-        marginTop: 10, 
+        fontWeight: 'bold',
+        marginTop: 10,
         marginBottom: 2
       },
       relationshipDescription: {
-        fontSize: 11, 
+        fontSize: 11,
         fontStyle: 'italic'
       },
       relationshipsLabel: {
-        fontSize: 15, 
+        fontSize: 15,
         marginBottom: 8
       },
       name: {
@@ -98,16 +99,16 @@ export class EntitiesSummary extends ResponsiveComponent {
         let relationships = [];
         for (let j = 0; j < this.props.entities[i].relationships.length; j++) {
           relationships.push(
-            <EntityRelationshipSummary 
+            <EntityRelationshipSummary
               key={i + ':' + j}
-              style={styles.relationshipSummary} 
-              relationship={this.props.entities[i].relationships[j]} 
+              style={styles.relationshipSummary}
+              relationship={this.props.entities[i].relationships[j]}
             />
           );
         }
 
         entities.push(
-          <div 
+          <div
             key={i}
             style={(i === this.props.entities.length - 1) ? styles.lastEntity : styles.entity}
           >
@@ -120,7 +121,7 @@ export class EntitiesSummary extends ResponsiveComponent {
                 </div>
                 <div>
                   <span style={styles.fieldLabel}>Public/Private:</span>
-                  <span style={styles.fieldValue}>{this.props.entities[i].public ? 'Public' : 'Private'}</span>
+                  <span style={styles.fieldValue}>{this.props.entities[i].public === 1 ? 'Public' : 'Private'}</span>
                 </div>
                 <div>
                   <span style={styles.fieldLabel}>Type:</span>

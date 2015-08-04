@@ -2,6 +2,8 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
+import Router from 'react-router';
+let Link = Router.Link;
 
 export class DisclosureTableRow extends ResponsiveComponent {
   constructor() {
@@ -36,7 +38,6 @@ export class DisclosureTableRow extends ResponsiveComponent {
       }
     };
     let styles = merge(this.commonStyles, mobileStyles);
-
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.name}>{this.props.name}</div>
@@ -84,7 +85,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
     return (
-      <div role="row" style={merge(styles.container, this.props.style)}>
+      <Link className="hoverable" to="archivedetail" params={{id: this.props.id}} role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={styles.value}>
           {this.props.name}
         </span>
@@ -100,7 +101,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
         <span role="gridcell" style={styles.value}>
           {this.props.type}
         </span>
-      </div>
+      </Link>
     );
   }
 }

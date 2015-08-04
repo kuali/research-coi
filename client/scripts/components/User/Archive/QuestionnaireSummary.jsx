@@ -20,10 +20,11 @@ export class QuestionnaireSummary extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         border: '1px solid #999',
-        boxShadow: '0 0 15px #E6E6E6'
+        boxShadow: '0 0 15px #E6E6E6',
+        backgroundColor: 'white'
       },
       heading: {
-        backgroundColor: window.config.colors.one,
+        backgroundColor: '#202020',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',
@@ -34,7 +35,7 @@ export class QuestionnaireSummary extends ResponsiveComponent {
       },
       footer: {
         borderTop: '1px solid #999',
-        backgroundColor: window.config.colors.one,
+        backgroundColor: '#202020',
         padding: '4px 15px',
         minHeight: 33,
         color: 'white'
@@ -69,15 +70,15 @@ export class QuestionnaireSummary extends ResponsiveComponent {
 
     let questions = [];
     if(this.props.questions !== undefined) {
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 0; i < 3; i++) {
         questions.push(
           <div key={i} className="flexbox row" style={styles.question}>
             <span style={styles.left}>
-              <div>{i}/3</div>
+              <div>{i + 1}/3</div>
               <div style={styles.answer}>{this.props.questions[i]}</div>
             </span>
             <span className="fill" style={styles.text}>
-              {this.questionText[i-1]}
+              {this.questionText[i]}
             </span>
           </div>
         );
@@ -91,6 +92,6 @@ export class QuestionnaireSummary extends ResponsiveComponent {
           {questions}
         </div>
       </div>
-    ); 
+    );
   }
 }

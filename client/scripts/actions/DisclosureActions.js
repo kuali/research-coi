@@ -171,6 +171,8 @@ class _DisclosureActions {
       direction: direction
     });
   }
+
+  loadArchivedDisclosureDetail(id) { this.dispatch(id); }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

@@ -15,8 +15,7 @@ export class ArchiveDetail extends ResponsiveComponent {
 
     let storeState = DisclosureStore.getState();
     this.state = {
-      // applicationState: storeState.applicationState,
-      archivedDisclosures: storeState.archivedDisclosures
+      disclosureDetail: storeState.archivedDisclosureDetail
     };
 
     this.onChange = this.onChange.bind(this);
@@ -24,7 +23,7 @@ export class ArchiveDetail extends ResponsiveComponent {
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
-    DisclosureActions.loadArchivedDisclosures();
+    DisclosureActions.loadArchivedDisclosureDetail(this.props.params.id);
   }
 
   componentWillUnmount() {
@@ -34,12 +33,11 @@ export class ArchiveDetail extends ResponsiveComponent {
   onChange() {
     let storeState = DisclosureStore.getState();
     this.setState({
-      // applicationState: storeState.applicationState,
-      archivedDisclosures: storeState.archivedDisclosures
+      disclosureDetail: storeState.archivedDisclosureDetail
     });
   }
 
-  shouldComponentUpdate() {return true;}
+  shouldComponentUpdate() { return true; }
 
   renderMobile() {}
 
@@ -57,41 +55,112 @@ export class ArchiveDetail extends ResponsiveComponent {
         paddingTop: 125
       },
       content: {
-        
+        padding: '0 40px 40px 40px',
+        overflow: 'auto',
+        maxWidth: 1100,
+        margin: '0 auto'
       },
       questionnaire: {
         marginBottom: 25
       },
       entities: {
         marginBottom: 25
-      }      
+      },
+      details: {
+      }
     };
     let styles = merge(this.commonStyles, desktopStyles);
-
-    let disclosure = {};
-    if (this.props.params.id) {
-      disclosure = this.state.archivedDisclosures.find(disclosure => {
-        return disclosure.id === this.props.params.id;
-      });      
-    }
+    let disclosure = this.state.disclosureDetail;
 
     let detail;
     if (disclosure) {
+      // faking stuff!
+      disclosure.questionnaire = [
+        'YES',
+        'NO',
+        'YES'
+      ];
+
+      disclosure.entities = [
+        {
+          name: 'Stubbed Glaxo',
+          status: 'Active',
+          type: 'Large Corporation',
+          relationships: [
+            {
+              person: 'Self',
+              relationship: 'Owner',
+              type: 'Stock',
+              amount: '$10,000',
+              comments: 'This is a company I own'
+            }
+          ]
+        },
+        {
+          name: 'Stubbed Xerox',
+          status: 'Active',
+          type: 'Large Corporation',
+          relationships: [
+            {
+              person: 'Self',
+              relationship: 'Owner',
+              type: 'Stock',
+              amount: '$10,000',
+              comments: 'This is a company I own'
+            }
+          ]
+        }
+      ];
+
+      disclosure.projects = [
+        {
+          name: 'Project 1',
+          entities: [
+            {
+              name: 'Stubbed Glaxo',
+              conflict: true,
+              comments: 'Commentario'
+            },
+            {
+              name: 'Stubbed Xerox',
+              conflict: false,
+              comments: 'I think its true'
+            }
+          ]
+        },
+        {
+          name: 'Project 2',
+          entities: [
+            {
+              name: 'Stubbed Glaxo',
+              conflict: false,
+              comments: 'Well maybe'
+            },
+            {
+              name: 'Stubbed Xerox',
+              conflict: true,
+              comments: 'We better talk'
+            }
+          ]
+        }
+      ];
+
+      // end fake stuff
+
       detail = (
-        <div className="fill" ref="bottom">
-          <QuestionnaireSummary 
-            questions={disclosure.questionnaire} 
-            style={styles.questionnaire} 
+        <div style={styles.details} className="fill" ref="bottom">
+          <QuestionnaireSummary
+            questions={disclosure.questionnaire}
+            style={styles.questionnaire}
             id={disclosure.id} />
-          <EntitiesSummary 
-            entities={disclosure.entities} 
+          <EntitiesSummary
+            entities={disclosure.entities}
             style={styles.entities}
             id={disclosure.id} />
-          <DeclarationsSummary 
-            names={nameMap} 
-            relationships={disclosure.projects}
+          <DeclarationsSummary
+            projects={disclosure.projects}
             id={disclosure.id} />
-        </div>      
+        </div>
       );
     }
 

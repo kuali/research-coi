@@ -15,6 +15,7 @@ body {
 
 a {
   text-decoration: none;
+  color: black;
 }
 
 button {
@@ -24,6 +25,10 @@ button {
 
 select, input, textarea {
   outline: 0;
+}
+
+.hoverable:hover {
+  background-color: #F9F9F9;
 }
 
 /* These classes allow us to use vendor prefixes for flexbox (can't do with React inline styles) */

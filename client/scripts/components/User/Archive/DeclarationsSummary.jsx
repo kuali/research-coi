@@ -11,17 +11,14 @@ export class DeclarationsSummary extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let findEntityName = id => {
-      return this.props.names[id];
-    };
-
     let desktopStyles = {
       container: {
         border: '1px solid #999',
-        boxShadow: '0 0 15px #E6E6E6'
+        boxShadow: '0 0 15px #E6E6E6',
+        backgroundColor: 'white'
       },
       heading: {
-        backgroundColor: window.config.colors.one,
+        backgroundColor: '#202020',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',
@@ -36,8 +33,8 @@ export class DeclarationsSummary extends ResponsiveComponent {
         marginBottom: 11
       },
       titles: {
-        borderBottom: '1px solid #ccc', 
-        color: '#888', 
+        borderBottom: '1px solid #ccc',
+        color: '#888',
         fontSize: 12,
         marginBottom: 10
       },
@@ -55,61 +52,57 @@ export class DeclarationsSummary extends ResponsiveComponent {
         verticalAlign: 'top'
       },
       relationship: {
-        marginBottom: 15, 
+        marginBottom: 15,
         paddingBottom: 15,
         borderBottom: '2px solid #666'
       },
-      lastrelationship: {
+      lastRelationship: {
         paddingBottom: 15,
         borderBottom: 0
       },
       declaration: {
-        fontSize: 12, 
+        fontSize: 12,
         marginBottom: 10
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
     let relationships = [];
-    if(this.props.relationships !== undefined && 
-      this.props.relationships.conflicts !== undefined) {
-      for (let i = 0; i < this.props.relationships.length; i++) {
-        let conflicts = [];
-        for (let j = 0; j < this.props.relationships[i].conflicts.length; j++) {
-          conflicts.push(
-            <div 
-              key={this.props.relationships[i].conflicts[j].id} 
-              style={styles.declaration}
-            >
+    let projects = this.props.projects;
+    if(projects !== undefined) {
+      projects.forEach((project, index) => {
+        let entities = [];
+        project.entities.forEach(entity => {
+          entities.push(
+            <div key={entity.id} style={styles.declaration}>
               <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
-                {findEntityName(this.props.relationships[i].conflicts[j].id)}
+                {entity.name}
               </span>
               <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
-                {this.props.relationships[i].conflicts[j].conflict ? 'Conflict' : 'No Conflict'}
+                {entity.conflict ? 'Conflict' : 'No Conflict'}
               </span>
               <span style={merge(styles.comments, {fontStyle: 'italic'})}>
-                {this.props.relationships[i].conflicts[j].comments}
+                {entity.comments}
               </span>
             </div>
           );
-        }
+        });
 
-        let projectName = this.props.relationships[i].name;
+        let projectName = project.name;
+        let isLastRelationshipInList = index === (projects.length - 1);
+        let relationshipStyle = isLastRelationshipInList ? styles.lastRelationship : styles.relationship;
         relationships.push(
-          <div
-            key={projectName} 
-            stylestyle={i === this.props.relationships.length - 1 ? styles.lastrelationship : styles.relationship}
-          >
+          <div key={projectName} style={relationshipStyle}>
             <div style={styles.name}>{projectName}</div>
             <div style={styles.titles}>
               <span style={styles.entityName}>FINANCIAL ENTITY</span>
               <span style={styles.conflict}>REPORTER RELATIONSHIP</span>
               <span style={styles.comments}>REPORTER COMMENTS</span>
             </div>
-            {conflicts}
+            {entities}
           </div>
         );
-      }
+      });
     }
 
     return (
