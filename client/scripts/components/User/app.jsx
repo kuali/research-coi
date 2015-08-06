@@ -10,6 +10,7 @@ import {Dashboard} from './Dashboard/Dashboard';
 import {Disclosure} from './Disclosure';
 import {TravelLog} from './TravelLog/TravelLog';
 import {Archive} from './Archive/Archive';
+import {ArchiveDetail} from './Archive/ArchiveDetail';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
 
@@ -37,6 +38,7 @@ class App extends SizeAwareComponent {
 let routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="archiveview" path="/archiveview" handler={Archive} />
+    <Route name="archivedetail" path="/archiveview/:id" handler={ArchiveDetail} />
     <Route name="dashboard" path="/dashboard" handler={Dashboard} />
     <Route name="disclosure" path="/disclosure" handler={Disclosure} />
     <Route name="travelLog" path="/travelLog" handler={TravelLog} />

@@ -5,6 +5,8 @@ class _DisclosureActions {
 
   loadArchivedDisclosures() { this.dispatch(); }
 
+  changeArchivedQuery(newQuery) { this.dispatch(newQuery); }
+
   loadDisclosureSummaries() { this.dispatch(); }
 
   toggleInstructions() { this.dispatch(); }
@@ -162,6 +164,15 @@ class _DisclosureActions {
   jumpToStep(step) {
     this.dispatch(step);
   }
+
+  setArchiveSort(field, direction) {
+    this.dispatch({
+      field: field,
+      direction: direction
+    });
+  }
+
+  loadArchivedDisclosureDetail(id) { this.dispatch(id); }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

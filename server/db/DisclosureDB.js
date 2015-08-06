@@ -373,7 +373,6 @@ export let getSampleDisclosures = () => {
 export let get = (dbInfo, disclosureId, callback) => {
   var disclosure;
   let knex = getKnex(dbInfo);
-
   Promise.all([
     knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
       .from('disclosure as de')
@@ -382,6 +381,10 @@ export let get = (dbInfo, disclosureId, callback) => {
       .from('coi.fin_entity as e')
       .where('disclosure_id', disclosureId)
   ]).then(result => {
+    if (result[0].length === 0) { // There should be more checks like this
+      callback(new Error('invalid disclosure id'));
+    }
+
     disclosure = result[0][0];
     disclosure.entities = result[1];
     knex.select('id', 'fin_entity_id', 'type_cd', 'person_type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
@@ -545,7 +548,7 @@ export let getSummariesForUser = (dbInfo, userId, callback) => {
 
 export let getArchivedDisclosures = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
-  knex.select('de.type_cd as type', 'de.title', knex.raw('UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date'), 'dn.description as disposition', 'de.start_date')
+  knex.select('de.id', 'de.type_cd as type', 'de.title', knex.raw('UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date'), 'dn.description as disposition', 'de.start_date')
     .from('disclosure as de')
     .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
     .catch(function (err) {

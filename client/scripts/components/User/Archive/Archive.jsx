@@ -5,6 +5,8 @@ import {FilterType} from './FilterType';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {SearchBox} from '../../SearchBox';
+
 const DISCLOSURE_TYPE = {
   PROJECT: '3',
   ANNUAL: '2',
@@ -24,6 +26,7 @@ export class Archive extends ResponsiveComponent {
     };
 
     this.onChange = this.onChange.bind(this);
+    this.changeQuery = this.changeQuery.bind(this);
   }
 
   componentDidMount() {
@@ -44,6 +47,10 @@ export class Archive extends ResponsiveComponent {
   }
 
   shouldComponentUpdate() { return true; }
+
+  changeQuery(newQuery) {
+    DisclosureActions.changeArchivedQuery(newQuery);
+  }
 
   renderMobile() {}
 
@@ -80,18 +87,34 @@ export class Archive extends ResponsiveComponent {
       },
       table: {
         margin: '30px 30px'
+      },
+      searchbox: {
+        width: 300,
+        margin: '30px'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let disclosures;
-    if (this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.ALL) {
-      disclosures = this.state.archivedDisclosures;
+    let query = this.state.applicationState.archiveQuery;
+    if (query) {
+      query = query.toLowerCase();
     }
-    else {
-      disclosures = this.state.archivedDisclosures.filter((disclosure) => {
-        return disclosure.type.toString() === this.state.applicationState.archiveFilter;
-      });
+    let disclosures = this.state.archivedDisclosures.filter(
+      disclosure => {
+        if (query) {
+          return disclosure.title.toLowerCase().indexOf(query) === 0;
+        }
+        else {
+          return true;
+        }
+      }
+    );
+    if (this.state.applicationState.archiveFilter !== DISCLOSURE_TYPE.ALL) {
+      disclosures = disclosures.filter(
+        disclosure => {
+          return disclosure.type.toString() === this.state.applicationState.archiveFilter;
+        }
+      );
     }
 
     return (
@@ -113,8 +136,16 @@ export class Archive extends ResponsiveComponent {
             <h2 style={styles.heading}>Disclosure Archive</h2>
           </div>
 
+          <div>
+            <SearchBox placeholder="Project Title" style={styles.searchbox} value={this.state.applicationState.archivedQuery} onChange={this.changeQuery} />
+          </div>
+
           <div style={styles.table}>
-            <DisclosureTable disclosures={disclosures} />
+            <DisclosureTable
+              sortField={this.state.applicationState.archiveSortField}
+              sortDirection={this.state.applicationState.archiveSortDirection}
+              disclosures={disclosures}
+            />
           </div>
         </span>
       </span>
