@@ -1,13 +1,11 @@
 import ConfigActions from '../actions/ConfigActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
-// import request from 'superagent';
 
 class _ConfigStore extends AutoBindingStore {
   constructor() {
     super(ConfigActions);
 
-    // initialize state here
     this.applicationState = {
       declarationsTypesBeingEdited: {},
       enteringNewType: false,
