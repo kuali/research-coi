@@ -10,7 +10,9 @@ class _ConfigStore extends AutoBindingStore {
       declarationsTypesBeingEdited: {},
       enteringNewType: false,
       disclosureTypesBeingEdited: {},
-      newNotification: {}
+      newNotification: {},
+      newQuestion: undefined,
+      questionsBeingEdited: {}
     };
 
     this.disclosureTypes = [
@@ -55,6 +57,17 @@ class _ConfigStore extends AutoBindingStore {
 
     this.notifications = [];
 
+    this.questions = [
+      {
+        id: 1,
+        type: '',
+        validations: [
+        ],
+        text: 'Denver Broncos or Colorado Rockies.  Doesn\'t really matter.  Neither one works well when what you need is a hammer drill.  Right?',
+        subQuestions: [
+        ]
+      }
+    ];
   }
 
   startEditingDeclarationType(id) {
@@ -177,6 +190,160 @@ class _ConfigStore extends AutoBindingStore {
       warningPeriod: 'Days',
       warningValue: 1
     };
+  }
+
+  findQuestion(id) {
+    if (id) {
+      if (this.applicationState.questionsBeingEdited[id] !== undefined) {
+        return this.applicationState.questionsBeingEdited[id];
+      }
+
+      return this.questions.find(question => { return question.id === id; });
+    }
+    else {
+      return this.applicationState.newQuestion;
+    }
+  }
+
+  validationAddedToQuestion(params) {
+    let targetQuestion = this.findQuestion(params.questionId);
+
+    if (!targetQuestion.validations) {
+      targetQuestion.validations = [];
+    }
+
+    targetQuestion.validations.push({
+      id: new Date().getTime(),
+      text: params.validation
+    });
+  }
+
+  validationRemovedFromQuestion(params) {
+    let targetQuestion = this.findQuestion(params.questionId);
+
+    if (targetQuestion.validations) {
+      targetQuestion.validations = targetQuestion.validations.filter(validation => {
+        return validation.id !== params.validationId;
+      });
+    }
+  }
+
+  questionTypeChosen(params) {
+    debugger;
+    let targetQuestion = this.findQuestion(params.questionId);
+    targetQuestion.type = params.type;
+  }
+
+  questionTextChanged(params) {
+    let targetQuestion = this.findQuestion(params.questionId);
+    targetQuestion.text = params.text;
+  }
+
+
+  cancelNewQuestion() {
+    this.applicationState.newQuestion = undefined;
+  }
+
+  saveNewQuestion() {
+    this.applicationState.newQuestion.id = new Date().getTime();
+    this.questions.push(this.applicationState.newQuestion);
+    this.applicationState.newQuestion = undefined;
+  }
+
+  startNewQuestion() {
+    this.applicationState.newQuestion = {};
+  }
+
+  questionMovedTo(params) {
+    let currentIndex = this.questions.findIndex(question => {
+      return question.id === params.questionId;
+    });
+    if (
+        currentIndex === -1 ||
+        params.position > this.questions.length ||
+        currentIndex === params.position ||
+        (currentIndex + 1) === params.position
+       )
+    {
+      return;
+    }
+
+    if (currentIndex < params.position) {
+      params.position -= 1;
+    }
+
+    let questionRef = this.questions.splice(currentIndex, 1)[0];
+    this.questions.splice(params.position, 0, questionRef);
+  }
+
+  deleteQuestion(questionId) {
+    let index = this.questions.findIndex(question => {
+      return question.id === questionId;
+    });
+
+    if (index !== -1) {
+      this.questions.splice(index, 1);
+    }
+  }
+
+  saveQuestionEdit(questionId) {
+    let index = this.questions.findIndex(question => {
+      return question.id === questionId;
+    });
+
+    if (index !== -1) {
+      this.questions[index] = this.applicationState.questionsBeingEdited[questionId];
+    }
+
+    delete this.applicationState.questionsBeingEdited[questionId];
+  }
+
+  startEditingQuestion(questionId) {
+    let clone = JSON.parse(JSON.stringify(this.findQuestion(questionId)));
+    this.applicationState.questionsBeingEdited[questionId] = clone;
+  }
+
+  cancelQuestionEdit(questionId) {
+    delete this.applicationState.questionsBeingEdited[questionId];
+  }
+
+  findPrecedingQuestion(questionId) {
+    let currentIndex = this.questions.findIndex(question => { return question.id === questionId; });
+
+    if (currentIndex > 0) {
+      return currentIndex - 1;
+    }
+    else {
+      return -1;
+    }
+  }
+
+  makeSubQuestion(questionId) {
+    let previousIndex = this.findPrecedingQuestion(questionId);
+
+    if (previousIndex >= 0) {
+      if (!this.questions[previousIndex].subQuestions) {
+        this.questions[previousIndex].subQuestions = [];
+      }
+      this.questions[previousIndex].subQuestions.push(this.questions[previousIndex + 1]);
+      this.questions.splice(previousIndex + 1, 1);
+    }
+  }
+
+  makeMainQuestion(questionId) {
+    let subIndex;
+    let parentIndex = this.questions.findIndex(question => {
+      subIndex = question.subQuestions.findIndex(subQuestion => {
+        return subQuestion.id === questionId;
+      });
+
+      return subIndex >= 0;
+    });
+
+    if (parentIndex >= 0) {
+      let toInsert = this.questions[parentIndex].subQuestions.splice(subIndex, 1);
+      this.questions.splice(parentIndex + 1, 0, toInsert[0]);
+    }
   }
 }
 

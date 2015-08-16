@@ -59,6 +59,59 @@ class _ConfigActions {
   }
 
   saveNewNotification() { this.dispatch(); }
+
+  validationAddedToQuestion(questionId, validation) {
+    this.dispatch({
+      questionId: questionId,
+      validation: validation
+    });
+  }
+
+  validationRemovedFromQuestion(questionId, validationId) {
+    this.dispatch({
+      questionId: questionId,
+      validationId: validationId
+    });
+  }
+
+  questionTypeChosen(questionId, type) {
+    this.dispatch({
+      questionId: questionId,
+      type: type
+    });
+  }
+
+  questionTextChanged(questionId, text) {
+    this.dispatch({
+      questionId: questionId,
+      text: text
+    });
+  }
+
+  cancelNewQuestion() { this.dispatch({}); }
+
+  saveNewQuestion() { this.dispatch({}); }
+
+  startNewQuestion() { this.dispatch({}); }
+
+  questionMovedTo(questionId, position) {
+    this.dispatch({
+      questionId: questionId,
+      position: position
+    });
+  }
+
+  deleteQuestion(questionId) { this.dispatch(questionId); }
+
+  saveQuestionEdit(questionId) { this.dispatch(questionId); }
+
+  startEditingQuestion(questionId) { this.dispatch(questionId); }
+
+  cancelQuestionEdit(questionId) { this.dispatch(questionId); }
+
+  makeSubQuestion(questionId) { this.dispatch(questionId); }
+
+  makeMainQuestion(questionId) { this.dispatch(questionId); }
 }
 
 export default alt.createActions(_ConfigActions);
