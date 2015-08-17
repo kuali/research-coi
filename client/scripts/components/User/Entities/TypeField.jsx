@@ -10,6 +10,10 @@ export class TypeField extends ResponsiveComponent {
     this.setType = this.setType.bind(this);
   }
 
+  shouldComponentUpdate() {
+    return true;
+  }
+
   setType() {
     this.props.onChange(this.refs.type.getDOMNode().value);
   }

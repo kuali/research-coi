@@ -1,7 +1,6 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {StatusField} from './StatusField';
 import {SponsorField} from './SponsorField';
 import {TypeField} from './TypeField';
 import {PublicField} from './PublicField';
@@ -25,7 +24,6 @@ export class EntityFormPartOne extends ResponsiveComponent {
 
     this.updateFieldValidity = this.updateFieldValidity.bind(this);
     this.formIsValid = this.formIsValid.bind(this);
-    this.setStatus = this.setStatus.bind(this);
     this.setType = this.setType.bind(this);
     this.setPublic = this.setPublic.bind(this);
     this.setSponsor = this.setSponsor.bind(this);
@@ -41,11 +39,6 @@ export class EntityFormPartOne extends ResponsiveComponent {
     }, () => {
       this.props.onValidation(this.formIsValid());
     });
-  }
-
-  setStatus(newStatus) {
-    this.updateFieldValidity('status', newStatus);
-    DisclosureActions.setEntityStatus(newStatus, this.props.id);
   }
 
   setType(newType) {
@@ -108,7 +101,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
         verticalAlign: 'top'
       },
       middle: {
-        width: '50%',
+        width: '100%',
         display: 'inline-block',
         verticalAlign: 'top'
       },
@@ -134,16 +127,10 @@ export class EntityFormPartOne extends ResponsiveComponent {
       }
     }
 
-    let status;
-    let type;
-    let isPublic;
-    let description;
-    if (this.props.update) {
-      status = this.props.status;
-      type = this.props.type;
-      isPublic = this.props.isPublic;
-      description = this.props.description;
-    }
+    let status = this.props.status;
+    let type = this.props.type;
+    let isPublic = this.props.isPublic;
+    let description = this.props.description;
 
     let sponsorValue;
     if (this.props.isSponsor) {
@@ -163,11 +150,11 @@ export class EntityFormPartOne extends ResponsiveComponent {
         <div style={{marginTop: this.props.update ? 0 : 20}}>
           <span style={styles.left}>
             <div style={{marginBottom: 20}}>
-              <StatusField
-                value={status}
+              <TypeField
+                value={type}
                 readonly={this.props.readonly}
-                onChange={this.setStatus}
-                invalid={this.state.validStatus.status === false}
+                onChange={this.setType}
+                invalid={this.state.validStatus.type === false}
               />
             </div>
             <div>
@@ -182,14 +169,6 @@ export class EntityFormPartOne extends ResponsiveComponent {
           <span style={styles.right}>
             <div style={{marginBottom: 20}}>
               <span style={styles.middle}>
-                <TypeField
-                  value={type}
-                  readonly={this.props.readonly}
-                  onChange={this.setType}
-                  invalid={this.state.validStatus.type === false}
-                />
-              </span>
-              <span style={styles.innerRight}>
                 <PublicField
                   value={isPublic}
                   readonly={this.props.readonly}

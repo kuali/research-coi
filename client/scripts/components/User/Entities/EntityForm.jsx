@@ -12,13 +12,12 @@ export class EntityForm extends ResponsiveComponent {
     super();
     this.commonStyles = {};
     this.state = {
-      submitEnabled: props.update,
       invalid: props.update ? false : true
     };
 
     this.next = this.next.bind(this);
+    this.back = this.back.bind(this);
     this.formValidation = this.formValidation.bind(this);
-    this.enableSubmit = this.enableSubmit.bind(this);
     this.cancel = this.cancel.bind(this);
     this.submit = this.submit.bind(this);
     this.done = this.done.bind(this);
@@ -33,6 +32,10 @@ export class EntityForm extends ResponsiveComponent {
       DisclosureActions.entityFormNextClicked(this.props.entity.id);
       this.setState({invalid: true});
     }
+  }
+
+  back() {
+    DisclosureActions.entityFormBackClicked(this.props.entity.id);
   }
 
   cancel() {
@@ -56,12 +59,6 @@ export class EntityForm extends ResponsiveComponent {
 
   undo() {
     DisclosureActions.undoEntityChanges(this.props.snapshot);
-  }
-
-  enableSubmit() {
-    this.setState({
-      submitEnabled: true
-    });
   }
 
   formValidation(isValid) {
@@ -112,6 +109,7 @@ export class EntityForm extends ResponsiveComponent {
 
     let entity = this.props.entity;
     let buttons;
+    let backButton;
     if (this.props.update) {
       currentStep = (
         <div>
@@ -131,11 +129,11 @@ export class EntityForm extends ResponsiveComponent {
             id={entity.id}
             readonly={!this.props.editing}
             update={this.props.update}
-            onRelationAdded={this.enableSubmit}
             relations={this.props.entity.relationships}
             name={this.props.entity.name}
             style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
             onValidation={this.formValidation}
+            appState={this.props.appState}
           />
         </div>
       );
@@ -181,20 +179,30 @@ export class EntityForm extends ResponsiveComponent {
               onValidation={this.formValidation}
             />
           );
+
+          backButton = (
+            <ProminentButton style={styles.button} onClick={this.back}>Back</ProminentButton>
+          );
+
           break;
         default:
           currentStep = (
             <EntityFormPartTwo
               update={this.props.update}
-              onRelationAdded={this.enableSubmit}
               relations={this.props.entity.relationships}
               name={this.props.entity.name}
               onValidation={this.formValidation}
+              appState={this.props.appState}
             />
           );
 
           submitButton = (
             <ProminentButton style={styles.button} onClick={this.submit}>Submit</ProminentButton>
+          );
+
+
+          backButton = (
+            <ProminentButton style={styles.button} onClick={this.back}>Back</ProminentButton>
           );
 
           nextButton = null;
@@ -203,9 +211,10 @@ export class EntityForm extends ResponsiveComponent {
 
       buttons = (
         <span>
+          {backButton}
           <ProminentButton style={styles.button} onClick={this.cancel}>Cancel</ProminentButton>
           {nextButton}
-          {this.state.submitEnabled ? submitButton : ''}
+          {submitButton}
         </span>
       );
     }
