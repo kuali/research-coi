@@ -58,32 +58,33 @@ export class Archive extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         width: '100%',
-        background: '#DDD'
+        background: '#eeeeee'
       },
       sidebar: {
-        width: 225,
+        minWidth: 300,
         display: 'inline-block',
-        backgroundColor: '#202020',
+        backgroundColor: '#eeeeee',
         verticalAlign: 'top',
-        paddingTop: 125
+        paddingTop: 125,
+        boxShadow: '2px 1px 8px #D5D5D5'
       },
       content: {
         display: 'inline-block',
-        verticalAlign: 'top',
-        borderTop: '8px solid ' + window.config.colors.two
+        verticalAlign: 'top'
       },
       header: {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
         position: 'relative',
-        borderBottom: '1px solid #e3e3e3'
+        borderBottom: '1px solid #e3e3e3',
+        boxShadow: '0 2px 8px #D5D5D5'
       },
       heading: {
         fontSize: '33px',
         margin: '0 0 0 0',
         textTransform: 'uppercase',
         fontWeight: 300,
-        color: window.config.colors.one
+        color: '#444'
       },
       table: {
         margin: '30px 30px'

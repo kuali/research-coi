@@ -18,7 +18,7 @@ export class DeclarationsSummary extends ResponsiveComponent {
         backgroundColor: 'white'
       },
       heading: {
-        backgroundColor: '#202020',
+        backgroundColor: '#1481A3',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',

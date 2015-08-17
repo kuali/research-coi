@@ -50,11 +50,11 @@ export class NavSidebar extends ResponsiveComponent {
         margin: '14px 0 14px 0',
         fontSize: 15,
         cursor: 'pointer',
-        color: window.config.colors.one,
+        color: '#1481A3',
         display: this.props.question <= 1 && this.props.step === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE ? 'none' : 'block'
       },
       icon: {
-        color: window.config.colors.one,
+        color: '#1481A3',
         marginRight: 3,
         width: 33,
         height: 33,
@@ -64,7 +64,7 @@ export class NavSidebar extends ResponsiveComponent {
         margin: '14px 0 14px 0',
         fontSize: 15,
         cursor: 'pointer',
-        color: window.config.colors.one
+        color: '#1481A3'
       },
       navigation: {
         verticalAlign: 'top',

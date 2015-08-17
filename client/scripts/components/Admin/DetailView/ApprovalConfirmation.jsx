@@ -26,7 +26,7 @@ export class ApprovalConfirmation extends ResponsiveComponent {
         color: 'white',
         fontSize: 15,
         width: 185,
-        backgroundColor: window.config.colors.three,
+        backgroundColor: '#1481A3',
         padding: '20px 17px'
       },
       button: {

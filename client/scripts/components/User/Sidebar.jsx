@@ -38,12 +38,19 @@ export class Sidebar extends ResponsiveComponent {
         stepState = 'incomplete';
       }
 
+      let extraStyle;
+      if (index === 0) {
+        extraStyle = {
+          borderTop: '1px solid #c0c0c0'
+        };
+      }
       steps.push(
         <SidebarStep
           label={step.label}
           state={stepState}
           key={index}
           step={step.value}
+          style={extraStyle}
         />
       );
     });
@@ -106,13 +113,13 @@ export class Sidebar extends ResponsiveComponent {
         display: 'inline-flex',
         flexDirection: 'column',
         verticalAlign: 'top',
-        backgroundColor: 'rgba(196, 196, 196, 0.2)'
+        backgroundColor: '#eeeeee'
       },
       ul: {
         marginTop: 130,
         listStyleType: 'none',
         padding: 0,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#eeeeee'
       },
       li: {
         padding: '12px 0 12px 58px',
@@ -123,8 +130,9 @@ export class Sidebar extends ResponsiveComponent {
       },
       selected: {
         fontWeight: 'bold',
-        backgroundColor: '#e0e0e0',
-        position: 'relative'
+        backgroundColor: 'white',
+        position: 'relative',
+        borderRight: '5px solid #1481A3'
       },
       incomplete: {
         color: '#bbb'

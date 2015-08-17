@@ -29,7 +29,7 @@ export class Toggle extends ResponsiveComponent {
         position: 'relative'
       },
       selected: {
-        backgroundColor: window.config.colors.two,
+        backgroundColor: '#1481A3',
         fontWeight: 'bold',
         color: 'white',
         zIndex: 2

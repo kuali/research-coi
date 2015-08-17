@@ -150,15 +150,16 @@ export class Disclosure extends ResponsiveComponent {
         width: '80%',
         display: 'inline-block',
         overflow: 'auto',
-        borderTop: '8px solid ' + window.config.colors.two,
-        backgroundColor: '#E5E8ED'
+        backgroundColor: '#eeeeee'
       },
       middle: {
         width: '75%',
         display: 'inline-block'
       },
       sidebar: {
-        width: 258
+        minWidth: 300,
+        boxShadow: '2px 1px 8px #D5D5D5',
+        zIndex: 9
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);

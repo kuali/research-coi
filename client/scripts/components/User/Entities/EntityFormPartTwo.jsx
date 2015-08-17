@@ -179,7 +179,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
       title: {
         fontWeight: this.props.update ? 'normal' : 'bold',
         fontSize: 17,
-        color: window.config.colors.two
+        color: '#1481A3'
       },
       instructions: {
         fontSize: 14,
@@ -219,7 +219,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
         marginBottom: 20
       },
       addButton: {
-        backgroundColor: this.formIsValid() ? window.config.colors.one : '#D8D8D8',
+        backgroundColor: this.formIsValid() ? '#1481A3' : '#D8D8D8',
         color: this.formIsValid() ? 'white' : '#939393',
         padding: '3px 9px 4px 7px',
         marginTop: 10,

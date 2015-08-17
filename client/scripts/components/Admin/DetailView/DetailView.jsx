@@ -74,8 +74,7 @@ export class DetailView extends ResponsiveComponent {
       container: {
       },
       details: {
-        height: '100%',
-        borderTop: '8px solid ' + window.config.colors.two
+        height: '100%'
       },
       list: {
         width: 320

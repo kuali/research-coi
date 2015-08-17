@@ -20,7 +20,7 @@ class App extends React.Component {
         height: '100%'
       },
       header: {
-        boxShadow: '0 2px 12px #A1A1A1',
+        boxShadow: '0 1px 6px #D1D1D1',
         zIndex: 9
       }
     };

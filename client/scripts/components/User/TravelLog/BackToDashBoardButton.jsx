@@ -14,19 +14,21 @@ export class BackToDashBoardButton extends React.Component {
     let styles = {
       container: {
         display: 'block',
-        backgroundColor: window.config.colors.three,
         verticalAlign: 'top',
         padding: '20px 30px 20px 30px',
         cursor: 'pointer',
-        color: 'white',
+        color: '#444',
         fontWeight: '300',
-        marginBottom: 5
+        borderBottom: '1px solid #c0c0c0',
+        borderTop: '1px solid #c0c0c0'
       },
       primary: {
-        fontSize: 25
+        fontSize: 28,
+        fontWeight: 300
       },
       secondary: {
-        fontSize: 22
+        fontSize: 22,
+        fontWeight: 'bold'
       }
     };
     styles = merge(this.commonStyles, styles);

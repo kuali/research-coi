@@ -3,7 +3,7 @@ let mockDB = {
     colors: {
       'one': '#348FF7',
       'two': '#0E4BB6',
-      'three': '#348FF7',
+      'three': '#048EAF',
       'four': '#EDF2F2'
     },
     'instructions': {

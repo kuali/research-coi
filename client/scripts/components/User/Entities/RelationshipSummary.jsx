@@ -19,7 +19,7 @@ export class RelationshipSummary extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        backgroundColor: window.config.colors.three,
+        backgroundColor: '#1481A3',
         borderRadius: 10,
         padding: 13,
         color: 'white',

@@ -41,19 +41,20 @@ export class TravelLog extends React.Component {
         marginTop: 20
       },
       sidebar: {
-        width: 200,
+        minWidth: 300,
         display: 'inline-block',
-        backgroundColor: '#202020',
+        backgroundColor: '#eeeeee',
         verticalAlign: 'top',
-        paddingTop: 125
+        paddingTop: 125,
+        boxShadow: '2px 1px 8px #D5D5D5',
+        zIndex: 9
       },
       content: {
         verticalAlign: 'top',
         width: '80%',
         display: 'inline-block',
         overflow: 'auto',
-        borderTop: '8px solid ' + window.config.colors.two,
-        backgroundColor: '#E5E8ED'
+        backgroundColor: '#eeeeee'
       }
     };
     styles = merge(this.commonStyles, styles);

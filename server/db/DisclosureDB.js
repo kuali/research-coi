@@ -104,9 +104,9 @@ export let getSampleDisclosures = () => {
   let results = [{
     type: 'ANNUAL',
     disposition: 222,
-    id: 34324234,
+    id: 3,
     name: 'Research 1',
-    submittedBy: 'John Jack',
+    submittedBy: 'Johnny Jack',
     submittedOn: 1434148767062,
     startDate: 1434148767062,
     status: 'IN_PROGRESS',
@@ -419,9 +419,9 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
   let results = [{
     type: 'ANNUAL',
     disposition: 222,
-    id: 34324234,
+    id: 3,
     name: 'Research 1',
-    submittedBy: 'John Jack',
+    submittedBy: 'Johnn Jack',
     submittedOn: 1434148767062,
     startDate: 1434148767062,
     status: 'IN_PROGRESS',

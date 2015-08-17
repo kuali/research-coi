@@ -47,7 +47,7 @@ export class EntityFormPartZero extends ResponsiveComponent {
       title: {
         fontWeight: 'bold',
         fontSize: 17,
-        color: window.config.colors.two
+        color: '#1481A3'
       },
       entityName: {
         display: 'inline-block',

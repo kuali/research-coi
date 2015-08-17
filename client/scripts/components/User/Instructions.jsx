@@ -52,7 +52,7 @@ export class Instructions extends ResponsiveComponent {
         display: this.state.visible ? 'block' : 'none',
         color: 'white',
         whiteSpace: 'normal',
-        backgroundColor: window.config.colors.two,
+        backgroundColor: '#444',
         padding: '47px 25px 31px 53px',
         transition: 'transform .3s ease-out',
         transform: this.props.collapsed ? 'translateY(-100%)' : 'translateY(0%)'
@@ -62,7 +62,7 @@ export class Instructions extends ResponsiveComponent {
         padding: '14px 14px 0 0'
       },
       closeButton: {
-        color: window.config.colors.one,
+        color: '#1481A3',
         padding: '3px 16px',
         fontSize: 15,
         marginRight: 23

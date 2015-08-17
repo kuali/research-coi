@@ -43,7 +43,7 @@ export class Question extends ResponsiveComponent {
       nums: {
         fontSize: 38,
         marginLeft: 10,
-        color: window.config.colors.one
+        color: '#1481A3'
       },
       text: {
         fontSize: 20,

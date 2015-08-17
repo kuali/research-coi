@@ -20,7 +20,7 @@ export class DisclosureFilterSearch extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         width: '100%',
-        backgroundColor: window.config.colors.one,
+        backgroundColor: '#49899D',
         padding: '13px 10px',
         textAlign: 'center'
       },

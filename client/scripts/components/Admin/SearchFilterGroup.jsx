@@ -87,7 +87,7 @@ export class SearchFilterGroup extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        backgroundColor: '#2E2E2E',
+        backgroundColor: '#eeeeee',
         padding: '12px 42px'
       },
       filters: {
@@ -101,7 +101,7 @@ export class SearchFilterGroup extends ResponsiveComponent {
         padding: 7,
         paddingRight: 100,
         fontSize: '.8em',
-        color: 'white'
+        color: '#444'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
