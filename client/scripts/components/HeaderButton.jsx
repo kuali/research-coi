@@ -5,19 +5,18 @@ export class HeaderButton extends React.Component {
   render() {
     let styles = {
       container: {
-        borderLeft: '1px solid ' + window.config.colors.one,
         padding: '8px 10px 0 10px',
         height: '100%',
         display: 'inline-block'
       },
       label: {
-        color: 'white',
+        color: '#676767',
         fontSize: 12,
         marginLeft: 4,
         verticalAlign: 'middle'
       },
       icon: {
-        color: window.config.colors.one,
+        color: '#676767',
         height: 26,
         verticalAlign: 'middle',
         width: 26

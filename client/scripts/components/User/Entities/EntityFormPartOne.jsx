@@ -95,7 +95,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
       title: {
         fontWeight: 'bold',
         fontSize: 17,
-        color: window.config.colors.two
+        color: '#1481A3'
       },
       left: {
         width: '33%',

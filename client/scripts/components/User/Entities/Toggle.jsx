@@ -38,7 +38,7 @@ export class Toggle extends ResponsiveComponent {
         width: 135,
         color: 'white',
         border: '1px solid #666666',
-        backgroundColor: window.config.colors.two,
+        backgroundColor: '#1481A3',
         borderRadius: 5
       }
     };

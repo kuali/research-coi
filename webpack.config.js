@@ -3,7 +3,8 @@ var path = require('path');
 module.exports = {
   entry: {
     user: './client/scripts/components/User/app.jsx',
-    admin: ['./client/scripts/components/Admin/admin.jsx']
+    admin: './client/scripts/components/Admin/admin.jsx',
+    config: './client/scripts/components/Config/config.jsx'
   },
   output: {
     path: path.join(__dirname, 'client/build'),

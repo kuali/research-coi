@@ -15,10 +15,10 @@ export class AppHeader extends ResponsiveComponent {
     super();
     this.commonStyles = {
       logo: {
-        width: 37,
+        width: 26,
         height: 26,
         verticalAlign: 'middle',
-        color: 'white'
+        color: 'black'
       },
       kuali: {
         display: 'inline-block',
@@ -26,14 +26,14 @@ export class AppHeader extends ResponsiveComponent {
         marginTop: '-3px'
       },
       product: {
-        color: 'white',
+        color: 'black',
         fontSize: 20,
         fontWeight: '300',
         verticalAlign: 'middle',
         paddingLeft: 5
       },
       modulename: {
-        color: 'white',
+        color: 'black',
         fontSize: 8,
         fontWeight: '300',
         verticalAlign: 'middle',
@@ -52,7 +52,7 @@ export class AppHeader extends ResponsiveComponent {
         height: 42
       },
       icon: {
-        color: window.config.colors.one,
+        color: '#676767',
         width: '65px',
         verticalAlign: 'middle',
         padding: '0 10px'
@@ -92,7 +92,7 @@ export class AppHeader extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        backgroundColor: '#202020',
+        backgroundColor: 'white',
         padding: '0 10px 0 50px'
       }
     };

@@ -39,17 +39,17 @@ export class NewEntityButton extends ResponsiveComponent {
         fontWeight: 400
       },
       financialText: {
-        color: window.config.colors.two,
+        color: '#1481A3',
         fontWeight: 400
       },
       entityText: {
-        color: window.config.colors.two,
+        color: '#1481A3',
         fontWeight: 400
       },
       img: {
         height: 42,
         width: 42,
-        color: window.config.colors.two
+        color: '#1481A3'
       },
       text: {
         verticalAlign: 'middle',

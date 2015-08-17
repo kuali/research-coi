@@ -52,7 +52,8 @@ export class DisclosureHeader extends ResponsiveComponent {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
         position: 'relative',
-        borderBottom: '1px solid #e3e3e3'
+        borderBottom: '1px solid #e3e3e3',
+        boxShadow: '0 2px 8px #D5D5D5'
       },
       instructionButton: {
         top: 0,
@@ -71,7 +72,7 @@ export class DisclosureHeader extends ResponsiveComponent {
         margin: '0 0 0 0',
         'textTransform': 'uppercase',
         fontWeight: 300,
-        color: window.config.colors.one
+        color: '#444'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);

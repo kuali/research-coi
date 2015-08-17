@@ -36,8 +36,9 @@ export class SidebarStep extends ResponsiveComponent {
       },
       selected: {
         fontWeight: 'bold',
-        backgroundColor: '#262626',
-        position: 'relative'
+        backgroundColor: 'white',
+        position: 'relative',
+        borderRight: '5px solid #1481A3'
       },
       image: {
         width: 42,
@@ -80,30 +81,19 @@ export class SidebarStep extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        padding: '3px 0 3px 7px',
-        fontSize: 16,
+        padding: '20px 20px 20px 40px',
+        fontSize: 22,
         textTransform: 'uppercase',
-        whiteSpace: 'nowrap'
-      },
-      arrow: {
-        display: 'inline-block',
-        height: 0,
-        width: 0,
-        border: '10px solid transparent',
-        borderLeft: '18px solid #ececec',
-        borderBottom: '26px solid transparent',
-        borderTop: '26px solid transparent',
-        position: 'absolute',
-        right: '-27px',
-        top: 0,
-        zIndex: '99'
+        whiteSpace: 'nowrap',
+        borderBottom: '1px solid #c0c0c0'
       },
       selected: {
         fontWeight: 'bold',
-        backgroundColor: '#ECECEC',
+        backgroundColor: 'white',
         position: 'relative',
         color: 'black',
-        boxShadow: '0 0 8px #CDCDCD'
+        boxShadow: '0 0 8px #CDCDCD',
+        borderRight: '5px solid #1481A3'
       },
       clickable: {
         cursor: 'pointer'
@@ -120,27 +110,23 @@ export class SidebarStep extends ResponsiveComponent {
     switch (this.props.state.toLowerCase()) {
       case 'complete':
         return (
-          <div style={styles.clickable} onClick={this.navigate}>
+          <div style={merge(styles.clickable, this.props.style)} onClick={this.navigate}>
             <li style={styles.container}>
-              <CompletedStepIcon style={styles.image} />
               <span style={styles.stepName}>{this.props.label}</span>
             </li>
           </div>
         );
       case 'active':
         return (
-          <div style={styles.clickable} onClick={this.navigate}>
+          <div style={merge(styles.clickable, this.props.style)} onClick={this.navigate}>
             <li style={merge(styles.container, styles.selected)}>
-              <CurrentStepIcon style={styles.image} />
               <span style={styles.stepName}>{this.props.label}</span>
-              <div style={styles.arrow}></div>
             </li>
           </div>
         );
       case 'incomplete':
         return (
-          <li style={merge(styles.container, styles.incomplete)}>
-            {<FutureStepIcon style={styles.image} />}
+          <li style={merge(styles.container, styles.incomplete, this.props.style)}>
             <span style={styles.stepName}>{this.props.label}</span>
           </li>
         );

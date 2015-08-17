@@ -50,18 +50,21 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         display: 'block',
-        backgroundColor: window.config.colors.three,
+        backgroundColor: '#eeeeee',
         verticalAlign: 'top',
         padding: '20px 30px 20px 30px',
         cursor: 'pointer',
-        color: 'white',
-        fontWeight: '300'
+        color: '#444',
+        fontWeight: '300',
+        borderBottom: '1px solid #c0c0c0'
       },
       primary: {
-        fontSize: 25
+        fontSize: 28,
+        fontWeight: 300
       },
       secondary: {
-        fontSize: 22
+        fontSize: 22,
+        fontWeight: 'bold'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);

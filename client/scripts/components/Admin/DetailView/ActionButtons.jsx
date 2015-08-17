@@ -37,7 +37,7 @@ export class ActionButtons extends ResponsiveComponent {
         verticalAlign: 'middle',
         display: 'inline-block',
         marginRight: 7,
-        color: window.config.colors.one
+        color: '#1481A3'
       },
       label: {
         display: 'inline-block',

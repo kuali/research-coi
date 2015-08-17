@@ -62,7 +62,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
       container: {
         color: 'white',
         fontWeight: 'bold',
-        backgroundColor: window.config.colors.two,
+        backgroundColor: '#1481A3',
         textAlign: 'center',
         fontSize: 22,
         position: 'relative',

@@ -42,7 +42,7 @@ export class QuestionSummary extends ResponsiveComponent {
       nums: {
         fontSize: 38,
         marginLeft: 10,
-        color: window.config.colors.one
+        color: '#1481A3'
       },
       question: {
         width: '78%',
@@ -59,9 +59,9 @@ export class QuestionSummary extends ResponsiveComponent {
       editlink: {
         fontSize: 12,
         margin: '10px 0 0 8px',
-        color: window.config.colors.one,
+        color: '#1481A3',
         cursor: 'pointer',
-        borderBottom: '1px dotted ' + window.config.colors.one,
+        borderBottom: '1px dotted #1481A3',
         display: 'inline-block'
       }
     };

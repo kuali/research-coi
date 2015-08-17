@@ -22,7 +22,8 @@ export class DisclosureList extends ResponsiveComponent {
         backgroundColor: '#e0e0e0',
         borderLeft: '1px solid #6d6d6d',
         borderRight: '1px solid #6d6d6d',
-        verticalAlign: 'top'
+        verticalAlign: 'top',
+        boxShadow: '2px 1px 6px #D1D1D1'
       },
       list: {
         listStyleType: 'none',

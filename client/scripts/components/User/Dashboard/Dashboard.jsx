@@ -109,32 +109,36 @@ export class Dashboard extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         width: '100%',
-        background: '#DDD'
+        backgroundColor: '#eeeeee'
       },
       sidebar: {
-        width: 200,
+        minWidth: 300,
         display: 'inline-block',
-        backgroundColor: '#202020',
+        backgroundColor: '#eeeeee',
         verticalAlign: 'top',
-        paddingTop: 125
+        paddingTop: 125,
+        boxShadow: '1px 0px 6px #D1D1D1'
       },
       content: {
         display: 'inline-block',
-        verticalAlign: 'top',
-        borderTop: '8px solid ' + window.config.colors.two
+        verticalAlign: 'top'
       },
       header: {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
         position: 'relative',
-        borderBottom: '1px solid #e3e3e3'
+        borderBottom: '1px solid #e3e3e3',
+        boxShadow: '0 1px 6px #D1D1D1'
       },
       heading: {
         fontSize: '33px',
         margin: '0 0 0 0',
         textTransform: 'uppercase',
         fontWeight: 300,
-        color: window.config.colors.one
+        color: '#525252'
+      },
+      annualButton: {
+        borderTop: '1px solid #c0c0c0'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -150,7 +154,7 @@ export class Dashboard extends ResponsiveComponent {
       <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
           <div>
-            <NewDisclosureButton type="Annual" />
+            <NewDisclosureButton type="Annual" style={styles.annualButton} />
           </div>
           <div>
           <TravelLogButton />

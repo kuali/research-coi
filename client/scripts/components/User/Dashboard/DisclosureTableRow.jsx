@@ -141,23 +141,23 @@ export class DisclosureTableRow extends ResponsiveComponent {
       },
       two: {
         width: '25%',
-        color: window.config.colors.two,
+        color: '#1481A3',
         fontSize: 18
       },
       three: {
         width: '25%',
-        color: window.config.colors.two,
+        color: '#1481A3',
         fontSize: 18
       },
       four: {
         width: '15%'
       },
       type: {
-        color: window.config.colors.two,
+        color: '#1481A3',
         fontSize: 17
       },
       extra: {
-        color: window.config.colors.two,
+        color: '#1481A3',
         fontSize: 14
       },
       button: {

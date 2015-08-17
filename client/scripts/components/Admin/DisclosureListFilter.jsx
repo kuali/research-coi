@@ -62,7 +62,7 @@ export class DisclosureListFilter extends ResponsiveComponent {
         position: 'absolute',
         top: 0,
         left: '100%',
-        backgroundColor: '#cdcdcd',
+        backgroundColor: '#eeeeee',
         padding: 10,
         zIndex: 1,
         display: this.state.active ? 'block' : 'none',

@@ -138,14 +138,16 @@ export class ListView extends ResponsiveComponent {
       container: {
       },
       sidebar: {
-        width: 225,
-        backgroundColor: '#202020'
+        minWidth: 300,
+        backgroundColor: '#eeeeee',
+        boxShadow: '2px 0px 6px #D1D1D1',
+        zIndex: 9
       },
       content: {
         display: 'inline-block',
         padding: '15px 30px',
-        borderTop: '6px solid ' + window.config.colors.three,
-        backgroundColor: '#E8E9E6'
+        borderTop: '6px solid #1481A3',
+        backgroundColor: '#eeeeee'
       },
       searchbox: {
         width: 300
@@ -158,11 +160,11 @@ export class ListView extends ResponsiveComponent {
       },
       previousPage: {
         padding: '7px 20px 7px 16px',
-        backgroundColor: window.config.colors.three
+        backgroundColor: '#1481A3'
       },
       nextPage: {
         padding: '7px 20px',
-        backgroundColor: window.config.colors.two
+        backgroundColor: '#1481A3'
       },
       table: {
         marginTop: 21,

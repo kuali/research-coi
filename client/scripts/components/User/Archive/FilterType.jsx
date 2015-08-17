@@ -26,9 +26,9 @@ export class FilterType extends ResponsiveComponent {
         margin: '30px 0',
         lineHeight: '15px',
         cursor: 'pointer',
-        color: this.props.active ? 'white' : '#CCC',
+        color: this.props.active ? 'black' : '#444',
         fontWeight: this.props.active ? 'bold' : 'normal',
-        borderRight: this.props.active ? '7px solid #535353' : '7px solid transparent'
+        borderRight: this.props.active ? '7px solid #048EAF' : '7px solid transparent'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);

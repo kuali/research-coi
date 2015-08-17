@@ -19,7 +19,7 @@ export class EntitiesSummary extends ResponsiveComponent {
         backgroundColor: 'white'
       },
       heading: {
-        backgroundColor: '#202020',
+        backgroundColor: '#1481A3',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',
@@ -30,7 +30,7 @@ export class EntitiesSummary extends ResponsiveComponent {
       },
       footer: {
         borderTop: '1px solid #999',
-        backgroundColor: '#202020',
+        backgroundColor: '#1481A3',
         padding: '4px 15px',
         minHeight: 33,
         color: 'white'

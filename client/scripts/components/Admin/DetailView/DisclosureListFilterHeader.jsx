@@ -33,7 +33,7 @@ export class DisclosureListFilterHeader extends ResponsiveComponent {
       heading: {
         fontWeight: 'bold',
         textAlign: 'right',
-        backgroundColor: window.config.colors.two,
+        backgroundColor: '#1481A3',
         color: 'white',
         padding: 10,
         paddingRight: 100,
@@ -41,7 +41,7 @@ export class DisclosureListFilterHeader extends ResponsiveComponent {
         fontSize: 17
       },
       filters: {
-        backgroundColor: window.config.colors.three,
+        backgroundColor: '#49899D',
         textAlign: 'right',
         color: 'white',
         width: '100%',

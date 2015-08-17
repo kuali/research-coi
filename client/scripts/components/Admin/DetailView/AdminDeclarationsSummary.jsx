@@ -37,7 +37,7 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
         boxShadow: '0 0 15px #E6E6E6'
       },
       heading: {
-        backgroundColor: window.config.colors.one,
+        backgroundColor: '#1481A3',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',
@@ -48,7 +48,7 @@ export class AdminDeclarationsSummary extends ResponsiveComponent {
       },
       footer: {
         borderTop: '1px solid #999',
-        backgroundColor: this.props.comment && !this.props.expandedComments ? window.config.colors.three : window.config.colors.one,
+        backgroundColor: '#1481A3',
         padding: '4px 15px',
         minHeight: 33,
         color: 'white'
