@@ -128,6 +128,7 @@ export class Entity extends ResponsiveComponent {
           entity={this.props.entity}
           editing={this.props.editing}
           snapshot={this.props.snapshot}
+          appState={this.props.appState}
         />
       </div>
     );

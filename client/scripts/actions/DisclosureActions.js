@@ -27,6 +27,8 @@ class _DisclosureActions {
 
   entityFormNextClicked(entityId) { this.dispatch(entityId); }
 
+  entityFormBackClicked(entityId) { this.dispatch(entityId); }
+
   setEntityStatus(newStatus, id) {
     this.dispatch({
       id: id,
@@ -62,15 +64,18 @@ class _DisclosureActions {
     });
   }
 
-  addEntityRelationship(person, relation, type, amount, comment, entityId) {
-    this.dispatch({
-      person: person,
-      relation: relation,
-      type: type,
-      amount: amount,
-      comment: comment,
-      id: entityId
-    });
+  setEntityRelationshipPerson(person) { this.dispatch(person); }
+
+  setEntityRelationshipRelation(relation) { this.dispatch(relation); }
+
+  setEntityRelationshipType(type) { this.dispatch(type); }
+
+  setEntityRelationshipAmount(amount) { this.dispatch(amount); }
+
+  setEntityRelationshipComment(comment) { this.dispatch(comment); }
+
+  addEntityRelationship(entityId) {
+    this.dispatch(entityId);
   }
 
   removeEntityRelationship(relationId, entityId) {

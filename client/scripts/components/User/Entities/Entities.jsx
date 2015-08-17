@@ -74,6 +74,7 @@ export class Entities extends ResponsiveComponent {
               editing={entityAppState ? entityAppState.editing : false}
               snapshot={entityAppState ? entityAppState.snapshot : undefined}
               key={entity.id}
+              appState={this.props.applicationState}
             />
           );
         }
@@ -119,6 +120,7 @@ export class Entities extends ResponsiveComponent {
           style={styles.newentityform}
           entity={this.props.inProgress}
           editing={true}
+          appState={this.props.applicationState}
         />
       );
     }

@@ -29,36 +29,18 @@ export class EntityFormPartTwo extends ResponsiveComponent {
     this.personSelected = this.personSelected.bind(this);
     this.relationChosen = this.relationChosen.bind(this);
     this.formIsValid = this.formIsValid.bind(this);
+    this.commentChanged = this.commentChanged.bind(this);
   }
+
+  shouldComponentUpdate() { return true; }
 
   addRelation() {
     if (!this.formIsValid()) {
       return;
     }
 
-    let personSelect = this.refs.personSelect.getDOMNode();
-    let commentTextArea = this.refs.commentTextArea.getDOMNode();
-    let typeSelect = React.findDOMNode(this.refs.typeSelect);
-    let amountSelect = React.findDOMNode(this.refs.amountSelect);
+    DisclosureActions.addEntityRelationship(this.props.id);
 
-    DisclosureActions.addEntityRelationship(
-      personSelect.value,
-      this.state.relation,
-      typeSelect ? typeSelect.value : '',
-      amountSelect ? amountSelect.value : '',
-      commentTextArea.value,
-      this.props.id
-    );
-
-    // Reset values
-    personSelect.value = '';
-    commentTextArea.value = '';
-    if (typeSelect) {
-      typeSelect.value = '';
-    }
-    if (amountSelect) {
-      amountSelect.value = '';
-    }
     this.setState({
       relation: '',
       validStatus: {
@@ -68,36 +50,26 @@ export class EntityFormPartTwo extends ResponsiveComponent {
         relationship: false
       }
     });
-
-    // Notify parent
-    this.props.onRelationAdded();
   }
 
   typeSelected() {
-    this.setState({
-      validStatus: merge(this.state.validStatus, {
-        type: this.refs.typeSelect.getDOMNode().value !== ''
-      })
-    });
+    DisclosureActions.setEntityRelationshipType(this.refs.typeSelect.getDOMNode().value);
   }
 
   amountSelected() {
-    this.setState({
-      validStatus: merge(this.state.validStatus, {
-        amount: this.refs.amountSelect.getDOMNode().value !== ''
-      })
-    });
+    DisclosureActions.setEntityRelationshipAmount(this.refs.amountSelect.getDOMNode().value);
   }
 
   personSelected() {
-    this.setState({
-      validStatus: merge(this.state.validStatus, {
-        person: this.refs.personSelect.getDOMNode().value !== ''
-      })
-    });
+    DisclosureActions.setEntityRelationshipPerson(this.refs.personSelect.getDOMNode().value);
+  }
+
+  commentChanged() {
+    DisclosureActions.setEntityRelationshipComment(this.refs.commentTextArea.getDOMNode().value);
   }
 
   relationChosen(relation) {
+    DisclosureActions.setEntityRelationshipRelation(relation);
     this.setState({
       relation: relation,
       validStatus: merge(this.state.validStatus, {
@@ -152,21 +124,23 @@ export class EntityFormPartTwo extends ResponsiveComponent {
   }
 
   formIsValid() {
-    switch (this.state.relation) {
-      case 'Offices/Positions':
-        return this.state.validStatus.type &&
-               this.state.validStatus.person &&
-               this.state.validStatus.relationship;
-      case 'Paid Activities':
-        return this.state.validStatus.amount &&
-               this.state.validStatus.person &&
-               this.state.validStatus.relationship;
-      default:
-        return this.state.validStatus.type &&
-               this.state.validStatus.amount &&
-               this.state.validStatus.person &&
-               this.state.validStatus.relationship;
-    }
+    return true;
+
+    // switch (this.state.relation) {
+    //   case 'Offices/Positions':
+    //     return this.state.validStatus.type &&
+    //            this.state.validStatus.person &&
+    //            this.state.validStatus.relationship;
+    //   case 'Paid Activities':
+    //     return this.state.validStatus.amount &&
+    //            this.state.validStatus.person &&
+    //            this.state.validStatus.relationship;
+    //   default:
+    //     return this.state.validStatus.type &&
+    //            this.state.validStatus.amount &&
+    //            this.state.validStatus.person &&
+    //            this.state.validStatus.relationship;
+    // }
   }
 
   renderMobile() {}
@@ -260,7 +234,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
       typeSection = (
         <div style={styles.typeSection}>
           <div>Type</div>
-          <select onChange={this.typeSelected} ref="typeSelect" style={styles.dropDown}>
+          <select onChange={this.typeSelected} ref="typeSelect" value={this.props.appState.potentialRelationship.type} style={styles.dropDown}>
             <option value="">--SELECT--</option>
             {typeOptions}
           </select>
@@ -273,7 +247,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
       amountSection = (
         <div style={styles.amountSection}>
           <div>Amount</div>
-          <select onChange={this.amountSelected} ref="amountSelect" defaultValue="" style={styles.dropDown}>
+          <select onChange={this.amountSelected} ref="amountSelect" value={this.props.appState.potentialRelationship.amount} style={styles.dropDown}>
             <option value="">--SELECT--</option>
             <option value="$1 - $5,000">$1 - $5,000</option>
             <option value="$5,001 - $10,000">$5,001 - $10,000</option>
@@ -331,7 +305,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
               <div style={styles.personSection}>
                 <div>Person</div>
                 <div>
-                  <select onChange={this.personSelected} ref="personSelect" defaultValue="Self" style={styles.dropDown}>
+                  <select onChange={this.personSelected} ref="personSelect" value={this.props.appState.potentialRelationship.person} style={styles.dropDown}>
                     <option value="">--SELECT--</option>
                     <option value="Self">Self</option>
                     <option value="Spouse">Spouse</option>
@@ -347,7 +321,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
               <div>Relationship</div>
               <div>
                 <ToggleSet
-                  selected={this.state.relation}
+                  selected={this.props.appState.potentialRelationship.relationship}
                   onChoose={this.relationChosen}
                   values={[
                     'Ownership',
@@ -362,7 +336,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
               <div style={styles.commentArea}>
                 <div>Comments</div>
                 <div>
-                  <textarea style={styles.textarea} ref="commentTextArea" />
+                  <textarea onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={styles.textarea} ref="commentTextArea" />
                 </div>
               </div>
               <div style={styles.addButtonSection}>

@@ -42,7 +42,16 @@ class _DisclosureStore extends AutoBindingStore {
       },
       declarationView: 'Project View',
       entityStates: {},
-      entityInProgress: {}
+      entityInProgress: {
+        status: 'ACTIVE'
+      },
+      potentialRelationship: {
+        person: '',
+        relation: '',
+        type: '',
+        amount: '',
+        comments: ''
+      }
     };
 
     this.projects = [
@@ -220,6 +229,20 @@ class _DisclosureStore extends AutoBindingStore {
     }
   }
 
+  entityFormBackClicked(entityId) {
+    if (entityId) {
+      if (!this.applicationState.entityStates[entityId]) {
+        this.applicationState.entityStates[entityId] = {};
+      }
+      this.applicationState.entityStates[entityId].formStep--;
+    }
+    else {
+      if (this.applicationState.newEntityFormStep > 0) {
+        this.applicationState.newEntityFormStep--;
+      }
+    }
+  }
+
   getEntity(id) {
     return this.entities.find(entity => {
       return entity.id === id;
@@ -251,27 +274,66 @@ class _DisclosureStore extends AutoBindingStore {
     entity.description = params.description;
   }
 
-  addEntityRelationship(params) {
-    let person = params.person;
-    let relation = params.relation;
-    let type = params.type;
-    let amount = params.amount;
-    let comment = params.comment;
+  setEntityRelationshipPerson(person) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
 
-    let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
+    this.applicationState.potentialRelationship.person = person;
+  }
+
+  setEntityRelationshipRelation(relation) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    this.applicationState.potentialRelationship.relationship = relation;
+  }
+
+  setEntityRelationshipType(type) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    this.applicationState.potentialRelationship.type = type;
+  }
+
+  setEntityRelationshipAmount(amount) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    this.applicationState.potentialRelationship.amount = amount;
+  }
+
+  setEntityRelationshipComment(comment) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    this.applicationState.potentialRelationship.comments = comment;
+  }
+
+  addEntityRelationship(entityId) {
+    let entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
 
     if (!entity.relationships) {
       entity.relationships = [];
     }
 
-    entity.relationships.push({
-      id: new Date().getTime() + 'FAKE', // relationship id
-      person: person,
-      relationship: relation,
-      type: type,
-      amount: amount,
-      comments: comment
-    });
+    if (!this.applicationState.potentialRelationship.id) {
+      this.applicationState.potentialRelationship.id = new Date().getTime() + 'FAKE';
+    }
+
+    entity.relationships.push(this.applicationState.potentialRelationship);
+
+    this.applicationState.potentialRelationship = {
+      person: '',
+      relation: '',
+      type: '',
+      amount: '',
+      comments: ''
+    };
   }
 
   removeEntityRelationship(params) {
@@ -285,6 +347,10 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityFormClosed(entityId) {
     if (entityId) {
+      if (this.applicationState.potentialRelationship.person.length > 0) {
+        this.addEntityRelationship(entityId);
+      }
+
       if (!this.applicationState.entityStates[entityId]) {
         this.applicationState.entityStates[entityId] = {};
       }
@@ -297,6 +363,10 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   saveInProgressEntity(entity) {
+    if (this.applicationState.potentialRelationship.person.length > 0) {
+      this.addEntityRelationship();
+    }
+
     entity.id = new Date().getTime(); // For mocking backend
 
     if (!this.entities) {
@@ -334,13 +404,13 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   undoEntityChanges(snapshot) {
-    for (let i = 0; i < this.entities.length; i++) {
-      if (this.entities[i].id === snapshot.id) {
-        this.entities[i] = snapshot;
-        break;
-      }
-    }
+    let targetIndex = this.entities.findIndex(entity => {
+      return entity.id === snapshot.id;
+    });
 
+    if (targetIndex >= 0) {
+      this.entities[targetIndex] = snapshot;
+    }
     this.applicationState.entityStates[snapshot.id].editing = false;
   }
 
