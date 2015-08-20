@@ -2,6 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import {TravelLogHeader} from './TravelLogHeader';
 import {TravelLogForm} from './TravelLogForm';
+import {TravelLogSort} from './TravelLogSort.jsx';
 import {BackToDashBoardButton} from './BackToDashBoardButton';
 import {TravelLogStore} from '../../../stores/TravelLogStore';
 import {Entry} from './Entry';
@@ -55,6 +56,12 @@ export class TravelLog extends React.Component {
         display: 'inline-block',
         overflow: 'auto',
         backgroundColor: '#eeeeee'
+      },
+      entryList: {
+        width: '65%',
+        margin: '44px 50px',
+        borderTop: '1px solid grey',
+        paddingTop: '44px'
       }
     };
     styles = merge(this.commonStyles, styles);
@@ -76,7 +83,10 @@ export class TravelLog extends React.Component {
         <span className="fill" style={styles.content}>
           <TravelLogHeader/>
           <TravelLogForm/>
-          {travelLogs}
+          <div style={styles.entryList}>
+            <TravelLogSort/>
+            {travelLogs}
+          </div>
         </span>
 
       </span>

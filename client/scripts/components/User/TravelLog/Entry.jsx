@@ -13,33 +13,55 @@ export class Entry extends React.Component {
   render() {
     let styles = {
       container: {
-        margin: '44px 50px',
+        marginTop: '44px',
         backgroundColor: 'white',
-        width: '75%',
-        padding: 10
+        padding: '10px 20px',
+        borderRadius: 5
+      },
+      entityName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        width: '35%',
+        display: 'inline-block'
       },
       left: {
         width: '80%',
         display: 'inline-block'
       },
-      right: {
-        width: '20%',
-        display: 'inline-block',
-        verticalAlign: 'bottom',
-        textAlign: 'center'
+      midDot: {
+        float: 'right',
+        marginRight: '10px'
       },
-      entityName: {
-        width: '100%',
-        display: 'inline-block',
-        fontSize: 20
-      },
-      date: {
-        width: '40%',
+      dates: {
+        width: '55%',
         display: 'inline-block'
       },
-      field: {
-        width: '100%',
-        display: 'inline-block',
+      label: {
+        fontSize: 14,
+        marginRight: '5px'
+      },
+      reason: {
+        marginTop: 10
+      },
+      data: {
+        fontWeight: 550
+      },
+      buttons: {
+        width: '20%',
+        display: 'inline-block'
+      },
+      button: {
+        margin: '5'
+      },
+      amount: {
+        width: '55%',
+        display: 'inline-block'
+      },
+      destination: {
+        width: '35%',
+        display: 'inline-block'
+      },
+      middle: {
         marginTop: 10
       }
     };
@@ -47,20 +69,40 @@ export class Entry extends React.Component {
 
     return (
       <div style={styles.container}>
-        <div style={styles.left}>
-        <div style={styles.entityName}>{this.props.travelLog.entityName}</div>
-        <div style={styles.field}>
-          <div style={styles.date}>Dates: {formatDate(this.props.travelLog.startDate)} - {formatDate(this.props.travelLog.endDate)}</div>
-          <div style={styles.date}>Amount: ${this.props.travelLog.amount}</div>
-        </div>
-
-        <div style={styles.field}>Reason: {this.props.travelLog.reason} </div>
-        <div style={styles.field}>Destination: {this.props.travelLog.destination}</div>
-        </div>
-        <div style={styles.right}>
-          <ProminentButton>Deactivate</ProminentButton>
+        <div>
+          <div style={styles.left}>
+            <div>
+              <div style={styles.entityName}>
+                {this.props.travelLog.entityName}
+                <span style={styles.midDot}>&middot;</span>
+              </div>
+              <div style={styles.dates}>
+                <span style={styles.label}>Dates:</span>
+                <span style={styles.data}>{formatDate(this.props.travelLog.startDate)} - {formatDate(this.props.travelLog.endDate)}</span>
+              </div>
+            </div>
+            <div style={styles.middle}>
+              <div style={styles.destination}>
+                <span style={styles.label}>Destination:</span>
+                <span style={styles.data}>{this.props.travelLog.destination}</span>
+              </div>
+              <div style={styles.amount}>
+                <span style={styles.label}>Amount:</span>
+                <span style={styles.data}>${this.props.travelLog.amount}</span>
+              </div>
+            </div>
+            <div style={styles.reason}>
+              <span style={styles.label}>Reason:</span>
+              <span style={styles.data}>{this.props.travelLog.reason}</span>
+            </div>
+          </div>
+          <div style={styles.buttons}>
+            <ProminentButton style={styles.button}>Edit</ProminentButton>
+            <ProminentButton style={styles.button}>Delete</ProminentButton>
+          </div>
         </div>
       </div>
     );
   }
+
 }

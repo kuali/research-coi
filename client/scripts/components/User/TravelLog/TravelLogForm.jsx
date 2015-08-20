@@ -115,8 +115,7 @@ export class TravelLogForm extends React.Component {
     render() {
       let styles = {
         container: {
-          margin: '44px 50px',
-          width: '75%'
+          margin: '44px 50px'
         },
         field: {
           display: 'inline-block',
@@ -127,20 +126,19 @@ export class TravelLogForm extends React.Component {
           marginTop: 20
         },
         left: {
-          width: '40%',
+          width: '30%',
           display: 'inline-block',
           verticalAlign: 'top'
         },
         middle: {
-          width: '40%',
+          width: '30%',
           display: 'inline-block',
           verticalAlign: 'top'
         },
         right: {
-          width: '20%',
+          width: '30%',
           display: 'inline-block',
-          verticalAlign: 'bottom',
-          textAlign: 'right'
+          verticalAlign: 'bottom'
         },
         input: {
           padding: '2px 8px',
@@ -165,6 +163,20 @@ export class TravelLogForm extends React.Component {
         invalidError: {
           fontSize: 10,
           marginTop: 2
+        },
+        currency: {
+          position: 'absolute',
+          display: 'inline',
+          float: 'left',
+          color: 'grey',
+          left: 6,
+          top: 4
+        },
+        amount: {
+          padding: '2px 20px'
+        },
+        addButton: {
+          width: 'auto'
         }
       };
       styles = merge(this.commonStyles, styles);
@@ -174,62 +186,74 @@ export class TravelLogForm extends React.Component {
         value: ''
       };
 
-      let addButtonStyle = this.state.isValid ? '' : styles.disabled;
+      let addButtonStyle = merge(styles.addButton, this.state.isValid ? '' : styles.disabled);
+
+      let amount = merge(styles.input, styles.amount);
 
       return (
         <div style={styles.container}>
-          <div style={styles.left}>
-            <div style={styles.top}>
-              <span style={styles.field}>
-                <div style={{marginBottom: 5, fontWeight: '500'}}>ENTITY NAME</div>
-                <div>
-                  <AutoSuggest suggestions={this.getSuggestions} inputAttributes={inputAttributes}/>
-                </div>
-              </span>
+          <div style={{width: '100%'}}>
+            <div style={styles.left}>
+              <div style={styles.top}>
+                <span style={styles.field}>
+                  <div style={{marginBottom: 5, fontWeight: '500'}}>ENTITY NAME</div>
+                  <div>
+                    <AutoSuggest suggestions={this.getSuggestions} inputAttributes={inputAttributes}/>
+                  </div>
+                </span>
+              </div>
             </div>
-            <div style={styles.top}>
-              <span style={styles.field}>
-                <div style={{marginBottom: 5, fontWeight: '500'}}>TIME</div>
-                <div style={styles.date}>
-                  <DatePicker required id="startDate" onChange={this.setStartDate} value={this.state.startDate} textFieldStyle={styles.input}/>
-                </div>
-                <div style={styles.dateMiddle}>TO</div>
-                <div style={styles.date}>
-                  <DatePicker required id="endDate" onChange={this.setEndDate} value={this.state.endDate} textFieldStyle={styles.input}/>
-                </div>
-              </span>
+            <div style={styles.middle}>
+              <div style={styles.top}>
+                <span style={styles.field}>
+                  <div style={{marginBottom: 5, fontWeight: '500'}}>AMOUNT</div>
+                  <div style={{position: 'relative'}}>
+                    <span style={styles.currency}>$</span>
+                    <input required ref="amount" onChange={this.validateForm} onKeyPress={this.validateNumeric} type="text" style={amount}/>
+                  </div>
+                </span>
+              </div>
             </div>
-            <div style={styles.top}>
-              <span style={styles.field}>
-                <div style={{marginBottom: 5, fontWeight: '500'}}>DESTINATION</div>
-                <div>
-                  <input required ref="destination" onChange={this.validateForm} type="text" style={styles.input}/>
-                </div>
-              </span>
-            </div>
-          </div>
-          <div style={styles.middle}>
-            <div style={styles.top}>
-              <span style={styles.field}>
-                <div style={{marginBottom: 5, fontWeight: '500'}}>AMOUNT</div>
-                <div>
-                  <input required ref="amount" onChange={this.validateForm} onKeyPress={this.validateNumeric} type="text" style={styles.input}/>
-                </div>
-              </span>
-            </div>
-
-            <div style={styles.top}>
-              <span style={styles.field}>
-                <div style={{marginBottom: 5, fontWeight: '500'}}>REASON</div>
-                <div>
-                  <input required ref="reason" onChange={this.validateForm} type="text" style={styles.input}/>
-                </div>
-              </span>
+            <div style={styles.right}>
+              <div style={styles.top}>
+                <span style={styles.field}>
+                  <div style={{marginBottom: 5, fontWeight: '500'}}>DESTINATION</div>
+                  <div>
+                    <input required ref="destination" onChange={this.validateForm} type="text" style={styles.input}/>
+                  </div>
+                </span>
+              </div>
             </div>
           </div>
-          <div style={styles.right}>
 
-            <ProminentButton onClick={this.addEntry} style={addButtonStyle}>ADD</ProminentButton>
+          <div style={{width: '100%'}}>
+            <div style={styles.left}>
+              <div style={styles.top}>
+                <span style={styles.field}>
+                  <div style={{marginBottom: 5, fontWeight: '500'}}>DATE RANGE</div>
+                  <div style={styles.date}>
+                    <DatePicker id="startDate" onChange={this.setStartDate} value={this.state.startDate} textFieldStyle={styles.input}/>
+                  </div>
+                  <div style={styles.dateMiddle}>TO</div>
+                  <div style={styles.date}>
+                    <DatePicker id="endDate" onChange={this.setEndDate} value={this.state.endDate} textFieldStyle={styles.input}/>
+                  </div>
+                </span>
+              </div>
+            </div>
+            <div style={styles.middle}>
+              <div style={styles.top}>
+                <span style={styles.field}>
+                  <div style={{marginBottom: 5, fontWeight: '500'}}>REASON</div>
+                  <div>
+                    <input required ref="reason" onChange={this.validateForm} type="text" style={styles.input}/>
+                  </div>
+                </span>
+              </div>
+            </div>
+            <div style={styles.right}>
+              <ProminentButton onClick={this.addEntry} style={addButtonStyle}>+ ADD</ProminentButton>
+            </div>
           </div>
         </div>
       );
