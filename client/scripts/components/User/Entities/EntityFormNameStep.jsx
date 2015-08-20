@@ -4,7 +4,7 @@ import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 
-export class EntityFormPartZero extends ResponsiveComponent {
+export class EntityFormNameStep extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
@@ -20,7 +20,7 @@ export class EntityFormPartZero extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let validationErrors = DisclosureStore.entityStepZeroErrors();
+    let validationErrors = DisclosureStore.entityNameStepErrors();
 
     let desktopStyles = {
       container: {

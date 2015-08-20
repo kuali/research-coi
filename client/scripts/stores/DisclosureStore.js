@@ -14,12 +14,12 @@ class _DisclosureStore extends AutoBindingStore {
 
     this.exportPublicMethods({
       getDisclosure: this.getDisclosure,
-      entityStepZeroErrors: this.entityStepZeroErrors,
-      entityStepZeroComplete: this.entityStepZeroComplete,
-      entityStepOneErrors: this.entityStepOneErrors,
-      entityStepOneComplete: this.entityStepOneComplete,
-      entityStepTwoErrors: this.entityStepTwoErrors,
-      entityStepTwoComplete: this.entityStepTwoComplete,
+      entityNameStepErrors: this.entityNameStepErrors,
+      entityNameStepComplete: this.entityNameStepComplete,
+      entityInformationStepErrors: this.entityInformationStepErrors,
+      entityInformationStepComplete: this.entityInformationStepComplete,
+      entityRelationshipStepErrors: this.entityRelationshipStepErrors,
+      entityRelationshipStepComplete: this.entityRelationshipStepComplete,
       entityIsSubmittable: this.entityIsSubmittable
     });
 
@@ -59,9 +59,9 @@ class _DisclosureStore extends AutoBindingStore {
         amount: '',
         comments: ''
       },
-      validatingEntityStepZero: false,
-      validatingEntityStepOne: false,
-      validatingEntityStepTwo: false
+      validatingEntityNameStep: false,
+      validatingEntityInformationStep: false,
+      validatingEntityRelationshipStep: false
     };
 
     this.projects = [
@@ -602,7 +602,7 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.archiveSortDirection = params.direction;
   }
 
-  entityStepZeroErrors() {
+  entityNameStepErrors() {
     const storeState = this.getState();
     let errors = {};
 
@@ -614,8 +614,8 @@ class _DisclosureStore extends AutoBindingStore {
     return errors;
   }
 
-  entityStepZeroComplete() {
-    let errors = this.entityStepZeroErrors();
+  entityNameStepComplete() {
+    let errors = this.entityNameStepErrors();
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -624,7 +624,7 @@ class _DisclosureStore extends AutoBindingStore {
     return true;
   }
 
-  entityStepOneErrors() {
+  entityInformationStepErrors() {
     const storeState = this.getState();
     let errors = {};
 
@@ -644,8 +644,8 @@ class _DisclosureStore extends AutoBindingStore {
     return errors;
   }
 
-  entityStepOneComplete() {
-    let errors = this.entityStepOneErrors();
+  entityInformationStepComplete() {
+    let errors = this.entityInformationStepErrors();
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -654,7 +654,7 @@ class _DisclosureStore extends AutoBindingStore {
     return true;
   }
 
-  entityStepTwoErrors() {
+  entityRelationshipStepErrors() {
     const storeState = this.getState();
     let errors = {};
 
@@ -687,8 +687,8 @@ class _DisclosureStore extends AutoBindingStore {
     return errors;
   }
 
-  entityStepTwoComplete() {
-    let errors = this.entityStepTwoErrors();
+  entityRelationshipStepComplete() {
+    let errors = this.entityRelationshipStepErrors();
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -722,14 +722,14 @@ class _DisclosureStore extends AutoBindingStore {
 
     if (atLeastOneRelationshipAdded()) {
       if (unSubmittedRelationshipStarted()) {
-        return this.entityStepTwoComplete();
+        return this.entityRelationshipStepComplete();
       }
       else {
         return true;
       }
     }
     else {
-      return this.entityStepTwoComplete();
+      return this.entityRelationshipStepComplete();
     }
   }
 
@@ -737,13 +737,13 @@ class _DisclosureStore extends AutoBindingStore {
   turnOnValidation(step) {
     switch (step) {
       case 0:
-        this.applicationState.validatingEntityStepZero = true;
+        this.applicationState.validatingEntityNameStep = true;
         break;
       case 1:
-        this.applicationState.validatingEntityStepOne = true;
+        this.applicationState.validatingEntityInformationStep = true;
         break;
       case 2:
-        this.applicationState.validatingEntityStepTwo = true;
+        this.applicationState.validatingEntityRelationshipStep = true;
         break;
     }
   }
@@ -751,13 +751,13 @@ class _DisclosureStore extends AutoBindingStore {
   turnOffValidation(step) {
     switch (step) {
       case 0:
-        this.applicationState.validatingEntityStepZero = false;
+        this.applicationState.validatingEntityNameStep = false;
         break;
       case 1:
-        this.applicationState.validatingEntityStepOne = false;
+        this.applicationState.validatingEntityInformationStep = false;
         break;
       case 2:
-        this.applicationState.validatingEntityStepTwo = false;
+        this.applicationState.validatingEntityRelationshipStep = false;
         break;
     }
   }
