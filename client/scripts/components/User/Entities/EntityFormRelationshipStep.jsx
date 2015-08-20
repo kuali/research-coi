@@ -8,7 +8,7 @@ import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {KButton} from '../../KButton';
 import {COIConstants} from '../../../../../COIConstants';
 
-export class EntityFormPartTwo extends ResponsiveComponent {
+export class EntityFormRelationshipStep extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
@@ -30,7 +30,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
   shouldComponentUpdate() { return true; }
 
   addRelation() {
-    let validationErrors = DisclosureStore.entityStepTwoErrors();
+    let validationErrors = DisclosureStore.entityRelationshipStepErrors();
     let isValid = Object.keys(validationErrors).length === 0;
 
     const stepNumber = 2;
@@ -116,7 +116,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let validationErrors = DisclosureStore.entityStepTwoErrors();
+    let validationErrors = DisclosureStore.entityRelationshipStepErrors();
     let isValid = Object.keys(validationErrors).length === 0;
 
     let desktopStyles = {

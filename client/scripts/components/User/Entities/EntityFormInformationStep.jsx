@@ -8,7 +8,7 @@ import {DescriptionField} from './DescriptionField';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 
-export class EntityFormPartOne extends ResponsiveComponent {
+export class EntityFormInformationStep extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
@@ -38,7 +38,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let validationErrors = DisclosureStore.entityStepOneErrors();
+    let validationErrors = DisclosureStore.entityInformationStepErrors();
 
     let desktopStyles = {
       container: {

@@ -2,9 +2,9 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {ProminentButton} from '../../ProminentButton';
 import {merge} from '../../../merge';
-import {EntityFormPartZero} from './EntityFormPartZero';
-import {EntityFormPartOne} from './EntityFormPartOne';
-import {EntityFormPartTwo} from './EntityFormPartTwo';
+import {EntityFormNameStep} from './EntityFormNameStep';
+import {EntityFormInformationStep} from './EntityFormInformationStep';
+import {EntityFormRelationshipStep} from './EntityFormRelationshipStep';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 
@@ -28,22 +28,22 @@ export class EntityForm extends ResponsiveComponent {
   isCurrentStepValid() {
     switch (this.props.step) {
       case 0:
-        return DisclosureStore.entityStepZeroComplete();
+        return DisclosureStore.entityNameStepComplete();
       case 1:
-        return DisclosureStore.entityStepOneComplete();
+        return DisclosureStore.entityInformationStepComplete();
       case 2:
-        return DisclosureStore.entityStepTwoComplete();
+        return DisclosureStore.entityRelationshipStepComplete();
     }
   }
 
   isStepValidating() {
     switch (this.props.step) {
       case 0:
-        return this.props.appState.validatingEntityStepZero;
+        return this.props.appState.validatingEntityNameStep;
       case 1:
-        return this.props.appState.validatingEntityStepOne;
+        return this.props.appState.validatingEntityInformationStep;
       case 2:
-        return this.props.appState.validatingEntityStepTwo;
+        return this.props.appState.validatingEntityRelationshipStep;
     }
   }
 
@@ -151,7 +151,7 @@ export class EntityForm extends ResponsiveComponent {
     if (this.props.update) {
       currentStep = (
         <div>
-          <EntityFormPartOne
+          <EntityFormInformationStep
             id={entity.id}
             readonly={!this.props.editing}
             update={this.props.update}
@@ -160,16 +160,16 @@ export class EntityForm extends ResponsiveComponent {
             isPublic={entity.isPublic}
             isSponsor={entity.isSponsor}
             description={entity.description}
-            validating={this.props.appState.validatingEntityStepOne}
+            validating={this.props.appState.validatingEntityInformationStep}
           />
-          <EntityFormPartTwo
+          <EntityFormRelationshipStep
             id={entity.id}
             readonly={!this.props.editing}
             update={this.props.update}
             relations={this.props.entity.relationships}
             name={this.props.entity.name}
             style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
-            validating={this.props.appState.validatingEntityStepTwo}
+            validating={this.props.appState.validatingEntityRelationshipStep}
             appState={this.props.appState}
           />
         </div>
@@ -197,22 +197,22 @@ export class EntityForm extends ResponsiveComponent {
       switch (this.props.step) {
         case 0:
           currentStep = (
-            <EntityFormPartZero
+            <EntityFormNameStep
               entityName={entity.name}
-              validating={this.props.appState.validatingEntityStepZero}
+              validating={this.props.appState.validatingEntityNameStep}
             />
           );
           break;
         case 1:
           currentStep = (
-            <EntityFormPartOne
+            <EntityFormInformationStep
               update={this.props.update}
               name={entity.name}
               type={entity.type}
               isPublic={entity.isPublic}
               isSponsor={entity.isSponsor}
               description={entity.description}
-              validating={this.props.appState.validatingEntityStepOne}
+              validating={this.props.appState.validatingEntityInformationStep}
             />
           );
 
@@ -223,12 +223,12 @@ export class EntityForm extends ResponsiveComponent {
           break;
         default:
           currentStep = (
-            <EntityFormPartTwo
+            <EntityFormRelationshipStep
               update={this.props.update}
               relations={this.props.entity.relationships}
               name={this.props.entity.name}
               appState={this.props.appState}
-              validating={this.props.appState.validatingEntityStepTwo}
+              validating={this.props.appState.validatingEntityRelationshipStep}
             />
           );
 
