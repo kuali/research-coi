@@ -6,6 +6,7 @@ import {RelationshipSummary} from './RelationshipSummary';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {KButton} from '../../KButton';
+import {COIConstants} from '../../../../../COIConstants';
 
 export class EntityFormPartTwo extends ResponsiveComponent {
   constructor() {
@@ -69,7 +70,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
     });
 
     switch (relation) {
-      case 'Ownership':
+      case COIConstants.ENTITY_RELATIONSHIP.OWNERSHIP:
         this.setState({
           typeOptions: [
             'Stock',
@@ -78,7 +79,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           ]
         });
         break;
-      case 'Offices/Positions':
+      case COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS:
         this.setState({
           typeOptions: [
             'Board Member',
@@ -88,7 +89,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           ]
         });
         break;
-      case 'Intellectual Property':
+      case COIConstants.ENTITY_RELATIONSHIP.INTELLECTUAL_PROPERTY:
         this.setState({
           typeOptions: [
             'Royalty Income',
@@ -96,7 +97,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           ]
         });
         break;
-      case 'Other':
+      case COIConstants.ENTITY_RELATIONSHIP.OTHER:
         this.setState({
           typeOptions: [
             'Contract',
@@ -336,11 +337,11 @@ export class EntityFormPartTwo extends ResponsiveComponent {
                   selected={this.props.appState.potentialRelationship.relationship}
                   onChoose={this.relationChosen}
                   values={[
-                    'Ownership',
-                    'Offices/Positions',
-                    'Paid Activities',
-                    'Intellectual Property',
-                    'Other'
+                    COIConstants.ENTITY_RELATIONSHIP.OWNERSHIP,
+                    COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS,
+                    COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES,
+                    COIConstants.ENTITY_RELATIONSHIP.INTELLECTUAL_PROPERTY,
+                    COIConstants.ENTITY_RELATIONSHIP.OTHER
                   ]}
                 />
               </div>

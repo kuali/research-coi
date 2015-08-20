@@ -668,13 +668,13 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
     if (potentialRelationship.relationship !== undefined && potentialRelationship.relationship.length !== 0) {
-      if (potentialRelationship.relationship !== 'Paid Activities') {
+      if (potentialRelationship.relationship !== COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES) {
         if (potentialRelationship.type === undefined || potentialRelationship.type.length === 0) {
           errors.type = 'Required Field';
         }
       }
 
-      if (potentialRelationship.relationship !== 'Offices/Positions') {
+      if (potentialRelationship.relationship !== COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS) {
         if (potentialRelationship.amount === undefined || potentialRelationship.amount.length === 0) {
           errors.amount = 'Required Field';
         }
