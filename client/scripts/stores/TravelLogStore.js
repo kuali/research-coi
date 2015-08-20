@@ -6,7 +6,12 @@ class _TravelLogStore extends AutoBindingStore {
     constructor() {
       super(TravelLogActions);
 
-      this.entries = [];
+      this.entries = [{entityName: 'Johnson & Johnson',
+            amount: 2045.34,
+            startDate: '05/15/2015',
+            endDate: '05/20/2015',
+            reason: 'I was a keynote speaker at their big big conference.',
+            destination: 'Lehi, UT.'}];
     }
 
     addEntry(params) {
