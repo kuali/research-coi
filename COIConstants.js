@@ -21,5 +21,12 @@ export let COIConstants = {
     APPROVED: 'APPROVED',
     START: 'START',
     TYPE: 'TYPE'
+  },
+  ENTITY_RELATIONSHIP: {
+    OWNERSHIP: 'Ownership',
+    OFFICES_POSITIONS: 'Offices/Positions',
+    PAID_ACTIVITIES: 'Paid Activities',
+    INTELLECTUAL_PROPERTY: 'Intellectual Property',
+    OTHER: 'Other'
   }
 };

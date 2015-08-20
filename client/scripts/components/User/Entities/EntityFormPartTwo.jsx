@@ -1,10 +1,12 @@
-import React from 'react/addons';
+import React from 'react/addons';  //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {ToggleSet} from './ToggleSet';
 import {RelationshipSummary} from './RelationshipSummary';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {KButton} from '../../KButton';
+import {COIConstants} from '../../../../../COIConstants';
 
 export class EntityFormPartTwo extends ResponsiveComponent {
   constructor() {
@@ -14,13 +16,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
     this.state = {
       typeOptions: [],
       relation: '',
-      relations: [],
-      validStatus: {
-        type: false,
-        amount: false,
-        person: true,
-        relationship: false
-      }
+      relations: []
     };
 
     this.addRelation = this.addRelation.bind(this);
@@ -28,28 +24,27 @@ export class EntityFormPartTwo extends ResponsiveComponent {
     this.amountSelected = this.amountSelected.bind(this);
     this.personSelected = this.personSelected.bind(this);
     this.relationChosen = this.relationChosen.bind(this);
-    this.formIsValid = this.formIsValid.bind(this);
     this.commentChanged = this.commentChanged.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
 
   addRelation() {
-    if (!this.formIsValid()) {
-      return;
+    let validationErrors = DisclosureStore.entityStepTwoErrors();
+    let isValid = Object.keys(validationErrors).length === 0;
+
+    const stepNumber = 2;
+    if (isValid) {
+      DisclosureActions.turnOffValidation(stepNumber);
+      DisclosureActions.addEntityRelationship(this.props.id);
+
+      this.setState({
+        relation: ''
+      });
     }
-
-    DisclosureActions.addEntityRelationship(this.props.id);
-
-    this.setState({
-      relation: '',
-      validStatus: {
-        type: false,
-        amount: false,
-        person: false,
-        relationship: false
-      }
-    });
+    else {
+      DisclosureActions.turnOnValidation(stepNumber);
+    }
   }
 
   typeSelected() {
@@ -71,16 +66,11 @@ export class EntityFormPartTwo extends ResponsiveComponent {
   relationChosen(relation) {
     DisclosureActions.setEntityRelationshipRelation(relation);
     this.setState({
-      relation: relation,
-      validStatus: merge(this.state.validStatus, {
-        relationship: true,
-        type: false,
-        amount: false
-      })
+      relation: relation
     });
 
     switch (relation) {
-      case 'Ownership':
+      case COIConstants.ENTITY_RELATIONSHIP.OWNERSHIP:
         this.setState({
           typeOptions: [
             'Stock',
@@ -89,7 +79,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           ]
         });
         break;
-      case 'Offices/Positions':
+      case COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS:
         this.setState({
           typeOptions: [
             'Board Member',
@@ -99,7 +89,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           ]
         });
         break;
-      case 'Intellectual Property':
+      case COIConstants.ENTITY_RELATIONSHIP.INTELLECTUAL_PROPERTY:
         this.setState({
           typeOptions: [
             'Royalty Income',
@@ -107,7 +97,7 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           ]
         });
         break;
-      case 'Other':
+      case COIConstants.ENTITY_RELATIONSHIP.OTHER:
         this.setState({
           typeOptions: [
             'Contract',
@@ -123,29 +113,12 @@ export class EntityFormPartTwo extends ResponsiveComponent {
     }
   }
 
-  formIsValid() {
-    return true;
-
-    // switch (this.state.relation) {
-    //   case 'Offices/Positions':
-    //     return this.state.validStatus.type &&
-    //            this.state.validStatus.person &&
-    //            this.state.validStatus.relationship;
-    //   case 'Paid Activities':
-    //     return this.state.validStatus.amount &&
-    //            this.state.validStatus.person &&
-    //            this.state.validStatus.relationship;
-    //   default:
-    //     return this.state.validStatus.type &&
-    //            this.state.validStatus.amount &&
-    //            this.state.validStatus.person &&
-    //            this.state.validStatus.relationship;
-    // }
-  }
-
   renderMobile() {}
 
   renderDesktop() {
+    let validationErrors = DisclosureStore.entityStepTwoErrors();
+    let isValid = Object.keys(validationErrors).length === 0;
+
     let desktopStyles = {
       container: {
         width: '100%'
@@ -193,11 +166,11 @@ export class EntityFormPartTwo extends ResponsiveComponent {
         marginBottom: 20
       },
       addButton: {
-        backgroundColor: this.formIsValid() ? '#1481A3' : '#D8D8D8',
-        color: this.formIsValid() ? 'white' : '#939393',
+        backgroundColor: this.props.validating && !isValid ? '#D8D8D8' : '#1481A3',
+        color: this.props.validating && !isValid ? '#939393' : 'white',
         padding: '3px 9px 4px 7px',
         marginTop: 10,
-        cursor: this.formIsValid() ? 'pointer' : 'default',
+        cursor: this.props.validating && !isValid ? 'default' : 'pointer',
         width: 'initial'
       },
       submittedrelations: {
@@ -219,12 +192,25 @@ export class EntityFormPartTwo extends ResponsiveComponent {
         backgroundColor: 'transparent',
         fontSize: 14,
         borderBottom: '1px solid #aaa'
+      },
+      invalidField: {
+        borderBottom: '3px solid red'
+      },
+      invalidText: {
+        color: 'red'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
     let typeSection;
     if (this.state.relation !== '' && this.state.relation !== 'Paid Activities') {
+      let labelStyle = {};
+      let dropDownStyle = styles.dropDown;
+      if (this.props.validating && validationErrors.type) {
+        labelStyle = styles.invalidText;
+        dropDownStyle = merge(dropDownStyle, styles.invalidField);
+      }
+
       let typeOptions = this.state.typeOptions.map(typeOption => {
         return (
           <option key={typeOption}>{typeOption}</option>
@@ -233,8 +219,8 @@ export class EntityFormPartTwo extends ResponsiveComponent {
 
       typeSection = (
         <div style={styles.typeSection}>
-          <div>Type</div>
-          <select onChange={this.typeSelected} ref="typeSelect" value={this.props.appState.potentialRelationship.type} style={styles.dropDown}>
+          <div style={labelStyle}>Type</div>
+          <select onChange={this.typeSelected} ref="typeSelect" value={this.props.appState.potentialRelationship.type} style={dropDownStyle}>
             <option value="">--SELECT--</option>
             {typeOptions}
           </select>
@@ -244,10 +230,17 @@ export class EntityFormPartTwo extends ResponsiveComponent {
 
     let amountSection;
     if (this.state.relation !== '' && this.state.relation !== 'Offices/Positions') {
+      let labelStyle = {};
+      let dropDownStyle = styles.dropDown;
+      if (this.props.validating && validationErrors.amount) {
+        labelStyle = styles.invalidText;
+        dropDownStyle = merge(dropDownStyle, styles.invalidField);
+      }
+
       amountSection = (
         <div style={styles.amountSection}>
-          <div>Amount</div>
-          <select onChange={this.amountSelected} ref="amountSelect" value={this.props.appState.potentialRelationship.amount} style={styles.dropDown}>
+          <div style={labelStyle}>Amount</div>
+          <select onChange={this.amountSelected} ref="amountSelect" value={this.props.appState.potentialRelationship.amount} style={dropDownStyle}>
             <option value="">--SELECT--</option>
             <option value="$1 - $5,000">$1 - $5,000</option>
             <option value="$5,001 - $10,000">$5,001 - $10,000</option>
@@ -292,6 +285,26 @@ export class EntityFormPartTwo extends ResponsiveComponent {
 
     let relationshipEditor;
     if (!this.props.readonly) {
+      let personLabelStyle = {};
+      let personDropDownStyle = styles.dropDown;
+      if (this.props.validating && validationErrors.person) {
+        personLabelStyle = styles.invalidText;
+        personDropDownStyle = merge(personDropDownStyle, styles.invalidField);
+      }
+
+
+      let relationStyle = {};
+      if (this.props.validating && validationErrors.relation) {
+        relationStyle = styles.invalidText;
+      }
+
+      let commentStyle = {};
+      let commentTextboxStyle = styles.textarea;
+      if (this.props.validating && validationErrors.comment) {
+        commentStyle = styles.invalidText;
+        commentTextboxStyle = merge(commentTextboxStyle, styles.invalidField);
+      }
+
       relationshipEditor = (
         <div>
           <div style={styles.title}>{heading}</div>
@@ -303,9 +316,9 @@ export class EntityFormPartTwo extends ResponsiveComponent {
           <div style={styles.top}>
             <span style={styles.left}>
               <div style={styles.personSection}>
-                <div>Person</div>
+                <div style={personLabelStyle}>Person</div>
                 <div>
-                  <select onChange={this.personSelected} ref="personSelect" value={this.props.appState.potentialRelationship.person} style={styles.dropDown}>
+                  <select onChange={this.personSelected} ref="personSelect" value={this.props.appState.potentialRelationship.person} style={personDropDownStyle}>
                     <option value="">--SELECT--</option>
                     <option value="Self">Self</option>
                     <option value="Spouse">Spouse</option>
@@ -318,29 +331,29 @@ export class EntityFormPartTwo extends ResponsiveComponent {
               {amountSection}
             </span>
             <span style={styles.right}>
-              <div>Relationship</div>
+              <div style={relationStyle}>Relationship</div>
               <div>
                 <ToggleSet
                   selected={this.props.appState.potentialRelationship.relationship}
                   onChoose={this.relationChosen}
                   values={[
-                    'Ownership',
-                    'Offices/Positions',
-                    'Paid Activities',
-                    'Intellectual Property',
-                    'Other'
+                    COIConstants.ENTITY_RELATIONSHIP.OWNERSHIP,
+                    COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS,
+                    COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES,
+                    COIConstants.ENTITY_RELATIONSHIP.INTELLECTUAL_PROPERTY,
+                    COIConstants.ENTITY_RELATIONSHIP.OTHER
                   ]}
                 />
               </div>
 
               <div style={styles.commentArea}>
-                <div>Comments</div>
+                <div style={commentStyle}>Comments</div>
                 <div>
-                  <textarea onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={styles.textarea} ref="commentTextArea" />
+                  <textarea onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={commentTextboxStyle} ref="commentTextArea" />
                 </div>
               </div>
               <div style={styles.addButtonSection}>
-                <KButton onClick={this.addRelation} style={styles.addButton}>+ Add Additional Relationship</KButton>
+                <KButton onClick={this.addRelation} title={this.props.validating && !isValid ? 'Please correct the highlighted fields' : ''} style={styles.addButton}>+ Add Additional Relationship</KButton>
               </div>
             </span>
           </div>
