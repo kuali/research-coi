@@ -6,82 +6,40 @@ import {TypeField} from './TypeField';
 import {PublicField} from './PublicField';
 import {DescriptionField} from './DescriptionField';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
 
 export class EntityFormPartOne extends ResponsiveComponent {
-  constructor(props) {
+  constructor() {
     super();
     this.commonStyles = {};
 
-    this.state = {
-      validStatus: {
-        status: props.status && props.status.length > 0,
-        type: props.type && props.type.length > 0,
-        public: props.isPublic && props.isPublic.length > 0,
-        sponsor: props.update ? true : undefined,
-        description: props.description && props.description.length > 0
-      }
-    };
-
-    this.updateFieldValidity = this.updateFieldValidity.bind(this);
-    this.formIsValid = this.formIsValid.bind(this);
     this.setType = this.setType.bind(this);
     this.setPublic = this.setPublic.bind(this);
     this.setSponsor = this.setSponsor.bind(this);
     this.setDescription = this.setDescription.bind(this);
   }
 
-  updateFieldValidity(field, newValue) {
-    let newValidStatus = {};
-    newValidStatus[field] = newValue !== undefined && newValue.length > 0;
-
-    this.setState({
-      validStatus: merge(this.state.validStatus, newValidStatus)
-    }, () => {
-      this.props.onValidation(this.formIsValid());
-    });
-  }
-
   setType(newType) {
-    this.updateFieldValidity('type', newType);
     DisclosureActions.setEntityType(newType, this.props.id);
   }
 
   setPublic(newValue) {
-    this.updateFieldValidity('public', newValue);
     DisclosureActions.setEntityPublic(newValue, this.props.id);
   }
 
   setSponsor(newValue) {
-    this.setState({
-      validStatus: merge(this.state.validStatus, {
-        sponsor: newValue !== undefined
-      })
-    }, () => {
-      this.props.onValidation(this.formIsValid());
-    });
     DisclosureActions.setEntityIsSponsor(newValue, this.props.id);
   }
 
   setDescription(newDescription) {
-    this.updateFieldValidity('description', newDescription);
     DisclosureActions.setEntityDescription(newDescription, this.props.id);
-  }
-
-  formIsValid() {
-    let fieldValid = field => {
-      return (this.props.update && this.state.validStatus[field] === 'undefined') || this.state.validStatus[field];
-    };
-
-    return fieldValid('status') &&
-           fieldValid('type') &&
-           fieldValid('public') &&
-           fieldValid('sponsor') &&
-           fieldValid('description');
   }
 
   renderMobile() {}
 
   renderDesktop() {
+    let validationErrors = DisclosureStore.entityStepOneErrors();
+
     let desktopStyles = {
       container: {
       },
@@ -127,7 +85,6 @@ export class EntityFormPartOne extends ResponsiveComponent {
       }
     }
 
-    let status = this.props.status;
     let type = this.props.type;
     let isPublic = this.props.isPublic;
     let description = this.props.description;
@@ -154,7 +111,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
                 value={type}
                 readonly={this.props.readonly}
                 onChange={this.setType}
-                invalid={this.state.validStatus.type === false}
+                invalid={this.props.validating && validationErrors.type}
               />
             </div>
             <div>
@@ -162,7 +119,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
                 value={sponsorValue}
                 readonly={this.props.readonly}
                 onChange={this.setSponsor}
-                invalid={this.state.validStatus.sponsor === false}
+                invalid={this.props.validating && validationErrors.isSponsor}
               />
             </div>
           </span>
@@ -173,7 +130,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
                   value={isPublic}
                   readonly={this.props.readonly}
                   onChange={this.setPublic}
-                  invalid={this.state.validStatus.public === false}
+                  invalid={this.props.validating && validationErrors.isPublic}
                 />
               </span>
             </div>
@@ -182,7 +139,7 @@ export class EntityFormPartOne extends ResponsiveComponent {
                 value={description}
                 readonly={this.props.readonly}
                 onChange={this.setDescription}
-                invalid={this.state.validStatus.description === false}
+                invalid={this.props.validating && validationErrors.description}
               />
             </div>
           </span>

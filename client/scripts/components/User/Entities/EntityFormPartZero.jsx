@@ -2,45 +2,26 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
 
 export class EntityFormPartZero extends ResponsiveComponent {
-  constructor(props) {
+  constructor() {
     super();
     this.commonStyles = {};
-
-    this.state = {
-      validStatus: {
-        entityName: props.entityName && props.entityName.length > 0
-      }
-    };
 
     this.updateName = this.updateName.bind(this);
   }
 
-  updateFieldValidity(field, newValue) {
-    let newValidStatus = {};
-    newValidStatus[field] = newValue !== undefined && newValue.length > 0;
-
-    this.setState({
-      validStatus: merge(this.state.validStatus, newValidStatus)
-    }, () => {
-      this.props.onValidation(this.formIsValid());
-    });
-  }
-
   updateName() {
     let newNameValue = this.refs.entityName.getDOMNode().value;
-    this.updateFieldValidity('entityName', newNameValue);
     DisclosureActions.setInProgressEntityName(newNameValue);
-  }
-
-  formIsValid() {
-    return this.state.validStatus.entityName;
   }
 
   renderMobile() {}
 
   renderDesktop() {
+    let validationErrors = DisclosureStore.entityStepZeroErrors();
+
     let desktopStyles = {
       container: {
       },
@@ -53,7 +34,7 @@ export class EntityFormPartZero extends ResponsiveComponent {
         display: 'inline-block',
         marginRight: 20,
         width: 275,
-        color: this.state.validStatus.entityName === false ? 'red' : 'inherit'
+        color: this.props.validating && validationErrors.name ? 'red' : 'inherit'
       },
       top: {
         marginTop: 20
@@ -68,7 +49,7 @@ export class EntityFormPartZero extends ResponsiveComponent {
         border: '1px solid #ccc',
         height: 30,
         width: '100%',
-        borderBottom: this.state.validStatus.entityName === false ? '3px solid red' : '1px solid #ccc'
+        borderBottom: this.props.validating && validationErrors.name ? '3px solid red' : '1px solid #ccc'
       },
       invalidError: {
         fontSize: 10,
@@ -78,9 +59,9 @@ export class EntityFormPartZero extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let requiredFieldError;
-    if (this.state.validStatus.entityName === false) {
+    if (this.props.validating && validationErrors.name) {
       requiredFieldError = (
-        <div style={styles.invalidError}>Required Field</div>
+        <div style={styles.invalidError}>{validationErrors.name}</div>
       );
     }
 

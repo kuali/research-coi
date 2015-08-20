@@ -13,7 +13,14 @@ class _DisclosureStore extends AutoBindingStore {
     super(DisclosureActions);
 
     this.exportPublicMethods({
-      getDisclosure: this.getDisclosure
+      getDisclosure: this.getDisclosure,
+      entityStepZeroErrors: this.entityStepZeroErrors,
+      entityStepZeroComplete: this.entityStepZeroComplete,
+      entityStepOneErrors: this.entityStepOneErrors,
+      entityStepOneComplete: this.entityStepOneComplete,
+      entityStepTwoErrors: this.entityStepTwoErrors,
+      entityStepTwoComplete: this.entityStepTwoComplete,
+      entityIsSubmittable: this.entityIsSubmittable
     });
 
     // initialize state here
@@ -51,7 +58,10 @@ class _DisclosureStore extends AutoBindingStore {
         type: '',
         amount: '',
         comments: ''
-      }
+      },
+      validatingEntityStepZero: false,
+      validatingEntityStepOne: false,
+      validatingEntityStepTwo: false
     };
 
     this.projects = [
@@ -288,6 +298,8 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
     this.applicationState.potentialRelationship.relationship = relation;
+    this.setEntityRelationshipType('');
+    this.setEntityRelationshipAmount('');
   }
 
   setEntityRelationshipType(type) {
@@ -338,7 +350,7 @@ class _DisclosureStore extends AutoBindingStore {
 
   removeEntityRelationship(params) {
     let relationId = params.relationId;
-    let entity = this.applicationState.entityInProgress;
+    let entity = params.entityId ? this.getEntity(params.entityId) : this.applicationState.entityInProgress;
 
     entity.relationships = entity.relationships.filter((relationship) => {
       return relationship.id !== relationId;
@@ -359,6 +371,9 @@ class _DisclosureStore extends AutoBindingStore {
     }
     else {
       this.applicationState.newEntityFormStep = -1;
+      this.applicationState.entityInProgress = {
+        status: 'ACTIVE'
+      };
     }
   }
 
@@ -374,7 +389,9 @@ class _DisclosureStore extends AutoBindingStore {
     }
     this.entities.push(entity);
 
-    this.applicationState.entityInProgress = {};
+    this.applicationState.entityInProgress = {
+      status: 'ACTIVE'
+    };
     this.applicationState.newEntityFormStep = -1;
   }
 
@@ -544,7 +561,9 @@ class _DisclosureStore extends AutoBindingStore {
   resetDisclosure() {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = 1;
-    this.applicationState.entityInProgress = {};
+    this.applicationState.entityInProgress = {
+      status: 'ACTIVE'
+    };
     this.applicationState.entityStates = {};
   }
 
@@ -581,6 +600,166 @@ class _DisclosureStore extends AutoBindingStore {
   setArchiveSort(params) {
     this.applicationState.archiveSortField = params.field;
     this.applicationState.archiveSortDirection = params.direction;
+  }
+
+  entityStepZeroErrors() {
+    const storeState = this.getState();
+    let errors = {};
+
+    if (storeState.applicationState.entityInProgress.name === undefined ||
+        storeState.applicationState.entityInProgress.name.length === 0) {
+      errors.name = 'Required Field';
+    }
+
+    return errors;
+  }
+
+  entityStepZeroComplete() {
+    let errors = this.entityStepZeroErrors();
+
+    if (Object.keys(errors).length > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  entityStepOneErrors() {
+    const storeState = this.getState();
+    let errors = {};
+
+    if (storeState.applicationState.entityInProgress.type === undefined || storeState.applicationState.entityInProgress.type.length === 0) {
+      errors.type = 'Required Field';
+    }
+    if (storeState.applicationState.entityInProgress.isPublic === undefined || storeState.applicationState.entityInProgress.isPublic.length === 0) {
+      errors.isPublic = 'Required Field';
+    }
+    if (storeState.applicationState.entityInProgress.isSponsor === undefined || storeState.applicationState.entityInProgress.isSponsor.length === 0) {
+      errors.isSponsor = 'Required Field';
+    }
+    if (storeState.applicationState.entityInProgress.description === undefined || storeState.applicationState.entityInProgress.description.length === 0) {
+      errors.description = 'Required Field';
+    }
+
+    return errors;
+  }
+
+  entityStepOneComplete() {
+    let errors = this.entityStepOneErrors();
+
+    if (Object.keys(errors).length > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  entityStepTwoErrors() {
+    const storeState = this.getState();
+    let errors = {};
+
+    let potentialRelationship = storeState.applicationState.potentialRelationship;
+    if (potentialRelationship.person === undefined || potentialRelationship.person.length === 0) {
+      errors.person = 'Required Field';
+    }
+
+    if (potentialRelationship.comments === undefined || potentialRelationship.comments.length === 0) {
+      errors.comment = 'Required Field';
+    }
+
+    if (potentialRelationship.relationship !== undefined && potentialRelationship.relationship.length !== 0) {
+      if (potentialRelationship.relationship !== 'Paid Activities') {
+        if (potentialRelationship.type === undefined || potentialRelationship.type.length === 0) {
+          errors.type = 'Required Field';
+        }
+      }
+
+      if (potentialRelationship.relationship !== 'Offices/Positions') {
+        if (potentialRelationship.amount === undefined || potentialRelationship.amount.length === 0) {
+          errors.amount = 'Required Field';
+        }
+      }
+    }
+    else {
+      errors.relation = 'Required Field';
+    }
+
+    return errors;
+  }
+
+  entityStepTwoComplete() {
+    let errors = this.entityStepTwoErrors();
+
+    if (Object.keys(errors).length > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  entityIsSubmittable(id) {
+    const storeState = this.getState();
+    let entity;
+    if (id) {
+      entity = storeState.entities.find(ent => {
+        return ent.id === id;
+      });
+    }
+    else {
+      entity = storeState.applicationState.entityInProgress;
+    }
+
+    let atLeastOneRelationshipAdded = () => {
+      return entity.relationships && entity.relationships.length > 0;
+    };
+
+    let unSubmittedRelationshipStarted = () => {
+      let potentialRelationship = storeState.applicationState.potentialRelationship;
+      return (potentialRelationship.person && potentialRelationship.person.length > 0) ||
+          (potentialRelationship.comments && potentialRelationship.comments.length > 0) ||
+          (potentialRelationship.relationship && potentialRelationship.relationship.length > 0);
+    };
+
+    if (atLeastOneRelationshipAdded()) {
+      if (unSubmittedRelationshipStarted()) {
+        return this.entityStepTwoComplete();
+      }
+      else {
+        return true;
+      }
+    }
+    else {
+      return this.entityStepTwoComplete();
+    }
+  }
+
+
+  turnOnValidation(step) {
+    switch (step) {
+      case 0:
+        this.applicationState.validatingEntityStepZero = true;
+        break;
+      case 1:
+        this.applicationState.validatingEntityStepOne = true;
+        break;
+      case 2:
+        this.applicationState.validatingEntityStepTwo = true;
+        break;
+    }
+  }
+
+  turnOffValidation(step) {
+    switch (step) {
+      case 0:
+        this.applicationState.validatingEntityStepZero = false;
+        break;
+      case 1:
+        this.applicationState.validatingEntityStepOne = false;
+        break;
+      case 2:
+        this.applicationState.validatingEntityStepTwo = false;
+        break;
+    }
   }
 }
 

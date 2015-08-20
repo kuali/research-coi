@@ -178,6 +178,10 @@ class _DisclosureActions {
   }
 
   loadArchivedDisclosureDetail(id) { this.dispatch(id); }
+
+  turnOnValidation(step) { this.dispatch(step); }
+
+  turnOffValidation(step) { this.dispatch(step); }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

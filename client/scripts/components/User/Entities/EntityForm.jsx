@@ -6,31 +6,54 @@ import {EntityFormPartZero} from './EntityFormPartZero';
 import {EntityFormPartOne} from './EntityFormPartOne';
 import {EntityFormPartTwo} from './EntityFormPartTwo';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
 
 export class EntityForm extends ResponsiveComponent {
-  constructor(props) {
+  constructor() {
     super();
     this.commonStyles = {};
-    this.state = {
-      invalid: props.update ? false : true
-    };
 
     this.next = this.next.bind(this);
     this.back = this.back.bind(this);
-    this.formValidation = this.formValidation.bind(this);
     this.cancel = this.cancel.bind(this);
     this.submit = this.submit.bind(this);
     this.done = this.done.bind(this);
     this.edit = this.edit.bind(this);
     this.undo = this.undo.bind(this);
+    this.isCurrentStepValid = this.isCurrentStepValid.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
 
+  isCurrentStepValid() {
+    switch (this.props.step) {
+      case 0:
+        return DisclosureStore.entityStepZeroComplete();
+      case 1:
+        return DisclosureStore.entityStepOneComplete();
+      case 2:
+        return DisclosureStore.entityStepTwoComplete();
+    }
+  }
+
+  isStepValidating() {
+    switch (this.props.step) {
+      case 0:
+        return this.props.appState.validatingEntityStepZero;
+      case 1:
+        return this.props.appState.validatingEntityStepOne;
+      case 2:
+        return this.props.appState.validatingEntityStepTwo;
+    }
+  }
+
   next() {
-    if (!this.state.invalid) {
+    if (this.isCurrentStepValid()) {
+      DisclosureActions.turnOffValidation(this.props.step);
       DisclosureActions.entityFormNextClicked(this.props.entity.id);
-      this.setState({invalid: true});
+    }
+    else {
+      DisclosureActions.turnOnValidation(this.props.step);
     }
   }
 
@@ -40,11 +63,19 @@ export class EntityForm extends ResponsiveComponent {
 
   cancel() {
     DisclosureActions.entityFormClosed(this.props.entity.id);
+    DisclosureActions.turnOffValidation(0);
+    DisclosureActions.turnOffValidation(1);
+    DisclosureActions.turnOffValidation(2);
   }
 
   submit() {
-    DisclosureActions.saveInProgressEntity(this.props.entity);
-    this.setState({invalid: false});
+    if (DisclosureStore.entityIsSubmittable()) {
+      DisclosureActions.turnOffValidation(this.props.step);
+      DisclosureActions.saveInProgressEntity(this.props.entity);
+    }
+    else {
+      DisclosureActions.turnOnValidation(this.props.step);
+    }
   }
 
   edit() {
@@ -52,19 +83,19 @@ export class EntityForm extends ResponsiveComponent {
   }
 
   done() {
-    if (!this.props.editing || !this.state.invalid) {
+    if (!this.props.editing || DisclosureStore.entityIsSubmittable(this.props.entity.id)) {
       DisclosureActions.entityFormClosed(this.props.entity.id);
+      DisclosureActions.turnOffValidation(1);
+      DisclosureActions.turnOffValidation(2);
+    }
+    else {
+      DisclosureActions.turnOnValidation(1);
+      DisclosureActions.turnOnValidation(2);
     }
   }
 
   undo() {
     DisclosureActions.undoEntityChanges(this.props.snapshot);
-  }
-
-  formValidation(isValid) {
-    this.setState({
-      invalid: !isValid
-    });
   }
 
   renderMobile() {}
@@ -102,10 +133,17 @@ export class EntityForm extends ResponsiveComponent {
 
     let currentStep;
     let submitButton;
-    let nextButtonStyle = this.state.invalid ? merge(styles.button, styles.disabled) : styles.button;
-    let nextButton = (
-      <ProminentButton style={nextButtonStyle} onClick={this.next}>Next &gt;</ProminentButton>
-    );
+    let nextButton;
+    if (this.isStepValidating() && !this.isCurrentStepValid()) {
+      nextButton = (
+        <ProminentButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.next}>Next &gt;</ProminentButton>
+      );
+    }
+    else {
+      nextButton = (
+        <ProminentButton style={styles.button} onClick={this.next}>Next &gt;</ProminentButton>
+      );
+    }
 
     let entity = this.props.entity;
     let buttons;
@@ -118,12 +156,11 @@ export class EntityForm extends ResponsiveComponent {
             readonly={!this.props.editing}
             update={this.props.update}
             name={entity.name}
-            status={entity.status}
             type={entity.type}
             isPublic={entity.isPublic}
             isSponsor={entity.isSponsor}
             description={entity.description}
-            onValidation={this.formValidation}
+            validating={this.props.appState.validatingEntityStepOne}
           />
           <EntityFormPartTwo
             id={entity.id}
@@ -132,13 +169,13 @@ export class EntityForm extends ResponsiveComponent {
             relations={this.props.entity.relationships}
             name={this.props.entity.name}
             style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
-            onValidation={this.formValidation}
+            validating={this.props.appState.validatingEntityStepTwo}
             appState={this.props.appState}
           />
         </div>
       );
 
-      let doneButtonStyle = this.state.invalid ? merge(styles.button, styles.disabled) : styles.button;
+      let doneButtonStyle = DisclosureStore.entityIsSubmittable(entity.id) ? styles.button : merge(styles.button, styles.disabled);
       if (this.props.editing) {
         buttons = (
           <span>
@@ -162,7 +199,7 @@ export class EntityForm extends ResponsiveComponent {
           currentStep = (
             <EntityFormPartZero
               entityName={entity.name}
-              onValidation={this.formValidation}
+              validating={this.props.appState.validatingEntityStepZero}
             />
           );
           break;
@@ -171,12 +208,11 @@ export class EntityForm extends ResponsiveComponent {
             <EntityFormPartOne
               update={this.props.update}
               name={entity.name}
-              status={entity.status}
               type={entity.type}
               isPublic={entity.isPublic}
               isSponsor={entity.isSponsor}
               description={entity.description}
-              onValidation={this.formValidation}
+              validating={this.props.appState.validatingEntityStepOne}
             />
           );
 
@@ -191,15 +227,21 @@ export class EntityForm extends ResponsiveComponent {
               update={this.props.update}
               relations={this.props.entity.relationships}
               name={this.props.entity.name}
-              onValidation={this.formValidation}
               appState={this.props.appState}
+              validating={this.props.appState.validatingEntityStepTwo}
             />
           );
 
-          submitButton = (
-            <ProminentButton style={styles.button} onClick={this.submit}>Submit</ProminentButton>
-          );
-
+          if (this.isStepValidating() && !this.isCurrentStepValid()) {
+            submitButton = (
+              <ProminentButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.submit}>Submit</ProminentButton>
+            );
+          }
+          else {
+            submitButton = (
+              <ProminentButton style={styles.button} onClick={this.submit}>Submit</ProminentButton>
+            );
+          }
 
           backButton = (
             <ProminentButton style={styles.button} onClick={this.back}>Back</ProminentButton>
