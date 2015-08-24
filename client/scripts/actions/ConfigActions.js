@@ -94,10 +94,10 @@ class _ConfigActions {
 
   startNewQuestion() { this.dispatch({}); }
 
-  questionMovedTo(questionId, position) {
+  questionMoved(draggedId, targetId) {
     this.dispatch({
-      questionId: questionId,
-      position: position
+      draggedId: draggedId,
+      targetId: targetId
     });
   }
 
@@ -108,10 +108,6 @@ class _ConfigActions {
   startEditingQuestion(questionId) { this.dispatch(questionId); }
 
   cancelQuestionEdit(questionId) { this.dispatch(questionId); }
-
-  makeSubQuestion(questionId) { this.dispatch(questionId); }
-
-  makeMainQuestion(questionId) { this.dispatch(questionId); }
 }
 
 export default alt.createActions(_ConfigActions);

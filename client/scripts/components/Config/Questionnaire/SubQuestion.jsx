@@ -2,30 +2,9 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import Gripper from '../../DynamicIcons/Gripper';
-import {DragSource} from 'react-dnd';
+//import {DragSource} from 'react-dnd';
 import ConfigActions from '../../../actions/ConfigActions';
 import NewQuestion from './NewQuestion';
-
-let questionSource = {
-  beginDrag(props, monitor, component) { // eslint-disable-line no-unused-vars
-    return {};
-  },
-  isDragging() {
-  },
-  endDrag(props, monitor, component) {
-    if (monitor.didDrop()) {
-      ConfigActions.questionMovedTo(component.props.id, monitor.getDropResult().position);
-    }
-  }
-};
-
-function collect(connect, monitor) {
-  return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-    offset: monitor.getDifferenceFromInitialOffset()
-  };
-}
 
 export default class SubQuestion extends React.Component {
   constructor() {
@@ -55,7 +34,11 @@ export default class SubQuestion extends React.Component {
   }
 
   makeMainQuestion() {
-    ConfigActions.makeMainQuestion(this.props.id);
+    // ConfigActions.makeMainQuestion(this.props.id);
+  }
+
+  getEditState(id) {
+    return this.props.appState.questionsBeingEdited[id];
   }
 
   render() {
@@ -66,7 +49,7 @@ export default class SubQuestion extends React.Component {
         boxShadow: '0 0 10px #BBB',
         overflow: 'hidden',
         cursor: 'move',
-        marginLeft: 60
+        margin: '25px 0 25px 60px'
       },
       content: {
         display: 'inline-block',
@@ -132,10 +115,11 @@ export default class SubQuestion extends React.Component {
 
     let buttons;
     let questionDetails;
-    if (this.props.editState) {
+    let editState = this.getEditState(this.props.id);
+    if (editState) {
       questionDetails = (
         <div className="flexbox row" style={styles.top}>
-          <NewQuestion id={this.props.id} question={this.props.editState} />
+          <NewQuestion id={this.props.id} question={editState} />
         </div>
       );
 
@@ -158,15 +142,7 @@ export default class SubQuestion extends React.Component {
       buttons = (
         <div>
           <span>
-            Display
-            <select style={styles.dropdown}>
-              <option>If</option>
-              <option>Always</option>
-            </select>
-            <select style={merge(styles.dropdown, {marginRight: 5})}>
-              <option>Parent</option>
-            </select>
-            is
+            Display if parent is
             <select style={styles.dropdown}>
               <option>Yes</option>
               <option>No</option>
@@ -178,7 +154,7 @@ export default class SubQuestion extends React.Component {
       );
     }
 
-    return this.props.connectDragSource(
+    return (
       <div className="flexbox row" style={merge(styles.container, this.props.style)}>
         <span style={styles.gripper}>
           <Gripper style={styles.gripperIcon} />
@@ -195,4 +171,4 @@ export default class SubQuestion extends React.Component {
   }
 }
 
-export default DragSource('subQuestion', questionSource, collect)(SubQuestion); //eslint-disable-line new-cap
+export default SubQuestion; //eslint-disable-line new-cap

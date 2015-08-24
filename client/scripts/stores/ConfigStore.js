@@ -63,9 +63,38 @@ class _ConfigStore extends AutoBindingStore {
         type: '',
         validations: [
         ],
-        text: 'Denver Broncos or Colorado Rockies.  Doesn\'t really matter.  Neither one works well when what you need is a hammer drill.  Right?',
-        subQuestions: [
-        ]
+        text: 'In the last year did you receive any contributions from companies which helped with research you are currently working on?'
+      },
+      {
+        id: 21,
+        type: '',
+        validations: [
+        ],
+        text: 'Do any of the companies have a reputation for doing bad things?',
+        parent: 1
+      },
+      {
+        id: 31,
+        type: '',
+        validations: [
+        ],
+        text: 'Are the companies actively employing political lobbyists?',
+        parent: 1
+      },
+      {
+        id: 2,
+        type: '',
+        validations: [
+        ],
+        text: 'Do you feel that the companies involved are trying to manipulate the results of your research?'
+      },
+      {
+        id: 41,
+        type: '',
+        validations: [
+        ],
+        text: 'In what way is your research being manipulated?',
+        parent: 2
       }
     ];
   }
@@ -229,7 +258,6 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   questionTypeChosen(params) {
-    debugger;
     let targetQuestion = this.findQuestion(params.questionId);
     targetQuestion.type = params.type;
   }
@@ -254,26 +282,30 @@ class _ConfigStore extends AutoBindingStore {
     this.applicationState.newQuestion = {};
   }
 
-  questionMovedTo(params) {
+  questionMoved(params) {
     let currentIndex = this.questions.findIndex(question => {
-      return question.id === params.questionId;
+      return question.id === params.draggedId;
     });
+    let targetIndex = this.questions.findIndex(question => {
+      return question.id === params.targetId;
+    });
+
     if (
         currentIndex === -1 ||
-        params.position > this.questions.length ||
-        currentIndex === params.position ||
-        (currentIndex + 1) === params.position
+        targetIndex === -1 ||
+        targetIndex >= this.questions.length ||
+        currentIndex === targetIndex
        )
     {
       return;
     }
 
-    if (currentIndex < params.position) {
-      params.position -= 1;
+    if (currentIndex < targetIndex) {
+      targetIndex -= 1;
     }
 
     let questionRef = this.questions.splice(currentIndex, 1)[0];
-    this.questions.splice(params.position, 0, questionRef);
+    this.questions.splice(targetIndex, 0, questionRef);
   }
 
   deleteQuestion(questionId) {
@@ -315,34 +347,6 @@ class _ConfigStore extends AutoBindingStore {
     }
     else {
       return -1;
-    }
-  }
-
-  makeSubQuestion(questionId) {
-    let previousIndex = this.findPrecedingQuestion(questionId);
-
-    if (previousIndex >= 0) {
-      if (!this.questions[previousIndex].subQuestions) {
-        this.questions[previousIndex].subQuestions = [];
-      }
-      this.questions[previousIndex].subQuestions.push(this.questions[previousIndex + 1]);
-      this.questions.splice(previousIndex + 1, 1);
-    }
-  }
-
-  makeMainQuestion(questionId) {
-    let subIndex;
-    let parentIndex = this.questions.findIndex(question => {
-      subIndex = question.subQuestions.findIndex(subQuestion => {
-        return subQuestion.id === questionId;
-      });
-
-      return subIndex >= 0;
-    });
-
-    if (parentIndex >= 0) {
-      let toInsert = this.questions[parentIndex].subQuestions.splice(subIndex, 1);
-      this.questions.splice(parentIndex + 1, 0, toInsert[0]);
     }
   }
 }

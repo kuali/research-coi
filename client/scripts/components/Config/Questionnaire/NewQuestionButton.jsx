@@ -16,7 +16,8 @@ export default class NewQuestionButton extends React.Component {
         position: 'relative',
         cursor: 'pointer',
         boxShadow: '0 0 15px #e6e6e6',
-        borderRadius: 6
+        borderRadius: 6,
+        marginBottom: 10
       },
       plus: {
         position: 'absolute',
