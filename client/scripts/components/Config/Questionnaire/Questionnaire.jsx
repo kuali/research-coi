@@ -76,14 +76,12 @@ class Questionnaire extends React.Component {
     this.state.questions.splice(targetIndex, 0, questionRef);
 
     if (this.isASubQuestion(this.state.questions[targetIndex])) {
-      // Set parent to new parent
       let newParent = this.findNewParentQuestion(this.state.questions[targetIndex]);
       if (newParent) {
         this.state.questions[targetIndex].parent = newParent.id;
       }
     }
     else {
-      // Reassign potential children to this
       for (let i = targetIndex + 1; i < this.state.questions.length; i++) {
         if (this.state.questions[i].parent) {
           this.state.questions[i].parent = draggedQuestionId;
@@ -180,7 +178,6 @@ class Questionnaire extends React.Component {
       let oldParentId = question.parent;
       delete question.parent;
 
-      // find subsequent questions who had the old parent and move them to this question
       this.findNewChildren(question, oldParentId);
 
       this.scheduleUpdate({
