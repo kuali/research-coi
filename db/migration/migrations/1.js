@@ -1,4 +1,4 @@
-exports.up = function(knex, Promise) {
+exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   return knex.schema.createTable('disclosure_type', function(table) {
     table.integer('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
@@ -108,5 +108,5 @@ exports.up = function(knex, Promise) {
   });
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function(knex, Promise) { //eslint-disable-line no-unused-vars
 };
