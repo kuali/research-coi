@@ -75,6 +75,10 @@ class Questionnaire extends React.Component {
     let questionRef = this.state.questions.splice(currentIndex, 1)[0];
     this.state.questions.splice(targetIndex, 0, questionRef);
 
+    if (currentIndex === 0) {
+      this.makeNewTopLevelParent();
+    }
+
     if (this.isASubQuestion(this.state.questions[targetIndex])) {
       let newParent = this.findNewParentQuestion(this.state.questions[targetIndex]);
       if (newParent) {
@@ -82,19 +86,44 @@ class Questionnaire extends React.Component {
       }
     }
     else {
-      for (let i = targetIndex + 1; i < this.state.questions.length; i++) {
-        if (this.state.questions[i].parent) {
-          this.state.questions[i].parent = draggedQuestionId;
-        }
-        else {
-          break;
-        }
-      }
+      this.reassignOldChildren(targetIndex);
+      this.adoptNewChildren(targetIndex);
     }
 
     this.scheduleUpdate({
       questions: this.state.questions
     });
+  }
+
+  makeNewTopLevelParent() {
+    if (this.state.questions[0].parent) {
+      delete this.state.questions[0].parent;
+    }
+  }
+
+  reassignOldChildren(newIndex) {
+    let latestParent;
+    let draggedQuestionId = this.state.questions[newIndex].id;
+    for (let i = 0; i < newIndex; i++) {
+      if (!this.state.questions[i].parent) {
+        latestParent = this.state.questions[i];
+      }
+      else if ((this.state.questions[i].parent === draggedQuestionId) && latestParent) {
+        this.state.questions[i].parent = latestParent.id;
+      }
+    }
+  }
+
+  adoptNewChildren(newIndex) {
+    let draggedQuestionId = this.state.questions[newIndex].id;
+    for (let i = newIndex + 1; i < this.state.questions.length; i++) {
+      if (this.state.questions[i].parent) {
+        this.state.questions[i].parent = draggedQuestionId;
+      }
+      else {
+        break;
+      }
+    }
   }
 
   isASubQuestion(question) {
@@ -266,7 +295,7 @@ class Questionnaire extends React.Component {
       let parentIndex = 0;
       let lastParent = this.state.questions.length > 0 ? this.state.questions[0].id : 0;
 
-      questions = this.state.questions.map((question) => {
+      questions = this.state.questions.map((question, index) => {
         let numberToShow;
         if (question.parent && question.parent === lastParent) {
           subIndex++;
@@ -290,7 +319,8 @@ class Questionnaire extends React.Component {
             key={question.id}
             id={question.id}
             text={question.text}
-            parent={question.parent} />
+            parent={question.parent}
+            style={index === 0 ? {cursor: 'ns-resize'} : {cursor: 'move'}} />
         );
       });
     }

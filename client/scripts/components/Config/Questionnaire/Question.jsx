@@ -88,7 +88,6 @@ class Question extends React.Component {
         backgroundColor: 'white',
         boxShadow: '0 0 10px #BBB',
         overflow: 'hidden',
-        cursor: 'move',
         visibility: this.props.isDragging ? 'hidden' : 'visible',
         marginLeft: this.props.parent ? 100 : 0,
         transition: 'margin .2s ease-in-out'
