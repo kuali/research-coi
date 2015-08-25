@@ -1,4 +1,4 @@
-
+/*eslint-disable camelcase */
 exports.seed = function(knex, Promise) {
   return Promise.join(
     // Inserts seed entries

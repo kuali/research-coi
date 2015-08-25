@@ -412,6 +412,9 @@ export let get = (dbInfo, disclosureId, callback) => {
       .catch(err => {
         callback(err);
       });
+  })
+  .catch(err => {
+    callback(err);
   });
 };
 
@@ -538,11 +541,11 @@ export let getSummariesForUser = (dbInfo, userId, callback) => {
     .from('disclosure as d')
     .innerJoin('disposition_type as t', 'd.disposition_type_cd', 't.type_cd')
     .innerJoin('disclosure_status as s', 'd.status_cd', 's.status_cd')
+    .then(function (rows) {
+      callback(undefined, rows);
+    })
     .catch(function (err) {
       callback(err);
-    }).
-    then(function (rows) {
-      callback(undefined, rows);
     });
 };
 
@@ -551,11 +554,11 @@ export let getArchivedDisclosures = (dbInfo, userId, callback) => {
   knex.select('de.id', 'de.type_cd as type', 'de.title', knex.raw('UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date'), 'dn.description as disposition', 'de.start_date')
     .from('disclosure as de')
     .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
+    .then(function (rows) {
+      callback(undefined, rows);
+    })
     .catch(function (err) {
       callback(err);
-    }).
-    then(function (rows) {
-      callback(undefined, rows);
     });
 };
 
