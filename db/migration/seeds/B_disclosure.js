@@ -1,10 +1,7 @@
 /*eslint-disable camelcase */
 exports.seed = function(knex, Promise) {
+  console.log('Seed - disclosure');
   return Promise.join(
-    // Deletes ALL existing entries
-    // knex('table_name').del(),
-
-    // Inserts seed entries
     knex('disclosure').insert({
       type_cd: 2,
       title: 'Petroleum extraction in deep water',
@@ -81,52 +78,6 @@ exports.seed = function(knex, Promise) {
       status_cd: 2,
       last_review_date: knex.raw('CURDATE()'),
       approved_date: knex.raw('CURDATE()')
-    }),
-    knex('project').insert({
-      name: 'Do Squirrels smile while eating peanut butter cups?',
-      type_cd: 1,
-      role_cd: 'PI',
-      sponsor_cd: '00010'
-    }),
-    knex('fin_entity').insert({
-      disclosure_id: knex.raw('(select max(id) from disclosure)'),
-      active: true,
-      public: true,
-      type_cd: 1,
-      sponsor: true,
-      description: 'Entity 1 - Petroleum extraction in deep water'
-    }),
-    knex('fin_entity').insert({
-      disclosure_id: knex.raw('(select max(id) from disclosure)'),
-      active: false,
-      public: true,
-      type_cd: 1,
-      sponsor: true,
-      description: 'Entity 2 - Petroleum extraction in deep water'
-    }),
-    knex('fin_entity').insert({
-      disclosure_id: knex.raw('(select max(id) from disclosure)'),
-      active: false,
-      public: true,
-      type_cd: 1,
-      sponsor: false,
-      description: 'Entity 3 - Petroleum extraction in deep water'
-    }),
-    knex('fin_entity').insert({
-      disclosure_id: knex.raw('(select max(id) from disclosure)'),
-      active: false,
-      public: false,
-      type_cd: 1,
-      sponsor: false,
-      description: 'Entity 4 - Petroleum extraction in deep water'
-    }),
-    knex('fin_entity').insert({
-      disclosure_id: knex.raw('(select max(id) from disclosure)'),
-      active: true,
-      public: true,
-      type_cd: 1,
-      sponsor: true,
-      description: 'Entity 1 - Glyphosate as a carcinogen'
     })
   );
 };
