@@ -1,11 +1,7 @@
 /*eslint-disable camelcase */
 exports.seed = function(knex, Promise) {
+  console.log('Seed - relationship');
   return Promise.join(
-    knex('declaration').insert({
-      fin_entity_id: knex.raw('(select max(id) from fin_entity)'),
-      project_id: knex.raw('(select max(id) from project)'),
-      relationship_status_cd: 1
-    }),
     knex('relationship').insert({
       fin_entity_id: knex.raw('(select max(id) from fin_entity)'),
       type_cd: 1,
