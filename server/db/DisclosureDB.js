@@ -537,7 +537,7 @@ export let getSummariesForReview = (school, sortColumn, sortDirection, query) =>
 
 export let getSummariesForUser = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
-  knex.select('t.description as type', knex.raw('UNIX_TIMESTAMP(d.expired_date)*1000 as expired_date'), 'd.title', 's.description as status', knex.raw('UNIX_TIMESTAMP(d.last_review_date)*1000 as last_review_date'), 'd.id')
+  knex.select('t.description as type', 'd.expired_date as expired_date', 'd.title', 's.description as status', 'd.last_review_date as last_review_date', 'd.id')
     .from('disclosure as d')
     .innerJoin('disposition_type as t', 'd.disposition_type_cd', 't.type_cd')
     .innerJoin('disclosure_status as s', 'd.status_cd', 's.status_cd')
@@ -551,7 +551,7 @@ export let getSummariesForUser = (dbInfo, userId, callback) => {
 
 export let getArchivedDisclosures = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
-  knex.select('de.id', 'de.type_cd as type', 'de.title', knex.raw('UNIX_TIMESTAMP(submitted_date)*1000 as submitted_date'), 'dn.description as disposition', 'de.start_date')
+  knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')
     .from('disclosure as de')
     .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
     .then(function (rows) {
