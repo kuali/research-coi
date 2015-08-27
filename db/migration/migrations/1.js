@@ -105,6 +105,17 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('relationship_status_cd').notNullable().references('status_cd').inTable('relationship_status');
     table.string('comments', 4000);
     table.engine('InnoDB');
+  })
+  .createTable('questionnaire', function(table) {
+    table.increments('id').notNullable();
+    table.string('instructions', 4000); // -- markdown
+    table.integer('version').unsigned().notNullable();
+    table.text('questions'); // -- json object containing questions
+  })
+  .createTable('questionnaire_answers', function(table) {
+    table.increments('id').notNullable();
+    table.integer('questionnaire_id').unsigned().notNullable().index().references('id').inTable('questionnaire').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.text('answers'); // -- json object containing answers
   });
 };
 

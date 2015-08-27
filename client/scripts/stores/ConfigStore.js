@@ -1,6 +1,7 @@
 import ConfigActions from '../actions/ConfigActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
+import request from 'superagent';
 
 class _ConfigStore extends AutoBindingStore {
   constructor() {
@@ -57,46 +58,37 @@ class _ConfigStore extends AutoBindingStore {
 
     this.notifications = [];
 
-    this.questions = [
-      {
-        id: 1,
-        type: '',
-        validations: [
-        ],
-        text: 'In the last year did you receive any contributions from companies which helped with research you are currently working on?'
-      },
-      {
-        id: 21,
-        type: '',
-        validations: [
-        ],
-        text: 'Do any of the companies have a reputation for doing bad things?',
-        parent: 1
-      },
-      {
-        id: 31,
-        type: '',
-        validations: [
-        ],
-        text: 'Are the companies actively employing political lobbyists?',
-        parent: 1
-      },
-      {
-        id: 2,
-        type: '',
-        validations: [
-        ],
-        text: 'Do you feel that the companies involved are trying to manipulate the results of your research?'
-      },
-      {
-        id: 41,
-        type: '',
-        validations: [
-        ],
-        text: 'In what way is your research being manipulated?',
-        parent: 2
+    this.questions = [ ];
+  }
+
+  convertQuestionFormat(questions) {
+    let formattedQuestions = [];
+    questions.forEach(question => {
+      formattedQuestions.push(question);
+      if (question.subQuestions) {
+        question.subQuestions.forEach(subQuestion => {
+          subQuestion.parent = question.id;
+          formattedQuestions.push(subQuestion);
+        });
       }
-    ];
+
+    });
+
+    return formattedQuestions;
+  }
+
+  refreshQuestionnaire() {
+    request.get('/api/coi/questionnaires/latest')
+           .end((err, questionnaire) => {
+             if (!err) {
+               this.questions = this.convertQuestionFormat(JSON.parse(questionnaire.body[0].questions));
+               this.emitChange();
+             }
+           });
+  }
+
+  loadLatestQuestionnaire() {
+    this.refreshQuestionnaire();
   }
 
   startEditingDeclarationType(id) {

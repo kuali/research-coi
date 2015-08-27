@@ -29,6 +29,7 @@ class Questionnaire extends React.Component {
   componentDidMount() {
     this.onChange();
     ConfigStore.listen(this.onChange);
+    ConfigActions.loadLatestQuestionnaire();
   }
 
   componentWillUnmount() {
