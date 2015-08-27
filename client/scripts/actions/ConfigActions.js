@@ -10,6 +10,8 @@ class _ConfigActions {
     });
   }
 
+  loadLatestQuestionnaire() { this.dispatch(); }
+
   stopEditingDeclarationType(id) { this.dispatch(id); }
 
   toggleDeclarationType(id) { this.dispatch(id); }
