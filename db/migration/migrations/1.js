@@ -16,10 +16,10 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   })
   .createTable('disclosure', function(table) {
     table.increments('id').notNullable();
-    table.integer('type_cd').notNullable().references('type_cd').inTable('disclosure_type').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('type_cd').notNullable().references('type_cd').inTable('disclosure_type');
     table.string('title', 200);
-    table.integer('disposition_type_cd').references('type_cd').inTable('disposition_type').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('status_cd').notNullable().references('status_cd').inTable('disclosure_status').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('disposition_type_cd').references('type_cd').inTable('disposition_type');
+    table.integer('status_cd').notNullable().references('status_cd').inTable('disclosure_status');
     table.string('submitted_by', 40);
     table.dateTime('submitted_date');
     table.dateTime('start_date').notNullable();
@@ -35,10 +35,10 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   })
   .createTable('fin_entity', function(table) {
     table.increments('id').notNullable();
-    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
     table.boolean('active');
     table.boolean('public');
-    table.integer('type_cd').references('type_cd').inTable('fin_entity_type').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('type_cd').references('type_cd').inTable('fin_entity_type');
     table.boolean('sponsor');
     table.string('name', 200);
     table.string('description', 200);
@@ -66,11 +66,11 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   })
   .createTable('relationship', function(table) {
     table.increments('id').notNullable();
-    table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('type_cd').references('type_cd').inTable('relationship_type').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('person_type_cd').notNullable().references('type_cd').inTable('relationship_person_type').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('relationship_category_cd').references('type_cd').inTable('relationship_category_type').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('amount_cd').references('type_cd').inTable('relationship_amount_type').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
+    table.integer('type_cd').references('type_cd').inTable('relationship_type');
+    table.integer('person_type_cd').notNullable().references('type_cd').inTable('relationship_person_type');
+    table.integer('relationship_category_cd').references('type_cd').inTable('relationship_category_type');
+    table.integer('amount_cd').references('type_cd').inTable('relationship_amount_type');
     table.string('comments', 4000);
     table.engine('InnoDB');
   })
@@ -88,8 +88,8 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   .createTable('project', function(table) {
     table.increments('id').notNullable();
     table.string('name', 200).notNullable();
-    table.integer('type_cd').notNullable().references('type_cd').inTable('project_type').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.string('role_cd', 50).notNullable().references('role_cd').inTable('project_role').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('type_cd').notNullable().references('type_cd').inTable('project_type');
+    table.string('role_cd', 50).notNullable().references('role_cd').inTable('project_role');
     table.string('sponsor_cd', 6).notNullable();
     table.engine('InnoDB');
   })
@@ -100,9 +100,9 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   })
   .createTable('declaration', function(table) {
     table.increments('id').notNullable();
-    table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('project_id').unsigned().notNullable().index().references('id').inTable('project').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('relationship_status_cd').notNullable().references('status_cd').inTable('relationship_status').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
+    table.integer('project_id').unsigned().notNullable().index().references('id').inTable('project');
+    table.integer('relationship_status_cd').notNullable().references('status_cd').inTable('relationship_status');
     table.string('comments', 4000);
     table.engine('InnoDB');
   });

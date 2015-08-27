@@ -3,8 +3,8 @@ exports.seed = function(knex, Promise) {
   console.log('Seed - declaration');
   return Promise.join(
     knex('declaration').insert({
-      fin_entity_id: knex.raw('(select max(id) from fin_entity)'),
-      project_id: knex.raw('(select max(id) from project)'),
+      fin_entity_id: knex('fin_entity').max('id'),
+      project_id: knex('project').max('id'),
       relationship_status_cd: 1
     })
   );
