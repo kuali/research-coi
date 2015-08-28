@@ -8,7 +8,11 @@ import NewQuestion from './NewQuestion';
 
 const questionTarget = {
   hover(props, monitor) {
-    const draggedId = monitor.getItem().id;
+    let itemBeingDragged = monitor.getItem();
+    if (props.parent && !itemBeingDragged.parent) {
+      return;
+    }
+    const draggedId = itemBeingDragged.id;
     let xOffset = monitor.getDifferenceFromInitialOffset().x;
 
     if (xOffset > 50) {
@@ -32,9 +36,7 @@ function collectTarget(connect) {
 
 const questionSource = {
   beginDrag(props, monitor, component) { // eslint-disable-line no-unused-vars
-    return {
-      id: props.id
-    };
+    return props;
   },
   isDragging() {
     return false;
