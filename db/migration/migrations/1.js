@@ -116,6 +116,15 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.increments('id').notNullable();
     table.integer('questionnaire_id').unsigned().notNullable().index().references('id').inTable('questionnaire').onDelete('NO ACTION').onUpdate('NO ACTION');
     table.text('answers'); // -- json object containing answers
+  })
+  .createTable('travel_log_entry', function(table) {
+    table.increments('id').notNullable();
+    table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
+    table.decimal('amount', 12, 2);
+    table.text('destination');
+    table.dateTime('start_date');
+    table.dateTime('end_date');
+    table.text('reason');
   });
 };
 

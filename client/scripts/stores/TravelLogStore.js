@@ -1,29 +1,39 @@
 import {AutoBindingStore} from './AutoBindingStore';
 import {TravelLogActions} from '../actions/TravelLogActions.js';
 import alt from '../alt';
+import request from 'superagent';
 
 class _TravelLogStore extends AutoBindingStore {
-    constructor() {
-      super(TravelLogActions);
+  constructor() {
+    super(TravelLogActions);
 
-      this.entries = [{entityName: 'Johnson & Johnson',
-            amount: 2045.34,
-            startDate: '05/15/2015',
-            endDate: '05/20/2015',
-            reason: 'I was a keynote speaker at their big big conference.',
-            destination: 'Lehi, UT.'}];
-    }
+    this.entries = [];
+  }
 
-    addEntry(params) {
-      this.entries.push({
-          entityName: params.entityName,
-          amount: params.amount,
-          startDate: params.startDate,
-          endDate: params.endDate,
-          reason: params.reason,
-          destination: params.destination
+  refreshTravelLogEntries() {
+    request.get('/api/coi/travelLogEntries/')
+      .end((err, travelLog) => {
+        if (!err) {
+          this.entries = travelLog.body;
+          this.emitChange();
+        }
       });
-    }
+  }
+
+  loadTravelLogEntries() {
+    this.refreshTravelLogEntries();
+  }
+
+  addEntry(params) {
+    this.entries.push({
+      entityName: params.entityName,
+      amount: params.amount,
+      startDate: params.startDate,
+      endDate: params.endDate,
+      reason: params.reason,
+      destination: params.destination
+    });
+  }
 
 }
 

@@ -5,6 +5,7 @@ import {TravelLogForm} from './TravelLogForm';
 import {TravelLogSort} from './TravelLogSort.jsx';
 import {BackToDashBoardButton} from './BackToDashBoardButton';
 import {TravelLogStore} from '../../../stores/TravelLogStore';
+import {TravelLogActions} from '../../../actions/TravelLogActions';
 import {Entry} from './Entry';
 
 export class TravelLog extends React.Component {
@@ -23,6 +24,7 @@ export class TravelLog extends React.Component {
 
   componentDidMount() {
     TravelLogStore.listen(this.onChange);
+    TravelLogActions.loadTravelLogEntries();
   }
 
   componentWillUnmount() {

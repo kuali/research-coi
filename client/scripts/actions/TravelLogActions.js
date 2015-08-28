@@ -11,5 +11,8 @@ class _TravelLogActions {
       destination: destination
     });
   }
+  loadTravelLogEntries() {
+    this.dispatch();
+  }
 }
 export let TravelLogActions = alt.createActions(_TravelLogActions);
