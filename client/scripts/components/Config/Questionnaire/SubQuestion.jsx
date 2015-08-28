@@ -5,23 +5,20 @@ import Gripper from '../../DynamicIcons/Gripper';
 import {DragSource, DropTarget} from 'react-dnd';
 import ConfigActions from '../../../actions/ConfigActions';
 import NewQuestion from './NewQuestion';
-import SubQuestion from './SubQuestion';
+import * as SubQuestion from './Question';
 
 const questionTarget = {
-  hover(props, monitor) {
+  hover(dropTargetProps, monitor) {
     let itemBeingDragged = monitor.getItem();
     const draggedId = itemBeingDragged.id;
     let xOffset = monitor.getDifferenceFromInitialOffset().x;
 
-    if (xOffset > 50 && (!itemBeingDragged.subQuestions || itemBeingDragged.subQuestions.length === 0)) {
-      props.makeSubQuestion(draggedId);
-    }
-    else if (xOffset < -50) {
-      props.makeMainQuestion(draggedId);
+    if (xOffset < -50) {
+      dropTargetProps.makeMainQuestion(draggedId);
     }
 
-    if (draggedId !== props.id) {
-      props.questionMoved(draggedId, props.id);
+    if (draggedId !== dropTargetProps.id) {
+      dropTargetProps.subQuestionMoved(draggedId, dropTargetProps.id);
     }
   }
 };
@@ -88,7 +85,7 @@ class Question extends React.Component {
         boxShadow: '0 0 10px #BBB',
         overflow: 'hidden',
         visibility: this.props.isDragging ? 'hidden' : 'visible',
-        marginLeft: this.props.parent ? 100 : 0,
+        marginLeft: 100,
         transition: 'margin .2s ease-in-out'
       },
       content: {
@@ -97,7 +94,7 @@ class Question extends React.Component {
         height: '100%'
       },
       gripper: {
-        backgroundColor: this.props.parent ? '#F2AA41' : '#048EAF',
+        backgroundColor: '#F2AA41',
         verticalAlign: 'top',
         display: 'inline-block',
         width: 25
@@ -168,18 +165,16 @@ class Question extends React.Component {
         </div>
       );
 
-      let displayCondition;
-      if (this.props.parent) {
-        displayCondition = (
-          <span>
-            Display if parent is
-            <select style={styles.dropdown}>
-              <option>Yes</option>
-              <option>No</option>
-            </select>
-          </span>
-        );
-      }
+      let displayCondition = (
+        <span>
+          Display if parent is
+          <select style={styles.dropdown}>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </span>
+      );
+
       buttons = (
         <div>
           {displayCondition}
@@ -189,25 +184,6 @@ class Question extends React.Component {
       );
     }
 
-    let subQuestions;
-    if (this.props.subQuestions) {
-      subQuestions = this.props.subQuestions.map((subQuestion, index) => {
-        return (
-          <SubQuestion
-            appState={this.props.appState}
-            questionMoved={this.props.questionMoved}
-            subQuestionMoved={this.props.subQuestionMoved}
-            makeMainQuestion={this.props.makeMainQuestion}
-            number={this.props.number + '-' + String.fromCharCode(index + 65)}
-            key={subQuestion.id}
-            id={subQuestion.id}
-            text={subQuestion.text}
-            subQuestions={[]} 
-            style={{cursor: 'move'}} />
-        );
-      });
-    } 
-  
     return this.props.connectDragSource(
       this.props.connectDropTarget(
         <div style={styles.extraSpace}>
@@ -223,16 +199,12 @@ class Question extends React.Component {
               </div>
             </span>
           </div>
-
-          <div>
-            {subQuestions}
-          </div>
         </div>
       )
     );
   }
 }
 
-let questionComponent = DragSource('question', questionSource, collectSource)(Question); //eslint-disable-line new-cap
-questionComponent = DropTarget('question', questionTarget, collectTarget)(questionComponent); //eslint-disable-line new-cap
+let questionComponent = DragSource('subquestion', questionSource, collectSource)(Question); //eslint-disable-line new-cap
+questionComponent = DropTarget('subquestion', questionTarget, collectTarget)(questionComponent); //eslint-disable-line new-cap
 export default questionComponent;

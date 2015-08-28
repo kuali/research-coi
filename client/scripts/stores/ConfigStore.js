@@ -80,6 +80,7 @@ class _ConfigStore extends AutoBindingStore {
            .end((err, questionnaire) => {
              if (!err) {
                this.questions = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
+               // this.questions = JSON.parse(questionnaire.body[0].questions);
                this.emitChange();
              }
            });
