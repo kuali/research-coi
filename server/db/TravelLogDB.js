@@ -28,26 +28,24 @@ export let deleteExistingQuestionnaire = (dbInfo, record, callback, optionalTrx)
 export let getTravelLogEntries = (dbInfo, callback, optionalTrx) => {
   let knex = getKnex(dbInfo);
 
-  var query = function (trx) {
-    knex.transacting(trx)
-    .select('fe.name as entityName', 'tle.amount', 'tle.start_date as startDate', 'tle.end_date as endDate', 'tle.destination', 'tle.reason')
-    .from('travel_log_entry as tle')
-    .innerJoin('fin_entity as fe', 'fe.id', 'tle.fin_entity_id')
-    .orderBy('fe.name', 'ASC')
-    .then(function (result) {
-      callback(null, result);
-    })
-    .catch(function(err) {
-      trx.rollback();
-      callback(err);
-    });
-  };
-
+  let query;
   if (optionalTrx) {
-    query(optionalTrx);
-  } else {
-    knex.transaction(function(trx) {
-      query(trx);
-    });
+    query = knex.transacting(optionalTrx);
   }
+  else {
+    query = knex;
+  }
+  query.select('fe.name as entityName', 'tle.amount', 'tle.start_date as startDate', 'tle.end_date as endDate', 'tle.destination', 'tle.reason')
+  .from('travel_log_entry as tle')
+  .innerJoin('fin_entity as fe', 'fe.id', 'tle.fin_entity_id')
+  .orderBy('fe.name', 'ASC')
+  .then(function (result) {
+    callback(null, result);
+  })
+  .catch(function(err) {
+    if (optionalTrx) {
+      optionalTrx.rollback();
+    }
+    callback(err);
+  });
 };
