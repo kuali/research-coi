@@ -30,29 +30,28 @@ export let deleteExistingQuestionnaire = (dbInfo, record, callback, optionalTrx)
 export let getLatestQuestionnaire = (dbInfo, callback, optionalTrx) => {
   let knex = getKnex(dbInfo);
 
-  var query = function (trx) {
-    knex('questionnaire')
-    .transacting(trx)
-    .select('*')
-    .limit(1)
-    .orderBy('version', 'desc')
-    .then(function (result) {
-      callback(null, camelizeJson(result));
-    })
-    .catch(function(err) {
-      trx.rollback();
-      callback(err);
-    });
-  };
-
+  let query;
   if (optionalTrx) {
-    query(optionalTrx);
-  } else {
-    knex.transaction(function(trx) {
-      query(trx);
-    });
+    query = knex.transacting(optionalTrx);
   }
+  else {
+    query = knex;
+  }
+  query.select('*')
+  .from('questionnaire')
+  .limit(1)
+  .orderBy('version', 'desc')
+  .then(function (result) {
+    callback(null, camelizeJson(result));
+  })
+  .catch(function(err) {
+    if (optionalTrx) {
+      optionalTrx.rollback();
+    }
+    callback(err);
+  });
 };
+
 
 export let saveQuestionnaireAnswers = (dbInfo, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'questionnaire_answers', pk: 'id'}, optionalTrx);
