@@ -66,9 +66,9 @@ export class Question extends ResponsiveComponent {
               <input
                 id="yesradio"
                 value="yes"
-                onClick={this.answer}
+                checked={this.props.answer === 'yes'}
+                onChange={this.answer}
                 type="radio"
-                name="answer"
                 style={styles.radio} />
             </div>
             <label htmlFor="yesradio" style={styles.label}>YES</label>
@@ -78,9 +78,9 @@ export class Question extends ResponsiveComponent {
               <input
                 id="noradio"
                 value="no"
-                onClick={this.answer}
+                checked={this.props.answer === 'no'}
+                onChange={this.answer}
                 type="radio"
-                name="answer"
                 style={styles.radio} />
             </div>
             <label htmlFor="noradio" style={styles.label}>NO</label>

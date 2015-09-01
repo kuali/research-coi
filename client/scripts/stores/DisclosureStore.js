@@ -36,7 +36,8 @@ class _DisclosureStore extends AutoBindingStore {
         step: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
         question: 1,
         disclosure: {
-          id: 222
+          id: 222,
+          answers:[]
         }
       },
       newEntityFormStep: -1,
@@ -133,6 +134,16 @@ class _DisclosureStore extends AutoBindingStore {
 
   loadDisclosureSummaries() {
     this.refreshDisclosureSummaries();
+  }
+
+  loadDisclosureData() {
+    request.get('/api/coi/disclosures/1')
+      .end((err, discloure) => {
+      if (!err) {
+        this.applicationState.currentDisclosureState.disclosure = discloure.body;
+        this.emitChange()
+      }
+    })
   }
 
   changeArchiveFilter(newValue) {

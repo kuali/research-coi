@@ -4,6 +4,7 @@ import {ResponsiveComponent} from '../ResponsiveComponent';
 import {Sidebar} from './Sidebar';
 import {DisclosureHeader} from './DisclosureHeader';
 import {DisclosureStore} from '../../stores/DisclosureStore';
+import {DisclosureActions} from '../../actions/DisclosureActions';
 import {COIConstants} from '../../../../COIConstants';
 import {Questionnaire} from './Questionnaire/Questionnaire';
 import {QuestionnaireSummary} from './QuestionnaireSummary/QuestionnaireSummary';
@@ -96,6 +97,7 @@ export class Disclosure extends ResponsiveComponent {
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
+    DisclosureActions.loadDisclosureData();
   }
 
   componentWillUnmount() {
@@ -180,6 +182,7 @@ export class Disclosure extends ResponsiveComponent {
         currentStep = (
           <Questionnaire
             questions={window.config.questions}
+            answers={currentDisclosureState.disclosure.answers}
             currentquestion={question}
             disclosureid={currentDisclosureId}
             instructionsShowing={this.state.applicationState.instructionsShowing}

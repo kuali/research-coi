@@ -117,6 +117,11 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('questionnaire_id').unsigned().notNullable().index().references('id').inTable('questionnaire').onDelete('NO ACTION').onUpdate('NO ACTION');
     table.text('answers'); // -- json object containing answers
   })
+  .createTable('disclosure_answers', function(table) {
+    table.increments('id').notNullable();
+    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
+    table.integer('questionnaire_answers_id').unsigned().notNullable().index().references('id').inTable('questionnaire_answers');
+  })
   .createTable('travel_log_entry', function(table) {
     table.increments('id').notNullable();
     table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
