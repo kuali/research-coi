@@ -9,6 +9,18 @@ export class Questionnaire extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
+
+    this.getAnswer = this.getAnswer.bind(this);
+  }
+
+  getAnswer(id) {
+    let value = {};
+    this.props.answers.forEach(answer => {
+      if (answer.id === id) {
+        value = answer.value;
+      }
+    });
+    return value;
   }
 
   renderMobile() {}
@@ -47,6 +59,7 @@ export class Questionnaire extends ResponsiveComponent {
         return (
           <Question
             id={question.id}
+            answer={this.getAnswer(question.id)}
             style={styles.question}
             number={index + 1}
             of={this.props.questions.length}

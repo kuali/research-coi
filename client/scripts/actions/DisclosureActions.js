@@ -9,6 +9,8 @@ class _DisclosureActions {
 
   loadDisclosureSummaries() { this.dispatch(); }
 
+  loadDisclosureData() {this.dispatch(); }
+
   toggleInstructions() { this.dispatch(); }
 
   answerQuestion(question) { this.dispatch(question); }
