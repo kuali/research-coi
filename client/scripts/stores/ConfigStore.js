@@ -1,5 +1,6 @@
 import ConfigActions from '../actions/ConfigActions';
 import {AutoBindingStore} from './AutoBindingStore';
+import {sortQuestions} from './ConfigUtils';
 import alt from '../alt';
 import request from 'superagent';
 
@@ -64,16 +65,13 @@ class _ConfigStore extends AutoBindingStore {
   convertQuestionFormat(questions) {
     let formattedQuestions = [];
     questions.forEach(question => {
+      question.text = question.question.text;
+      question.type = question.question.type;
+      question.validations = question.question.validations;
+      question.displayCriteria = question.question.displayCriteria;
+      delete question.question;
       formattedQuestions.push(question);
-      if (question.subQuestions) {
-        question.subQuestions.forEach(subQuestion => {
-          subQuestion.parent = question.id;
-          formattedQuestions.push(subQuestion);
-        });
-      }
-
     });
-
     return formattedQuestions;
   }
 
@@ -81,7 +79,7 @@ class _ConfigStore extends AutoBindingStore {
     request.get('/api/coi/questionnaires/latest')
            .end((err, questionnaire) => {
              if (!err) {
-               this.questions = this.convertQuestionFormat(JSON.parse(questionnaire.body[0].questions));
+               this.questions = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
                this.emitChange();
              }
            });

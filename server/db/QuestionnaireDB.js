@@ -28,6 +28,7 @@ export let deleteExistingQuestionnaire = (dbInfo, record, callback, optionalTrx)
 };
 
 export let getLatestQuestionnaire = (dbInfo, callback, optionalTrx) => {
+  var questionnaire;
   let knex = getKnex(dbInfo);
 
   let query;
@@ -37,12 +38,25 @@ export let getLatestQuestionnaire = (dbInfo, callback, optionalTrx) => {
   else {
     query = knex;
   }
+
   query.select('*')
   .from('questionnaire')
   .limit(1)
   .orderBy('version', 'desc')
-  .then(function (result) {
-    callback(null, camelizeJson(result));
+  .then( result => {
+    questionnaire = result[0];
+    questionnaire.questions = [];
+    query.select('*')
+    .from('questionnaire_question as qq')
+    .where({questionnaire_id: result[0].id})
+    .then(questions => {
+      questions.forEach(question => {
+        question.question = JSON.parse(question.question);
+        questionnaire.questions.push(question);
+      });
+      callback(undefined, camelizeJson(questionnaire));
+    });
+
   })
   .catch(function(err) {
     if (optionalTrx) {

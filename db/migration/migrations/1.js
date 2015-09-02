@@ -110,17 +110,23 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.increments('id').notNullable();
     table.string('instructions', 4000); // -- markdown
     table.integer('version').unsigned().notNullable();
-    table.text('questions'); // -- json object containing questions
   })
-  .createTable('questionnaire_answers', function(table) {
+  .createTable('questionnaire_question', function(table) {
     table.increments('id').notNullable();
     table.integer('questionnaire_id').unsigned().notNullable().index().references('id').inTable('questionnaire').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.text('answers'); // -- json object containing answers
+    table.integer('parent').unsigned().index().references('id').inTable('questionnaire_question').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.text('question'); // -- json object containing question
   })
-  .createTable('disclosure_answers', function(table) {
+  .createTable('questionnaire_answer', function(table) {
+    table.increments('id').notNullable();
+    table.integer('question_id').unsigned().notNullable().index().references('id').inTable('questionnaire_question').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.text('answer'); // -- json object containing answer
+  })
+  .createTable('disclosure_answer', function(table) {
     table.increments('id').notNullable();
     table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
-    table.integer('questionnaire_answers_id').unsigned().notNullable().index().references('id').inTable('questionnaire_answers');
+    table.integer('questionnaire_answer_id').unsigned().notNullable().index().references('id').inTable('questionnaire_answer');
+    table.unique(['disclosure_id', 'questionnaire_answer_id']);
   })
   .createTable('travel_log_entry', function(table) {
     table.increments('id').notNullable();
