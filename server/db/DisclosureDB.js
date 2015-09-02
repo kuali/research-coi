@@ -380,9 +380,9 @@ export let get = (dbInfo, disclosureId, callback) => {
     knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.name', 'e.description')
       .from('fin_entity as e')
       .where('disclosure_id', disclosureId),
-    knex.select('answers')
-      .from('disclosure_answers as da')
-      .innerJoin('questionnaire_answers as qa', 'qa.id', 'da.questionnaire_answers_id')
+    knex.select('qa.id as id', 'qa.answer as answer')
+      .from('disclosure_answer as da')
+      .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId)
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
@@ -391,7 +391,10 @@ export let get = (dbInfo, disclosureId, callback) => {
 
     disclosure = result[0][0];
     disclosure.entities = result[1];
-    disclosure.answers = JSON.parse(result[2][0].answers);
+    disclosure.answers = result[2];
+    disclosure.answers.forEach(answer =>{
+      answer.answer = JSON.parse(answer.answer);
+    });
     knex.select('id', 'fin_entity_id', 'type_cd', 'person_type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
       .from('relationship')
       .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.fin_entity_id; }))

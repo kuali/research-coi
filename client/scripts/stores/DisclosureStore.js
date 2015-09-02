@@ -37,7 +37,7 @@ class _DisclosureStore extends AutoBindingStore {
         question: 1,
         disclosure: {
           id: 222,
-          answers:[]
+          answers: []
         }
       },
       newEntityFormStep: -1,
@@ -139,11 +139,11 @@ class _DisclosureStore extends AutoBindingStore {
   loadDisclosureData() {
     request.get('/api/coi/disclosures/1')
       .end((err, discloure) => {
-      if (!err) {
-        this.applicationState.currentDisclosureState.disclosure = discloure.body;
-        this.emitChange()
-      }
-    })
+        if (!err) {
+          this.applicationState.currentDisclosureState.disclosure = discloure.body;
+          this.emitChange();
+        }
+      });
   }
 
   changeArchiveFilter(newValue) {
