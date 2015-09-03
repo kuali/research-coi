@@ -12,7 +12,7 @@ export class Question extends ResponsiveComponent {
   }
 
   answer(evt) {
-    DisclosureActions.answerQuestion({id: this.props.id, answer: evt.target.value});
+    DisclosureActions.answerQuestion({id: this.props.id, answer: {value: evt.target.value}});
     DisclosureActions.advanceQuestion();
   }
 

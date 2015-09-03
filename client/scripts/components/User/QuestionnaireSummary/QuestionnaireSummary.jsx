@@ -36,7 +36,7 @@ export class QuestionnaireSummary extends ResponsiveComponent {
           <QuestionSummary
             number={index + 1}
             text={thisQuestion.text}
-            answer={answer.value}
+            answer={answer.answer.value}
             questionId={answer.id}
             key={answer.id}
           />

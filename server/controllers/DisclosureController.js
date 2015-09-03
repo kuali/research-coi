@@ -224,6 +224,16 @@ export let init = app => {
     res.send(DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, query));
   });
 
+  app.post('/api/coi/disclosure/:id/question/answer', function(req, res) {
+    res.sendStatus(202);
+    res.send(DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, req.params.id, req.body));
+  });
+
+  app.put('/api/coi/disclosure/:id/question/answer', function(req, res) {
+    res.sendStatus(202);
+    res.send(DisclosureDB.saveNewQuestionAnswer(req.dbInfo, req.params.id, req.body));
+  });
+
   app.post('/api/coi/disclosure/:id/approve', function(req, res){
     res.sendStatus(202);
     res.send(DisclosureDB.approve(req.dbInfo, req.params.id));
