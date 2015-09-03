@@ -59,18 +59,35 @@ class _ConfigStore extends AutoBindingStore {
 
     this.notifications = [];
 
-    this.questions = [ ];
+    this.questions = [];
   }
 
   convertQuestionFormat(questions) {
     let formattedQuestions = [];
-    questions.forEach(question => {
+    questions.forEach((question) => {
       question.text = question.question.text;
       question.type = question.question.type;
       question.validations = question.question.validations;
       question.displayCriteria = question.question.displayCriteria;
+
+      // Recreate nested structure -- refactor again later?
+      if (question.parent) {
+        let parentQuestion = formattedQuestions.find(questionToCheck => {
+          return questionToCheck.id === question.parent;
+        });
+
+        if (parentQuestion) {
+          if (!parentQuestion.subQuestions) {
+            parentQuestion.subQuestions = [];
+          }
+
+          parentQuestion.subQuestions.push(question);
+        }
+      }
+      else {
+        formattedQuestions.push(question);
+      }
       delete question.question;
-      formattedQuestions.push(question);
     });
     return formattedQuestions;
   }
@@ -214,11 +231,20 @@ class _ConfigStore extends AutoBindingStore {
 
   findQuestion(id) {
     if (id) {
-      if (this.applicationState.questionsBeingEdited[id] !== undefined) {
-        return this.applicationState.questionsBeingEdited[id];
-      }
+      for (let i = 0; i < this.questions.length; i++) {
+        let question = this.questions[i];
+        if (question.id === id) {
+          return question;
+        }
 
-      return this.questions.find(question => { return question.id === id; });
+        if (question.subQuestions && question.subQuestions.length > 0) {
+          for (let j = 0; j < question.subQuestions.length; j++) {
+            if (question.subQuestions[j].id === id) {
+              return question.subQuestions[j];
+            }
+          }
+        }
+      }
     }
     else {
       return this.applicationState.newQuestion;

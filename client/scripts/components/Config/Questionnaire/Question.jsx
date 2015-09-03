@@ -7,6 +7,23 @@ import ConfigActions from '../../../actions/ConfigActions';
 import NewQuestion from './NewQuestion';
 import SubQuestion from './SubQuestion';
 
+const subQuestionTarget = {
+  hover(dropTargetProps, monitor) {
+    let itemBeingDragged = monitor.getItem();
+    const draggedId = itemBeingDragged.id;
+
+    if (draggedId !== dropTargetProps.id) {
+      dropTargetProps.subQuestionMovedToParent(draggedId, dropTargetProps.id);
+    }
+  }
+};
+
+function subQuestionCollectTarget(connect) {
+  return {
+    subConnectDropTarget: connect.dropTarget()
+  };
+}
+
 const questionTarget = {
   hover(props, monitor) {
     let itemBeingDragged = monitor.getItem();
@@ -15,9 +32,6 @@ const questionTarget = {
 
     if (xOffset > 50 && (!itemBeingDragged.subQuestions || itemBeingDragged.subQuestions.length === 0)) {
       props.makeSubQuestion(draggedId);
-    }
-    else if (xOffset < -50) {
-      props.makeMainQuestion(draggedId);
     }
 
     if (draggedId !== props.id) {
@@ -80,6 +94,10 @@ class Question extends React.Component {
     return this.props.appState.questionsBeingEdited[id];
   }
 
+  isOpen(id) {
+    return this.getEditState(id) !== undefined;
+  }
+
   render() {
     let styles = {
       container: {
@@ -88,7 +106,6 @@ class Question extends React.Component {
         boxShadow: '0 0 10px #BBB',
         overflow: 'hidden',
         visibility: this.props.isDragging ? 'hidden' : 'visible',
-        marginLeft: this.props.parent ? 100 : 0,
         transition: 'margin .2s ease-in-out'
       },
       content: {
@@ -97,7 +114,7 @@ class Question extends React.Component {
         height: '100%'
       },
       gripper: {
-        backgroundColor: this.props.parent ? '#F2AA41' : '#048EAF',
+        backgroundColor: '#048EAF',
         verticalAlign: 'top',
         display: 'inline-block',
         width: 25
@@ -139,7 +156,10 @@ class Question extends React.Component {
         marginLeft: 5
       },
       extraSpace: {
-        paddingTop: 24
+        position: 'absolute',
+        width: '100%',
+        top: this.props.top,
+        transition: 'all .2s ease-in-out'
       }
     };
 
@@ -168,21 +188,8 @@ class Question extends React.Component {
         </div>
       );
 
-      let displayCondition;
-      if (this.props.parent) {
-        displayCondition = (
-          <span>
-            Display if parent is
-            <select style={styles.dropdown}>
-              <option>Yes</option>
-              <option>No</option>
-            </select>
-          </span>
-        );
-      }
       buttons = (
         <div>
-          {displayCondition}
           <KButton style={styles.button} onClick={this.edit}>Edit</KButton>
           <KButton style={styles.button} onClick={this.deleteQuestion}>Delete</KButton>
         </div>
@@ -191,43 +198,74 @@ class Question extends React.Component {
 
     let subQuestions;
     if (this.props.subQuestions) {
-      subQuestions = this.props.subQuestions.map((subQuestion, index) => {
+      let currentQuestionNumber = 0;
+      const heightOfAQuestion = 139;
+      const heightOfExpandedQuestion = 285;
+      let nextQuestionYPosition;
+      if (this.isOpen(this.props.id)) {
+        nextQuestionYPosition = heightOfExpandedQuestion;
+      }
+      else {
+        nextQuestionYPosition = heightOfAQuestion;
+      }
+
+      this.props.subQuestions.forEach(question => {
+        question.top = nextQuestionYPosition;
+        if (this.isOpen(question.id)) {
+          nextQuestionYPosition += heightOfExpandedQuestion;
+        } else {
+          nextQuestionYPosition += heightOfAQuestion;
+        }
+
+        currentQuestionNumber++;
+        question.numberToShow = currentQuestionNumber;
+      });
+
+      let questions = Array.from(this.props.subQuestions);
+      subQuestions = questions.sort((a, b) => {
+        if (a.id < b.id) { return -1; }
+        else if (a.id === b.id) { return 0; }
+        else { return 1; }
+      }).map((subQuestion) => {
         return (
           <SubQuestion
             appState={this.props.appState}
             questionMoved={this.props.questionMoved}
             subQuestionMoved={this.props.subQuestionMoved}
             makeMainQuestion={this.props.makeMainQuestion}
-            number={this.props.number + '-' + String.fromCharCode(index + 65)}
+            number={this.props.number + '-' + String.fromCharCode(subQuestion.numberToShow + 64)}
             key={subQuestion.id}
             id={subQuestion.id}
             text={subQuestion.text}
-            subQuestions={[]} 
+            subQuestions={[]}
+            top={subQuestion.top}
             style={{cursor: 'move'}} />
         );
       });
-    } 
-  
+    }
+
     return this.props.connectDragSource(
       this.props.connectDropTarget(
-        <div style={styles.extraSpace}>
-          <div className="flexbox row" style={merge(styles.container, this.props.style)}>
-            <span style={styles.gripper}>
-              <Gripper style={styles.gripperIcon} />
-            </span>
-            <span className="fill" style={styles.content}>
-              {questionDetails}
+        this.props.subConnectDropTarget(
+          <div style={styles.extraSpace}>
+            <div className="flexbox row" style={merge(styles.container, this.props.style)}>
+              <span style={styles.gripper}>
+                <Gripper style={styles.gripperIcon} />
+              </span>
+              <span className="fill" style={styles.content}>
+                {questionDetails}
 
-              <div style={styles.bottom}>
-                {buttons}
-              </div>
-            </span>
-          </div>
+                <div style={styles.bottom}>
+                  {buttons}
+                </div>
+              </span>
+            </div>
 
-          <div>
-            {subQuestions}
+            <div>
+              {subQuestions}
+            </div>
           </div>
-        </div>
+        )
       )
     );
   }
@@ -235,4 +273,5 @@ class Question extends React.Component {
 
 let questionComponent = DragSource('question', questionSource, collectSource)(Question); //eslint-disable-line new-cap
 questionComponent = DropTarget('question', questionTarget, collectTarget)(questionComponent); //eslint-disable-line new-cap
+questionComponent = DropTarget('subquestion', subQuestionTarget, subQuestionCollectTarget)(questionComponent); //eslint-disable-line new-cap
 export default questionComponent;

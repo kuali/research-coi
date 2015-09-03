@@ -5,9 +5,8 @@ import Gripper from '../../DynamicIcons/Gripper';
 import {DragSource, DropTarget} from 'react-dnd';
 import ConfigActions from '../../../actions/ConfigActions';
 import NewQuestion from './NewQuestion';
-import * as SubQuestion from './Question';
 
-const questionTarget = {
+const subQuestionTarget = {
   hover(dropTargetProps, monitor) {
     let itemBeingDragged = monitor.getItem();
     const draggedId = itemBeingDragged.id;
@@ -23,7 +22,7 @@ const questionTarget = {
   }
 };
 
-function collectTarget(connect) {
+function subQuestionCollectTarget(connect) {
   return {
     connectDropTarget: connect.dropTarget()
   };
@@ -136,7 +135,10 @@ class Question extends React.Component {
         marginLeft: 5
       },
       extraSpace: {
-        paddingTop: 24
+        position: 'absolute',
+        top: this.props.top,
+        transition: 'top .2s ease-in-out',
+        width: '100%'
       }
     };
 
@@ -206,5 +208,5 @@ class Question extends React.Component {
 }
 
 let questionComponent = DragSource('subquestion', questionSource, collectSource)(Question); //eslint-disable-line new-cap
-questionComponent = DropTarget('subquestion', questionTarget, collectTarget)(questionComponent); //eslint-disable-line new-cap
+questionComponent = DropTarget('subquestion', subQuestionTarget, subQuestionCollectTarget)(questionComponent); //eslint-disable-line new-cap
 export default questionComponent;
