@@ -370,6 +370,32 @@ export let getSampleDisclosures = () => {
   return results;
 };
 
+export let saveNewQuestionAnswer = (dbInfo, disclosureId, body) => {
+  let knex = getKnex(dbInfo);
+  console.log(body);
+  knex('questionnaire_answer').insert({
+    question_id: body.id,
+    answer: JSON.stringify(body.answer)
+  }).then(result =>{
+    return knex('disclosure_answer').insert({
+      disclosure_id: disclosureId,
+      questionnaire_answer_id: result[0]});
+  });
+};
+
+export let saveExistingQuestionAnswer = (dbInfo, disclosureId, body) => {
+  let knex = getKnex(dbInfo);
+  knex.select('qa.id')
+  .from('disclosure_answer as da')
+  .innerJoin('questionnaire_answer as qa', 'da.questionnaire_answer_id', 'qa.id')
+  .where('da.disclosure_id', disclosureId)
+  .andWhere('qa.question_id', body.id).then(result => {
+    return knex('questionnaire_answer')
+    .where('id', result[0].id)
+    .update('answer', JSON.stringify(body.answer));
+  });
+};
+
 export let get = (dbInfo, disclosureId, callback) => {
   var disclosure;
   let knex = getKnex(dbInfo);

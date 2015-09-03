@@ -167,14 +167,32 @@ class _DisclosureStore extends AutoBindingStore {
       return answer.id === question.id;
     });
     if (existingAnswer) {
-      existingAnswer.value = question.answer;
+      existingAnswer.answer.value = question.answer.value;
+      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
+        .send(existingAnswer)
+        .type('application/json')
+        .end(function(err, res){
+          if (res.ok) {
+            console.log("updated question answer")
+          } else {
+            console.error('Error: ' + res.text);
+          }
+        });
     }
     else {
-      this.applicationState.currentDisclosureState.disclosure.answers.push({id: questionId, value: question.answer});
+      let newAnswer = {id: question.id, answer: question.answer};
+      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
+      request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
+        .send(newAnswer)
+        .type('application/json')
+        .end(function(err, res){
+          if (res.ok) {
+            console.log("inserted question answer");
+          } else {
+            console.error('Error: ' + res.text);
+          }
+        });
     }
-
-    request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id)
-           .send(this.applicationState.currentDisclosureState.disclosure);
   }
 
   advanceQuestion() {
