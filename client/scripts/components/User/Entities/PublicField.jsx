@@ -49,15 +49,15 @@ export class PublicField extends ResponsiveComponent {
     let dom;
     if (this.props.readonly) {
       dom = (
-        <div style={styles.value}>{this.props.value}</div>
+        <div style={styles.value}>{this.props.value === 1 ? 'Public' : 'Private'}</div>
       );
     }
     else {
       dom = (
         <select required value={this.props.value} ref="public" onChange={this.setPublic} style={styles.select}>
           <option value="">--SELECT--</option>
-          <option value="Public">Public</option>
-          <option value="Private">Private</option>
+          <option value="1">Public</option>
+          <option value="0">Private</option>
         </select>
       );
     }

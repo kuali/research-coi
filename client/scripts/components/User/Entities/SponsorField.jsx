@@ -10,8 +10,8 @@ export class SponsorField extends ResponsiveComponent {
     this.setSponsor = this.setSponsor.bind(this);
   }
 
-  setSponsor() {
-    this.props.onChange(this.refs.sponsorYes.getDOMNode().checked);
+  setSponsor(evt) {
+    this.props.onChange(parseInt(evt.target.value));
   }
 
   renderMobile() {}
@@ -51,11 +51,11 @@ export class SponsorField extends ResponsiveComponent {
       dom = (
         <div>
           <span style={{display: 'inline-block', width: 50, marginLeft: 15}}>
-            <div><input checked={this.props.value === 'Yes'} ref="sponsorYes" onChange={this.setSponsor} name="isSponsor" type="radio" /></div>
+            <div><input checked={this.props.value === 'Yes'} ref="sponsorYes" value='1' onChange={this.setSponsor} name="isSponsor" type="radio" /></div>
             <div>YES</div>
           </span>
           <span style={{display: 'inline-block', width: 50}}>
-            <div><input checked={this.props.value === 'No'} ref="sponsorNo" onChange={this.setSponsor} name="isSponsor" type="radio" /></div>
+            <div><input checked={this.props.value === 'No'} ref="sponsorNo" value='0' onChange={this.setSponsor} name="isSponsor" type="radio" /></div>
             <div>NO</div>
           </span>
         </div>

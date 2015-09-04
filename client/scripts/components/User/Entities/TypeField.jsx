@@ -62,6 +62,7 @@ export class TypeField extends ResponsiveComponent {
           <option value="">--SELECT--</option>
           <option value="Investment">Investment</option>
           <option value="Retirement">Retirement</option>
+          <option value="Large Corporation">Large Corporation</option>
         </select>
       );
     }
