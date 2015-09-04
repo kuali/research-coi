@@ -141,6 +141,11 @@ class _DisclosureStore extends AutoBindingStore {
       .end((err, discloure) => {
         if (!err) {
           this.applicationState.currentDisclosureState.disclosure = discloure.body;
+          this.entities = discloure.body.entities;
+          this.entities.forEach(entity =>{
+            entity.status = entity.active === 1 ? 'ACTIVE' : 'INACTIVE';
+            delete entity.active;
+          });
           this.emitChange();
         }
       });

@@ -403,8 +403,9 @@ export let get = (dbInfo, disclosureId, callback) => {
     knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
       .from('disclosure as de')
       .where('id', disclosureId),
-    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.public', 'e.type_cd', 'e.sponsor', 'e.name', 'e.description')
+    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.public as isPublic', 'et.description as type', 'e.sponsor as isSponsor', 'e.name', 'e.description')
       .from('fin_entity as e')
+      .innerJoin('fin_entity_type as et', 'et.type_cd', 'e.type_cd')
       .where('disclosure_id', disclosureId),
     knex.select('qa.id as id', 'qa.answer as answer')
       .from('disclosure_answer as da')
@@ -421,9 +422,13 @@ export let get = (dbInfo, disclosureId, callback) => {
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
-    knex.select('id', 'fin_entity_id', 'type_cd', 'person_type_cd', 'relationship_category_cd', 'amount_cd', 'comments')
-      .from('relationship')
-      .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.fin_entity_id; }))
+    knex.select('r.id', 'r.fin_entity_id', 'rt.description as type', 'rp.description as person', 'rc.description as relationship', 'ra.description as amount', 'r.comments')
+      .from('relationship as r')
+      .innerJoin('relationship_person_type as rp', 'r.person_type_cd', 'rp.type_cd')
+      .innerJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd')
+      .innerJoin('relationship_category_type as rc', 'r.relationship_category_cd', 'rc.type_cd' )
+      .innerJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
+      .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
       .then(relationships => {
         disclosure.entities.forEach(entity => {
           entity.relationships = relationships.filter(relationship => {

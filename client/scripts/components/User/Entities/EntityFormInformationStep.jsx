@@ -90,7 +90,7 @@ export class EntityFormInformationStep extends ResponsiveComponent {
     let description = this.props.description;
 
     let sponsorValue;
-    if (this.props.isSponsor) {
+    if (this.props.isSponsor === 1) {
       sponsorValue = 'Yes';
     }
     else if (this.props.isSponsor === undefined) {
