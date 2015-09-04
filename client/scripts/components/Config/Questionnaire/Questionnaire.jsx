@@ -22,8 +22,6 @@ class Questionnaire extends React.Component {
     this.subQuestionMoved = this.subQuestionMoved.bind(this);
     this.makeMainQuestion = this.makeMainQuestion.bind(this);
     this.makeSubQuestion = this.makeSubQuestion.bind(this);
-    this.scheduleUpdate = this.scheduleUpdate.bind(this);
-    this.drawFrame = this.drawFrame.bind(this);
     this.subQuestionMovedToParent = this.subQuestionMovedToParent.bind(this);
   }
 
@@ -45,79 +43,57 @@ class Questionnaire extends React.Component {
     });
   }
 
-  scheduleUpdate(update) {
-    this.pendingUpdate = JSON.parse(JSON.stringify(update));
-
-    if (!this.requestedFrame) {
-      this.requestedFrame = requestAnimationFrame(this.drawFrame);
-    }
-  }
-
-  drawFrame() {
-    this.setState(this.pendingUpdate);
-
-    this.pendingUpdate = null;
-    this.requestedFrame = null;
-  }
-
   subQuestionMoved(draggedQuestionId, targetId) {
+    let draggedQuestion = this.findQuestion(draggedQuestionId);
+    let targetQuestion = this.findQuestion(targetId);
+
     let parentOfDraggedQuestion = this.findParentOfSubQuestion(draggedQuestionId);
     let parentOfTargetQuestion = this.findParentOfSubQuestion(targetId);
-    if (!parentOfDraggedQuestion || !parentOfTargetQuestion) {
-      return;
-    }
-
-    let currentIndex = this.findSubQuestionIndexById(parentOfDraggedQuestion.id, draggedQuestionId);
-    let targetIndex = this.findSubQuestionIndexById(parentOfTargetQuestion.id, targetId);
 
     if (
         this.isMoving ||
-        currentIndex === -1 ||
-        targetIndex === -1 ||
-        targetIndex >= parentOfTargetQuestion.subQuestions.length ||
-        (parentOfDraggedQuestion === parentOfTargetQuestion && currentIndex === targetIndex)
-       )
-    {
+        draggedQuestion === targetQuestion ||
+        !parentOfDraggedQuestion ||
+        !parentOfTargetQuestion
+    ) {
       return;
+    }
+
+    if (parentOfDraggedQuestion === parentOfTargetQuestion) {
+      let swapValue = draggedQuestion.order;
+      draggedQuestion.order = targetQuestion.order;
+      targetQuestion.order = swapValue;
+    }
+    else {
+      this.subQuestionMovedToParent(draggedQuestionId, parentOfTargetQuestion.id);
     }
 
     this.setIsMovingFlag();
 
-    if (!parentOfTargetQuestion.subQuestions) {
-      parentOfTargetQuestion.subQuestions = [];
-    }
-
-    let questionRef = parentOfDraggedQuestion.subQuestions.splice(currentIndex, 1)[0];
-    parentOfTargetQuestion.subQuestions.splice(targetIndex, 0, questionRef);
-
-    this.scheduleUpdate({
-      questions: this.state.questions
-    });
+    ConfigActions.updateQuestions(this.state.questions);
   }
 
   subQuestionMovedToParent(draggedQuestionId, targetId) {
-    let parentOfDraggedQuestion = this.findParentOfSubQuestion(draggedQuestionId);
-    let targetQuestion = this.findQuestion(targetId);
-    if (!parentOfDraggedQuestion || !targetQuestion) {
+    let draggedQuestion = this.findQuestion(draggedQuestionId);
+    if (!draggedQuestion || this.isMoving || draggedQuestion.parent === targetId) {
       return;
     }
 
-    let currentIndex = this.findSubQuestionIndexById(parentOfDraggedQuestion.id, draggedQuestionId);
+    draggedQuestion.parent = targetId;
+    let otherSubquestions = this.findSubQuestions(targetId);
 
-    if (this.isMoving || currentIndex === -1) {
-      return;
+    if (otherSubquestions.length > 0) {
+      draggedQuestion.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
+        return Math.max(previousValue, subQuestion.order);
+      }, 1);
+    }
+    else {
+      draggedQuestion.order = 1;
     }
 
     this.setIsMovingFlag();
 
-    if (!targetQuestion.subQuestions) {
-      targetQuestion.subQuestions = [];
-    }
-
-    let questionRef = parentOfDraggedQuestion.subQuestions.splice(currentIndex, 1)[0];
-    targetQuestion.subQuestions.push(questionRef);
-
-    this.forceUpdate();
+    ConfigActions.updateQuestions(this.state.questions);
   }
 
   setIsMovingFlag() {
@@ -128,61 +104,60 @@ class Questionnaire extends React.Component {
   }
 
   questionMoved(draggedQuestionId, targetId) {
-    let currentIndex = this.findQuestionIndexById(draggedQuestionId);
-    let targetIndex = this.findQuestionIndexById(targetId);
+    let draggedQuestion = this.findQuestion(draggedQuestionId);
+    let targetQuestion = this.findQuestion(targetId);
 
-    if (
-        this.isMoving ||
-        currentIndex === targetIndex ||
-        currentIndex === -1 ||
-        targetIndex === -1 ||
-        targetIndex >= this.state.questions.length
-       )
-    {
+    if (this.isMoving || draggedQuestion === targetQuestion || targetQuestion.parent) {
       return;
     }
     this.setIsMovingFlag();
 
-    let questionRef = this.state.questions.splice(currentIndex, 1)[0];
-    this.state.questions.splice(targetIndex, 0, questionRef);
+    let swapValue = draggedQuestion.order;
+    draggedQuestion.order = targetQuestion.order;
+    targetQuestion.order = swapValue;
 
-    this.scheduleUpdate({
-      questions: this.state.questions
-    });
+    ConfigActions.updateQuestions(this.state.questions);
   }
 
   findNewParentQuestion(question) {
-    let currentIndex = this.findQuestionIndex(question);
-    let scanIndex = currentIndex - 1;
-    while (scanIndex >= 0 && this.state.questions[scanIndex].parent) {
-      scanIndex--;
-    }
-
-    if (scanIndex >= 0) {
-      return this.state.questions[scanIndex];
-    }
+    return this.state.questions.find(toTest => {
+      return !toTest.parent && toTest.order === question.order - 1;
+    });
   }
 
   makeSubQuestion(id) {
     let question = this.findQuestion(id);
-    if (!question) {
+    if (!question || question.parent) {
       return;
     }
-    let currentIndex = this.findQuestionIndexById(id);
+
+    let subQuestions = this.findSubQuestions(id);
+    if (subQuestions.length > 0) {
+      return;
+    }
 
     // Find closest previous main question
     let parent = this.findNewParentQuestion(question);
     if (parent) {
-      // Remove the question from its previous position
-      let questionToMove = this.state.questions.splice(currentIndex, 1)[0];
-
-      // Add this question to its subquestions
-      if (!parent.subQuestions) { parent.subQuestions = []; }
-      parent.subQuestions.push(questionToMove);
-
-      this.scheduleUpdate({
-        questions: this.state.questions
+      this.state.questions.filter(toTest => {
+        return !toTest.parent && toTest.order > question.order;
+      }).forEach(toBumpUp => {
+        toBumpUp.order -= 1;
       });
+
+      // set new order value on the question
+      let otherSubquestions = this.findSubQuestions(parent.id);
+      if (otherSubquestions.length > 0) {
+        question.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
+          return Math.max(previousValue, subQuestion.order);
+        }, 1);
+      } else {
+        question.order = 1;
+      }
+
+      question.parent = parent.id;
+
+      ConfigActions.updateQuestions(this.state.questions);
     }
   }
 
@@ -192,66 +167,29 @@ class Questionnaire extends React.Component {
     });
   }
 
-  findQuestionIndex(question) {
-    return this.state.questions.findIndex(questionToTest => {
-      return questionToTest.id === question.id;
-    });
-  }
-
-  findQuestionIndexById(id) {
-    return this.state.questions.findIndex(question => {
-      return question.id === id;
-    });
-  }
-
-  findSubQuestionIndexById(parentId, subQuestionId) {
-    let parent = this.findQuestion(parentId);
-    if (parent) {
-      return parent.subQuestions.findIndex(subQuestion => {
-        return subQuestion.id === subQuestionId;
-      });
-    }
-  }
-
   findParentOfSubQuestion(subQuestionId) {
-    let parentIndex = this.findParentIndexOfSubQuestion(subQuestionId);
-    if (parentIndex !== -1) {
-      return this.state.questions[parentIndex];
+    let question = this.findQuestion(subQuestionId);
+    if (question.parent) {
+      return this.findQuestion(question.parent);
     }
-  }
-
-  findParentIndexOfSubQuestion(subQuestionId) {
-    return this.state.questions.findIndex(question => {
-      if (question.subQuestions) {
-        let sub = question.subQuestions.find(subQuestion => {
-          return subQuestion.id === subQuestionId;
-        });
-
-        return sub !== undefined;
-      }
-      else {
-        return false;
-      }
-    });
   }
 
   makeMainQuestion(subQuestionId) {
-    let parentIndex = this.findParentIndexOfSubQuestion(subQuestionId);
-    if (parentIndex === -1) {
-      return;
+    let question = this.findQuestion(subQuestionId);
+    let parent = this.findQuestion(question.parent);
+    if (question && parent) {
+      question.parent = null;
+
+      this.state.questions.filter(toTest => {
+        return !toTest.parent && toTest.order > parent.order;
+      }).forEach(toBump => {
+        toBump.order += 1;
+      });
+
+      question.order = parent.order + 1;
+
+      ConfigActions.updateQuestions(this.state.questions);
     }
-
-    // remove from parent
-    let subQuestionIndex = this.findSubQuestionIndexById(this.state.questions[parentIndex].id, subQuestionId);
-    let questionToMove = this.state.questions[parentIndex].subQuestions.splice(subQuestionIndex, 1)[0];
-    questionToMove.parent = null;
-
-    // insert after parent
-    this.state.questions.splice(parentIndex + 1, 0, questionToMove);
-
-    this.scheduleUpdate({
-      questions: this.state.questions
-    });
   }
 
   newQuestionCancelled() {
@@ -276,22 +214,17 @@ class Questionnaire extends React.Component {
       height = heightOfAQuestion;
     }
 
-    let totalSubQuestionsHeight = 0;
-    if (question.subQuestions && question.subQuestions.length > 0) {
-      question.subQuestions.forEach(subQuestion => {
-        if (this.isOpen(subQuestion.id)) {
-          totalSubQuestionsHeight += heightOfExpandedQuestion;
-        } else {
-          totalSubQuestionsHeight += heightOfAQuestion;
-        }
-      });
-    }
-
-    return height + totalSubQuestionsHeight;
+    return height;
   }
 
   isOpen(id) {
     return this.state.applicationState.questionsBeingEdited[id] !== undefined;
+  }
+
+  findSubQuestions(parentId) {
+    return this.state.questions.filter(question => {
+      return question.parent === parentId;
+    });
   }
 
   render() {
@@ -337,9 +270,9 @@ class Questionnaire extends React.Component {
     ];
 
     let newQuestion;
-    let questions;
     let newQuestionButton;
     let nextQuestionYPosition = 0;
+    let questionsJSX = [];
 
     if (this.state.applicationState) {
       if (this.state.applicationState.newQuestion) {
@@ -356,42 +289,75 @@ class Questionnaire extends React.Component {
       }
 
       let currentQuestionNumber = 0;
-      this.state.questions.forEach(question => {
+      Array.from(this.state.questions).filter(question => {
+        return !question.parent;
+      }).sort((a, b) => {
+        if (a.order < b.order) { return -1; }
+        else if (a.order === b.order) { return 0; }
+        else { return 1; }
+      }).forEach(question => {
         question.top = nextQuestionYPosition;
         nextQuestionYPosition += this.findQuestionHeight(question);
-
         currentQuestionNumber++;
         question.numberToShow = currentQuestionNumber;
+
+        let currentSubQuestionNumber = 0;
+        this.findSubQuestions(question.id).sort((a, b) => {
+          return a.order - b.order;
+        }).forEach(subQuestion => {
+          subQuestion.top = nextQuestionYPosition;
+          nextQuestionYPosition += this.findQuestionHeight(subQuestion);
+          currentSubQuestionNumber++;
+          subQuestion.numberToShow = currentQuestionNumber + ' - ' + (String.fromCharCode(64 + currentSubQuestionNumber));
+        });
       });
 
-      questions = Array.from(this.state.questions);
-      questions = questions.sort((a, b) => {
-        if (a.id < b.id) { return -1; }
-        else if (a.id === b.id) { return 0; }
-        else { return 1; }
-      }).map((question, index) => {
+      this.state.questions.filter(question => {
+        return !question.parent;
+      }).forEach((question, index) => {
         let canBeSubQuestion = index > 0 && (!question.subQuestions || question.subQuestions.length === 0);
 
         let questionStyle = {
           cursor: canBeSubQuestion ? 'move' : 'ns-resize'
         };
 
-        return (
+        questionsJSX.push(
           <Question
+            order={question.order}
             appState={this.state.applicationState}
             questionMoved={this.questionMoved}
-            makeMainQuestion={this.makeMainQuestion}
             makeSubQuestion={this.makeSubQuestion}
+            makeMainQuestion={this.makeMainQuestion}
             subQuestionMoved={this.subQuestionMoved}
             subQuestionMovedToParent={this.subQuestionMovedToParent}
             number={question.numberToShow}
             key={question.id}
             id={question.id}
             text={question.text}
-            subQuestions={question.subQuestions}
+            isSubQuestion={false}
             top={question.top}
             style={questionStyle} />
         );
+
+        this.findSubQuestions(question.id).forEach(subQuestion => {
+          questionsJSX.push(
+            <Question
+              order={question.order}
+              appState={this.state.applicationState}
+              questionMoved={this.questionMoved}
+              makeSubQuestion={this.makeSubQuestion}
+              makeMainQuestion={this.makeMainQuestion}
+              subQuestionMoved={this.subQuestionMoved}
+              subQuestionMovedToParent={this.subQuestionMovedToParent}
+              number={subQuestion.numberToShow}
+              key={subQuestion.id}
+              id={subQuestion.id}
+              text={subQuestion.text}
+              isSubQuestion={true}
+              top={subQuestion.top}
+              style={{cursor: 'move'}} />
+          );
+        });
       });
     }
 
@@ -409,7 +375,7 @@ class Questionnaire extends React.Component {
               {newQuestion}
 
               <div style={{position: 'relative', marginTop: 16, minHeight: nextQuestionYPosition}}>
-                {questions}
+                {questionsJSX}
               </div>
             </span>
             <span style={styles.rightPanel}>
