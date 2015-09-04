@@ -292,13 +292,9 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   deleteQuestion(questionId) {
-    let index = this.questions.findIndex(question => {
-      return question.id === questionId;
+    this.questions = this.questions.filter(question => {
+      return question.id !== questionId && question.parent !== questionId;
     });
-
-    if (index !== -1) {
-      this.questions.splice(index, 1);
-    }
   }
 
   saveQuestionEdit(questionId) {
