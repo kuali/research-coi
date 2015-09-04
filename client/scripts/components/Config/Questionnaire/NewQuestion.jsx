@@ -82,7 +82,7 @@ export default class NewQuestion extends React.Component {
       validations = this.props.question.validations.map(validation => {
         return (
           <Badge key={validation.id} style={styles.validation} id={validation.id} onDelete={this.validationRemoved}>
-            {validation.text}
+            {validation}
           </Badge>
         );
       });

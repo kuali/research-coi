@@ -90,18 +90,13 @@ class _ConfigActions {
     });
   }
 
+  updateQuestions(questions) { this.dispatch(questions); }
+
   cancelNewQuestion() { this.dispatch({}); }
 
   saveNewQuestion() { this.dispatch({}); }
 
   startNewQuestion() { this.dispatch({}); }
-
-  questionMoved(draggedId, targetId) {
-    this.dispatch({
-      draggedId: draggedId,
-      targetId: targetId
-    });
-  }
 
   deleteQuestion(questionId) { this.dispatch(questionId); }
 

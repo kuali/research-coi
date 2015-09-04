@@ -8,18 +8,29 @@ import NewQuestion from './NewQuestion';
 
 const questionTarget = {
   hover(props, monitor) {
-    const draggedId = monitor.getItem().id;
+    let itemBeingDragged = monitor.getItem();
+    const draggedId = itemBeingDragged.id;
     let xOffset = monitor.getDifferenceFromInitialOffset().x;
 
-    if (xOffset > 50) {
-      props.makeSubQuestion(draggedId);
-    }
-    else if (xOffset < -50) {
+    if (itemBeingDragged.isSubQuestion && xOffset < -50) {
       props.makeMainQuestion(draggedId);
+    }
+    else if (!itemBeingDragged.isSubQuestion && xOffset > 50) {
+      props.makeSubQuestion(draggedId);
     }
 
     if (draggedId !== props.id) {
-      props.questionMoved(draggedId, props.id);
+      if (itemBeingDragged.isSubQuestion) {
+        if (props.isSubQuestion) {
+          props.subQuestionMoved(draggedId, props.id);
+        }
+        else {
+          props.subQuestionMovedToParent(draggedId, props.id);
+        }
+      }
+      else {
+        props.questionMoved(draggedId, props.id);
+      }
     }
   }
 };
@@ -32,15 +43,12 @@ function collectTarget(connect) {
 
 const questionSource = {
   beginDrag(props, monitor, component) { // eslint-disable-line no-unused-vars
-    return {
-      id: props.id
-    };
+    return props;
   },
   isDragging() {
     return false;
   },
   endDrag(props, monitor, component) { // eslint-disable-line no-unused-vars
-    props.endDrag(props.id);
   }
 };
 
@@ -81,6 +89,10 @@ class Question extends React.Component {
     return this.props.appState.questionsBeingEdited[id];
   }
 
+  isOpen(id) {
+    return this.getEditState(id) !== undefined;
+  }
+
   render() {
     let styles = {
       container: {
@@ -89,8 +101,8 @@ class Question extends React.Component {
         boxShadow: '0 0 10px #BBB',
         overflow: 'hidden',
         visibility: this.props.isDragging ? 'hidden' : 'visible',
-        marginLeft: this.props.parent ? 100 : 0,
-        transition: 'margin .2s ease-in-out'
+        marginLeft: this.props.isSubQuestion ? 100 : 0,
+        transition: 'all .2s ease-in-out'
       },
       content: {
         display: 'inline-block',
@@ -98,7 +110,7 @@ class Question extends React.Component {
         height: '100%'
       },
       gripper: {
-        backgroundColor: this.props.parent ? '#F2AA41' : '#048EAF',
+        backgroundColor: this.props.isSubQuestion ? '#F2AA41' : '#048EAF',
         verticalAlign: 'top',
         display: 'inline-block',
         width: 25
@@ -140,12 +152,29 @@ class Question extends React.Component {
         marginLeft: 5
       },
       extraSpace: {
-        padding: '12px 0'
+        position: 'absolute',
+        width: '100%',
+        top: this.props.top,
+        transition: 'all .2s ease-in-out'
       }
     };
 
     let buttons;
     let questionDetails;
+
+    let displayCondition;
+    if (this.props.isSubQuestion) {
+      displayCondition = (
+        <span>
+          Display if parent is
+          <select style={styles.dropdown}>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </span>
+      );
+    }
+
     let editState = this.getEditState(this.props.id);
     if (editState) {
       questionDetails = (
@@ -169,18 +198,6 @@ class Question extends React.Component {
         </div>
       );
 
-      let displayCondition;
-      if (this.props.parent) {
-        displayCondition = (
-          <span>
-            Display if parent is
-            <select style={styles.dropdown}>
-              <option>Yes</option>
-              <option>No</option>
-            </select>
-          </span>
-        );
-      }
       buttons = (
         <div>
           {displayCondition}

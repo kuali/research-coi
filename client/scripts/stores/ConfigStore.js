@@ -59,19 +59,37 @@ class _ConfigStore extends AutoBindingStore {
 
     this.notifications = [];
 
-    this.questions = [ ];
+    this.questions = [];
+  }
+
+  insertOrders(questions) {
+    let order = 1;
+    questions.filter(question => {
+      return !question.parent;
+    }).forEach(question => {
+      question.order = order++;
+      let subOrder = 1;
+      questions.filter(toFilter => {
+        return toFilter.parent === question.id;
+      }).forEach(sub => {
+        sub.order = subOrder;
+      });
+    });
   }
 
   convertQuestionFormat(questions) {
     let formattedQuestions = [];
-    questions.forEach(question => {
+    this.insertOrders(questions);
+    questions.forEach((question) => {
       question.text = question.question.text;
       question.type = question.question.type;
       question.validations = question.question.validations;
       question.displayCriteria = question.question.displayCriteria;
-      delete question.question;
+
       formattedQuestions.push(question);
+      delete question.question;
     });
+
     return formattedQuestions;
   }
 
@@ -213,11 +231,9 @@ class _ConfigStore extends AutoBindingStore {
 
   findQuestion(id) {
     if (id) {
-      if (this.applicationState.questionsBeingEdited[id] !== undefined) {
-        return this.applicationState.questionsBeingEdited[id];
-      }
-
-      return this.questions.find(question => { return question.id === id; });
+      return this.questions.find(question => {
+        return question.id === id;
+      });
     }
     else {
       return this.applicationState.newQuestion;
@@ -257,6 +273,9 @@ class _ConfigStore extends AutoBindingStore {
     targetQuestion.text = params.text;
   }
 
+  updateQuestions(questions) {
+    this.questions = questions;
+  }
 
   cancelNewQuestion() {
     this.applicationState.newQuestion = undefined;
@@ -270,32 +289,6 @@ class _ConfigStore extends AutoBindingStore {
 
   startNewQuestion() {
     this.applicationState.newQuestion = {};
-  }
-
-  questionMoved(params) {
-    let currentIndex = this.questions.findIndex(question => {
-      return question.id === params.draggedId;
-    });
-    let targetIndex = this.questions.findIndex(question => {
-      return question.id === params.targetId;
-    });
-
-    if (
-        currentIndex === -1 ||
-        targetIndex === -1 ||
-        targetIndex >= this.questions.length ||
-        currentIndex === targetIndex
-       )
-    {
-      return;
-    }
-
-    if (currentIndex < targetIndex) {
-      targetIndex -= 1;
-    }
-
-    let questionRef = this.questions.splice(currentIndex, 1)[0];
-    this.questions.splice(targetIndex, 0, questionRef);
   }
 
   deleteQuestion(questionId) {
