@@ -8,6 +8,7 @@ export class TypeField extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.setType = this.setType.bind(this);
+    this.getTypeDescription = this.getTypeDescription.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -15,9 +16,18 @@ export class TypeField extends ResponsiveComponent {
   }
 
   setType() {
-    this.props.onChange(this.refs.type.getDOMNode().value);
+    this.props.onChange(parseInt(this.refs.type.getDOMNode().value));
   }
 
+  getTypeDescription(cd) {
+    let description;
+    this.props.options.forEach(option => {
+      if (option.typeCd === cd ) {
+        description = option.description;
+      }
+    });
+    return description;
+  }
   renderMobile() {}
 
   renderDesktop() {
@@ -53,16 +63,17 @@ export class TypeField extends ResponsiveComponent {
     let dom;
     if (this.props.readonly) {
       dom = (
-        <div style={styles.value}>{this.props.value}</div>
+        <div style={styles.value}>{this.getTypeDescription(this.props.value)}</div>
       );
     }
     else {
+      let options = this.props.options.map(option =>{
+        return <option key={option.typeCd} value={option.typeCd}>{option.description}</option>;
+      });
       dom = (
         <select required value={this.props.value} ref="type" onChange={this.setType} style={styles.select}>
           <option value="">--SELECT--</option>
-          <option value="Investment">Investment</option>
-          <option value="Retirement">Retirement</option>
-          <option value="Large Corporation">Large Corporation</option>
+          {options}
         </select>
       );
     }
