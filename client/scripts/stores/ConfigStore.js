@@ -62,7 +62,7 @@ class _ConfigStore extends AutoBindingStore {
     this.questions = [];
   }
 
-  insertOrdersTempHack(questions) {
+  insertOrders(questions) {
     let order = 1;
     questions.filter(question => {
       return !question.parent;
@@ -79,7 +79,7 @@ class _ConfigStore extends AutoBindingStore {
 
   convertQuestionFormat(questions) {
     let formattedQuestions = [];
-    this.insertOrdersTempHack(questions);
+    this.insertOrders(questions);
     questions.forEach((question) => {
       question.text = question.question.text;
       question.type = question.question.type;
@@ -98,7 +98,6 @@ class _ConfigStore extends AutoBindingStore {
            .end((err, questionnaire) => {
              if (!err) {
                this.questions = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
-               // this.questions = JSON.parse(questionnaire.body[0].questions);
                this.emitChange();
              }
            });
@@ -232,20 +231,9 @@ class _ConfigStore extends AutoBindingStore {
 
   findQuestion(id) {
     if (id) {
-      for (let i = 0; i < this.questions.length; i++) {
-        let question = this.questions[i];
-        if (question.id === id) {
-          return question;
-        }
-
-        if (question.subQuestions && question.subQuestions.length > 0) {
-          for (let j = 0; j < question.subQuestions.length; j++) {
-            if (question.subQuestions[j].id === id) {
-              return question.subQuestions[j];
-            }
-          }
-        }
-      }
+      return this.questions.find(question => {
+        return question.id === id;
+      });
     }
     else {
       return this.applicationState.newQuestion;
@@ -287,7 +275,6 @@ class _ConfigStore extends AutoBindingStore {
 
   updateQuestions(questions) {
     this.questions = questions;
-    // return false;
   }
 
   cancelNewQuestion() {
