@@ -283,6 +283,14 @@ class _ConfigStore extends AutoBindingStore {
 
   saveNewQuestion() {
     this.applicationState.newQuestion.id = new Date().getTime();
+
+    this.questions.filter(question => {
+      return !question.parent;
+    }).forEach(question => {
+      question.order += 1;
+    });
+
+    this.applicationState.newQuestion.order = 1;
     this.questions.push(this.applicationState.newQuestion);
     this.applicationState.newQuestion = undefined;
   }
