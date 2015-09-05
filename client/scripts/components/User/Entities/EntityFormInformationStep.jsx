@@ -109,6 +109,7 @@ export class EntityFormInformationStep extends ResponsiveComponent {
             <div style={{marginBottom: 20}}>
               <TypeField
                 value={type}
+                options = {this.props.entityTypes}
                 readonly={this.props.readonly}
                 onChange={this.setType}
                 invalid={this.props.validating && validationErrors.type}

@@ -53,6 +53,7 @@ class _DisclosureStore extends AutoBindingStore {
       entityInProgress: {
         status: 'ACTIVE'
       },
+      entityTypes: [],
       potentialRelationship: {
         person: '',
         relation: '',
@@ -149,6 +150,13 @@ class _DisclosureStore extends AutoBindingStore {
           this.emitChange();
         }
       });
+    request.get('/api/coi/disclosure/financial-entity/types')
+    .end((err, entityTypes) => {
+      if (!err) {
+        this.applicationState.entityTypes = entityTypes.body;
+        this.emitChange();
+      }
+    });
   }
 
   changeArchiveFilter(newValue) {
@@ -164,7 +172,6 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   answerQuestion(question) {
-    let questionId = question.id;
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
@@ -178,7 +185,7 @@ class _DisclosureStore extends AutoBindingStore {
         .type('application/json')
         .end(function(err, res){
           if (res.ok) {
-            console.log("updated question answer")
+            console.log('updated question answer');
           } else {
             console.error('Error: ' + res.text);
           }
@@ -192,7 +199,7 @@ class _DisclosureStore extends AutoBindingStore {
         .type('application/json')
         .end(function(err, res){
           if (res.ok) {
-            console.log("inserted question answer");
+            console.log('inserted question answer');
           } else {
             console.error('Error: ' + res.text);
           }

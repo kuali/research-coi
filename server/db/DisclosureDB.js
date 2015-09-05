@@ -403,9 +403,8 @@ export let get = (dbInfo, disclosureId, callback) => {
     knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
       .from('disclosure as de')
       .where('id', disclosureId),
-    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.public as isPublic', 'et.description as type', 'e.sponsor as isSponsor', 'e.name', 'e.description')
+    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.public as isPublic', 'e.type_cd as type', 'e.sponsor as isSponsor', 'e.name', 'e.description')
       .from('fin_entity as e')
-      .innerJoin('fin_entity_type as et', 'et.type_cd', 'e.type_cd')
       .where('disclosure_id', disclosureId),
     knex.select('qa.id as id', 'qa.answer as answer')
       .from('disclosure_answer as da')
@@ -599,6 +598,18 @@ export let getArchivedDisclosures = (dbInfo, userId, callback) => {
     .catch(function (err) {
       callback(err);
     });
+};
+
+export let getEntityTypes = (dbInfo, callback) => {
+  let knex = getKnex(dbInfo);
+  knex.select('type_cd as typeCd', 'description')
+  .from('fin_entity_type')
+  .then(results => {
+    callback(undefined, results);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
 };
 
 export let approve = (school, disclosureId) => {

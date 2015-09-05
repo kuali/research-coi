@@ -113,6 +113,16 @@ export let init = app => {
     });
   });
 
+  app.get('/api/coi/disclosure/financial-entity/types', function(req, res, next){
+    DisclosureDB.getEntityTypes(req.dbInfo, function(err, entityTypes) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(entityTypes);
+      }
+    });
+  });
   // Save existing disclosure with this data
   /*
     {
