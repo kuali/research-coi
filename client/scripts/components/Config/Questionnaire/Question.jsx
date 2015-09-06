@@ -148,6 +148,9 @@ class Question extends React.Component {
         float: 'right',
         marginLeft: 10
       },
+      nonFloatButton: {
+        marginLeft: 10
+      },
       dropdown: {
         marginLeft: 5
       },
@@ -156,6 +159,12 @@ class Question extends React.Component {
         width: '100%',
         top: this.props.top,
         transition: 'all .2s ease-in-out'
+      },
+      warning: {
+        color: 'red',
+        fontSize: 14,
+        whiteSpace: 'normal',
+        paddingLeft: 10
       }
     };
 
@@ -183,10 +192,22 @@ class Question extends React.Component {
         </div>
       );
 
+      let subQuestionWarning;
+      if (editState.showWarning) {
+        subQuestionWarning = (
+          <div style={styles.warning}>Only Yes/No can have subquestions. All subquestions will be deleted.</div>
+        );
+      }
+
       buttons = (
-        <div>
-          <KButton style={styles.button} onClick={this.save}>Save</KButton>
-          <KButton style={styles.button} onClick={this.cancel}>Cancel</KButton>
+        <div className="flexbox row">
+          <div className="fill">
+            {subQuestionWarning}
+          </div>
+          <span>
+            <KButton style={styles.nonFloatButton} onClick={this.cancel}>Cancel</KButton>
+            <KButton style={styles.nonFloatButton} onClick={this.save}>Save</KButton>
+          </span>
         </div>
       );
     }

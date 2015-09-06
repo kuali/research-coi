@@ -2,6 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Badge from './Badge';
 import ConfigActions from '../../../actions/ConfigActions';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class NewQuestion extends React.Component {
   constructor() {
@@ -88,6 +89,14 @@ export default class NewQuestion extends React.Component {
       });
     }
 
+    let questionTypes = Object.keys(COIConstants.QUESTION_TYPE).map(questionType => {
+      return (
+        <option key={questionType} value={COIConstants.QUESTION_TYPE[questionType]}>
+          {COIConstants.QUESTION_TYPE[questionType]}
+        </option>
+      );
+    });
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div>
@@ -96,11 +105,7 @@ export default class NewQuestion extends React.Component {
             <div>
               <select style={styles.dropdown} value={this.props.question.type} ref="typeDropdown" onChange={this.typeChosen} id="questionType">
                 <option>Select</option>
-                <option>Yes/No</option>
-                <option>Yes/No/NA</option>
-                <option>Number</option>
-                <option>Date</option>
-                <option>Lookup</option>
+                {questionTypes}
               </select>
             </div>
           </span>

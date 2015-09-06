@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import {sortQuestions} from './ConfigUtils';
 import alt from '../alt';
 import request from 'superagent';
+import {COIConstants} from '../../../COIConstants';
 
 class _ConfigStore extends AutoBindingStore {
   constructor() {
@@ -263,13 +264,35 @@ class _ConfigStore extends AutoBindingStore {
     }
   }
 
+  hasSubQuestions(parentId) {
+    return this.questions.some(question => {
+      return question.parent === parentId;
+    });
+  }
+
   questionTypeChosen(params) {
-    let targetQuestion = this.findQuestion(params.questionId);
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+
+      targetQuestion.showWarning = this.hasSubQuestions(targetQuestion.id) && params.type !== COIConstants.QUESTION_TYPE.YESNO;
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
     targetQuestion.type = params.type;
   }
 
   questionTextChanged(params) {
-    let targetQuestion = this.findQuestion(params.questionId);
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
     targetQuestion.text = params.text;
   }
 
@@ -305,13 +328,25 @@ class _ConfigStore extends AutoBindingStore {
     });
   }
 
+  removeSubQuestions(parentId) {
+    this.questions = this.questions.filter(question => {
+      return question.parent !== parentId;
+    });
+  }
+
   saveQuestionEdit(questionId) {
     let index = this.questions.findIndex(question => {
       return question.id === questionId;
     });
 
+    let newQuestion = this.applicationState.questionsBeingEdited[questionId];
+    delete newQuestion.showWarning;
     if (index !== -1) {
-      this.questions[index] = this.applicationState.questionsBeingEdited[questionId];
+      this.questions[index] = newQuestion;
+    }
+
+    if (newQuestion.type !== COIConstants.QUESTION_TYPE.YESNO) {
+      this.removeSubQuestions(newQuestion.id);
     }
 
     delete this.applicationState.questionsBeingEdited[questionId];

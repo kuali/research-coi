@@ -11,6 +11,7 @@ import ConfigStore from '../../../stores/ConfigStore';
 import ConfigActions from '../../../actions/ConfigActions';
 import Question from './Question';
 import NewQuestionButton from './NewQuestionButton';
+import {COIConstants} from '../../../../../COIConstants';
 
 class Questionnaire extends React.Component {
   constructor() {
@@ -139,6 +140,11 @@ class Questionnaire extends React.Component {
     // Find closest previous main question
     let parent = this.findNewParentQuestion(question);
     if (parent) {
+      // Can only be a sub question if the parent is a yes/no question
+      if (parent.type !== COIConstants.QUESTION_TYPE.YESNO) {
+        return;
+      }
+
       this.state.questions.filter(toTest => {
         return !toTest.parent && toTest.order > question.order;
       }).forEach(toBumpUp => {
@@ -227,7 +233,31 @@ class Questionnaire extends React.Component {
     });
   }
 
+  canBeSubQuestion(question) {
+    if (question.parent) {
+      return false;
+    }
+
+    let potentialParent = this.findNewParentQuestion(question);
+    if (!potentialParent || potentialParent.type !== COIConstants.QUESTION_TYPE.YESNO) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  printDebugInfo() {
+    if (this.state.questions) {
+      console.log('-------');
+      this.state.questions.forEach(question => {
+        console.log(question.id + ' parent:' + question.parent + ' type:' + question.type);
+      });
+    }
+  }
+
   render() {
+    this.printDebugInfo();
     let styles = {
       container: {
         overflowY: 'auto',
@@ -315,7 +345,7 @@ class Questionnaire extends React.Component {
       this.state.questions.filter(question => {
         return !question.parent;
       }).forEach((question, index) => {
-        let canBeSubQuestion = index > 0 && (!question.subQuestions || question.subQuestions.length === 0);
+        let canBeSubQuestion = index > 0 && this.canBeSubQuestion(question);
 
         let questionStyle = {
           cursor: canBeSubQuestion ? 'move' : 'ns-resize'
