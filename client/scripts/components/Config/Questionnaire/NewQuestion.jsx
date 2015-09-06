@@ -8,20 +8,8 @@ export default class NewQuestion extends React.Component {
   constructor() {
     super();
 
-    this.validationAdded = this.validationAdded.bind(this);
-    this.validationRemoved = this.validationRemoved.bind(this);
     this.textChanged = this.textChanged.bind(this);
     this.typeChosen = this.typeChosen.bind(this);
-  }
-
-  validationAdded() {
-    let dropdown = React.findDOMNode(this.refs.validation);
-    ConfigActions.validationAddedToQuestion(this.props.id, dropdown.value);
-    dropdown.value = 'Select';
-  }
-
-  validationRemoved(validationId) {
-    ConfigActions.validationRemovedFromQuestion(this.props.id, validationId);
   }
 
   typeChosen() {
@@ -108,19 +96,6 @@ export default class NewQuestion extends React.Component {
                 {questionTypes}
               </select>
             </div>
-          </span>
-          <span style={styles.span}>
-            <label style={styles.label} htmlFor="validationChoices">VALIDATION</label>
-            <div>
-              <select ref="validation" defaultValue={''} onChange={this.validationAdded} style={styles.dropdown} id="validationChoices">
-                <option>Select</option>
-                <option>Required</option>
-                <option>Only One Selection</option>
-              </select>
-            </div>
-          </span>
-          <span style={styles.span}>
-            {validations}
           </span>
         </div>
         <div style={styles.questionTextSection}>
