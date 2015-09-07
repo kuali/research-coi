@@ -105,6 +105,13 @@ class _ConfigActions {
   startEditingQuestion(questionId) { this.dispatch(questionId); }
 
   cancelQuestionEdit(questionId) { this.dispatch(questionId); }
+
+  criteriaChanged(questionId, newValue) {
+    this.dispatch({
+      questionId: questionId,
+      newValue: newValue
+    });
+  }  
 }
 
 export default alt.createActions(_ConfigActions);

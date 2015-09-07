@@ -1,3 +1,5 @@
+/*eslint-disable camelcase */
+
 exports.seed = function(knex, Promise) {
   return Promise.join(
   knex('questionnaire').insert({
@@ -22,9 +24,7 @@ exports.seed = function(knex, Promise) {
               text: 'If Yes, did the organization send you on vacation?',
               type: 'text',
               validations: ['select1', 'required'],
-              displayCriteria: {
-                value: 'true'
-              }
+              displayCriteria: 'Yes'
             })
           }).then(function(questionId) {
             return knex('questionnaire_answer').insert({

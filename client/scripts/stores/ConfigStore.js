@@ -371,6 +371,13 @@ class _ConfigStore extends AutoBindingStore {
       return -1;
     }
   }
+
+  criteriaChanged(params) {
+    let question = this.findQuestion(params.questionId);
+    if (question) {
+      question.displayCriteria = params.newValue;
+    }
+  }
 }
 
 export default alt.createStore(_ConfigStore, 'ConfigStore');

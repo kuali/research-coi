@@ -385,7 +385,8 @@ class Questionnaire extends React.Component {
               text={subQuestion.text}
               isSubQuestion={true}
               top={subQuestion.top}
-              style={{cursor: 'move'}} />
+              style={{cursor: 'move'}}
+              displayCriteria={subQuestion.displayCriteria} />
           );
         });
       });
