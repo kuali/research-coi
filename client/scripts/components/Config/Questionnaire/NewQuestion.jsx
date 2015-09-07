@@ -10,6 +10,9 @@ export default class NewQuestion extends React.Component {
 
     this.textChanged = this.textChanged.bind(this);
     this.typeChosen = this.typeChosen.bind(this);
+    this.optionTextChanged = this.optionTextChanged.bind(this);
+    this.optionDeleted = this.optionDeleted.bind(this);
+    this.requiredSelectionsChanged = this.requiredSelectionsChanged.bind(this);
   }
 
   typeChosen() {
@@ -20,6 +23,23 @@ export default class NewQuestion extends React.Component {
   textChanged() {
     let textarea = React.findDOMNode(this.refs.questionText);
     ConfigActions.questionTextChanged(this.props.id, textarea.value);
+  }
+
+  optionTextChanged(evt) {
+    if (evt.keyCode === 13) {
+      let textbox = React.findDOMNode(this.refs.optionText);
+      ConfigActions.multiSelectOptionAdded(this.props.id, textbox.value);
+      textbox.value = '';
+    }
+  }
+
+  optionDeleted(optionId) {
+    ConfigActions.multiSelectOptionDeleted(this.props.id, optionId);
+  }
+
+  requiredSelectionsChanged() {
+    let textbox = React.findDOMNode(this.refs.requiredNumSelections);
+    ConfigActions.requiredNumSelectionsChanged(this.props.id, textbox.value);
   }
 
   render() {
@@ -63,19 +83,41 @@ export default class NewQuestion extends React.Component {
       },
       validation: {
         marginRight: 5
+      },
+      textbox: {
+        padding: 6,
+        fontSize: 16,
+        borderRadius: 5,
+        border: '1px solid #B0B0B0'
+      },
+      tip: {
+        fontSize: 12,
+        color: '#666',
+        paddingTop: 5,
+        paddingBottom: 15
+      },
+      optionEnteringSection: {
+        display: 'inline-block',
+        verticalAlign: 'top'
+      },
+      options: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        padding: '24px 20px 0 20px',
+        overflowY: 'auto',
+        height: 95
+      },
+      option: {
+        margin: '0 5px 5px 0',
+        display: 'inline-block',
+        backgroundColor: '#2A9788',
+        fontSize: 16
+      },
+      requiredSelectionsSection: {
+        display: 'inline-block',
+        marginLeft: 59
       }
     };
-
-    let validations;
-    if (this.props.question.validations) {
-      validations = this.props.question.validations.map(validation => {
-        return (
-          <Badge key={validation.id} style={styles.validation} id={validation.id} onDelete={this.validationRemoved}>
-            {validation}
-          </Badge>
-        );
-      });
-    }
 
     let questionTypes = Object.keys(COIConstants.QUESTION_TYPE).map(questionType => {
       return (
@@ -84,6 +126,46 @@ export default class NewQuestion extends React.Component {
         </option>
       );
     });
+
+    let multiSelectOptions, requiredSelections;
+    if (this.props.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+      let options;
+      if (this.props.question.options) {
+        options = this.props.question.options.map(option => {
+          return (
+            <Badge style={styles.option} id={option} onDelete={this.optionDeleted}>{option}</Badge>
+          );
+        });
+      }
+
+      multiSelectOptions = (
+        <div className="flexbox row" style={{padding: '10px 10px 0 10px'}}>
+          <span style={styles.optionEnteringSection}>
+            <div>
+              <label style={styles.label} htmlFor="options">OPTIONS</label>
+            </div>
+            <div>
+              <input style={styles.textbox} ref="optionText" type="text" id="options" onKeyUp={this.optionTextChanged} />
+            </div>
+            <div style={styles.tip}>
+              (Push Enter to add another)
+            </div>
+          </span>
+          <span className="fill" style={styles.options}>
+            {options}
+          </span>
+        </div>
+      );
+
+      requiredSelections = (
+        <span style={styles.requiredSelectionsSection}>
+          <label style={styles.label} htmlFor="requiredNumSelections">SELECTIONS REQUIRED</label>
+          <div>
+            <input style={styles.textbox} type="number" id="requiredNumSelections" ref="requiredNumSelections" onChange={this.requiredSelectionsChanged} value={this.props.question.requiredNumSelections} />
+          </div>
+        </span>
+      );
+    }
 
     return (
       <div style={merge(styles.container, this.props.style)}>
@@ -97,7 +179,9 @@ export default class NewQuestion extends React.Component {
               </select>
             </div>
           </span>
+          {requiredSelections}
         </div>
+        {multiSelectOptions}
         <div style={styles.questionTextSection}>
           <label style={styles.label}>QUESTION TEXT</label>
           <div>

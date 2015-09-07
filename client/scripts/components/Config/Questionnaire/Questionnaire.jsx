@@ -213,9 +213,16 @@ class Questionnaire extends React.Component {
   findQuestionHeight(question) {
     const heightOfAQuestion = 139;
     const heightOfExpandedQuestion = 285;
+    const heightOfExpandedMultiSelect = 390;
     let height;
     if (this.isOpen(question.id)) {
-      height = heightOfExpandedQuestion;
+      let editState = this.state.applicationState.questionsBeingEdited[question.id];
+      if (editState.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+        height = heightOfExpandedMultiSelect;
+      }
+      else {
+        height = heightOfExpandedQuestion;
+      }
     } else {
       height = heightOfAQuestion;
     }
@@ -247,17 +254,7 @@ class Questionnaire extends React.Component {
     }
   }
 
-  printDebugInfo() {
-    if (this.state.questions) {
-      console.log('-------');
-      this.state.questions.forEach(question => {
-        console.log(question.id + ' parent:' + question.parent + ' type:' + question.type);
-      });
-    }
-  }
-
   render() {
-    this.printDebugInfo();
     let styles = {
       container: {
         overflowY: 'auto',

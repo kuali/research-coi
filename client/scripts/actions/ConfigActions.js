@@ -111,7 +111,28 @@ class _ConfigActions {
       questionId: questionId,
       newValue: newValue
     });
-  }  
+  }
+
+  multiSelectOptionAdded(questionId, newValue) {
+    this.dispatch({
+      questionId: questionId,
+      newValue: newValue
+    });
+  }
+
+  multiSelectOptionDeleted(questionId, optionId) {
+    this.dispatch({
+      questionId: questionId,
+      optionId: optionId
+    });
+  }
+
+  requiredNumSelectionsChanged(questionId, newValue) {
+    this.dispatch({
+      questionId: questionId,
+      newValue: newValue
+    });
+  }
 }
 
 export default alt.createActions(_ConfigActions);

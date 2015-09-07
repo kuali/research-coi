@@ -86,6 +86,8 @@ class _ConfigStore extends AutoBindingStore {
       question.type = question.question.type;
       question.validations = question.question.validations;
       question.displayCriteria = question.question.displayCriteria;
+      question.multiSelectOptions = question.question.multiSelectOptions;
+      question.requiredNumSelections = question.question.requiredNumSelections;
 
       formattedQuestions.push(question);
       delete question.question;
@@ -377,6 +379,49 @@ class _ConfigStore extends AutoBindingStore {
     if (question) {
       question.displayCriteria = params.newValue;
     }
+  }
+
+  multiSelectOptionAdded(params) {
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
+    if (!targetQuestion.options) {
+      targetQuestion.options = [];
+    }
+    targetQuestion.options.push(params.newValue);
+  }
+
+  multiSelectOptionDeleted(params) {
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
+    if (targetQuestion.options) {
+      targetQuestion.options = targetQuestion.options.filter(option => {
+        return option !== params.optionId;
+      });
+    }
+  }
+
+  requiredNumSelectionsChanged(params) {
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
+    targetQuestion.requiredNumSelections = params.newValue;
   }
 }
 
