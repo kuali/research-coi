@@ -421,7 +421,7 @@ export let get = (dbInfo, disclosureId, callback) => {
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
-    knex.select('r.id', 'r.fin_entity_id', 'rt.description as type', 'rp.description as person', 'rc.description as relationship', 'ra.description as amount', 'r.comments')
+    knex.select('r.id', 'r.fin_entity_id', 'r.type_cd as relationshipCd', 'rt.description as relationship', 'r.person_type_cd as personCd', 'rp.description as person', 'r.relationship_category_cd as typeCd', 'rc.description as type', 'r.amount_cd as amountCd', 'ra.description as amount', 'r.comments')
       .from('relationship as r')
       .innerJoin('relationship_person_type as rp', 'r.person_type_cd', 'rp.type_cd')
       .innerJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd')
@@ -604,6 +604,54 @@ export let getEntityTypes = (dbInfo, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('type_cd as typeCd', 'description')
   .from('fin_entity_type')
+  .then(results => {
+    callback(undefined, results);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+};
+
+export let getRelationshipTypes = (dbInfo, callback) => {
+  let knex = getKnex(dbInfo);
+  knex.select('type_cd as typeCd', 'description')
+  .from('relationship_type')
+  .then(results => {
+    callback(undefined, results);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+};
+
+export let getRelationshipCategoryTypes = (dbInfo, callback) => {
+  let knex = getKnex(dbInfo);
+  knex.select('type_cd as typeCd', 'relationship_type_cd as relationshipTypeCd', 'description')
+  .from('relationship_category_type')
+  .then(results => {
+    callback(undefined, results);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+};
+
+export let getRelationshipPersonTypes = (dbInfo, callback) => {
+  let knex = getKnex(dbInfo);
+  knex.select('type_cd as typeCd', 'description')
+  .from('relationship_person_type')
+  .then(results => {
+    callback(undefined, results);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+};
+
+export let getRelationshipAmountTypes = (dbInfo, callback) => {
+  let knex = getKnex(dbInfo);
+  knex.select('type_cd as typeCd', 'description')
+  .from('relationship_amount_type')
   .then(results => {
     callback(undefined, results);
   })

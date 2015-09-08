@@ -54,6 +54,10 @@ class _DisclosureStore extends AutoBindingStore {
         status: 'ACTIVE'
       },
       entityTypes: [],
+      relationshipTypes: [],
+      relationshipCategoryTypes: [],
+      relationshipPersonTypes: [],
+      relationshipAmountTypes: [],
       potentialRelationship: {
         person: '',
         relation: '',
@@ -154,6 +158,34 @@ class _DisclosureStore extends AutoBindingStore {
     .end((err, entityTypes) => {
       if (!err) {
         this.applicationState.entityTypes = entityTypes.body;
+        this.emitChange();
+      }
+    });
+    request.get('/api/coi/disclosure/financial-entity/relationship/types')
+    .end((err, relationshipTypes) => {
+      if (!err) {
+        this.applicationState.relationshipTypes = relationshipTypes.body;
+        this.emitChange();
+      }
+    });
+    request.get('/api/coi/disclosure/financial-entity/relationship/category-types')
+    .end((err, relationshipCategoryTypes) => {
+      if (!err) {
+        this.applicationState.relationshipCategoryTypes = relationshipCategoryTypes.body;
+        this.emitChange();
+      }
+    });
+    request.get('/api/coi/disclosure/financial-entity/relationship/person-types')
+    .end((err, relationshipPersonTypes) => {
+      if (!err) {
+        this.applicationState.relationshipPersonTypes = relationshipPersonTypes.body;
+        this.emitChange();
+      }
+    });
+    request.get('/api/coi/disclosure/financial-entity/relationship/amount-types')
+    .end((err, relationshipAmountTypes) => {
+      if (!err) {
+        this.applicationState.relationshipAmountTypes = relationshipAmountTypes.body;
         this.emitChange();
       }
     });
@@ -325,38 +357,38 @@ class _DisclosureStore extends AutoBindingStore {
     entity.description = params.description;
   }
 
-  setEntityRelationshipPerson(person) {
+  setEntityRelationshipPerson(personCd) {
     if (!this.applicationState.potentialRelationship) {
       this.applicationState.potentialRelationship = {};
     }
 
-    this.applicationState.potentialRelationship.person = person;
+    this.applicationState.potentialRelationship.personCd = personCd;
   }
 
-  setEntityRelationshipRelation(relation) {
+  setEntityRelationshipRelation(relationshipCd) {
     if (!this.applicationState.potentialRelationship) {
       this.applicationState.potentialRelationship = {};
     }
 
-    this.applicationState.potentialRelationship.relationship = relation;
+    this.applicationState.potentialRelationship.relationshipCd = relationshipCd;
     this.setEntityRelationshipType('');
     this.setEntityRelationshipAmount('');
   }
 
-  setEntityRelationshipType(type) {
+  setEntityRelationshipType(typeCd) {
     if (!this.applicationState.potentialRelationship) {
       this.applicationState.potentialRelationship = {};
     }
 
-    this.applicationState.potentialRelationship.type = type;
+    this.applicationState.potentialRelationship.typeCd = typeCd;
   }
 
-  setEntityRelationshipAmount(amount) {
+  setEntityRelationshipAmount(amountCd) {
     if (!this.applicationState.potentialRelationship) {
       this.applicationState.potentialRelationship = {};
     }
 
-    this.applicationState.potentialRelationship.amount = amount;
+    this.applicationState.potentialRelationship.amountCd = amountCd;
   }
 
   setEntityRelationshipComment(comment) {
@@ -378,15 +410,43 @@ class _DisclosureStore extends AutoBindingStore {
       this.applicationState.potentialRelationship.id = new Date().getTime() + 'FAKE';
     }
 
+    this.applicationState.potentialRelationship.amount = this.getDescriptionFromCode(this.applicationState.potentialRelationship.amountCd, this.applicationState.relationshipAmountTypes);
+    this.applicationState.potentialRelationship.type = this.getDescriptionFromCode(this.applicationState.potentialRelationship.typeCd, this.applicationState.relationshipCategoryTypes);
+    this.applicationState.potentialRelationship.relationship = this.getDescriptionFromCode(this.applicationState.potentialRelationship.relationshipCd, this.applicationState.relationshipTypes);
+    this.applicationState.potentialRelationship.person = this.getDescriptionFromCode(this.applicationState.potentialRelationship.personCd, this.applicationState.relationshipPersonTypes);
     entity.relationships.push(this.applicationState.potentialRelationship);
 
     this.applicationState.potentialRelationship = {
+      personCd: '',
       person: '',
-      relation: '',
+      relationship: '',
+      relationshipCd: '',
       type: '',
+      typeCd: '',
       amount: '',
+      amountCd: '',
       comments: ''
     };
+  }
+
+  getDescriptionFromCode(typeCd, collection) {
+    let desc = collection.find(type =>{
+      return type.typeCd === typeCd;
+    });
+
+    if(desc) {
+      return desc.description;
+    }
+  }
+
+  getCodeFromDescription(description, collection) {
+    let code = collection.find(type =>{
+      return type.description === description;
+    });
+
+    if(code) {
+      return code.typeCd;
+    }
   }
 
   removeEntityRelationship(params) {
@@ -400,7 +460,7 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityFormClosed(entityId) {
     if (entityId) {
-      if (this.applicationState.potentialRelationship.person.length > 0) {
+      if (this.applicationState.potentialRelationship.personCd.length > 0) {
         this.addEntityRelationship(entityId);
       }
 
@@ -419,7 +479,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   saveInProgressEntity(entity) {
-    if (this.applicationState.potentialRelationship.person.length > 0) {
+    if (this.applicationState.potentialRelationship.personCd.length > 0) {
       this.addEntityRelationship();
     }
 
@@ -700,7 +760,7 @@ class _DisclosureStore extends AutoBindingStore {
     let errors = {};
 
     let potentialRelationship = storeState.applicationState.potentialRelationship;
-    if (potentialRelationship.person === undefined || potentialRelationship.person.length === 0) {
+    if (potentialRelationship.personCd === undefined || potentialRelationship.personCd.length === 0) {
       errors.person = 'Required Field';
     }
 
@@ -708,15 +768,23 @@ class _DisclosureStore extends AutoBindingStore {
       errors.comment = 'Required Field';
     }
 
-    if (potentialRelationship.relationship !== undefined && potentialRelationship.relationship.length !== 0) {
-      if (potentialRelationship.relationship !== COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES) {
-        if (potentialRelationship.type === undefined || potentialRelationship.type.length === 0) {
+    let paidActivities = storeState.applicationState.relationshipTypes.find(type => {
+      return type.description === COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES;
+    });
+
+    if (potentialRelationship.relationshipCd !== undefined && potentialRelationship.relationshipCd.length !== 0) {
+      if (potentialRelationship.relationshipCd !== paidActivities.typeCd) {
+        if (potentialRelationship.typeCd === undefined || potentialRelationship.typeCd.length === 0) {
           errors.type = 'Required Field';
         }
       }
 
-      if (potentialRelationship.relationship !== COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS) {
-        if (potentialRelationship.amount === undefined || potentialRelationship.amount.length === 0) {
+      let officePositions = storeState.applicationState.relationshipTypes.find(type =>{
+        return type.description === COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS;
+      });
+
+      if (potentialRelationship.relationshipCd !== officePositions.typeCd) {
+        if (potentialRelationship.amountCd === undefined || potentialRelationship.amountCd.length === 0) {
           errors.amount = 'Required Field';
         }
       }
@@ -756,9 +824,9 @@ class _DisclosureStore extends AutoBindingStore {
 
     let unSubmittedRelationshipStarted = () => {
       let potentialRelationship = storeState.applicationState.potentialRelationship;
-      return (potentialRelationship.person && potentialRelationship.person.length > 0) ||
+      return (potentialRelationship.personCd && potentialRelationship.personCd.length > 0) ||
           (potentialRelationship.comments && potentialRelationship.comments.length > 0) ||
-          (potentialRelationship.relationship && potentialRelationship.relationship.length > 0);
+          (potentialRelationship.relationshipCd && potentialRelationship.relationshipCd.length > 0);
     };
 
     if (atLeastOneRelationshipAdded()) {

@@ -123,6 +123,50 @@ export let init = app => {
       }
     });
   });
+
+  app.get('/api/coi/disclosure/financial-entity/relationship/types', function(req, res, next){
+    DisclosureDB.getRelationshipTypes(req.dbInfo, function(err, relationshipTypes) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(relationshipTypes);
+      }
+    });
+  });
+
+  app.get('/api/coi/disclosure/financial-entity/relationship/category-types', function(req, res, next){
+    DisclosureDB.getRelationshipCategoryTypes(req.dbInfo, function(err, relationshipTypes) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(relationshipTypes);
+      }
+    });
+  });
+
+  app.get('/api/coi/disclosure/financial-entity/relationship/person-types', function(req, res, next){
+    DisclosureDB.getRelationshipPersonTypes(req.dbInfo, function(err, relationshipTypes) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(relationshipTypes);
+      }
+    });
+  });
+
+  app.get('/api/coi/disclosure/financial-entity/relationship/amount-types', function(req, res, next){
+    DisclosureDB.getRelationshipAmountTypes(req.dbInfo, function(err, relationshipTypes) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(relationshipTypes);
+      }
+    });
+  });
   // Save existing disclosure with this data
   /*
     {
