@@ -44,15 +44,19 @@ export default class Sidebar extends React.Component {
         active: true
       },
       {
-        label: 'Customize Questionnaire',
+        label: 'Screening Questionnaire',
         link: 'questionnaire'
       },
       {
-        label: 'Customize Financial Entities',
+        label: 'Financial Entities Questionnaire',
         link: 'entities'
       },
       {
-        label: 'Customize Project Declarations',
+        label: 'Relationship Matrix',
+        link: 'relationship'
+      },
+      {
+        label: 'Project Declarations',
         link: 'declarations'
       },
       {
@@ -63,8 +67,8 @@ export default class Sidebar extends React.Component {
 
     let stepsJsx = steps.map((step, index) => {
       let parts = step.label.split(' ');
-      let firstPart = parts.shift();
-      let rest = parts.join(' ');
+      let rest = parts.pop();
+      let firstPart = parts.join(' ');
 
       let stepStyle = styles.step;
       if (this.props.active === step.link) {

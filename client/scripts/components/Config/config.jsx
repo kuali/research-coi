@@ -10,6 +10,7 @@ import {AppHeader} from '../AppHeader';
 import GeneralConfiguration from './General/General';
 import QuestionnaireCustomization from './Questionnaire/Questionnaire';
 import EntitiesCustomization from './Entities/Entities';
+import RelationshipCustomization from './Relationship/Relationship';
 import DeclarationsCustomization from './Declarations/Declarations';
 import CertificationCustomization from './Certification/Certification';
 
@@ -39,6 +40,7 @@ let routes = (
     <Route name="general" path="/general" handler={GeneralConfiguration} />
     <Route name="questionnaire" path="/questionnaire" handler={QuestionnaireCustomization} />
     <Route name="entities" path="/entities" handler={EntitiesCustomization} />
+    <Route name="relationship" path="/relationship" handler={RelationshipCustomization} />
     <Route name="declarations" path="/declarations" handler={DeclarationsCustomization} />
     <Route name="certification" path="/certification" handler={CertificationCustomization} />
     <DefaultRoute handler={GeneralConfiguration} />
