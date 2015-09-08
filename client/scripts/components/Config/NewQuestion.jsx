@@ -1,8 +1,8 @@
 import React from 'react/addons';
-import {merge} from '../../../merge';
+import {merge} from '../../merge';
 import Badge from './Badge';
-import ConfigActions from '../../../actions/ConfigActions';
-import {COIConstants} from '../../../../../COIConstants';
+import ConfigActions from '../../actions/ConfigActions';
+import {COIConstants} from '../../../../COIConstants';
 
 export default class NewQuestion extends React.Component {
   constructor() {
@@ -17,29 +17,29 @@ export default class NewQuestion extends React.Component {
 
   typeChosen() {
     let dropdown = React.findDOMNode(this.refs.typeDropdown);
-    ConfigActions.questionTypeChosen(this.props.id, dropdown.value);
+    ConfigActions.questionTypeChosen(this.props.questionnaireCategory, this.props.id, dropdown.value);
   }
 
   textChanged() {
     let textarea = React.findDOMNode(this.refs.questionText);
-    ConfigActions.questionTextChanged(this.props.id, textarea.value);
+    ConfigActions.questionTextChanged(this.props.questionnaireCategory, this.props.id, textarea.value);
   }
 
   optionTextChanged(evt) {
-    if (evt.keyCode === 13) {
+    if (evt.keyCode === COIConstants.RETURN_KEY) {
       let textbox = React.findDOMNode(this.refs.optionText);
-      ConfigActions.multiSelectOptionAdded(this.props.id, textbox.value);
+      ConfigActions.multiSelectOptionAdded(this.props.questionnaireCategory, this.props.id, textbox.value);
       textbox.value = '';
     }
   }
 
   optionDeleted(optionId) {
-    ConfigActions.multiSelectOptionDeleted(this.props.id, optionId);
+    ConfigActions.multiSelectOptionDeleted(this.props.questionnaireCategory, this.props.id, optionId);
   }
 
   requiredSelectionsChanged() {
     let textbox = React.findDOMNode(this.refs.requiredNumSelections);
-    ConfigActions.requiredNumSelectionsChanged(this.props.id, textbox.value);
+    ConfigActions.requiredNumSelectionsChanged(this.props.questionnaireCategory, this.props.id, textbox.value);
   }
 
   render() {
@@ -133,7 +133,7 @@ export default class NewQuestion extends React.Component {
       if (this.props.question.options) {
         options = this.props.question.options.map(option => {
           return (
-            <Badge style={styles.option} id={option} onDelete={this.optionDeleted}>{option}</Badge>
+            <Badge key={option} style={styles.option} id={option} onDelete={this.optionDeleted}>{option}</Badge>
           );
         });
       }

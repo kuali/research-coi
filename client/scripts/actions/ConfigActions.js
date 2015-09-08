@@ -62,75 +62,104 @@ class _ConfigActions {
 
   saveNewNotification() { this.dispatch(); }
 
-  validationAddedToQuestion(questionId, validation) {
+  questionTypeChosen(category, questionId, type) {
     this.dispatch({
       questionId: questionId,
-      validation: validation
+      type: type,
+      category: category
     });
   }
 
-  validationRemovedFromQuestion(questionId, validationId) {
+  questionTextChanged(category, questionId, text) {
     this.dispatch({
       questionId: questionId,
-      validationId: validationId
+      text: text,
+      category: category
     });
   }
 
-  questionTypeChosen(questionId, type) {
+  updateQuestions(category, questions) {
     this.dispatch({
-      questionId: questionId,
-      type: type
+      questions: questions,
+      category: category
     });
   }
 
-  questionTextChanged(questionId, text) {
+  cancelNewQuestion(category) {
     this.dispatch({
-      questionId: questionId,
-      text: text
+      category: category
     });
   }
 
-  updateQuestions(questions) { this.dispatch(questions); }
-
-  cancelNewQuestion() { this.dispatch({}); }
-
-  saveNewQuestion() { this.dispatch({}); }
-
-  startNewQuestion() { this.dispatch({}); }
-
-  deleteQuestion(questionId) { this.dispatch(questionId); }
-
-  saveQuestionEdit(questionId) { this.dispatch(questionId); }
-
-  startEditingQuestion(questionId) { this.dispatch(questionId); }
-
-  cancelQuestionEdit(questionId) { this.dispatch(questionId); }
-
-  criteriaChanged(questionId, newValue) {
+  saveNewQuestion(category) {
     this.dispatch({
-      questionId: questionId,
-      newValue: newValue
+      category: category
     });
   }
 
-  multiSelectOptionAdded(questionId, newValue) {
+  startNewQuestion(category) {
     this.dispatch({
-      questionId: questionId,
-      newValue: newValue
+      category: category
     });
   }
 
-  multiSelectOptionDeleted(questionId, optionId) {
+  deleteQuestion(category, questionId) {
     this.dispatch({
       questionId: questionId,
-      optionId: optionId
+      category: category
     });
   }
 
-  requiredNumSelectionsChanged(questionId, newValue) {
+  saveQuestionEdit(category, questionId) {
     this.dispatch({
       questionId: questionId,
-      newValue: newValue
+      category: category
+    });
+  }
+
+  startEditingQuestion(category, questionId) {
+    this.dispatch({
+      questionId: questionId,
+      category: category
+    });
+  }
+
+  cancelQuestionEdit(category, questionId) {
+    this.dispatch({
+      questionId: questionId,
+      category: category
+    });
+  }
+
+  criteriaChanged(category, questionId, newValue) {
+    this.dispatch({
+      questionId: questionId,
+      newValue: newValue,
+      category: category
+    });
+  }
+
+  multiSelectOptionAdded(category, questionId, newValue) {
+    this.dispatch({
+      questionId: questionId,
+      newValue: newValue,
+      category: category
+    });
+  }
+
+  multiSelectOptionDeleted(category, questionId, optionId) {
+    this.dispatch({
+      questionId: questionId,
+      optionId: optionId,
+      category: category
+    });
+  }
+
+  requiredNumSelectionsChanged(category, questionId, newValue) {
+    this.dispatch({
+      questionId: questionId,
+      newValue: newValue,
+      category: category
     });
   }
 }

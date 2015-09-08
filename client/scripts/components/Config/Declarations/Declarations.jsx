@@ -8,6 +8,7 @@ import ConfigStore from '../../../stores/ConfigStore';
 import DeclarationType from './DeclarationType';
 import DeleteLink from '../DeleteLink';
 import ConfigActions from '../../../actions/ConfigActions';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class Declarations extends React.Component {
   constructor() {
@@ -37,7 +38,7 @@ export default class Declarations extends React.Component {
   }
 
   lookForEnter(evt) {
-    if (evt.keyCode === 13) {
+    if (evt.keyCode === COIConstants.RETURN_KEY) {
       ConfigActions.saveNewDeclarationType();
     }
   }

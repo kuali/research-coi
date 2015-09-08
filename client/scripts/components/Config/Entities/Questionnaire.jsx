@@ -29,7 +29,7 @@ export default class Questionnaire extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      questions: storeState.questions.screening
+      questions: storeState.questions.entities
     });
   }
 
@@ -68,12 +68,12 @@ export default class Questionnaire extends React.Component {
     if (this.state.applicationState) {
       configSection = (
         <span className="fill">
-          <InstructionEditor step="Questionnaire" />
+          <InstructionEditor step="Financial Entities Questionnaire" />
           <QuestionnaireConfig
-            questionnaireCategory="screening"
+            questionnaireCategory="entities"
             questions={this.state.questions}
-            questionsBeingEdited={this.state.applicationState.questionsBeingEdited.screening}
-            newQuestion={this.state.applicationState.newQuestion.screening}
+            questionsBeingEdited={this.state.applicationState.questionsBeingEdited.entities}
+            newQuestion={this.state.applicationState.newQuestion.entities}
           />
         </span>
       );
@@ -81,10 +81,10 @@ export default class Questionnaire extends React.Component {
 
     return (
       <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
-        <Sidebar active="questionnaire" />
+        <Sidebar active="entities" />
         <span style={styles.content} className="inline-flexbox column fill">
           <div style={styles.stepTitle}>
-            Customize Questionnaire
+            Financial Entities Questionnaire
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
             {configSection}

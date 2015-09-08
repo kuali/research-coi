@@ -1,5 +1,5 @@
 import React from 'react/addons';
-import {merge} from '../../../merge';
+import {merge} from '../../merge';
 
 export default class Badge extends React.Component {
   constructor() {

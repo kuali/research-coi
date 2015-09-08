@@ -14,6 +14,30 @@ export let init = app => {
     });
   });
 
+  app.get('/api/coi/questionnaires/screening/latest', function(req, res, next) {
+    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, function(err, questionnaire) {
+      if (err) {
+        console.error(err);
+        next(err);
+      }
+      else {
+        res.send(questionnaire);
+      }
+    });
+  });
+
+  app.get('/api/coi/questionnaires/entities/latest', function(req, res, next) {
+    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, function(err, questionnaire) {
+      if (err) {
+        console.error(err);
+        next(err);
+      }
+      else {
+        res.send(questionnaire);
+      }
+    });
+  });
+
   app.get('/api/coi/questionnaires/:id', function(req, res, next) {
     QuestionnaireDB.getExistingQuestionnaire(req.dbInfo, req.params.id, function(err, questionnaire) {
       if (err) {

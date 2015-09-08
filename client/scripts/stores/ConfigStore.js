@@ -14,8 +14,14 @@ class _ConfigStore extends AutoBindingStore {
       enteringNewType: false,
       disclosureTypesBeingEdited: {},
       newNotification: {},
-      newQuestion: undefined,
-      questionsBeingEdited: {}
+      newQuestion: {
+        screening: undefined,
+        entities: undefined
+      },
+      questionsBeingEdited: {
+        screening: {},
+        entities: {}
+      }
     };
 
     this.disclosureTypes = [
@@ -60,7 +66,10 @@ class _ConfigStore extends AutoBindingStore {
 
     this.notifications = [];
 
-    this.questions = [];
+    this.questions = {
+      screening: [],
+      entities: []
+    };
   }
 
   insertOrders(questions) {
@@ -97,10 +106,17 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   refreshQuestionnaire() {
-    request.get('/api/coi/questionnaires/latest')
+    request.get('/api/coi/questionnaires/screening/latest')
            .end((err, questionnaire) => {
              if (!err) {
-               this.questions = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
+               this.questions.screening = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
+               this.emitChange();
+             }
+           });
+    request.get('/api/coi/questionnaires/entities/latest')
+           .end((err, questionnaire) => {
+             if (!err) {
+               this.questions.entities = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
                this.emitChange();
              }
            });
@@ -232,42 +248,19 @@ class _ConfigStore extends AutoBindingStore {
     };
   }
 
-  findQuestion(id) {
+  findQuestion(category, id) {
     if (id) {
-      return this.questions.find(question => {
+      return this.questions[category].find(question => {
         return question.id === id;
       });
     }
     else {
-      return this.applicationState.newQuestion;
+      return this.applicationState.newQuestion[category];
     }
   }
 
-  validationAddedToQuestion(params) {
-    let targetQuestion = this.findQuestion(params.questionId);
-
-    if (!targetQuestion.validations) {
-      targetQuestion.validations = [];
-    }
-
-    targetQuestion.validations.push({
-      id: new Date().getTime(),
-      text: params.validation
-    });
-  }
-
-  validationRemovedFromQuestion(params) {
-    let targetQuestion = this.findQuestion(params.questionId);
-
-    if (targetQuestion.validations) {
-      targetQuestion.validations = targetQuestion.validations.filter(validation => {
-        return validation.id !== params.validationId;
-      });
-    }
-  }
-
-  hasSubQuestions(parentId) {
-    return this.questions.some(question => {
+  hasSubQuestions(category, parentId) {
+    return this.questions[category].some(question => {
       return question.parent === parentId;
     });
   }
@@ -275,12 +268,12 @@ class _ConfigStore extends AutoBindingStore {
   questionTypeChosen(params) {
     let targetQuestion;
     if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
 
-      targetQuestion.showWarning = this.hasSubQuestions(targetQuestion.id) && params.type !== COIConstants.QUESTION_TYPE.YESNO;
+      targetQuestion.showWarning = this.hasSubQuestions(params.category, targetQuestion.id) && params.type !== COIConstants.QUESTION_TYPE.YESNO;
     }
     else {
-      targetQuestion = this.applicationState.newQuestion;
+      targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
     targetQuestion.type = params.type;
@@ -289,93 +282,86 @@ class _ConfigStore extends AutoBindingStore {
   questionTextChanged(params) {
     let targetQuestion;
     if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion;
+      targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
     targetQuestion.text = params.text;
   }
 
-  updateQuestions(questions) {
-    this.questions = questions;
+  updateQuestions(params) {
+    this.questions[params.category] = params.questions;
   }
 
-  cancelNewQuestion() {
-    this.applicationState.newQuestion = undefined;
+  cancelNewQuestion(params) {
+    this.applicationState.newQuestion[params.category] = undefined;
   }
 
-  saveNewQuestion() {
-    this.applicationState.newQuestion.id = new Date().getTime();
+  saveNewQuestion(params) {
+    if (!this.applicationState.newQuestion[params.category].type) {
+      return;
+    }
 
-    this.questions.filter(question => {
+    this.applicationState.newQuestion[params.category].id = new Date().getTime();
+
+    this.questions[params.category].filter(question => {
       return !question.parent;
     }).forEach(question => {
       question.order += 1;
     });
 
-    this.applicationState.newQuestion.order = 1;
-    this.questions.push(this.applicationState.newQuestion);
-    this.applicationState.newQuestion = undefined;
+    this.applicationState.newQuestion[params.category].order = 1;
+    this.questions[params.category].push(this.applicationState.newQuestion[params.category]);
+    this.applicationState.newQuestion[params.category] = undefined;
   }
 
-  startNewQuestion() {
-    this.applicationState.newQuestion = {};
+  startNewQuestion(params) {
+    this.applicationState.newQuestion[params.category] = {};
   }
 
-  deleteQuestion(questionId) {
-    this.questions = this.questions.filter(question => {
-      return question.id !== questionId && question.parent !== questionId;
+  deleteQuestion(params) {
+    this.questions[params.category] = this.questions[params.category].filter(question => {
+      return question.id !== params.questionId && question.parent !== params.questionId;
     });
   }
 
-  removeSubQuestions(parentId) {
-    this.questions = this.questions.filter(question => {
+  removeSubQuestions(category, parentId) {
+    this.questions[category] = this.questions[category].filter(question => {
       return question.parent !== parentId;
     });
   }
 
-  saveQuestionEdit(questionId) {
-    let index = this.questions.findIndex(question => {
-      return question.id === questionId;
+  saveQuestionEdit(params) {
+    let index = this.questions[params.category].findIndex(question => {
+      return question.id === params.questionId;
     });
 
-    let newQuestion = this.applicationState.questionsBeingEdited[questionId];
-    delete newQuestion.showWarning;
+    let editedQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    delete editedQuestion.showWarning;
     if (index !== -1) {
-      this.questions[index] = newQuestion;
+      this.questions[params.category][index] = editedQuestion;
     }
 
-    if (newQuestion.type !== COIConstants.QUESTION_TYPE.YESNO) {
-      this.removeSubQuestions(newQuestion.id);
+    if (editedQuestion.type !== COIConstants.QUESTION_TYPE.YESNO) {
+      this.removeSubQuestions(params.category, editedQuestion.id);
     }
 
-    delete this.applicationState.questionsBeingEdited[questionId];
+    delete this.applicationState.questionsBeingEdited[params.category][params.questionId];
   }
 
-  startEditingQuestion(questionId) {
-    let clone = JSON.parse(JSON.stringify(this.findQuestion(questionId)));
-    this.applicationState.questionsBeingEdited[questionId] = clone;
+  startEditingQuestion(params) {
+    let clone = JSON.parse(JSON.stringify(this.findQuestion(params.category, params.questionId)));
+    this.applicationState.questionsBeingEdited[params.category][params.questionId] = clone;
   }
 
-  cancelQuestionEdit(questionId) {
-    delete this.applicationState.questionsBeingEdited[questionId];
-  }
-
-  findPrecedingQuestion(questionId) {
-    let currentIndex = this.questions.findIndex(question => { return question.id === questionId; });
-
-    if (currentIndex > 0) {
-      return currentIndex - 1;
-    }
-    else {
-      return -1;
-    }
+  cancelQuestionEdit(params) {
+    delete this.applicationState.questionsBeingEdited[params.category][params.questionId];
   }
 
   criteriaChanged(params) {
-    let question = this.findQuestion(params.questionId);
+    let question = this.findQuestion(params.category, params.questionId);
     if (question) {
       question.displayCriteria = params.newValue;
     }
@@ -384,10 +370,10 @@ class _ConfigStore extends AutoBindingStore {
   multiSelectOptionAdded(params) {
     let targetQuestion;
     if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion;
+      targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
     if (!targetQuestion.options) {
@@ -399,10 +385,10 @@ class _ConfigStore extends AutoBindingStore {
   multiSelectOptionDeleted(params) {
     let targetQuestion;
     if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion;
+      targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
     if (targetQuestion.options) {
@@ -415,10 +401,10 @@ class _ConfigStore extends AutoBindingStore {
   requiredNumSelectionsChanged(params) {
     let targetQuestion;
     if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion;
+      targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
     targetQuestion.requiredNumSelections = params.newValue;
