@@ -1,3 +1,4 @@
+/*eslint camelcase:0 */
 import {camelizeJson} from './JsonUtils';
 import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
 

@@ -216,7 +216,7 @@ class _DisclosureStore extends AutoBindingStore {
         .send(existingAnswer)
         .type('application/json')
         .end(function(err, res){
-          if (res.ok) {
+          if (!err && res.ok) {
             console.log('updated question answer');
           } else {
             console.error('Error: ' + res.text);
@@ -230,7 +230,7 @@ class _DisclosureStore extends AutoBindingStore {
         .send(newAnswer)
         .type('application/json')
         .end(function(err, res){
-          if (res.ok) {
+          if (!err && res.ok) {
             console.log('inserted question answer');
           } else {
             console.error('Error: ' + res.text);
