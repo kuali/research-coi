@@ -12,7 +12,7 @@ export class Toggle extends ResponsiveComponent {
 
   toggle() {
     if (this.props.onClick) {
-      this.props.onClick(this.props.text);
+      this.props.onClick(this.props.typeCd);
     }
   }
 

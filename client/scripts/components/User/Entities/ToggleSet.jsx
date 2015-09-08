@@ -44,10 +44,11 @@ export class ToggleSet extends ResponsiveComponent {
       return (
         <Toggle
           style={styles.toggle}
-          text={value}
-          selected={this.state.value === value}
+          typeCd={value.typeCd}
+          text={value.description}
+          selected={this.state.value === value.typeCd}
           onClick={this.change}
-          key={value}
+          key={value.typeCd}
          />
       );
     });

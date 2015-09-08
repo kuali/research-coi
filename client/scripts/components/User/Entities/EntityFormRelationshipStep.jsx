@@ -6,7 +6,6 @@ import {RelationshipSummary} from './RelationshipSummary';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {KButton} from '../../KButton';
-import {COIConstants} from '../../../../../COIConstants';
 
 export class EntityFormRelationshipStep extends ResponsiveComponent {
   constructor() {
@@ -25,6 +24,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     this.personSelected = this.personSelected.bind(this);
     this.relationChosen = this.relationChosen.bind(this);
     this.commentChanged = this.commentChanged.bind(this);
+    this.getTypeOptions = this.getTypeOptions.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -48,15 +48,15 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
   }
 
   typeSelected() {
-    DisclosureActions.setEntityRelationshipType(this.refs.typeSelect.getDOMNode().value);
+    DisclosureActions.setEntityRelationshipType(parseInt(this.refs.typeSelect.getDOMNode().value));
   }
 
   amountSelected() {
-    DisclosureActions.setEntityRelationshipAmount(this.refs.amountSelect.getDOMNode().value);
+    DisclosureActions.setEntityRelationshipAmount(parseInt(this.refs.amountSelect.getDOMNode().value));
   }
 
   personSelected() {
-    DisclosureActions.setEntityRelationshipPerson(this.refs.personSelect.getDOMNode().value);
+    DisclosureActions.setEntityRelationshipPerson(parseInt(this.refs.personSelect.getDOMNode().value));
   }
 
   commentChanged() {
@@ -66,51 +66,15 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
   relationChosen(relation) {
     DisclosureActions.setEntityRelationshipRelation(relation);
     this.setState({
-      relation: relation
+      relation: relation,
+      typeOptions: this.getTypeOptions(relation)
     });
+  }
 
-    switch (relation) {
-      case COIConstants.ENTITY_RELATIONSHIP.OWNERSHIP:
-        this.setState({
-          typeOptions: [
-            'Stock',
-            'Stock Options',
-            'Other Ownership'
-          ]
-        });
-        break;
-      case COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS:
-        this.setState({
-          typeOptions: [
-            'Board Member',
-            'Partner',
-            'Other Managerial Positions',
-            'Founder'
-          ]
-        });
-        break;
-      case COIConstants.ENTITY_RELATIONSHIP.INTELLECTUAL_PROPERTY:
-        this.setState({
-          typeOptions: [
-            'Royalty Income',
-            'Intellectual Property Rights'
-          ]
-        });
-        break;
-      case COIConstants.ENTITY_RELATIONSHIP.OTHER:
-        this.setState({
-          typeOptions: [
-            'Contract',
-            'Other Transactions'
-          ]
-        });
-        break;
-      default:
-        this.setState({
-          typeOptions: []
-        });
-        break;
-    }
+  getTypeOptions(relation) {
+    return this.props.appState.relationshipCategoryTypes.filter(relationshipCategoryType => {
+      return relationshipCategoryType.relationshipTypeCd === relation;
+    });
   }
 
   renderMobile() {}
@@ -203,7 +167,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let typeSection;
-    if (this.state.relation !== '' && this.state.relation !== 'Paid Activities') {
+    if (this.state.typeOptions.length > 0) {
       let labelStyle = {};
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.type) {
@@ -213,14 +177,14 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
 
       let typeOptions = this.state.typeOptions.map(typeOption => {
         return (
-          <option key={typeOption}>{typeOption}</option>
+          <option key={typeOption.typeCd} value={typeOption.typeCd}>{typeOption.description}</option>
         );
       });
 
       typeSection = (
         <div style={styles.typeSection}>
           <div style={labelStyle}>Type</div>
-          <select onChange={this.typeSelected} ref="typeSelect" value={this.props.appState.potentialRelationship.type} style={dropDownStyle}>
+          <select onChange={this.typeSelected} ref="typeSelect" value={this.props.appState.potentialRelationship.typeCd} style={dropDownStyle}>
             <option value="">--SELECT--</option>
             {typeOptions}
           </select>
@@ -237,16 +201,16 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         dropDownStyle = merge(dropDownStyle, styles.invalidField);
       }
 
+      let amountTypeOptions = this.props.appState.relationshipAmountTypes.map(type => {
+        return <option key={type.typeCd} value={type.typeCd}>{type.description}</option>;
+      });
+
       amountSection = (
         <div style={styles.amountSection}>
           <div style={labelStyle}>Amount</div>
-          <select onChange={this.amountSelected} ref="amountSelect" value={this.props.appState.potentialRelationship.amount} style={dropDownStyle}>
+          <select onChange={this.amountSelected} ref="amountSelect" value={this.props.appState.potentialRelationship.amountCd} style={dropDownStyle}>
             <option value="">--SELECT--</option>
-            <option value="$1 - $5,000">$1 - $5,000</option>
-            <option value="$5,001 - $10,000">$5,001 - $10,000</option>
-            <option value="Over $10,000">Over $10,000</option>
-            <option value="Privately held, no valuation">Privately held, no valuation</option>
-            <option value="Does not apply">Does not apply</option>
+            {amountTypeOptions}
           </select>
         </div>
       );
@@ -305,6 +269,10 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         commentTextboxStyle = merge(commentTextboxStyle, styles.invalidField);
       }
 
+      let relationshipPersonTypeOptions = this.props.appState.relationshipPersonTypes.map(option =>{
+        return <option key={option.typeCd} value={option.typeCd}>{option.description}</option>;
+      });
+
       relationshipEditor = (
         <div>
           <div style={styles.title}>{heading}</div>
@@ -318,12 +286,9 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
               <div style={styles.personSection}>
                 <div style={personLabelStyle}>Person</div>
                 <div>
-                  <select onChange={this.personSelected} ref="personSelect" value={this.props.appState.potentialRelationship.person} style={personDropDownStyle}>
+                  <select onChange={this.personSelected} ref="personSelect" value={this.props.appState.potentialRelationship.personCd} style={personDropDownStyle}>
                     <option value="">--SELECT--</option>
-                    <option value="Self">Self</option>
-                    <option value="Spouse">Spouse</option>
-                    <option value="Children">Children</option>
-                    <option value="Other">Other</option>
+                    {relationshipPersonTypeOptions}
                   </select>
                 </div>
               </div>
@@ -334,15 +299,9 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
               <div style={relationStyle}>Relationship</div>
               <div>
                 <ToggleSet
-                  selected={this.props.appState.potentialRelationship.relationship}
+                  selected={this.props.appState.potentialRelationship.relationshipCd}
                   onChoose={this.relationChosen}
-                  values={[
-                    COIConstants.ENTITY_RELATIONSHIP.OWNERSHIP,
-                    COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS,
-                    COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES,
-                    COIConstants.ENTITY_RELATIONSHIP.INTELLECTUAL_PROPERTY,
-                    COIConstants.ENTITY_RELATIONSHIP.OTHER
-                  ]}
+                  values={this.props.appState.relationshipTypes}
                 />
               </div>
 

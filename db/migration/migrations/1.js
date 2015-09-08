@@ -56,6 +56,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   })
   .createTable('relationship_category_type', function(table) {
     table.integer('type_cd').notNullable().primary();
+    table.integer('relationship_type_cd').notNullable().references('type_cd').inTable('relationship_type');
     table.string('description', 50).notNullable();
     table.engine('InnoDB');
   })
