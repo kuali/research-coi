@@ -67,6 +67,7 @@ class Question extends React.Component {
     this.save = this.save.bind(this);
     this.edit = this.edit.bind(this);
     this.cancel = this.cancel.bind(this);
+    this.criteriaChanged = this.criteriaChanged.bind(this);
   }
 
   deleteQuestion() {
@@ -91,6 +92,11 @@ class Question extends React.Component {
 
   isOpen(id) {
     return this.getEditState(id) !== undefined;
+  }
+
+  criteriaChanged() {
+    let dropdown = React.findDOMNode(this.refs.displayCriteria);
+    ConfigActions.criteriaChanged(this.props.id, dropdown.value);
   }
 
   render() {
@@ -148,6 +154,9 @@ class Question extends React.Component {
         float: 'right',
         marginLeft: 10
       },
+      nonFloatButton: {
+        marginLeft: 10
+      },
       dropdown: {
         marginLeft: 5
       },
@@ -156,6 +165,12 @@ class Question extends React.Component {
         width: '100%',
         top: this.props.top,
         transition: 'all .2s ease-in-out'
+      },
+      warning: {
+        color: 'red',
+        fontSize: 14,
+        whiteSpace: 'normal',
+        paddingLeft: 10
       }
     };
 
@@ -167,9 +182,9 @@ class Question extends React.Component {
       displayCondition = (
         <span>
           Display if parent is
-          <select style={styles.dropdown}>
-            <option>Yes</option>
-            <option>No</option>
+          <select ref="displayCriteria" style={styles.dropdown} value={this.props.displayCriteria} onChange={this.criteriaChanged}>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
           </select>
         </span>
       );
@@ -183,10 +198,22 @@ class Question extends React.Component {
         </div>
       );
 
+      let subQuestionWarning;
+      if (editState.showWarning) {
+        subQuestionWarning = (
+          <div style={styles.warning}>Only Yes/No can have subquestions. All subquestions will be deleted.</div>
+        );
+      }
+
       buttons = (
-        <div>
-          <KButton style={styles.button} onClick={this.save}>Save</KButton>
-          <KButton style={styles.button} onClick={this.cancel}>Cancel</KButton>
+        <div className="flexbox row">
+          <div className="fill">
+            {subQuestionWarning}
+          </div>
+          <span>
+            <KButton style={styles.nonFloatButton} onClick={this.cancel}>Cancel</KButton>
+            <KButton style={styles.nonFloatButton} onClick={this.save}>Save</KButton>
+          </span>
         </div>
       );
     }

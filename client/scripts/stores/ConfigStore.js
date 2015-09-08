@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import {sortQuestions} from './ConfigUtils';
 import alt from '../alt';
 import request from 'superagent';
+import {COIConstants} from '../../../COIConstants';
 
 class _ConfigStore extends AutoBindingStore {
   constructor() {
@@ -85,6 +86,8 @@ class _ConfigStore extends AutoBindingStore {
       question.type = question.question.type;
       question.validations = question.question.validations;
       question.displayCriteria = question.question.displayCriteria;
+      question.multiSelectOptions = question.question.multiSelectOptions;
+      question.requiredNumSelections = question.question.requiredNumSelections;
 
       formattedQuestions.push(question);
       delete question.question;
@@ -263,13 +266,35 @@ class _ConfigStore extends AutoBindingStore {
     }
   }
 
+  hasSubQuestions(parentId) {
+    return this.questions.some(question => {
+      return question.parent === parentId;
+    });
+  }
+
   questionTypeChosen(params) {
-    let targetQuestion = this.findQuestion(params.questionId);
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+
+      targetQuestion.showWarning = this.hasSubQuestions(targetQuestion.id) && params.type !== COIConstants.QUESTION_TYPE.YESNO;
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
     targetQuestion.type = params.type;
   }
 
   questionTextChanged(params) {
-    let targetQuestion = this.findQuestion(params.questionId);
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
     targetQuestion.text = params.text;
   }
 
@@ -283,6 +308,14 @@ class _ConfigStore extends AutoBindingStore {
 
   saveNewQuestion() {
     this.applicationState.newQuestion.id = new Date().getTime();
+
+    this.questions.filter(question => {
+      return !question.parent;
+    }).forEach(question => {
+      question.order += 1;
+    });
+
+    this.applicationState.newQuestion.order = 1;
     this.questions.push(this.applicationState.newQuestion);
     this.applicationState.newQuestion = undefined;
   }
@@ -292,13 +325,15 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   deleteQuestion(questionId) {
-    let index = this.questions.findIndex(question => {
-      return question.id === questionId;
+    this.questions = this.questions.filter(question => {
+      return question.id !== questionId && question.parent !== questionId;
     });
+  }
 
-    if (index !== -1) {
-      this.questions.splice(index, 1);
-    }
+  removeSubQuestions(parentId) {
+    this.questions = this.questions.filter(question => {
+      return question.parent !== parentId;
+    });
   }
 
   saveQuestionEdit(questionId) {
@@ -306,8 +341,14 @@ class _ConfigStore extends AutoBindingStore {
       return question.id === questionId;
     });
 
+    let newQuestion = this.applicationState.questionsBeingEdited[questionId];
+    delete newQuestion.showWarning;
     if (index !== -1) {
-      this.questions[index] = this.applicationState.questionsBeingEdited[questionId];
+      this.questions[index] = newQuestion;
+    }
+
+    if (newQuestion.type !== COIConstants.QUESTION_TYPE.YESNO) {
+      this.removeSubQuestions(newQuestion.id);
     }
 
     delete this.applicationState.questionsBeingEdited[questionId];
@@ -331,6 +372,56 @@ class _ConfigStore extends AutoBindingStore {
     else {
       return -1;
     }
+  }
+
+  criteriaChanged(params) {
+    let question = this.findQuestion(params.questionId);
+    if (question) {
+      question.displayCriteria = params.newValue;
+    }
+  }
+
+  multiSelectOptionAdded(params) {
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
+    if (!targetQuestion.options) {
+      targetQuestion.options = [];
+    }
+    targetQuestion.options.push(params.newValue);
+  }
+
+  multiSelectOptionDeleted(params) {
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
+    if (targetQuestion.options) {
+      targetQuestion.options = targetQuestion.options.filter(option => {
+        return option !== params.optionId;
+      });
+    }
+  }
+
+  requiredNumSelectionsChanged(params) {
+    let targetQuestion;
+    if (params.questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[params.questionId];
+    }
+    else {
+      targetQuestion = this.applicationState.newQuestion;
+    }
+
+    targetQuestion.requiredNumSelections = params.newValue;
   }
 }
 

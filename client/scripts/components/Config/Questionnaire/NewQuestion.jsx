@@ -2,25 +2,17 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Badge from './Badge';
 import ConfigActions from '../../../actions/ConfigActions';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class NewQuestion extends React.Component {
   constructor() {
     super();
 
-    this.validationAdded = this.validationAdded.bind(this);
-    this.validationRemoved = this.validationRemoved.bind(this);
     this.textChanged = this.textChanged.bind(this);
     this.typeChosen = this.typeChosen.bind(this);
-  }
-
-  validationAdded() {
-    let dropdown = React.findDOMNode(this.refs.validation);
-    ConfigActions.validationAddedToQuestion(this.props.id, dropdown.value);
-    dropdown.value = 'Select';
-  }
-
-  validationRemoved(validationId) {
-    ConfigActions.validationRemovedFromQuestion(this.props.id, validationId);
+    this.optionTextChanged = this.optionTextChanged.bind(this);
+    this.optionDeleted = this.optionDeleted.bind(this);
+    this.requiredSelectionsChanged = this.requiredSelectionsChanged.bind(this);
   }
 
   typeChosen() {
@@ -31,6 +23,23 @@ export default class NewQuestion extends React.Component {
   textChanged() {
     let textarea = React.findDOMNode(this.refs.questionText);
     ConfigActions.questionTextChanged(this.props.id, textarea.value);
+  }
+
+  optionTextChanged(evt) {
+    if (evt.keyCode === 13) {
+      let textbox = React.findDOMNode(this.refs.optionText);
+      ConfigActions.multiSelectOptionAdded(this.props.id, textbox.value);
+      textbox.value = '';
+    }
+  }
+
+  optionDeleted(optionId) {
+    ConfigActions.multiSelectOptionDeleted(this.props.id, optionId);
+  }
+
+  requiredSelectionsChanged() {
+    let textbox = React.findDOMNode(this.refs.requiredNumSelections);
+    ConfigActions.requiredNumSelectionsChanged(this.props.id, textbox.value);
   }
 
   render() {
@@ -74,18 +83,88 @@ export default class NewQuestion extends React.Component {
       },
       validation: {
         marginRight: 5
+      },
+      textbox: {
+        padding: 6,
+        fontSize: 16,
+        borderRadius: 5,
+        border: '1px solid #B0B0B0'
+      },
+      tip: {
+        fontSize: 12,
+        color: '#666',
+        paddingTop: 5,
+        paddingBottom: 15
+      },
+      optionEnteringSection: {
+        display: 'inline-block',
+        verticalAlign: 'top'
+      },
+      options: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        padding: '24px 20px 0 20px',
+        overflowY: 'auto',
+        height: 95
+      },
+      option: {
+        margin: '0 5px 5px 0',
+        display: 'inline-block',
+        backgroundColor: '#2A9788',
+        fontSize: 16
+      },
+      requiredSelectionsSection: {
+        display: 'inline-block',
+        marginLeft: 59
       }
     };
 
-    let validations;
-    if (this.props.question.validations) {
-      validations = this.props.question.validations.map(validation => {
-        return (
-          <Badge key={validation.id} style={styles.validation} id={validation.id} onDelete={this.validationRemoved}>
-            {validation}
-          </Badge>
-        );
-      });
+    let questionTypes = Object.keys(COIConstants.QUESTION_TYPE).map(questionType => {
+      return (
+        <option key={questionType} value={COIConstants.QUESTION_TYPE[questionType]}>
+          {COIConstants.QUESTION_TYPE[questionType]}
+        </option>
+      );
+    });
+
+    let multiSelectOptions, requiredSelections;
+    if (this.props.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+      let options;
+      if (this.props.question.options) {
+        options = this.props.question.options.map(option => {
+          return (
+            <Badge style={styles.option} id={option} onDelete={this.optionDeleted}>{option}</Badge>
+          );
+        });
+      }
+
+      multiSelectOptions = (
+        <div className="flexbox row" style={{padding: '10px 10px 0 10px'}}>
+          <span style={styles.optionEnteringSection}>
+            <div>
+              <label style={styles.label} htmlFor="options">OPTIONS</label>
+            </div>
+            <div>
+              <input style={styles.textbox} ref="optionText" type="text" id="options" onKeyUp={this.optionTextChanged} />
+            </div>
+            <div style={styles.tip}>
+              (Push Enter to add another)
+            </div>
+          </span>
+          <span className="fill" style={styles.options}>
+            {options}
+          </span>
+        </div>
+      );
+
+      requiredSelections = (
+        <span style={styles.requiredSelectionsSection}>
+          <label style={styles.label} htmlFor="requiredNumSelections">SELECTIONS REQUIRED</label>
+          <div>
+            <input style={styles.textbox} type="number" id="requiredNumSelections" ref="requiredNumSelections" onChange={this.requiredSelectionsChanged} value={this.props.question.requiredNumSelections} />
+          </div>
+        </span>
+      );
     }
 
     return (
@@ -96,28 +175,13 @@ export default class NewQuestion extends React.Component {
             <div>
               <select style={styles.dropdown} value={this.props.question.type} ref="typeDropdown" onChange={this.typeChosen} id="questionType">
                 <option>Select</option>
-                <option>Yes/No</option>
-                <option>Yes/No/NA</option>
-                <option>Number</option>
-                <option>Date</option>
-                <option>Lookup</option>
+                {questionTypes}
               </select>
             </div>
           </span>
-          <span style={styles.span}>
-            <label style={styles.label} htmlFor="validationChoices">VALIDATION</label>
-            <div>
-              <select ref="validation" defaultValue={''} onChange={this.validationAdded} style={styles.dropdown} id="validationChoices">
-                <option>Select</option>
-                <option>Required</option>
-                <option>Only One Selection</option>
-              </select>
-            </div>
-          </span>
-          <span style={styles.span}>
-            {validations}
-          </span>
+          {requiredSelections}
         </div>
+        {multiSelectOptions}
         <div style={styles.questionTextSection}>
           <label style={styles.label}>QUESTION TEXT</label>
           <div>

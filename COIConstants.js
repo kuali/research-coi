@@ -28,5 +28,13 @@ export let COIConstants = {
     PAID_ACTIVITIES: 'Paid Activities',
     INTELLECTUAL_PROPERTY: 'Intellectual Property',
     OTHER: 'Other'
+  },
+  QUESTION_TYPE: {
+    YESNO: 'Yes/No',
+    YESNONA: 'Yes/No/NA',
+    NUMBER: 'Number',
+    DATE: 'Date',
+    TEXTAREA: 'Text area',
+    MULTISELECT: 'Multiselect'
   }
 };
