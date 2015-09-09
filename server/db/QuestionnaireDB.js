@@ -1,6 +1,6 @@
+/*eslint camelcase:0 */
 import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
-import {camelizeJson, snakeizeJson} from './JsonUtils';
-import _ from 'lodash';
+import {camelizeJson} from './JsonUtils';
 
 let getKnex;
 try {

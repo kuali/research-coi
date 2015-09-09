@@ -36,5 +36,6 @@ export let COIConstants = {
     DATE: 'Date',
     TEXTAREA: 'Text area',
     MULTISELECT: 'Multiselect'
-  }
+  },
+  RETURN_KEY: 13
 };

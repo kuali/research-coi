@@ -1,6 +1,6 @@
 import React from 'react/addons';
-import {merge} from '../../../merge';
-import {PlusIcon} from '../../DynamicIcons/PlusIcon';
+import {merge} from '../../merge';
+import {PlusIcon} from '../DynamicIcons/PlusIcon';
 
 export default class NewQuestionButton extends React.Component {
   render() {

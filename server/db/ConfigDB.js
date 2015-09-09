@@ -46,7 +46,7 @@ export let getConfig = (dbInfo, callback, optionalTrx) => {
       formattedQuestion.id = question.id;
       formattedQuestion.text = JSON.parse(question.question).text;
       formattedQuestions.push(formattedQuestion);
-    })
+    });
     config.questions = formattedQuestions;
     callback(undefined, config);
   })

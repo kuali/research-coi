@@ -4,6 +4,7 @@ import ConfigActions from '../../../actions/ConfigActions';
 import EditLink from '../EditLink';
 import DoneLink from '../DoneLink';
 import DeleteLink from '../DeleteLink';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class Declaration extends React.Component {
   constructor() {
@@ -48,7 +49,7 @@ export default class Declaration extends React.Component {
   }
 
   lookForEnter(evt) {
-    if (evt.keyCode === 13) {
+    if (evt.keyCode === COIConstants.RETURN_KEY) {
       this.doneEditing();
     }
   }
