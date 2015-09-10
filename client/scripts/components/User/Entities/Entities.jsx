@@ -62,7 +62,7 @@ export class Entities extends ResponsiveComponent {
     let entities;
     if (this.props.entities) {
       entities = this.props.entities.filter(entity => {
-        return entity.status === this.props.applicationState.activeEntityView;
+        return entity.active === this.props.applicationState.activeEntityView;
       }).map(
         (entity) => {
           let entityAppState = this.props.applicationState.entityStates[entity.id];
@@ -84,8 +84,8 @@ export class Entities extends ResponsiveComponent {
         viewToggle = (
           <Toggle
             values={[
-              COIConstants.DISCLOSURE_STATUS.ACTIVE,
-              COIConstants.DISCLOSURE_STATUS.INACTIVE
+            {code: 1, description: 'ACTIVE'},
+            {code: 0, description: 'INACTIVE'}
             ]}
             selected={this.props.applicationState.activeEntityView}
             onChange={this.viewChanged}

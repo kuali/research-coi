@@ -31,7 +31,7 @@ class _DisclosureActions {
 
   entityFormBackClicked(entityId) { this.dispatch(entityId); }
 
-  setEntityStatus(newStatus, id) {
+  setEntityActiveStatus(newStatus, id) {
     this.dispatch({
       id: id,
       status: newStatus
@@ -87,7 +87,7 @@ class _DisclosureActions {
     });
   }
 
-  entityFormClosed(entityId) { this.dispatch(entityId); }
+  entityFormClosed(entity) { this.dispatch(entity); }
 
   saveInProgressEntity(entity) { this.dispatch(entity); }
 

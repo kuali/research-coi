@@ -107,38 +107,34 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     console.log('Seed - relationship_type');
     return Promise.all([
-      knex('relationship_type')
+      knex('relationship_category_type')
       .insert({type_cd: 1, description: 'Ownership'})
       .then(function(){
-        return Promise.all([
-          knex('relationship_category_type').insert({type_cd: 1, relationship_type_cd: 1, description: 'Stock'}),
-          knex('relationship_category_type').insert({type_cd: 2, relationship_type_cd: 1, description: 'Stock Options'}),
-          knex('relationship_category_type').insert({type_cd: 3, relationship_type_cd: 1, description: 'Other Ownership'})
-        ]);
+        return Promise.join(
+        knex('relationship_type').insert({type_cd: 1, relationship_cd: 1, description: 'Stock'}),
+        knex('relationship_type').insert({type_cd: 2, relationship_cd: 1, description: 'Stock Options'}),
+        knex('relationship_type').insert({type_cd: 3, relationship_cd: 1, description: 'Other Ownership'}));
       }),
-      knex('relationship_type').insert({type_cd: 2, description: 'Offices/Positions'})
+      knex('relationship_category_type').insert({type_cd: 2, description: 'Offices/Positions'})
       .then(function() {
-        return Promise.all([
-          knex('relationship_category_type').insert({type_cd: 4, relationship_type_cd: 2, description: 'Board Member'}),
-          knex('relationship_category_type').insert({type_cd: 5, relationship_type_cd: 2, description: 'Partner'}),
-          knex('relationship_category_type').insert({type_cd: 6, relationship_type_cd: 2, description: 'Other Managerial Positions'}),
-          knex('relationship_category_type').insert({type_cd: 7, relationship_type_cd: 2, description: 'Founder'})
-        ]);
+        return Promise.join(
+        knex('relationship_type').insert({type_cd: 4, relationship_cd: 2, description: 'Board Member'}),
+        knex('relationship_type').insert({type_cd: 5, relationship_cd: 2, description: 'Partner'}),
+        knex('relationship_type').insert({type_cd: 6, relationship_cd: 2, description: 'Other Managerial Positions'}),
+        knex('relationship_type').insert({type_cd: 7, relationship_cd: 2, description: 'Founder'}));
       }),
-      knex('relationship_type').insert({type_cd: 3, description: 'Paid Activities'}),
-      knex('relationship_type').insert({type_cd: 4, description: 'Intellectual Property'})
+      knex('relationship_category_type').insert({type_cd: 3, description: 'Paid Activities'}),
+      knex('relationship_category_type').insert({type_cd: 4, description: 'Intellectual Property'})
       .then(function() {
-        return Promise.all([
-          knex('relationship_category_type').insert({type_cd: 8, relationship_type_cd: 4, description: 'Royalty Income'}),
-          knex('relationship_category_type').insert({type_cd: 9, relationship_type_cd: 4, description: 'Intellectual Property Rights'})
-        ]);
+        return Promise.join(
+        knex('relationship_type').insert({type_cd: 8, relationship_cd: 4, description: 'Royalty Income'}),
+        knex('relationship_type').insert({type_cd: 9, relationship_cd: 4, description: 'Intellectual Property Rights'}));
       }),
-      knex('relationship_type').insert({type_cd: 5, description: 'Other'})
+      knex('relationship_category_type').insert({type_cd: 5, description: 'Other'})
       .then(function() {
-        return Promise.all([
-          knex('relationship_category_type').insert({type_cd: 10, relationship_type_cd: 5, description: 'Contract'}),
-          knex('relationship_category_type').insert({type_cd: 11, relationship_type_cd: 5, description: 'Other Transactions'})
-        ]);
+        return Promise.join(
+        knex('relationship_type').insert({type_cd: 10, relationship_cd: 5, description: 'Contract'}),
+        knex('relationship_type').insert({type_cd: 11, relationship_cd: 5, description: 'Other Transactions'}));
       })
     ]);
   }).then(function() {
@@ -240,18 +236,18 @@ exports.seed = function(knex, Promise) {
         return knex('fin_entity').insert({
           disclosure_id: row[0].id,
           active: true,
-          public: true,
+          is_public: true,
           type_cd: 1,
-          sponsor: true,
+          is_sponsor: true,
           name: 'Apple',
           description: 'Entity 1 - Petroleum extraction in deep water'
         })
         .then(function(id){
           return knex('relationship').insert({
             fin_entity_id: id[0],
+            relationship_cd: 1,
+            person_cd: 1,
             type_cd: 1,
-            person_type_cd: 1,
-            relationship_category_cd: 1,
             amount_cd: 1,
             comments: 'Rel 1 Comments'
           });
@@ -260,36 +256,36 @@ exports.seed = function(knex, Promise) {
       knex('fin_entity').insert({
         disclosure_id: knex('disclosure').max('id'),
         active: false,
-        public: true,
+        is_public: true,
         type_cd: 1,
-        sponsor: true,
+        is_sponsor: true,
         name: 'Pfizer',
         description: 'Entity 2 - Petroleum extraction in deep water'
       }),
       knex('fin_entity').insert({
         disclosure_id: knex('disclosure').max('id'),
         active: false,
-        public: true,
+        is_public: true,
         type_cd: 1,
-        sponsor: false,
+        is_sponsor: false,
         name: 'Johnson & Johnson',
         description: 'Entity 3 - Petroleum extraction in deep water'
       }),
       knex('fin_entity').insert({
         disclosure_id: knex('disclosure').max('id'),
         active: false,
-        public: false,
+        is_public: false,
         type_cd: 1,
-        sponsor: false,
+        is_sponsor: false,
         name: 'PepsiCo',
         description: 'Entity 4 - Petroleum extraction in deep water'
       }),
       knex('fin_entity').insert({
         disclosure_id: knex('disclosure').max('id'),
         active: true,
-        public: true,
+        is_public: true,
         type_cd: 1,
-        sponsor: true,
+        is_sponsor: true,
         name: 'Rockwell Collins',
         description: 'Entity 1 - Glyphosate as a carcinogen'
       })
@@ -308,17 +304,17 @@ exports.seed = function(knex, Promise) {
     return Promise.all([
       knex('relationship').insert({
         fin_entity_id: knex('fin_entity').max('id'),
+        relationship_cd: 1,
+        person_cd: 1,
         type_cd: 1,
-        person_type_cd: 1,
-        relationship_category_cd: 1,
         amount_cd: 1,
         comments: 'Rel 2 Comments'
       }),
       knex('relationship').insert({
         fin_entity_id: knex('fin_entity').max('id'),
+        relationship_cd: 2,
+        person_cd: 2,
         type_cd: 2,
-        person_type_cd: 2,
-        relationship_category_cd: 2,
         amount_cd: 2,
         comments: 'Rel 3 Comments'
       })

@@ -124,6 +124,17 @@ export let init = app => {
     });
   });
 
+  app.get('/api/coi/disclosure/financial-entity/relationship/category-types', function(req, res, next){
+    DisclosureDB.getRelationshipCategoryTypes(req.dbInfo, function(err, relationshipCategories) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(relationshipCategories);
+      }
+    });
+  });
+
   app.get('/api/coi/disclosure/financial-entity/relationship/types', function(req, res, next){
     DisclosureDB.getRelationshipTypes(req.dbInfo, function(err, relationshipTypes) {
       if (err) {
@@ -135,35 +146,24 @@ export let init = app => {
     });
   });
 
-  app.get('/api/coi/disclosure/financial-entity/relationship/category-types', function(req, res, next){
-    DisclosureDB.getRelationshipCategoryTypes(req.dbInfo, function(err, relationshipTypes) {
-      if (err) {
-        console.error(err);
-        next(err);
-      } else {
-        res.send(relationshipTypes);
-      }
-    });
-  });
-
   app.get('/api/coi/disclosure/financial-entity/relationship/person-types', function(req, res, next){
-    DisclosureDB.getRelationshipPersonTypes(req.dbInfo, function(err, relationshipTypes) {
+    DisclosureDB.getRelationshipPersonTypes(req.dbInfo, function(err, personTypes) {
       if (err) {
         console.error(err);
         next(err);
       } else {
-        res.send(relationshipTypes);
+        res.send(personTypes);
       }
     });
   });
 
   app.get('/api/coi/disclosure/financial-entity/relationship/amount-types', function(req, res, next){
-    DisclosureDB.getRelationshipAmountTypes(req.dbInfo, function(err, relationshipTypes) {
+    DisclosureDB.getRelationshipAmountTypes(req.dbInfo, function(err, amountTypes) {
       if (err) {
         console.error(err);
         next(err);
       } else {
-        res.send(relationshipTypes);
+        res.send(amountTypes);
       }
     });
   });
@@ -276,6 +276,29 @@ export let init = app => {
       query = req.query.query;
     }
     res.send(DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, query));
+  });
+
+
+  app.post('/api/coi/disclosure/:id/financial-entity', function(req, res, next) {
+    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, req.params.id, req.body, function(err, financialEntity) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(financialEntity);
+      }
+    });
+  });
+
+  app.put('/api/coi/disclosure/:id/financial-entity', function(req, res, next) {
+    DisclosureDB.saveNewFinancialEntity(req.dbInfo, req.params.id, req.body, function(err, financialEntity) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(financialEntity);
+      }
+    });
   });
 
   app.post('/api/coi/disclosure/:id/question/answer', function(req, res) {

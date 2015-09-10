@@ -11,7 +11,7 @@ export class PublicField extends ResponsiveComponent {
   }
 
   setPublic() {
-    this.props.onChange(this.refs.public.getDOMNode().value);
+    this.props.onChange(parseInt(this.refs.public.getDOMNode().value));
   }
 
   renderMobile() {}

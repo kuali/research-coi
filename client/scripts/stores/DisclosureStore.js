@@ -51,18 +51,18 @@ class _DisclosureStore extends AutoBindingStore {
       declarationView: 'Project View',
       entityStates: {},
       entityInProgress: {
-        status: 'ACTIVE'
+        active: 1
       },
       entityTypes: [],
-      relationshipTypes: [],
       relationshipCategoryTypes: [],
+      relationshipTypes: [],
       relationshipPersonTypes: [],
       relationshipAmountTypes: [],
       potentialRelationship: {
-        person: '',
-        relation: '',
-        type: '',
-        amount: '',
+        personCd: '',
+        relationshipCd: '',
+        typeCd: '',
+        amountCd: '',
         comments: ''
       },
       validatingEntityNameStep: false,
@@ -147,10 +147,6 @@ class _DisclosureStore extends AutoBindingStore {
         if (!err) {
           this.applicationState.currentDisclosureState.disclosure = discloure.body;
           this.entities = discloure.body.entities;
-          this.entities.forEach(entity =>{
-            entity.status = entity.active === 1 ? 'ACTIVE' : 'INACTIVE';
-            delete entity.active;
-          });
           this.emitChange();
         }
       });
@@ -161,17 +157,17 @@ class _DisclosureStore extends AutoBindingStore {
         this.emitChange();
       }
     });
-    request.get('/api/coi/disclosure/financial-entity/relationship/types')
-    .end((err, relationshipTypes) => {
-      if (!err) {
-        this.applicationState.relationshipTypes = relationshipTypes.body;
-        this.emitChange();
-      }
-    });
     request.get('/api/coi/disclosure/financial-entity/relationship/category-types')
     .end((err, relationshipCategoryTypes) => {
       if (!err) {
         this.applicationState.relationshipCategoryTypes = relationshipCategoryTypes.body;
+        this.emitChange();
+      }
+    });
+    request.get('/api/coi/disclosure/financial-entity/relationship/types')
+    .end((err, relationshipTypes) => {
+      if (!err) {
+        this.applicationState.relationshipTypes = relationshipTypes.body;
         this.emitChange();
       }
     });
@@ -332,9 +328,9 @@ class _DisclosureStore extends AutoBindingStore {
     });
   }
 
-  setEntityStatus(params) {
+  setEntityActiveStatus(params) {
     let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
-    entity.status = params.status;
+    entity.active = params.active;
   }
 
   setEntityType(params) {
@@ -406,13 +402,9 @@ class _DisclosureStore extends AutoBindingStore {
       entity.relationships = [];
     }
 
-    if (!this.applicationState.potentialRelationship.id) {
-      this.applicationState.potentialRelationship.id = new Date().getTime() + 'FAKE';
-    }
-
     this.applicationState.potentialRelationship.amount = this.getDescriptionFromCode(this.applicationState.potentialRelationship.amountCd, this.applicationState.relationshipAmountTypes);
-    this.applicationState.potentialRelationship.type = this.getDescriptionFromCode(this.applicationState.potentialRelationship.typeCd, this.applicationState.relationshipCategoryTypes);
-    this.applicationState.potentialRelationship.relationship = this.getDescriptionFromCode(this.applicationState.potentialRelationship.relationshipCd, this.applicationState.relationshipTypes);
+    this.applicationState.potentialRelationship.type = this.getDescriptionFromCode(this.applicationState.potentialRelationship.typeCd, this.applicationState.relationshipTypes);
+    this.applicationState.potentialRelationship.relationship = this.getDescriptionFromCode(this.applicationState.potentialRelationship.relationshipCd, this.applicationState.relationshipCategoryTypes);
     this.applicationState.potentialRelationship.person = this.getDescriptionFromCode(this.applicationState.potentialRelationship.personCd, this.applicationState.relationshipPersonTypes);
     entity.relationships.push(this.applicationState.potentialRelationship);
 
@@ -458,22 +450,49 @@ class _DisclosureStore extends AutoBindingStore {
     });
   }
 
-  entityFormClosed(entityId) {
-    if (entityId) {
+  entityFormClosed(entity) {
+    if (entity.id) {
       if (this.applicationState.potentialRelationship.personCd.length > 0) {
-        this.addEntityRelationship(entityId);
+        this.addEntityRelationship(entity.id);
       }
 
-      if (!this.applicationState.entityStates[entityId]) {
-        this.applicationState.entityStates[entityId] = {};
+      if (this.applicationState.entityStates[entity.id].editing === true) {
+        request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
+        .send(entity)
+        .type('application/json')
+        .end((err, res) => {
+          if (!err) {
+
+            let index = this.entities.findIndex(existingEntity => {
+              return existingEntity.id === res.body.id;
+            });
+
+            if (index !== -1) {
+              this.entities[index] = res.body;
+            }
+
+            if (!this.applicationState.entityStates[entity.id]) {
+              this.applicationState.entityStates[entity.id] = {};
+            }
+
+            this.applicationState.entityStates[entity.id].formStep = -1;
+            this.applicationState.entityStates[entity.id].editing = false;
+            this.emitChange();
+          }
+        });
+      } else {
+        if (!this.applicationState.entityStates[entity.id]) {
+          this.applicationState.entityStates[entity.id] = {};
+        }
+
+        this.applicationState.entityStates[entity.id].formStep = -1;
+        this.applicationState.entityStates[entity.id].editing = false;
       }
-      this.applicationState.entityStates[entityId].formStep = -1;
-      this.applicationState.entityStates[entityId].editing = false;
     }
     else {
       this.applicationState.newEntityFormStep = -1;
       this.applicationState.entityInProgress = {
-        status: 'ACTIVE'
+        active: 1
       };
     }
   }
@@ -483,17 +502,26 @@ class _DisclosureStore extends AutoBindingStore {
       this.addEntityRelationship();
     }
 
-    entity.id = new Date().getTime(); // For mocking backend
-
     if (!this.entities) {
       this.entities = [];
     }
-    this.entities.push(entity);
 
-    this.applicationState.entityInProgress = {
-      status: 'ACTIVE'
-    };
-    this.applicationState.newEntityFormStep = -1;
+    request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
+    .send(entity)
+    .type('application/json')
+    .end((err, res) => {
+      if (!err) {
+        this.entities.push(res.body);
+
+        this.applicationState.entityInProgress = {
+          active: 1
+        };
+
+        this.applicationState.newEntityFormStep = -1;
+
+        this.emitChange();
+      }
+    });
   }
 
   changeActiveEntityView(newView) {
@@ -663,7 +691,7 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = 1;
     this.applicationState.entityInProgress = {
-      status: 'ACTIVE'
+      active: 1
     };
     this.applicationState.entityStates = {};
   }
@@ -768,7 +796,7 @@ class _DisclosureStore extends AutoBindingStore {
       errors.comment = 'Required Field';
     }
 
-    let paidActivities = storeState.applicationState.relationshipTypes.find(type => {
+    let paidActivities = storeState.applicationState.relationshipCategoryTypes.find(type => {
       return type.description === COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES;
     });
 
@@ -779,7 +807,7 @@ class _DisclosureStore extends AutoBindingStore {
         }
       }
 
-      let officePositions = storeState.applicationState.relationshipTypes.find(type =>{
+      let officePositions = storeState.applicationState.relationshipCategoryTypes.find(type =>{
         return type.description === COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS;
       });
 
