@@ -4,8 +4,25 @@ import Sidebar from '../Sidebar';
 import Panel from '../Panel';
 import UndoButton from '../UndoButton';
 import InstructionEditor from '../InstructionEditor';
+import EditableList from '../EditableList';
 
 export default class Relationship extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      list: ['Self', 'Spouse', 'Children', 'Other']
+    };
+
+    this.itemsChanged = this.itemsChanged.bind(this);
+  }
+
+  itemsChanged(newList) {
+    this.setState({
+      list: newList
+    });
+  }
+
   render() {
     let styles = {
       container: {
@@ -42,8 +59,10 @@ export default class Relationship extends React.Component {
             <span className="fill">
               <InstructionEditor step="Relationship Matrix" />
               <Panel title="Disclosure Types">
-                <div>Stuff goes here</div>
-                <div>Yeah more stuff</div>
+                <EditableList
+                  items={this.state.list}
+                  onChange={this.itemsChanged}
+                />
               </Panel>
             </span>
             <span style={styles.rightPanel}>
