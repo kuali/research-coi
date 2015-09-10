@@ -23,6 +23,13 @@ class EditableItem extends React.Component {
     this.setState({
       editing: true
     });
+
+    requestAnimationFrame(() => {
+      let textbox = React.findDOMNode(this.refs.textbox);
+      if (textbox) {
+        textbox.focus();
+      }
+    });
   }
 
   delete() {
@@ -94,12 +101,12 @@ class EditableItem extends React.Component {
     let content;
     if (this.state.editing) {
       content = (
-        <span style={merge(styles.container, this.props.style)}>
+        <div style={merge(styles.container, this.props.style)}>
           <span onClick={this.done} style={styles.done}>
             <CheckmarkIcon style={styles.checkmark} /> Done
           </span>
           <input type="text" defaultValue={this.props.children} ref="textbox" style={styles.textbox} onKeyUp={this.keyPressed} />
-        </span>
+        </div>
       );
     }
     else {
@@ -133,6 +140,13 @@ export default class EditableList extends React.Component {
   add() {
     this.setState({
       adding: true
+    });
+
+    requestAnimationFrame(() => {
+      let textbox = React.findDOMNode(this.refs.textbox);
+      if (textbox) {
+        textbox.focus();
+      }
     });
   }
 
@@ -187,7 +201,7 @@ export default class EditableList extends React.Component {
       },
       addAnother: {
         color: '#048EAF',
-        padding: '10px 0 0 10px',
+        padding: '10px 0 2px 25px',
         fontSize: 13,
         cursor: 'pointer'
       },
@@ -222,21 +236,28 @@ export default class EditableList extends React.Component {
         width: 15,
         height: 15,
         verticalAlign: 'middle'
+      },
+      items: {
+        borderLeft: '1px solid black',
+        paddingLeft: 15
       }
     };
 
-    let items = this.props.items.map((item, index) => {
-      return (
-        <EditableItem key={index} id={index} onDelete={this.delete} onEdit={this.edited}>
-          {item}
-        </EditableItem>
-      );
-    });
+    let items;
+    if (this.props.items) {
+      items = this.props.items.map((item, index) => {
+        return (
+          <EditableItem key={index} id={index} onDelete={this.delete} onEdit={this.edited}>
+            {item}
+          </EditableItem>
+        );
+      });
+    }
 
     let addAnother;
     if (this.state.adding) {
       addAnother = (
-        <div style={{margin: '0 0 8px 10px'}}>
+        <div style={{margin: '0 0 0 25px'}}>
           <span onClick={this.done} style={styles.done}>
             <CheckmarkIcon style={styles.checkmark} /> Done
           </span>
@@ -258,7 +279,9 @@ export default class EditableList extends React.Component {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        {items}
+        <div style={styles.items}>
+          {items}
+        </div>
 
         {addAnother}
       </div>

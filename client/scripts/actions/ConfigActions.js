@@ -162,6 +162,49 @@ class _ConfigActions {
       category: category
     });
   }
+
+  relationshipPeopleChanged(newPeople) {
+    this.dispatch(newPeople);
+  }
+
+  relationshipPeopleEnabled(newValue) {
+    this.dispatch(newValue);
+  }
+
+  enabledChanged(relationshipType, newValue) {
+    this.dispatch({
+      relationshipType: relationshipType,
+      newValue: newValue
+    });
+  }
+
+  typeEnabledChanged(relationshipType, newValue) {
+    this.dispatch({
+      relationshipType: relationshipType,
+      newValue: newValue
+    });
+  }
+
+  amountEnabledChanged(relationshipType, newValue) {
+    this.dispatch({
+      relationshipType: relationshipType,
+      newValue: newValue
+    });
+  }
+
+  typeOptionsChanged(relationshipType, newList) {
+    this.dispatch({
+      relationshipType: relationshipType,
+      newList: newList
+    });
+  }
+
+  amountOptionsChanged(relationshipType, newList) {
+    this.dispatch({
+      relationshipType: relationshipType,
+      newList: newList
+    });
+  }
 }
 
 export default alt.createActions(_ConfigActions);
