@@ -50,11 +50,13 @@ export default class General extends React.Component {
         padding: '15px 15px 15px 35px',
         color: '#525252',
         fontWeight: 300,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        minHeight: 68
       },
       configurationArea: {
         padding: 35,
-        overflow: 'auto'
+        overflowY: 'auto',
+        minHeight: 0
       },
       rightPanel: {
         padding: '0 20px'

@@ -70,6 +70,113 @@ class _ConfigStore extends AutoBindingStore {
       screening: [],
       entities: []
     };
+
+    this.peopleEnabled = true;
+    this.people = ['Self', 'Spouse', 'Children', 'Other'];
+    this.matrixTypes = [
+      {
+        name: 'Ownership',
+        enabled: true,
+        typeEnabled: true,
+        typeOptions: [
+          'Stock',
+          'Stock Options',
+          'Other Ownership'
+        ],
+        amountEnabled: true,
+        amountOptions: [
+          '$0 - $100',
+          '$101 - $1,000',
+          '$1,001 - $10,000',
+          'Privately held, no valuations',
+          'Does not apply'
+        ]
+      },
+      {
+        name: 'Offices/Positions',
+        enabled: true,
+        typeEnabled: true,
+        typeOptions: [
+          'Board Member',
+          'Partner',
+          'Other Managerial',
+          'Founder'
+        ],
+        amountEnabled: true,
+        amountOptions: [
+          '$0 - $100',
+          '$101 - $1,000',
+          '$1,001 - $10,000',
+          'Does not apply'
+        ]
+      },
+      {
+        name: 'Paid Activities',
+        enabled: true,
+        typeEnabled: true,
+        typeOptions: [
+          'Stock',
+          'Stock Options',
+          'Other Ownership'
+        ],
+        amountEnabled: true,
+        amountOptions: [
+          '$0 - $100',
+          '$101 - $1,000',
+          '$1,001 - $10,000',
+          'Does not apply'
+        ]
+      },
+      {
+        name: 'Travel',
+        enabled: true,
+        typeEnabled: true,
+        typeOptions: [
+          'Stock',
+          'Stock Options',
+          'Other Ownership'
+        ],
+        amountEnabled: true,
+        amountOptions: [
+          '$0 - $100',
+          '$101 - $1,000',
+          '$1,001 - $10,000',
+          'Does not apply'
+        ]
+      },
+      {
+        name: 'Intellectual Property',
+        enabled: true,
+        typeEnabled: true,
+        typeOptions: [
+          'Royalty Income',
+          'Intellectual Property Rights'
+        ],
+        amountEnabled: true,
+        amountOptions: [
+          '$0 - $100',
+          '$101 - $1,000',
+          '$1,001 - $10,000',
+          'Does not apply'
+        ]
+      },
+      {
+        name: 'Other',
+        enabled: true,
+        typeEnabled: true,
+        typeOptions: [
+          'Contract',
+          'Other Transactions'
+        ],
+        amountEnabled: true,
+        amountOptions: [
+          '$0 - $100',
+          '$101 - $1,000',
+          '$1,001 - $10,000',
+          'Does not apply'
+        ]
+      }
+    ];
   }
 
   insertOrders(questions) {
@@ -408,6 +515,64 @@ class _ConfigStore extends AutoBindingStore {
     }
 
     targetQuestion.requiredNumSelections = params.newValue;
+  }
+
+  relationshipPeopleChanged(newPeople) {
+    this.people = newPeople;
+  }
+
+  relationshipPeopleEnabled(newValue) {
+    this.peopleEnabled = newValue;
+  }
+
+  enabledChanged(params) {
+    let target = this.matrixTypes.find(matrixType => {
+      return matrixType.name === params.relationshipType;
+    });
+
+    if (target) {
+      target.enabled = params.newValue;
+    }
+  }
+
+  typeEnabledChanged(params) {
+    let target = this.matrixTypes.find(matrixType => {
+      return matrixType.name === params.relationshipType;
+    });
+
+    if (target) {
+      target.typeEnabled = params.newValue;
+    }
+  }
+
+  amountEnabledChanged(params) {
+    let target = this.matrixTypes.find(matrixType => {
+      return matrixType.name === params.relationshipType;
+    });
+
+    if (target) {
+      target.amountEnabled = params.newValue;
+    }
+  }
+
+  typeOptionsChanged(params) {
+    let target = this.matrixTypes.find(matrixType => {
+      return matrixType.name === params.relationshipType;
+    });
+
+    if (target) {
+      target.typeOptions = params.newList;
+    }
+  }
+
+  amountOptionsChanged(params) {
+    let target = this.matrixTypes.find(matrixType => {
+      return matrixType.name === params.relationshipType;
+    });
+
+    if (target) {
+      target.amountOptions = params.newList;
+    }
   }
 }
 
