@@ -3,14 +3,14 @@
 exports.seed = function(knex, Promise) {
   console.log('Truncating tables');
   console.log('1st level truncations');
-  return Promise.join(
+  return Promise.all([
     knex('declaration').del(),
     knex('relationship').del(),
     knex('travel_log_entry').del(),
     knex('disclosure_answer').del()
-  ).then(function() {
+  ]).then(function() {
     console.log('2nd level truncations');
-    return Promise.join(
+    return Promise.all([
       knex('project').del(),
       knex('questionnaire_answer').del(),
       knex('relationship_status').del(),
@@ -19,127 +19,131 @@ exports.seed = function(knex, Promise) {
       knex('relationship_category_type').del(),
       knex('fin_entity').del(),
       knex('questionnaire_question').update({parent: null})
-    );
+    ]);
   }).then(function() {
     console.log('3rd level truncations');
-    return Promise.join(
+    return Promise.all([
       knex('project_role').del(),
       knex('project_type').del(),
       knex('questionnaire_question').del(),
       knex('relationship_type').del(),
       knex('fin_entity_type').del(),
       knex('disclosure').del()
-    );
+    ]);
   }).then(function() {
     console.log('4th level truncations');
-    Promise.join(
+    Promise.all([
       knex('questionnaire').del(),
       knex('disclosure_status').del(),
       knex('disposition_type').del(),
       knex('disclosure_type').del()
-    );
+    ]);
   }).then(function() {
     console.log('Seed - disclosure_status');
-    return Promise.join(
+    return Promise.all([
       knex('disclosure_status').insert({status_cd: 1, description: 'In progress'}),
       knex('disclosure_status').insert({status_cd: 2, description: 'Routed for Review'}),
       knex('disclosure_status').insert({status_cd: 3, description: 'Approved'}),
       knex('disclosure_status').insert({status_cd: 4, description: 'Disapproved'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - disclosure_type');
-    return Promise.join(
+    return Promise.all([
       knex('disclosure_type').insert({type_cd: 1, description: 'Manual'}),
       knex('disclosure_type').insert({type_cd: 2, description: 'Annual'}),
       knex('disclosure_type').insert({type_cd: 3, description: 'Project'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - disposition_type');
-    return Promise.join(
+    return Promise.all([
       knex('disposition_type').insert({type_cd: 1, description: '222'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - fin_entity_type');
-    return Promise.join(
+    return Promise.all([
       knex('fin_entity_type').insert({type_cd: 1, description: 'State Government'}),
       knex('fin_entity_type').insert({type_cd: 2, description: 'County Government'}),
       knex('fin_entity_type').insert({type_cd: 3, description: 'Small Business'}),
       knex('fin_entity_type').insert({type_cd: 4, description: 'For-profit Organization'}),
       knex('fin_entity_type').insert({type_cd: 5, description: 'Individual'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - project_role');
-    return Promise.join(
+    return Promise.all([
       knex('project_role').insert({role_cd: 'PI', description: 'Principal Investigator'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - project_type');
-    return Promise.join(
+    return Promise.all([
       knex('project_type').insert({type_cd: 1, description: 'Research'}),
       knex('project_type').insert({type_cd: 2, description: 'Administration'}),
       knex('project_type').insert({type_cd: 3, description: 'Resubmission'}),
       knex('project_type').insert({type_cd: 4, description: 'Classification'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - relationship_amount_type');
-    return Promise.join(
+    return Promise.all([
       knex('relationship_amount_type').insert({type_cd: 1, description: '$1 - $5,000'}),
       knex('relationship_amount_type').insert({type_cd: 2, description: '$5,001 - $10,000'}),
       knex('relationship_amount_type').insert({type_cd: 3, description: 'Over $10,000'}),
       knex('relationship_amount_type').insert({type_cd: 4, description: 'Privately Held, no valuation'}),
       knex('relationship_amount_type').insert({type_cd: 5, description: 'Does not apply'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - relationship_person_type');
-    return Promise.join(
+    return Promise.all([
       knex('relationship_person_type').insert({type_cd: 1, description: 'Self'}),
       knex('relationship_person_type').insert({type_cd: 2, description: 'Spouse'}),
       knex('relationship_person_type').insert({type_cd: 5, description: 'Other'}),
       knex('relationship_person_type').insert({type_cd: 6, description: 'Entity'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - relationship_status');
-    return Promise.join(
+    return Promise.all([
       knex('relationship_status').insert({status_cd: 1, description: 'No Conflict'}),
       knex('relationship_status').insert({status_cd: 2, description: 'Potential Relationship'}),
       knex('relationship_status').insert({status_cd: 3, description: 'Managed Relationship'})
-    );
+    ]);
   }).then(function() {
     console.log('Seed - relationship_type');
-    return Promise.join(
+    return Promise.all([
       knex('relationship_type')
       .insert({type_cd: 1, description: 'Ownership'})
       .then(function(){
-        return Promise.join(
-        knex('relationship_category_type').insert({type_cd: 1, relationship_type_cd: 1, description: 'Stock'}),
-        knex('relationship_category_type').insert({type_cd: 2, relationship_type_cd: 1, description: 'Stock Options'}),
-        knex('relationship_category_type').insert({type_cd: 3, relationship_type_cd: 1, description: 'Other Ownership'}));
+        return Promise.all([
+          knex('relationship_category_type').insert({type_cd: 1, relationship_type_cd: 1, description: 'Stock'}),
+          knex('relationship_category_type').insert({type_cd: 2, relationship_type_cd: 1, description: 'Stock Options'}),
+          knex('relationship_category_type').insert({type_cd: 3, relationship_type_cd: 1, description: 'Other Ownership'})
+        ]);
       }),
       knex('relationship_type').insert({type_cd: 2, description: 'Offices/Positions'})
       .then(function() {
-        return Promise.join(
-        knex('relationship_category_type').insert({type_cd: 4, relationship_type_cd: 2, description: 'Board Member'}),
-        knex('relationship_category_type').insert({type_cd: 5, relationship_type_cd: 2, description: 'Partner'}),
-        knex('relationship_category_type').insert({type_cd: 6, relationship_type_cd: 2, description: 'Other Managerial Positions'}),
-        knex('relationship_category_type').insert({type_cd: 7, relationship_type_cd: 2, description: 'Founder'}));
+        return Promise.all([
+          knex('relationship_category_type').insert({type_cd: 4, relationship_type_cd: 2, description: 'Board Member'}),
+          knex('relationship_category_type').insert({type_cd: 5, relationship_type_cd: 2, description: 'Partner'}),
+          knex('relationship_category_type').insert({type_cd: 6, relationship_type_cd: 2, description: 'Other Managerial Positions'}),
+          knex('relationship_category_type').insert({type_cd: 7, relationship_type_cd: 2, description: 'Founder'})
+        ]);
       }),
       knex('relationship_type').insert({type_cd: 3, description: 'Paid Activities'}),
       knex('relationship_type').insert({type_cd: 4, description: 'Intellectual Property'})
       .then(function() {
-        return Promise.join(
-        knex('relationship_category_type').insert({type_cd: 8, relationship_type_cd: 4, description: 'Royalty Income'}),
-        knex('relationship_category_type').insert({type_cd: 9, relationship_type_cd: 4, description: 'Intellectual Property Rights'}));
+        return Promise.all([
+          knex('relationship_category_type').insert({type_cd: 8, relationship_type_cd: 4, description: 'Royalty Income'}),
+          knex('relationship_category_type').insert({type_cd: 9, relationship_type_cd: 4, description: 'Intellectual Property Rights'})
+        ]);
       }),
       knex('relationship_type').insert({type_cd: 5, description: 'Other'})
       .then(function() {
-        return Promise.join(
-        knex('relationship_category_type').insert({type_cd: 10, relationship_type_cd: 5, description: 'Contract'}),
-        knex('relationship_category_type').insert({type_cd: 11, relationship_type_cd: 5, description: 'Other Transactions'}));
+        return Promise.all([
+          knex('relationship_category_type').insert({type_cd: 10, relationship_type_cd: 5, description: 'Contract'}),
+          knex('relationship_category_type').insert({type_cd: 11, relationship_type_cd: 5, description: 'Other Transactions'})
+        ]);
       })
-    );
+    ]);
   }).then(function() {
     console.log('Seed - disclosure');
-    return Promise.join(
+    return Promise.all([
       knex('disclosure').insert({
         type_cd: 2,
         title: 'Petroleum extraction in deep water',
@@ -217,20 +221,20 @@ exports.seed = function(knex, Promise) {
         last_review_date: new Date(),
         approved_date: new Date()
       })
-    );
+    ]);
   }).then(function() {
     console.log('Seed - project');
-    return Promise.join(
+    return Promise.all([
       knex('project').insert({
         name: 'Do Squirrels smile while eating peanut butter cups?',
         type_cd: 1,
         role_cd: 'PI',
         sponsor_cd: '00010'
       })
-    );
+    ]);
   }).then(function() {
     console.log('Seed - fin_entity');
-    return Promise.join(
+    return Promise.all([
       knex('disclosure').min('id as id')
       .then(function(row) {
         return knex('fin_entity').insert({
@@ -289,19 +293,19 @@ exports.seed = function(knex, Promise) {
         name: 'Rockwell Collins',
         description: 'Entity 1 - Glyphosate as a carcinogen'
       })
-    );
+    ]);
   }).then(function() {
     console.log('Seed - declaration');
-    return Promise.join(
+    return Promise.all([
       knex('declaration').insert({
         fin_entity_id: knex('fin_entity').max('id'),
         project_id: knex('project').max('id'),
         relationship_status_cd: 1
       })
-    );
+    ]);
   }).then(function() {
     console.log('Seed - relationship');
-    return Promise.join(
+    return Promise.all([
       knex('relationship').insert({
         fin_entity_id: knex('fin_entity').max('id'),
         type_cd: 1,
@@ -318,10 +322,10 @@ exports.seed = function(knex, Promise) {
         amount_cd: 2,
         comments: 'Rel 3 Comments'
       })
-    );
+    ]);
   }).then(function() {
     console.log('Seed - travel_log_entry');
-    return Promise.join(
+    return Promise.all([
       knex('travel_log_entry').insert({
         fin_entity_id: knex('fin_entity').min('id'),
         amount: 1000.00,
@@ -346,15 +350,15 @@ exports.seed = function(knex, Promise) {
         end_date: new Date(2015, 7, 3),
         reason: 'To give a talk on string theory'
       })
-    );
+    ]);
   }).then(function() {
-    return Promise.join(
+    return Promise.all([
     knex('questionnaire').insert({
       instructions: 'Please fill out this questionnaire in order to document your disclosure activities. Thanks! No taking $$ from vendors.',
       version: 1
     })
     .then(function(questionnaireId) {
-      return Promise.join(
+      return Promise.all([
         knex('questionnaire_question').insert({
           questionnaire_id: questionnaireId[0],
           question: JSON.stringify({
@@ -363,7 +367,7 @@ exports.seed = function(knex, Promise) {
             validations: ['required']
           })
         }).then(function (parentId) {
-          return Promise.join(
+          return Promise.all([
             knex('questionnaire_question').insert({
               questionnaire_id: questionnaireId[0],
               parent: parentId[0],
@@ -405,7 +409,7 @@ exports.seed = function(knex, Promise) {
                 });
               });
             })
-          );
+          ]);
         }),
         knex('questionnaire_question').insert({
           questionnaire_id: questionnaireId[0],
@@ -482,8 +486,8 @@ exports.seed = function(knex, Promise) {
             });
           });
         })
-      );
+      ]);
     })
-    );
+    ]);
   });
 };
