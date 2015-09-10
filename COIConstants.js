@@ -8,8 +8,8 @@ export let COIConstants = {
     CERTIFY: 'certify'
   },
   DISCLOSURE_STATUS: {
-    ACTIVE: 'ACTIVE',
-    INACTIVE: 'INACTIVE'
+    ACTIVE: 1,
+    INACTIVE: 0
   },
   SORT_DIRECTION: {
     ASCENDING: 'ASCENDING',

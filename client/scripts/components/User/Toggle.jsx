@@ -11,7 +11,7 @@ export class Toggle extends ResponsiveComponent {
   }
 
   clicked(evt) {
-    this.props.onChange(evt.target.innerText);
+    this.props.onChange(parseInt(evt.target.value));
   }
 
   renderMobile() {}
@@ -61,7 +61,7 @@ export class Toggle extends ResponsiveComponent {
       let arrow;
       let isFirst = index === 0;
       let isLast = index === array.length - 1;
-      let isSelected = this.props.selected === value;
+      let isSelected = this.props.selected === value.code;
       if (isSelected) {
         arrow = (
           <div style={styles.arrow}></div>
@@ -77,9 +77,10 @@ export class Toggle extends ResponsiveComponent {
             isLast ? styles.last : {}
           )}
           onClick={this.clicked}
-          key={value}
+          value={value.code}
+          key={value.code}
         >
-          {value}
+          {value.description}
           {arrow}
         </button>
       );

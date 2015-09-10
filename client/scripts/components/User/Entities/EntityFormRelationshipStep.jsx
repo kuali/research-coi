@@ -72,8 +72,8 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
   }
 
   getTypeOptions(relation) {
-    return this.props.appState.relationshipCategoryTypes.filter(relationshipCategoryType => {
-      return relationshipCategoryType.relationshipTypeCd === relation;
+    return this.props.appState.relationshipTypes.filter(type => {
+      return type.relationshipTypeCd === relation;
     });
   }
 
@@ -301,7 +301,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
                 <ToggleSet
                   selected={this.props.appState.potentialRelationship.relationshipCd}
                   onChoose={this.relationChosen}
-                  values={this.props.appState.relationshipTypes}
+                  values={this.props.appState.relationshipCategoryTypes}
                 />
               </div>
 

@@ -22,14 +22,14 @@ export class Entity extends ResponsiveComponent {
   }
 
   toggleStatus() {
-    let newStatus;
-    if (this.props.entity.status === COIConstants.DISCLOSURE_STATUS.ACTIVE) {
-      newStatus = COIConstants.DISCLOSURE_STATUS.INACTIVE;
+    let active;
+    if (this.props.entity.active === COIConstants.DISCLOSURE_STATUS.ACTIVE) {
+      active = COIConstants.DISCLOSURE_STATUS.INACTIVE;
     }
     else {
-      newStatus = COIConstants.DISCLOSURE_STATUS.ACTIVE;
+      active = COIConstants.DISCLOSURE_STATUS.ACTIVE;
     }
-    DisclosureActions.setEntityStatus(newStatus, this.props.id);
+    DisclosureActions.setEntityActiveStatus(active, this.props.id);
   }
 
   renderMobile() {}
@@ -87,7 +87,7 @@ export class Entity extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let statusButton;
-    if (this.props.entity.status === COIConstants.DISCLOSURE_STATUS.ACTIVE) {
+    if (this.props.entity.active === COIConstants.DISCLOSURE_STATUS.ACTIVE) {
       statusButton = (<KButton onClick={this.toggleStatus} style={styles.button}>Deactivate</KButton>);
     } else {
       statusButton = (<KButton onClick={this.toggleStatus} style={styles.button}>Reactivate</KButton>);

@@ -37,9 +37,9 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.increments('id').notNullable();
     table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
     table.boolean('active');
-    table.boolean('public');
+    table.boolean('is_public');
     table.integer('type_cd').references('type_cd').inTable('fin_entity_type');
-    table.boolean('sponsor');
+    table.boolean('is_sponsor');
     table.string('name', 200);
     table.string('description', 200);
     table.engine('InnoDB');
@@ -49,14 +49,14 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('description', 50).notNullable();
     table.engine('InnoDB');
   })
-  .createTable('relationship_type', function(table) {
+  .createTable('relationship_category_type', function(table) {
     table.integer('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
     table.engine('InnoDB');
   })
-  .createTable('relationship_category_type', function(table) {
+  .createTable('relationship_type', function(table) {
     table.integer('type_cd').notNullable().primary();
-    table.integer('relationship_type_cd').notNullable().references('type_cd').inTable('relationship_type');
+    table.integer('relationship_cd').notNullable().references('type_cd').inTable('relationship_category_type');
     table.string('description', 50).notNullable();
     table.engine('InnoDB');
   })
@@ -68,9 +68,9 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   .createTable('relationship', function(table) {
     table.increments('id').notNullable();
     table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
+    table.integer('relationship_cd').references('type_cd').inTable('relationship_category_type');
+    table.integer('person_cd').notNullable().references('type_cd').inTable('relationship_person_type');
     table.integer('type_cd').references('type_cd').inTable('relationship_type');
-    table.integer('person_type_cd').notNullable().references('type_cd').inTable('relationship_person_type');
-    table.integer('relationship_category_cd').references('type_cd').inTable('relationship_category_type');
     table.integer('amount_cd').references('type_cd').inTable('relationship_amount_type');
     table.string('comments', 4000);
     table.engine('InnoDB');

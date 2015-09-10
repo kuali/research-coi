@@ -62,7 +62,7 @@ export class EntityForm extends ResponsiveComponent {
   }
 
   cancel() {
-    DisclosureActions.entityFormClosed(this.props.entity.id);
+    DisclosureActions.entityFormClosed(this.props.entity);
     DisclosureActions.turnOffValidation(0);
     DisclosureActions.turnOffValidation(1);
     DisclosureActions.turnOffValidation(2);
@@ -84,7 +84,7 @@ export class EntityForm extends ResponsiveComponent {
 
   done() {
     if (!this.props.editing || DisclosureStore.entityIsSubmittable(this.props.entity.id)) {
-      DisclosureActions.entityFormClosed(this.props.entity.id);
+      DisclosureActions.entityFormClosed(this.props.entity);
       DisclosureActions.turnOffValidation(1);
       DisclosureActions.turnOffValidation(2);
     }
