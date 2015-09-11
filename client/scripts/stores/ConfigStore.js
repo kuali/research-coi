@@ -12,7 +12,6 @@ class _ConfigStore extends AutoBindingStore {
     this.applicationState = {
       declarationsTypesBeingEdited: {},
       enteringNewType: false,
-      disclosureTypesBeingEdited: {},
       newNotification: {},
       newQuestion: {
         screening: undefined,
@@ -27,19 +26,23 @@ class _ConfigStore extends AutoBindingStore {
     this.disclosureTypes = [
       {
         label: 'Annual Disclosure',
-        id: 1
+        id: 1,
+        enabled: true
       },
       {
         label: 'Travel Log',
-        id: 2
+        id: 2,
+        enabled: true
       },
       {
         label: 'Project Disclosure',
-        id: 3
+        id: 3,
+        enabled: false
       },
       {
         label: 'Manual Disclosure',
-        id: 4
+        id: 4,
+        enabled: false
       }
     ];
 
@@ -284,14 +287,15 @@ class _ConfigStore extends AutoBindingStore {
     });
   }
 
-  startEditingDisclosureType(id) {
-    this.applicationState.disclosureTypesBeingEdited[id] = {
-      newValue: this.disclosureTypes.find(type => { return id === type.id; }).text
-    };
+  enableDisclosureType(id) {
+    this.disclosureTypes.find(type => { return id === type.id; }).enabled = true;
+  }
+
+  disableDisclosureType(id) {
+    this.disclosureTypes.find(type => { return id === type.id; }).enabled = false;
   }
 
   updateDisclosureType(params) {
-    delete this.applicationState.disclosureTypesBeingEdited[params.id];
     this.disclosureTypes.find(type => { return params.id === type.id; }).label = params.newValue;
   }
 

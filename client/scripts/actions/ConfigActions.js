@@ -26,7 +26,9 @@ class _ConfigActions {
 
   deleteDeclarationType(id) { this.dispatch(id); }
 
-  startEditingDisclosureType(id) { this.dispatch(id); }
+  enableDisclosureType(id) { this.dispatch(id); }
+
+  disableDisclosureType(id) { this.dispatch(id); }
 
   updateDisclosureType(id, newValue) {
     this.dispatch({

@@ -73,7 +73,10 @@ export default class General extends React.Component {
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
               <Panel title="Disclosure Types">
-                <DisclosureTypes types={this.state.disclosureTypes} appState={this.state.applicationState} />
+                <DisclosureTypes
+                  types={this.state.disclosureTypes}
+                  appState={this.state.applicationState}
+                />
               </Panel>
 
               <Panel title="Expiration Notifications">
