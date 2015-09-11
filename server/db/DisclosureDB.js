@@ -507,7 +507,11 @@ export let get = (dbInfo, disclosureId, callback) => {
     knex.select('qa.id as id', 'qa.answer as answer')
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
-      .where('da.disclosure_id', disclosureId)
+      .where('da.disclosure_id', disclosureId),
+    knex.select('p.name as title', 'pt.description as type', 'p.role_cd as role', 'p.sponsor_cd as sponsorCd')
+      .from('project as p')
+      .innerJoin('project_type as pt', 'pt.type_cd', 'p.type_cd' )
+      .where('disclosure_id', disclosureId)
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
       callback(new Error('invalid disclosure id'));
@@ -516,6 +520,7 @@ export let get = (dbInfo, disclosureId, callback) => {
     disclosure = result[0][0];
     disclosure.entities = result[1];
     disclosure.answers = result[2];
+    disclosure.projects = result[3];
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
@@ -551,6 +556,14 @@ export let get = (dbInfo, disclosureId, callback) => {
   })
   .catch(err => {
     callback(err);
+  });
+};
+
+export let getMinDisclosure = (dbInfo, callback) => {
+  let knex = getKnex(dbInfo);
+  knex('disclosure').min('id as id')
+  .then(result => {
+    get(dbInfo, result[0].id, callback);
   });
 };
 

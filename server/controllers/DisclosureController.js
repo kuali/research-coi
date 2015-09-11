@@ -101,6 +101,19 @@ export let init = app => {
       ]
     }
   */
+
+  app.get('/api/coi/disclosures/min', function(req, res, next){
+    // Use real user id once we have it
+    DisclosureDB.getMinDisclosure(req.dbInfo, function(err, disclosure) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(disclosure);
+      }
+    });
+  });
+
   app.get('/api/coi/disclosures/:id', function(req, res, next){
     // Use real user id once we have it
     DisclosureDB.get(req.dbInfo, req.params.id, function(err, disclosure) {
