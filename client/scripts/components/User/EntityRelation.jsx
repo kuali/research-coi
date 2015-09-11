@@ -12,15 +12,8 @@ export class EntityRelation extends ResponsiveComponent {
     this.commentMade = this.commentMade.bind(this);
   }
 
-  relationChosen() {
-    let relation = 'NONE';
-    if (this.refs.potential.getDOMNode().checked) {
-      relation = 'POTENTIAL';
-    }
-    else if(this.refs.managed.getDOMNode().checked) {
-      relation = 'MANAGED';
-    }
-    DisclosureActions.entityRelationChosen(this.props.relationType, this.props.entity.id, this.props.projectId, relation);
+  relationChosen(evt) {
+    DisclosureActions.entityRelationChosen(this.props.relationType, this.props.entity.id, this.props.projectId, parseInt(evt.target.value));
   }
 
   commentMade() {
@@ -47,42 +40,29 @@ export class EntityRelation extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
+    let relationshipStatusOptions = this.props.relationshipStatuses.map(status =>{
+      return (
+        <div>
+          <input
+          type="radio"
+          ref="none"
+          checked={this.props.relation === status.statusCd}
+          value={status.statusCd}
+          onChange={this.relationChosen}
+          name={this.props.entity.id + 'relation' + this.props.projectId}
+          />
+          <span style={{fontSize: 14, marginLeft: 6}}>{status.description}</span>
+        </div>
+      );
+    });
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         <span style={{width: '25%', display: 'inline-block', verticalAlign: 'top'}}>
           {this.props.entity.name}
         </span>
         <span style={{width: '30%', display: 'inline-block', verticalAlign: 'top'}}>
-          <div>
-            <input
-              type="radio"
-              ref="none"
-              checked={this.props.relation === 'NONE'}
-              onChange={this.relationChosen}
-              name={this.props.entity.id + 'relation' + this.props.projectId}
-            />
-            <span style={{fontSize: 14, marginLeft: 6}}>No Conflict</span>
-          </div>
-          <div>
-            <input
-              type="radio"
-              ref="potential"
-              checked={this.props.relation === 'POTENTIAL'}
-              onChange={this.relationChosen}
-              name={this.props.entity.id + 'relation' + this.props.projectId}
-            />
-            <span style={{fontSize: 14, marginLeft: 6}}>Potential Relationship</span>
-          </div>
-          <div>
-            <input
-              type="radio"
-              ref="managed"
-              checked={this.props.relation === 'MANAGED'}
-              onChange={this.relationChosen}
-              name={this.props.entity.id + 'relation' + this.props.projectId}
-            />
-            <span style={{fontSize: 14, marginLeft: 6}}>Managed Relationship</span>
-          </div>
+          {relationshipStatusOptions}
         </span>
         <span style={{width: '45%', display: 'inline-block'}}>
           <input

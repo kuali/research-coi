@@ -58,7 +58,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
     DisclosureActions.setAllForProject(
       'PROJECT',
       this.props.projectid,
-      this.refs.setAllSelect.getDOMNode().value
+      parseInt(this.refs.setAllSelect.getDOMNode().value)
     );
   }
 
@@ -124,8 +124,15 @@ export class ProjectRelationDialog extends ResponsiveComponent {
           projectId={this.props.projectid}
           relation={this.findRelationByEntity(element.id)}
           comments={this.findCommentByEntity(element.id)}
+          relationshipStatuses={this.props.relationshipStatuses}
           key={element.id}
         />
+      );
+    });
+
+    let relationshipStatusOptions = this.props.relationshipStatuses.map(option =>{
+      return (
+      <option key={option.statusCd} value={option.statusCd}>{option.description}</option>
       );
     });
 
@@ -138,10 +145,8 @@ export class ProjectRelationDialog extends ResponsiveComponent {
           <div>
             <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
             to:
-            <select ref="setAllSelect" defaultValue={'NONE'} style={{marginLeft: 10}}>
-              <option value="NONE">No Conflict</option>
-              <option value="POTENTIAL">Potential Relationship</option>
-              <option value="MANAGED">Managed Relationship</option>
+            <select ref="setAllSelect" style={{marginLeft: 10}}>
+              {relationshipStatusOptions}
             </select>
           </div>
           <div style={styles.headings}>

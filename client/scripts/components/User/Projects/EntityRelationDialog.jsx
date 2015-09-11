@@ -55,7 +55,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
   }
 
   setAll() {
-    DisclosureActions.setAllForEntity(this.props.entityId, this.refs.setAllSelect.getDOMNode().value);
+    DisclosureActions.setAllForEntity(this.props.entityId, parseInt(this.refs.setAllSelect.getDOMNode().value));
   }
 
   renderMobile() {}
@@ -118,8 +118,15 @@ export class EntityRelationDialog extends ResponsiveComponent {
           entityId={this.props.entityId}
           relation={this.findRelationByProject(element.projectid)}
           comments={this.findCommentByProject(element.projectid)}
+          relationshipStatuses={this.props.relationshipStatuses}
           key={element.projectid}
         />
+      );
+    });
+
+    let relationshipStatusOptions = this.props.relationshipStatuses.map(option =>{
+      return (
+      <option key={option.statusCd} value={option.statusCd}>{option.description}</option>
       );
     });
 
@@ -132,10 +139,8 @@ export class EntityRelationDialog extends ResponsiveComponent {
           <div>
             <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
             to:
-            <select ref="setAllSelect" defaultValue={'NONE'} style={{marginLeft: 10}}>
-              <option value="NONE">No Conflict</option>
-              <option value="POTENTIAL">Potential Relationship</option>
-              <option value="MANAGED">Managed Relationship</option>
+            <select ref="setAllSelect" style={{marginLeft: 10}}>
+              {relationshipStatusOptions}
             </select>
           </div>
           <div style={styles.headings}>

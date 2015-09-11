@@ -58,6 +58,7 @@ class _DisclosureStore extends AutoBindingStore {
       relationshipTypes: [],
       relationshipPersonTypes: [],
       relationshipAmountTypes: [],
+      relationshipStatuses: [],
       potentialRelationship: {
         personCd: '',
         relationshipCd: '',
@@ -73,6 +74,7 @@ class _DisclosureStore extends AutoBindingStore {
     this.projects = [];
 
     this.entities = [];
+    this.declarations = [];
     this.archivedDisclosures = [];
     this.archivedDisclosureDetail = undefined;
     this.disclosureSummariesForUser = [];
@@ -123,6 +125,7 @@ class _DisclosureStore extends AutoBindingStore {
           this.applicationState.currentDisclosureState.disclosure = disclosure.body;
           this.entities = disclosure.body.entities;
           this.projects = this.populateSponsorNames(disclosure.body.projects);
+          this.declarations = disclosure.body.declarations;
           this.emitChange();
         }
       });
@@ -158,6 +161,13 @@ class _DisclosureStore extends AutoBindingStore {
     .end((err, relationshipAmountTypes) => {
       if (!err) {
         this.applicationState.relationshipAmountTypes = relationshipAmountTypes.body;
+        this.emitChange();
+      }
+    });
+    request.get('/api/coi/disclosure/declaration/relationship/statuses')
+    .end((err, relationshipStatuses) => {
+      if (!err) {
+        this.applicationState.relationshipStatuses = relationshipStatuses.body;
         this.emitChange();
       }
     });

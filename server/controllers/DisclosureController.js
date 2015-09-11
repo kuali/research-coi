@@ -180,6 +180,17 @@ export let init = app => {
       }
     });
   });
+
+  app.get('/api/coi/disclosure/declaration/relationship/statuses', function(req, res, next){
+    DisclosureDB.getRelationshipStatuses(req.dbInfo, function(err, statuses) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(statuses);
+      }
+    });
+  });
   // Save existing disclosure with this data
   /*
     {

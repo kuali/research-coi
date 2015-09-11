@@ -30,10 +30,10 @@ export class Project extends ResponsiveComponent {
       let worstRelation = 'NONE';
 
       this.props.relations.forEach(element => {
-        if (element.relation === 'MANAGED') {
+        if (element.relation === 3) {
           worstRelation = 'MANAGED';
         }
-        else if (worstRelation !== 'MANAGED' && element.relation === 'POTENTIAL') {
+        else if (worstRelation !== 'MANAGED' && element.relation === 2) {
           worstRelation = 'POTENTIAL';
         }
       });
@@ -122,6 +122,7 @@ export class Project extends ResponsiveComponent {
           sponsor={this.props.sponsor}
           cosponsor={this.props.cosponsor}
           projectid={this.props.projectid}
+          relationshipStatuses={this.props.relationshipStatuses}
           id={this.props.id}
           onSave={this.toggleDialog}
           onCancel={this.toggleDialog}
