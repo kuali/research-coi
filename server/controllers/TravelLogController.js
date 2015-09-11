@@ -1,9 +1,10 @@
 import * as TravelLogDB from '../db/TravelLogDB';
+import {getUserInfo} from '../AuthService';
 
 export let init = app => {
-
   app.get('/api/coi/travelLogEntries/', function(req, res, next) {
-    TravelLogDB.getTravelLogEntries(req.dbInfo, function(err, travelLog) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    TravelLogDB.getTravelLogEntries(req.dbInfo, userInfo.id, function(err, travelLog) {
       if (err) {
         console.error(err);
         next(err);

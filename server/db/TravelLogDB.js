@@ -9,23 +9,23 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let saveQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let saveQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'travel_log_entry', pk: 'id'}, optionalTrx);
 };
 
-export let getExistingQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let getExistingQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   getExistingSingleRecord(dbInfo, record, callback, {table: 'travel_log_entry', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let saveExistingQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   saveExistingSingleRecord(dbInfo, record, callback, {table: 'travel_log_entry', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let deleteExistingQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'travel_log_entry', pk: 'id'}, optionalTrx);
 };
 
-export let getTravelLogEntries = (dbInfo, callback, optionalTrx) => {
+export let getTravelLogEntries = (dbInfo, userId, callback, optionalTrx) => {
   let knex = getKnex(dbInfo);
 
   let query;

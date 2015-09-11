@@ -18,7 +18,7 @@ export let wipeAll = () => {
   mockDB.clear();
 };
 
-export let save = (school, newDisclosure) => {
+export let save = (school, userId, newDisclosure) => {
   if (!mockDB.has(school)) {
     mockDB.set(school, new Map());
   }
@@ -26,27 +26,27 @@ export let save = (school, newDisclosure) => {
   return lastId++;
 };
 
-export let saveDisclosure = (dbInfo, record, callback, optionalTrx) => {
+export let saveDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
 };
 
-export let getExistingDisclosure = (dbInfo, record, callback, optionalTrx) => {
+export let getExistingDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
   getExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingDisclosure = (dbInfo, record, callback, optionalTrx) => {
+export let saveExistingDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
   saveExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingDisclosure = (dbInfo, record, callback, optionalTrx) => {
+export let deleteExistingDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
 };
 
-export let saveFinEntity = (dbInfo, record, callback, optionalTrx) => {
+export let saveFinEntity = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
-export let saveNewFinancialEntity = (dbInfo, disclosureId, body, callback) => {
+export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callback) => {
   let knex = getKnex(dbInfo);
 
   let financialEntity = body;
@@ -94,7 +94,7 @@ export let saveNewFinancialEntity = (dbInfo, disclosureId, body, callback) => {
   });
 };
 
-export let saveExistingFinancialEntity = (dbInfo, disclosureId, body, callback) => {
+export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, callback) => {
   let knex = getKnex(dbInfo);
 
   let financialEntity = body;
@@ -144,332 +144,59 @@ export let saveExistingFinancialEntity = (dbInfo, disclosureId, body, callback) 
   });
 };
 
-export let getExistingEntity = (dbInfo, record, callback, optionalTrx) => {
+export let getExistingEntity = (dbInfo, userId, record, callback, optionalTrx) => {
   getExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingFinEntity = (dbInfo, record, callback, optionalTrx) => {
+export let saveExistingFinEntity = (dbInfo, userId, record, callback, optionalTrx) => {
   saveExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingEntity = (dbInfo, record, callback, optionalTrx) => {
+export let deleteExistingEntity = (dbInfo, userId, record, callback, optionalTrx) => {
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
-export let saveRelationship = (dbInfo, record, callback, optionalTrx) => {
+export let saveRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
 };
 
-export let getExistingRelationship = (dbInfo, record, callback, optionalTrx) => {
+export let getExistingRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
   getExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingRelationship = (dbInfo, record, callback, optionalTrx) => {
+export let saveExistingRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
   saveExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingRelationship = (dbInfo, record, callback, optionalTrx) => {
+export let deleteExistingRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
 };
 
-export let saveDeclaration = (dbInfo, record, callback, optionalTrx) => {
+export let saveDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
 };
 
-export let getExistingDeclaration = (dbInfo, record, callback, optionalTrx) => {
+export let getExistingDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
   getExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingDeclaration = (dbInfo, record, callback, optionalTrx) => {
+export let saveExistingDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
   saveExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingDeclaration = (dbInfo, record, callback, optionalTrx) => {
+export let deleteExistingDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
 };
 
-export let saveDisclosureNested = (dbInfo, record, callback) => {
+export let saveDisclosureNested = (dbInfo, userId, record, callback) => {
   //implement
 };
 
-export let saveExistingDisclosureNested = (dbInfo, record, callback) => {
+export let saveExistingDisclosureNested = (dbInfo, userId, record, callback) => {
   //implement
 };
 
-
-// this need not be implemented, just demo data for now
-// until get by disclosure id is implemented.
-export let getSampleDisclosures = () => {
-  let results = [{
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 3,
-    name: 'Research 1',
-    submittedBy: 'Johnny Jack',
-    submittedOn: 1434148767062,
-    startDate: 1434148767062,
-    status: 'IN_PROGRESS',
-    questionnaire: {
-      '1': 'Yes',
-      '2': 'No',
-      '3': 'Yes'
-     },
-    entities: [
-      {
-        'id': 61709,
-        'name': 'Avaya Inc.',
-        'status': 'Active',
-        'public': true,
-        'type': 'Large Corporation',
-        'sponsorResearch': false,
-        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
-        'relationships': [
-          {
-            'person': 'Self',
-            'relationship': 'Other',
-            'type': 'Other Transactions',
-            'amount': '$1-$5,000',
-            'comments': 'This organization consults with me weekly via phone'
-          }
-        ]
-      }
-    ],
-    projects: [{
-      'name': 'Project 1'
-    }]
-  },
-  {
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 32432,
-    name: 'Research 2',
-    submittedBy: 'Kim Kiera',
-    submittedOn: 1434948767062,
-    startDate: 1434143767062,
-    status: 'AWAITING_REVIEW',
-    questionnaire: {
-      '1': 'Yes',
-      '2': 'No',
-      '3': 'Yes'
-     },
-    entities: [
-      {
-        'id': 61709,
-        'name': 'Avaya Inc.',
-        'status': 'Active',
-        'public': true,
-        'type': 'Large Corporation',
-        'sponsorResearch': false,
-        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
-        'relationships': [
-          {
-            'person': 'Self',
-            'relationship': 'Other',
-            'type': 'Other Transactions',
-            'amount': '$1-$5,000',
-            'comments': 'This organization consults with me weekly via phone'
-          }
-        ]
-      }
-    ],
-    projects: [{
-      'name': 'Project 2'
-    }]
-  },
-  {
-    type: 'PROJECT',
-    disposition: 222,
-    id: 54364,
-    name: 'Research 3',
-    submittedBy: 'Lara Lant',
-    submittedOn: 1432148767062,
-    startDate: 1434448767062,
-    status: 'IN_PROGRESS',
-    questionnaire: {
-      '1': 'Yes',
-      '2': 'No',
-      '3': 'Yes'
-     },
-    entities: [
-      {
-        'id': 61709,
-        'name': 'Avaya Inc.',
-        'status': 'Active',
-        'public': true,
-        'type': 'Large Corporation',
-        'sponsorResearch': false,
-        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
-        'relationships': [
-          {
-            'person': 'Self',
-            'relationship': 'Other',
-            'type': 'Other Transactions',
-            'amount': '$1-$5,000',
-            'comments': 'This organization consults with me weekly via phone'
-          }
-        ]
-      }
-    ],
-    projects: [{
-      'name': 'Project 3'
-    }]
-  },
-  {
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 76576,
-    name: 'Research 4',
-    submittedBy: 'Mark Millburn',
-    submittedOn: 1434748767062,
-    startDate: 1434188767062,
-    status: 'REVISION_NECESSARY',
-    'questionnaire': {
-      '1': 'Yes',
-      '2': 'No',
-      '3': 'Yes'
-     },
-    'entities': [
-      {
-        'id': 61709,
-        'name': 'Avaya Inc.',
-        'status': 'Active',
-        'public': true,
-        'type': 'Large Corporation',
-        'sponsorResearch': false,
-        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
-        'relationships': [
-          {
-            'person': 'Self',
-            'relationship': 'Other',
-            'type': 'Other Transactions',
-            'amount': '$1-$5,000',
-            'comments': 'This organization consults with me weekly via phone'
-          }
-        ]
-      }
-    ],
-    projects: [{
-      'name': 'Project 4'
-    }]
-  },
-  {
-    type: 'PROJECT',
-    disposition: 222,
-    id: 9769,
-    name: 'Research 5',
-    submittedBy: 'Nate Niter',
-    submittedOn: 1432148767062,
-    startDate: 1434248767062,
-    status: 'REVISION_NECESSARY',
-    'questionnaire': {
-      '1': 'Yes',
-      '2': 'No',
-      '3': 'Yes'
-     },
-    'entities': [
-      {
-        'id': 61709,
-        'name': 'Avaya Inc.',
-        'status': 'Active',
-        'public': true,
-        'type': 'Large Corporation',
-        'sponsorResearch': false,
-        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
-        'relationships': [
-          {
-            'person': 'Self',
-            'relationship': 'Other',
-            'type': 'Other Transactions',
-            'amount': '$1-$5,000',
-            'comments': 'This organization consults with me weekly via phone'
-          }
-        ]
-      }
-    ],
-    projects: [{
-      'name': 'Project 5'
-    }]
-  },
-  {
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 8987,
-    name: 'Research 6',
-    submittedBy: 'Oliver Osmond',
-    submittedOn: 1432148767062,
-    startDate: 1434248767062,
-    status: 'AWAITING_REVIEW',
-    'questionnaire': {
-      '1': 'Yes',
-      '2': 'No',
-      '3': 'Yes'
-     },
-    'entities': [
-      {
-        'id': 61709,
-        'name': 'Avaya Inc.',
-        'status': 'Active',
-        'public': true,
-        'type': 'Large Corporation',
-        'sponsorResearch': false,
-        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
-        'relationships': [
-          {
-            'person': 'Self',
-            'relationship': 'Other',
-            'type': 'Other Transactions',
-            'amount': '$1-$5,000',
-            'comments': 'This organization consults with me weekly via phone'
-          }
-        ]
-      }
-    ],
-    projects: [{
-      'name': 'Project 6'
-    }]
-  },
-  {
-    type: 'PROJECT',
-    disposition: 222,
-    id: 113232,
-    name: 'Research 7',
-    submittedBy: 'Peter Pratan',
-    submittedOn: 1434948767062,
-    startDate: 1434548767062,
-    status: 'REVISION_NECESSARY',
-    'questionnaire': {
-      '1': 'Yes',
-      '2': 'No',
-      '3': 'Yes'
-     },
-    'entities': [
-      {
-        'id': 61709,
-        'name': 'Avaya Inc.',
-        'status': 'Active',
-        'public': true,
-        'type': 'Large Corporation',
-        'sponsorResearch': false,
-        'description': 'A research lab dedicated to finding the cures for diseases such as cancer, diabetes, and MLS',
-        'relationships': [
-          {
-            'person': 'Self',
-            'relationship': 'Other',
-            'type': 'Other Transactions',
-            'amount': '$1-$5,000',
-            'comments': 'This organization consults with me weekly via phone'
-          }
-        ]
-      }
-    ],
-    projects: [{
-      'name': 'Project 7'
-    }]
-  }];
-  return results;
-};
-
-export let saveNewQuestionAnswer = (dbInfo, disclosureId, body) => {
+export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   let knex = getKnex(dbInfo);
   knex('questionnaire_answer').insert({
     question_id: body.id,
@@ -481,7 +208,7 @@ export let saveNewQuestionAnswer = (dbInfo, disclosureId, body) => {
   });
 };
 
-export let saveExistingQuestionAnswer = (dbInfo, disclosureId, body) => {
+export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   let knex = getKnex(dbInfo);
   knex.select('qa.id')
   .from('disclosure_answer as da')
@@ -559,7 +286,7 @@ export let get = (dbInfo, disclosureId, callback) => {
   });
 };
 
-export let getMinDisclosure = (dbInfo, callback) => {
+export let getMinDisclosure = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex('disclosure').min('id as id')
   .then(result => {
@@ -567,7 +294,7 @@ export let getMinDisclosure = (dbInfo, callback) => {
   });
 };
 
-export let getSummariesForReview = (school, sortColumn, sortDirection, query) => {
+export let getSummariesForReview = (school, userId, sortColumn, sortDirection, query) => {
   let results = [{
     type: 'ANNUAL',
     disposition: 222,
@@ -711,7 +438,7 @@ export let getArchivedDisclosures = (dbInfo, userId, callback) => {
     });
 };
 
-export let getEntityTypes = (dbInfo, callback) => {
+export let getEntityTypes = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('type_cd as typeCd', 'description')
   .from('fin_entity_type')
@@ -723,7 +450,7 @@ export let getEntityTypes = (dbInfo, callback) => {
   });
 };
 
-export let getRelationshipCategoryTypes = (dbInfo, callback) => {
+export let getRelationshipCategoryTypes = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('type_cd as typeCd', 'description')
   .from('relationship_category_type')
@@ -735,7 +462,7 @@ export let getRelationshipCategoryTypes = (dbInfo, callback) => {
   });
 };
 
-export let getRelationshipTypes = (dbInfo, callback) => {
+export let getRelationshipTypes = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('type_cd as typeCd', 'relationship_cd as relationshipTypeCd', 'description')
   .from('relationship_type')
@@ -747,7 +474,7 @@ export let getRelationshipTypes = (dbInfo, callback) => {
   });
 };
 
-export let getRelationshipPersonTypes = (dbInfo, callback) => {
+export let getRelationshipPersonTypes = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('type_cd as typeCd', 'description')
   .from('relationship_person_type')
@@ -759,7 +486,7 @@ export let getRelationshipPersonTypes = (dbInfo, callback) => {
   });
 };
 
-export let getRelationshipAmountTypes = (dbInfo, callback) => {
+export let getRelationshipAmountTypes = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('type_cd as typeCd', 'description')
   .from('relationship_amount_type')
@@ -771,7 +498,7 @@ export let getRelationshipAmountTypes = (dbInfo, callback) => {
   });
 };
 
-export let getRelationshipStatuses = (dbInfo, callback) => {
+export let getRelationshipStatuses = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('status_cd as statusCd', 'description')
   .from('relationship_status')
@@ -783,101 +510,41 @@ export let getRelationshipStatuses = (dbInfo, callback) => {
   });
 };
 
-export let approve = (school, disclosureId) => {
+export let approve = (school, userId, disclosureId) => {
   let disclosure = get(school, disclosureId);
   disclosure.status = 'APPROVED';
 };
 
-export let sendBack = (school, disclosureId) => {
+export let sendBack = (school, userId, disclosureId) => {
   let disclosure = get(school, disclosureId);
   disclosure.status = 'RETURNED';
 };
 
-export let addReviewer = (school, disclosureId, reviewerName) => {
+export let addReviewer = (school, userId, disclosureId, reviewerName) => {
   let disclosure = get(school, disclosureId);
   if (!disclosure.reviewers) { disclosure.reviewers = []; }
   disclosure.reviewers.push(reviewerName);
 };
 
-export let addQuestionnaireComment = (school, disclosureId, comment) => {
+export let addQuestionnaireComment = (school, userId, disclosureId, comment) => {
   let disclosure = get(school, disclosureId);
   if (!disclosure.questionnaire) { disclosure.questionnaire = {comments: []}; }
   disclosure.questionnaire.comments.push(comment);
 };
 
-export let addEntityComment = (school, disclosureId, comment) => {
+export let addEntityComment = (school, userId, disclosureId, comment) => {
   let disclosure = get(school, disclosureId);
   if (!disclosure.entity) { disclosure.entity = {comments: []}; }
   disclosure.entity.comments.push(comment);
 };
 
-export let addDeclarationComment = (school, disclosureId, comment) => {
+export let addDeclarationComment = (school, userId, disclosureId, comment) => {
   let disclosure = get(school, disclosureId);
   if (!disclosure.declarations) { disclosure.declarations = {comments: []}; }
   disclosure.declarations.comments.push(comment);
 };
 
-export let searchByDate = (school, start, end) => {
-  let schoolMap = mockDB.get(school);
-  let matches = [];
-  schoolMap.forEach((value) => {
-    if (value.submittedDate >= start && value.submittedDate <= end) {
-      matches.push(value);
-    }
-  });
-
-  return matches;
-};
-
-export let searchByType = (school, type) => {
-  let schoolMap = mockDB.get(school);
-  let matches = [];
-  schoolMap.forEach((value) => {
-    if (value.type === type) {
-      matches.push(value);
-    }
-  });
-
-  return matches;
-};
-
-export let searchByDisposition = (school, disposition) => {
-  let schoolMap = mockDB.get(school);
-  let matches = [];
-  schoolMap.forEach((value) => {
-    if (value.disposition === disposition) {
-      matches.push(value);
-    }
-  });
-
-  return matches;
-};
-
-export let searchByStatus = (school, status) => {
-  let schoolMap = mockDB.get(school);
-  let matches = [];
-  schoolMap.forEach((value) => {
-    if (value.status === status) {
-      matches.push(value);
-    }
-  });
-
-  return matches;
-};
-
-export let searchByUnit = (school, unit) => {
-  let schoolMap = mockDB.get(school);
-  let matches = [];
-  schoolMap.forEach((value) => {
-    if (value.unit === unit) {
-      matches.push(value);
-    }
-  });
-
-  return matches;
-};
-
-export let search = (school, query) => {
+export let search = (school, userId, query) => {
   let schoolMap = mockDB.get(school);
   let matches = [];
   schoolMap.forEach((value) => {

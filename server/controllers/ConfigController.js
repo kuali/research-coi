@@ -1,8 +1,10 @@
 import * as ConfigDB from '../db/ConfigDB';
+import {getUserInfo} from '../AuthService';
 
 export let init = app => {
   app.get('/api/coi/config', function(req, res, next) {
-    ConfigDB.getConfig(req.dbInfo, function(err, questionnaire) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    ConfigDB.getConfig(req.dbInfo, userInfo.id, function(err, questionnaire) {
       if (err) {
         console.error(err);
         next(err);
@@ -14,8 +16,9 @@ export let init = app => {
   });
 
   app.put('/api/coi/config/', function(req, res){
+    let userInfo = getUserInfo(req.cookies.authToken);
     // validation?
     res.sendStatus(202);
-    res.send(ConfigDB.setConfig(req));
+    res.send(ConfigDB.setConfig(req, userInfo.id));
   });
 };

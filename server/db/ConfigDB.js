@@ -25,7 +25,7 @@ let mockDB = {
   }
 };
 
-export let getConfig = (dbInfo, callback, optionalTrx) => {
+export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
   var config = mockDB.UIT;
   let knex = getKnex(dbInfo);
 
@@ -58,6 +58,6 @@ export let getConfig = (dbInfo, callback, optionalTrx) => {
   });
 };
 
-export let setConfig = (req) => {
+export let setConfig = (req, userId) => {
   mockDB.UIT = req.body;
 };
