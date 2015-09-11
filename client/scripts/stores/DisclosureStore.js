@@ -70,32 +70,7 @@ class _DisclosureStore extends AutoBindingStore {
       validatingEntityRelationshipStep: false
     };
 
-    this.projects = [
-      {
-        title: 'Molecular Disentropization',
-        type: 'Research',
-        role: 'PI',
-        sponsor: 'NIH',
-        cosponsor: 'Quest Diagnostics Inc.',
-        projectid: '250240'
-      },
-      {
-        title: 'Adolescent Diabetes Recurrence',
-        type: 'Research',
-        role: 'PI',
-        sponsor: 'NIH',
-        cosponsor: 'W.W. Grainger Inc',
-        projectid: '250499'
-      },
-      {
-        title: 'Photosynthesis and Salinity',
-        type: 'Research',
-        role: 'PI',
-        sponsor: 'NSA',
-        cosponsor: 'Sempra Energy',
-        projectid: '287110'
-      }
-    ];
+    this.projects = [];
 
     this.entities = [];
     this.archivedDisclosures = [];
@@ -142,11 +117,12 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   loadDisclosureData() {
-    request.get('/api/coi/disclosures/1')
-      .end((err, discloure) => {
+    request.get('/api/coi/disclosures/min')
+      .end((err, disclosure) => {
         if (!err) {
-          this.applicationState.currentDisclosureState.disclosure = discloure.body;
-          this.entities = discloure.body.entities;
+          this.applicationState.currentDisclosureState.disclosure = disclosure.body;
+          this.entities = disclosure.body.entities;
+          this.projects = this.populateSponsorNames(disclosure.body.projects);
           this.emitChange();
         }
       });
@@ -185,6 +161,21 @@ class _DisclosureStore extends AutoBindingStore {
         this.emitChange();
       }
     });
+  }
+
+  populateSponsorNames(projects) {
+    return projects.map(project =>{
+      project.sponsor = this.getSponsorName(project.sponsorCd);
+      return project;
+    });
+  }
+
+  getSponsorName(sponsorCd) {
+    switch (sponsorCd) {
+      case '000100': return 'Air Force';
+      case '000340': return 'NIH';
+      case '000500': return 'NSF';
+    }
   }
 
   changeArchiveFilter(newValue) {

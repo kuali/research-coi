@@ -221,11 +221,15 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     console.log('Seed - project');
     return Promise.all([
-      knex('project').insert({
-        name: 'Do Squirrels smile while eating peanut butter cups?',
-        type_cd: 1,
-        role_cd: 'PI',
-        sponsor_cd: '00010'
+      knex('disclosure').min('id as id')
+      .then(function(row) {
+        return knex('project').insert({
+          disclosure_id: row[0].id,
+          name: 'Molecular Disentropization',
+          type_cd: 1,
+          role_cd: 'PI',
+          sponsor_cd: '000100'
+        })
       })
     ]);
   }).then(function() {
