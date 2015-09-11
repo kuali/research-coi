@@ -11,23 +11,23 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let saveQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let saveQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'questionnaire', pk: 'id'}, optionalTrx);
 };
 
-export let getExistingQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let getExistingQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   getExistingSingleRecord(dbInfo, record, callback, {table: 'questionnaire', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let saveExistingQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   saveExistingSingleRecord(dbInfo, record, callback, {table: 'questionnaire', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingQuestionnaire = (dbInfo, record, callback, optionalTrx) => {
+export let deleteExistingQuestionnaire = (dbInfo, userId, record, callback, optionalTrx) => {
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'questionnaire', pk: 'id'}, optionalTrx);
 };
 
-export let getLatestQuestionnaire = (dbInfo, callback, optionalTrx) => {
+export let getLatestQuestionnaire = (dbInfo, userId, callback, optionalTrx) => {
   var questionnaire;
   let knex = getKnex(dbInfo);
 
@@ -67,18 +67,18 @@ export let getLatestQuestionnaire = (dbInfo, callback, optionalTrx) => {
 };
 
 
-export let saveQuestionnaireAnswers = (dbInfo, record, callback, optionalTrx) => {
+export let saveQuestionnaireAnswers = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'questionnaire_answers', pk: 'id'}, optionalTrx);
 };
 
-export let getExistingQuestionnaireAnswers = (dbInfo, record, callback, optionalTrx) => {
+export let getExistingQuestionnaireAnswers = (dbInfo, userId, record, callback, optionalTrx) => {
   getExistingSingleRecord(dbInfo, record, callback, {table: 'questionnaire_answers', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingQuestionnaireAnswers = (dbInfo, record, callback, optionalTrx) => {
+export let saveExistingQuestionnaireAnswers = (dbInfo, userId, record, callback, optionalTrx) => {
   saveExistingSingleRecord(dbInfo, record, callback, {table: 'questionnaire_answers', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingQuestionnaireAnswers = (dbInfo, record, callback, optionalTrx) => {
+export let deleteExistingQuestionnaireAnswers = (dbInfo, userId, record, callback, optionalTrx) => {
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'questionnaire_answers', pk: 'id'}, optionalTrx);
 };

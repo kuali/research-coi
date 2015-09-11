@@ -4,6 +4,10 @@ import * as QuestionnaireController from './controllers/QuestionnaireController'
 import * as TravelLogController from './controllers/TravelLogController';
 import express from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import authentication from './middleware/authentication';
+import viewRenderer from './middleware/viewRenderer';
+import {getUserInfo, authView} from './AuthService';
 
 export function run() {
   let app = express();
@@ -16,7 +20,13 @@ export function run() {
   } catch (e) {
     console.log('extensions not found');
   }
+
   app.use('/coi', express.static('client'));
+  app.use(cookieParser());
+  app.use('/coi/auth', authView); // Temporary stubbed out auth service
+  app.use(authentication);
+  app.use('/coi', viewRenderer);
+  app.use('/coi/', viewRenderer);
   app.use(bodyParser.json());
   ConfigController.init(app);
   DisclosureController.init(app);

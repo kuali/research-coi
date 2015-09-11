@@ -1,9 +1,10 @@
 import * as QuestionnaireDB from '../db/QuestionnaireDB';
+import {getUserInfo} from '../AuthService';
 
 export let init = app => {
-
   app.get('/api/coi/questionnaires/latest', function(req, res, next) {
-    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, function(err, questionnaire) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, userInfo.id, function(err, questionnaire) {
       if (err) {
         console.error(err);
         next(err);
@@ -15,7 +16,8 @@ export let init = app => {
   });
 
   app.get('/api/coi/questionnaires/screening/latest', function(req, res, next) {
-    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, function(err, questionnaire) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, userInfo.id, function(err, questionnaire) {
       if (err) {
         console.error(err);
         next(err);
@@ -27,7 +29,8 @@ export let init = app => {
   });
 
   app.get('/api/coi/questionnaires/entities/latest', function(req, res, next) {
-    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, function(err, questionnaire) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    QuestionnaireDB.getLatestQuestionnaire(req.dbInfo, userInfo.id, function(err, questionnaire) {
       if (err) {
         console.error(err);
         next(err);
@@ -39,7 +42,8 @@ export let init = app => {
   });
 
   app.get('/api/coi/questionnaires/:id', function(req, res, next) {
-    QuestionnaireDB.getExistingQuestionnaire(req.dbInfo, req.params.id, function(err, questionnaire) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    QuestionnaireDB.getExistingQuestionnaire(req.dbInfo, userInfo.id, req.params.id, function(err, questionnaire) {
       if (err) {
         console.error(err);
         next(err);
