@@ -47,7 +47,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
     });
 
     if (relation) {
-      return relation.comment;
+      return relation.comments;
     }
     else {
       return null;
@@ -116,10 +116,10 @@ export class EntityRelationDialog extends ResponsiveComponent {
         <ProjectRelation
           project={element}
           entityId={this.props.entityId}
-          relation={this.findRelationByProject(element.projectid)}
-          comments={this.findCommentByProject(element.projectid)}
+          relation={this.findRelationByProject(element.projectId)}
+          comments={this.findCommentByProject(element.projectId)}
           relationshipStatuses={this.props.relationshipStatuses}
-          key={element.projectid}
+          key={element.projectId}
         />
       );
     });

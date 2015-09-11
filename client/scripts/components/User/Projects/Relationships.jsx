@@ -26,11 +26,11 @@ export class Relationships extends ResponsiveComponent {
 
   openNext(currentIndex, type) {
     if (type === 'PROJECT') {
-      let currentId = this.props.projects[currentIndex].projectid;
+      let currentId = this.props.projects[currentIndex].projectId;
       DisclosureActions.toggleDeclaration(currentId, type);
       let nextId;
       if (this.props.projects[currentIndex + 1]) {
-        nextId = this.props.projects[currentIndex + 1].projectid;
+        nextId = this.props.projects[currentIndex + 1].projectId;
         DisclosureActions.toggleDeclaration(nextId, type);
       }
     }
@@ -47,11 +47,11 @@ export class Relationships extends ResponsiveComponent {
 
   openPrevious(currentIndex, type) {
     if (type === 'PROJECT') {
-      let currentId = this.props.projects[currentIndex].projectid;
+      let currentId = this.props.projects[currentIndex].projectId;
       DisclosureActions.toggleDeclaration(currentId, type);
       let previousId;
       if (this.props.projects[currentIndex - 1]) {
-        previousId = this.props.projects[currentIndex - 1].projectid;
+        previousId = this.props.projects[currentIndex - 1].projectId;
         DisclosureActions.toggleDeclaration(previousId, type);
       }
     }
@@ -130,7 +130,7 @@ export class Relationships extends ResponsiveComponent {
     let relations;
     if (projectView) {
       for (let i = 0; i < this.props.projects.length; i++) {
-        relations = this.getProjectRelations(this.props.projects[i].projectid);
+        relations = this.getProjectRelations(this.props.projects[i].projectId);
 
         relationshipNodes.push(
           <Project
@@ -141,13 +141,13 @@ export class Relationships extends ResponsiveComponent {
             role={this.props.projects[i].role}
             sponsor={this.props.projects[i].sponsor}
             cosponsor={this.props.projects[i].cosponsor}
-            projectid={this.props.projects[i].projectid}
+            projectId={this.props.projects[i].projectId}
             relationshipStatuses={this.props.relationshipStatuses}
-            open={this.isProjectDeclarationOpen(this.props.projects[i].projectid)}
+            open={this.isProjectDeclarationOpen(this.props.projects[i].projectId)}
             onNext={this.openNext}
             id={i}
             onPrevious={this.openPrevious}
-            key={this.props.projects[i].projectid}
+            key={this.props.projects[i].projectId}
           />
         );
       }

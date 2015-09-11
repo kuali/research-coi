@@ -47,7 +47,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
     });
 
     if (relation) {
-      return relation.comment;
+      return relation.comments;
     }
     else {
       return null;
@@ -57,7 +57,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
   setAll() {
     DisclosureActions.setAllForProject(
       'PROJECT',
-      this.props.projectid,
+      this.props.projectId,
       parseInt(this.refs.setAllSelect.getDOMNode().value)
     );
   }
@@ -121,7 +121,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
         <EntityRelation
           entity={element}
           relationType="PROJECT"
-          projectId={this.props.projectid}
+          projectId={this.props.projectId}
           relation={this.findRelationByEntity(element.id)}
           comments={this.findCommentByEntity(element.id)}
           relationshipStatuses={this.props.relationshipStatuses}
@@ -140,7 +140,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)} >
         <div style={styles.content}>
           <div style={styles.instructions}>
-            Indicate how each Financial Entity is related to project #{this.props.projectid} - {this.props.title}:
+            Indicate how each Financial Entity is related to project #{this.props.projectId} - {this.props.title}:
           </div>
           <div>
             <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>

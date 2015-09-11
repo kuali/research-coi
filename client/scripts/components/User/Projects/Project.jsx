@@ -19,7 +19,7 @@ export class Project extends ResponsiveComponent {
   shouldComponentUpdate() { return true; }
 
   toggleDialog() {
-    DisclosureActions.toggleDeclaration(this.props.projectid, 'PROJECT');
+    DisclosureActions.toggleDeclaration(this.props.projectId, 'PROJECT');
   }
 
   getFlagStatus() {
@@ -121,7 +121,7 @@ export class Project extends ResponsiveComponent {
           role={this.props.role}
           sponsor={this.props.sponsor}
           cosponsor={this.props.cosponsor}
-          projectid={this.props.projectid}
+          projectId={this.props.projectId}
           relationshipStatuses={this.props.relationshipStatuses}
           id={this.props.id}
           onSave={this.toggleDialog}
