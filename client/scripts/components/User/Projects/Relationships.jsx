@@ -142,6 +142,7 @@ export class Relationships extends ResponsiveComponent {
             sponsor={this.props.projects[i].sponsor}
             cosponsor={this.props.projects[i].cosponsor}
             projectid={this.props.projects[i].projectid}
+            relationshipStatuses={this.props.relationshipStatuses}
             open={this.isProjectDeclarationOpen(this.props.projects[i].projectid)}
             onNext={this.openNext}
             id={i}
@@ -161,6 +162,7 @@ export class Relationships extends ResponsiveComponent {
             relations={relations}
             projects={this.props.projects}
             title={this.props.entities[i].name}
+            relationshipStatuses={this.props.relationshipStatuses}
             open={this.isEntityDeclarationOpen(this.props.entities[i].id)}
             onNext={this.openNext}
             onPrevious={this.openPrevious}

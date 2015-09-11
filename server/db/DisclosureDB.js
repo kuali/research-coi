@@ -771,6 +771,18 @@ export let getRelationshipAmountTypes = (dbInfo, callback) => {
   });
 };
 
+export let getRelationshipStatuses = (dbInfo, callback) => {
+  let knex = getKnex(dbInfo);
+  knex.select('status_cd as statusCd', 'description')
+  .from('relationship_status')
+  .then(results => {
+    callback(undefined, results);
+  })
+  .catch(function (err) {
+    callback(err);
+  });
+};
+
 export let approve = (school, disclosureId) => {
   let disclosure = get(school, disclosureId);
   disclosure.status = 'APPROVED';

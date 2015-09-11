@@ -248,6 +248,7 @@ export class Disclosure extends ResponsiveComponent {
               relations={this.state.declarations}
               declarationStates={this.state.applicationState.declarationStates}
               view={this.state.applicationState.declarationView}
+              relationshipStatuses={this.state.applicationState.relationshipStatuses}
               instructionsShowing={this.state.applicationState.instructionsShowing}
             />
           );
