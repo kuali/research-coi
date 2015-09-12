@@ -300,7 +300,8 @@ exports.seed = function(knex, Promise) {
       knex('declaration').insert({
         fin_entity_id: knex('fin_entity').max('id'),
         project_id: knex('project').max('id'),
-        relationship_status_cd: 1
+        relationship_status_cd: 1,
+        comments: "The Molecular Disentropization project has no conflict with Apple"
       })
     ]);
   }).then(function() {

@@ -3,7 +3,7 @@ export function undefinedRelationExists(type, itemsNeedingDisclosures, relations
   let undeclaredRelation = itemsNeedingDisclosures.find(item => {
     let existingRelation = relations.find(relation => {
       if (type === 'PROJECT') {
-        return relation.projectId === item.projectid;
+        return relation.projectId === item.projectId;
       }
       else {
         return relation.entityId === item.id;

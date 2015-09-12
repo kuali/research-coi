@@ -671,7 +671,7 @@ class _DisclosureStore extends AutoBindingStore {
       this.entityRelationChosen({
         relationType: 'PROJECT',
         entityId: params.entityId,
-        projectId: project.projectid,
+        projectId: project.projectId,
         relation: params.newValue
       });
     });

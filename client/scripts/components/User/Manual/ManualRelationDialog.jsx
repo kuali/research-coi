@@ -37,7 +37,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
     });
 
     if (relation) {
-      return relation.comment;
+      return relation.comments;
     }
     else {
       return null;
