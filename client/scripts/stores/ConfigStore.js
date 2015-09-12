@@ -182,6 +182,11 @@ class _ConfigStore extends AutoBindingStore {
         ]
       }
     ];
+
+    this.certificationOptions = {
+      text: '',
+      required: true
+    };
   }
 
   insertOrders(questions) {
@@ -593,6 +598,14 @@ class _ConfigStore extends AutoBindingStore {
     if (target) {
       target.amountOptions = params.newList;
     }
+  }
+
+  setCertificationText(newText) {
+    this.certificationOptions.text = newText;
+  }
+
+  setCertificationRequired(newValue) {
+    this.certificationOptions.required = newValue;
   }
 }
 

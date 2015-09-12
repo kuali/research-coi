@@ -213,6 +213,10 @@ class _ConfigActions {
       newList: newList
     });
   }
+
+  setCertificationText(newText) { this.dispatch(newText); }
+
+  setCertificationRequired(newValue) { this.dispatch(newValue); }
 }
 
 export default alt.createActions(_ConfigActions);
