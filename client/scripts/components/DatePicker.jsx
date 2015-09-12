@@ -42,6 +42,7 @@ export class DatePicker extends ResponsiveComponent {
         fontFamily: 'Lato',
         fontSize: 15,
         border: '1px solid #999',
+        borderRadius: 5,
         padding: '3px 5px'
       },
       calendar: {

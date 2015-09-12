@@ -58,19 +58,29 @@ export default class DisclosureType extends React.Component {
         marginLeft: 10
       },
       checkbox: {
-        marginRight: 10
+        marginRight: 10,
+        verticalAlign: 'middle'
       },
       textbox: {
         verticalAlign: 'middle',
-        padding: 3,
-        fontSize: 16
+        padding: '3px 6px',
+        fontSize: 16,
+        borderRadius: 5,
+        border: '1px solid #AAA'
+      },
+      label: {
+        fontSize: 17
+      },
+      dynamicSpan: {
+        verticalAlign: 'middle',
+        display: 'inline-block'
       }
     };
 
     let jsx;
     if (this.state.editing) {
       jsx = (
-        <span>
+        <span style={styles.dynamicSpan}>
           <input type="text" ref="label" style={styles.textbox} defaultValue={this.props.type.label} onKeyUp={this.keyUp} />
           <DoneLink onClick={this.doneEditing} style={styles.editLink} />
         </span>
@@ -78,8 +88,8 @@ export default class DisclosureType extends React.Component {
     }
     else {
       jsx = (
-        <span>
-          <label htmlFor={this.props.type.id + 'disctype'}>{this.props.type.label}</label>
+        <span style={styles.dynamicSpan}>
+          <label htmlFor={this.props.type.id + 'disctype'} style={styles.label}>{this.props.type.label}</label>
           <EditLink onClick={this.editType} style={styles.editLink} />
         </span>
       );

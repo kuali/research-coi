@@ -46,6 +46,8 @@ class _ConfigStore extends AutoBindingStore {
       }
     ];
 
+    this.sponsorLookup = true;
+
     this.declarationTypes = [
       {
         id: 1,
@@ -299,6 +301,14 @@ class _ConfigStore extends AutoBindingStore {
     this.disclosureTypes.find(type => { return params.id === type.id; }).label = params.newValue;
   }
 
+  enableSponsorLookup() {
+    this.sponsorLookup = true;
+  }
+
+  disableSponsorLookup() {
+    this.sponsorLookup = false;
+  }
+
   setDueDate(newDate) {
     this.dueDate = newDate;
   }
@@ -357,6 +367,12 @@ class _ConfigStore extends AutoBindingStore {
       warningPeriod: 'Days',
       warningValue: 1
     };
+  }
+
+  deleteNotification(id) {
+    this.notifications = this.notifications.filter(notification => {
+      return notification.id !== id;
+    });
   }
 
   findQuestion(category, id) {

@@ -2,56 +2,68 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import ConfigActions from '../../../actions/ConfigActions';
 import EditLink from '../EditLink';
+import DeleteLink from '../DeleteLink';
+import DoneLink from '../DoneLink';
+import DateOptions from './DateOptions';
 
 export default class Notification extends React.Component {
   constructor() {
     super();
 
-    this.setWarningPeriod = this.setWarningPeriod.bind(this);
-    this.setWarningValue = this.setWarningValue.bind(this);
+    this.state = {
+      editing: false
+    };
+
+    this.edit = this.edit.bind(this);
+    this.delete = this.delete.bind(this);
+    this.done = this.done.bind(this);
   }
 
-  setWarningValue() {
-    let warningValueSelect = React.findDOMNode(this.refs.warningValue);
-    ConfigActions.setWarningValueOnNotification(this.props.id, warningValueSelect.value);
+  edit() {
+    this.setState({
+      editing: true
+    });
   }
 
-  setWarningPeriod() {
-    let warningPeriodSelect = React.findDOMNode(this.refs.warningPeriod);
-    ConfigActions.setWarningPeriodOnNotification(this.props.id, warningPeriodSelect.value);
+  delete() {
+    ConfigActions.deleteNotification(this.props.id);
+  }
+
+  done() {
+    let textarea = React.findDOMNode(this.refs.reminderText);
+    ConfigActions.setReminderTextOnNotification(this.props.id, textarea.value);
+    this.setState({
+      editing: false
+    });
   }
 
   render() {
     let styles = {
       container: {
-      },
-      warningValue: {
-        margin: '0 5px'
-      },
-      warningPeriod: {
-        marginRight: 5
-      },
-      cancel: {
-        float: 'right',
-        color: '#F44336',
-        paddingLeft: 5,
-        marginLeft: 25,
-        paddingTop: 7,
-        paddingBottom: 2,
-        fontSize: 8,
-        borderBottom: '1px dotted #F44336',
-        cursor: 'pointer',
-        verticalAlign: 'middle'
+        marginBottom: 40
       },
       edit: {
-        float: 'right'
+        marginRight: 10
       },
-      expirationMessage: {
+      done: {
+      },
+      delete: {
+      },
+      reminderText: {
         display: 'block',
         width: '100%',
         fontSize: 11,
         margin: '5px 0 30px 0',
-        color: '#333'
+        color: '#333',
+        whiteSpace: 'pre',
+        wordWrap: 'break-word'
+      },
+      reminderTextbox: {
+        display: 'block',
+        width: '100%',
+        padding: 10,
+        fontSize: 16,
+        marginTop: 10
       }
     };
 
@@ -64,27 +76,51 @@ export default class Notification extends React.Component {
       i++;
     }
 
+    let reminderText;
+    let buttons;
+    if (this.state.editing) {
+      reminderText = (
+        <textarea
+          ref="reminderText"
+          style={styles.reminderTextbox}
+          placeholder="Enter the reminder text here"
+          defaultValue={this.props.reminderText}>
+        </textarea>
+      );
+
+      buttons = (
+        <span style={{float: 'right'}}>
+          <DoneLink style={styles.done} onClick={this.done} />
+        </span>
+      );
+    } else {
+      reminderText = (
+        <div style={styles.reminderText}>
+          {this.props.reminderText}
+        </div>
+      );
+
+      buttons = (
+        <span style={{float: 'right'}}>
+          <EditLink style={styles.edit} onClick={this.edit} />
+          <DeleteLink style={styles.delete} onClick={this.delete} />
+        </span>
+      );
+    }
+
     return (
       <div style={merge(styles.container, this.props.style)}>
+        {buttons}
+
         <div>
-          Send
-          <select ref="warningValue" value={this.props.warningValue} style={styles.warningValue} onChange={this.setWarningValue}>
-            {warningValue}
-          </select>
-          <select ref="warningPeriod" value={this.props.warningPeriod} style={styles.warningPeriod} onChange={this.setWarningPeriod}>
-            <option>Days</option>
-            <option>Weeks</option>
-            <option>Months</option>
-          </select>
-          before expiration
-
-          <span style={styles.cancel}>
-            X CANCEL
-          </span>
-
-          <EditLink style={styles.edit} />
+          <DateOptions
+            warningValue={this.props.warningValue}
+            warningPeriod={this.props.warningPeriod}
+            id={this.props.id}
+          />
         </div>
-        <div style={styles.expirationMessage}>{this.props.reminderText}</div>
+
+        {reminderText}
       </div>
     );
   }

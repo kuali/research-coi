@@ -37,6 +37,10 @@ class _ConfigActions {
     });
   }
 
+  enableSponsorLookup() { this.dispatch(); }
+
+  disableSponsorLookup() { this.dispatch(); }
+
   setDueDate(newDate) { this.dispatch(newDate); }
 
   setIsRollingDueDate(value) { this.dispatch(value); }
@@ -63,6 +67,8 @@ class _ConfigActions {
   }
 
   saveNewNotification() { this.dispatch(); }
+
+  deleteNotification(id) { this.dispatch(id); }
 
   questionTypeChosen(category, questionId, type) {
     this.dispatch({

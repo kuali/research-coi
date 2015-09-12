@@ -6,6 +6,7 @@ import UndoButton from '../UndoButton';
 import DisclosureTypes from './DisclosureTypes';
 import NotificationDetails from './NotificationDetails';
 import ConfigStore from '../../../stores/ConfigStore';
+import SponsorLookup from './SponsorLookup';
 
 export default class General extends React.Component {
   constructor() {
@@ -31,7 +32,8 @@ export default class General extends React.Component {
       disclosureTypes: storeState.disclosureTypes,
       dueDate: storeState.dueDate,
       isRollingDueDate: storeState.isRollingDueDate,
-      notifications: storeState.notifications
+      notifications: storeState.notifications,
+      sponsorLookup: storeState.sponsorLookup
     });
   }
 
@@ -77,6 +79,8 @@ export default class General extends React.Component {
                   types={this.state.disclosureTypes}
                   appState={this.state.applicationState}
                 />
+
+                <SponsorLookup enabled={this.state.sponsorLookup} />
               </Panel>
 
               <Panel title="Expiration Notifications">
