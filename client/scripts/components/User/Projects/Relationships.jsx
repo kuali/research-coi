@@ -69,7 +69,7 @@ export class Relationships extends ResponsiveComponent {
   getEntityRelations(id) {
     if (this.props.relations) {
       return this.props.relations.filter(element => {
-        return element.entityId === id;
+        return element.finEntityId === id;
       });
     }
     else {
@@ -146,6 +146,7 @@ export class Relationships extends ResponsiveComponent {
             open={this.isProjectDeclarationOpen(this.props.projects[i].projectId)}
             onNext={this.openNext}
             id={i}
+            projectCount={this.props.projects.length}
             onPrevious={this.openPrevious}
             key={this.props.projects[i].projectId}
           />
@@ -167,6 +168,7 @@ export class Relationships extends ResponsiveComponent {
             onNext={this.openNext}
             onPrevious={this.openPrevious}
             id={i}
+            entityCount={this.props.entities.length}
             key={this.props.entities[i].id}
           />
         );

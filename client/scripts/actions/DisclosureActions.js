@@ -108,27 +108,27 @@ class _DisclosureActions {
 
   changeDeclarationView(newView) { this.dispatch(newView); }
 
-  entityRelationChosen(relationType, entityId, projectId, relation) {
+  entityRelationChosen(relationType, finEntityId, projectId, relationshipStatusCd) {
     this.dispatch({
       relationType: relationType,
-      entityId: entityId,
+      finEntityId: finEntityId,
       projectId: projectId,
-      relation: relation
+      relationshipStatusCd: relationshipStatusCd
     });
   }
 
-  declarationCommentedOn(relationType, entityId, projectId, comment) {
+  declarationCommentedOn(relationType, finEntityId, projectId, comments) {
     this.dispatch({
       relationType: relationType,
-      entityId: entityId,
+      finEntityId: finEntityId,
       projectId: projectId,
-      comment: comment
+      comments: comments
     });
   }
 
-  setAllForEntity(entityId, newValue) {
+  setAllForEntity(finEntityId, newValue) {
     this.dispatch({
-      entityId: entityId,
+      finEntityId: finEntityId,
       newValue: newValue
     });
   }

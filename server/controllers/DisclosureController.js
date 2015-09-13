@@ -338,6 +338,30 @@ export let init = app => {
     });
   });
 
+  app.put('/api/coi/disclosure/:id/declaration', function(req, res, next) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    DisclosureDB.saveDeclaration(req.dbInfo, userInfo.id, req.body, function(err, declaration){
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(declaration);
+      }
+    }, undefined);
+  });
+
+  app.post('/api/coi/disclosure/:id/declaration', function(req, res, next) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.body, function(err, declaration){
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(declaration);
+      }
+    }, undefined);
+  });
+
   app.post('/api/coi/disclosure/:id/question/answer', function(req, res) {
     let userInfo = getUserInfo(req.cookies.authToken);
     res.sendStatus(202);

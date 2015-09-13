@@ -125,10 +125,10 @@ export class Entity extends ResponsiveComponent {
           sponsor={this.props.sponsor}
           cosponsor={this.props.cosponsor}
           relationshipStatuses={this.props.relationshipStatuses}
-          entityId={this.props.entity.id}
+          finEntityId={this.props.entity.id}
           id={this.props.id}
+          entityCount={this.props.entityCount}
           onSave={this.toggleDialog}
-          onCancel={this.toggleDialog}
           onNext={this.props.onNext}
           onPrevious={this.props.onPrevious} />
       );

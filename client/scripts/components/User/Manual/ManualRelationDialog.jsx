@@ -20,11 +20,11 @@ export class ManualRelationDialog extends ResponsiveComponent {
 
   findRelationByEntity(id) {
     let relation = this.props.relations.find((element) => {
-      return element.entityId === id;
+      return element.finEntityId === id;
     });
 
     if (relation) {
-      return relation.relation;
+      return relation.relationshipStatusCd;
     }
     else {
       return null;
@@ -33,7 +33,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
 
   findCommentByEntity(id) {
     let relation = this.props.relations.find((element) => {
-      return element.entityId === id;
+      return element.finEntityId === id;
     });
 
     if (relation) {
@@ -104,7 +104,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
           entity={element}
           relationType="MANUAL"
           projectId={this.props.projectId}
-          relation={this.findRelationByEntity(element.id)}
+          relationshipStatusCd={this.findRelationByEntity(element.id)}
           comments={this.findCommentByEntity(element.id)}
           key={element.id}
         />
@@ -135,7 +135,6 @@ export class ManualRelationDialog extends ResponsiveComponent {
         </div>
         <div style={styles.buttons}>
           <div>
-            <ProminentButton onClick={this.props.onCancel} style={styles.button}>Cancel</ProminentButton>
             <ProminentButton onClick={this.props.onSave} style={styles.button}>Done</ProminentButton>
           </div>
         </div>
