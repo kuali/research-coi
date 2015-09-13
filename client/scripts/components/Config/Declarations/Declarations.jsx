@@ -3,6 +3,7 @@ import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
 import UndoButton from '../UndoButton';
+import SaveButton from '../SaveButton';
 import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
 import DeclarationType from './DeclarationType';
@@ -34,7 +35,8 @@ export default class Declarations extends React.Component {
     this.setState({
       applicationState: storeState.applicationState,
       declarationTypes: storeState.declarationTypes,
-      instructions: storeState.instructions
+      instructions: storeState.instructions,
+      dirty: storeState.dirty
     });
   }
 
@@ -73,7 +75,8 @@ export default class Declarations extends React.Component {
         minHeight: 0
       },
       rightPanel: {
-        padding: '0 20px'
+        padding: '0 20px 0 35px',
+        width: 235
       },
       types: {
         width: 350
@@ -94,6 +97,11 @@ export default class Declarations extends React.Component {
       deleteLink: {
         float: 'right',
         paddingTop: 2
+      },
+      saveAndUndo: {
+        position: 'fixed',
+        transition: 'opacity .1s linear',
+        opacity: this.state.dirty ? 1 : 0
       }
     };
 
@@ -174,7 +182,10 @@ export default class Declarations extends React.Component {
               </Panel>
             </span>
             <span style={styles.rightPanel}>
-              <UndoButton onClick={this.undo} />
+              <div style={styles.saveAndUndo}>
+                <SaveButton style={{marginBottom: 30}} />
+                <UndoButton />
+              </div>
             </span>
           </div>
         </span>

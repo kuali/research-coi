@@ -3,6 +3,7 @@ import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
 import UndoButton from '../UndoButton';
+import SaveButton from '../SaveButton';
 import InstructionEditor from '../InstructionEditor';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
@@ -32,7 +33,8 @@ export default class Certification extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       certificationOptions: storeState.certificationOptions,
-      instructions: storeState.instructions
+      instructions: storeState.instructions,
+      dirty: storeState.dirty
     });
   }
 
@@ -70,7 +72,8 @@ export default class Certification extends React.Component {
         minHeight: 0
       },
       rightPanel: {
-        padding: '0 20px'
+        padding: '0 20px 0 35px',
+        width: 235
       },
       textarea: {
         width: '100%',
@@ -92,6 +95,11 @@ export default class Certification extends React.Component {
         fontSize: 11,
         fontWeight: 'bold',
         paddingBottom: 2
+      },
+      saveAndUndo: {
+        position: 'fixed',
+        transition: 'opacity .1s linear',
+        opacity: this.state.dirty ? 1 : 0
       }
     };
 
@@ -134,7 +142,10 @@ export default class Certification extends React.Component {
               </Panel>
             </span>
             <span style={styles.rightPanel}>
-              <UndoButton onClick={this.undo} />
+              <div style={styles.saveAndUndo}>
+                <SaveButton style={{marginBottom: 30}} />
+                <UndoButton />
+              </div>
             </span>
           </div>
         </span>

@@ -23,6 +23,8 @@ class _ConfigStore extends AutoBindingStore {
       }
     };
 
+    this.dirty = false;
+
     this.disclosureTypes = [
       {
         label: 'Annual Disclosure',
@@ -250,29 +252,35 @@ class _ConfigStore extends AutoBindingStore {
     this.applicationState.declarationsTypesBeingEdited[id] = {
       newValue: this.declarationTypes.find(type => { return id === type.id; }).text
     };
+    this.dirty = true;
   }
 
   updateDeclarationType(params) {
     this.applicationState.declarationsTypesBeingEdited[params.id].newValue = params.newValue;
+    this.dirty = true;
   }
 
   stopEditingDeclarationType(id) {
     let newValue = this.applicationState.declarationsTypesBeingEdited[id].newValue;
     this.declarationTypes.find(type => { return id === type.id; }).text = newValue;
     delete this.applicationState.declarationsTypesBeingEdited[id];
+    this.dirty = true;
   }
 
   toggleDeclarationType(id) {
     let typeObject = this.declarationTypes.find(type => { return id === type.id; });
     typeObject.showing = !typeObject.showing;
+    this.dirty = true;
   }
 
   startEnteringNewDeclarationType() {
     this.applicationState.enteringNewType = true;
+    this.dirty = true;
   }
 
   deleteInProgressCustomDeclarationType() {
     this.applicationState.enteringNewType = false;
+    this.dirty = true;
   }
 
   saveNewDeclarationType() {
@@ -285,44 +293,54 @@ class _ConfigStore extends AutoBindingStore {
     });
     this.applicationState.enteringNewType = false;
     this.applicationState.newTypeText = '';
+    this.dirty = true;
   }
 
   setNewDeclarationTypeText(newValue) {
     this.applicationState.newTypeText = newValue;
+    this.dirty = true;
   }
 
   deleteDeclarationType(id) {
     this.declarationTypes = this.declarationTypes.filter(type => {
       return type.id !== id;
     });
+    this.dirty = true;
   }
 
   enableDisclosureType(id) {
     this.disclosureTypes.find(type => { return id === type.id; }).enabled = true;
+    this.dirty = true;
   }
 
   disableDisclosureType(id) {
     this.disclosureTypes.find(type => { return id === type.id; }).enabled = false;
+    this.dirty = true;
   }
 
   updateDisclosureType(params) {
     this.disclosureTypes.find(type => { return params.id === type.id; }).label = params.newValue;
+    this.dirty = true;
   }
 
   enableSponsorLookup() {
     this.sponsorLookup = true;
+    this.dirty = true;
   }
 
   disableSponsorLookup() {
     this.sponsorLookup = false;
+    this.dirty = true;
   }
 
   setDueDate(newDate) {
     this.dueDate = newDate;
+    this.dirty = true;
   }
 
   setIsRollingDueDate(value) {
     this.isRollingDueDate = value;
+    this.dirty = true;
   }
 
   setWarningValueOnNotification(params) {
@@ -337,6 +355,7 @@ class _ConfigStore extends AutoBindingStore {
     if (targetNote) {
       targetNote.warningValue = params.newValue;
     }
+    this.dirty = true;
   }
 
   setWarningPeriodOnNotification(params) {
@@ -351,6 +370,7 @@ class _ConfigStore extends AutoBindingStore {
     if (targetNote) {
       targetNote.warningPeriod = params.newValue;
     }
+    this.dirty = true;
   }
 
   setReminderTextOnNotification(params) {
@@ -365,6 +385,7 @@ class _ConfigStore extends AutoBindingStore {
     if (targetNote) {
       targetNote.reminderText = params.newValue;
     }
+    this.dirty = true;
   }
 
   saveNewNotification() {
@@ -375,12 +396,14 @@ class _ConfigStore extends AutoBindingStore {
       warningPeriod: 'Days',
       warningValue: 1
     };
+    this.dirty = true;
   }
 
   deleteNotification(id) {
     this.notifications = this.notifications.filter(notification => {
       return notification.id !== id;
     });
+    this.dirty = true;
   }
 
   findQuestion(category, id) {
@@ -412,6 +435,7 @@ class _ConfigStore extends AutoBindingStore {
     }
 
     targetQuestion.type = params.type;
+    this.dirty = true;
   }
 
   questionTextChanged(params) {
@@ -424,14 +448,17 @@ class _ConfigStore extends AutoBindingStore {
     }
 
     targetQuestion.text = params.text;
+    this.dirty = true;
   }
 
   updateQuestions(params) {
     this.questions[params.category] = params.questions;
+    this.dirty = true;
   }
 
   cancelNewQuestion(params) {
     this.applicationState.newQuestion[params.category] = undefined;
+    this.dirty = true;
   }
 
   saveNewQuestion(params) {
@@ -450,16 +477,20 @@ class _ConfigStore extends AutoBindingStore {
     this.applicationState.newQuestion[params.category].order = 1;
     this.questions[params.category].push(this.applicationState.newQuestion[params.category]);
     this.applicationState.newQuestion[params.category] = undefined;
+    this.dirty = true;
   }
 
   startNewQuestion(params) {
     this.applicationState.newQuestion[params.category] = {};
+    this.dirty = true;
   }
 
   deleteQuestion(params) {
     this.questions[params.category] = this.questions[params.category].filter(question => {
       return question.id !== params.questionId && question.parent !== params.questionId;
     });
+
+    this.dirty = true;
   }
 
   removeSubQuestions(category, parentId) {
@@ -484,15 +515,21 @@ class _ConfigStore extends AutoBindingStore {
     }
 
     delete this.applicationState.questionsBeingEdited[params.category][params.questionId];
+
+    this.dirty = true;
   }
 
   startEditingQuestion(params) {
     let clone = JSON.parse(JSON.stringify(this.findQuestion(params.category, params.questionId)));
     this.applicationState.questionsBeingEdited[params.category][params.questionId] = clone;
+
+    this.dirty = true;
   }
 
   cancelQuestionEdit(params) {
     delete this.applicationState.questionsBeingEdited[params.category][params.questionId];
+
+    this.dirty = true;
   }
 
   criteriaChanged(params) {
@@ -500,6 +537,8 @@ class _ConfigStore extends AutoBindingStore {
     if (question) {
       question.displayCriteria = params.newValue;
     }
+
+    this.dirty = true;
   }
 
   multiSelectOptionAdded(params) {
@@ -515,6 +554,8 @@ class _ConfigStore extends AutoBindingStore {
       targetQuestion.options = [];
     }
     targetQuestion.options.push(params.newValue);
+
+    this.dirty = true;
   }
 
   multiSelectOptionDeleted(params) {
@@ -531,6 +572,8 @@ class _ConfigStore extends AutoBindingStore {
         return option !== params.optionId;
       });
     }
+
+    this.dirty = true;
   }
 
   requiredNumSelectionsChanged(params) {
@@ -543,14 +586,18 @@ class _ConfigStore extends AutoBindingStore {
     }
 
     targetQuestion.requiredNumSelections = params.newValue;
+
+    this.dirty = true;
   }
 
   relationshipPeopleChanged(newPeople) {
     this.people = newPeople;
+    this.dirty = true;
   }
 
   relationshipPeopleEnabled(newValue) {
     this.peopleEnabled = newValue;
+    this.dirty = true;
   }
 
   enabledChanged(params) {
@@ -561,6 +608,7 @@ class _ConfigStore extends AutoBindingStore {
     if (target) {
       target.enabled = params.newValue;
     }
+    this.dirty = true;
   }
 
   typeEnabledChanged(params) {
@@ -571,6 +619,7 @@ class _ConfigStore extends AutoBindingStore {
     if (target) {
       target.typeEnabled = params.newValue;
     }
+    this.dirty = true;
   }
 
   amountEnabledChanged(params) {
@@ -581,6 +630,7 @@ class _ConfigStore extends AutoBindingStore {
     if (target) {
       target.amountEnabled = params.newValue;
     }
+    this.dirty = true;
   }
 
   typeOptionsChanged(params) {
@@ -591,6 +641,7 @@ class _ConfigStore extends AutoBindingStore {
     if (target) {
       target.typeOptions = params.newList;
     }
+    this.dirty = true;
   }
 
   amountOptionsChanged(params) {
@@ -601,18 +652,34 @@ class _ConfigStore extends AutoBindingStore {
     if (target) {
       target.amountOptions = params.newList;
     }
+    this.dirty = true;
   }
 
   setCertificationText(newText) {
     this.certificationOptions.text = newText;
+    this.dirty = true;
   }
 
   setCertificationRequired(newValue) {
     this.certificationOptions.required = newValue;
+    this.dirty = true;
   }
 
   setInstructions(params) {
     this.instructions[params.step] = params.newValue;
+    this.dirty = true;
+  }
+
+  loadAllConfigData() {
+    // reload all data from the backend
+  }
+
+  saveAll() {
+    // persist all data to the backend
+  }
+
+  undoAll() {
+    this.loadAllConfigData();
   }
 }
 

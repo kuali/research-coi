@@ -224,6 +224,10 @@ class _ConfigActions {
       newValue: newValue
     });
   }
+
+  saveAll() { this.dispatch(); }
+
+  undoAll() { this.dispatch(); }
 }
 
 export default alt.createActions(_ConfigActions);

@@ -3,6 +3,7 @@ import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
 import UndoButton from '../UndoButton';
+import SaveButton from '../SaveButton';
 import InstructionEditor from '../InstructionEditor';
 import EditableList from '../EditableList';
 import ConfigActions from '../../../actions/ConfigActions';
@@ -41,7 +42,8 @@ export default class Relationship extends React.Component {
       list: storeState.people,
       peopleEnabled: storeState.peopleEnabled,
       matrixTypes: storeState.matrixTypes,
-      instructions: storeState.instructions
+      instructions: storeState.instructions,
+      dirty: storeState.dirty
     });
   }
 
@@ -99,7 +101,8 @@ export default class Relationship extends React.Component {
         minHeight: 0
       },
       rightPanel: {
-        padding: '0 20px'
+        padding: '0 20px 0 35px',
+        width: 235
       },
       peopleLeft: {
         paddingRight: 25
@@ -114,6 +117,11 @@ export default class Relationship extends React.Component {
         fontWeight: 'bold',
         marginLeft: 10,
         verticalAlign: 'middle'
+      },
+      saveAndUndo: {
+        position: 'fixed',
+        transition: 'opacity .1s linear',
+        opacity: this.state.dirty ? 1 : 0
       }
     };
 
@@ -182,7 +190,10 @@ export default class Relationship extends React.Component {
               </Panel>
             </span>
             <span style={styles.rightPanel}>
-              <UndoButton onClick={this.undo} />
+              <div style={styles.saveAndUndo}>
+                <SaveButton style={{marginBottom: 30}} />
+                <UndoButton />
+              </div>
             </span>
           </div>
         </span>
