@@ -46,7 +46,7 @@ export class EntityRelation extends ResponsiveComponent {
           <input
           type="radio"
           ref="none"
-          checked={this.props.relation === status.statusCd}
+          checked={this.props.relationshipStatusCd === status.statusCd}
           value={status.statusCd}
           onChange={this.relationChosen}
           name={this.props.entity.id + 'relation' + this.props.projectId}

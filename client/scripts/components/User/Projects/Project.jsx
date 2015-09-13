@@ -124,8 +124,8 @@ export class Project extends ResponsiveComponent {
           projectId={this.props.projectId}
           relationshipStatuses={this.props.relationshipStatuses}
           id={this.props.id}
+          projectCount={this.props.projectCount}
           onSave={this.toggleDialog}
-          onCancel={this.toggleDialog}
           onNext={this.props.onNext}
           onPrevious={this.props.onPrevious} />
       );
@@ -182,9 +182,6 @@ export class Project extends ResponsiveComponent {
 
               <div>
                 <KButton style={styles.button} onClick={this.toggleDialog}>Update</KButton>
-                <KButton style={merge(styles.button, {marginBottom: 0})}>
-                  Project Details
-                </KButton>
               </div>
             </span>
           </div>

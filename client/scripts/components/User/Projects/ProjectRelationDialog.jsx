@@ -30,11 +30,11 @@ export class ProjectRelationDialog extends ResponsiveComponent {
 
   findRelationByEntity(id) {
     let relation = this.props.relations.find(element => {
-      return element.entityId === id;
+      return element.finEntityId === id;
     });
 
     if (relation) {
-      return relation.relation;
+      return relation.relationshipStatusCd;
     }
     else {
       return null;
@@ -43,7 +43,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
 
   findCommentByEntity(id) {
     let relation = this.props.relations.find(element => {
-      return element.entityId === id;
+      return element.finEntityId === id;
     });
 
     if (relation) {
@@ -122,7 +122,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
           entity={element}
           relationType="PROJECT"
           projectId={this.props.projectId}
-          relation={this.findRelationByEntity(element.id)}
+          relationshipStatusCd={this.findRelationByEntity(element.id)}
           comments={this.findCommentByEntity(element.id)}
           relationshipStatuses={this.props.relationshipStatuses}
           key={element.id}
@@ -135,6 +135,20 @@ export class ProjectRelationDialog extends ResponsiveComponent {
       <option key={option.statusCd} value={option.statusCd}>{option.description}</option>
       );
     });
+
+    let navButtons = [];
+    if (this.props.projectCount > 0) {
+      if (this.props.id > 0) {
+        navButtons.push(
+        <ProminentButton key='previous' onClick={this.onPrevious} style={styles.button}>Previous Project ^</ProminentButton>
+        );
+      }
+      if (this.props.id < this.props.projectCount - 1) {
+        navButtons.push(
+        <ProminentButton key='next' onClick={this.onNext} style={styles.button}>Next Project v</ProminentButton>
+        );
+      }
+    }
 
     return (
       <div style={merge(styles.container, this.props.style)} >
@@ -158,10 +172,8 @@ export class ProjectRelationDialog extends ResponsiveComponent {
         </div>
         <div style={styles.buttons}>
           <div>
-            <ProminentButton onClick={this.onPrevious} style={styles.button}>Previous Project ^</ProminentButton>
-            <ProminentButton onClick={this.onNext} style={styles.button}>Next Project v</ProminentButton>
+            {navButtons}
             <span style={styles.spacer} />
-            <ProminentButton onClick={this.props.onCancel} style={styles.button}>Cancel</ProminentButton>
             <ProminentButton onClick={this.props.onSave} style={styles.button}>Done</ProminentButton>
           </div>
         </div>

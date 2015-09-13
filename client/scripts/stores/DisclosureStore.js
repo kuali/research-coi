@@ -617,19 +617,31 @@ class _DisclosureStore extends AutoBindingStore {
 
     // Look for existing relation
     let existing = this.declarations.find(declaration => {
-      return declaration.entityId === params.entityId && declaration[field] === params.projectId;
+      return declaration.finEntityId === params.finEntityId && declaration[field] === params.projectId;
     });
 
     if (existing) {
-      existing.relation = params.relation;
+      existing.relationshipStatusCd = params.relationshipStatusCd;
+      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      .send(existing)
+      .type('application/json')
+      .end();
     }
     else {
       let newRelation = {
-        entityId: params.entityId,
-        relation: params.relation
+        finEntityId: params.finEntityId,
+        relationshipStatusCd: params.relationshipStatusCd
       };
       newRelation[field] = params.projectId;
-      this.declarations.push(newRelation);
+      request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      .send(newRelation)
+      .type('application/json')
+      .end((err, res) => {
+        if (!err) {
+          this.declarations.push(res.body);
+          this.emitChange();
+        }
+      });
     }
   }
 
@@ -650,19 +662,31 @@ class _DisclosureStore extends AutoBindingStore {
 
     // Look for existing relation
     let existing = this.declarations.find(declaration => {
-      return declaration.entityId === params.entityId && declaration[field] === params.projectId;
+      return declaration.finEntityId === params.finEntityId && declaration[field] === params.projectId;
     });
 
     if (existing) {
-      existing.comment = params.comment;
+      existing.comments = params.comments;
+      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      .send(existing)
+      .type('application/json')
+      .end();
     }
     else {
       let newRelation = {
-        entityId: params.entityId,
-        comment: params.comment
+        finEntityId: params.finEntityId,
+        comments: params.comments
       };
       newRelation[field] = params.projectId;
-      this.declarations.push(newRelation);
+      request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      .send(newRelation)
+      .type('application/json')
+      .end((err, res) => {
+        if (!err) {
+          this.declarations.push(res.body);
+          this.emitChange();
+        }
+      });
     }
   }
 
@@ -670,9 +694,9 @@ class _DisclosureStore extends AutoBindingStore {
     this.projects.forEach(project => {
       this.entityRelationChosen({
         relationType: 'PROJECT',
-        entityId: params.entityId,
+        finEntityId: params.finEntityId,
         projectId: project.projectId,
-        relation: params.newValue
+        relationshipStatusCd: params.newValue
       });
     });
   }
@@ -681,9 +705,9 @@ class _DisclosureStore extends AutoBindingStore {
     this.entities.forEach(entity => {
       this.entityRelationChosen({
         relationType: params.type,
-        entityId: entity.id,
+        finEntityId: entity.id,
         projectId: params.projectId,
-        relation: params.newValue
+        relationshipStatusCd: params.newValue
       });
     });
   }

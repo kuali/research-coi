@@ -56,7 +56,7 @@ export class Disclosure extends ResponsiveComponent {
     entities.forEach(entity => {
       projects.forEach(project => {
         let existingRelation = relations.find(relation => {
-          return relation.entityId === entity.id &&
+          return relation.finEntityId === entity.id &&
             (
               relation.projectId === project.projectId
             );
@@ -82,7 +82,7 @@ export class Disclosure extends ResponsiveComponent {
     let undefinedFound = false;
     entities.forEach(entity => {
       let existingRelation = relations.find(relation => {
-        return relation.entityId === entity.id && relation.manualId === disclosure.projectId;
+        return relation.finEntityId === entity.id && relation.manualId === disclosure.projectId;
       });
 
       if (!existingRelation) {

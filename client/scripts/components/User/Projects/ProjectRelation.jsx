@@ -13,11 +13,11 @@ export class ProjectRelation extends ResponsiveComponent {
   }
 
   relationChosen(evt) {
-    DisclosureActions.entityRelationChosen('PROJECT', this.props.entityId, this.props.project.projectId, parseInt(evt.target.value));
+    DisclosureActions.entityRelationChosen('PROJECT', this.props.finEntityId, this.props.project.projectId, parseInt(evt.target.value));
   }
 
   commentMade() {
-    DisclosureActions.declarationCommentedOn('PROJECT', this.props.entityId, this.props.project.projectId, this.refs.comment.getDOMNode().value);
+    DisclosureActions.declarationCommentedOn('PROJECT', this.props.finEntityId, this.props.project.projectId, this.refs.comment.getDOMNode().value);
   }
 
   renderMobile() {}
@@ -46,10 +46,10 @@ export class ProjectRelation extends ResponsiveComponent {
         <input
         type="radio"
         ref="none"
-        checked={this.props.relation === status.statusCd}
+        checked={this.props.relationshipStatusCd === status.statusCd}
         value={status.statusCd}
         onChange={this.relationChosen}
-        name={this.props.project.projectId + 'relation' + this.props.entityId}
+        name={this.props.project.projectId + 'relation' + this.props.finEntityId}
         />
         <span style={{fontSize: 14, marginLeft: 6}}>{status.description}</span>
       </div>

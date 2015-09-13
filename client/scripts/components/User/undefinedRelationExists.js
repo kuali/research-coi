@@ -6,7 +6,7 @@ export function undefinedRelationExists(type, itemsNeedingDisclosures, relations
         return relation.projectId === item.projectId;
       }
       else {
-        return relation.entityId === item.id;
+        return relation.finEntityId === item.id;
       }
     });
 

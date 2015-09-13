@@ -29,7 +29,7 @@ export let saveSingleRecord = (dbInfo, record, callback, tableProps, optionalTrx
   .into(tableProps.table)
   .then(function (result) {
     let updatedRecord = _.clone(record);
-    updatedRecord[camelizeJson(tableProps.pk)] = result;
+    updatedRecord[camelizeJson(tableProps).pk] = result[0];
     callback(null, updatedRecord);
   })
   .catch(function(err) {
@@ -72,7 +72,7 @@ export let getExistingSingleRecord = (dbInfo, recordId, callback, tableProps, op
 export let saveExistingSingleRecord = (dbInfo, record, callback, tableProps, optionalTrx) => {
   let knex = getKnex(dbInfo);
 
-  let recordId = record[camelizeJson(tableProps.pk)];
+  let recordId = record[camelizeJson(tableProps).pk];
   if (!recordId) {
     callback('Record does not have an ' + tableProps.pk + ' for table ' + tableProps.table);
   }

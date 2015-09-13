@@ -239,10 +239,10 @@ export let get = (dbInfo, disclosureId, callback) => {
       .from('project as p')
       .innerJoin('project_type as pt', 'pt.type_cd', 'p.type_cd' )
       .where('disclosure_id', disclosureId),
-    knex.select('d.project_id as projectId', 'd.fin_entity_id as entityId', 'd.relationship_status_cd as relation', 'd.comments as comments')
+    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.relationship_status_cd as relationshipStatusCd', 'd.comments as comments')
       .from('declaration as d')
-      .innerJoin('fin_entity as fe','fe.id', 'd.fin_entity_id')
-      .where('fe.disclosure_id',disclosureId)
+      .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
+      .where('fe.disclosure_id', disclosureId)
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
       callback(new Error('invalid disclosure id'));
