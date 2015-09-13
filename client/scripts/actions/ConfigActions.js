@@ -217,6 +217,13 @@ class _ConfigActions {
   setCertificationText(newText) { this.dispatch(newText); }
 
   setCertificationRequired(newValue) { this.dispatch(newValue); }
+
+  setInstructions(step, newValue) {
+    this.dispatch({
+      step: step,
+      newValue: newValue
+    });
+  }
 }
 
 export default alt.createActions(_ConfigActions);

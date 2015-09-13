@@ -29,7 +29,8 @@ export default class Questionnaire extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      questions: storeState.questions.entities
+      questions: storeState.questions.entities,
+      instructions: storeState.instructions
     });
   }
 
@@ -64,11 +65,19 @@ export default class Questionnaire extends React.Component {
       }
     };
 
+    let instructionText = '';
+    if (this.state.instructions && this.state.instructions['Financial Entities Questionnaire']) {
+      instructionText = this.state.instructions['Financial Entities Questionnaire'];
+    }
+
     let configSection;
     if (this.state.applicationState) {
       configSection = (
         <span className="fill">
-          <InstructionEditor step="Financial Entities Questionnaire" />
+          <InstructionEditor
+            step="Financial Entities Questionnaire"
+            value={instructionText}
+          />
           <QuestionnaireConfig
             questionnaireCategory="entities"
             questions={this.state.questions}

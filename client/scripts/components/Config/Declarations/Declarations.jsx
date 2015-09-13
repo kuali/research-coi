@@ -33,7 +33,8 @@ export default class Declarations extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      declarationTypes: storeState.declarationTypes
+      declarationTypes: storeState.declarationTypes,
+      instructions: storeState.instructions
     });
   }
 
@@ -141,6 +142,11 @@ export default class Declarations extends React.Component {
       });
     }
 
+    let instructionText = '';
+    if (this.state.instructions && this.state.instructions['Project Declaration']) {
+      instructionText = this.state.instructions['Project Declaration'];
+    }
+
     return (
       <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
         <Sidebar active="declarations" />
@@ -150,7 +156,10 @@ export default class Declarations extends React.Component {
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
-              <InstructionEditor step="Project Declaration" />
+              <InstructionEditor
+                step="Project Declaration"
+                value={instructionText}
+              />
               <Panel title="Declaration Types">
                 <div style={styles.types}>
                   {typesJsx}

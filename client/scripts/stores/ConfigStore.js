@@ -187,6 +187,9 @@ class _ConfigStore extends AutoBindingStore {
       text: '',
       required: true
     };
+
+    this.instructions = {
+    };
   }
 
   insertOrders(questions) {
@@ -606,6 +609,10 @@ class _ConfigStore extends AutoBindingStore {
 
   setCertificationRequired(newValue) {
     this.certificationOptions.required = newValue;
+  }
+
+  setInstructions(params) {
+    this.instructions[params.step] = params.newValue;
   }
 }
 

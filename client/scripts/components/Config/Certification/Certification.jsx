@@ -11,8 +11,7 @@ export default class Certification extends React.Component {
   constructor() {
     super();
 
-    this.state = {
-    };
+    this.state = {};
 
     this.onChange = this.onChange.bind(this);
     this.textChanged = this.textChanged.bind(this);
@@ -31,7 +30,8 @@ export default class Certification extends React.Component {
   onChange() {
     let storeState = ConfigStore.getState();
     this.setState({
-      certificationOptions: storeState.certificationOptions
+      certificationOptions: storeState.certificationOptions,
+      instructions: storeState.instructions
     });
   }
 
@@ -108,6 +108,11 @@ export default class Certification extends React.Component {
       );
     }
 
+    let instructionText = '';
+    if (this.state.instructions && this.state.instructions.Certification) {
+      instructionText = this.state.instructions.Certification;
+    }
+
     return (
       <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
         <Sidebar active="certification" />
@@ -117,7 +122,10 @@ export default class Certification extends React.Component {
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
-              <InstructionEditor step="Certification" />
+              <InstructionEditor
+                step="Certification"
+                value={instructionText}
+              />
               <Panel title="Certification">
                 <div style={styles.details}>
                   {details}
