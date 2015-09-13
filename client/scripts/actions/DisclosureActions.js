@@ -31,10 +31,10 @@ class _DisclosureActions {
 
   entityFormBackClicked(entityId) { this.dispatch(entityId); }
 
-  setEntityActiveStatus(newStatus, id) {
+  setEntityActiveStatus(active, id) {
     this.dispatch({
       id: id,
-      status: newStatus
+      active: active
     });
   }
 
