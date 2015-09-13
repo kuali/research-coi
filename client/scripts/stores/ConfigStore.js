@@ -672,10 +672,12 @@ class _ConfigStore extends AutoBindingStore {
 
   loadAllConfigData() {
     // reload all data from the backend
+    this.dirty = false;
   }
 
   saveAll() {
     // persist all data to the backend
+    this.dirty = false;
   }
 
   undoAll() {
