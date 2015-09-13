@@ -143,8 +143,8 @@ export default class Declarations extends React.Component {
     }
 
     let instructionText = '';
-    if (this.state.instructions && this.state.instructions['Project Declaration']) {
-      instructionText = this.state.instructions['Project Declaration'];
+    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS]) {
+      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
     }
 
     return (
@@ -157,7 +157,7 @@ export default class Declarations extends React.Component {
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
               <InstructionEditor
-                step="Project Declaration"
+                step={COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS}
                 value={instructionText}
               />
               <Panel title="Declaration Types">

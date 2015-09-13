@@ -6,6 +6,7 @@ import UndoButton from '../UndoButton';
 import InstructionEditor from '../InstructionEditor';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class Certification extends React.Component {
   constructor() {
@@ -109,8 +110,8 @@ export default class Certification extends React.Component {
     }
 
     let instructionText = '';
-    if (this.state.instructions && this.state.instructions.Certification) {
-      instructionText = this.state.instructions.Certification;
+    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION]) {
+      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
     }
 
     return (
@@ -123,7 +124,7 @@ export default class Certification extends React.Component {
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
               <InstructionEditor
-                step="Certification"
+                step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
                 value={instructionText}
               />
               <Panel title="Certification">

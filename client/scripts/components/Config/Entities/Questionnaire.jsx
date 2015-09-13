@@ -6,6 +6,7 @@ import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
 import ConfigActions from '../../../actions/ConfigActions';
 import QuestionnaireConfig from '../QuestionnaireConfig';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class Questionnaire extends React.Component {
   constructor() {
@@ -66,8 +67,8 @@ export default class Questionnaire extends React.Component {
     };
 
     let instructionText = '';
-    if (this.state.instructions && this.state.instructions['Financial Entities Questionnaire']) {
-      instructionText = this.state.instructions['Financial Entities Questionnaire'];
+    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.ENTITIES_QUESTIONNAIRE]) {
+      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.ENTITIES_QUESTIONNAIRE];
     }
 
     let configSection;
@@ -75,7 +76,7 @@ export default class Questionnaire extends React.Component {
       configSection = (
         <span className="fill">
           <InstructionEditor
-            step="Financial Entities Questionnaire"
+            step={COIConstants.INSTRUCTION_STEP.ENTITIES_QUESTIONNAIRE}
             value={instructionText}
           />
           <QuestionnaireConfig

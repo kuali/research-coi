@@ -8,6 +8,7 @@ import EditableList from '../EditableList';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
 import RelationshipType from './RelationshipType';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class Relationship extends React.Component {
   constructor() {
@@ -139,8 +140,8 @@ export default class Relationship extends React.Component {
     }
 
     let instructionText = '';
-    if (this.state.instructions && this.state.instructions['Relationship Matrix']) {
-      instructionText = this.state.instructions['Relationship Matrix'];
+    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX]) {
+      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX];
     }
 
     return (
@@ -153,7 +154,7 @@ export default class Relationship extends React.Component {
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
               <InstructionEditor
-                step="Relationship Matrix"
+                step={COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX}
                 value={instructionText}
               />
               <Panel title="Relationship Matrix People Configuration">
