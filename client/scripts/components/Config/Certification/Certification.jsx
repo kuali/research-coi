@@ -2,8 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
-import UndoButton from '../UndoButton';
-import SaveButton from '../SaveButton';
+import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
@@ -71,10 +70,6 @@ export default class Certification extends React.Component {
         overflowY: 'auto',
         minHeight: 0
       },
-      rightPanel: {
-        padding: '0 20px 0 35px',
-        width: 235
-      },
       textarea: {
         width: '100%',
         height: 160,
@@ -95,11 +90,6 @@ export default class Certification extends React.Component {
         fontSize: 11,
         fontWeight: 'bold',
         paddingBottom: 2
-      },
-      saveAndUndo: {
-        position: 'fixed',
-        transition: 'opacity .1s linear',
-        opacity: this.state.dirty ? 1 : 0
       }
     };
 
@@ -141,12 +131,7 @@ export default class Certification extends React.Component {
                 </div>
               </Panel>
             </span>
-            <span style={styles.rightPanel}>
-              <div style={styles.saveAndUndo}>
-                <SaveButton style={{marginBottom: 30}} />
-                <UndoButton />
-              </div>
-            </span>
+            <ActionPanel visible={this.state.dirty} />
           </div>
         </span>
       </span>

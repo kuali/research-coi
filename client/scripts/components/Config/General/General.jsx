@@ -2,8 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
-import UndoButton from '../UndoButton';
-import SaveButton from '../SaveButton';
+import ActionPanel from '../ActionPanel';
 import DisclosureTypes from './DisclosureTypes';
 import NotificationDetails from './NotificationDetails';
 import ConfigStore from '../../../stores/ConfigStore';
@@ -61,15 +60,6 @@ export default class General extends React.Component {
         padding: 35,
         overflowY: 'auto',
         minHeight: 0
-      },
-      rightPanel: {
-        padding: '0 20px 0 35px',
-        width: 235
-      },
-      saveAndUndo: {
-        position: 'fixed',
-        transition: 'opacity .1s linear',
-        opacity: this.state.dirty ? 1 : 0
       }
     };
 
@@ -100,12 +90,7 @@ export default class General extends React.Component {
                 />
               </Panel>
             </span>
-            <span style={styles.rightPanel}>
-              <div style={styles.saveAndUndo}>
-                <SaveButton style={{marginBottom: 30}} />
-                <UndoButton />
-              </div>
-            </span>
+            <ActionPanel visible={this.state.dirty} />
           </div>
         </span>
       </span>

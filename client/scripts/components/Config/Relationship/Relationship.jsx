@@ -2,8 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
-import UndoButton from '../UndoButton';
-import SaveButton from '../SaveButton';
+import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import EditableList from '../EditableList';
 import ConfigActions from '../../../actions/ConfigActions';
@@ -100,10 +99,6 @@ export default class Relationship extends React.Component {
         overflowY: 'auto',
         minHeight: 0
       },
-      rightPanel: {
-        padding: '0 20px 0 35px',
-        width: 235
-      },
       peopleLeft: {
         paddingRight: 25
       },
@@ -117,11 +112,6 @@ export default class Relationship extends React.Component {
         fontWeight: 'bold',
         marginLeft: 10,
         verticalAlign: 'middle'
-      },
-      saveAndUndo: {
-        position: 'fixed',
-        transition: 'opacity .1s linear',
-        opacity: this.state.dirty ? 1 : 0
       }
     };
 
@@ -189,12 +179,7 @@ export default class Relationship extends React.Component {
                 </div>
               </Panel>
             </span>
-            <span style={styles.rightPanel}>
-              <div style={styles.saveAndUndo}>
-                <SaveButton style={{marginBottom: 30}} />
-                <UndoButton />
-              </div>
-            </span>
+            <ActionPanel visible={this.state.dirty} />
           </div>
         </span>
       </span>

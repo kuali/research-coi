@@ -2,8 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
-import UndoButton from '../UndoButton';
-import SaveButton from '../SaveButton';
+import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
 import DeclarationType from './DeclarationType';
@@ -74,10 +73,6 @@ export default class Declarations extends React.Component {
         overflowY: 'auto',
         minHeight: 0
       },
-      rightPanel: {
-        padding: '0 20px 0 35px',
-        width: 235
-      },
       types: {
         width: 350
       },
@@ -97,11 +92,6 @@ export default class Declarations extends React.Component {
       deleteLink: {
         float: 'right',
         paddingTop: 2
-      },
-      saveAndUndo: {
-        position: 'fixed',
-        transition: 'opacity .1s linear',
-        opacity: this.state.dirty ? 1 : 0
       }
     };
 
@@ -181,12 +171,7 @@ export default class Declarations extends React.Component {
                 </div>
               </Panel>
             </span>
-            <span style={styles.rightPanel}>
-              <div style={styles.saveAndUndo}>
-                <SaveButton style={{marginBottom: 30}} />
-                <UndoButton />
-              </div>
-            </span>
+            <ActionPanel visible={this.state.dirty} />
           </div>
         </span>
       </span>
