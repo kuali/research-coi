@@ -29,7 +29,7 @@ export class QuestionnaireSummary extends ResponsiveComponent {
     if (this.props.answers) {
       summaries = this.props.answers.map((answer, index) => {
         let thisQuestion = this.props.questions.find((question) => {
-          return question.id === answer.id;
+          return question.id === answer.questionId;
         });
 
         return (
@@ -37,7 +37,7 @@ export class QuestionnaireSummary extends ResponsiveComponent {
             number={index + 1}
             text={thisQuestion.text}
             answer={answer.answer.value}
-            questionId={answer.id}
+            questionId={answer.questionId}
             key={answer.id}
           />
         );

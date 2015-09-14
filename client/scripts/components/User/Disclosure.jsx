@@ -97,7 +97,8 @@ export class Disclosure extends ResponsiveComponent {
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
-    DisclosureActions.loadDisclosureData();
+    let disclosureType = this.context.router.getCurrentQuery().type;
+    DisclosureActions.loadDisclosureData(disclosureType);
   }
 
   componentWillUnmount() {

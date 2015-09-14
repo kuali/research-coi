@@ -55,7 +55,7 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callbac
     disclosure_id: disclosureId,
     active: financialEntity.active,
     is_public: financialEntity.isPublic,
-    type_cd: financialEntity.type,
+    type_cd: financialEntity.type === undefined ? null : financialEntity.type,
     is_sponsor: financialEntity.isSponsor,
     name: financialEntity.name,
     description: financialEntity.description
@@ -199,7 +199,7 @@ export let saveExistingDisclosureNested = (dbInfo, userId, record, callback) => 
 export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   let knex = getKnex(dbInfo);
   knex('questionnaire_answer').insert({
-    question_id: body.id,
+    question_id: body.questionId,
     answer: JSON.stringify(body.answer)
   }).then(result =>{
     return knex('disclosure_answer').insert({
@@ -214,7 +214,7 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body) => 
   .from('disclosure_answer as da')
   .innerJoin('questionnaire_answer as qa', 'da.questionnaire_answer_id', 'qa.id')
   .where('da.disclosure_id', disclosureId)
-  .andWhere('qa.question_id', body.id).then(result => {
+  .andWhere('qa.question_id', body.questionId).then(result => {
     return knex('questionnaire_answer')
     .where('id', result[0].id)
     .update('answer', JSON.stringify(body.answer));
@@ -231,7 +231,7 @@ export let get = (dbInfo, disclosureId, callback) => {
     knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.is_public as isPublic', 'e.type_cd as type', 'e.is_sponsor as isSponsor', 'e.name', 'e.description')
       .from('fin_entity as e')
       .where('disclosure_id', disclosureId),
-    knex.select('qa.id as id', 'qa.answer as answer')
+    knex.select('qa.id as id', 'qa.question_id as questionId', 'qa.answer as answer')
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
@@ -291,11 +291,31 @@ export let get = (dbInfo, disclosureId, callback) => {
   });
 };
 
-export let getMinDisclosure = (dbInfo, userId, callback) => {
+export let getAnnualDisclosure = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
-  knex('disclosure').min('id as id')
+  knex('disclosure').select('id as id').where('type_cd', 1).andWhere('user_id', userId)
   .then(result => {
+    if (result.length < 1) {
+      let newDisclosure = {type_cd: 1, status_cd: 1, start_date: new Date(), user_id: userId};
+      return knex('disclosure')
+      .insert(newDisclosure)
+      .then(id => {
+        newDisclosure.id = id[0];
+        newDisclosure.answers = [];
+        newDisclosure.entities = [];
+        newDisclosure.projects = [];
+        newDisclosure.declarations = [];
+        callback(undefined, newDisclosure);
+      })
+      .catch(err => {
+        callback(err);
+      });
+    }
+
     get(dbInfo, result[0].id, callback);
+  })
+  .catch(err => {
+    callback(err);
   });
 };
 

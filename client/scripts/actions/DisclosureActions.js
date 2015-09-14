@@ -9,7 +9,7 @@ class _DisclosureActions {
 
   loadDisclosureSummaries() { this.dispatch(); }
 
-  loadDisclosureData() {this.dispatch(); }
+  loadDisclosureData(disclosureType) {this.dispatch(disclosureType); }
 
   toggleInstructions() { this.dispatch(); }
 
