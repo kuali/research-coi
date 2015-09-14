@@ -62,7 +62,7 @@ export default class Declaration extends React.Component {
       },
       typeLabel: {
         verticalAlign: 'middle',
-        paddingLeft: 10
+        paddingLeft: this.props.toggle ? 10 : 28
       },
       textbox: {
         verticalAlign: 'middle',

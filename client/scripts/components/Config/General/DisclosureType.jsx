@@ -8,17 +8,44 @@ export default class DisclosureType extends React.Component {
   constructor() {
     super();
 
+    this.state = {
+      editing: false
+    };
+
     this.editType = this.editType.bind(this);
     this.doneEditing = this.doneEditing.bind(this);
+    this.keyUp = this.keyUp.bind(this);
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle() {
+    let checkbox = React.findDOMNode(this.refs.checkbox);
+    if (checkbox.checked) {
+      ConfigActions.enableDisclosureType(this.props.type.id);
+    }
+    else {
+      ConfigActions.disableDisclosureType(this.props.type.id);
+    }
+  }
+
+  keyUp(evt) {
+    if (evt.keyCode === 13) {
+      this.doneEditing();
+    }
   }
 
   editType() {
-    ConfigActions.startEditingDisclosureType(this.props.id);
+    this.setState({
+      editing: true
+    });
   }
 
   doneEditing() {
     let textbox = React.findDOMNode(this.refs.label);
-    ConfigActions.updateDisclosureType(this.props.id, textbox.value);
+    ConfigActions.updateDisclosureType(this.props.type.id, textbox.value);
+    this.setState({
+      editing: false
+    });
   }
 
   render() {
@@ -31,35 +58,55 @@ export default class DisclosureType extends React.Component {
         marginLeft: 10
       },
       checkbox: {
-        marginRight: 10
+        marginRight: 10,
+        verticalAlign: 'middle'
       },
       textbox: {
         verticalAlign: 'middle',
-        padding: 3,
-        fontSize: 16
+        padding: '3px 6px',
+        fontSize: 16,
+        borderRadius: 5,
+        border: '1px solid #AAA'
+      },
+      label: {
+        fontSize: 17
+      },
+      dynamicSpan: {
+        verticalAlign: 'middle',
+        display: 'inline-block'
       }
     };
 
     let jsx;
-    if (this.props.editMode) {
+    if (this.state.editing) {
       jsx = (
-        <span style={merge(styles.container, this.props.style)}>
-          <input id="travel" type="checkbox" style={styles.checkbox} />
-          <input type="text" ref="label" style={styles.textbox} defaultValue={this.props.label} />
+        <span style={styles.dynamicSpan}>
+          <input type="text" ref="label" style={styles.textbox} defaultValue={this.props.type.label} onKeyUp={this.keyUp} />
           <DoneLink onClick={this.doneEditing} style={styles.editLink} />
         </span>
       );
     }
     else {
       jsx = (
-        <span style={merge(styles.container, this.props.style)}>
-          <input id="travel" type="checkbox" style={styles.checkbox} />
-          <label htmlFor="travel">{this.props.label}</label>
+        <span style={styles.dynamicSpan}>
+          <label htmlFor={this.props.type.id + 'disctype'} style={styles.label}>{this.props.type.label}</label>
           <EditLink onClick={this.editType} style={styles.editLink} />
         </span>
       );
     }
 
-    return jsx;
+    return (
+      <span style={merge(styles.container, this.props.style)}>
+        <input
+          ref="checkbox"
+          id={this.props.type.id + 'disctype'}
+          type="checkbox"
+          style={styles.checkbox}
+          defaultChecked={this.props.type.enabled}
+          onChange={this.toggle}
+        />
+        {jsx}
+      </span>
+    );
   }
 }

@@ -2,7 +2,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
-import UndoButton from '../UndoButton';
+import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
 import DeclarationType from './DeclarationType';
@@ -33,7 +33,9 @@ export default class Declarations extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      declarationTypes: storeState.declarationTypes
+      declarationTypes: storeState.declarationTypes,
+      instructions: storeState.instructions,
+      dirty: storeState.dirty
     });
   }
 
@@ -70,9 +72,6 @@ export default class Declarations extends React.Component {
         padding: 35,
         overflowY: 'auto',
         minHeight: 0
-      },
-      rightPanel: {
-        padding: '0 20px'
       },
       types: {
         width: 350
@@ -141,6 +140,11 @@ export default class Declarations extends React.Component {
       });
     }
 
+    let instructionText = '';
+    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS]) {
+      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
+    }
+
     return (
       <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
         <Sidebar active="declarations" />
@@ -150,7 +154,10 @@ export default class Declarations extends React.Component {
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
-              <InstructionEditor step="Project Declaration" />
+              <InstructionEditor
+                step={COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS}
+                value={instructionText}
+              />
               <Panel title="Declaration Types">
                 <div style={styles.types}>
                   {typesJsx}
@@ -164,9 +171,7 @@ export default class Declarations extends React.Component {
                 </div>
               </Panel>
             </span>
-            <span style={styles.rightPanel}>
-              <UndoButton onClick={this.undo} />
-            </span>
+            <ActionPanel visible={this.state.dirty} />
           </div>
         </span>
       </span>

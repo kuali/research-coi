@@ -5,12 +5,6 @@ import DisclosureType from './DisclosureType';
 export default class DisclosureTypes extends React.Component {
   constructor() {
     super();
-    this.typeIsBeingEdited = this.typeIsBeingEdited.bind(this);
-  }
-
-  typeIsBeingEdited(type) {
-    return this.props.appState &&
-           this.props.appState.disclosureTypesBeingEdited[type.id] !== undefined;
   }
 
   render() {
@@ -39,12 +33,12 @@ export default class DisclosureTypes extends React.Component {
       rows = (
         <span>
           <div style={styles.optionRow}>
-            <DisclosureType editMode={this.typeIsBeingEdited(this.props.types[0])} id={this.props.types[0].id} label={this.props.types[0].label} />
-            <DisclosureType editMode={this.typeIsBeingEdited(this.props.types[1])} id={this.props.types[1].id} label={this.props.types[1].label} />
+            <DisclosureType type={this.props.types[0]} />
+            <DisclosureType type={this.props.types[1]} />
           </div>
           <div style={styles.optionRow}>
-            <DisclosureType editMode={this.typeIsBeingEdited(this.props.types[2])} id={this.props.types[2].id} label={this.props.types[2].label} />
-            <DisclosureType editMode={this.typeIsBeingEdited(this.props.types[3])} id={this.props.types[3].id} label={this.props.types[3].label} />
+            <DisclosureType type={this.props.types[2]} />
+            <DisclosureType type={this.props.types[3]} />
           </div>
         </span>
       );

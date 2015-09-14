@@ -1,14 +1,28 @@
 import React from 'react/addons';
 import {merge} from '../../merge';
+import ConfigActions from '../../actions/ConfigActions';
 
 export default class InstructionEditor extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
+
     this.state = {
-      open: false
+      open: props.value && props.value.length > 0
     };
 
     this.toggle = this.toggle.bind(this);
+    this.textChanged = this.textChanged.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      open: nextProps.value && nextProps.value.length > 0
+    });
+  }
+
+  textChanged() {
+    let textarea = React.findDOMNode(this.refs.textarea);
+    ConfigActions.setInstructions(this.props.step, textarea.value);
   }
 
   toggle() {
@@ -27,7 +41,9 @@ export default class InstructionEditor extends React.Component {
       },
       flipper: {
         position: 'absolute',
-        right: 22
+        right: 22,
+        transform: this.state.open ? 'rotateX(180deg)' : 'rotateX(0deg)',
+        transition: 'transform .3s linear'
       },
       top: {
         padding: '10px 20px',
@@ -39,17 +55,26 @@ export default class InstructionEditor extends React.Component {
       },
       bottom: {
         borderTop: '1px solid #AAA',
-        padding: '10px 15px',
+        padding: '15px 27px 21px 27px',
         zIndex: 1,
         position: 'relative',
-        marginTop: this.state.open ? 0 : -110,
+        marginTop: this.state.open ? 0 : -146,
         transition: 'margin-top .3s ease-out'
       },
       textarea: {
         width: '100%',
-        height: 60,
+        height: 85,
         fontSize: 16,
-        padding: 10
+        padding: 10,
+        borderRadius: 5,
+        border: '1px solid #AAA'
+      },
+      label: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        paddingBottom: 2,
+        color: '#555',
+        display: 'block'
       }
     };
 
@@ -61,9 +86,16 @@ export default class InstructionEditor extends React.Component {
         </div>
         <div style={{overflow: 'hidden'}}>
           <div style={styles.bottom}>
-            <div>INSTRUCTION TEXT</div>
+            <label htmlFor="instructionText" style={styles.label}>INSTRUCTION TEXT</label>
             <div>
-              <textarea style={styles.textarea} placeholder="Type instructions here">
+              <textarea
+                id="instructionText"
+                style={styles.textarea}
+                placeholder="Type instructions here"
+                onChange={this.textChanged}
+                ref="textarea"
+                value={this.props.value}
+              >
               </textarea>
             </div>
           </div>

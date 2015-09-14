@@ -2,12 +2,13 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
-import UndoButton from '../UndoButton';
+import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import EditableList from '../EditableList';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
 import RelationshipType from './RelationshipType';
+import {COIConstants} from '../../../../../COIConstants';
 
 export default class Relationship extends React.Component {
   constructor() {
@@ -39,7 +40,9 @@ export default class Relationship extends React.Component {
     this.setState({
       list: storeState.people,
       peopleEnabled: storeState.peopleEnabled,
-      matrixTypes: storeState.matrixTypes
+      matrixTypes: storeState.matrixTypes,
+      instructions: storeState.instructions,
+      dirty: storeState.dirty
     });
   }
 
@@ -96,9 +99,6 @@ export default class Relationship extends React.Component {
         overflowY: 'auto',
         minHeight: 0
       },
-      rightPanel: {
-        padding: '0 20px'
-      },
       peopleLeft: {
         paddingRight: 25
       },
@@ -137,6 +137,11 @@ export default class Relationship extends React.Component {
       });
     }
 
+    let instructionText = '';
+    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX]) {
+      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX];
+    }
+
     return (
       <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
         <Sidebar active="relationship" />
@@ -146,7 +151,10 @@ export default class Relationship extends React.Component {
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
-              <InstructionEditor step="Relationship Matrix" />
+              <InstructionEditor
+                step={COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX}
+                value={instructionText}
+              />
               <Panel title="Relationship Matrix People Configuration">
                 <div style={{padding: '7px 21px 15px 21px'}}>
                   <div style={styles.panelInstructions}>Configure the people types for your relationship matrix:</div>
@@ -171,9 +179,7 @@ export default class Relationship extends React.Component {
                 </div>
               </Panel>
             </span>
-            <span style={styles.rightPanel}>
-              <UndoButton onClick={this.undo} />
-            </span>
+            <ActionPanel visible={this.state.dirty} />
           </div>
         </span>
       </span>

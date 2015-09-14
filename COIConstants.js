@@ -7,6 +7,13 @@ export let COIConstants = {
     MANUAL: 'manual',
     CERTIFY: 'certify'
   },
+  INSTRUCTION_STEP: {
+    SCREENING_QUESTIONNAIRE: 'Questionnaire',
+    ENTITIES_QUESTIONNAIRE: 'Financial Entities Questionnaire',
+    RELATIONSHIP_MATRIX: 'Relationship Matrix',
+    PROJECT_DECLARATIONS: 'Project Declaration',
+    CERTIFICATION: 'Certification'
+  },
   DISCLOSURE_STATUS: {
     ACTIVE: 1,
     INACTIVE: 0

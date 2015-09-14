@@ -26,7 +26,9 @@ class _ConfigActions {
 
   deleteDeclarationType(id) { this.dispatch(id); }
 
-  startEditingDisclosureType(id) { this.dispatch(id); }
+  enableDisclosureType(id) { this.dispatch(id); }
+
+  disableDisclosureType(id) { this.dispatch(id); }
 
   updateDisclosureType(id, newValue) {
     this.dispatch({
@@ -34,6 +36,10 @@ class _ConfigActions {
       newValue: newValue
     });
   }
+
+  enableSponsorLookup() { this.dispatch(); }
+
+  disableSponsorLookup() { this.dispatch(); }
 
   setDueDate(newDate) { this.dispatch(newDate); }
 
@@ -61,6 +67,8 @@ class _ConfigActions {
   }
 
   saveNewNotification() { this.dispatch(); }
+
+  deleteNotification(id) { this.dispatch(id); }
 
   questionTypeChosen(category, questionId, type) {
     this.dispatch({
@@ -205,6 +213,21 @@ class _ConfigActions {
       newList: newList
     });
   }
+
+  setCertificationText(newText) { this.dispatch(newText); }
+
+  setCertificationRequired(newValue) { this.dispatch(newValue); }
+
+  setInstructions(step, newValue) {
+    this.dispatch({
+      step: step,
+      newValue: newValue
+    });
+  }
+
+  saveAll() { this.dispatch(); }
+
+  undoAll() { this.dispatch(); }
 }
 
 export default alt.createActions(_ConfigActions);
