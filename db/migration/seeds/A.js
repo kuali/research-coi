@@ -2,42 +2,48 @@
 
 exports.seed = function(knex, Promise) {
   console.log('Truncating tables');
-  console.log('1st level truncations');
-  return Promise.all([
-    knex('declaration').del(),
-    knex('relationship').del(),
-    knex('travel_log_entry').del(),
-    knex('disclosure_answer').del()
-  ]).then(function() {
-    console.log('2nd level truncations');
-    return Promise.all([
-      knex('project').del(),
-      knex('questionnaire_answer').del(),
-      knex('relationship_status').del(),
-      knex('relationship_amount_type').del(),
-      knex('relationship_person_type').del(),
-      knex('relationship_category_type').del(),
-      knex('fin_entity').del(),
-      knex('questionnaire_question').update({parent: null})
-    ]);
+  knex('declaration').truncate().then(function() {
+    knex('relationship').truncate();
   }).then(function() {
-    console.log('3rd level truncations');
-    return Promise.all([
-      knex('project_role').del(),
-      knex('project_type').del(),
-      knex('questionnaire_question').del(),
-      knex('relationship_type').del(),
-      knex('fin_entity_type').del(),
-      knex('disclosure').del()
-    ]);
+    knex('travel_log_entry').truncate();
   }).then(function() {
-    console.log('4th level truncations');
-    Promise.all([
-      knex('questionnaire').del(),
-      knex('disclosure_status').del(),
-      knex('disposition_type').del(),
-      knex('disclosure_type').del()
-    ]);
+    knex('disclosure_answer').truncate();
+  }).then(function() {
+    knex('project').truncate();
+  }).then(function() {
+    knex('questionnaire_answer').truncate();
+  }).then(function() {
+    knex('relationship_status').truncate();
+  }).then(function() {
+    knex('relationship_amount_type').truncate();
+  }).then(function() {
+    knex('relationship_person_type').truncate();
+  }).then(function() {
+    knex('relationship_category_type').truncate();
+  }).then(function() {
+    knex('fin_entity').truncate();
+  }).then(function() {
+    knex('questionnaire_question').update({parent: null});
+  }).then(function() {
+    knex('project_role').truncate();
+  }).then(function() {
+    knex('project_type').truncate();
+  }).then(function() {
+    knex('questionnaire_question').truncate();
+  }).then(function() {
+    knex('relationship_type').truncate();
+  }).then(function() {
+    knex('fin_entity_type').truncate();
+  }).then(function() {
+    knex('disclosure').truncate();
+  }).then(function() {
+    knex('questionnaire').truncate();
+  }).then(function() {
+    knex('disclosure_status').truncate();
+  }).then(function() {
+    knex('disposition_type').truncate();
+  }).then(function() {
+    knex('disclosure_type').truncate();
   }).then(function() {
     console.log('Seed - disclosure_status');
     return Promise.all([
@@ -236,7 +242,7 @@ exports.seed = function(knex, Promise) {
           type_cd: 1,
           role_cd: 'PI',
           sponsor_cd: '000100'
-        })
+        });
       })
     ]);
   }).then(function() {
@@ -308,7 +314,7 @@ exports.seed = function(knex, Promise) {
         fin_entity_id: knex('fin_entity').max('id'),
         project_id: knex('project').max('id'),
         relationship_status_cd: 1,
-        comments: "The Molecular Disentropization project has no conflict with Apple"
+        comments: 'The Molecular Disentropization project has no conflict with Apple'
       })
     ]);
   }).then(function() {
