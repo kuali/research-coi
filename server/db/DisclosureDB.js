@@ -11,21 +11,6 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-let mockDB = new Map();
-let lastId = 0;
-
-export let wipeAll = () => {
-  mockDB.clear();
-};
-
-export let save = (school, userId, newDisclosure) => {
-  if (!mockDB.has(school)) {
-    mockDB.set(school, new Map());
-  }
-  mockDB.get(school).set(lastId, newDisclosure);
-  return lastId++;
-};
-
 export let saveDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
 };
@@ -221,7 +206,7 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body) => 
   });
 };
 
-export let get = (dbInfo, disclosureId, callback) => {
+export let get = (dbInfo, userId, disclosureId, callback) => {
   var disclosure;
   let knex = getKnex(dbInfo);
   Promise.all([
@@ -246,6 +231,7 @@ export let get = (dbInfo, disclosureId, callback) => {
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
       callback(new Error('invalid disclosure id'));
+      return;
     }
 
     disclosure = result[0][0];
@@ -312,7 +298,7 @@ export let getAnnualDisclosure = (dbInfo, userId, callback) => {
       });
     }
 
-    get(dbInfo, result[0].id, callback);
+    get(dbInfo, userId, result[0].id, callback);
   })
   .catch(err => {
     callback(err);
@@ -461,50 +447,4 @@ export let getArchivedDisclosures = (dbInfo, userId, callback) => {
     .catch(function (err) {
       callback(err);
     });
-};
-
-export let approve = (school, userId, disclosureId) => {
-  let disclosure = get(school, disclosureId);
-  disclosure.status = 'APPROVED';
-};
-
-export let sendBack = (school, userId, disclosureId) => {
-  let disclosure = get(school, disclosureId);
-  disclosure.status = 'RETURNED';
-};
-
-export let addReviewer = (school, userId, disclosureId, reviewerName) => {
-  let disclosure = get(school, disclosureId);
-  if (!disclosure.reviewers) { disclosure.reviewers = []; }
-  disclosure.reviewers.push(reviewerName);
-};
-
-export let addQuestionnaireComment = (school, userId, disclosureId, comment) => {
-  let disclosure = get(school, disclosureId);
-  if (!disclosure.questionnaire) { disclosure.questionnaire = {comments: []}; }
-  disclosure.questionnaire.comments.push(comment);
-};
-
-export let addEntityComment = (school, userId, disclosureId, comment) => {
-  let disclosure = get(school, disclosureId);
-  if (!disclosure.entity) { disclosure.entity = {comments: []}; }
-  disclosure.entity.comments.push(comment);
-};
-
-export let addDeclarationComment = (school, userId, disclosureId, comment) => {
-  let disclosure = get(school, disclosureId);
-  if (!disclosure.declarations) { disclosure.declarations = {comments: []}; }
-  disclosure.declarations.comments.push(comment);
-};
-
-export let search = (school, userId, query) => {
-  let schoolMap = mockDB.get(school);
-  let matches = [];
-  schoolMap.forEach((value) => {
-    if (value.name.startsWith(query)) {
-      matches.push(value);
-    }
-  });
-
-  return matches;
 };
