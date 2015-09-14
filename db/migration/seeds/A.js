@@ -141,7 +141,8 @@ exports.seed = function(knex, Promise) {
     console.log('Seed - disclosure');
     return Promise.all([
       knex('disclosure').insert({
-        type_cd: 2,
+        user_id: 1698122389,
+        type_cd: 1,
         title: 'Petroleum extraction in deep water',
         submitted_date: new Date(),
         disposition_type_cd: 1,
@@ -152,6 +153,7 @@ exports.seed = function(knex, Promise) {
         approved_date: new Date()
       }),
       knex('disclosure').insert({
+        user_id: 1,
         type_cd: 3,
         title: 'Celery and peanut butter',
         submitted_date: new Date(),
@@ -163,6 +165,7 @@ exports.seed = function(knex, Promise) {
         approved_date: new Date()
       }),
       knex('disclosure').insert({
+        user_id: 1,
         type_cd: 2,
         title: 'Investment strategies for Africa',
         submitted_date: new Date(),
@@ -174,6 +177,7 @@ exports.seed = function(knex, Promise) {
         approved_date: new Date()
       }),
       knex('disclosure').insert({
+        user_id: 1,
         type_cd: 3,
         title: 'Pigeon navigation sources',
         submitted_date: new Date(),
@@ -185,6 +189,7 @@ exports.seed = function(knex, Promise) {
         approved_date: new Date()
       }),
       knex('disclosure').insert({
+        user_id: 1,
         type_cd: 2,
         title: 'Effect of electromagnetic resonance',
         submitted_date: new Date(),
@@ -196,6 +201,7 @@ exports.seed = function(knex, Promise) {
         approved_date: new Date()
       }),
       knex('disclosure').insert({
+        user_id: 1,
         type_cd: 2,
         title: 'Copper transformation rates',
         submitted_date: new Date(),
@@ -207,6 +213,7 @@ exports.seed = function(knex, Promise) {
         approved_date: new Date()
       }),
       knex('disclosure').insert({
+        user_id: 1,
         type_cd: 3,
         title: 'Glyphosate as a carcinogen',
         submitted_date: new Date(),

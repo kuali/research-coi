@@ -104,9 +104,9 @@ export let init = app => {
     }
   */
 
-  app.get('/api/coi/disclosures/min', function(req, res, next){
+  app.get('/api/coi/disclosures/annual', function(req, res, next){
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.getMinDisclosure(req.dbInfo, userInfo.id, function(err, disclosure) {
+    DisclosureDB.getAnnualDisclosure(req.dbInfo, userInfo.id, function(err, disclosure) {
       if (err) {
         console.error(err);
         next(err);

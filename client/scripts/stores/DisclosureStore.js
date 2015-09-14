@@ -112,8 +112,9 @@ class _DisclosureStore extends AutoBindingStore {
     this.refreshDisclosureSummaries();
   }
 
-  loadDisclosureData() {
-    request.get('/api/coi/disclosures/min')
+  loadDisclosureData(disclosureType) {
+    if (disclosureType === 'Annual') {
+      request.get('/api/coi/disclosures/annual')
       .end((err, disclosure) => {
         if (!err) {
           this.applicationState.currentDisclosureState.disclosure = disclosure.body;
@@ -123,6 +124,8 @@ class _DisclosureStore extends AutoBindingStore {
           this.emitChange();
         }
       });
+    }
+
   }
 
   populateSponsorNames(projects) {
@@ -157,7 +160,7 @@ class _DisclosureStore extends AutoBindingStore {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
     let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
-      return answer.id === question.id;
+      return answer.questionId === question.id;
     });
     if (existingAnswer) {
       existingAnswer.answer.value = question.answer.value;
@@ -173,7 +176,7 @@ class _DisclosureStore extends AutoBindingStore {
         });
     }
     else {
-      let newAnswer = {id: question.id, answer: question.answer};
+      let newAnswer = {questionId: question.id, answer: question.answer};
       this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
       request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
         .send(newAnswer)

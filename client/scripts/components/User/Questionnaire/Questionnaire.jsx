@@ -16,7 +16,7 @@ export class Questionnaire extends ResponsiveComponent {
   getAnswer(id) {
     let value = {};
     this.props.answers.forEach(answer => {
-      if (answer.id === id) {
+      if (answer.questionId === id) {
         value = answer.answer.value;
       }
     });
