@@ -72,7 +72,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
   }
 
   getTypeOptions(relation) {
-    return this.props.appState.relationshipTypes.filter(type => {
+    return window.config.relationshipTypes.filter(type => {
       return type.relationshipTypeCd === relation;
     });
   }
@@ -201,7 +201,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         dropDownStyle = merge(dropDownStyle, styles.invalidField);
       }
 
-      let amountTypeOptions = this.props.appState.relationshipAmountTypes.map(type => {
+      let amountTypeOptions = window.config.relationshipAmountTypes.map(type => {
         return <option key={type.typeCd} value={type.typeCd}>{type.description}</option>;
       });
 
@@ -269,7 +269,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         commentTextboxStyle = merge(commentTextboxStyle, styles.invalidField);
       }
 
-      let relationshipPersonTypeOptions = this.props.appState.relationshipPersonTypes.map(option =>{
+      let relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(option =>{
         return <option key={option.typeCd} value={option.typeCd}>{option.description}</option>;
       });
 
@@ -301,7 +301,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
                 <ToggleSet
                   selected={this.props.appState.potentialRelationship.relationshipCd}
                   onChoose={this.relationChosen}
-                  values={this.props.appState.relationshipCategoryTypes}
+                  values={window.config.relationshipCategoryTypes}
                 />
               </div>
 

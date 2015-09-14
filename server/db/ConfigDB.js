@@ -36,18 +36,27 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
   else {
     query = knex;
   }
-
-  query.select('*')
-  .from('questionnaire_question')
-  .then( result => {
-    let formattedQuestions = [];
-    result.forEach(question => {
-      let formattedQuestion = {};
-      formattedQuestion.id = question.id;
-      formattedQuestion.text = JSON.parse(question.question).text;
-      formattedQuestions.push(formattedQuestion);
+  Promise.all([
+    query.select('*').from('questionnaire_question'),
+    query.select('type_cd as typeCd', 'description').from('fin_entity_type'),
+    query.select('type_cd as typeCd', 'description').from('relationship_category_type'),
+    query.select('type_cd as typeCd', 'relationship_cd as relationshipTypeCd', 'description').from('relationship_type'),
+    query.select('type_cd as typeCd', 'description').from('relationship_person_type'),
+    query.select('type_cd as typeCd', 'description').from('relationship_amount_type'),
+    query.select('status_cd as statusCd', 'description').from('relationship_status')
+  ])
+  .then(result=>{
+    config.questions = result[0].map(question => {
+      question.text = JSON.parse(question.question).text;
+      return question;
     });
-    config.questions = formattedQuestions;
+
+    config.entityTypes = result[1];
+    config.relationshipCategoryTypes = result[2];
+    config.relationshipTypes = result[3];
+    config.relationshipPersonTypes = result[4];
+    config.relationshipAmountTypes = result[5];
+    config.relationshipStatuses = result[6];
     callback(undefined, config);
   })
   .catch(function(err) {

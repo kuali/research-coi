@@ -53,12 +53,6 @@ class _DisclosureStore extends AutoBindingStore {
       entityInProgress: {
         active: 1
       },
-      entityTypes: [],
-      relationshipCategoryTypes: [],
-      relationshipTypes: [],
-      relationshipPersonTypes: [],
-      relationshipAmountTypes: [],
-      relationshipStatuses: [],
       potentialRelationship: {
         personCd: '',
         relationshipCd: '',
@@ -129,48 +123,6 @@ class _DisclosureStore extends AutoBindingStore {
           this.emitChange();
         }
       });
-    request.get('/api/coi/disclosure/financial-entity/types')
-    .end((err, entityTypes) => {
-      if (!err) {
-        this.applicationState.entityTypes = entityTypes.body;
-        this.emitChange();
-      }
-    });
-    request.get('/api/coi/disclosure/financial-entity/relationship/category-types')
-    .end((err, relationshipCategoryTypes) => {
-      if (!err) {
-        this.applicationState.relationshipCategoryTypes = relationshipCategoryTypes.body;
-        this.emitChange();
-      }
-    });
-    request.get('/api/coi/disclosure/financial-entity/relationship/types')
-    .end((err, relationshipTypes) => {
-      if (!err) {
-        this.applicationState.relationshipTypes = relationshipTypes.body;
-        this.emitChange();
-      }
-    });
-    request.get('/api/coi/disclosure/financial-entity/relationship/person-types')
-    .end((err, relationshipPersonTypes) => {
-      if (!err) {
-        this.applicationState.relationshipPersonTypes = relationshipPersonTypes.body;
-        this.emitChange();
-      }
-    });
-    request.get('/api/coi/disclosure/financial-entity/relationship/amount-types')
-    .end((err, relationshipAmountTypes) => {
-      if (!err) {
-        this.applicationState.relationshipAmountTypes = relationshipAmountTypes.body;
-        this.emitChange();
-      }
-    });
-    request.get('/api/coi/disclosure/declaration/relationship/statuses')
-    .end((err, relationshipStatuses) => {
-      if (!err) {
-        this.applicationState.relationshipStatuses = relationshipStatuses.body;
-        this.emitChange();
-      }
-    });
   }
 
   populateSponsorNames(projects) {
@@ -407,10 +359,10 @@ class _DisclosureStore extends AutoBindingStore {
       entity.relationships = [];
     }
 
-    this.applicationState.potentialRelationship.amount = this.getDescriptionFromCode(this.applicationState.potentialRelationship.amountCd, this.applicationState.relationshipAmountTypes);
-    this.applicationState.potentialRelationship.type = this.getDescriptionFromCode(this.applicationState.potentialRelationship.typeCd, this.applicationState.relationshipTypes);
-    this.applicationState.potentialRelationship.relationship = this.getDescriptionFromCode(this.applicationState.potentialRelationship.relationshipCd, this.applicationState.relationshipCategoryTypes);
-    this.applicationState.potentialRelationship.person = this.getDescriptionFromCode(this.applicationState.potentialRelationship.personCd, this.applicationState.relationshipPersonTypes);
+    this.applicationState.potentialRelationship.amount = this.getDescriptionFromCode(this.applicationState.potentialRelationship.amountCd, window.config.relationshipAmountTypes);
+    this.applicationState.potentialRelationship.type = this.getDescriptionFromCode(this.applicationState.potentialRelationship.typeCd, window.config.relationshipTypes);
+    this.applicationState.potentialRelationship.relationship = this.getDescriptionFromCode(this.applicationState.potentialRelationship.relationshipCd, window.config.relationshipCategoryTypes);
+    this.applicationState.potentialRelationship.person = this.getDescriptionFromCode(this.applicationState.potentialRelationship.personCd, window.config.relationshipPersonTypes);
     entity.relationships.push(this.applicationState.potentialRelationship);
 
     this.applicationState.potentialRelationship = {
@@ -825,7 +777,7 @@ class _DisclosureStore extends AutoBindingStore {
       errors.comment = 'Required Field';
     }
 
-    let paidActivities = storeState.applicationState.relationshipCategoryTypes.find(type => {
+    let paidActivities = window.config.relationshipCategoryTypes.find(type => {
       return type.description === COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES;
     });
 
@@ -836,7 +788,7 @@ class _DisclosureStore extends AutoBindingStore {
         }
       }
 
-      let officePositions = storeState.applicationState.relationshipCategoryTypes.find(type =>{
+      let officePositions = window.config.relationshipCategoryTypes.find(type =>{
         return type.description === COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS;
       });
 

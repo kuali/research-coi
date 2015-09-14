@@ -160,7 +160,7 @@ export class EntityForm extends ResponsiveComponent {
             isPublic={entity.isPublic}
             isSponsor={entity.isSponsor}
             description={entity.description}
-            entityTypes={this.props.appState.entityTypes}
+            entityTypes={window.config.entityTypes}
             validating={this.props.appState.validatingEntityInformationStep}
           />
           <EntityFormRelationshipStep
@@ -213,7 +213,7 @@ export class EntityForm extends ResponsiveComponent {
               isPublic={entity.isPublic}
               isSponsor={entity.isSponsor}
               description={entity.description}
-              entityTypes={this.props.appState.entityTypes}
+              entityTypes={window.config.entityTypes}
               validating={this.props.appState.validatingEntityInformationStep}
             />
           );
