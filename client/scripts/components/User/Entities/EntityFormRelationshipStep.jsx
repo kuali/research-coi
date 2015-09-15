@@ -24,7 +24,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     this.personSelected = this.personSelected.bind(this);
     this.relationChosen = this.relationChosen.bind(this);
     this.commentChanged = this.commentChanged.bind(this);
-    this.getTypeOptions = this.getTypeOptions.bind(this);
+    this.getMatrixType = this.getMatrixType.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -67,13 +67,13 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     DisclosureActions.setEntityRelationshipRelation(relation);
     this.setState({
       relation: relation,
-      typeOptions: this.getTypeOptions(relation)
+      matrixType: this.getMatrixType(relation)
     });
   }
 
-  getTypeOptions(relation) {
-    return window.config.relationshipTypes.filter(type => {
-      return type.relationshipTypeCd === relation;
+  getMatrixType(relation) {
+    return window.config.matrixTypes.find(type => {
+      return type.typeCd === relation;
     });
   }
 
@@ -167,7 +167,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let typeSection;
-    if (this.state.typeOptions.length > 0) {
+    if (this.state.relation !== '' && this.state.matrixType.typeEnabled === 1) {
       let labelStyle = {};
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.type) {
@@ -175,7 +175,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         dropDownStyle = merge(dropDownStyle, styles.invalidField);
       }
 
-      let typeOptions = this.state.typeOptions.map(typeOption => {
+      let typeOptions = this.state.matrixType.typeOptions.map(typeOption => {
         return (
           <option key={typeOption.typeCd} value={typeOption.typeCd}>{typeOption.description}</option>
         );
@@ -193,7 +193,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     }
 
     let amountSection;
-    if (this.state.relation !== '' && this.state.relation !== 'Offices/Positions') {
+    if (this.state.relation !== '' && this.state.matrixType.amountEnabled === 1) {
       let labelStyle = {};
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.amount) {
@@ -201,7 +201,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         dropDownStyle = merge(dropDownStyle, styles.invalidField);
       }
 
-      let amountTypeOptions = window.config.relationshipAmountTypes.map(type => {
+      let amountTypeOptions = this.state.matrixType.amountOptions.map(type => {
         return <option key={type.typeCd} value={type.typeCd}>{type.description}</option>;
       });
 
@@ -301,7 +301,14 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
                 <ToggleSet
                   selected={this.props.appState.potentialRelationship.relationshipCd}
                   onChoose={this.relationChosen}
-                  values={window.config.relationshipCategoryTypes}
+                  values={window.config.matrixTypes.filter(type =>{
+                    return type.enabled === 1;
+                  }).map(type => {
+                    let value = {};
+                    value.typeCd = type.typeCd;
+                    value.description = type.description;
+                    return value;
+                  })}
                 />
               </div>
 

@@ -48,7 +48,7 @@ class EditableItem extends React.Component {
     });
 
     let textbox = React.findDOMNode(this.refs.textbox);
-    this.props.onEdit(this.props.id, textbox.value);
+    this.props.onEdit(this.props.id, this.props.typeCd, textbox.value);
   }
 
   render() {
@@ -157,9 +157,10 @@ export default class EditableList extends React.Component {
     this.props.onChange(newItems);
   }
 
-  edited(id, newValue) {
+  edited(id, typeCd, description) {
     let newItems = Array.from(this.props.items);
-    newItems[id] = newValue;
+    newItems[id].typeCd = typeCd;
+    newItems[id].description = description;
 
     this.props.onChange(newItems);
   }
@@ -188,7 +189,10 @@ export default class EditableList extends React.Component {
     let textbox = React.findDOMNode(this.refs.textbox);
     if (textbox.value.length > 0) {
       let newItems = Array.from(this.props.items);
-      newItems.push(textbox.value);
+
+      newItems.push({
+        description: textbox.value
+      });
       textbox.value = '';
 
       this.props.onChange(newItems);
@@ -247,8 +251,8 @@ export default class EditableList extends React.Component {
     if (this.props.items) {
       items = this.props.items.map((item, index) => {
         return (
-          <EditableItem key={index} id={index} onDelete={this.delete} onEdit={this.edited}>
-            {item}
+          <EditableItem key={index} id={index} typeCd={item.typeCd} onDelete={this.delete} onEdit={this.edited}>
+            {item.description}
           </EditableItem>
         );
       });

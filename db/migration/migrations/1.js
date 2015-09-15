@@ -46,23 +46,27 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.engine('InnoDB');
   })
   .createTable('relationship_person_type', function(table) {
-    table.integer('type_cd').notNullable().primary();
+    table.increments('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship_category_type', function(table) {
     table.integer('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
+    table.boolean('enabled').notNullable();
+    table.boolean('type_enabled').notNullable();
+    table.boolean('amount_enabled').notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship_type', function(table) {
-    table.integer('type_cd').notNullable().primary();
+    table.increments('type_cd').notNullable().primary();
     table.integer('relationship_cd').notNullable().references('type_cd').inTable('relationship_category_type');
     table.string('description', 50).notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship_amount_type', function(table) {
-    table.integer('type_cd').notNullable().primary();
+    table.increments('type_cd').notNullable().primary();
+    table.integer('relationship_cd').notNullable().references('type_cd').inTable('relationship_category_type');
     table.string('description', 50).notNullable();
     table.engine('InnoDB');
   })
@@ -70,9 +74,9 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.increments('id').notNullable();
     table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
     table.integer('relationship_cd').references('type_cd').inTable('relationship_category_type');
-    table.integer('person_cd').notNullable().references('type_cd').inTable('relationship_person_type');
-    table.integer('type_cd').references('type_cd').inTable('relationship_type');
-    table.integer('amount_cd').references('type_cd').inTable('relationship_amount_type');
+    table.integer('person_cd').unsigned().notNullable().index().references('type_cd').inTable('relationship_person_type');
+    table.integer('type_cd').unsigned().index().references('type_cd').inTable('relationship_type');
+    table.integer('amount_cd').unsigned().index().references('type_cd').inTable('relationship_amount_type');
     table.string('comments', 4000);
     table.engine('InnoDB');
   })

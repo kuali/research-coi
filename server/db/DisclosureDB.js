@@ -55,7 +55,7 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callbac
     disclosure_id: disclosureId,
     active: financialEntity.active,
     is_public: financialEntity.isPublic,
-    type_cd: financialEntity.type === undefined ? null : financialEntity.type,
+    type_cd: financialEntity.type,
     is_sponsor: financialEntity.isSponsor,
     name: financialEntity.name,
     description: financialEntity.description
@@ -69,8 +69,8 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callbac
         fin_entity_id: id[0],
         relationship_cd: relationship.relationshipCd,
         person_cd: relationship.personCd,
-        type_cd: relationship.typeCd,
-        amount_cd: relationship.amountCd,
+        type_cd: !relationship.typeCd ? null : relationship.typeCd,
+        amount_cd: !relationship.amountCd ? null : relationship.amountCd,
         comments: relationship.comments
       })
       .then(relationshipId=>{
@@ -118,8 +118,8 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, ca
           fin_entity_id: financialEntity.id,
           relationship_cd: relationship.relationshipCd,
           person_cd: relationship.personCd,
-          type_cd: relationship.typeCd,
-          amount_cd: relationship.amountCd,
+          type_cd: !relationship.typeCd ? null : relationship.typeCd,
+          amount_cd: !relationship.amountCd ? null : relationship.amountCd,
           comments: relationship.comments
         })
         .then(relationshipId=>{
@@ -260,8 +260,8 @@ export let get = (dbInfo, disclosureId, callback) => {
       .from('relationship as r')
       .innerJoin('relationship_person_type as rp', 'r.person_cd', 'rp.type_cd')
       .innerJoin('relationship_category_type as rc', 'r.relationship_cd', 'rc.type_cd')
-      .innerJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd' )
-      .innerJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
+      .leftJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd' )
+      .leftJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
       .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
       .then(relationships => {
         disclosure.entities.forEach(entity => {

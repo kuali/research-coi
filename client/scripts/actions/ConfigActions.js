@@ -179,37 +179,37 @@ class _ConfigActions {
     this.dispatch(newValue);
   }
 
-  enabledChanged(relationshipType, newValue) {
+  enabledChanged(typeCd, newValue) {
     this.dispatch({
-      relationshipType: relationshipType,
+      typeCd: typeCd,
       newValue: newValue
     });
   }
 
-  typeEnabledChanged(relationshipType, newValue) {
+  typeEnabledChanged(typeCd, newValue) {
     this.dispatch({
-      relationshipType: relationshipType,
+      typeCd: typeCd,
       newValue: newValue
     });
   }
 
-  amountEnabledChanged(relationshipType, newValue) {
+  amountEnabledChanged(typeCd, newValue) {
     this.dispatch({
-      relationshipType: relationshipType,
+      typeCd: typeCd,
       newValue: newValue
     });
   }
 
-  typeOptionsChanged(relationshipType, newList) {
+  typeOptionsChanged(typeCd, newList) {
     this.dispatch({
-      relationshipType: relationshipType,
+      typeCd: typeCd,
       newList: newList
     });
   }
 
-  amountOptionsChanged(relationshipType, newList) {
+  amountOptionsChanged(typeCd, newList) {
     this.dispatch({
-      relationshipType: relationshipType,
+      typeCd: typeCd,
       newList: newList
     });
   }

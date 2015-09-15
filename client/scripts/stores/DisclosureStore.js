@@ -125,7 +125,6 @@ class _DisclosureStore extends AutoBindingStore {
         }
       });
     }
-
   }
 
   populateSponsorNames(projects) {
@@ -362,11 +361,17 @@ class _DisclosureStore extends AutoBindingStore {
       entity.relationships = [];
     }
 
-    this.applicationState.potentialRelationship.amount = this.getDescriptionFromCode(this.applicationState.potentialRelationship.amountCd, window.config.relationshipAmountTypes);
-    this.applicationState.potentialRelationship.type = this.getDescriptionFromCode(this.applicationState.potentialRelationship.typeCd, window.config.relationshipTypes);
-    this.applicationState.potentialRelationship.relationship = this.getDescriptionFromCode(this.applicationState.potentialRelationship.relationshipCd, window.config.relationshipCategoryTypes);
-    this.applicationState.potentialRelationship.person = this.getDescriptionFromCode(this.applicationState.potentialRelationship.personCd, window.config.relationshipPersonTypes);
-    entity.relationships.push(this.applicationState.potentialRelationship);
+    let relation = this.applicationState.potentialRelationship;
+
+    let matrixType = window.config.matrixTypes.find(matrix=>{
+      return matrix.typeCd === relation.relationshipCd;
+    });
+
+    relation.amount = this.getDescriptionFromCode(relation.amountCd, matrixType.amountOptions);
+    relation.type = this.getDescriptionFromCode(relation.typeCd, matrixType.typeOptions);
+    relation.relationship = this.getDescriptionFromCode(relation.relationshipCd, window.config.matrixTypes);
+    relation.person = this.getDescriptionFromCode(relation.personCd, window.config.relationshipPersonTypes);
+    entity.relationships.push(relation);
 
     this.applicationState.potentialRelationship = {
       personCd: '',
@@ -780,22 +785,19 @@ class _DisclosureStore extends AutoBindingStore {
       errors.comment = 'Required Field';
     }
 
-    let paidActivities = window.config.relationshipCategoryTypes.find(type => {
-      return type.description === COIConstants.ENTITY_RELATIONSHIP.PAID_ACTIVITIES;
+    let matrixType = window.config.matrixTypes.find(type=>{
+      return type.typeCd === potentialRelationship.relationshipCd;
     });
 
+
     if (potentialRelationship.relationshipCd !== undefined && potentialRelationship.relationshipCd.length !== 0) {
-      if (potentialRelationship.relationshipCd !== paidActivities.typeCd) {
+      if (matrixType.typeEnabled === 1) {
         if (potentialRelationship.typeCd === undefined || potentialRelationship.typeCd.length === 0) {
           errors.type = 'Required Field';
         }
       }
 
-      let officePositions = window.config.relationshipCategoryTypes.find(type =>{
-        return type.description === COIConstants.ENTITY_RELATIONSHIP.OFFICES_POSITIONS;
-      });
-
-      if (potentialRelationship.relationshipCd !== officePositions.typeCd) {
+      if (matrixType.amountEnabled === 1) {
         if (potentialRelationship.amountCd === undefined || potentialRelationship.amountCd.length === 0) {
           errors.amount = 'Required Field';
         }
