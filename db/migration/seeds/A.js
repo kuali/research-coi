@@ -2,48 +2,53 @@
 
 exports.seed = function(knex, Promise) {
   console.log('Truncating tables');
-  knex('declaration').truncate().then(function() {
-    knex('relationship').truncate();
+  //temp raw statement to get seed data working
+  return knex.raw('SET FOREIGN_KEY_CHECKS=0').then(function(){
+    knex('declaration').truncate();
   }).then(function() {
-    knex('travel_log_entry').truncate();
+    return knex('relationship').truncate();
   }).then(function() {
-    knex('disclosure_answer').truncate();
+    return knex('travel_log_entry').truncate();
   }).then(function() {
-    knex('project').truncate();
+    return knex('disclosure_answer').truncate();
   }).then(function() {
-    knex('questionnaire_answer').truncate();
+    return knex('project').truncate();
   }).then(function() {
-    knex('relationship_status').truncate();
+    return knex('questionnaire_answer').truncate();
   }).then(function() {
-    knex('relationship_amount_type').truncate();
+    return knex('relationship_status').truncate();
   }).then(function() {
-    knex('relationship_person_type').truncate();
+    return knex('relationship_type').truncate();
   }).then(function() {
-    knex('relationship_category_type').truncate();
+    return knex('relationship_amount_type').truncate();
   }).then(function() {
-    knex('fin_entity').truncate();
+    return knex('relationship_person_type').truncate();
   }).then(function() {
-    knex('questionnaire_question').update({parent: null});
+    return knex('relationship_category_type').truncate();
   }).then(function() {
-    knex('project_role').truncate();
+    return knex('fin_entity').truncate();
   }).then(function() {
-    knex('project_type').truncate();
+    return knex('questionnaire_question').update({parent: null});
   }).then(function() {
-    knex('questionnaire_question').truncate();
+    return knex('project_role').truncate();
   }).then(function() {
-    knex('relationship_type').truncate();
+    return knex('project_type').truncate();
   }).then(function() {
-    knex('fin_entity_type').truncate();
+    return knex('questionnaire_question').truncate();
   }).then(function() {
-    knex('disclosure').truncate();
+    return knex('fin_entity_type').truncate();
   }).then(function() {
-    knex('questionnaire').truncate();
+    return knex('disclosure').truncate();
   }).then(function() {
-    knex('disclosure_status').truncate();
+    return knex('questionnaire').truncate();
   }).then(function() {
-    knex('disposition_type').truncate();
+    return knex('disclosure_status').truncate();
   }).then(function() {
-    knex('disclosure_type').truncate();
+    return knex('disposition_type').truncate();
+  }).then(function() {
+    return knex('disclosure_type').truncate();
+  }).then(function() {
+    knex.raw('SET FOREIGN_KEY_CHECKS=1');
   }).then(function() {
     console.log('Seed - disclosure_status');
     return Promise.all([
@@ -286,10 +291,10 @@ exports.seed = function(knex, Promise) {
         .then(function(id){
           return knex('relationship').insert({
             fin_entity_id: id[0],
-            relationship_cd: 1,
-            person_cd: 1,
-            type_cd: 1,
-            amount_cd: 1,
+            relationship_cd: knex('relationship_category_type').max('type_cd'),
+            person_cd: knex('relationship_person_type').max('type_cd'),
+            type_cd: knex('relationship_type').max('type_cd'),
+            amount_cd: knex('relationship_amount_type').max('type_cd'),
             comments: 'Rel 1 Comments'
           });
         });
@@ -339,26 +344,6 @@ exports.seed = function(knex, Promise) {
         project_id: knex('project').max('id'),
         relationship_status_cd: 1,
         comments: 'The Molecular Disentropization project has no conflict with Apple'
-      })
-    ]);
-  }).then(function() {
-    console.log('Seed - relationship');
-    return Promise.all([
-      knex('relationship').insert({
-        fin_entity_id: knex('fin_entity').max('id'),
-        relationship_cd: 1,
-        person_cd: 1,
-        type_cd: 1,
-        amount_cd: 1,
-        comments: 'Rel 2 Comments'
-      }),
-      knex('relationship').insert({
-        fin_entity_id: knex('fin_entity').max('id'),
-        relationship_cd: 2,
-        person_cd: 2,
-        type_cd: 2,
-        amount_cd: 2,
-        comments: 'Rel 3 Comments'
       })
     ]);
   }).then(function() {
