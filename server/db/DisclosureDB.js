@@ -305,120 +305,32 @@ export let getAnnualDisclosure = (dbInfo, userId, callback) => {
   });
 };
 
-export let getSummariesForReview = (school, userId, sortColumn, sortDirection, query) => {
-  let results = [{
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 3,
-    name: 'Research 1',
-    submittedBy: 'Johnn Jack',
-    submittedOn: 1434148767062,
-    startDate: 1434148767062,
-    status: 'IN_PROGRESS',
-    projects: [{
-      'name': 'Project 1'
-    }]
-  },
-  {
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 32432,
-    name: 'Research 2',
-    submittedBy: 'Kim Kiera',
-    submittedOn: 1434948767062,
-    startDate: 1434143767062,
-    status: 'AWAITING_REVIEW',
-    projects: [{
-      'name': 'Project 2'
-    }]
-  },
-  {
-    type: 'PROJECT',
-    disposition: 222,
-    id: 54364,
-    name: 'Research 3',
-    submittedBy: 'Lara Lant',
-    submittedOn: 1432148767062,
-    startDate: 1434448767062,
-    status: 'IN_PROGRESS',
-    projects: [{
-      'name': 'Project 3'
-    }]
-  },
-  {
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 76576,
-    name: 'Research 4',
-    submittedBy: 'Mark Millburn',
-    submittedOn: 1434748767062,
-    startDate: 1434188767062,
-    status: 'REVISION_NECESSARY',
-    projects: [{
-      'name': 'Project 4'
-    }]
-  },
-  {
-    type: 'PROJECT',
-    disposition: 222,
-    id: 9769,
-    name: 'Research 5',
-    submittedBy: 'Nate Niter',
-    submittedOn: 1432148767062,
-    startDate: 1434248767062,
-    status: 'REVISION_NECESSARY',
-    projects: [{
-      'name': 'Project 5'
-    }]
-  },
-  {
-    type: 'ANNUAL',
-    disposition: 222,
-    id: 8987,
-    name: 'Research 6',
-    submittedBy: 'Oliver Osmond',
-    submittedOn: 1432148767062,
-    startDate: 1434248767062,
-    status: 'AWAITING_REVIEW',
-    projects: [{
-      'name': 'Project 6'
-    }]
-  },
-  {
-    type: 'PROJECT',
-    disposition: 222,
-    id: 113232,
-    name: 'Research 7',
-    submittedBy: 'Peter Pratan',
-    submittedOn: 1434948767062,
-    startDate: 1434548767062,
-    status: 'REVISION_NECESSARY',
-    projects: [{
-      'name': 'Project 7'
-    }]
-  }];
+export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, query, callback) => {
+  let knex = getKnex(dbInfo);
 
-  let lowerCaseQuery = query.toLowerCase();
-  results = results.filter((disclosure) => {
-    return disclosure.projects[0].name.toLowerCase().indexOf(lowerCaseQuery) === 0 ||
-           disclosure.submittedBy.toLowerCase().indexOf(lowerCaseQuery) === 0;
-  });
+  knex('disclosure').select('disclosure_status.description as status', 'disclosure_type.description as type', 'disposition_type.description as disposition', 'id', 'title as name', 'submitted_by', 'submitted_date as submitted_on', 'start_date')
+  .innerJoin('disposition_type', 'disposition_type.type_cd', 'disclosure.disposition_type_cd')
+  .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
+  .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd')
+  .then(rows => {
+    let result = rows.sort((a, b) => {
+      switch (sortColumn) {
+        case 'DISPOSITION':
+          return sortDirection === 'DESCENDING' ? a.disposition < b.disposition : a.disposition > b.disposition;
+        case 'PROJECT_TITLE':
+          return sortDirection === 'DESCENDING' ? a.name < b.name : a.name > b.name;
+        case 'PI':
+          return sortDirection === 'DESCENDING' ? a.submittedBy < b.submittedBy : a.submittedBy > b.submittedBy;
+        case 'DATE_SUBMITTED':
+          return sortDirection === 'DESCENDING' ? a.submittedOn < b.submittedOn : a.submittedOn > b.submittedOn;
+        case 'STATUS':
+          return sortDirection === 'DESCENDING' ? a.status < b.status : a.status > b.status;
+        case 'PROJECT_START_DATE':
+          return sortDirection === 'DESCENDING' ? a.startDate < b.startDate : a.startDate > b.startDate;
+      }
+    });
 
-  return results.sort((a, b) => {
-    switch (sortColumn) {
-      case 'DISPOSITION':
-        return sortDirection === 'DESCENDING' ? a.disposition < b.disposition : a.disposition > b.disposition;
-      case 'PROJECT_TITLE':
-        return sortDirection === 'DESCENDING' ? a.name < b.name : a.name > b.name;
-      case 'PI':
-        return sortDirection === 'DESCENDING' ? a.submittedBy < b.submittedBy : a.submittedBy > b.submittedBy;
-      case 'DATE_SUBMITTED':
-        return sortDirection === 'DESCENDING' ? a.submittedOn < b.submittedOn : a.submittedOn > b.submittedOn;
-      case 'STATUS':
-        return sortDirection === 'DESCENDING' ? a.status < b.status : a.status > b.status;
-      case 'PROJECT_START_DATE':
-        return sortDirection === 'DESCENDING' ? a.startDate < b.startDate : a.startDate > b.startDate;
-    }
+    callback(undefined, result);
   });
 };
 

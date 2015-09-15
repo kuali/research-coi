@@ -214,7 +214,7 @@ export let init = app => {
   */
 
   // Admin stuff
-  app.get('/api/coi/disclosure-summaries', function(req, res) {
+  app.get('/api/coi/disclosure-summaries', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     let sortColumn = 'DATE_SUBMITTED';
     if (req.query.sortColumn) {
@@ -228,7 +228,14 @@ export let init = app => {
     if (req.query.query) {
       query = req.query.query;
     }
-    res.send(DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, query));
+    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, query, (err, sumarries) => {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(sumarries);
+      }
+    });
   });
 
 
