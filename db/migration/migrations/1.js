@@ -48,6 +48,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   .createTable('relationship_person_type', function(table) {
     table.increments('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
+    table.boolean('active').notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship_category_type', function(table) {
@@ -62,12 +63,14 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.increments('type_cd').notNullable().primary();
     table.integer('relationship_cd').notNullable().references('type_cd').inTable('relationship_category_type');
     table.string('description', 50).notNullable();
+    table.boolean('active').notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship_amount_type', function(table) {
     table.increments('type_cd').notNullable().primary();
     table.integer('relationship_cd').notNullable().references('type_cd').inTable('relationship_category_type');
     table.string('description', 50).notNullable();
+    table.boolean('active').notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship', function(table) {

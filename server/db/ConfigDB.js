@@ -39,8 +39,37 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
     query = knex;
   }
 
-  return collection.map(line => {
+  let queries = [];
+
+  let sel = {};
+  if (tableProps.where) {
+    sel = query(tableProps.table).select(tableProps.pk).where(tableProps.where.key, tableProps.where.value);
+  } else {
+    sel = query(tableProps.table).select(tableProps.pk);
+  }
+
+  sel.then(results=>{
+    results.forEach(result=>{
+      let match = collection.find(item=>{
+        return item[tableProps.pk] && (item[tableProps.pk] === result[tableProps.pk]);
+      });
+      if (!match) {
+        queries.push(query(tableProps.table)
+        .update({active: false})
+        .where(tableProps.pk, result[tableProps.pk])
+        .catch(function(err) {
+          if (optionalTrx) {
+            optionalTrx.rollback();
+          }
+          callback(err);
+        }));
+      }
+    });
+  });
+
+  queries.push(collection.map(line => {
     if (line[tableProps.pk] === undefined) {
+      line.active = true;
       return query(tableProps.table)
       .insert(line, tableProps.pk)
       .then(pk=> {
@@ -56,8 +85,6 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
       return query(tableProps.table)
       .update(line)
       .where(tableProps.pk, line[tableProps.pk])
-      .then(()=> {
-      })
       .catch(function(err) {
         if (optionalTrx) {
           optionalTrx.rollback();
@@ -65,7 +92,7 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
         callback(err);
       });
     }
-  });
+  }));
 };
 
 export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
@@ -83,9 +110,9 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query.select('*').from('questionnaire_question'),
     query.select('*').from('fin_entity_type'),
     query.select('*').from('relationship_category_type'),
-    query.select('*').from('relationship_type'),
-    query.select('*').from('relationship_amount_type'),
-    query.select('*').from('relationship_person_type'),
+    query.select('*').from('relationship_type').where('active', true),
+    query.select('*').from('relationship_amount_type').where('active', true),
+    query.select('*').from('relationship_person_type').where('active', true),
     query.select('*').from('relationship_status')
   ])
   .then(result=>{
@@ -146,9 +173,9 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
       callback(err);
     });
 
-    let typeOptionsQueries = createCollectionQueries(dbInfo, type.type_options, {pk: 'type_cd', table: 'relationship_type'}, callback);
+    let typeOptionsQueries = createCollectionQueries(dbInfo, type.type_options, {pk: 'type_cd', table: 'relationship_type', where: {key: 'relationship_cd', value: type.type_cd}}, callback);
 
-    let amountOptionsQueries = createCollectionQueries(dbInfo, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type'}, callback);
+    let amountOptionsQueries = createCollectionQueries(dbInfo, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type', where: {key: 'relationship_cd', value: type.type_cd}}, callback);
 
     matrixTypeQueries.push(matrixTypeQuery);
     matrixTypeQueries.push(typeOptionsQueries);

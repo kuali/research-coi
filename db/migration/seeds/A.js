@@ -94,10 +94,10 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     console.log('Seed - relationship_person_type');
     return Promise.all([
-      knex('relationship_person_type').insert({description: 'Self'}),
-      knex('relationship_person_type').insert({description: 'Spouse'}),
-      knex('relationship_person_type').insert({description: 'Other'}),
-      knex('relationship_person_type').insert({description: 'Entity'})
+      knex('relationship_person_type').insert({description: 'Self', active: true}),
+      knex('relationship_person_type').insert({description: 'Spouse', active: true}),
+      knex('relationship_person_type').insert({description: 'Other', active: true}),
+      knex('relationship_person_type').insert({description: 'Entity', active: true})
     ]);
   }).then(function() {
     console.log('Seed - relationship_status');
@@ -113,63 +113,63 @@ exports.seed = function(knex, Promise) {
       .insert({type_cd: 1, description: 'Ownership', enabled: true, type_enabled: true, amount_enabled: true})
       .then(function(){
         return Promise.all([
-        knex('relationship_type').insert({relationship_cd: 1, description: 'Stock'}),
-        knex('relationship_type').insert({relationship_cd: 1, description: 'Stock Options'}),
-        knex('relationship_type').insert({relationship_cd: 1, description: 'Other Ownership'}),
-        knex('relationship_amount_type').insert({relationship_cd: 1, description: '$1 - $5,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 1, description: '$5,001 - $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Over $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Privately Held, no valuation'}),
-        knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Does not apply'})]);
+        knex('relationship_type').insert({relationship_cd: 1, description: 'Stock', active: true}),
+        knex('relationship_type').insert({relationship_cd: 1, description: 'Stock Options', active: true}),
+        knex('relationship_type').insert({relationship_cd: 1, description: 'Other Ownership', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 1, description: '$1 - $5,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 1, description: '$5,001 - $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Over $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Privately Held, no valuation', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Does not apply', active: true})]);
       }),
       knex('relationship_category_type')
       .insert({type_cd: 2, description: 'Offices/Positions', enabled: true, type_enabled: true, amount_enabled: true})
       .then(function() {
         return Promise.all([
-        knex('relationship_type').insert({relationship_cd: 2, description: 'Board Member'}),
-        knex('relationship_type').insert({relationship_cd: 2, description: 'Partner'}),
-        knex('relationship_type').insert({relationship_cd: 2, description: 'Other Managerial Positions'}),
-        knex('relationship_type').insert({relationship_cd: 2, description: 'Founder'}),
-        knex('relationship_amount_type').insert({relationship_cd: 2, description: '$1 - $5,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 2, description: '$5,001 - $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Over $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Privately Held, no valuation'}),
-        knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Does not apply'})]);
+        knex('relationship_type').insert({relationship_cd: 2, description: 'Board Member', active: true}),
+        knex('relationship_type').insert({relationship_cd: 2, description: 'Partner', active: true}),
+        knex('relationship_type').insert({relationship_cd: 2, description: 'Other Managerial Positions', active: true}),
+        knex('relationship_type').insert({relationship_cd: 2, description: 'Founder', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 2, description: '$1 - $5,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 2, description: '$5,001 - $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Over $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Privately Held, no valuation', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Does not apply', active: true})]);
       }),
       knex('relationship_category_type')
       .insert({type_cd: 3, description: 'Paid Activities', enabled: true, type_enabled: false, amount_enabled: true})
       .then(function() {
         return Promise.all([
-          knex('relationship_amount_type').insert({relationship_cd: 3, description: '$1 - $5,000'}),
-          knex('relationship_amount_type').insert({relationship_cd: 3, description: '$5,001 - $10,000'}),
-          knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Over $10,000'}),
-          knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Privately Held, no valuation'}),
-          knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Does not apply'})
+          knex('relationship_amount_type').insert({relationship_cd: 3, description: '$1 - $5,000', active: true}),
+          knex('relationship_amount_type').insert({relationship_cd: 3, description: '$5,001 - $10,000', active: true}),
+          knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Over $10,000', active: true}),
+          knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Privately Held, no valuation', active: true}),
+          knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Does not apply', active: true})
         ])
       }),
       knex('relationship_category_type')
       .insert({type_cd: 4, description: 'Intellectual Property', enabled: true, type_enabled: true, amount_enabled: true})
       .then(function() {
         return Promise.all([
-        knex('relationship_type').insert({relationship_cd: 4, description: 'Royalty Income'}),
-        knex('relationship_type').insert({relationship_cd: 4, description: 'Intellectual Property Rights'}),
-        knex('relationship_amount_type').insert({relationship_cd: 4, description: '$1 - $5,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 4, description: '$5,001 - $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Over $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Privately Held, no valuation'}),
-        knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Does not apply'})]);
+        knex('relationship_type').insert({relationship_cd: 4, description: 'Royalty Income', active: true}),
+        knex('relationship_type').insert({relationship_cd: 4, description: 'Intellectual Property Rights', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 4, description: '$1 - $5,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 4, description: '$5,001 - $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Over $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Privately Held, no valuation', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Does not apply', active: true})]);
       }),
       knex('relationship_category_type')
       .insert({type_cd: 5, description: 'Other', enabled: true, type_enabled: true, amount_enabled: true})
       .then(function() {
         return Promise.all([
-        knex('relationship_type').insert({relationship_cd: 5, description: 'Contract'}),
-        knex('relationship_type').insert({relationship_cd: 5, description: 'Other Transactions'}),
-        knex('relationship_amount_type').insert({relationship_cd: 5, description: '$1 - $5,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 5, description: '$5,001 - $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Over $10,000'}),
-        knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Privately Held, no valuation'}),
-        knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Does not apply'})]);
+        knex('relationship_type').insert({relationship_cd: 5, description: 'Contract', active: true}),
+        knex('relationship_type').insert({relationship_cd: 5, description: 'Other Transactions', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 5, description: '$1 - $5,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 5, description: '$5,001 - $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Over $10,000', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Privately Held, no valuation', active: true}),
+        knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Does not apply', active: true})]);
       })
     ]);
   }).then(function() {
