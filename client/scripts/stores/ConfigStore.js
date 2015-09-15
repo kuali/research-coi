@@ -25,6 +25,17 @@ class _ConfigStore extends AutoBindingStore {
 
     this.dirty = false;
 
+    this.config = {
+      disclosureTypes: [],
+      questions: [],
+      entityTypes: [],
+      relationshipCategoryTypes: [],
+      relationshipTypes: [],
+      relationshipPersonType: [],
+      relationshipAmountTypes: [],
+      relationshipStatuses: []
+    };
+
     this.disclosureTypes = [
       {
         label: 'Annual Disclosure',
@@ -79,111 +90,6 @@ class _ConfigStore extends AutoBindingStore {
     };
 
     this.peopleEnabled = true;
-    this.people = ['Self', 'Spouse', 'Children', 'Other'];
-    this.matrixTypes = [
-      {
-        name: 'Ownership',
-        enabled: true,
-        typeEnabled: true,
-        typeOptions: [
-          'Stock',
-          'Stock Options',
-          'Other Ownership'
-        ],
-        amountEnabled: true,
-        amountOptions: [
-          '$0 - $100',
-          '$101 - $1,000',
-          '$1,001 - $10,000',
-          'Privately held, no valuations',
-          'Does not apply'
-        ]
-      },
-      {
-        name: 'Offices/Positions',
-        enabled: true,
-        typeEnabled: true,
-        typeOptions: [
-          'Board Member',
-          'Partner',
-          'Other Managerial',
-          'Founder'
-        ],
-        amountEnabled: true,
-        amountOptions: [
-          '$0 - $100',
-          '$101 - $1,000',
-          '$1,001 - $10,000',
-          'Does not apply'
-        ]
-      },
-      {
-        name: 'Paid Activities',
-        enabled: true,
-        typeEnabled: true,
-        typeOptions: [
-          'Stock',
-          'Stock Options',
-          'Other Ownership'
-        ],
-        amountEnabled: true,
-        amountOptions: [
-          '$0 - $100',
-          '$101 - $1,000',
-          '$1,001 - $10,000',
-          'Does not apply'
-        ]
-      },
-      {
-        name: 'Travel',
-        enabled: true,
-        typeEnabled: true,
-        typeOptions: [
-          'Stock',
-          'Stock Options',
-          'Other Ownership'
-        ],
-        amountEnabled: true,
-        amountOptions: [
-          '$0 - $100',
-          '$101 - $1,000',
-          '$1,001 - $10,000',
-          'Does not apply'
-        ]
-      },
-      {
-        name: 'Intellectual Property',
-        enabled: true,
-        typeEnabled: true,
-        typeOptions: [
-          'Royalty Income',
-          'Intellectual Property Rights'
-        ],
-        amountEnabled: true,
-        amountOptions: [
-          '$0 - $100',
-          '$101 - $1,000',
-          '$1,001 - $10,000',
-          'Does not apply'
-        ]
-      },
-      {
-        name: 'Other',
-        enabled: true,
-        typeEnabled: true,
-        typeOptions: [
-          'Contract',
-          'Other Transactions'
-        ],
-        amountEnabled: true,
-        amountOptions: [
-          '$0 - $100',
-          '$101 - $1,000',
-          '$1,001 - $10,000',
-          'Does not apply'
-        ]
-      }
-    ];
 
     this.certificationOptions = {
       text: '',
@@ -192,6 +98,8 @@ class _ConfigStore extends AutoBindingStore {
 
     this.instructions = {
     };
+
+    this.loadAllConfigData();
   }
 
   insertOrders(questions) {
@@ -591,7 +499,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   relationshipPeopleChanged(newPeople) {
-    this.people = newPeople;
+    this.config.relationshipPersonTypes = newPeople;
     this.dirty = true;
   }
 
@@ -601,8 +509,8 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   enabledChanged(params) {
-    let target = this.matrixTypes.find(matrixType => {
-      return matrixType.name === params.relationshipType;
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
     });
 
     if (target) {
@@ -612,8 +520,8 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   typeEnabledChanged(params) {
-    let target = this.matrixTypes.find(matrixType => {
-      return matrixType.name === params.relationshipType;
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
     });
 
     if (target) {
@@ -623,8 +531,8 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   amountEnabledChanged(params) {
-    let target = this.matrixTypes.find(matrixType => {
-      return matrixType.name === params.relationshipType;
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
     });
 
     if (target) {
@@ -634,8 +542,8 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   typeOptionsChanged(params) {
-    let target = this.matrixTypes.find(matrixType => {
-      return matrixType.name === params.relationshipType;
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
     });
 
     if (target) {
@@ -645,8 +553,8 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   amountOptionsChanged(params) {
-    let target = this.matrixTypes.find(matrixType => {
-      return matrixType.name === params.relationshipType;
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
     });
 
     if (target) {
@@ -671,12 +579,26 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   loadAllConfigData() {
-    // reload all data from the backend
+    // Then load config and re-render
+    request.get('/api/coi/config', (err, config) => {
+      if (!err) {
+        this.config = config.body;
+        this.emitChange();
+      }
+    });
     this.dirty = false;
   }
 
   saveAll() {
-    // persist all data to the backend
+    request.post('/api/coi/config')
+    .send(this.config)
+    .type('application/json')
+    .end((err, config) => {
+      if (!err) {
+        this.config = config.body;
+        this.emitChange();
+      }
+    });
     this.dirty = false;
   }
 

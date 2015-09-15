@@ -38,9 +38,9 @@ export default class Relationship extends React.Component {
   onChange() {
     let storeState = ConfigStore.getState();
     this.setState({
-      list: storeState.people,
+      list: storeState.config.relationshipPersonTypes,
       peopleEnabled: storeState.peopleEnabled,
-      matrixTypes: storeState.matrixTypes,
+      matrixTypes: storeState.config.matrixTypes,
       instructions: storeState.instructions,
       dirty: storeState.dirty
     });
@@ -55,16 +55,16 @@ export default class Relationship extends React.Component {
     ConfigActions.relationshipPeopleEnabled(checkbox.checked);
   }
 
-  enabledChanged(relationshipType, newValue) {
-    ConfigActions.enabledChanged(relationshipType, newValue);
+  enabledChanged(typeCd, newValue) {
+    ConfigActions.enabledChanged(typeCd, newValue);
   }
 
-  typeEnabledChanged(relationshipType, newValue) {
-    ConfigActions.typeEnabledChanged(relationshipType, newValue);
+  typeEnabledChanged(typeCd, newValue) {
+    ConfigActions.typeEnabledChanged(typeCd, newValue);
   }
 
-  amountEnabledChanged(relationshipType, newValue) {
-    ConfigActions.amountEnabledChanged(relationshipType, newValue);
+  amountEnabledChanged(typeCd, newValue) {
+    ConfigActions.amountEnabledChanged(typeCd, newValue);
   }
 
   typeOptionsChanged(relationshipType, newList) {
@@ -121,7 +121,8 @@ export default class Relationship extends React.Component {
         return (
           <RelationshipType
             key={matrixType.name}
-            name={matrixType.name}
+            typeCd={matrixType.typeCd}
+            name={matrixType.description}
             enabled={matrixType.enabled}
             typeEnabled={matrixType.typeEnabled}
             amountEnabled={matrixType.amountEnabled}

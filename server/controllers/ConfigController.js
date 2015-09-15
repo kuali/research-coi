@@ -4,21 +4,27 @@ import {getUserInfo} from '../AuthService';
 export let init = app => {
   app.get('/api/coi/config', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    ConfigDB.getConfig(req.dbInfo, userInfo.id, function(err, questionnaire) {
+    ConfigDB.getConfig(req.dbInfo, userInfo.id, function(err, config) {
       if (err) {
         console.error(err);
         next(err);
       }
       else {
-        res.send(questionnaire);
+        res.send(config);
       }
     });
   });
 
-  app.put('/api/coi/config/', function(req, res){
+  app.post('/api/coi/config/', function(req, res, next){
     let userInfo = getUserInfo(req.cookies.authToken);
-    // validation?
-    res.sendStatus(202);
-    res.send(ConfigDB.setConfig(req, userInfo.id));
+    ConfigDB.setConfig(req.dbInfo, userInfo.id, req.body, function(err, config) {
+      if (err) {
+        console.error(err);
+        next(err);
+      }
+      else {
+        res.send(config);
+      }
+    });
   });
 };
