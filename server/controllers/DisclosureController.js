@@ -55,12 +55,6 @@ export let init = app => {
     });
   });
 
-  // I'm not sure we need this route anymore...
-  app.get('/api/coi/disclosure/{query}', function(req, res){
-    let userInfo = getUserInfo(req.cookies.authToken);
-    res.send(DisclosureDB.search(req.dbInfo, userInfo.id, req.params.query));
-  });
-
   // Returns details of a disclosure
   /*
     {
@@ -218,14 +212,9 @@ export let init = app => {
       ]
     }
   */
-  app.post('/api/coi/disclosure', function(req, res){
-    let userInfo = getUserInfo(req.cookies.authToken);
-    res.sendStatus(202);
-    res.send(DisclosureDB.save(req.dbInfo, userInfo.id, req.body));
-  });
 
   // Admin stuff
-  app.get('/api/coi/disclosure-summaries', function(req, res) {
+  app.get('/api/coi/disclosure-summaries', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     let sortColumn = 'DATE_SUBMITTED';
     if (req.query.sortColumn) {
@@ -239,7 +228,14 @@ export let init = app => {
     if (req.query.query) {
       query = req.query.query;
     }
-    res.send(DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, query));
+    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, query, (err, sumarries) => {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(sumarries);
+      }
+    });
   });
 
 
@@ -301,49 +297,5 @@ export let init = app => {
     let userInfo = getUserInfo(req.cookies.authToken);
     res.sendStatus(202);
     res.send(DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body));
-  });
-
-  app.post('/api/coi/disclosure/:id/approve', function(req, res){
-    let userInfo = getUserInfo(req.cookies.authToken);
-    res.sendStatus(202);
-    res.send(DisclosureDB.approve(req.dbInfo, userInfo.id, req.params.id));
-  });
-
-  app.post('/api/coi/disclosure/:id/sendback', function(req, res){
-    let userInfo = getUserInfo(req.cookies.authToken);
-    res.sendStatus(202);
-    res.send(DisclosureDB.sendBack(req.dbInfo, userInfo.id, req.params.id));
-  });
-
-  app.post('/api/coi/disclosure/:id/reviewer', function(req, res){
-    if (req.body && req.body.name) {
-      let userInfo = getUserInfo(req.cookies.authToken);
-      res.sendStatus(202);
-      res.send(DisclosureDB.addReviewer(req.dbInfo, userInfo.id, req.params.id, req.body.name));
-    }
-  });
-
-  app.post('/api/coi/disclosure/:id/comment/questionnaire', function(req, res){
-    if (req.body && req.body.comment) {
-      let userInfo = getUserInfo(req.cookies.authToken);
-      res.sendStatus(202);
-      res.send(DisclosureDB.addQuestionnaireComment(req.dbInfo, userInfo.id, req.params.id, req.body.comment));
-    }
-  });
-
-  app.post('/api/coi/disclosure/:id/comment/entities', function(req, res){
-    if (req.body && req.body.comment) {
-      let userInfo = getUserInfo(req.cookies.authToken);
-      res.sendStatus(202);
-      res.send(DisclosureDB.addEntityComment(req.dbInfo, userInfo.id, req.params.id, req.body.comment));
-    }
-  });
-
-  app.post('/api/coi/disclosure/:id/comment/declarations', function(req, res){
-    if (req.body && req.body.comment) {
-      let userInfo = getUserInfo(req.cookies.authToken);
-      res.sendStatus(202);
-      res.send(DisclosureDB.addDeclarationComment(req.dbInfo, userInfo.id, req.params.id, req.body.comment));
-    }
   });
 };

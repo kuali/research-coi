@@ -64,7 +64,7 @@ export class DisclosureTable extends ResponsiveComponent {
         <DisclosureTableRow
           key={disclosure.id}
           id={disclosure.id}
-          name={disclosure.projects[0].name}
+          name={disclosure.name}
           submittedBy={disclosure.submittedBy}
           status={disclosure.status}
           disposition={disclosure.disposition}
@@ -102,7 +102,7 @@ export class DisclosureTable extends ResponsiveComponent {
         <DisclosureTableRow
           key={disclosure.id}
           id={disclosure.id}
-          name={disclosure.projects[0].name}
+          name={disclosure.name}
           submittedBy={disclosure.submittedBy}
           submittedOn={disclosure.submittedOn}
           status={disclosure.status}
