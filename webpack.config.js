@@ -16,8 +16,16 @@ module.exports = {
   },
   module: {
     loaders: [
-      {test: /\.js/, loader: 'babel-loader?cacheDirectory=true'},
-      {test: /\.jsx/, loader: 'babel-loader?cacheDirectory=true'},
+      {
+        test: /\.js/,
+        exclude: /(node_modules)/,
+        loader: 'babel-loader?cacheDirectory=true'
+      },
+      {
+        test: /\.jsx/,
+        exclude: /(node_modules)/,
+        loader: 'babel-loader?cacheDirectory=true'
+      },
       {test: /\.css/, loader: 'style!css'}
     ]
   }
