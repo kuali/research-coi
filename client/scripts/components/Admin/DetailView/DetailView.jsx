@@ -47,11 +47,17 @@ export class DetailView extends ResponsiveComponent {
   }
 
   searchFilter(disclosure) {
-    let query = this.state.applicationState.query ? this.state.applicationState.query.toLowerCase() : '';
-    if (disclosure.submittedBy.toLowerCase().startsWith(query)) {
-      return true;
+    let query = this.state.applicationState.query;
+    if (query && query.length > 0) {
+      query = query.toLowerCase();
+      if (disclosure.submittedBy.toLowerCase().startsWith(query)) {
+        return true;
+      }
+      else if (disclosure.type.toLowerCase().startsWith(query)) {
+        return true;
+      }
     }
-    else if (disclosure.type.toLowerCase().startsWith(query)) {
+    else {
       return true;
     }
   }

@@ -86,7 +86,6 @@ function statusFilter(status) {
       }
     }
     else {
-      console.log('statusFilter');
       return true;
     }
   };
