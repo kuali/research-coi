@@ -11,8 +11,8 @@
     "type": "git",
     "url": "https://github.com/kualico/kc-coi"
   },
-  "author": "KualiCo",
-  "license": "AGPL3",
+  "author": "Kuali",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/kualico/kc-coi/issues"
   },
