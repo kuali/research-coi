@@ -36,29 +36,6 @@ class _ConfigStore extends AutoBindingStore {
       declarationTypes: []
     };
 
-    this.disclosureTypes = [
-      {
-        label: 'Annual Disclosure',
-        id: 1,
-        enabled: true
-      },
-      {
-        label: 'Travel Log',
-        id: 2,
-        enabled: true
-      },
-      {
-        label: 'Project Disclosure',
-        id: 3,
-        enabled: false
-      },
-      {
-        label: 'Manual Disclosure',
-        id: 4,
-        enabled: false
-      }
-    ];
-
     this.sponsorLookup = true;
 
     this.dueDate = undefined;
@@ -199,18 +176,18 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  enableDisclosureType(id) {
-    this.disclosureTypes.find(type => { return id === type.id; }).enabled = true;
+  enableDisclosureType(typeCd) {
+    this.config.disclosureTypes.find(type => { return typeCd === type.typeCd; }).enabled = 1;
     this.dirty = true;
   }
 
-  disableDisclosureType(id) {
-    this.disclosureTypes.find(type => { return id === type.id; }).enabled = false;
+  disableDisclosureType(typeCd) {
+    this.config.disclosureTypes.find(type => { return typeCd === type.typeCd; }).enabled = 0;
     this.dirty = true;
   }
 
   updateDisclosureType(params) {
-    this.disclosureTypes.find(type => { return params.id === type.id; }).label = params.newValue;
+    this.config.disclosureTypes.find(type => { return params.typeCd === type.typeCd; }).description = params.newValue;
     this.dirty = true;
   }
 

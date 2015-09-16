@@ -113,7 +113,8 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query.select('*').from('relationship_type').where('active', true),
     query.select('*').from('relationship_amount_type').where('active', true),
     query.select('*').from('relationship_person_type').where('active', true),
-    query.select('*').from('declaration_type').where('active', true)
+    query.select('*').from('declaration_type').where('active', true),
+    query.select('*').from('disclosure_type')
   ])
   .then(result=>{
     config.questions = result[0].map(question => {
@@ -134,6 +135,7 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     });
     config.relationshipPersonTypes = result[5];
     config.declarationTypes = result[6];
+    config.disclosureTypes = result[7];
     callback(undefined, camelizeJson(config));
   })
   .catch(function(err) {
@@ -189,6 +191,10 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
 
   queries.push(
     createCollectionQueries(dbInfo, config.relationship_person_types, {pk: 'type_cd', table: 'relationship_person_type'}, callback)
+  );
+
+  queries.push(
+    createCollectionQueries(dbInfo, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'}, callback)
   );
 
   Promise.all(queries)

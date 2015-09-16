@@ -29,7 +29,7 @@ export default class General extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      disclosureTypes: storeState.disclosureTypes,
+      disclosureTypes: storeState.config.disclosureTypes,
       dueDate: storeState.dueDate,
       isRollingDueDate: storeState.isRollingDueDate,
       notifications: storeState.notifications,

@@ -26,13 +26,13 @@ class _ConfigActions {
 
   deleteDeclarationType(id) { this.dispatch(id); }
 
-  enableDisclosureType(id) { this.dispatch(id); }
+  enableDisclosureType(typeCd) { this.dispatch(typeCd); }
 
-  disableDisclosureType(id) { this.dispatch(id); }
+  disableDisclosureType(typeCd) { this.dispatch(typeCd); }
 
-  updateDisclosureType(id, newValue) {
+  updateDisclosureType(typeCd, newValue) {
     this.dispatch({
-      id: id,
+      typeCd: typeCd,
       newValue: newValue
     });
   }

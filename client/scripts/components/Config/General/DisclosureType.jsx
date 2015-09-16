@@ -21,10 +21,10 @@ export default class DisclosureType extends React.Component {
   toggle() {
     let checkbox = React.findDOMNode(this.refs.checkbox);
     if (checkbox.checked) {
-      ConfigActions.enableDisclosureType(this.props.type.id);
+      ConfigActions.enableDisclosureType(this.props.type.typeCd);
     }
     else {
-      ConfigActions.disableDisclosureType(this.props.type.id);
+      ConfigActions.disableDisclosureType(this.props.type.typeCd);
     }
   }
 
@@ -42,7 +42,7 @@ export default class DisclosureType extends React.Component {
 
   doneEditing() {
     let textbox = React.findDOMNode(this.refs.label);
-    ConfigActions.updateDisclosureType(this.props.type.id, textbox.value);
+    ConfigActions.updateDisclosureType(this.props.type.typeCd, textbox.value);
     this.setState({
       editing: false
     });
@@ -81,7 +81,7 @@ export default class DisclosureType extends React.Component {
     if (this.state.editing) {
       jsx = (
         <span style={styles.dynamicSpan}>
-          <input type="text" ref="label" style={styles.textbox} defaultValue={this.props.type.label} onKeyUp={this.keyUp} />
+          <input type="text" ref="label" style={styles.textbox} defaultValue={this.props.type.description} onKeyUp={this.keyUp} />
           <DoneLink onClick={this.doneEditing} style={styles.editLink} />
         </span>
       );
@@ -89,7 +89,7 @@ export default class DisclosureType extends React.Component {
     else {
       jsx = (
         <span style={styles.dynamicSpan}>
-          <label htmlFor={this.props.type.id + 'disctype'} style={styles.label}>{this.props.type.label}</label>
+          <label htmlFor={this.props.type.typeCd + 'disctype'} style={styles.label}>{this.props.type.description}</label>
           <EditLink onClick={this.editType} style={styles.editLink} />
         </span>
       );
@@ -99,10 +99,10 @@ export default class DisclosureType extends React.Component {
       <span style={merge(styles.container, this.props.style)}>
         <input
           ref="checkbox"
-          id={this.props.type.id + 'disctype'}
+          id={this.props.type.typeCd + 'disctype'}
           type="checkbox"
           style={styles.checkbox}
-          defaultChecked={this.props.type.enabled}
+          checked={this.props.type.enabled === 1}
           onChange={this.toggle}
         />
         {jsx}
