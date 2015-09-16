@@ -2,6 +2,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   return knex.schema.createTable('disclosure_type', function(table) {
     table.integer('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
+    table.boolean('enabled').notNullable();
     table.engine('InnoDB');
   })
   .createTable('disclosure_status', function(table) {

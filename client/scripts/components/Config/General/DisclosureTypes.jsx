@@ -29,7 +29,7 @@ export default class DisclosureTypes extends React.Component {
     };
 
     let rows;
-    if (this.props.types) {
+    if (this.props.types && this.props.types.length > 0) {
       rows = (
         <span>
           <div style={styles.optionRow}>
