@@ -48,7 +48,7 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
     sel = query(tableProps.table).select(tableProps.pk);
   }
 
-  sel.then(results=>{
+  queries.push(sel.then(results=>{
     results.forEach(result=>{
       let match = collection.find(item=>{
         return item[tableProps.pk] && (item[tableProps.pk] === result[tableProps.pk]);
@@ -65,16 +65,13 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
         }));
       }
     });
-  });
+  }));
 
   queries.push(collection.map(line => {
     if (line[tableProps.pk] === undefined) {
       line.active = true;
       return query(tableProps.table)
       .insert(line, tableProps.pk)
-      .then(pk=> {
-        line[tableProps.pk] = pk[0];
-      })
       .catch(function(err) {
         if (optionalTrx) {
           optionalTrx.rollback();
@@ -114,7 +111,8 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query.select('*').from('relationship_amount_type').where('active', true),
     query.select('*').from('relationship_person_type').where('active', true),
     query.select('*').from('declaration_type').where('active', true),
-    query.select('*').from('disclosure_type')
+    query.select('*').from('disclosure_type'),
+    query.select('*').from('notification')
   ])
   .then(result=>{
     config.questions = result[0].map(question => {
@@ -136,6 +134,7 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     config.relationshipPersonTypes = result[5];
     config.declarationTypes = result[6];
     config.disclosureTypes = result[7];
+    config.notifications = result[8];
     callback(undefined, camelizeJson(config));
   })
   .catch(function(err) {
@@ -195,6 +194,10 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
 
   queries.push(
     createCollectionQueries(dbInfo, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'}, callback)
+  );
+
+  queries.push(
+    createCollectionQueries(dbInfo, config.notifications, {pk: 'id', table: 'notification'}, callback)
   );
 
   Promise.all(queries)
