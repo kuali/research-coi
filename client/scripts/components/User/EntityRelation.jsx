@@ -40,18 +40,18 @@ export class EntityRelation extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let relationshipStatusOptions = this.props.relationshipStatuses.map(status =>{
+    let declarationTypeOptions = this.props.declarationTypes.map(type =>{
       return (
         <div>
           <input
           type="radio"
           ref="none"
-          checked={this.props.relationshipStatusCd === status.statusCd}
-          value={status.statusCd}
+          checked={this.props.typeCd === type.typeCd}
+          value={type.typeCd}
           onChange={this.relationChosen}
           name={this.props.entity.id + 'relation' + this.props.projectId}
           />
-          <span style={{fontSize: 14, marginLeft: 6}}>{status.description}</span>
+          <span style={{fontSize: 14, marginLeft: 6}}>{type.description}</span>
         </div>
       );
     });
@@ -62,7 +62,7 @@ export class EntityRelation extends ResponsiveComponent {
           {this.props.entity.name}
         </span>
         <span style={{width: '30%', display: 'inline-block', verticalAlign: 'top'}}>
-          {relationshipStatusOptions}
+          {declarationTypeOptions}
         </span>
         <span style={{width: '45%', display: 'inline-block'}}>
           <input

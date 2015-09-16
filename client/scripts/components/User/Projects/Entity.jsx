@@ -12,8 +12,8 @@ export class Entity extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.getFlagStatus = this.getFlagStatus.bind(this);
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
+    this.getDeclarationDescription = this.getDeclarationDescription.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -22,32 +22,32 @@ export class Entity extends ResponsiveComponent {
     DisclosureActions.toggleDeclaration(this.props.entity.id, 'ENTITY');
   }
 
-  getFlagStatus() {
-    if (undefinedRelationExists('PROJECT', this.props.projects, this.props.relations)) {
-      return 'ATTENTION';
+  getDisplayStatus() {
+    if (undefinedRelationExists('PROJECT', this.props.projects, this.props.declarations)) {
+      return 'Action Required';
     }
     else {
-      let worstRelation = 'NONE';
+      let worstDeclaration = this.props.declarations[0].typeCd;
 
-      this.props.relations.forEach(element => {
-        if (element.relation === 3) {
-          worstRelation = 'MANAGED';
-        }
-        else if (worstRelation !== 'MANAGED' && element.relation === 2) {
-          worstRelation = 'POTENTIAL';
+      this.props.declarations.forEach(element => {
+        if (worstDeclaration !== 2 && element.type > 1) {
+          worstDeclaration = element.typeCd;
         }
       });
 
-      return worstRelation;
+      return this.getDeclarationDescription(worstDeclaration);
     }
   }
 
-  getDisplayStatus() {
-    switch (this.getFlagStatus()) {
-      case 'ATTENTION': return 'Action Required';
-      case 'MANAGED': return 'Managed Relationship';
-      case 'POTENTIAL': return 'Potential Relationship';
-      case 'NONE': return 'No Conflict';
+  getDeclarationDescription(typeCd) {
+    let declarationType = window.config.declarationTypes.find(type=>{
+      return type.typeCd === typeCd;
+    });
+
+    if (declarationType) {
+      return declarationType.description;
+    } else {
+      return null;
     }
   }
 
@@ -116,7 +116,7 @@ export class Entity extends ResponsiveComponent {
     if (this.props.open) {
       relationshipDialog = (
         <EntityRelationDialog
-          relations={this.props.relations}
+          declarations={this.props.declarations}
           projects={this.props.projects}
           style={{display: this.props.open ? 'block' : 'none'}}
           title={this.props.title}
@@ -124,7 +124,7 @@ export class Entity extends ResponsiveComponent {
           role={this.props.role}
           sponsor={this.props.sponsor}
           cosponsor={this.props.cosponsor}
-          relationshipStatuses={this.props.relationshipStatuses}
+          declarationTypes={this.props.declarationTypes}
           finEntityId={this.props.entity.id}
           id={this.props.id}
           entityCount={this.props.entityCount}
@@ -142,7 +142,7 @@ export class Entity extends ResponsiveComponent {
     });
 
     let status;
-    if (this.getFlagStatus() === 'ATTENTION') {
+    if (this.getDisplayStatus() === 'Action Required') {
       status = (
         <div style={styles.attention}>
           - {this.getDisplayStatus()} -

@@ -108,12 +108,12 @@ class _DisclosureActions {
 
   changeDeclarationView(newView) { this.dispatch(newView); }
 
-  entityRelationChosen(relationType, finEntityId, projectId, relationshipStatusCd) {
+  entityRelationChosen(relationType, finEntityId, projectId, typeCd) {
     this.dispatch({
       relationType: relationType,
       finEntityId: finEntityId,
       projectId: projectId,
-      relationshipStatusCd: relationshipStatusCd
+      typeCd: typeCd
     });
   }
 

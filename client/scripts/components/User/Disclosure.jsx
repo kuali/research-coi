@@ -246,10 +246,10 @@ export class Disclosure extends ResponsiveComponent {
             <Relationships
               projects={this.state.projects}
               entities={this.state.entities}
-              relations={this.state.declarations}
+              declarations={this.state.declarations}
               declarationStates={this.state.applicationState.declarationStates}
               view={this.state.applicationState.declarationView}
-              relationshipStatuses={window.config.relationshipStatuses}
+              declarationTypes={window.config.declarationTypes}
               instructionsShowing={this.state.applicationState.instructionsShowing}
             />
           );

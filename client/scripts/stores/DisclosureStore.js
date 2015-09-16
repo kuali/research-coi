@@ -585,7 +585,7 @@ class _DisclosureStore extends AutoBindingStore {
     });
 
     if (existing) {
-      existing.relationshipStatusCd = params.relationshipStatusCd;
+      existing.typeCd = params.typeCd;
       request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
       .send(existing)
       .type('application/json')
@@ -594,7 +594,7 @@ class _DisclosureStore extends AutoBindingStore {
     else {
       let newRelation = {
         finEntityId: params.finEntityId,
-        relationshipStatusCd: params.relationshipStatusCd
+        typeCd: params.typeCd
       };
       newRelation[field] = params.projectId;
       request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
@@ -660,7 +660,7 @@ class _DisclosureStore extends AutoBindingStore {
         relationType: 'PROJECT',
         finEntityId: params.finEntityId,
         projectId: project.projectId,
-        relationshipStatusCd: params.newValue
+        typeCd: params.newValue
       });
     });
   }
@@ -671,7 +671,7 @@ class _DisclosureStore extends AutoBindingStore {
         relationType: params.type,
         finEntityId: entity.id,
         projectId: params.projectId,
-        relationshipStatusCd: params.newValue
+        typeCd: params.newValue
       });
     });
   }

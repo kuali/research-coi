@@ -12,8 +12,8 @@ export class ManualEventRelations extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.getFlagStatus = this.getFlagStatus.bind(this);
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
+    this.getDeclarationDescription = this.getDeclarationDescription.bind(this);
     this.editProject = this.editProject.bind(this);
   }
 
@@ -23,34 +23,32 @@ export class ManualEventRelations extends ResponsiveComponent {
     DisclosureActions.toggleDeclaration(this.props.disclosure.id, 'MANUAL');
   }
 
-  getFlagStatus() {
-    if (undefinedRelationExists('ENTITY', this.props.entities, this.props.relations)) {
-      return 'ATTENTION';
+  getDisplayStatus() {
+    if (undefinedRelationExists('ENTITY', this.props.entities, this.props.declarations)) {
+      return 'Action Required';
     }
     else {
-      let worstRelation = 'NONE';
+      let worstDeclaration = this.props.declarations[0].typeCd;
 
-      if (this.props.relations) {
-        this.props.relations.forEach(element => {
-          if (element.relation === 'MANAGED') {
-            worstRelation = 'MANAGED';
-          }
-          else if (worstRelation !== 'MANAGED' && element.relation === 'POTENTIAL') {
-            worstRelation = 'POTENTIAL';
-          }
-        });
-      }
+      this.props.declarations.forEach(element => {
+        if (worstDeclaration !== 2 && element.typeCd > 1) {
+          worstDeclaration = element.typeCd;
+        }
+      });
 
-      return worstRelation;
+      return this.getDeclarationDescription(worstDeclaration);
     }
   }
 
-  getDisplayStatus() {
-    switch (this.getFlagStatus()) {
-      case 'ATTENTION': return 'Action Required';
-      case 'MANAGED': return 'Managed Relationship';
-      case 'POTENTIAL': return 'Potential Relationship';
-      case 'NONE': return 'No Conflict';
+  getDeclarationDescription(typeCd) {
+    let declarationType = window.config.declarationTypes.find(type=>{
+      return type.typeCd === typeCd;
+    });
+
+    if (declarationType) {
+      return declarationType.description;
+    } else {
+      return null;
     }
   }
 
@@ -118,7 +116,7 @@ export class ManualEventRelations extends ResponsiveComponent {
     if (this.props.open) {
       relationshipDialog = (
         <ManualRelationDialog
-          relations={this.props.relations}
+          declarations={this.props.declarations}
           entities={this.props.entities}
           title={this.props.disclosure.title}
           projectId={this.props.disclosure.projectId}
@@ -129,7 +127,7 @@ export class ManualEventRelations extends ResponsiveComponent {
     }
 
     let status;
-    if (this.getFlagStatus() === 'ATTENTION') {
+    if (this.getDisplayStatus() === 'Action Required') {
       status = (
         <div style={styles.attention}>
           - {this.getDisplayStatus()} -

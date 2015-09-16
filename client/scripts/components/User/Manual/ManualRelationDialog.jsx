@@ -11,20 +11,20 @@ export class ManualRelationDialog extends ResponsiveComponent {
     super();
     this.commonStyles = {};
 
-    this.findRelationByEntity = this.findRelationByEntity.bind(this);
+    this.findDeclarationTypeByEntity = this.findDeclarationTypeByEntity.bind(this);
     this.findCommentByEntity = this.findCommentByEntity.bind(this);
     this.setAll = this.setAll.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
 
-  findRelationByEntity(id) {
-    let relation = this.props.relations.find((element) => {
+  findDeclarationTypeByEntity(id) {
+    let declaration = this.props.declarations.find((element) => {
       return element.finEntityId === id;
     });
 
-    if (relation) {
-      return relation.relationshipStatusCd;
+    if (declaration) {
+      return declaration.typeCd;
     }
     else {
       return null;
@@ -32,12 +32,12 @@ export class ManualRelationDialog extends ResponsiveComponent {
   }
 
   findCommentByEntity(id) {
-    let relation = this.props.relations.find((element) => {
+    let declaration = this.props.declarations.find((element) => {
       return element.finEntityId === id;
     });
 
-    if (relation) {
-      return relation.comments;
+    if (declaration) {
+      return declaration.comments;
     }
     else {
       return null;
@@ -104,7 +104,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
           entity={element}
           relationType="MANUAL"
           projectId={this.props.projectId}
-          relationshipStatusCd={this.findRelationByEntity(element.id)}
+          typeCd={this.findDeclarationTypeByEntity(element.id)}
           comments={this.findCommentByEntity(element.id)}
           key={element.id}
         />

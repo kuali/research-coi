@@ -239,7 +239,7 @@ export let get = (dbInfo, disclosureId, callback) => {
       .from('project as p')
       .innerJoin('project_type as pt', 'pt.type_cd', 'p.type_cd' )
       .where('disclosure_id', disclosureId),
-    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.relationship_status_cd as relationshipStatusCd', 'd.comments as comments')
+    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments')
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
       .where('fe.disclosure_id', disclosureId)
@@ -270,16 +270,6 @@ export let get = (dbInfo, disclosureId, callback) => {
           });
         });
 
-        return knex.select('id', 'fin_entity_id', 'project_id', 'relationship_status_cd')
-          .from('declaration')
-          .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.fin_entity_id; }));
-      })
-      .then(declarations => {
-        disclosure.entities.forEach(entity => {
-          entity.declarations = declarations.filter(declaration => {
-            return declaration.fin_entity_id === entity.id;
-          });
-        });
         callback(undefined, camelizeJson(disclosure));
       })
       .catch(err => {

@@ -4,7 +4,7 @@ exports.seed = function(knex, Promise) {
   console.log('Truncating tables');
   //temp raw statement to get seed data working
   return knex.raw('SET FOREIGN_KEY_CHECKS=0').then(function(){
-    knex('declaration').truncate();
+    return knex('declaration').truncate();
   }).then(function() {
     return knex('relationship').truncate();
   }).then(function() {
@@ -16,7 +16,7 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     return knex('questionnaire_answer').truncate();
   }).then(function() {
-    return knex('relationship_status').truncate();
+    return knex('declaration_type').truncate();
   }).then(function() {
     return knex('relationship_type').truncate();
   }).then(function() {
@@ -100,11 +100,11 @@ exports.seed = function(knex, Promise) {
       knex('relationship_person_type').insert({description: 'Entity', active: true})
     ]);
   }).then(function() {
-    console.log('Seed - relationship_status');
+    console.log('Seed - declaration_type');
     return Promise.all([
-      knex('relationship_status').insert({status_cd: 1, description: 'No Conflict'}),
-      knex('relationship_status').insert({status_cd: 2, description: 'Potential Relationship'}),
-      knex('relationship_status').insert({status_cd: 3, description: 'Managed Relationship'})
+      knex('declaration_type').insert({type_cd: 1, description: 'No Conflict', enabled: true, custom: false, active: true}),
+      knex('declaration_type').insert({type_cd: 2, description: 'Managed Relationship', enabled: true, custom: false, active: true}),
+      knex('declaration_type').insert({type_cd: 3, description: 'Potential Relationship', enabled: true, custom: true, active: true})
     ]);
   }).then(function() {
     console.log('Seed - relationship_type');
@@ -342,7 +342,7 @@ exports.seed = function(knex, Promise) {
       knex('declaration').insert({
         fin_entity_id: knex('fin_entity').max('id'),
         project_id: knex('project').max('id'),
-        relationship_status_cd: 1,
+        type_cd: knex('declaration_type').max('type_cd'),
         comments: 'The Molecular Disentropization project has no conflict with Apple'
       })
     ]);

@@ -15,8 +15,8 @@ export class Relationships extends ResponsiveComponent {
 
     this.openNext = this.openNext.bind(this);
     this.openPrevious = this.openPrevious.bind(this);
-    this.getEntityRelations = this.getEntityRelations.bind(this);
-    this.getProjectRelations = this.getProjectRelations.bind(this);
+    this.getEntityDeclarations = this.getEntityDeclarations.bind(this);
+    this.getProjectDeclarations = this.getProjectDeclarations.bind(this);
     this.isProjectDeclarationOpen = this.isProjectDeclarationOpen.bind(this);
     this.isEntityDeclarationOpen = this.isEntityDeclarationOpen.bind(this);
     this.viewChanged = this.viewChanged.bind(this);
@@ -66,9 +66,9 @@ export class Relationships extends ResponsiveComponent {
     }
   }
 
-  getEntityRelations(id) {
-    if (this.props.relations) {
-      return this.props.relations.filter(element => {
+  getEntityDeclarations(id) {
+    if (this.props.declarations) {
+      return this.props.declarations.filter(element => {
         return element.finEntityId === id;
       });
     }
@@ -77,9 +77,9 @@ export class Relationships extends ResponsiveComponent {
     }
   }
 
-  getProjectRelations(id) {
-    if (this.props.relations) {
-      return this.props.relations.filter(element => {
+  getProjectDeclarations(id) {
+    if (this.props.declarations) {
+      return this.props.declarations.filter(element => {
         return element.projectId === id;
       });
     }
@@ -127,14 +127,14 @@ export class Relationships extends ResponsiveComponent {
 
     let projectView = this.props.view === 'Project View';
     let relationshipNodes = [];
-    let relations;
+    let declarations;
     if (projectView) {
       for (let i = 0; i < this.props.projects.length; i++) {
-        relations = this.getProjectRelations(this.props.projects[i].projectId);
+        declarations = this.getProjectDeclarations(this.props.projects[i].projectId);
 
         relationshipNodes.push(
           <Project
-            relations={relations}
+            declarations={declarations}
             entities={this.props.entities}
             title={this.props.projects[i].title}
             type={this.props.projects[i].type}
@@ -142,7 +142,7 @@ export class Relationships extends ResponsiveComponent {
             sponsor={this.props.projects[i].sponsor}
             cosponsor={this.props.projects[i].cosponsor}
             projectId={this.props.projects[i].projectId}
-            relationshipStatuses={this.props.relationshipStatuses}
+            declarationTypes={this.props.declarationTypes}
             open={this.isProjectDeclarationOpen(this.props.projects[i].projectId)}
             onNext={this.openNext}
             id={i}
@@ -155,15 +155,15 @@ export class Relationships extends ResponsiveComponent {
     }
     else {
       for (let i = 0; i < this.props.entities.length; i++) {
-        relations = this.getEntityRelations(this.props.entities[i].id);
+        declarations = this.getEntityDeclarations(this.props.entities[i].id);
 
         relationshipNodes.push(
           <Entity
             entity={this.props.entities[i]}
-            relations={relations}
+            declarations={declarations}
             projects={this.props.projects}
             title={this.props.entities[i].name}
-            relationshipStatuses={this.props.relationshipStatuses}
+            declarationTypes={this.props.declarationTypes}
             open={this.isEntityDeclarationOpen(this.props.entities[i].id)}
             onNext={this.openNext}
             onPrevious={this.openPrevious}

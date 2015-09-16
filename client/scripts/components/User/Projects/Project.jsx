@@ -12,8 +12,8 @@ export class Project extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.getFlagStatus = this.getFlagStatus.bind(this);
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
+    this.getDeclarationDescription = this.getDeclarationDescription.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -22,32 +22,32 @@ export class Project extends ResponsiveComponent {
     DisclosureActions.toggleDeclaration(this.props.projectId, 'PROJECT');
   }
 
-  getFlagStatus() {
-    if (undefinedRelationExists('ENTITY', this.props.entities, this.props.relations)) {
-      return 'ATTENTION';
+  getDisplayStatus() {
+    if (undefinedRelationExists('ENTITY', this.props.entities, this.props.declarations)) {
+      return 'Action Required';
     }
     else {
-      let worstRelation = 'NONE';
+      let worstDeclaration = this.props.declarations[0].typeCd;
 
-      this.props.relations.forEach(element => {
-        if (element.relation === 3) {
-          worstRelation = 'MANAGED';
-        }
-        else if (worstRelation !== 'MANAGED' && element.relation === 2) {
-          worstRelation = 'POTENTIAL';
+      this.props.declarations.forEach(element => {
+        if (worstDeclaration !== 2 && element.typeCd > 1) {
+          worstDeclaration = element.typeCd;
         }
       });
 
-      return worstRelation;
+      return this.getDeclarationDescription(worstDeclaration);
     }
   }
 
-  getDisplayStatus() {
-    switch (this.getFlagStatus()) {
-      case 'ATTENTION': return 'ATTENTION REQUIRED';
-      case 'MANAGED': return 'Managed Relationship';
-      case 'POTENTIAL': return 'Potential Relationship';
-      case 'NONE': return 'No Conflict';
+  getDeclarationDescription(typeCd) {
+    let declarationType = window.config.declarationTypes.find(type=>{
+      return type.typeCd === typeCd;
+    });
+
+    if (declarationType) {
+      return declarationType.description;
+    } else {
+      return null;
     }
   }
 
@@ -113,7 +113,7 @@ export class Project extends ResponsiveComponent {
     if (this.props.open) {
       relationshipDialog = (
         <ProjectRelationDialog
-          relations={this.props.relations}
+          declarations={this.props.declarations}
           entities={this.props.entities}
           style={{display: this.props.open ? 'block' : 'none'}}
           title={this.props.title}
@@ -122,7 +122,7 @@ export class Project extends ResponsiveComponent {
           sponsor={this.props.sponsor}
           cosponsor={this.props.cosponsor}
           projectId={this.props.projectId}
-          relationshipStatuses={this.props.relationshipStatuses}
+          declarationTypes={this.props.declarationTypes}
           id={this.props.id}
           projectCount={this.props.projectCount}
           onSave={this.toggleDialog}
@@ -132,7 +132,7 @@ export class Project extends ResponsiveComponent {
     }
 
     let status;
-    if (this.getFlagStatus() === 'ATTENTION') {
+    if (this.getDisplayStatus() === 'Action Required') {
       status = (
         <div style={styles.attention}>
           - {this.getDisplayStatus()} -
