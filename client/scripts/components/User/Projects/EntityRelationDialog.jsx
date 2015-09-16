@@ -13,7 +13,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
 
     this.onNext = this.onNext.bind(this);
     this.onPrevious = this.onPrevious.bind(this);
-    this.findRelationByProject = this.findRelationByProject.bind(this);
+    this.findDeclarationTypeByProject = this.findDeclarationTypeByProject.bind(this);
     this.findCommentByProject = this.findCommentByProject.bind(this);
     this.setAll = this.setAll.bind(this);
   }
@@ -28,13 +28,13 @@ export class EntityRelationDialog extends ResponsiveComponent {
     this.props.onPrevious(this.props.id, 'ENTITY');
   }
 
-  findRelationByProject(id) {
-    let relation = this.props.relations.find((element) => {
+  findDeclarationTypeByProject(id) {
+    let declaration = this.props.declarations.find((element) => {
       return element.projectId === id;
     });
 
-    if (relation) {
-      return relation.relationshipStatusCd;
+    if (declaration) {
+      return declaration.typeCd;
     }
     else {
       return null;
@@ -42,7 +42,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
   }
 
   findCommentByProject(id) {
-    let relation = this.props.relations.find((element) => {
+    let relation = this.props.declarations.find((element) => {
       return element.projectId === id;
     });
 
@@ -116,17 +116,17 @@ export class EntityRelationDialog extends ResponsiveComponent {
         <ProjectRelation
           project={element}
           finEntityId={this.props.finEntityId}
-          relationshipStatusCd={this.findRelationByProject(element.projectId)}
+          typeCd={this.findDeclarationTypeByProject(element.projectId)}
           comments={this.findCommentByProject(element.projectId)}
-          relationshipStatuses={this.props.relationshipStatuses}
+          declarationTypes={this.props.declarationTypes}
           key={element.projectId}
         />
       );
     });
 
-    let relationshipStatusOptions = this.props.relationshipStatuses.map(option =>{
+    let declarationTypeOptions = this.props.declarationTypes.map(option =>{
       return (
-      <option key={option.statusCd} value={option.statusCd}>{option.description}</option>
+      <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
       );
     });
 
@@ -154,7 +154,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
             <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
             to:
             <select ref="setAllSelect" style={{marginLeft: 10}}>
-              {relationshipStatusOptions}
+              {declarationTypeOptions}
             </select>
           </div>
           <div style={styles.headings}>

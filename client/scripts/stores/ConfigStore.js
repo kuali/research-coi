@@ -33,7 +33,7 @@ class _ConfigStore extends AutoBindingStore {
       relationshipTypes: [],
       relationshipPersonType: [],
       relationshipAmountTypes: [],
-      relationshipStatuses: []
+      declarationTypes: []
     };
 
     this.disclosureTypes = [
@@ -60,24 +60,6 @@ class _ConfigStore extends AutoBindingStore {
     ];
 
     this.sponsorLookup = true;
-
-    this.declarationTypes = [
-      {
-        id: 1,
-        text: 'No Conflict',
-        showing: true
-      },
-      {
-        id: 2,
-        text: 'Potential Relationship',
-        showing: true
-      },
-      {
-        id: 3,
-        text: 'Relationship Managed',
-        showing: false
-      }
-    ];
 
     this.dueDate = undefined;
     this.isRollingDueDate = undefined;
@@ -156,9 +138,9 @@ class _ConfigStore extends AutoBindingStore {
     this.refreshQuestionnaire();
   }
 
-  startEditingDeclarationType(id) {
-    this.applicationState.declarationsTypesBeingEdited[id] = {
-      newValue: this.declarationTypes.find(type => { return id === type.id; }).text
+  startEditingDeclarationType(typeCd) {
+    this.applicationState.declarationsTypesBeingEdited[typeCd] = {
+      newValue: this.config.declarationTypes.find(type => { return typeCd === type.typeCd; }).text
     };
     this.dirty = true;
   }
@@ -168,16 +150,18 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  stopEditingDeclarationType(id) {
-    let newValue = this.applicationState.declarationsTypesBeingEdited[id].newValue;
-    this.declarationTypes.find(type => { return id === type.id; }).text = newValue;
-    delete this.applicationState.declarationsTypesBeingEdited[id];
+  stopEditingDeclarationType(typeCd) {
+    let newValue = this.applicationState.declarationsTypesBeingEdited[typeCd].newValue;
+    if (newValue) {
+      this.config.declarationTypes.find(type => { return typeCd === type.typeCd; }).description = newValue;
+    }
+    delete this.applicationState.declarationsTypesBeingEdited[typeCd];
     this.dirty = true;
   }
 
-  toggleDeclarationType(id) {
-    let typeObject = this.declarationTypes.find(type => { return id === type.id; });
-    typeObject.showing = !typeObject.showing;
+  toggleDeclarationType(typeCd) {
+    let typeObject = this.config.declarationTypes.find(type => { return typeCd === type.typeCd; });
+    typeObject.enabled = typeObject.enabled === 1 ? 0 : 1;
     this.dirty = true;
   }
 
@@ -193,10 +177,9 @@ class _ConfigStore extends AutoBindingStore {
 
   saveNewDeclarationType() {
     // Eventually get id from server
-    this.declarationTypes.push({
-      id: new Date().getTime(),
-      showing: true,
-      text: this.applicationState.newTypeText,
+    this.config.declarationTypes.push({
+      enabled: true,
+      description: this.applicationState.newTypeText,
       custom: true
     });
     this.applicationState.enteringNewType = false;
@@ -209,9 +192,9 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  deleteDeclarationType(id) {
-    this.declarationTypes = this.declarationTypes.filter(type => {
-      return type.id !== id;
+  deleteDeclarationType(typeCd) {
+    this.config.declarationTypes = this.config.declarationTypes.filter(type => {
+      return type.typeCd !== typeCd;
     });
     this.dirty = true;
   }

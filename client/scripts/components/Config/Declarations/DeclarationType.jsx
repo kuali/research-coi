@@ -20,32 +20,32 @@ export default class Declaration extends React.Component {
   }
 
   typeToggled() {
-    ConfigActions.toggleDeclarationType(this.props.type.id);
+    ConfigActions.toggleDeclarationType(this.props.type.typeCd);
   }
 
   typeIsBeingEdited(type) {
-    return this.props.applicationState.declarationsTypesBeingEdited[type.id] !== undefined;
+    return this.props.applicationState.declarationsTypesBeingEdited[type.typeCd] !== undefined;
   }
 
   getNewValue(type) {
-    return this.props.applicationState.declarationsTypesBeingEdited[type.id].newValue;
+    return this.props.applicationState.declarationsTypesBeingEdited[type.typeCd].newValue;
   }
 
   nameChanged() {
     let newValue = React.findDOMNode(this.refs.typeName).value;
-    ConfigActions.updateDeclarationType(this.props.type.id, newValue);
+    ConfigActions.updateDeclarationType(this.props.type.typeCd, newValue);
   }
 
   doneEditing() {
-    ConfigActions.stopEditingDeclarationType(this.props.type.id);
+    ConfigActions.stopEditingDeclarationType(this.props.type.typeCd);
   }
 
   startEditing() {
-    ConfigActions.startEditingDeclarationType(this.props.type.id);
+    ConfigActions.startEditingDeclarationType(this.props.type.typeCd);
   }
 
   deleteType() {
-    ConfigActions.deleteDeclarationType(this.props.type.id);
+    ConfigActions.deleteDeclarationType(this.props.type.typeCd);
   }
 
   lookForEnter(evt) {
@@ -102,7 +102,7 @@ export default class Declaration extends React.Component {
     else {
       jsx = (
         <span>
-          <label style={styles.typeLabel} htmlFor={'type_' + type.id}>{type.text}</label>
+          <label style={styles.typeLabel} htmlFor={'type_' + type.typeCd}>{type.description}</label>
           {deleteLink}
           <EditLink style={styles.editLink} onClick={this.startEditing} />
         </span>
@@ -112,7 +112,7 @@ export default class Declaration extends React.Component {
     let checkbox;
     if (this.props.toggle) {
       checkbox = (
-        <input type="checkbox" checked={type.showing} id={'type_' + type.id} onChange={this.typeToggled} />
+        <input type="checkbox" checked={type.enabled === 1} id={'type_' + type.typeCd} onChange={this.typeToggled} />
       );
     }
 

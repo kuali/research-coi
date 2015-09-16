@@ -103,16 +103,19 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('sponsor_cd', 6).notNullable();
     table.engine('InnoDB');
   })
-  .createTable('relationship_status', function(table) {
-    table.integer('status_cd').notNullable().primary();
+  .createTable('declaration_type', function(table) {
+    table.increments('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
+    table.boolean('enabled').notNullable();
+    table.boolean('custom').notNullable();
+    table.boolean('active').notNullable();
     table.engine('InnoDB');
   })
   .createTable('declaration', function(table) {
     table.increments('id').notNullable();
     table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
     table.integer('project_id').unsigned().notNullable().index().references('id').inTable('project');
-    table.integer('relationship_status_cd').notNullable().references('status_cd').inTable('relationship_status');
+    table.integer('type_cd').unsigned().index().references('type_cd').inTable('declaration_type');
     table.string('comments', 4000);
     table.engine('InnoDB');
   })

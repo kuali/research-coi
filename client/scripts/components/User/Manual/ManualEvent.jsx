@@ -45,7 +45,7 @@ export class ManualEvent extends ResponsiveComponent {
         <ManualEventRelations
           disclosure={this.props.disclosure}
           entities={this.props.entities}
-          relations={this.props.relations}
+          declarations={this.props.declarations}
           open={this.isDeclarationOpen(this.props.disclosure.id)}
         />
       );

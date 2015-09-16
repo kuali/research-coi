@@ -33,7 +33,7 @@ export default class Declarations extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      declarationTypes: storeState.declarationTypes,
+      declarationTypes: storeState.config.declarationTypes,
       instructions: storeState.instructions,
       dirty: storeState.dirty
     });

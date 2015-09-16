@@ -113,7 +113,7 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query.select('*').from('relationship_type').where('active', true),
     query.select('*').from('relationship_amount_type').where('active', true),
     query.select('*').from('relationship_person_type').where('active', true),
-    query.select('*').from('relationship_status')
+    query.select('*').from('declaration_type').where('active', true)
   ])
   .then(result=>{
     config.questions = result[0].map(question => {
@@ -133,7 +133,7 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
       return type;
     });
     config.relationshipPersonTypes = result[5];
-    config.relationshipStatuses = result[6];
+    config.declarationTypes = result[6];
     callback(undefined, camelizeJson(config));
   })
   .catch(function(err) {
@@ -146,7 +146,6 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
 
 export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
   let config = snakeizeJson(body);
-
   let knex = getKnex(dbInfo);
 
   let query;
@@ -183,6 +182,10 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
 
     return matrixTypeQueries;
   }));
+
+  queries.push(
+    createCollectionQueries(dbInfo, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'}, callback)
+  );
 
   queries.push(
     createCollectionQueries(dbInfo, config.relationship_person_types, {pk: 'type_cd', table: 'relationship_person_type'}, callback)
