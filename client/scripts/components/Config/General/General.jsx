@@ -32,7 +32,7 @@ export default class General extends React.Component {
       disclosureTypes: storeState.config.disclosureTypes,
       dueDate: storeState.dueDate,
       isRollingDueDate: storeState.isRollingDueDate,
-      notifications: storeState.notifications,
+      notifications: storeState.config.notifications,
       sponsorLookup: storeState.sponsorLookup,
       dirty: storeState.dirty
     });

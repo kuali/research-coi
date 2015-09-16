@@ -17,13 +17,21 @@ export let init = app => {
 
   app.post('/api/coi/config/', function(req, res, next){
     let userInfo = getUserInfo(req.cookies.authToken);
-    ConfigDB.setConfig(req.dbInfo, userInfo.id, req.body, function(err, config) {
+    ConfigDB.setConfig(req.dbInfo, userInfo.id, req.body, function(err) {
       if (err) {
         console.error(err);
         next(err);
       }
       else {
-        res.send(config);
+        ConfigDB.getConfig(req.dbInfo, userInfo.id, function(err, config) {
+          if (err) {
+            console.error(err);
+            next(err);
+          }
+          else {
+            res.send(config);
+          }
+        });
       }
     });
   });

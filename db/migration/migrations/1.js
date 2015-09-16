@@ -150,6 +150,13 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.dateTime('start_date');
     table.dateTime('end_date');
     table.text('reason');
+  })
+  .createTable('notification', function(table) {
+    table.increments('id').notNullable();
+    table.text('reminder_text');
+    table.integer('warning_value');
+    table.text('warning_period');
+    table.boolean('active').notNullable();
   });
 };
 

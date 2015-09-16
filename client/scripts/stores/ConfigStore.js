@@ -12,7 +12,11 @@ class _ConfigStore extends AutoBindingStore {
     this.applicationState = {
       declarationsTypesBeingEdited: {},
       enteringNewType: false,
-      newNotification: {},
+      newNotification: {
+        warningPeriod: 'Days',
+        warningValue: 1,
+        active: true
+      },
       newQuestion: {
         screening: undefined,
         entities: undefined
@@ -33,7 +37,8 @@ class _ConfigStore extends AutoBindingStore {
       relationshipTypes: [],
       relationshipPersonType: [],
       relationshipAmountTypes: [],
-      declarationTypes: []
+      declarationTypes: [],
+      notifications: []
     };
 
     this.sponsorLookup = true;
@@ -41,7 +46,6 @@ class _ConfigStore extends AutoBindingStore {
     this.dueDate = undefined;
     this.isRollingDueDate = undefined;
 
-    this.notifications = [];
 
     this.questions = {
       screening: [],
@@ -214,7 +218,7 @@ class _ConfigStore extends AutoBindingStore {
   setWarningValueOnNotification(params) {
     let targetNote;
     if (params.id) {
-      targetNote = this.notifications.find(notification => { return notification.id === params.id; });
+      targetNote = this.config.notifications.find(notification => { return notification.id === params.id; });
     }
     else {
       targetNote = this.applicationState.newNotification;
@@ -229,7 +233,7 @@ class _ConfigStore extends AutoBindingStore {
   setWarningPeriodOnNotification(params) {
     let targetNote;
     if (params.id) {
-      targetNote = this.notifications.find(notification => { return notification.id === params.id; });
+      targetNote = this.config.notifications.find(notification => { return notification.id === params.id; });
     }
     else {
       targetNote = this.applicationState.newNotification;
@@ -244,7 +248,7 @@ class _ConfigStore extends AutoBindingStore {
   setReminderTextOnNotification(params) {
     let targetNote;
     if (params.id) {
-      targetNote = this.notifications.find(notification => { return notification.id === params.id; });
+      targetNote = this.config.notifications.find(notification => { return notification.id === params.id; });
     }
     else {
       targetNote = this.applicationState.newNotification;
@@ -257,18 +261,18 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   saveNewNotification() {
-    this.applicationState.newNotification.id = new Date().getTime(); // Fix when using db
-    this.notifications.push(this.applicationState.newNotification);
+    this.config.notifications.push(this.applicationState.newNotification);
     this.applicationState.newNotification = {
       reminderText: '',
       warningPeriod: 'Days',
-      warningValue: 1
+      warningValue: 1,
+      active: true
     };
     this.dirty = true;
   }
 
   deleteNotification(id) {
-    this.notifications = this.notifications.filter(notification => {
+    this.config.notifications = this.config.notifications.filter(notification => {
       return notification.id !== id;
     });
     this.dirty = true;
