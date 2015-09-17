@@ -70,6 +70,9 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
   queries.push(collection.map(line => {
     if (line[tableProps.pk] === undefined) {
       line.active = true;
+      if (tableProps.parent) {
+        line[tableProps.parent.key] = tableProps.parent.value;
+      }
       return query(tableProps.table)
       .insert(line, tableProps.pk)
       .catch(function(err) {
@@ -92,6 +95,16 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
   }));
 };
 
+let convertQuestionFormat = (questions) =>{
+  return questions.map(question=>{
+    question.question = JSON.stringify(question.question);
+    if (isNaN(question.id)) {
+      delete question.id;
+    }
+    return question;
+  });
+};
+
 export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
   var config = mockDB.UIT;
   let knex = getKnex(dbInfo);
@@ -104,7 +117,6 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query = knex;
   }
   Promise.all([
-    query.select('*').from('questionnaire_question'),
     query.select('*').from('fin_entity_type'),
     query.select('*').from('relationship_category_type'),
     query.select('*').from('relationship_type').where('active', true),
@@ -112,29 +124,44 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query.select('*').from('relationship_person_type').where('active', true),
     query.select('*').from('declaration_type').where('active', true),
     query.select('*').from('disclosure_type'),
-    query.select('*').from('notification')
+    query.select('*').from('notification'),
+    query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(result=>{
+      if (result[0]) {
+        return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
+      }
+    }),
+    query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc').then(result=>{
+      if (result[0]) {
+        return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
+      }
+    })
   ])
   .then(result=>{
-    config.questions = result[0].map(question => {
-      question.text = JSON.parse(question.question).text;
-      return question;
-    });
-
-    config.entityTypes = result[1];
-    config.matrixTypes = result[2];
+    config.entityTypes = result[0];
+    config.matrixTypes = result[1];
     config.matrixTypes.map(type => {
-      type.typeOptions = result[3].filter(relationType =>{
+      type.typeOptions = result[2].filter(relationType =>{
         return relationType.relationship_cd === type.type_cd;
       });
-      type.amountOptions = result[4].filter(amountType =>{
+      type.amountOptions = result[3].filter(amountType =>{
         return amountType.relationship_cd === type.type_cd;
       });
       return type;
     });
-    config.relationshipPersonTypes = result[5];
-    config.declarationTypes = result[6];
-    config.disclosureTypes = result[7];
-    config.notifications = result[8];
+    config.relationshipPersonTypes = result[4];
+    config.declarationTypes = result[5];
+    config.disclosureTypes = result[6];
+    config.notifications = result[7];
+    config.questions = {};
+    config.questions.screening = result[8] ? result[8].map(question=>{
+      question.question = JSON.parse(question.question);
+      return question;
+    }) : [];
+    config.questions.entities = result[9] ? result[9].map(question=>{
+      question.question = JSON.parse(question.question);
+      return question;
+    }) : [];
+
     callback(undefined, camelizeJson(config));
   })
   .catch(function(err) {
@@ -148,7 +175,6 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
 export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
   let config = snakeizeJson(body);
   let knex = getKnex(dbInfo);
-
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -199,6 +225,51 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
   queries.push(
     createCollectionQueries(dbInfo, config.notifications, {pk: 'id', table: 'notification'}, callback)
   );
+
+  queries.push(
+    query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(result=>{
+      if (result[0]) {
+        return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.screening), {
+          pk: 'id',
+          table: 'questionnaire_question',
+          where: {key: 'questionnaire_id', value: result[0].id},
+          parent: {key: 'questionnaire_id', value: result[0].id}
+        }, callback);
+      } else {
+        return query('questionnaire').insert({version: 1, type_cd: 1}).then(id=>{
+          return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.screening), {
+            pk: 'id',
+            table: 'questionnaire_question',
+            where: {key: 'questionnaire_id', value: id[0]},
+            parent: {key: 'questionnaire_id', value: id[0]}
+          }, callback);
+        });
+      }
+    })
+  );
+
+  queries.push(
+    query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc').then(result=>{
+      if (result[0]) {
+        return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.entities), {
+          pk: 'id',
+          table: 'questionnaire_question',
+          where: {key: 'questionnaire_id', value: result[0].id},
+          parent: {key: 'questionnaire_id', value: result[0].id}
+        }, callback);
+      } else {
+        return query('questionnaire').insert({version: 1, type_cd: 2}).then(id=>{
+          return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.entities), {
+            pk: 'id',
+            table: 'questionnaire_question',
+            where: {key: 'questionnaire_id', value: id[0]},
+            parent: {key: 'questionnaire_id', value: id[0]}
+          }, callback);
+        });
+      }
+    })
+  );
+
 
   Promise.all(queries)
   .then(() =>{

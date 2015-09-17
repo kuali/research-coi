@@ -120,13 +120,20 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('comments', 4000);
     table.engine('InnoDB');
   })
+  .createTable('questionnaire_type', function(table) {
+    table.integer('type_cd').notNullable().primary();
+    table.string('description', 50).notNullable();
+    table.engine('InnoDB');
+  })
   .createTable('questionnaire', function(table) {
     table.increments('id').notNullable();
+    table.integer('type_cd').notNullable().references('type_cd').inTable('questionnaire_type');
     table.string('instructions', 4000); // -- markdown
     table.integer('version').unsigned().notNullable();
   })
   .createTable('questionnaire_question', function(table) {
     table.increments('id').notNullable();
+    table.boolean('active').notNullable();
     table.integer('questionnaire_id').unsigned().notNullable().index().references('id').inTable('questionnaire').onDelete('NO ACTION').onUpdate('NO ACTION');
     table.integer('parent').unsigned().index().references('id').inTable('questionnaire_question').onDelete('NO ACTION').onUpdate('NO ACTION');
     table.text('question'); // -- json object containing question

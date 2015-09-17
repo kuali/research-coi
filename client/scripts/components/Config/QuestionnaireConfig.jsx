@@ -40,9 +40,9 @@ class QuestionnaireConfig extends React.Component {
     }
 
     if (parentOfDraggedQuestion === parentOfTargetQuestion) {
-      let swapValue = draggedQuestion.order;
-      draggedQuestion.order = targetQuestion.order;
-      targetQuestion.order = swapValue;
+      let swapValue = draggedQuestion.question.order;
+      draggedQuestion.question.order = targetQuestion.question.order;
+      targetQuestion.question.order = swapValue;
     }
     else {
       this.subQuestionMovedToParent(draggedQuestionId, parentOfTargetQuestion.id);
@@ -60,7 +60,7 @@ class QuestionnaireConfig extends React.Component {
     }
 
     let parent = this.findQuestion(targetId);
-    if (parent.type !== COIConstants.QUESTION_TYPE.YESNO) {
+    if (parent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
       return;
     }
 
@@ -68,12 +68,12 @@ class QuestionnaireConfig extends React.Component {
     let otherSubquestions = this.findSubQuestions(targetId);
 
     if (otherSubquestions.length > 0) {
-      draggedQuestion.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
-        return Math.max(previousValue, subQuestion.order);
+      draggedQuestion.question.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
+        return Math.max(previousValue, subQuestion.question.order);
       }, 1);
     }
     else {
-      draggedQuestion.order = 1;
+      draggedQuestion.question.order = 1;
     }
 
     this.setIsMovingFlag();
@@ -97,16 +97,16 @@ class QuestionnaireConfig extends React.Component {
     }
     this.setIsMovingFlag();
 
-    let swapValue = draggedQuestion.order;
-    draggedQuestion.order = targetQuestion.order;
-    targetQuestion.order = swapValue;
+    let swapValue = draggedQuestion.question.order;
+    draggedQuestion.question.order = targetQuestion.question.order;
+    targetQuestion.question.order = swapValue;
 
     ConfigActions.updateQuestions(this.props.questionnaireCategory, this.props.questions);
   }
 
   findNewParentQuestion(question) {
     return this.props.questions.find(toTest => {
-      return !toTest.parent && toTest.order === question.order - 1;
+      return !toTest.parent && toTest.question.order === question.question.order - 1;
     });
   }
 
@@ -125,24 +125,24 @@ class QuestionnaireConfig extends React.Component {
     let parent = this.findNewParentQuestion(question);
     if (parent) {
       // Can only be a sub question if the parent is a yes/no question
-      if (parent.type !== COIConstants.QUESTION_TYPE.YESNO) {
+      if (parent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
         return;
       }
 
       this.props.questions.filter(toTest => {
-        return !toTest.parent && toTest.order > question.order;
+        return !toTest.parent && toTest.question.order > question.question.order;
       }).forEach(toBumpUp => {
-        toBumpUp.order -= 1;
+        toBumpUp.question.order -= 1;
       });
 
       // set new order value on the question
       let otherSubquestions = this.findSubQuestions(parent.id);
       if (otherSubquestions.length > 0) {
-        question.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
-          return Math.max(previousValue, subQuestion.order);
+        question.question.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
+          return Math.max(previousValue, subQuestion.question.order);
         }, 1);
       } else {
-        question.order = 1;
+        question.question.order = 1;
       }
 
       question.parent = parent.id;
@@ -171,12 +171,12 @@ class QuestionnaireConfig extends React.Component {
       question.parent = null;
 
       this.props.questions.filter(toTest => {
-        return !toTest.parent && toTest.order > parent.order;
+        return !toTest.parent && toTest.question.order > parent.question.order;
       }).forEach(toBump => {
-        toBump.order += 1;
+        toBump.question.order += 1;
       });
 
-      question.order = parent.order + 1;
+      question.question.order = parent.question.order + 1;
 
       ConfigActions.updateQuestions(this.props.questionnaireCategory, this.props.questions);
     }
@@ -218,7 +218,7 @@ class QuestionnaireConfig extends React.Component {
     }
 
     let potentialParent = this.findNewParentQuestion(question);
-    if (!potentialParent || potentialParent.type !== COIConstants.QUESTION_TYPE.YESNO) {
+    if (!potentialParent || potentialParent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
       return false;
     }
     else {
@@ -280,23 +280,23 @@ class QuestionnaireConfig extends React.Component {
     Array.from(this.props.questions).filter(question => {
       return !question.parent;
     }).sort((a, b) => {
-      if (a.order < b.order) { return -1; }
-      else if (a.order === b.order) { return 0; }
+      if (a.question.order < b.question.order) { return -1; }
+      else if (a.question.order === b.question.order) { return 0; }
       else { return 1; }
     }).forEach(question => {
-      question.top = nextQuestionYPosition;
+      question.question.top = nextQuestionYPosition;
       nextQuestionYPosition += this.findQuestionHeight(question);
       currentQuestionNumber++;
-      question.numberToShow = currentQuestionNumber;
+      question.question.numberToShow = currentQuestionNumber;
 
       let currentSubQuestionNumber = 0;
       this.findSubQuestions(question.id).sort((a, b) => {
-        return a.order - b.order;
+        return a.question.order - b.question.order;
       }).forEach(subQuestion => {
-        subQuestion.top = nextQuestionYPosition;
+        subQuestion.question.top = nextQuestionYPosition;
         nextQuestionYPosition += this.findQuestionHeight(subQuestion);
         currentSubQuestionNumber++;
-        subQuestion.numberToShow = currentQuestionNumber + ' - ' + (String.fromCharCode(64 + currentSubQuestionNumber));
+        subQuestion.question.numberToShow = currentQuestionNumber + ' - ' + (String.fromCharCode(64 + currentSubQuestionNumber));
       });
     });
 
@@ -318,12 +318,12 @@ class QuestionnaireConfig extends React.Component {
           makeMainQuestion={this.makeMainQuestion}
           subQuestionMoved={this.subQuestionMoved}
           subQuestionMovedToParent={this.subQuestionMovedToParent}
-          number={question.numberToShow}
+          number={question.question.numberToShow}
           key={question.id}
           id={question.id}
-          text={question.text}
+          text={question.question.text}
           isSubQuestion={false}
-          top={question.top}
+          top={question.question.top}
           style={questionStyle} />
       );
 
@@ -337,14 +337,14 @@ class QuestionnaireConfig extends React.Component {
             makeMainQuestion={this.makeMainQuestion}
             subQuestionMoved={this.subQuestionMoved}
             subQuestionMovedToParent={this.subQuestionMovedToParent}
-            number={subQuestion.numberToShow}
+            number={subQuestion.question.numberToShow}
             key={subQuestion.id}
             id={subQuestion.id}
-            text={subQuestion.text}
+            text={subQuestion.question.text}
             isSubQuestion={true}
-            top={subQuestion.top}
+            top={subQuestion.question.top}
             style={{cursor: 'move'}}
-            displayCriteria={subQuestion.displayCriteria} />
+            displayCriteria={subQuestion.question.displayCriteria} />
         );
       });
     });

@@ -9,6 +9,14 @@ export class QuestionnaireSummary extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
+
+    this.getQuestion = this.getQuestion.bind(this);
+  }
+
+  getQuestion(questionId) {
+    return this.props.questions.find((question) => {
+      return question.id === questionId;
+    });
   }
 
   renderMobile() {}
@@ -27,15 +35,18 @@ export class QuestionnaireSummary extends ResponsiveComponent {
 
     let summaries;
     if (this.props.answers) {
-      summaries = this.props.answers.map((answer, index) => {
-        let thisQuestion = this.props.questions.find((question) => {
-          return question.id === answer.questionId;
-        });
-
+      summaries = this.props.answers.map(a=>{
+        a.question = this.getQuestion(a.questionId);
+        return a;
+      }).filter(a=>{
+        return a.question;
+      }).sort((a, b)=>{
+        return a.question.order - b.question.order;
+      }).map((answer, index) => {
         return (
           <QuestionSummary
             number={index + 1}
-            text={thisQuestion.text}
+            text={answer.question.question.text}
             answer={answer.answer.value}
             questionId={answer.questionId}
             key={answer.id}

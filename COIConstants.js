@@ -44,5 +44,6 @@ export let COIConstants = {
     TEXTAREA: 'Text area',
     MULTISELECT: 'Multiselect'
   },
-  RETURN_KEY: 13
+  RETURN_KEY: 13,
+  TMP_PLACEHOLDER: 'TMP'
 };

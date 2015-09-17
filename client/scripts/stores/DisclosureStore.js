@@ -191,7 +191,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   advanceQuestion() {
-    if (this.applicationState.currentDisclosureState.question >= window.config.questions.length) {
+    if (this.applicationState.currentDisclosureState.question >= window.config.questions.screening.length) {
       this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
     }
     else {
@@ -208,7 +208,7 @@ class _DisclosureStore extends AutoBindingStore {
         break;
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
-        this.applicationState.currentDisclosureState.question = window.config.questions.length;
+        this.applicationState.currentDisclosureState.question = window.config.questions.screening.length;
         break;
       case COIConstants.DISCLOSURE_STEP.ENTITIES:
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
