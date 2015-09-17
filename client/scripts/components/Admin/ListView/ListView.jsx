@@ -20,6 +20,7 @@ export class ListView extends React.Component {
 
     this.changeSearch = this.changeSearch.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.doSearch = this.doSearch.bind(this);
   }
 
   componentDidMount() {
@@ -34,6 +35,10 @@ export class ListView extends React.Component {
     this.setState({
       data: AdminStore.getState()
     });
+  }
+
+  doSearch() {
+    AdminActions.doSearch();
   }
 
   changeType(newType) {
@@ -129,7 +134,12 @@ export class ListView extends React.Component {
               <KButton style={merge(styles.pageButton, styles.previousPage)} onClick={this.goBackPage}>&lt; PREVIOUS PAGE</KButton>
               <KButton style={merge(styles.pageButton, styles.nextPage)} onClick={this.advancePages}>NEXT PAGE &gt;</KButton>
             </span>
-            <SearchBox style={styles.searchbox} value={this.state.data.applicationState.filters.search} onChange={this.changeSearch} />
+            <SearchBox
+              style={styles.searchbox}
+              value={this.state.data.applicationState.filters.search}
+              onChange={this.changeSearch}
+              onSearch={this.doSearch}
+            />
           </div>
 
           <div>
@@ -139,7 +149,7 @@ export class ListView extends React.Component {
               page={this.state.data.applicationState.page}
               style={styles.table}
               disclosures={filtered}
-              searchTerm={this.state.data.applicationState.filters.search}
+              searchTerm={this.state.data.applicationState.effectiveSearchValue}
             />
           </div>
         </span>

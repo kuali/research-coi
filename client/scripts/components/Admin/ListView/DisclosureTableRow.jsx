@@ -6,7 +6,7 @@ let Link = ReactRouter.Link;
 
 export class DisclosureTableRow extends React.Component {
   highlightSearchTerm(value) {
-    if (this.props.searchTerm.length > 2) {
+    // if (this.props.searchTerm.length > 2) {
       let start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
       if (start >= 0) {
         let matchingValue = value.substr(start, this.props.searchTerm.length);
@@ -24,10 +24,10 @@ export class DisclosureTableRow extends React.Component {
       else {
         return value;
       }
-    }
-    else {
-      return value;
-    }
+    // }
+    // else {
+    //   return value;
+    // }
   }
 
   render() {

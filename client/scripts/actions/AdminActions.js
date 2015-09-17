@@ -9,6 +9,8 @@ class _AdminActions {
 
   changeSearch(newSearch) { this.dispatch(newSearch); }
 
+  doSearch() { this.dispatch(); }
+
   setStartDateFilter(newValue) { this.dispatch(newValue); }
 
   setEndDateFilter(newValue) { this.dispatch(newValue); }
