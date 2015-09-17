@@ -22,16 +22,10 @@ export class SearchFilterGroup extends ResponsiveComponent {
         label: 'TYPE'
       },
       {
-        label: 'DISPOSITION'
-      },
-      {
         label: 'STATUS'
       },
       {
         label: 'SUBMITTED BY'
-      },
-      {
-        label: 'REPORTER NAME'
       }
     ];
 
@@ -99,34 +93,33 @@ export class SearchFilterGroup extends ResponsiveComponent {
       },
       filter: {
         padding: 7,
-        paddingRight: 100,
+        textAlign: 'right',
         fontSize: '.8em',
         color: '#444'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
-
     return (
       <div style={merge(styles.container, this.props.style)}>
         <DisclosureListFilter style={styles.filter} label='DATE/DATE RANGE'>
-            <DisclosureFilterByDate
-              startDate={this.props.filters.date.start}
-              endDate={this.props.filters.date.end}
-              sortDirection={this.props.sortDirection}
-            />
+          <DisclosureFilterByDate
+            startDate={this.props.filters.date.start}
+            endDate={this.props.filters.date.end}
+            sortDirection={this.props.sortDirection}
+            showSort={this.props.showDateSort}
+          />
         </DisclosureListFilter>
         <DisclosureListFilter style={styles.filter} label='TYPE' >
-              <DisclosureFilterByType
-                annual={this.props.filters.type.annual}
-                project={this.props.filters.type.project}
-              />
+          <DisclosureFilterByType
+            activeFilters={this.props.activeTypeFilters}
+            possibleTypes={this.props.possibleTypes}
+          />
         </DisclosureListFilter>
         <DisclosureListFilter style={styles.filter} label='STATUS'>
-            <DisclosureFilterByStatus
-              inProgress={this.props.filters.status.inProgress}
-              awaitingReview={this.props.filters.status.awaitingReview}
-              revisionNecessary={this.props.filters.status.revisionNecessary}
-            />
+          <DisclosureFilterByStatus
+            activeFilters={this.props.activeStatusFilters}
+            possibleStatuses={this.props.possibleStatuses}
+          />
         </DisclosureListFilter>
       </div>
     );

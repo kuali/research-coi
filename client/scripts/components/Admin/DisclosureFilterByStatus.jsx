@@ -8,22 +8,23 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
+    this.toggleFilter = this.toggleFilter.bind(this);
+    this.isChecked = this.isChecked.bind(this);
   }
 
   clearFilter() {
     AdminActions.clearStatusFilter();
   }
 
-  toggleInProgressStatusFilter() {
-    AdminActions.toggleInProgressStatusFilter();
+  toggleFilter(evt) {
+    let index = +(evt.target.id.replace('statFilt', ''));
+    AdminActions.toggleStatusFilter(this.props.possibleStatuses[index]);
   }
 
-  toggleAwaitingReviewStatusFilter() {
-    AdminActions.toggleAwaitingReviewStatusFilter();
-  }
-
-  toggleRevisionNecessaryStatusFilter() {
-    AdminActions.toggleRevisionNecessaryStatusFilter();
+  isChecked(value) {
+    return this.props.activeFilters.find(filter => {
+      return filter === value;
+    }) !== undefined;
   }
 
   renderMobile() {}
@@ -49,37 +50,24 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
+    let options = this.props.possibleStatuses.map((status, index) => {
+      let id = 'statFilt' + index;
+      return (
+        <div style={styles.checkbox} key={status}>
+          <input
+            id={id}
+            type="checkbox"
+            checked={this.isChecked(status)}
+            onChange={this.toggleFilter}
+          />
+          <label htmlFor={id}>{status}</label>
+        </div>
+      );
+    });
+
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.checkbox}>
-          <input type="checkbox"
-            value="In Progress"
-            checked={this.props.inProgress}
-            onChange={this.toggleInProgressStatusFilter}
-          >
-            <label>In Progress</label>
-          </input>
-        </div>
-        <hr style={styles.hr} />
-        <div style={styles.checkbox}>
-          <input type="checkbox"
-            value="Awaiting Review"
-            checked={this.props.awaitingReview}
-            onChange={this.toggleAwaitingReviewStatusFilter}
-          >
-            <label>Awaiting Review</label>
-          </input>
-        </div>
-        <hr style={styles.hr} />
-        <div style={merge(styles.checkbox, {marginBottom: 10})}>
-          <input type="checkbox"
-            value="Revision Necessary"
-            checked={this.props.revisionNecessary}
-            onChange={this.toggleRevisionNecessaryStatusFilter}
-          >
-            <label>Revision Necessary</label>
-          </input>
-        </div>
+        {options}
         <KButton style={styles.clearButton} onClick={this.clearFilter}>CLEAR FILTER</KButton>
       </div>
     );

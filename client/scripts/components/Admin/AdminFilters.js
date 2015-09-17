@@ -72,29 +72,9 @@ function typeFilter(type) {
   };
 }
 
-function statusFilter(status) {
-  return function(disclosure) {
-    if (status) {
-      if (status.inProgress && disclosure.status === 'In progress') {
-        return true;
-      }
-      else if (status.awaitingReview && disclosure.status === 'Routed for Review') {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else {
-      return true;
-    }
-  };
-}
-
 module.exports = {
   isAfterStartDate: isAfterStartDate,
   isBeforeEndDate: isBeforeEndDate,
   sortFunction: sortFunction,
-  typeFilter: typeFilter,
-  statusFilter: statusFilter
+  typeFilter: typeFilter
 };

@@ -5,7 +5,6 @@ import {DisclosureListFilter} from '../DisclosureListFilter';
 import {DisclosureFilterByType} from '../DisclosureFilterByType';
 import {DisclosureFilterByDate} from '../DisclosureFilterByDate';
 import {DisclosureFilterByStatus} from '../DisclosureFilterByStatus';
-import {DisclosureFilterByUnit} from '../DisclosureFilterByUnit';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
 
 export class DisclosureListFilterHeader extends ResponsiveComponent {

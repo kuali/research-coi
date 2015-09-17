@@ -67,6 +67,19 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
+    let sortFields;
+    if (this.props.showSort) {
+      sortFields = (
+        <div style={styles.inputDivs}>
+          <label htmlFor="dateSort" style={styles.label}>Sort</label>
+          <select style={styles.dropDown} id="dateSort" value={this.props.sortDirection} onChange={this.setOrder}>
+            <option value="DESCENDING">Newest - Oldest</option>
+            <option value="ASCENDING">Oldest - Newest</option>
+          </select>
+        </div>
+      );
+    }
+
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div className="flexbox row" style={styles.datesContainer}>
@@ -79,13 +92,7 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
             <DatePicker id="toDate" onChange={this.setToDate} value={this.props.endDate} />
           </div>
         </div>
-        <div style={styles.inputDivs}>
-          <label htmlFor="dateSort" style={styles.label}>Sort</label>
-          <select style={styles.dropDown} id="dateSort" value={this.props.sortDirection} onChange={this.setOrder}>
-            <option value="DESCENDING">Newest - Oldest</option>
-            <option value="ASCENDING">Oldest - Newest</option>
-          </select>
-        </div>
+        {sortFields}
         <div>
           <KButton style={styles.clearButton} onClick={this.clearFilter}>CLEAR FILTER</KButton>
         </div>
