@@ -22,6 +22,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('disposition_type_cd').references('type_cd').inTable('disposition_type');
     table.integer('status_cd').notNullable().references('status_cd').inTable('disclosure_status');
     table.integer('user_id').notNullable();
+    table.string('pi_name', 200).notNullable();
     table.string('submitted_by', 40);
     table.dateTime('submitted_date');
     table.dateTime('start_date').notNullable();

@@ -100,7 +100,7 @@ export let init = app => {
 
   app.get('/api/coi/disclosures/annual', function(req, res, next){
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.getAnnualDisclosure(req.dbInfo, userInfo.id, function(err, disclosure) {
+    DisclosureDB.getAnnualDisclosure(req.dbInfo, userInfo.id, userInfo.displayName, function(err, disclosure) {
       if (err) {
         console.error(err);
         next(err);

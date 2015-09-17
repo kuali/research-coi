@@ -146,7 +146,7 @@ exports.seed = function(knex, Promise) {
           knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Over $10,000', active: true}),
           knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Privately Held, no valuation', active: true}),
           knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Does not apply', active: true})
-        ])
+        ]);
       }),
       knex('relationship_category_type')
       .insert({type_cd: 4, description: 'Intellectual Property', enabled: true, type_enabled: true, amount_enabled: true})
@@ -178,6 +178,7 @@ exports.seed = function(knex, Promise) {
     return Promise.all([
       knex('disclosure').insert({
         user_id: 1698122389,
+        pi_name: 'Abby Bateman',
         type_cd: 1,
         title: 'Petroleum extraction in deep water',
         submitted_date: new Date(),
@@ -190,6 +191,7 @@ exports.seed = function(knex, Promise) {
       }),
       knex('disclosure').insert({
         user_id: 1,
+        pi_name: 'Cathy Donahue',
         type_cd: 3,
         title: 'Celery and peanut butter',
         submitted_date: new Date(),
@@ -202,6 +204,7 @@ exports.seed = function(knex, Promise) {
       }),
       knex('disclosure').insert({
         user_id: 1,
+        pi_name: 'Eliza Frome',
         type_cd: 2,
         title: 'Investment strategies for Africa',
         submitted_date: new Date(),
@@ -214,6 +217,7 @@ exports.seed = function(knex, Promise) {
       }),
       knex('disclosure').insert({
         user_id: 1,
+        pi_name: 'Gina Holmes',
         type_cd: 3,
         title: 'Pigeon navigation sources',
         submitted_date: new Date(),
@@ -226,6 +230,7 @@ exports.seed = function(knex, Promise) {
       }),
       knex('disclosure').insert({
         user_id: 1,
+        pi_name: 'Iggy Jackson',
         type_cd: 2,
         title: 'Effect of electromagnetic resonance',
         submitted_date: new Date(),
@@ -238,6 +243,7 @@ exports.seed = function(knex, Promise) {
       }),
       knex('disclosure').insert({
         user_id: 1,
+        pi_name: 'Katrina Lorens',
         type_cd: 2,
         title: 'Copper transformation rates',
         submitted_date: new Date(),
@@ -250,6 +256,7 @@ exports.seed = function(knex, Promise) {
       }),
       knex('disclosure').insert({
         user_id: 1,
+        pi_name: 'Martina Noriega',
         type_cd: 3,
         title: 'Glyphosate as a carcinogen',
         submitted_date: new Date(),

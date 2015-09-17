@@ -61,10 +61,10 @@ export class DisclosureTable extends React.Component {
         <DisclosureTableRow
           key={disclosure.id}
           id={disclosure.id}
-          submittedBy={disclosure.submittedBy}
+          submittedBy={disclosure.submitted_by}
           type={disclosure.type}
           status={disclosure.status}
-          submittedDate={disclosure.submittedDate}
+          submittedDate={disclosure.submitted_date}
           searchTerm={this.props.searchTerm}
         />
       );

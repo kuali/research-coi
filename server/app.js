@@ -7,7 +7,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
 import viewRenderer from './middleware/viewRenderer';
-import {getUserInfo, authView} from './AuthService';
+import {authView} from './AuthService';
 
 export function run() {
   let app = express();
