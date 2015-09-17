@@ -7,7 +7,7 @@ let Link = ReactRouter.Link;
 export class DisclosureTableRow extends React.Component {
   highlightSearchTerm(value) {
     if (this.props.searchTerm.length > 2) {
-      return value.replace(new RegExp(this.props.searchTerm, 'g'), '<span class="highlight">' + this.props.searchTerm + '</span>');
+      return value.replace(new RegExp(this.props.searchTerm, 'gi'), '<span class="highlight">' + this.props.searchTerm + '</span>');
     }
     else {
       return value;
