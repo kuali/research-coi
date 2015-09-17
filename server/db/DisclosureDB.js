@@ -2,6 +2,8 @@
 import {camelizeJson} from './JsonUtils';
 import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
 
+const ONE_DAY = 1000 * 60 * 60 * 24;
+
 let getKnex;
 try {
   let extensions = require('research-extensions');
@@ -295,32 +297,60 @@ export let getAnnualDisclosure = (dbInfo, userId, callback) => {
   });
 };
 
-export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, query, callback) => {
+export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, filters, callback) => {
   let knex = getKnex(dbInfo);
 
-  knex('disclosure').select('disclosure_status.description as status', 'disclosure_type.description as type', 'disposition_type.description as disposition', 'id', 'title as name', 'submitted_by', 'submitted_date as submitted_on', 'start_date')
-  .innerJoin('disposition_type', 'disposition_type.type_cd', 'disclosure.disposition_type_cd')
-  .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
-  .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd')
+  let query = knex('disclosure').select('disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
+    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
+    .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd');
+
+  if (filters.date) {
+    if (filters.date.start && !isNaN(filters.date.start)) {
+      query.where('submitted_date', '>=', new Date(filters.date.start));
+    }
+
+    if (filters.date.end && !isNaN(filters.date.end)) {
+      query.where('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+    }
+  }
+  if (filters.status && filters.status.length > 0) {
+    query.whereIn('disclosure_status.description', filters.status);
+  }
+  if (filters.type && filters.type.length > 0) {
+    query.whereIn('disclosure_type.description', filters.type);
+  }
+  if (filters.submittedBy) {
+    query.where('user_name', query.submittedBy);
+  }
+  if (filters.search) {
+    query.where('disclosure_status.description', 'like', '%' + filters.search + '%')
+         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%');
+  }
+
+  let dbSortColumn;
+  let dbSortDirection = sortDirection === 'DESCENDING' ? 'desc' : undefined;
+  switch (sortColumn) {
+    case 'SUBMITTED_DATE':
+      dbSortColumn = 'submitted_date';
+      break;
+    case 'STATUS':
+      dbSortColumn = 'status';
+      break;
+    case 'TYPE':
+      dbSortColumn = 'type';
+      break;
+    default:
+      dbSortColumn = 'status'; // This needs to be name column when we have it
+      break;
+  }
+
+  query.orderBy(dbSortColumn, dbSortDirection)
   .then(rows => {
-    let result = rows.sort((a, b) => {
-      switch (sortColumn) {
-        case 'DISPOSITION':
-          return sortDirection === 'DESCENDING' ? a.disposition < b.disposition : a.disposition > b.disposition;
-        case 'PROJECT_TITLE':
-          return sortDirection === 'DESCENDING' ? a.name < b.name : a.name > b.name;
-        case 'PI':
-          return sortDirection === 'DESCENDING' ? a.submittedBy < b.submittedBy : a.submittedBy > b.submittedBy;
-        case 'DATE_SUBMITTED':
-          return sortDirection === 'DESCENDING' ? a.submittedOn < b.submittedOn : a.submittedOn > b.submittedOn;
-        case 'STATUS':
-          return sortDirection === 'DESCENDING' ? a.status < b.status : a.status > b.status;
-        case 'PROJECT_START_DATE':
-          return sortDirection === 'DESCENDING' ? a.startDate < b.startDate : a.startDate > b.startDate;
-      }
+    rows.forEach((row, index) => {
+      row.submittedBy = 'Drew Wilkerson the ' + index;
     });
 
-    callback(undefined, result);
+    callback(undefined, rows);
   });
 };
 

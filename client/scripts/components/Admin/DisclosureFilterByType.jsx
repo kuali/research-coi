@@ -8,18 +8,23 @@ export class DisclosureFilterByType extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
+    this.toggleFilter = this.toggleFilter.bind(this);
+    this.isChecked = this.isChecked.bind(this);
   }
 
   clearFilter() {
     AdminActions.clearTypeFilter();
   }
 
-  toggleAnnualTypeFilter() {
-    AdminActions.toggleAnnualTypeFilter();
+  toggleFilter(evt) {
+    let index = +(evt.target.id.replace('typeFilt', ''));
+    AdminActions.toggleTypeFilter(this.props.possibleTypes[index]);
   }
 
-  toggleProjectTypeFilter() {
-    AdminActions.toggleProjectTypeFilter();
+  isChecked(value) {
+    return this.props.activeFilters.find(filter => {
+      return filter === value;
+    }) !== undefined;
   }
 
   renderMobile() {}
@@ -45,29 +50,24 @@ export class DisclosureFilterByType extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
+    let options = this.props.possibleTypes.map((type, index) => {
+      let id = 'typeFilt' + index;
+      return (
+        <div style={styles.checkbox} key={type}>
+          <input
+            id={id}
+            type="checkbox"
+            checked={this.isChecked(type)}
+            onChange={this.toggleFilter}
+          />
+          <label htmlFor={id}>{type}</label>
+        </div>
+      );
+    });
+
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.checkbox}>
-          <input
-            type="checkbox"
-            value="Annual"
-            checked={this.props.annual}
-            onChange={this.toggleAnnualTypeFilter}
-          >
-            <label>Annual Disclosures</label>
-          </input>
-        </div>
-        <hr style={styles.hr} />
-        <div style={merge(styles.checkbox, {marginBottom: 10})}>
-          <input
-            type="checkbox"
-            value="Project"
-            checked={this.props.project}
-            onChange={this.toggleProjectTypeFilter}
-          >
-            <label>Project Disclosures</label>
-          </input>
-        </div>
+        {options}
         <KButton style={styles.clearButton} onClick={this.clearFilter}>CLEAR FILTER</KButton>
       </div>
     );

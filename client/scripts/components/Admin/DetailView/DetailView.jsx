@@ -5,8 +5,7 @@ import {AdminStore} from '../../../stores/AdminStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
-import {isAfterStartDate, isBeforeEndDate, sortFunction, typeFilter,
-        statusFilter} from '../AdminFilters';
+import {isAfterStartDate, isBeforeEndDate, sortFunction, typeFilter} from '../AdminFilters';
 
 
 export class DetailView extends ResponsiveComponent {
@@ -63,13 +62,7 @@ export class DetailView extends ResponsiveComponent {
   }
 
   filterDisclosures() {
-    let filtered = this.state.summaries
-    .filter(this.searchFilter)
-    .filter(isAfterStartDate(this.state.applicationState.filters.date))
-    .filter(isBeforeEndDate(this.state.applicationState.filters.date))
-    .filter(typeFilter(this.state.applicationState.filters.type))
-    .filter(statusFilter(this.state.applicationState.filters.status))
-    .sort(sortFunction(this.state.applicationState.sortDirection));
+    let filtered = this.state.summaries;
     return filtered;
   }
 

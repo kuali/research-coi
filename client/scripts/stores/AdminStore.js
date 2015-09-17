@@ -11,15 +11,15 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState = {
       sort: 'DATE_SUBMITTED',
       sortDirection: 'DESCENDING',
-      query: '',
       filters: {
         date: {
           start: undefined,
           end: undefined
         },
-        disposition: undefined,
         submittedBy: undefined,
-        reporterName: undefined
+        status: [],
+        type: [],
+        search: ''
       },
       showFiltersOnMobile: false,
       showingApproval: false,
@@ -30,9 +30,6 @@ class _AdminStore extends AutoBindingStore {
       selectedDisclosure: undefined
     };
 
-    this.clearTypeFilter();
-    this.clearStatusFilter();
-
     this.disclosureSummaries = [];
 
     this.refreshDisclosures();
@@ -42,7 +39,7 @@ class _AdminStore extends AutoBindingStore {
     request.get('/api/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})
            .query({sortDirection: this.applicationState.sortDirection})
-           .query({query: this.applicationState.query})
+           .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
            .end((err, summaries) => {
              if (!err) {
                this.disclosureSummaries = summaries.body;
@@ -84,9 +81,9 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.sortDirection = newDirection;
   }
 
-  changeQuery(newQuery) {
-    let shouldRefresh = newQuery.length > 2 || this.applicationState.query.length > newQuery.length;
-    this.applicationState.query = newQuery;
+  changeSearch(newSearch) {
+    let shouldRefresh = newSearch.length > 2 || this.applicationState.filters.search.length > newSearch.length;
+    this.applicationState.filters.search = newSearch;
     if (shouldRefresh) {
       this.refreshDisclosures();
       return false;
@@ -99,19 +96,17 @@ class _AdminStore extends AutoBindingStore {
 
   setStartDateFilter(newValue) {
     this.applicationState.filters.date.start = newValue;
+    this.refreshDisclosures();
   }
 
   setEndDateFilter(newValue) {
     this.applicationState.filters.date.end = newValue;
+    this.refreshDisclosures();
   }
 
   clearDateFilter() {
     this.applicationState.filters.date.start = undefined;
     this.applicationState.filters.date.end = undefined;
-  }
-
-  changeStatusFilter(newFilter) {
-    this.applicationState.filters.status = newFilter;
   }
 
   changeSubmittedByFilter(newFilter) {
@@ -158,39 +153,42 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.showingEntitiesComments = false;
   }
 
-  toggleProjectTypeFilter() {
-    this.applicationState.filters.type.project = !this.applicationState.filters.type.project;
-  }
-
-  toggleAnnualTypeFilter() {
-    this.applicationState.filters.type.annual = !this.applicationState.filters.type.annual;
-  }
-
   clearTypeFilter() {
-    this.applicationState.filters.type = {
-      annual: true,
-      project: true
-    };
+    this.applicationState.filters.type = [];
+    this.refreshDisclosures();
+  }
+
+  toggleTypeFilter(toToggle) {
+    let index = this.applicationState.filters.type.findIndex(filter => {
+      return filter === toToggle;
+    });
+    if (index === -1) {
+      this.applicationState.filters.type.push(toToggle);
+    }
+    else {
+      this.applicationState.filters.type.splice(index, 1);
+    }
+
+    this.refreshDisclosures();
   }
 
   clearStatusFilter() {
-    this.applicationState.filters.status = {
-      inProgress: true,
-      awaitingReview: true,
-      revisionNecessary: true
-    };
+    this.applicationState.filters.status = [];
+    this.refreshDisclosures();
   }
 
-  toggleInProgressStatusFilter() {
-    this.applicationState.filters.status.inProgress = !this.applicationState.filters.status.inProgress;
-  }
+  toggleStatusFilter(toToggle) {
+    let index = this.applicationState.filters.status.findIndex(filter => {
+      return filter === toToggle;
+    });
+    if (index === -1) {
+      this.applicationState.filters.status.push(toToggle);
+    }
+    else {
+      this.applicationState.filters.status.splice(index, 1);
+    }
 
-  toggleAwaitingReviewStatusFilter() {
-    this.applicationState.filters.status.awaitingReview = !this.applicationState.filters.status.awaitingReview;
-  }
-
-  toggleRevisionNecessaryStatusFilter() {
-    this.applicationState.filters.status.revisionNecessary = !this.applicationState.filters.status.revisionNecessary;
+    this.refreshDisclosures();
   }
 }
 

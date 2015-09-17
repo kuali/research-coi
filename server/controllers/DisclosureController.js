@@ -224,11 +224,19 @@ export let init = app => {
     if (req.query.sortDirection) {
       sortDirection = req.query.sortDirection;
     }
-    let query = '';
-    if (req.query.query) {
-      query = req.query.query;
+
+    let filters = {};
+    if (req.query.filters) {
+      try {
+        let potentialFilter = decodeURIComponent(req.query.filters);
+        potentialFilter = JSON.parse(potentialFilter);
+        filters = potentialFilter;
+      }
+      catch (parseErr) {
+        console.log('invalid filters supplied to disclosure-summaries');
+      }
     }
-    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, query, (err, sumarries) => {
+    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, filters, (err, sumarries) => {
       if (err) {
         console.error(err);
         next(err);

@@ -7,15 +7,13 @@ class _AdminActions {
 
   changeTypeFilter(newType) { this.dispatch(newType); }
 
-  changeQuery(newQuery) { this.dispatch(newQuery); }
+  changeSearch(newSearch) { this.dispatch(newSearch); }
 
   setStartDateFilter(newValue) { this.dispatch(newValue); }
 
   setEndDateFilter(newValue) { this.dispatch(newValue); }
 
   clearDateFilter() { this.dispatch(); }
-
-  changeStatusFilter(newFilter) { this.dispatch(newFilter); }
 
   changeSubmittedByFilter(newFilter) { this.dispatch(newFilter); }
 
@@ -41,19 +39,13 @@ class _AdminActions {
 
   hideEntitiesComments() { this.dispatch(); }
 
-  toggleAnnualTypeFilter() { this.dispatch(); }
-
-  toggleProjectTypeFilter() { this.dispatch(); }
-
   clearTypeFilter() { this.dispatch(); }
+
+  toggleTypeFilter(toToggle) { this.dispatch(toToggle); }
 
   clearStatusFilter() { this.dispatch(); }
 
-  toggleInProgressStatusFilter() { this.dispatch(); }
-
-  toggleAwaitingReviewStatusFilter() { this.dispatch(); }
-
-  toggleRevisionNecessaryStatusFilter() { this.dispatch(); }
+  toggleStatusFilter(toToggle) { this.dispatch(toToggle); }
 
   setSortDirection(newDirection) { this.dispatch(newDirection); }
 }

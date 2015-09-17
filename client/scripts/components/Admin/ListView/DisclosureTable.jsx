@@ -1,21 +1,18 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
 import {TableHeading} from './TableHeading';
 import {AdminActions} from '../../../actions/AdminActions';
 
-export class DisclosureTable extends ResponsiveComponent {
+export class DisclosureTable extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
-    this.sortByTitle = this.sortByTitle.bind(this);
-    this.sortByPI = this.sortByPI.bind(this);
+    this.sortBySubmittedBy = this.sortBySubmittedBy.bind(this);
+    this.sortByStatus = this.sortByStatus.bind(this);
     this.sortBySubmittedDate = this.sortBySubmittedDate.bind(this);
     this.sortByStatus = this.sortByStatus.bind(this);
-    this.sortByDisposition = this.sortByDisposition.bind(this);
-    this.sortByStartDate = this.sortByStartDate.bind(this);
+    this.sortByType = this.sortByType.bind(this);
   }
 
   changeSort(field) {
@@ -27,61 +24,24 @@ export class DisclosureTable extends ResponsiveComponent {
     }
   }
 
-  sortByTitle() {
-    this.changeSort('PROJECT_TITLE');
-  }
-
-  sortByPI() {
-    this.changeSort('PI');
+  sortBySubmittedBy() {
+    this.changeSort('SUBMITTED_BY');
   }
 
   sortBySubmittedDate() {
-    this.changeSort('DATE_SUBMITTED');
+    this.changeSort('SUBMITTED_DATE');
   }
 
   sortByStatus() {
     this.changeSort('STATUS');
   }
 
-  sortByDisposition() {
-    this.changeSort('DISPOSITION');
+  sortByType() {
+    this.changeSort('TYPE');
   }
 
-  sortByStartDate() {
-    this.changeSort('PROJECT_START_DATE');
-  }
-
-  renderMobile() {
-    let mobileStyles = {
-      container: {
-        backgroundColor: '#D8D9D6'
-      }
-    };
-    let styles = merge(this.commonStyles, mobileStyles);
-
-    let disclosures = this.props.disclosures.map((disclosure) => {
-      return (
-        <DisclosureTableRow
-          key={disclosure.id}
-          id={disclosure.id}
-          name={disclosure.name}
-          submittedBy={disclosure.submittedBy}
-          status={disclosure.status}
-          disposition={disclosure.disposition}
-          submittedOn={disclosure.submittedOn}
-        />
-      );
-    });
-
-    return (
-      <div style={merge(styles.container, this.props.style)}>
-        {disclosures}
-      </div>
-    );
-  }
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         display: 'table',
         width: '100%'
@@ -95,19 +55,17 @@ export class DisclosureTable extends ResponsiveComponent {
         padding: 10
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let disclosures = this.props.disclosures.map((disclosure) => {
       return (
         <DisclosureTableRow
           key={disclosure.id}
           id={disclosure.id}
-          name={disclosure.name}
           submittedBy={disclosure.submittedBy}
-          submittedOn={disclosure.submittedOn}
+          type={disclosure.type}
           status={disclosure.status}
-          disposition={disclosure.disposition}
-          startDate={disclosure.startDate}
+          submittedDate={disclosure.submittedDate}
+          searchTerm={this.props.searchTerm}
         />
       );
     });
@@ -115,12 +73,10 @@ export class DisclosureTable extends ResponsiveComponent {
     return (
       <div role="grid" style={merge(styles.container, this.props.style)}>
         <div role="row" style={styles.headings}>
-          <TableHeading sort={this.sortByTitle} active={this.props.sort === 'PROJECT_TITLE'}>PROJECT TITLE</TableHeading>
-          <TableHeading sort={this.sortByPI} active={this.props.sort === 'PI'}>PI</TableHeading>
-          <TableHeading sort={this.sortBySubmittedDate} active={this.props.sort === 'DATE_SUBMITTED'}>DATE SUBMITTED</TableHeading>
-          <TableHeading sort={this.sortByStatus} active={this.props.sort === 'STATUS'}>STATUS</TableHeading>
-          <TableHeading sort={this.sortByDisposition} active={this.props.sort === 'DISPOSITION'}>DISPOSITION</TableHeading>
-          <TableHeading sort={this.sortByStartDate} active={this.props.sort === 'PROJECT_START_DATE'}>PROJECT START DATE</TableHeading>
+          <TableHeading sort={this.sortBySubmittedBy} active={this.props.sort === ''}>SUBMITTED BY</TableHeading>
+          <TableHeading sort={this.sortByType} active={this.props.sort === ''}>TYPE</TableHeading>
+          <TableHeading sort={this.sortByStatus} active={this.props.sort === ''}>STATUS</TableHeading>
+          <TableHeading sort={this.sortBySubmittedDate} active={this.props.sort === ''}>DATE SUBMITTED</TableHeading>
         </div>
         <div style={{display: 'table-row-group'}}>
           {disclosures}
