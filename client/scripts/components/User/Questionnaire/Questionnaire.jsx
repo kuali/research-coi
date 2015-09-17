@@ -55,7 +55,9 @@ export class Questionnaire extends ResponsiveComponent {
 
     let questions = [];
     if (this.props.questions) {
-      questions = this.props.questions.map((question, index) => {
+      questions = this.props.questions.sort((a, b)=>{
+        return a.question.order - b.question.order;
+      }).map((question, index) => {
         return (
           <Question
             id={question.id}
@@ -63,7 +65,7 @@ export class Questionnaire extends ResponsiveComponent {
             style={styles.question}
             number={index + 1}
             of={this.props.questions.length}
-            text={question.text}
+            text={question.question.text}
             disclosureid={this.props.disclosureid}
             key={index}
           />

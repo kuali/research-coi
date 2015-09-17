@@ -4,7 +4,6 @@ import Sidebar from '../Sidebar';
 import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
-import ConfigActions from '../../../actions/ConfigActions';
 import QuestionnaireConfig from '../QuestionnaireConfig';
 import {COIConstants} from '../../../../../COIConstants';
 
@@ -19,7 +18,6 @@ export default class Questionnaire extends React.Component {
   componentDidMount() {
     this.onChange();
     ConfigStore.listen(this.onChange);
-    ConfigActions.loadLatestQuestionnaire();
   }
 
   componentWillUnmount() {
@@ -30,7 +28,7 @@ export default class Questionnaire extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      questions: storeState.questions.screening,
+      questions: storeState.config.questions.screening,
       instructions: storeState.instructions,
       dirty: storeState.dirty
     });

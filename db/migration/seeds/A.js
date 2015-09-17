@@ -42,6 +42,8 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     return knex('questionnaire').truncate();
   }).then(function() {
+    return knex('questionnaire_type').truncate();
+  }).then(function() {
     return knex('disclosure_status').truncate();
   }).then(function() {
     return knex('disposition_type').truncate();
@@ -376,18 +378,27 @@ exports.seed = function(knex, Promise) {
       })
     ]);
   }).then(function() {
+    console.log('Seed - questionnaire_type');
+    return Promise.all([
+      knex('questionnaire_type').insert({type_cd: 1, description: 'Screening'}),
+      knex('questionnaire_type').insert({type_cd: 2, description: 'Entity'})
+    ]);
+  }).then(function() {
     return Promise.all([
     knex('questionnaire').insert({
       instructions: 'Please fill out this questionnaire in order to document your disclosure activities. Thanks! No taking $$ from vendors.',
-      version: 1
+      version: 1,
+      type_cd: 1
     })
     .then(function(questionnaireId) {
       return Promise.all([
         knex('questionnaire_question').insert({
           questionnaire_id: questionnaireId[0],
+          active: true,
           question: JSON.stringify({
+            order: 1,
             text: 'From any for-profit organization, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director\'s fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other intellectual property; or other direct payments exceeding $5,000?',
-            type: 'boolean',
+            type: 'Yes/No',
             validations: ['required']
           })
         }).then(function (parentId) {
@@ -395,9 +406,11 @@ exports.seed = function(knex, Promise) {
             knex('questionnaire_question').insert({
               questionnaire_id: questionnaireId[0],
               parent: parentId[0],
+              active: true,
               question: JSON.stringify({
+                order: 1,
                 text: 'If Yes, did the organization send you on vacation?',
-                type: 'text',
+                type: 'Text area',
                 validations: ['select1', 'required'],
                 displayCriteria: 'Yes'
               })
@@ -437,9 +450,11 @@ exports.seed = function(knex, Promise) {
         }),
         knex('questionnaire_question').insert({
           questionnaire_id: questionnaireId[0],
+          active: true,
           question: JSON.stringify({
+            order: 2,
             text: 'From any privately held organization, do you have stock, stock options, or other equity interest of any value?',
-            type: 'boolean',
+            type: 'Yes/No',
             validations: ['required']
           })
         })
@@ -462,9 +477,11 @@ exports.seed = function(knex, Promise) {
         }),
         knex('questionnaire_question').insert({
           questionnaire_id: questionnaireId[0],
+          active: true,
           question: JSON.stringify({
+            order: 3,
             text: 'Some publicly traded stock must be disclosed, but only in specific circumstances. Do you own stock, which in aggregate exceeds $5,000, in a company that provides funds to this institution in support of your Institutional Responsibilities (e.g. teaching, research, committee, or other administrative responsibilities)? When aggregating, please consider stock, stock options, warrants and other existing or contingent ownership interests in the publicly held company. Do not consider investments where you do not directly influence investment decisions, such as mutual funds and retirement accounts.',
-            type: 'boolean',
+            type: 'Yes/No',
             validations: ['required']
           })
         })
@@ -487,9 +504,11 @@ exports.seed = function(knex, Promise) {
         }),
         knex('questionnaire_question').insert({
           questionnaire_id: questionnaireId[0],
+          active: true,
           question: JSON.stringify({
+            order: 4,
             text: 'From US educational institutions, US teaching hospitals or US research institutions affiliated with US educational institutions: Did you receive in the last 12 months, or do you expect to receive in the next 12 months, payments for services, which in aggregate exceed $5,000 (e.g. payments for consulting, board positions, patents, copyrights or other intellectual property)? Exclude payments for scholarly or academic works (i.e. peer-reviewed (vs. editorial reviewed) articles or books based on original research or experimentation, published by an academic association or a university/academic press).',
-            type: 'boolean',
+            type: 'Yes/No',
             validations: ['required']
           })
         })

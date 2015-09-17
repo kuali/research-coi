@@ -128,10 +128,10 @@ export default class NewQuestion extends React.Component {
     });
 
     let multiSelectOptions, requiredSelections;
-    if (this.props.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+    if (this.props.question.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
       let options;
-      if (this.props.question.options) {
-        options = this.props.question.options.map(option => {
+      if (this.props.question.question.options) {
+        options = this.props.question.question.options.map(option => {
           return (
             <Badge key={option} style={styles.option} id={option} onDelete={this.optionDeleted}>{option}</Badge>
           );
@@ -161,7 +161,7 @@ export default class NewQuestion extends React.Component {
         <span style={styles.requiredSelectionsSection}>
           <label style={styles.label} htmlFor="requiredNumSelections">SELECTIONS REQUIRED</label>
           <div>
-            <input style={styles.textbox} type="number" id="requiredNumSelections" ref="requiredNumSelections" onChange={this.requiredSelectionsChanged} value={this.props.question.requiredNumSelections} />
+            <input style={styles.textbox} type="number" id="requiredNumSelections" ref="requiredNumSelections" onChange={this.requiredSelectionsChanged} value={this.props.question.question.requiredNumSelections} />
           </div>
         </span>
       );
@@ -173,7 +173,7 @@ export default class NewQuestion extends React.Component {
           <span style={styles.span}>
             <label style={styles.label} htmlFor="questionType">QUESTION TYPE</label>
             <div>
-              <select style={styles.dropdown} value={this.props.question.type} ref="typeDropdown" onChange={this.typeChosen} id="questionType">
+              <select style={styles.dropdown} value={this.props.question.question.type} ref="typeDropdown" onChange={this.typeChosen} id="questionType">
                 <option>Select</option>
                 {questionTypes}
               </select>
@@ -185,7 +185,7 @@ export default class NewQuestion extends React.Component {
         <div style={styles.questionTextSection}>
           <label style={styles.label}>QUESTION TEXT</label>
           <div>
-            <textarea ref="questionText" value={this.props.question.text} onChange={this.textChanged} style={styles.textarea} />
+            <textarea ref="questionText" value={this.props.question.question.text} onChange={this.textChanged} style={styles.textarea} />
           </div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import ConfigActions from '../actions/ConfigActions';
 import {AutoBindingStore} from './AutoBindingStore';
-import {sortQuestions} from './ConfigUtils';
 import alt from '../alt';
 import request from 'superagent';
 import {COIConstants} from '../../../COIConstants';
@@ -31,7 +30,10 @@ class _ConfigStore extends AutoBindingStore {
 
     this.config = {
       disclosureTypes: [],
-      questions: [],
+      questions: {
+        screening: [],
+        entities: []
+      },
       entityTypes: [],
       relationshipCategoryTypes: [],
       relationshipTypes: [],
@@ -46,12 +48,6 @@ class _ConfigStore extends AutoBindingStore {
     this.dueDate = undefined;
     this.isRollingDueDate = undefined;
 
-
-    this.questions = {
-      screening: [],
-      entities: []
-    };
-
     this.peopleEnabled = true;
 
     this.certificationOptions = {
@@ -63,60 +59,6 @@ class _ConfigStore extends AutoBindingStore {
     };
 
     this.loadAllConfigData();
-  }
-
-  insertOrders(questions) {
-    let order = 1;
-    questions.filter(question => {
-      return !question.parent;
-    }).forEach(question => {
-      question.order = order++;
-      let subOrder = 1;
-      questions.filter(toFilter => {
-        return toFilter.parent === question.id;
-      }).forEach(sub => {
-        sub.order = subOrder;
-      });
-    });
-  }
-
-  convertQuestionFormat(questions) {
-    let formattedQuestions = [];
-    this.insertOrders(questions);
-    questions.forEach((question) => {
-      question.text = question.question.text;
-      question.type = question.question.type;
-      question.validations = question.question.validations;
-      question.displayCriteria = question.question.displayCriteria;
-      question.multiSelectOptions = question.question.multiSelectOptions;
-      question.requiredNumSelections = question.question.requiredNumSelections;
-
-      formattedQuestions.push(question);
-      delete question.question;
-    });
-
-    return formattedQuestions;
-  }
-
-  refreshQuestionnaire() {
-    request.get('/api/coi/questionnaires/screening/latest')
-           .end((err, questionnaire) => {
-             if (!err) {
-               this.questions.screening = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
-               this.emitChange();
-             }
-           });
-    request.get('/api/coi/questionnaires/entities/latest')
-           .end((err, questionnaire) => {
-             if (!err) {
-               this.questions.entities = sortQuestions(this.convertQuestionFormat(questionnaire.body.questions));
-               this.emitChange();
-             }
-           });
-  }
-
-  loadLatestQuestionnaire() {
-    this.refreshQuestionnaire();
   }
 
   startEditingDeclarationType(typeCd) {
@@ -280,7 +222,7 @@ class _ConfigStore extends AutoBindingStore {
 
   findQuestion(category, id) {
     if (id) {
-      return this.questions[category].find(question => {
+      return this.config.questions[category].find(question => {
         return question.id === id;
       });
     }
@@ -290,7 +232,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   hasSubQuestions(category, parentId) {
-    return this.questions[category].some(question => {
+    return this.config.questions[category].some(question => {
       return question.parent === parentId;
     });
   }
@@ -306,7 +248,7 @@ class _ConfigStore extends AutoBindingStore {
       targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
-    targetQuestion.type = params.type;
+    targetQuestion.question.type = params.type;
     this.dirty = true;
   }
 
@@ -319,12 +261,12 @@ class _ConfigStore extends AutoBindingStore {
       targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
-    targetQuestion.text = params.text;
+    targetQuestion.question.text = params.text;
     this.dirty = true;
   }
 
   updateQuestions(params) {
-    this.questions[params.category] = params.questions;
+    this.config.questions[params.category] = params.questions;
     this.dirty = true;
   }
 
@@ -334,31 +276,31 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   saveNewQuestion(params) {
-    if (!this.applicationState.newQuestion[params.category].type) {
+    if (!this.applicationState.newQuestion[params.category].question.type) {
       return;
     }
 
-    this.applicationState.newQuestion[params.category].id = new Date().getTime();
-
-    this.questions[params.category].filter(question => {
+    this.config.questions[params.category].filter(question => {
       return !question.parent;
     }).forEach(question => {
-      question.order += 1;
+      question.question.order += 1;
     });
 
-    this.applicationState.newQuestion[params.category].order = 1;
-    this.questions[params.category].push(this.applicationState.newQuestion[params.category]);
+    this.applicationState.newQuestion[params.category].question.order = 1;
+    this.applicationState.newQuestion[params.category].active = 1;
+    this.applicationState.newQuestion[params.category].id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
+    this.config.questions[params.category].push(this.applicationState.newQuestion[params.category]);
     this.applicationState.newQuestion[params.category] = undefined;
     this.dirty = true;
   }
 
   startNewQuestion(params) {
-    this.applicationState.newQuestion[params.category] = {};
+    this.applicationState.newQuestion[params.category] = {question: {}};
     this.dirty = true;
   }
 
   deleteQuestion(params) {
-    this.questions[params.category] = this.questions[params.category].filter(question => {
+    this.config.questions[params.category] = this.config.questions[params.category].filter(question => {
       return question.id !== params.questionId && question.parent !== params.questionId;
     });
 
@@ -366,23 +308,23 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   removeSubQuestions(category, parentId) {
-    this.questions[category] = this.questions[category].filter(question => {
+    this.config.questions[category] = this.config.questions[category].filter(question => {
       return question.parent !== parentId;
     });
   }
 
   saveQuestionEdit(params) {
-    let index = this.questions[params.category].findIndex(question => {
+    let index = this.config.questions[params.category].findIndex(question => {
       return question.id === params.questionId;
     });
 
     let editedQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
     delete editedQuestion.showWarning;
     if (index !== -1) {
-      this.questions[params.category][index] = editedQuestion;
+      this.config.questions[params.category][index] = editedQuestion;
     }
 
-    if (editedQuestion.type !== COIConstants.QUESTION_TYPE.YESNO) {
+    if (editedQuestion.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
       this.removeSubQuestions(params.category, editedQuestion.id);
     }
 
@@ -422,10 +364,10 @@ class _ConfigStore extends AutoBindingStore {
       targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
-    if (!targetQuestion.options) {
-      targetQuestion.options = [];
+    if (!targetQuestion.question.options) {
+      targetQuestion.question.options = [];
     }
-    targetQuestion.options.push(params.newValue);
+    targetQuestion.question.options.push(params.newValue);
 
     this.dirty = true;
   }
@@ -439,8 +381,8 @@ class _ConfigStore extends AutoBindingStore {
       targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
-    if (targetQuestion.options) {
-      targetQuestion.options = targetQuestion.options.filter(option => {
+    if (targetQuestion.question.options) {
+      targetQuestion.question.options = targetQuestion.question.options.filter(option => {
         return option !== params.optionId;
       });
     }
@@ -457,7 +399,7 @@ class _ConfigStore extends AutoBindingStore {
       targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
-    targetQuestion.requiredNumSelections = params.newValue;
+    targetQuestion.questions.requiredNumSelections = params.newValue;
 
     this.dirty = true;
   }
