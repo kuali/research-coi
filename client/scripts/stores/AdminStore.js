@@ -9,8 +9,8 @@ class _AdminStore extends AutoBindingStore {
 
     // initialize state here
     this.applicationState = {
-      sort: 'DATE_SUBMITTED',
-      sortDirection: 'DESCENDING',
+      sort: 'SUBMITTED_DATE',
+      sortDirection: 'ASCENDING',
       filters: {
         date: {
           start: undefined,

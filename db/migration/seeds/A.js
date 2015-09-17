@@ -1,5 +1,55 @@
 /*eslint-disable camelcase */
 
+function getLastName(num) {
+  switch (num % 20) {
+    case 0: return 'Anderson';
+    case 1: return 'Carhart';
+    case 2: return 'Edmunds';
+    case 3: return 'Grover';
+    case 4: return 'Martin';
+    case 5: return 'Pasker';
+    case 6: return 'Daniels';
+    case 7: return 'Ditto';
+    case 8: return 'Simmons';
+    case 9: return 'Tremon';
+    case 10: return 'Wilkerson';
+    case 11: return 'Nicholls';
+    case 12: return 'Williams';
+    case 13: return 'Dehlin';
+    case 14: return 'Jackman';
+    case 15: return 'Foxley';
+    case 16: return 'Osmun';
+    case 17: return 'Giles';
+    case 18: return 'Boudwin';
+    case 19: return 'Williams';
+  }
+}
+
+function getFirstName(num) {
+  switch (num % 20) {
+    case 0: return 'Chloe';
+    case 1: return 'James';
+    case 2: return 'Eleanor';
+    case 3: return 'Todd';
+    case 4: return 'Ross';
+    case 5: return 'Ben';
+    case 6: return 'Lark';
+    case 7: return 'Ann';
+    case 8: return 'Nigel';
+    case 9: return 'Evan';
+    case 10: return 'Joel';
+    case 11: return 'Brandon';
+    case 12: return 'Drew';
+    case 13: return 'Derrick';
+    case 14: return 'Gary';
+    case 15: return 'Jennie';
+    case 16: return 'Hannah';
+    case 17: return 'Joe';
+    case 18: return 'Chris';
+    case 19: return 'Terry';
+  }
+}
+
 exports.seed = function(knex, Promise) {
   console.log('Truncating tables');
   //temp raw statement to get seed data working
@@ -175,99 +225,26 @@ exports.seed = function(knex, Promise) {
     ]);
   }).then(function() {
     console.log('Seed - disclosure');
-    return Promise.all([
-      knex('disclosure').insert({
-        user_id: 1698122389,
-        pi_name: 'Abby Bateman',
-        type_cd: 1,
-        title: 'Petroleum extraction in deep water',
-        submitted_date: new Date(),
-        disposition_type_cd: 1,
-        start_date: new Date(),
-        expired_date: new Date(),
-        status_cd: 1,
-        last_review_date: new Date(),
-        approved_date: new Date()
-      }),
-      knex('disclosure').insert({
-        user_id: 1,
-        pi_name: 'Cathy Donahue',
-        type_cd: 3,
-        title: 'Celery and peanut butter',
-        submitted_date: new Date(),
-        disposition_type_cd: 1,
-        start_date: new Date(),
-        expired_date: new Date(),
-        status_cd: 1,
-        last_review_date: new Date(),
-        approved_date: new Date()
-      }),
-      knex('disclosure').insert({
-        user_id: 1,
-        pi_name: 'Eliza Frome',
-        type_cd: 2,
-        title: 'Investment strategies for Africa',
-        submitted_date: new Date(),
-        disposition_type_cd: 1,
-        start_date: new Date(),
-        expired_date: new Date(),
-        status_cd: 1,
-        last_review_date: new Date(),
-        approved_date: new Date()
-      }),
-      knex('disclosure').insert({
-        user_id: 1,
-        pi_name: 'Gina Holmes',
-        type_cd: 3,
-        title: 'Pigeon navigation sources',
-        submitted_date: new Date(),
-        disposition_type_cd: 1,
-        start_date: new Date(),
-        expired_date: new Date(),
-        status_cd: 1,
-        last_review_date: new Date(),
-        approved_date: new Date()
-      }),
-      knex('disclosure').insert({
-        user_id: 1,
-        pi_name: 'Iggy Jackson',
-        type_cd: 2,
-        title: 'Effect of electromagnetic resonance',
-        submitted_date: new Date(),
-        disposition_type_cd: 1,
-        start_date: new Date(),
-        expired_date: new Date(),
-        status_cd: 1,
-        last_review_date: new Date(),
-        approved_date: new Date()
-      }),
-      knex('disclosure').insert({
-        user_id: 1,
-        pi_name: 'Katrina Lorens',
-        type_cd: 2,
-        title: 'Copper transformation rates',
-        submitted_date: new Date(),
-        disposition_type_cd: 1,
-        start_date: new Date(),
-        expired_date: new Date(),
-        status_cd: 1,
-        last_review_date: new Date(),
-        approved_date: new Date()
-      }),
-      knex('disclosure').insert({
-        user_id: 1,
-        pi_name: 'Martina Noriega',
-        type_cd: 3,
-        title: 'Glyphosate as a carcinogen',
-        submitted_date: new Date(),
-        disposition_type_cd: 1,
-        start_date: new Date(),
-        expired_date: new Date(),
-        status_cd: 2,
-        last_review_date: new Date(),
-        approved_date: new Date()
-      })
-    ]);
+    var disclosures = [];
+    for (var i = 0; i < 172; i++) {
+      disclosures.push(
+        knex('disclosure').insert({
+          user_id: Math.floor(Math.random() * 1000000),
+          submitted_by: getFirstName(Math.floor(Math.random() * 20)) + ' ' + getLastName(Math.floor(Math.random() * 20)),
+          type_cd: Math.floor(Math.random() * 3) + 1,
+          title: 'Title - what is this?' + i,
+          submitted_date: new Date(new Date() - Math.floor(Math.random() * 7606400000)),
+          disposition_type_cd: 1,
+          start_date: new Date(),
+          expired_date: new Date(),
+          status_cd: Math.floor(Math.random() * 3) + 1,
+          last_review_date: new Date(),
+          approved_date: new Date()
+        })
+      );
+    }
+
+    return Promise.all(disclosures);
   }).then(function() {
     console.log('Seed - project');
     return Promise.all([
