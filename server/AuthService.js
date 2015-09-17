@@ -28,6 +28,7 @@ export function getUserInfo(token) {
       role: 'admin',
       firstName: 'Admin',
       lastName: 'User',
+      displayName: 'Admin User',
       phone: '801-322-3323'
     };
   }
@@ -42,6 +43,7 @@ export function getUserInfo(token) {
       role: 'admin',
       firstName: 'Super',
       lastName: 'User',
+      displayName: 'Super User',
       phone: '801-322-3323'
     };
   }
@@ -56,6 +58,7 @@ export function getUserInfo(token) {
       role: 'user',
       firstName: 'Normal',
       lastName: 'User',
+      displayName: 'Normal User',
       phone: '801-322-3323'
     };
   }

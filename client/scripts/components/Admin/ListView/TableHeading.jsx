@@ -30,6 +30,9 @@ export class TableHeading extends ResponsiveComponent {
         display: 'table-cell',
         borderBottom: '1px solid #aaa',
         whiteSpace: 'nowrap'
+      },
+      label: {
+        verticalAlign: 'middle'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -38,7 +41,7 @@ export class TableHeading extends ResponsiveComponent {
 
     return (
       <span style={merge(styles.container, this.props.style)} role="columnheader" onClick={this.props.sort}>
-        {this.props.children}
+        <span style={styles.label}>{this.props.children}</span>
         {this.props.active ? sortArrow : <span></span>}
       </span>
     );

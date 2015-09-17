@@ -4,15 +4,11 @@ import {AdminStore} from '../../../stores/AdminStore';
 import {AdminActions} from '../../../actions/AdminActions';
 import {SearchFilterGroup} from '../SearchFilterGroup';
 import {SearchBox} from '../../SearchBox';
-import {PageIndicator} from './PageIndicator';
-import {KButton} from '../../KButton';
 import {DisclosureTable} from './DisclosureTable';
 
 export class ListView extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
 
     this.state = {
       data: AdminStore.getState()
@@ -20,6 +16,7 @@ export class ListView extends React.Component {
 
     this.changeSearch = this.changeSearch.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.doSearch = this.doSearch.bind(this);
   }
 
   componentDidMount() {
@@ -36,6 +33,10 @@ export class ListView extends React.Component {
     });
   }
 
+  doSearch() {
+    AdminActions.doSearch();
+  }
+
   changeType(newType) {
     AdminActions.changeTypeFilter(newType);
   }
@@ -44,16 +45,8 @@ export class ListView extends React.Component {
     AdminActions.changeSearch(newSearch);
   }
 
-  advancePages() {
-    // server side paging will go here
-  }
-
-  goBackPage() {
-    // server side paging will go here
-  }
-
   render() {
-    let desktopStyles = {
+    let styles = {
       container: {
       },
       sidebar: {
@@ -71,20 +64,6 @@ export class ListView extends React.Component {
       searchbox: {
         width: 300
       },
-      pageButton: {
-        height: 40,
-        marginLeft: 10,
-        width: 'initial',
-        color: 'white'
-      },
-      previousPage: {
-        padding: '7px 20px 7px 16px',
-        backgroundColor: '#1481A3'
-      },
-      nextPage: {
-        padding: '7px 20px',
-        backgroundColor: '#1481A3'
-      },
       table: {
         marginTop: 21,
         backgroundColor: 'white',
@@ -94,16 +73,11 @@ export class ListView extends React.Component {
       },
       filterGroup: {
         marginTop: 90
-      },
-      pageButtons: {
-        whiteSpace: 'nowrap',
-        'float': 'right'
       }
     };
 
     let filtered = this.state.data.disclosureSummaries;
 
-    let styles = merge(this.commonStyles, desktopStyles);
     return (
       <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
@@ -120,16 +94,12 @@ export class ListView extends React.Component {
         </span>
         <span className="fill" style={styles.content}>
           <div>
-            <span style={styles.pageButtons}>
-              <PageIndicator
-                current={this.state.page}
-                total={this.state.disclosures ? Math.ceil(this.state.disclosures.length / 10) : 1}
-              />
-
-              <KButton style={merge(styles.pageButton, styles.previousPage)} onClick={this.goBackPage}>&lt; PREVIOUS PAGE</KButton>
-              <KButton style={merge(styles.pageButton, styles.nextPage)} onClick={this.advancePages}>NEXT PAGE &gt;</KButton>
-            </span>
-            <SearchBox style={styles.searchbox} value={this.state.data.applicationState.filters.search} onChange={this.changeSearch} />
+            <SearchBox
+              style={styles.searchbox}
+              value={this.state.data.applicationState.filters.search}
+              onChange={this.changeSearch}
+              onSearch={this.doSearch}
+            />
           </div>
 
           <div>
@@ -139,7 +109,7 @@ export class ListView extends React.Component {
               page={this.state.data.applicationState.page}
               style={styles.table}
               disclosures={filtered}
-              searchTerm={this.state.data.applicationState.filters.search}
+              searchTerm={this.state.data.applicationState.effectiveSearchValue}
             />
           </div>
         </span>

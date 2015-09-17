@@ -14,6 +14,8 @@ function izeJson(attrs, caseFunc) {
       val = _.map(val, function(e) {
         return izeJson(e, caseFunc);
       });
+    } else if (val instanceof Date) {
+      obj[caseFunc(key)] = val;
     } else if (val instanceof Object) {
       val = izeJson(val, caseFunc);
     }

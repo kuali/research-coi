@@ -11,7 +11,7 @@ export class SortArrow extends React.Component {
       container: {
         fontSize: 9,
         marginLeft: 5,
-        verticalAlign: 'top'
+        verticalAlign: 'middle'
       }
     };
 

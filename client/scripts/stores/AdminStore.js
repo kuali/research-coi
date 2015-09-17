@@ -9,8 +9,8 @@ class _AdminStore extends AutoBindingStore {
 
     // initialize state here
     this.applicationState = {
-      sort: 'DATE_SUBMITTED',
-      sortDirection: 'DESCENDING',
+      sort: 'SUBMITTED_DATE',
+      sortDirection: 'ASCENDING',
       filters: {
         date: {
           start: undefined,
@@ -21,6 +21,7 @@ class _AdminStore extends AutoBindingStore {
         type: [],
         search: ''
       },
+      effectiveSearchValue: '',
       showFiltersOnMobile: false,
       showingApproval: false,
       showingRejection: false,
@@ -85,9 +86,15 @@ class _AdminStore extends AutoBindingStore {
     let shouldRefresh = newSearch.length > 2 || this.applicationState.filters.search.length > newSearch.length;
     this.applicationState.filters.search = newSearch;
     if (shouldRefresh) {
+      this.applicationState.effectiveSearchValue = newSearch;
       this.refreshDisclosures();
       return false;
     }
+  }
+
+  doSearch() {
+    this.applicationState.effectiveSearchValue = this.applicationState.filters.search;
+    this.refreshDisclosures();
   }
 
   changeTypeFilter(newFilter) {
@@ -107,6 +114,7 @@ class _AdminStore extends AutoBindingStore {
   clearDateFilter() {
     this.applicationState.filters.date.start = undefined;
     this.applicationState.filters.date.end = undefined;
+    this.refreshDisclosures();
   }
 
   changeSubmittedByFilter(newFilter) {

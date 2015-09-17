@@ -269,12 +269,12 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
   });
 };
 
-export let getAnnualDisclosure = (dbInfo, userId, callback) => {
+export let getAnnualDisclosure = (dbInfo, userId, piName, callback) => {
   let knex = getKnex(dbInfo);
   knex('disclosure').select('id as id').where('type_cd', 1).andWhere('user_id', userId)
   .then(result => {
     if (result.length < 1) {
-      let newDisclosure = {type_cd: 1, status_cd: 1, start_date: new Date(), user_id: userId};
+      let newDisclosure = {type_cd: 1, status_cd: 1, start_date: new Date(), user_id: userId, submitted_by: piName};
       return knex('disclosure')
       .insert(newDisclosure)
       .then(id => {
@@ -300,7 +300,7 @@ export let getAnnualDisclosure = (dbInfo, userId, callback) => {
 export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, filters, callback) => {
   let knex = getKnex(dbInfo);
 
-  let query = knex('disclosure').select('disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
+  let query = knex('disclosure').select('submitted_by', 'disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
     .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
     .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd');
 
@@ -320,11 +320,12 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, f
     query.whereIn('disclosure_type.description', filters.type);
   }
   if (filters.submittedBy) {
-    query.where('user_name', query.submittedBy);
+    query.where('submitted_by', query.submittedBy);
   }
   if (filters.search) {
     query.where('disclosure_status.description', 'like', '%' + filters.search + '%')
-         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%');
+         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
+         .orWhere('submitted_by', 'like', '%' + filters.search + '%');
   }
 
   let dbSortColumn;
@@ -340,16 +341,12 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, f
       dbSortColumn = 'type';
       break;
     default:
-      dbSortColumn = 'status'; // This needs to be name column when we have it
+      dbSortColumn = 'submitted_by';
       break;
   }
 
   query.orderBy(dbSortColumn, dbSortDirection)
   .then(rows => {
-    rows.forEach((row, index) => {
-      row.submittedBy = 'Drew Wilkerson the ' + index;
-    });
-
     callback(undefined, rows);
   });
 };
