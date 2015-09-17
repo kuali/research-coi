@@ -107,6 +107,7 @@ class _AdminStore extends AutoBindingStore {
   clearDateFilter() {
     this.applicationState.filters.date.start = undefined;
     this.applicationState.filters.date.end = undefined;
+    this.refreshDisclosures();
   }
 
   changeSubmittedByFilter(newFilter) {

@@ -82,7 +82,7 @@ export class SearchFilterGroup extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         backgroundColor: '#eeeeee',
-        padding: '12px 42px'
+        padding: '12px 22px 12px 42px'
       },
       filters: {
         backgroundColor: window.config.colors.three,
@@ -101,7 +101,7 @@ export class SearchFilterGroup extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <DisclosureListFilter style={styles.filter} label='DATE/DATE RANGE'>
+        <DisclosureListFilter style={styles.filter} label='DATE/DATE RANGE' active={this.props.filters.date.start || this.props.filters.date.end}>
           <DisclosureFilterByDate
             startDate={this.props.filters.date.start}
             endDate={this.props.filters.date.end}
@@ -109,13 +109,13 @@ export class SearchFilterGroup extends ResponsiveComponent {
             showSort={this.props.showDateSort}
           />
         </DisclosureListFilter>
-        <DisclosureListFilter style={styles.filter} label='TYPE' >
+        <DisclosureListFilter style={styles.filter} label='TYPE' active={this.props.activeTypeFilters && this.props.activeTypeFilters.length > 0}>
           <DisclosureFilterByType
             activeFilters={this.props.activeTypeFilters}
             possibleTypes={this.props.possibleTypes}
           />
         </DisclosureListFilter>
-        <DisclosureListFilter style={styles.filter} label='STATUS'>
+        <DisclosureListFilter style={styles.filter} label='STATUS' active={this.props.activeStatusFilters && this.props.activeStatusFilters.length > 0}>
           <DisclosureFilterByStatus
             activeFilters={this.props.activeStatusFilters}
             possibleStatuses={this.props.possibleStatuses}
