@@ -31,8 +31,8 @@ export default class Certification extends React.Component {
   onChange() {
     let storeState = ConfigStore.getState();
     this.setState({
-      certificationOptions: storeState.certificationOptions,
-      instructions: storeState.instructions,
+      certificationOptions: storeState.config.general.certificationOptions,
+      instructions: storeState.config.general.instructions,
       dirty: storeState.dirty
     });
   }

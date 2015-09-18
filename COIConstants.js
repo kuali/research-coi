@@ -1,6 +1,6 @@
 export let COIConstants = {
   DISCLOSURE_STEP: {
-    QUESTIONNAIRE: 'questionnaire',
+    QUESTIONNAIRE: 'Questionnaire',
     QUESTIONNAIRE_SUMMARY: 'questionnairesummary',
     ENTITIES: 'entities',
     PROJECTS: 'projects',

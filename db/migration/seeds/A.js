@@ -334,6 +334,29 @@ exports.seed = function(knex, Promise) {
       })
     ]);
   }).then(function() {
+    console.log('Seed - config');
+    return knex('config').insert({
+      name: 'General Config',
+      config: JSON.stringify({
+        peopleEnabled: true,
+        sponsorLookup: true,
+
+        dueDate: new Date(2015,1,1),
+        isRollingDueDate: false,
+        instructions: {
+          'Questionnaire': 'Questionnaire Instructions',
+          'Financial Entities Questionnaire': 'Financial Entities Questionnaire Instructions',
+          'Relationship Matrix': 'Relationship Matrix Instructions',
+          'Project Declaration': 'Project Declaration Instructions',
+          'Certification': 'Certification Instructions'
+        },
+        certificationOptions: {
+          text: 'Certification Text',
+          required: true
+        }
+      })
+    })
+  }).then(function() {
     console.log('Seed - travel_log_entry');
     return Promise.all([
       knex('travel_log_entry').insert({

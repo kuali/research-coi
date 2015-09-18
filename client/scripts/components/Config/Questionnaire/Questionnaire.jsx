@@ -29,7 +29,7 @@ export default class Questionnaire extends React.Component {
     this.setState({
       applicationState: storeState.applicationState,
       questions: storeState.config.questions.screening,
-      instructions: storeState.instructions,
+      instructions: storeState.config.general.instructions,
       dirty: storeState.dirty
     });
   }

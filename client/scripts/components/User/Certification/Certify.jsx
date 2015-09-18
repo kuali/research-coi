@@ -32,7 +32,7 @@ export class Certify extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.CERTIFY];
+    let instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.CERTIFY];
     let instructions = (
       <Instructions
         text={instructionText}

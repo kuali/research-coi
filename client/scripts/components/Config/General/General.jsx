@@ -30,10 +30,10 @@ export default class General extends React.Component {
     this.setState({
       applicationState: storeState.applicationState,
       disclosureTypes: storeState.config.disclosureTypes,
-      dueDate: storeState.dueDate,
-      isRollingDueDate: storeState.isRollingDueDate,
+      dueDate: storeState.config.general.dueDate,
+      isRollingDueDate: storeState.config.general.isRollingDueDate,
       notifications: storeState.config.notifications,
-      sponsorLookup: storeState.sponsorLookup,
+      sponsorLookup: storeState.config.general.sponsorLookup,
       dirty: storeState.dirty
     });
   }

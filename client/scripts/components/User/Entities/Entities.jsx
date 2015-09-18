@@ -125,7 +125,7 @@ export class Entities extends ResponsiveComponent {
       );
     }
 
-    let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY];
+    let instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY];
     let instructions = (
       <Instructions
         text={instructionText}
