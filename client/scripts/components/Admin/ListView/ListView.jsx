@@ -3,9 +3,9 @@ import {merge} from '../../../merge';
 import {AdminStore} from '../../../stores/AdminStore';
 import {AdminActions} from '../../../actions/AdminActions';
 import {SearchFilterGroup} from '../SearchFilterGroup';
-import {SearchBox} from '../../SearchBox';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
+import {KButton} from '../../KButton';
 
 export class ListView extends React.Component {
   constructor() {
@@ -39,6 +39,10 @@ export class ListView extends React.Component {
         }
       }
     });
+  }
+
+  loadMore() {
+    AdminActions.loadMore();
   }
 
   componentWillUnmount() {
@@ -96,10 +100,36 @@ export class ListView extends React.Component {
         padding: '8px 70px 8px 0',
         fontWeight: 'bold',
         fontSize: 17
+      },
+      loadMoreButton: {
+        textAlign: 'center',
+        margin: '10px 0'
+      },
+      loadingIndicator: {
+        textAlign: 'center',
+        margin: '10px 0',
+        color: '#777'
       }
     };
 
     let filtered = this.state.data.disclosureSummaries;
+    let loadMoreButton;
+    if (!this.state.data.applicationState.loadedAll && !this.state.data.applicationState.loadingMore) {
+      loadMoreButton = (
+        <div style={styles.loadMoreButton}>
+          <KButton onClick={this.loadMore}>Load more</KButton>
+        </div>
+      );
+    }
+
+    let loadingIndicator;
+    if (this.state.data.applicationState.loadingMore) {
+      loadingIndicator = (
+        <div style={styles.loadingIndicator}>
+          <span>Loading more...</span>
+        </div>
+      );
+    }
 
     return (
       <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
@@ -131,6 +161,8 @@ export class ListView extends React.Component {
             disclosures={filtered}
             searchTerm={this.state.data.applicationState.effectiveSearchValue}
           />
+          {loadMoreButton}
+          {loadingIndicator}
         </span>
       </div>
     );

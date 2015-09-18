@@ -60,6 +60,7 @@ class _AdminStore extends AutoBindingStore {
 
   refreshDisclosures() {
     this.applicationState.offset = 0;
+    this.applicationState.loadingMore = true;
 
     request.get('/api/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})
@@ -250,19 +251,11 @@ class _AdminStore extends AutoBindingStore {
              if (!err) {
                this.disclosureSummaries = this.disclosureSummaries.concat(summaries.body);
                this.applicationState.loadingMore = false;
-
-               if (this.morePossibleSummaries(this.disclosureSummaries)) {
-                 this.loadSummaryCount();
-               }
-               else {
-                 this.applicationState.summaryCount = this.disclosureSummaries.length;
-                 this.applicationState.loadedAll = true;
-               }
+               this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
 
                this.emitChange();
              }
            });
-    return false;
   }
 }
 
