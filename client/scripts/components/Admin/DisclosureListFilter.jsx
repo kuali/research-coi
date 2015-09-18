@@ -89,16 +89,24 @@ export class DisclosureListFilter extends ResponsiveComponent {
       arrows: {
         fontSize: 7,
         marginLeft: 4,
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        color: 'white'
       },
       clear: {
         display: 'inline-block',
         width: 40,
         fontWeight: 'bold',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        color: 'white'
       },
       label: {
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        color: 'white'
+      },
+      filter: {
+        padding: '0 22px 0 42px',
+        position: 'relative',
+        backgroundColor: this.props.active ? '#3B7182' : 'initial'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -116,7 +124,7 @@ export class DisclosureListFilter extends ResponsiveComponent {
     }
 
     return (
-      <div style={{position: 'relative', backgroundColor: this.props.active ? '#CCC' : 'initial'}}>
+      <div style={styles.filter}>
         <div style={merge(styles.container, this.props.style)} onClick={this.click}>
           <span style={styles.label}>{this.props.label}</span>
           <span style={styles.arrows}>&#9654;</span>

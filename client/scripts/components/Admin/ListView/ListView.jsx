@@ -3,8 +3,9 @@ import {merge} from '../../../merge';
 import {AdminStore} from '../../../stores/AdminStore';
 import {AdminActions} from '../../../actions/AdminActions';
 import {SearchFilterGroup} from '../SearchFilterGroup';
-import {SearchBox} from '../../SearchBox';
 import {DisclosureTable} from './DisclosureTable';
+import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
+import {KButton} from '../../KButton';
 
 export class ListView extends React.Component {
   constructor() {
@@ -21,6 +22,27 @@ export class ListView extends React.Component {
 
   componentDidMount() {
     AdminStore.listen(this.onChange);
+
+    let rightPanel = React.findDOMNode(this.refs.rightPanel);
+    let enabled = true;
+    rightPanel.addEventListener('scroll', () => {
+      if (enabled) {
+        enabled = false;
+        setTimeout(() => {
+          enabled = true;
+        }, 100);
+
+        if ((rightPanel.clientHeight + rightPanel.scrollTop) > (rightPanel.scrollHeight - 300)) {
+          if (!this.state.data.applicationState.loadingMore) {
+            AdminActions.loadMore();
+          }
+        }
+      }
+    });
+  }
+
+  loadMore() {
+    AdminActions.loadMore();
   }
 
   componentWillUnmount() {
@@ -59,28 +81,67 @@ export class ListView extends React.Component {
         display: 'inline-block',
         padding: '15px 30px',
         borderTop: '6px solid #1481A3',
-        backgroundColor: '#eeeeee'
-      },
-      searchbox: {
-        width: 300
+        backgroundColor: '#eeeeee',
+        overflowY: 'auto'
       },
       table: {
-        marginTop: 21,
         backgroundColor: 'white',
         borderRadius: 15,
         overflow: 'hidden',
         boxShadow: '0 0 9px #bbb'
       },
       filterGroup: {
-        marginTop: 90
+        backgroundColor: '#49899D'
+      },
+      heading: {
+        color: 'white',
+        backgroundColor: '#2B5866',
+        textAlign: 'right',
+        padding: '8px 70px 8px 0',
+        fontWeight: 'bold',
+        fontSize: 17
+      },
+      loadMoreButton: {
+        textAlign: 'center',
+        margin: '10px 0'
+      },
+      loadingIndicator: {
+        textAlign: 'center',
+        margin: '10px 0',
+        color: '#777'
       }
     };
 
     let filtered = this.state.data.disclosureSummaries;
+    let loadMoreButton;
+    if (!this.state.data.applicationState.loadedAll && !this.state.data.applicationState.loadingMore) {
+      loadMoreButton = (
+        <div style={styles.loadMoreButton}>
+          <KButton onClick={this.loadMore}>Load more</KButton>
+        </div>
+      );
+    }
+
+    let loadingIndicator;
+    if (this.state.data.applicationState.loadingMore) {
+      loadingIndicator = (
+        <div style={styles.loadingIndicator}>
+          <span>Loading more...</span>
+        </div>
+      );
+    }
 
     return (
       <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
+          <DisclosureFilterSearch
+            query={this.state.data.applicationState.filters.search}
+            onChange={this.changeSearch}
+            onSearch={this.doSearch}
+          />
+          <div style={styles.heading} onClick={this.toggleFilters}>
+            {this.state.data.applicationState.summaryCount} Disclosures Shown
+          </div>
           <SearchFilterGroup
             style={styles.filterGroup}
             filters={this.state.data.applicationState.filters}
@@ -90,28 +151,18 @@ export class ListView extends React.Component {
             activeTypeFilters={this.state.data.applicationState.filters.type}
             showDateSort={false}
           />
-
         </span>
-        <span className="fill" style={styles.content}>
-          <div>
-            <SearchBox
-              style={styles.searchbox}
-              value={this.state.data.applicationState.filters.search}
-              onChange={this.changeSearch}
-              onSearch={this.doSearch}
-            />
-          </div>
-
-          <div>
-            <DisclosureTable
-              sort={this.state.data.applicationState.sort}
-              sortDirection={this.state.data.applicationState.sortDirection}
-              page={this.state.data.applicationState.page}
-              style={styles.table}
-              disclosures={filtered}
-              searchTerm={this.state.data.applicationState.effectiveSearchValue}
-            />
-          </div>
+        <span className="fill" style={styles.content} ref="rightPanel">
+          <DisclosureTable
+            sort={this.state.data.applicationState.sort}
+            sortDirection={this.state.data.applicationState.sortDirection}
+            page={this.state.data.applicationState.page}
+            style={styles.table}
+            disclosures={filtered}
+            searchTerm={this.state.data.applicationState.effectiveSearchValue}
+          />
+          {loadMoreButton}
+          {loadingIndicator}
         </span>
       </div>
     );

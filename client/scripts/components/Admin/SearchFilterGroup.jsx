@@ -82,7 +82,7 @@ export class SearchFilterGroup extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         backgroundColor: '#eeeeee',
-        padding: '12px 22px 12px 42px'
+        padding: '12px 0 12px 0'
       },
       filters: {
         backgroundColor: window.config.colors.three,

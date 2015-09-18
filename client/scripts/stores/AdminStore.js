@@ -3,6 +3,8 @@ import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import request from 'superagent';
 
+const PAGE_SIZE = 40;
+
 class _AdminStore extends AutoBindingStore {
   constructor() {
     super(AdminActions);
@@ -28,7 +30,11 @@ class _AdminStore extends AutoBindingStore {
       showingQuestionnaireComments: false,
       showingEntitiesComments: false,
       showingProjectComments: false,
-      selectedDisclosure: undefined
+      selectedDisclosure: undefined,
+      loadingMore: false,
+      offset: 0,
+      loadedAll: false,
+      summaryCount: 0
     };
 
     this.disclosureSummaries = [];
@@ -36,14 +42,43 @@ class _AdminStore extends AutoBindingStore {
     this.refreshDisclosures();
   }
 
+  morePossibleSummaries(summaries) {
+    return summaries.length !== 0 && summaries.length % PAGE_SIZE === 0;
+  }
+
+  loadSummaryCount() {
+    request.get('/api/coi/disclosure-summaries/count')
+           .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
+           .end((err, theCount) => {
+             if (!err) {
+               this.applicationState.summaryCount = theCount.body[0].rowcount;
+               this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
+               this.emitChange();
+             }
+           });
+  }
+
   refreshDisclosures() {
+    this.applicationState.offset = 0;
+    this.applicationState.loadingMore = true;
+
     request.get('/api/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})
            .query({sortDirection: this.applicationState.sortDirection})
            .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
+           .query({start: this.applicationState.offset})
            .end((err, summaries) => {
              if (!err) {
                this.disclosureSummaries = summaries.body;
+               this.applicationState.loadingMore = false;
+               if (this.morePossibleSummaries(this.disclosureSummaries)) {
+                 this.loadSummaryCount();
+               }
+               else {
+                 this.applicationState.summaryCount = this.disclosureSummaries.length;
+                 this.applicationState.loadedAll = true;
+               }
+
                this.emitChange();
              }
            });
@@ -197,6 +232,30 @@ class _AdminStore extends AutoBindingStore {
     }
 
     this.refreshDisclosures();
+  }
+
+  loadMore() {
+    if (this.applicationState.loadedAll) {
+      return false;
+    }
+
+    this.applicationState.loadingMore = true;
+    this.applicationState.offset += PAGE_SIZE;
+
+    request.get('/api/coi/disclosure-summaries')
+           .query({sortColumn: this.applicationState.sort})
+           .query({sortDirection: this.applicationState.sortDirection})
+           .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
+           .query({start: this.applicationState.offset})
+           .end((err, summaries) => {
+             if (!err) {
+               this.disclosureSummaries = this.disclosureSummaries.concat(summaries.body);
+               this.applicationState.loadingMore = false;
+               this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
+
+               this.emitChange();
+             }
+           });
   }
 }
 
