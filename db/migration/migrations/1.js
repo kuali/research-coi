@@ -164,6 +164,10 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('warning_value');
     table.text('warning_period');
     table.boolean('active').notNullable();
+  })
+  .createTable('config', function(table) {
+    table.text('name');
+    table.text('config'); //--json object with config elements
   });
 };
 

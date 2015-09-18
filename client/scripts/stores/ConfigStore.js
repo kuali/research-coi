@@ -40,7 +40,8 @@ class _ConfigStore extends AutoBindingStore {
       relationshipPersonType: [],
       relationshipAmountTypes: [],
       declarationTypes: [],
-      notifications: []
+      notifications: [],
+      general: []
     };
 
     this.sponsorLookup = true;
@@ -138,22 +139,22 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   enableSponsorLookup() {
-    this.sponsorLookup = true;
+    this.config.general.sponsorLookup = true;
     this.dirty = true;
   }
 
   disableSponsorLookup() {
-    this.sponsorLookup = false;
+    this.config.general.sponsorLookup = false;
     this.dirty = true;
   }
 
   setDueDate(newDate) {
-    this.dueDate = newDate;
+    this.config.general.dueDate = newDate;
     this.dirty = true;
   }
 
   setIsRollingDueDate(value) {
-    this.isRollingDueDate = value;
+    this.config.general.isRollingDueDate = value;
     this.dirty = true;
   }
 
@@ -410,7 +411,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   relationshipPeopleEnabled(newValue) {
-    this.peopleEnabled = newValue;
+    this.config.general.peopleEnabled = newValue;
     this.dirty = true;
   }
 
@@ -470,17 +471,17 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   setCertificationText(newText) {
-    this.certificationOptions.text = newText;
+    this.config.general.certificationOptions.text = newText;
     this.dirty = true;
   }
 
   setCertificationRequired(newValue) {
-    this.certificationOptions.required = newValue;
+    this.config.general.certificationOptions.required = newValue;
     this.dirty = true;
   }
 
   setInstructions(params) {
-    this.instructions[params.step] = params.newValue;
+    this.config.general.instructions[params.step] = params.newValue;
     this.dirty = true;
   }
 

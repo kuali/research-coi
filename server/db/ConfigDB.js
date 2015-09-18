@@ -134,7 +134,8 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
       if (result[0]) {
         return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
       }
-    })
+    }),
+    query('config').select('config').where('name', 'General Config')
   ])
   .then(result=>{
     config.entityTypes = result[0];
@@ -162,7 +163,10 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
       return question;
     }) : [];
 
-    callback(undefined, camelizeJson(config));
+    config = camelizeJson(config);
+
+    config.general = JSON.parse(result[10][0].config);
+    callback(undefined, config);
   })
   .catch(function(err) {
     if (optionalTrx) {
@@ -270,6 +274,9 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
     })
   );
 
+  queries.push(
+    query('config').update({config: JSON.stringify(body.general)}).where('name', 'General Config')
+  );
 
   Promise.all(queries)
   .then(() =>{

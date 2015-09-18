@@ -39,9 +39,9 @@ export default class Relationship extends React.Component {
     let storeState = ConfigStore.getState();
     this.setState({
       list: storeState.config.relationshipPersonTypes,
-      peopleEnabled: storeState.peopleEnabled,
+      peopleEnabled: storeState.config.general.peopleEnabled,
       matrixTypes: storeState.config.matrixTypes,
-      instructions: storeState.instructions,
+      instructions: storeState.config.general.instructions,
       dirty: storeState.dirty
     });
   }

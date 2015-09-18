@@ -60,7 +60,7 @@ export class ManualEvent extends ResponsiveComponent {
       );
     }
 
-    let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
+    let instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
     let instructions = (
       <Instructions
         text={instructionText}

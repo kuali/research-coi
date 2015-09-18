@@ -73,7 +73,7 @@ export class Questionnaire extends ResponsiveComponent {
       });
     }
 
-    let instructionText = window.config.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE];
+    let instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE];
     let instructions = (
       <Instructions
         text={instructionText}
