@@ -297,7 +297,46 @@ export let getAnnualDisclosure = (dbInfo, userId, piName, callback) => {
   });
 };
 
-export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, filters, callback) => {
+export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
+  let knex = getKnex(dbInfo);
+
+  let query = knex('disclosure').count('id as rowcount')
+    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
+    .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd');
+
+  if (filters.date) {
+    if (filters.date.start && !isNaN(filters.date.start)) {
+      query.where('submitted_date', '>=', new Date(filters.date.start));
+    }
+
+    if (filters.date.end && !isNaN(filters.date.end)) {
+      query.where('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+    }
+  }
+  if (filters.status && filters.status.length > 0) {
+    query.whereIn('disclosure_status.description', filters.status);
+  }
+  if (filters.type && filters.type.length > 0) {
+    query.whereIn('disclosure_type.description', filters.type);
+  }
+  if (filters.submittedBy) {
+    query.where('submitted_by', query.submittedBy);
+  }
+  if (filters.search) {
+    query = query.where(function() {
+      this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
+         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
+         .orWhere('submitted_by', 'like', '%' + filters.search + '%');
+    });
+  }
+
+  query.then(count => {
+    callback(undefined, count);
+  });
+};
+
+const SUMMARY_PAGE_SIZE = 40;
+export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, start, filters, callback) => {
   let knex = getKnex(dbInfo);
 
   let query = knex('disclosure').select('submitted_by', 'disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
@@ -323,9 +362,11 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, f
     query.where('submitted_by', query.submittedBy);
   }
   if (filters.search) {
-    query.where('disclosure_status.description', 'like', '%' + filters.search + '%')
+    query.where(function() {
+      this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
          .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
          .orWhere('submitted_by', 'like', '%' + filters.search + '%');
+    });
   }
 
   let dbSortColumn;
@@ -345,7 +386,8 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, f
       break;
   }
 
-  query.orderBy(dbSortColumn, dbSortDirection)
+  query.orderBy(dbSortColumn, dbSortDirection);
+  query.limit(SUMMARY_PAGE_SIZE).offset(+start)
   .then(rows => {
     callback(undefined, rows);
   });

@@ -1,23 +1,34 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {SearchIcon} from '../DynamicIcons/SearchIcon';
-import {AdminActions} from '../../actions/AdminActions';
 
-export class DisclosureFilterSearch extends ResponsiveComponent {
+export class DisclosureFilterSearch extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
+    this.valueChanged = this.valueChanged.bind(this);
+    this.keyUp = this.keyUp.bind(this);
+    this.search = this.search.bind(this);
   }
 
-  onChange(evt) {
-    AdminActions.changeQuery(evt.target.value);
+  search() {
+    if (this.props.onSearch) {
+      this.props.onSearch();
+    }
   }
 
-  renderMobile() {}
+  keyUp(evt) {
+    if (evt.keyCode === 13 && this.props.onSearch) {
+      this.props.onSearch();
+    }
+  }
 
-  renderDesktop() {
-    let desktopStyles = {
+  valueChanged(evt) {
+    this.props.onChange(evt.target.value);
+  }
+
+
+  render() {
+    let styles = {
       container: {
         width: '100%',
         backgroundColor: '#49899D',
@@ -26,27 +37,31 @@ export class DisclosureFilterSearch extends ResponsiveComponent {
       },
       input: {
         border: 0,
-        padding: '2px 0 1px 2px',
+        padding: '2px 3px 1px 5px',
         backgroundColor: 'white',
         outline: 0,
-        height: 25
+        height: 25,
+        fontSize: 16,
+        width: 175,
+        verticalAlign: 'middle',
+        borderRadius: '0 5px 5px 0'
       },
       magnifyingGlass: {
         width: 25,
         height: 25,
         color: 'white',
         backgroundColor: '#414141',
-        paddingTop: 6,
-        verticalAlign: 'middle'
+        padding: '6px 0 2px 0',
+        verticalAlign: 'middle',
+        borderRadius: '5px 0 0 5px'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let currentValue = this.props.query || '';
     return (
       <div style={merge(styles.container, this.props.styles)}>
-        <SearchIcon style={styles.magnifyingGlass} />
-        <input placeholder="Search" style={styles.input} type="text" onChange={this.onChange} value={currentValue} />
+        <SearchIcon style={styles.magnifyingGlass} onClick={this.search} />
+        <input placeholder="Search" style={styles.input} type="text" onChange={this.valueChanged} onKeyUp={this.keyUp} value={currentValue} />
       </div>
     );
   }

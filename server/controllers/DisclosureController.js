@@ -236,16 +236,45 @@ export let init = app => {
         console.log('invalid filters supplied to disclosure-summaries');
       }
     }
-    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, filters, (err, sumarries) => {
+
+    let start = 0;
+    if (req.query.start && !isNaN(req.query.start)) {
+      start = req.query.start;
+    }
+    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, start, filters, (err, summaries) => {
       if (err) {
         console.error(err);
         next(err);
       } else {
-        res.send(sumarries);
+        res.send(summaries);
       }
     });
   });
 
+  app.get('/api/coi/disclosure-summaries/count', function(req, res, next) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    let filters = {};
+    if (req.query.filters) {
+      try {
+        let potentialFilter = decodeURIComponent(req.query.filters);
+        potentialFilter = JSON.parse(potentialFilter);
+        filters = potentialFilter;
+      }
+      catch (parseErr) {
+        console.log('invalid filters supplied to disclosure-summaries/count');
+      }
+    }
+
+    DisclosureDB.getSummariesForReviewCount(req.dbInfo, userInfo.id, filters, (err, count) => {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(count);
+      }
+    });
+  });
 
   app.post('/api/coi/disclosure/:id/financial-entity', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);

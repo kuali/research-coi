@@ -50,6 +50,10 @@ class _AdminActions {
   toggleStatusFilter(toToggle) { this.dispatch(toToggle); }
 
   setSortDirection(newDirection) { this.dispatch(newDirection); }
+
+  loadMore() {
+    this.dispatch();
+  }
 }
 
 export let AdminActions = alt.createActions(_AdminActions);
