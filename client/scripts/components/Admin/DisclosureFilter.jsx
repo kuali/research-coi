@@ -1,8 +1,7 @@
 import React from 'react/addons';
 import {merge} from '../../merge';
-import {AdminActions} from '../../actions/AdminActions';
 
-export class DisclosureListFilter extends React.Component {
+export default class DisclosureListFilter extends React.Component {
   constructor() {
     super();
 
@@ -10,28 +9,18 @@ export class DisclosureListFilter extends React.Component {
       showing: false
     };
 
-    this.click = this.click.bind(this);
+    this.showHideFilter = this.showHideFilter.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.clear = this.clear.bind(this);
+    this.close = this.close.bind(this);
   }
 
-  clear(e) {
-    switch(this.props.children.type.name) {
-      case 'DisclosureFilterByDate':
-        AdminActions.clearDateFilter();
-        break;
-      case 'DisclosureFilterByType':
-        AdminActions.clearTypeFilter();
-        break;
-      case 'DisclosureFilterByStatus':
-        AdminActions.clearStatusFilter();
-        break;
-    }
-    e.stopPropagation();
-  }
-
-  click() {
+  showHideFilter() {
     this.setState({showing: !this.state.showing});
+  }
+
+  close() {
+    this.handleClickOutside();
   }
 
   handleClickOutside() {
@@ -41,7 +30,7 @@ export class DisclosureListFilter extends React.Component {
   componentDidMount() {
     let localNode = React.findDOMNode(this.refs.root);
     let eventHandler = this.handleClickOutside;
-    var fn = (evt) => {
+    var fn = evt => {
       var source = evt.target;
 
       while(source.parentNode) {
@@ -69,7 +58,11 @@ export class DisclosureListFilter extends React.Component {
   render() {
     let styles = {
       container: {
-        cursor: 'pointer'
+        cursor: 'pointer',
+        padding: 7,
+        textAlign: 'right',
+        fontSize: '.8em',
+        color: '#444'
       },
       popOut: {
         position: 'absolute',
@@ -120,13 +113,13 @@ export class DisclosureListFilter extends React.Component {
 
     return (
       <div style={styles.filter}>
-        <div style={merge(styles.container, this.props.style)} onClick={this.click}>
-          <span style={styles.label}>{this.props.label}</span>
+        <div style={merge(styles.container, this.props.style)} onClick={this.showHideFilter}>
+          <span style={styles.label}>{this.label}</span>
           <span style={styles.arrows}>&#9654;</span>
           {clearButton}
         </div>
         <div ref="root" style={styles.popOut}>
-          {this.props.children}
+          {this.renderFilter()}
         </div>
       </div>
     );

@@ -90,37 +90,28 @@ export class SearchFilterGroup extends ResponsiveComponent {
         color: 'white',
         width: '100%',
         position: 'relative'
-      },
-      filter: {
-        padding: 7,
-        textAlign: 'right',
-        fontSize: '.8em',
-        color: '#444'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <DisclosureListFilter style={styles.filter} label='DATE/DATE RANGE' active={this.props.filters.date.start || this.props.filters.date.end}>
-          <DisclosureFilterByDate
-            startDate={this.props.filters.date.start}
-            endDate={this.props.filters.date.end}
-            sortDirection={this.props.sortDirection}
-            showSort={this.props.showDateSort}
-          />
-        </DisclosureListFilter>
-        <DisclosureListFilter style={styles.filter} label='TYPE' active={this.props.activeTypeFilters && this.props.activeTypeFilters.length > 0}>
-          <DisclosureFilterByType
-            activeFilters={this.props.activeTypeFilters}
-            possibleTypes={this.props.possibleTypes}
-          />
-        </DisclosureListFilter>
-        <DisclosureListFilter style={styles.filter} label='STATUS' active={this.props.activeStatusFilters && this.props.activeStatusFilters.length > 0}>
-          <DisclosureFilterByStatus
-            activeFilters={this.props.activeStatusFilters}
-            possibleStatuses={this.props.possibleStatuses}
-          />
-        </DisclosureListFilter>
+        <DisclosureFilterByDate
+          active={this.props.filters.date.start || this.props.filters.date.end}
+          startDate={this.props.filters.date.start}
+          endDate={this.props.filters.date.end}
+          sortDirection={this.props.sortDirection}
+          showSort={this.props.showDateSort}
+        />
+        <DisclosureFilterByType
+          active={this.props.activeTypeFilters && this.props.activeTypeFilters.length > 0}
+          activeFilters={this.props.activeTypeFilters}
+          possibleTypes={this.props.possibleTypes}
+        />
+        <DisclosureFilterByStatus
+          active={this.props.activeStatusFilters && this.props.activeStatusFilters.length > 0}
+          activeFilters={this.props.activeStatusFilters}
+          possibleStatuses={this.props.possibleStatuses}
+        />
       </div>
     );
   }
