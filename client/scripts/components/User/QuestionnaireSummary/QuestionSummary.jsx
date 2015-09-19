@@ -67,7 +67,7 @@ export class QuestionSummary extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let answer = this.props.answer === 'yes' ? 'YES' : 'NO';
+    let answer = this.props.answer;
 
     return (
       <div style={merge(styles.container, this.props.style)}>

@@ -154,7 +154,7 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.instructionsShowing = !this.applicationState.instructionsShowing;
   }
 
-  answerQuestion(question) {
+  submitQuestion(question) {
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
@@ -187,6 +187,49 @@ class _DisclosureStore extends AutoBindingStore {
             console.error('Error: ' + res.text);
           }
         });
+    }
+  }
+
+  answerQuestion(question) {
+    if (!this.applicationState.currentDisclosureState.disclosure.answers) {
+      this.applicationState.currentDisclosureState.disclosure.answers = [];
+    }
+    let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
+      return answer.questionId === question.id;
+    });
+    if (existingAnswer) {
+      existingAnswer.answer.value = question.answer.value;
+    }
+    else {
+      let newAnswer = {questionId: question.id, answer: question.answer};
+      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
+    }
+  }
+
+  answerMultiple(question) {
+    if (!this.applicationState.currentDisclosureState.disclosure.answers) {
+      this.applicationState.currentDisclosureState.disclosure.answers = [];
+    }
+    let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
+      return answer.questionId === question.id;
+    });
+    if (existingAnswer) {
+      if (question.checked) {
+        if (!existingAnswer.answer.value.includes(question.answer.value)) {
+          existingAnswer.answer.value.push(question.answer.value);
+        }
+      } else {
+        let index = existingAnswer.answer.value.indexOf(question.answer.value);
+        if (index > -1) {
+          existingAnswer.answer.value.splice(index, 1);
+        }
+      }
+    }
+    else {
+      let answers = [];
+      answers.push(question.answer.value);
+      let newAnswer = {questionId: question.id, answer: {value: answers}};
+      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
     }
   }
 
