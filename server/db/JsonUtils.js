@@ -12,6 +12,9 @@ function izeJson(attrs, caseFunc) {
   return _.reduce(attrs, function(obj, val, key) {
     if (val instanceof Array) {
       val = _.map(val, function(e) {
+        if (typeof e !== 'object') {
+          return e;
+        }
         return izeJson(e, caseFunc);
       });
     } else if (val instanceof Date) {

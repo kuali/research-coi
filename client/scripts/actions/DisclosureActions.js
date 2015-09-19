@@ -13,7 +13,11 @@ class _DisclosureActions {
 
   toggleInstructions() { this.dispatch(); }
 
+  submitQuestion(question) { this.dispatch(question); }
+
   answerQuestion(question) { this.dispatch(question); }
+
+  answerMultiple(question) { this.dispatch(question); }
 
   advanceQuestion() { this.dispatch(); }
 

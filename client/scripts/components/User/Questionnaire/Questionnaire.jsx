@@ -1,38 +1,33 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {Question} from './Question';
 import {Instructions} from '../Instructions';
 import {COIConstants} from '../../../../../COIConstants';
 
-export class Questionnaire extends ResponsiveComponent {
+export class Questionnaire extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.getAnswer = this.getAnswer.bind(this);
   }
 
   getAnswer(id) {
-    let value = {};
-    this.props.answers.forEach(answer => {
-      if (answer.questionId === id) {
-        value = answer.answer.value;
-      }
+    let answer = this.props.answers.find(a => {
+      return a.questionId === id;
     });
-    return value;
+    if (answer) {
+      return answer.answer.value;
+    }
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
+  render() {
     let percentToSlide = 0;
     if (this.props.currentquestion) {
       const FULL_WIDTH_IN_PERCENT = 100;
       percentToSlide = (this.props.currentquestion - 1) * -FULL_WIDTH_IN_PERCENT;
     }
 
-    let desktopStyles = {
+    let styles = {
       container: {
         whiteSpace: 'nowrap',
         overflow: 'hidden'
@@ -51,7 +46,6 @@ export class Questionnaire extends ResponsiveComponent {
         transform: 'translateX(' + percentToSlide + '%)'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let questions = [];
     if (this.props.questions) {
@@ -65,7 +59,7 @@ export class Questionnaire extends ResponsiveComponent {
             style={styles.question}
             number={index + 1}
             of={this.props.questions.length}
-            text={question.question.text}
+            question={question}
             disclosureid={this.props.disclosureid}
             key={index}
           />

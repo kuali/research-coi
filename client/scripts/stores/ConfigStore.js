@@ -400,7 +400,7 @@ class _ConfigStore extends AutoBindingStore {
       targetQuestion = this.applicationState.newQuestion[params.category];
     }
 
-    targetQuestion.questions.requiredNumSelections = params.newValue;
+    targetQuestion.question.requiredNumSelections = params.newValue;
 
     this.dirty = true;
   }
