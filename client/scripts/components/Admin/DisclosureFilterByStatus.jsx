@@ -1,19 +1,22 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../ResponsiveComponent';
-import {merge} from '../../merge';
 import {KButton} from '../KButton';
 import {AdminActions} from '../../actions/AdminActions';
+import DisclosureFilter from './DisclosureFilter';
+import DoneWithFilterButton from './DoneWithFilterButton';
 
-export class DisclosureFilterByStatus extends ResponsiveComponent {
+export class DisclosureFilterByStatus extends DisclosureFilter {
   constructor() {
     super();
-    this.commonStyles = {};
+
+    this.label = 'STATUS';
+
     this.toggleFilter = this.toggleFilter.bind(this);
     this.isChecked = this.isChecked.bind(this);
   }
 
-  clearFilter() {
+  clear(e) {
     AdminActions.clearStatusFilter();
+    e.stopPropagation();
   }
 
   toggleFilter(evt) {
@@ -27,10 +30,9 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
     }) !== undefined;
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  // render() is implemented in DisclosureFilter, which will call renderFilter
+  renderFilter() {
+    let styles = {
       container: {
         whiteSpace: 'nowrap',
         color: 'black'
@@ -42,13 +44,8 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
       clearButton: {
         backgroundColor: '#444',
         color: 'white'
-      },
-      hr: {
-        width: '67%',
-        borderBottom: '1px solid #D4D4D4'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let options = this.props.possibleStatuses.map((status, index) => {
       let id = 'statFilt' + index;
@@ -66,9 +63,10 @@ export class DisclosureFilterByStatus extends ResponsiveComponent {
     });
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div style={styles.container}>
+        <DoneWithFilterButton onClick={this.close} />
         {options}
-        <KButton style={styles.clearButton} onClick={this.clearFilter}>CLEAR FILTER</KButton>
+        <KButton style={styles.clearButton} onClick={this.clear}>CLEAR FILTER</KButton>
       </div>
     );
   }

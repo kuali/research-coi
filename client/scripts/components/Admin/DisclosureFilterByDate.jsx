@@ -1,21 +1,20 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../ResponsiveComponent';
-import {merge} from '../../merge';
 import {DatePicker} from '../DatePicker';
 import {KButton} from '../KButton';
 import {AdminActions} from '../../actions/AdminActions';
+import DisclosureFilter from './DisclosureFilter';
+import DoneWithFilterButton from './DoneWithFilterButton';
 
-export class DisclosureFilterByDate extends ResponsiveComponent {
+export class DisclosureFilterByDate extends DisclosureFilter {
   constructor() {
     super();
-    this.commonStyles = {};
 
-    this.state = {
-      fromDate: '',
-      toDate: '',
-      showingStartCalendar: false,
-      showingEndCalendar: false
-    };
+    this.label = 'DATE/DATE RANGE';
+  }
+
+  clear(e) {
+    AdminActions.clearDateFilter();
+    e.stopPropagation();
   }
 
   setFromDate(newValue) {
@@ -30,14 +29,9 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
     AdminActions.setSortDirection(evt.target.value);
   }
 
-  clearFilter() {
-    AdminActions.clearDateFilter();
-  }
-
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  // render() is implemented in DisclosureFilter, which will call renderFilter
+  renderFilter() {
+    let styles = {
       container: {
         whiteSpace: 'nowrap',
         color: 'black',
@@ -45,13 +39,12 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
       },
       inputDivs: {
         textAlign: 'left',
-        padding: 10
+        padding: 10,
+        flex: 1
       },
       label: {
         display: 'block',
         fontSize: 13
-      },
-      datesContainer: {
       },
       dropDown: {
         width: 176,
@@ -65,7 +58,6 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
         color: 'white'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let sortFields;
     if (this.props.showSort) {
@@ -81,8 +73,9 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
     }
 
     return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <div className="flexbox row" style={styles.datesContainer}>
+      <div style={styles.container}>
+        <DoneWithFilterButton onClick={this.close} />
+        <div className="flexbox row">
           <div style={styles.inputDivs}>
             <label htmlFor="fromDate" style={styles.label}>From Date:</label>
             <DatePicker id="fromDate" onChange={this.setFromDate} value={this.props.startDate} />
@@ -94,7 +87,7 @@ export class DisclosureFilterByDate extends ResponsiveComponent {
         </div>
         {sortFields}
         <div>
-          <KButton style={styles.clearButton} onClick={this.clearFilter}>CLEAR FILTER</KButton>
+          <KButton style={styles.clearButton} onClick={this.clear}>CLEAR FILTER</KButton>
         </div>
       </div>
     );
