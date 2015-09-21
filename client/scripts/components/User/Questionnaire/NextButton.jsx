@@ -10,7 +10,9 @@ export class NextButton extends React.Component {
   }
 
   submit() {
-    this.props.onClick();
+    if (this.props.isValid) {
+      this.props.onClick();
+    }
   }
 
   render() {

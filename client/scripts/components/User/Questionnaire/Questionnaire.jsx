@@ -48,21 +48,40 @@ export class Questionnaire extends React.Component {
     };
 
     let questions = [];
+
     if (this.props.questions) {
-      questions = this.props.questions.sort((a, b)=>{
+      let parentQuestions = this.props.questions.filter(question=>{
+        return !question.parent;
+      });
+
+      questions = parentQuestions.sort((a, b)=>{
         return a.question.order - b.question.order;
       }).map((question, index) => {
+        let answer = this.getAnswer(question.id);
+        let subQuestions = [];
+        if (question.question.type === COIConstants.QUESTION_TYPE.YESNO) {
+          subQuestions = this.props.questions.filter(subQuestion =>{
+            return subQuestion.parent === question.id;
+          }).map(subQuestion=>{
+            subQuestion.answer = this.getAnswer(subQuestion.id);
+            return subQuestion;
+          });
+        }
+
         return (
-          <Question
-            id={question.id}
-            answer={this.getAnswer(question.id)}
-            style={styles.question}
-            number={index + 1}
-            of={this.props.questions.length}
-            question={question}
-            disclosureid={this.props.disclosureid}
-            key={index}
-          />
+          <span>
+            <Question
+              id={question.id}
+              answer={answer}
+              style={styles.question}
+              number={index + 1}
+              of={parentQuestions.length}
+              question={question}
+              subQuestions={subQuestions}
+              disclosureid={this.props.disclosureid}
+              key={index}
+            />
+          </span>
         );
       });
     }

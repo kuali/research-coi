@@ -146,6 +146,7 @@ class QuestionnaireConfig extends React.Component {
       }
 
       question.parent = parent.id;
+      question.question.displayCriteria = 'Yes';
 
       ConfigActions.updateQuestions(this.props.questionnaireCategory, this.props.questions);
     }

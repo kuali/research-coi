@@ -324,15 +324,27 @@ export let init = app => {
     }, undefined);
   });
 
-  app.post('/api/coi/disclosure/:id/question/answer', function(req, res) {
+  app.post('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    res.sendStatus(202);
-    res.send(DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body));
+    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body, function(err, answer) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(answer);
+      }
+    });
   });
 
-  app.put('/api/coi/disclosure/:id/question/answer', function(req, res) {
+  app.put('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    res.sendStatus(202);
-    res.send(DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body));
+    DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body, function(err, answer) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.send(answer);
+      }
+    });
   });
 };

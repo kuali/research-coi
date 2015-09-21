@@ -10,13 +10,11 @@ export class CheckboxControl extends React.Component {
   }
 
   answerMultiple(evt) {
-    this.props.onChange(evt);
+    this.props.onChange(evt, this.props.questionId);
   }
 
   submitMultiple() {
-    if (this.props.isValid){
-      this.props.onClick();
-    }
+    this.props.onClick(this.props.answer, this.props.questionId);
   }
 
   render() {
@@ -59,12 +57,14 @@ export class CheckboxControl extends React.Component {
       );
     });
 
+    let nextButton = this.props.isParent ? <NextButton onClick={this.submitMultiple} isValid={this.props.isValid}/> : {};
+
     return (
       <div>
         <div>
           {options}
         </div>
-        <NextButton onClick={this.submitMultiple} isValid={this.props.isValid}/>
+        {nextButton}
         <div style={{clear: 'both'}}/>
       </div>
     );

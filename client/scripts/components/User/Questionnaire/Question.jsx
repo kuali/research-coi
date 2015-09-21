@@ -8,6 +8,7 @@ import {TextAreaControl} from './TextAreaControl';
 import {NumericControl} from './NumericControl';
 import {DateControl} from './DateControl';
 import {CheckboxControl} from './CheckboxControl';
+import {NextButton} from './NextButton';
 
 export class Question extends ResponsiveComponent {
   constructor() {
@@ -20,33 +21,143 @@ export class Question extends ResponsiveComponent {
     this.submitMultiple = this.submitMultiple.bind(this);
     this.answerMultiple = this.answerMultiple.bind(this);
     this.answerDate = this.answerDate.bind(this);
+    this.getControl = this.getControl.bind(this);
+    this.isSubQuestionForAnswer = this.isSubQuestionForAnswer.bind(this);
+    this.submitSubQuestions = this.submitSubQuestions.bind(this);
   }
 
-  answerAndSubmit(evt) {
-    DisclosureActions.submitQuestion({id: this.props.id, answer: {value: evt.target.value}});
+  answerAndSubmit(evt, questionId, isParent) {
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: evt.target.value}});
+    if (!this.isSubQuestionForAnswer(evt.target.value) && isParent ) {
+      DisclosureActions.advanceQuestion();
+    }
+  }
+
+  isSubQuestionForAnswer(value) {
+    let subQuestion = this.props.subQuestions.find(question=>{
+      return question.question.displayCriteria === value;
+    });
+
+    if (subQuestion) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  answer(evt, questionId) {
+    DisclosureActions.answerQuestion({id: questionId, answer: {value: evt.target.value}});
+  }
+
+  answerMultiple(evt, questionId) {
+    DisclosureActions.answerMultiple({id: questionId, answer: {value: evt.target.value}, checked: evt.target.checked});
+  }
+
+  submit(answer, questionId) {
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: answer}});
     DisclosureActions.advanceQuestion();
   }
 
-  answer(evt) {
-    DisclosureActions.answerQuestion({id: this.props.id, answer: {value: evt.target.value}});
-  }
-
-  answerMultiple(evt) {
-    DisclosureActions.answerMultiple({id: this.props.id, answer: {value: evt.target.value}, checked: evt.target.checked});
-  }
-
-  submit() {
-    DisclosureActions.submitQuestion({id: this.props.id, answer: {value: this.props.answer}});
+  submitMultiple(answer, questionId) {
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: answer}});
     DisclosureActions.advanceQuestion();
   }
 
-  submitMultiple() {
-    DisclosureActions.submitQuestion({id: this.props.id, answer: {value: this.props.answer}});
+  answerDate(newDate, questionId) {
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: newDate}});
+  }
+
+  submitSubQuestions() {
+    this.props.subQuestions.forEach(subQuestion=>{
+      if (subQuestion.question.displayCriteria === this.props.answer) {
+        DisclosureActions.submitQuestion({id: subQuestion.id, answer: {value: subQuestion.answer}});
+      }
+    });
     DisclosureActions.advanceQuestion();
   }
 
-  answerDate(newDate) {
-    DisclosureActions.submitQuestion({id: this.props.id, answer: {value: newDate}});
+  getControl(question, answer) {
+    switch (question.question.type) {
+      case COIConstants.QUESTION_TYPE.YESNO:
+        return (
+        <RadioControl
+        options={['Yes', 'No']}
+        answer={answer}
+        onChange={this.answerAndSubmit}
+        isParent={!question.parent}
+        questionId={question.id}
+        />
+        );
+      case COIConstants.QUESTION_TYPE.YESNONA:
+        return (
+        <RadioControl
+        options={['Yes', 'No', 'NA']}
+        answer={answer}
+        onChange={this.answerAndSubmit}
+        isParent={!question.parent}
+        questionId={question.id}
+        />
+        );
+      case COIConstants.QUESTION_TYPE.TEXTAREA:
+        return (
+        <TextAreaControl
+        answer={answer}
+        onChange={this.answer}
+        onClick={this.submit}
+        isValid={answer ? true : false}
+        isParent={!question.parent}
+        questionId={question.id}
+        />
+        );
+      case COIConstants.QUESTION_TYPE.MULTISELECT:
+        if (question.question.requiredNumSelections === '1') {
+          return (
+          <RadioControl
+          options={question.question.options}
+          answer={answer}
+          onChange={this.answerAndSubmit}
+          isParent={!question.parent}
+          questionId={question.id}
+          />
+          );
+        } else {
+          let valid = answer && answer.length >= parseInt(question.question.requiredNumSelections);
+          return (
+          <CheckboxControl
+          options={question.question.options}
+          answer={answer}
+          onChange={this.answerMultiple}
+          onClick={this.submitMultiple}
+          isValid={valid}
+          isParent={!question.parent}
+          questionId={question.id}
+          />
+          );
+        }
+        break;
+      case COIConstants.QUESTION_TYPE.NUMBER:
+        return (
+        <NumericControl
+        answer={answer}
+        onChange={this.answer}
+        onClick={this.submit}
+        isValid={answer ? true : false}
+        isParent={!question.parent}
+        questionId={question.id}
+        />
+        );
+      case COIConstants.QUESTION_TYPE.DATE:
+        return (
+        <DateControl
+        answer={answer}
+        onChange={this.answerDate}
+        onClick={this.submit}
+        isValid={answer ? true : false}
+        isParent={!question.parent}
+        questionId={question.id}
+        />
+        );
+    }
   }
 
   renderMobile() {}
@@ -77,71 +188,39 @@ export class Question extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let control = {};
-    switch (this.props.question.question.type) {
-      case COIConstants.QUESTION_TYPE.YESNO:
-        control = (
-          <RadioControl
-            options={['Yes', 'No']}
-            answer={this.props.answer}
-            onChange={this.answerAndSubmit}/>
-        );
-        break;
-      case COIConstants.QUESTION_TYPE.YESNONA:
-        control = (
-          <RadioControl
-            options={['Yes', 'No', 'NA']}
-            answer={this.props.answer}
-            onChange={this.answerAndSubmit}/>
-        );
-        break;
-      case COIConstants.QUESTION_TYPE.TEXTAREA:
-        control = (
-          <TextAreaControl
-            answer={this.props.answer}
-            onChange={this.answer}
-            onClick={this.submit}
-            isValid={this.props.answer ? true : false}/>
-        );
-        break;
-      case COIConstants.QUESTION_TYPE.MULTISELECT:
-        if (this.props.question.question.requiredNumSelections === '1') {
-          control = (
-            <RadioControl
-              options={this.props.question.question.options}
-              answer={this.props.answer}
-              onChange={this.answerAndSubmit}/>
-          );
-        } else {
-          let valid = this.props.answer && this.props.answer.length >= parseInt(this.props.question.question.requiredNumSelections);
-          control = (
-            <CheckboxControl
-              options={this.props.question.question.options}
-              answer={this.props.answer}
-              onChange={this.answerMultiple}
-              onClick={this.submitMultiple}
-              isValid={valid} />
-          );
+    let subQuestions = this.props.subQuestions.filter(subQuestion=>{
+      return subQuestion.question.displayCriteria === this.props.answer;
+    }).sort((a, b)=>{
+      return a.question.order - b.question.order;
+    }).map(subQuestion=>{
+      return (
+        <div style={{clear: 'both', marginTop: 40}}>
+          <div style={{color: '#1481A3', fontSize: 28, marginBottom: 10}}>
+            {subQuestion.question.numberToShow}
+          </div>
+          <div style={styles.text}>
+            {subQuestion.question.text}
+          </div>
+          <div style={styles.controls}>
+            {this.getControl(subQuestion, subQuestion.answer)}
+          </div>
+        </div>
+      );
+    });
+
+    let nextButton = this.props.subQuestions.length > 0 ? <NextButton onClick={this.submit} isValid={true}/> : {};
+
+    if (this.props.subQuestions.length ) {
+      let isValid = true;
+      this.props.subQuestions.forEach(subQuestion =>{
+        if (!subQuestion.answer) {
+          isValid = false;
         }
-        break;
-      case COIConstants.QUESTION_TYPE.NUMBER:
-        control = (
-          <NumericControl
-            answer={this.props.answer}
-            onChange={this.answer}
-            onClick={this.submit}
-            isValid={this.props.answer ? true : false}/>
-        );
-        break;
-      case COIConstants.QUESTION_TYPE.DATE:
-        control = (
-          <DateControl
-            answer={this.props.answer}
-            onChange={this.answerDate}
-            onClick={this.submit}
-            isValid={this.props.answer ? true : false}/>
-        );
-        break;
+      });
+
+      nextButton = (
+        <NextButton onClick={this.submitSubQuestions} isValid={isValid}/>
+      );
     }
 
     return (
@@ -150,7 +229,7 @@ export class Question extends ResponsiveComponent {
           {this.props.question.question.text}
         </div>
         <div style={styles.controls}>
-          {control}
+          {this.getControl(this.props.question, this.props.answer)}
           <span style={styles.counter}>
             QUESTION
             <span style={styles.nums}>
@@ -158,6 +237,8 @@ export class Question extends ResponsiveComponent {
             </span>
           </span>
         </div>
+        {subQuestions}
+        {nextButton}
       </span>
     );
   }
