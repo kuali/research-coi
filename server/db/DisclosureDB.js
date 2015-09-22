@@ -277,10 +277,10 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
 
 export let getAnnualDisclosure = (dbInfo, userId, piName, callback) => {
   let knex = getKnex(dbInfo);
-  knex('disclosure').select('id as id').where('type_cd', 1).andWhere('user_id', userId)
+  knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userId)
   .then(result => {
     if (result.length < 1) {
-      let newDisclosure = {type_cd: 1, status_cd: 1, start_date: new Date(), user_id: userId, submitted_by: piName};
+      let newDisclosure = {type_cd: 2, status_cd: 1, start_date: new Date(), user_id: userId, submitted_by: piName};
       return knex('disclosure')
       .insert(newDisclosure)
       .then(id => {
@@ -401,10 +401,9 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
 
 export let getSummariesForUser = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
-  knex.select('t.description as type', 'd.expired_date as expired_date', 'd.title', 's.description as status', 'd.last_review_date as last_review_date', 'd.id')
+  knex.select('expired_date', 'type_cd as type', 'title', 'status_cd as status', 'last_review_date', 'id')
     .from('disclosure as d')
-    .innerJoin('disposition_type as t', 'd.disposition_type_cd', 't.type_cd')
-    .innerJoin('disclosure_status as s', 'd.status_cd', 's.status_cd')
+    .where('d.user_id', userId)
     .then(function (rows) {
       callback(undefined, rows);
     })

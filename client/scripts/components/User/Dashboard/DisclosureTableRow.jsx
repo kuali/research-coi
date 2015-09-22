@@ -4,6 +4,8 @@ import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import Router from 'react-router';
 import {formatDate} from '../../../formatDate';
+import ConfigStore from '../../../stores/ConfigStore';
+
 let Link = Router.Link;
 
 export class DisclosureTableRow extends ResponsiveComponent {
@@ -168,7 +170,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let extraInfo;
-    if (this.props.type === 'Annual') {
+    if (this.props.type === 2) {
       extraInfo = (
         <div style={styles.extra}>Expires On: {formatDate(this.props.expiresOn)}</div>
       );
@@ -179,23 +181,36 @@ export class DisclosureTableRow extends ResponsiveComponent {
       );
     }
 
+    let button;
+
+    if (this.props.status === 1) {
+      button = (
+        <Link to="disclosure" query={{type: this.props.type }}>
+          <KButton style={styles.button}>Update &gt;</KButton>
+        </Link>
+      );
+    } else {
+      button = (
+        <KButton style={styles.button}>View &gt;</KButton>
+      );
+    }
+
+
+
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={merge(styles.cell, styles.one)}>
-          <div style={styles.type}>{this.props.type} Disclosure</div>
+          <div style={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
           {extraInfo}
         </span>
         <span role="gridcell" style={merge(styles.cell, styles.two)}>
-          {this.props.status}
+          {ConfigStore.getDisclosureStatusString(this.props.status)}
         </span>
         <span role="gridcell" style={merge(styles.cell, styles.three)}>
-          {formatDate(this.props.lastreviewed)}
+          {this.props.lastreviewed ? formatDate(this.props.lastreviewed) : ''}
         </span>
         <span role="gridcell" style={merge(styles.cell, styles.four)}>
-
-          <Link to="disclosure" query={{type: this.props.type }}>
-            <KButton style={styles.button}>Update &gt;</KButton>
-          </Link>
+          {button}
         </span>
       </div>
     );
