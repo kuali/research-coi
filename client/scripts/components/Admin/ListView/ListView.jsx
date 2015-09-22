@@ -6,6 +6,7 @@ import {SearchFilterGroup} from '../SearchFilterGroup';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
 import {KButton} from '../../KButton';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class ListView extends React.Component {
   constructor() {
@@ -131,6 +132,14 @@ export class ListView extends React.Component {
       );
     }
 
+    let possibleStatuses = ConfigStore.getState().config.disclosureStatus.map(status => {
+      return status.description;
+    });
+
+    let possibleTypes = ConfigStore.getState().config.disclosureTypes.map(type => {
+      return type.description;
+    });
+
     return (
       <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
@@ -145,8 +154,8 @@ export class ListView extends React.Component {
           <SearchFilterGroup
             style={styles.filterGroup}
             filters={this.state.data.applicationState.filters}
-            possibleStatuses={['In progress', 'Routed for Review', 'Approved', 'Disapproved']}
-            possibleTypes={['Manual Disclosure', 'Annual Disclosure', 'Project Disclosure', 'Travel Log']}
+            possibleStatuses={possibleStatuses}
+            possibleTypes={possibleTypes}
             activeStatusFilters={this.state.data.applicationState.filters.status}
             activeTypeFilters={this.state.data.applicationState.filters.type}
             showDateSort={false}

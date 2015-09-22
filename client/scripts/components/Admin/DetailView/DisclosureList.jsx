@@ -5,6 +5,7 @@ import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
 import {SearchFilterGroup} from '../SearchFilterGroup';
 import {AdminActions} from '../../../actions/AdminActions';
 import {KButton} from '../../KButton';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class DisclosureList extends React.Component {
   constructor() {
@@ -113,6 +114,14 @@ export class DisclosureList extends React.Component {
       );
     }
 
+    let possibleStatuses = ConfigStore.getState().config.disclosureStatus.map(status => {
+      return status.description;
+    });
+
+    let possibleTypes = ConfigStore.getState().config.disclosureTypes.map(type => {
+      return type.description;
+    });
+
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div>
@@ -127,8 +136,8 @@ export class DisclosureList extends React.Component {
           <SearchFilterGroup
             style={styles.filterGroup}
             filters={this.props.filters}
-            possibleStatuses={['In progress', 'Routed for Review', 'Approved', 'Disapproved']}
-            possibleTypes={['Manual Disclosure', 'Annual Disclosure', 'Project Disclosure', 'Travel Log']}
+            possibleStatuses={possibleStatuses}
+            possibleTypes={possibleTypes}
             activeStatusFilters={this.props.filters.status}
             activeTypeFilters={this.props.filters.type}
             showDateSort={false}
