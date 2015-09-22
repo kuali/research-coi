@@ -135,7 +135,9 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
         return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
       }
     }),
-    query('config').select('config').where('name', 'General Config')
+    query('config').select('config').where('name', 'General Config'),
+    query.select('*').from('disclosure_status'),
+    query.select('*').from('project_type')
   ])
   .then(result=>{
     config.entityTypes = result[0];
@@ -162,6 +164,9 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
       question.question = JSON.parse(question.question);
       return question;
     }) : [];
+
+    config.disclosureStatus = result[11];
+    config.projectTypes = result[12];
 
     config = camelizeJson(config);
 

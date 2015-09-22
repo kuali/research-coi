@@ -8,6 +8,18 @@ class _ConfigStore extends AutoBindingStore {
   constructor() {
     super(ConfigActions);
 
+    this.codeMaps = {};
+
+    this.exportPublicMethods({
+      getDeclarationTypeString: this.getDeclarationTypeString,
+      getDisclosureStatusString: this.getDisclosureStatusString,
+      getDisclosureTypeString: this.getDisclosureTypeString,
+      getFinancialEntityTypeString: this.getFinancialEntityTypeString,
+      getProjectTypeString: this.getProjectTypeString,
+      getRelationshipCategoryTypeString: this.getRelationshipCategoryTypeString,
+      getRelationshipPersonTypeString: this.getRelationshipPersonTypeString
+    });
+
     this.applicationState = {
       declarationsTypesBeingEdited: {},
       enteringNewType: false,
@@ -485,11 +497,51 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
+  mapCodes() {
+    this.codeMaps.declarationType = {};
+    this.config.declarationTypes.forEach(typeRecord => {
+      this.codeMaps.declarationType[typeRecord.typeCd] = typeRecord;
+    });
+
+    this.codeMaps.disclosureStatus = {};
+    this.config.disclosureStatus.forEach(typeRecord => {
+      this.codeMaps.disclosureStatus[typeRecord.statusCd] = typeRecord;
+    });
+
+    this.codeMaps.disclosureType = {};
+    this.config.disclosureTypes.forEach(typeRecord => {
+      this.codeMaps.disclosureType[typeRecord.typeCd] = typeRecord;
+    });
+
+    this.codeMaps.financialEntityType = {};
+    this.config.entityTypes.forEach(typeRecord => {
+      this.codeMaps.financialEntityType[typeRecord.typeCd] = typeRecord;
+    });
+
+    this.codeMaps.projectType = {};
+    this.config.projectTypes.forEach(typeRecord => {
+      this.codeMaps.projectType[typeRecord.typeCd] = typeRecord;
+    });
+
+    this.codeMaps.relationshipCategoryType = {};
+    this.config.matrixTypes.forEach(typeRecord => {
+      this.codeMaps.relationshipCategoryType[typeRecord.typeCd] = typeRecord;
+    });
+
+    this.codeMaps.relationshipPersonType = {};
+    this.config.relationshipPersonTypes.forEach(typeRecord => {
+      this.codeMaps.relationshipPersonType[typeRecord.typeCd] = typeRecord;
+    });
+  }
+
   loadAllConfigData() {
     // Then load config and re-render
     request.get('/api/coi/config', (err, config) => {
       if (!err) {
         this.config = config.body;
+
+        this.mapCodes();
+
         this.emitChange();
       }
     });
@@ -511,6 +563,76 @@ class _ConfigStore extends AutoBindingStore {
 
   undoAll() {
     this.loadAllConfigData();
+  }
+
+  getDeclarationTypeString(code) {
+    let typeRecord = this.getState().codeMaps.declarationType[code];
+    if (typeRecord) {
+      return typeRecord.description;
+    }
+    else {
+      return 'Undefined';
+    }
+  }
+
+  getDisclosureStatusString(code) {
+    let typeRecord = this.getState().codeMaps.disclosureStatus[code];
+    if (typeRecord) {
+      return typeRecord.description;
+    }
+    else {
+      return 'Undefined';
+    }
+  }
+
+  getDisclosureTypeString(code) {
+    let typeRecord = this.getState().codeMaps.disclosureType[code];
+    if (typeRecord) {
+      return typeRecord.description;
+    }
+    else {
+      return 'Undefined';
+    }
+  }
+
+  getFinancialEntityTypeString(code) {
+    let typeRecord = this.getState().codeMaps.financialEntityType[code];
+    if (typeRecord) {
+      return typeRecord.description;
+    }
+    else {
+      return 'Undefined';
+    }
+  }
+
+  getProjectTypeString(code) {
+    let typeRecord = this.getState().codeMaps.projectType[code];
+    if (typeRecord) {
+      return typeRecord.description;
+    }
+    else {
+      return 'Undefined';
+    }
+  }
+
+  getRelationshipCategoryTypeString(code) {
+    let typeRecord = this.getState().codeMaps.relationshipCategoryType[code];
+    if (typeRecord) {
+      return typeRecord.description;
+    }
+    else {
+      return 'Undefined';
+    }
+  }
+
+  getRelationshipPersonTypeString(code) {
+    let typeRecord = this.getState().codeMaps.relationshipPersonType[code];
+    if (typeRecord) {
+      return typeRecord.description;
+    }
+    else {
+      return 'Undefined';
+    }
   }
 }
 
