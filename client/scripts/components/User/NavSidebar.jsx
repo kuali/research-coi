@@ -13,19 +13,12 @@ export class NavSidebar extends ResponsiveComponent {
     super();
     this.commonStyles = {};
 
-    this.closeDisclosure = this.closeDisclosure.bind(this);
     this.submitDisclosure = this.submitDisclosure.bind(this);
-  }
-
-  closeDisclosure() {
-    DisclosureActions.resetDisclosure();
-    window.location = '#/dashboard';
   }
 
   submitDisclosure() {
     if (!this.props.submitDisabled) {
-      this.closeDisclosure();
-      DisclosureActions.toggleConfirmationMessage();
+      DisclosureActions.submitDisclosure();
     }
   }
 

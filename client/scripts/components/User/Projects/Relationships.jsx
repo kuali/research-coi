@@ -125,7 +125,7 @@ export class Relationships extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let projectView = this.props.view === 'Project View';
+    let projectView = this.props.view === 0;
     let relationshipNodes = [];
     let declarations;
     if (projectView) {
@@ -190,7 +190,7 @@ export class Relationships extends ResponsiveComponent {
         <div style={styles.content}>
           <div style={{textAlign: 'right'}}>
             <Toggle
-              values={['Project View', 'SFI View']}
+              values={[{code: 0, description: 'Project View'}, {code: 1, description: 'SFI View'}]}
               selected={this.props.view}
               onChange={this.viewChanged}
               style={{marginBottom: 18}}
