@@ -2,6 +2,8 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {COIConstants} from '../../../../../COIConstants';
+import {formatDate} from '../../../../scripts/formatDate';
 
 export class QuestionSummary extends ResponsiveComponent {
   constructor() {
@@ -12,7 +14,7 @@ export class QuestionSummary extends ResponsiveComponent {
   }
 
   reviewQuestion() {
-    DisclosureActions.setCurrentQuestion(+(this.props.questionId));
+    DisclosureActions.setCurrentQuestion(+(this.props.index));
   }
 
   renderMobile() {}
@@ -40,7 +42,7 @@ export class QuestionSummary extends ResponsiveComponent {
         height: '4em'
       },
       nums: {
-        fontSize: 38,
+        fontSize: 28,
         marginLeft: 10,
         color: '#1481A3'
       },
@@ -68,16 +70,25 @@ export class QuestionSummary extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let answer = this.props.answer;
+    switch(this.props.question.question.type) {
+      case COIConstants.QUESTION_TYPE.DATE:
+        answer = formatDate(this.props.answer);
+        break;
+      case COIConstants.QUESTION_TYPE.MULTISELECT:
+        if (this.props.question.question.requiredNumSelections > 1) {
+          answer = this.props.answer.join(', ');
+        }
+    }
 
     return (
       <div style={merge(styles.container, this.props.style)}>
         <span style={styles.counter}>
           <span style={styles.nums}>
-            {this.props.number}
+            {this.props.question.question.numberToShow}
           </span>
         </span>
 
-        <span style={styles.question}>{this.props.text}</span>
+        <span style={styles.question}>{this.props.question.question.text}</span>
 
         <span style={styles.answer}>
           <div style={{fontSize: 25}}>{answer}</div>
