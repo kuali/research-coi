@@ -145,8 +145,6 @@ class _DisclosureActions {
     });
   }
 
-  resetDisclosure() { this.dispatch(); }
-
   toggleConfirmationMessage() { this.dispatch(); }
 
   manualTypeSelected(disclosureId, manualType) {
@@ -190,6 +188,8 @@ class _DisclosureActions {
   turnOffValidation(step) { this.dispatch(step); }
 
   certify(value) { this.dispatch(value); }
+
+  submitDisclosure() { this.dispatch(); }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

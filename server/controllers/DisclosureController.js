@@ -347,4 +347,16 @@ export let init = app => {
       }
     });
   });
+
+  app.post('/api/coi/disclosure/:id/submit', function(req, res, next) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    DisclosureDB.submit(req.dbInfo, userInfo.displayName, req.params.id, function(err) {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        res.sendStatus(202);
+      }
+    });
+  });
 };

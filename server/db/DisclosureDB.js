@@ -413,6 +413,23 @@ export let getSummariesForUser = (dbInfo, userId, callback) => {
     });
 };
 
+export let submit = (dbInfo, displayName, disclosureId, callback) => {
+  let knex = getKnex(dbInfo);
+  knex('disclosure')
+  .update({
+    status_cd: 2,
+    submitted_by: displayName,
+    submitted_date: new Date()
+  })
+  .where('id', disclosureId)
+  .then(()=>{
+    callback(undefined);
+  })
+  .catch(err=>{
+    callback(err);
+  });
+};
+
 export let getArchivedDisclosures = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')

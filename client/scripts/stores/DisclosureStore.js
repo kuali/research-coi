@@ -49,7 +49,7 @@ class _DisclosureStore extends AutoBindingStore {
         manual: {},
         travel: {}
       },
-      declarationView: 'Project View',
+      declarationView: 0,
       entityStates: {},
       entityInProgress: {
         active: 1
@@ -939,6 +939,17 @@ class _DisclosureStore extends AutoBindingStore {
 
   certify(value) {
     this.applicationState.currentDisclosureState.isCertified = value;
+  }
+
+  submitDisclosure() {
+    request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/submit')
+    .end((err)=>{
+      if (!err) {
+        this.resetDisclosure();
+        window.location = '#/dashboard';
+        this.toggleConfirmationMessage();
+      }
+    });
   }
 }
 
