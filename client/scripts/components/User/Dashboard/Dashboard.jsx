@@ -137,8 +137,8 @@ export class Dashboard extends ResponsiveComponent {
         fontWeight: 300,
         color: '#525252'
       },
-      annualButton: {
-        borderTop: '1px solid #c0c0c0'
+      borderBottom: {
+        borderBottom: '1px solid #c0c0c0'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -150,14 +150,25 @@ export class Dashboard extends ResponsiveComponent {
       );
     }
 
+    let annualDisclosureButton;
+    let annualDisclosureInRoute = this.state.disclosureSummaries.find(summary=>{
+      return summary.type === 2 && summary.status > 1;
+    });
+
+    if (!annualDisclosureInRoute) {
+      annualDisclosureButton = (
+        <div>
+          <NewDisclosureButton type="Annual"/>
+        </div>
+      );
+    }
+
     return (
       <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
+          {annualDisclosureButton}
           <div>
-            <NewDisclosureButton type="Annual" style={styles.annualButton} />
-          </div>
-          <div>
-          <TravelLogButton />
+          <TravelLogButton/>
           </div>
           <div>
             <NewDisclosureButton type="Manual" />
@@ -166,7 +177,7 @@ export class Dashboard extends ResponsiveComponent {
             <FinancialEntitiesButton />
           </div>
           <div>
-            <DisclosureArchiveButton />
+            <DisclosureArchiveButton style={styles.borderBottom} />
           </div>
         </span>
         <span className="fill" style={styles.content}>

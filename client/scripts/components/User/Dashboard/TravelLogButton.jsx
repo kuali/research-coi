@@ -20,7 +20,7 @@ export class TravelLogButton extends React.Component {
         cursor: 'pointer',
         color: '#444',
         fontWeight: '300',
-        borderBottom: '1px solid #c0c0c0'
+        borderTop: '1px solid #c0c0c0'
       },
       primary: {
         fontSize: 28,
