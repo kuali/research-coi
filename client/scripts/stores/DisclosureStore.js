@@ -35,6 +35,7 @@ class _DisclosureStore extends AutoBindingStore {
       currentDisclosureState: {
         step: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
         question: 1,
+        isCertified: false,
         disclosure: {
           id: 222,
           answers: []
@@ -934,6 +935,10 @@ class _DisclosureStore extends AutoBindingStore {
         this.applicationState.validatingEntityRelationshipStep = false;
         break;
     }
+  }
+
+  certify(value) {
+    this.applicationState.currentDisclosureState.isCertified = value;
   }
 }
 

@@ -3,11 +3,18 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {COIConstants} from '../../../../../COIConstants';
 import {Instructions} from '../Instructions';
+import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class Certify extends ResponsiveComponent {
   constructor() {
     super();
     this.commonStyles = {};
+
+    this.certify = this.certify.bind(this);
+  }
+
+  certify(evt) {
+    DisclosureActions.certify(evt.target.checked);
   }
 
   shouldComponentUpdate() { return true; }
@@ -40,35 +47,37 @@ export class Certify extends ResponsiveComponent {
       />
     );
 
+    let agreement;
+
+    if (window.config.general.certificationOptions.required) {
+      agreement = (
+      <div style={{marginTop: 20}}>
+          <span style={{display: 'inline-block', width: '5%'}}>
+            <input type="checkbox" onChange={this.certify} checked={this.props.isCertified}/>
+          </span>
+          <span style={{display: 'inline-block', width: '95%', verticalAlign: 'top', fontWeight: 'bold'}}>
+            I acknowledge that it is my responsibility to disclose any new SIGNIFICANT FINANCIAL
+            INTERESTS obtained during the term of this disclosure. I certify that this is a complete
+            disclosure of all my financial interests related to the projects therein.
+          </span>
+      </div>
+      );
+    }
     return (
       <div style={merge(styles.container, this.props.style)}>
         {instructions}
 
         <div style={styles.content}>
           <span style={{display: 'inline-block'}}>
-            <p style={styles.p}>In accordance with the Universitys policy on Disclosure of Financial Interests and Management of Conflict of Interest Related to Sponsored Projects, the Principal Investigator and all other Investigators who share responsibility for the design, conduct, or reporting of sponsored projects must disclose their personal SIGNIFICANT FINANCIAL INTERESTS in any non-profit foundation or for-profit company that might benefit from the predictable results of those proposed projects.</p>
-
-            <p style={styles.p}>In addition, when the work to be performed under the proposed research project and the results of the proposed research project would reasonably appear to affect the Investigators SIGNIFICANT FINANCIAL INTEREST, the interest is regarded as being related to the proposed research project and must be reported.</p>
-
-            <p style={styles.p}>For the purposes of this disclosure, SIGNIFICANT FINANCIAL INTEREST is considered to include:</p>
-
-            <ul style={styles.ul}>
-              <li>Income (Includes salary, stock dividends and/or interest earned, consulting fees, royalty payments and honoraria from a single business entity exceeding $10,000).</li>
-              <li>Position with a single business entity (Includes director, employee, founder, manager, officer, partner, trustee, or advisory board member).</li>
-              <li>Investment Ownership or Controlling Interest of more than 5% of the voting stock in a single business entity.</li>
-              <li>Interest in Intellectual Property Rights belonging to a single business entity (Includes patents, copyrights or other license rights).</li>
-            </ul>
-
-            <div>
-              <span style={{display: 'inline-block', width: '5%'}}>
-                <input type="checkbox" />
-              </span>
-              <span style={{display: 'inline-block', width: '95%', verticalAlign: 'top', fontWeight: 'bold'}}>
-                I acknowledge that it is my responsibility to disclose any new SIGNIFICANT FINANCIAL
-                INTERESTS obtained during the term of this disclosure. I certify that this is a complete
-                disclosure of all my financial interests related to the projects therein.
-              </span>
-            </div>
+            {window.config.general.certificationOptions.text.split('\n').map(function(item) {
+              return (
+                <span>
+                  {item}
+                  <br/>
+                </span>
+              );
+            })}
+            {agreement}
           </span>
         </div>
       </div>
