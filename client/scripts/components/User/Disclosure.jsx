@@ -268,11 +268,14 @@ export class Disclosure extends ResponsiveComponent {
         currentStep = (
           <Certify
             instructionsShowing={this.state.applicationState.instructionsShowing}
+            isCertified = {this.state.applicationState.currentDisclosureState.isCertified}
           />
         );
         heading = 'Certification';
         break;
     }
+
+    let submitDisabled = window.config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
 
     return (
       <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
@@ -289,6 +292,7 @@ export class Disclosure extends ResponsiveComponent {
             percent={percent}
             step={currentDisclosureStep}
             question={currentQuestion}
+            submitDisabled={submitDisabled}
             nextDisabled={projectNextDisabled}
           />
         </span>

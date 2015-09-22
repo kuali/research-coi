@@ -23,8 +23,10 @@ export class NavSidebar extends ResponsiveComponent {
   }
 
   submitDisclosure() {
-    this.closeDisclosure();
-    DisclosureActions.toggleConfirmationMessage();
+    if (!this.props.submitDisabled) {
+      this.closeDisclosure();
+      DisclosureActions.toggleConfirmationMessage();
+    }
   }
 
   goBack() {
@@ -79,6 +81,10 @@ export class NavSidebar extends ResponsiveComponent {
       stepButtons: {
         textAlign: 'left',
         display: 'inline-block'
+      },
+      disabled: {
+        color: '#AAA',
+        cursor: 'default'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -111,8 +117,14 @@ export class NavSidebar extends ResponsiveComponent {
         </div>
       );
 
+      let submitStyle;
+      if (this.props.submitDisabled) {
+        submitStyle = merge(styles.nextquestion, styles.disabled);
+      } else {
+        submitStyle = styles.nextquestion;
+      }
       submit = (
-        <div onClick={this.submitDisclosure} style={styles.nextquestion}>
+        <div onClick={this.submitDisclosure} style={submitStyle}>
           <NextIcon style={styles.icon} />
           <span style={styles.stepLabel}>
             SUBMIT

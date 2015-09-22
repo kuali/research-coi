@@ -188,6 +188,8 @@ class _DisclosureActions {
   turnOnValidation(step) { this.dispatch(step); }
 
   turnOffValidation(step) { this.dispatch(step); }
+
+  certify(value) { this.dispatch(value); }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);
