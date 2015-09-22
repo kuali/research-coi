@@ -1,20 +1,21 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
+import ConfigStore from '../../../stores/ConfigStore';
+import {formatDate} from '../../../formatDate';
+import {KButton} from '../../KButton';
+import ReactRouter from 'react-router';
+let Link = ReactRouter.Link;
 
-export class DisclosureDetailHeading extends ResponsiveComponent {
+export class DisclosureDetailHeading extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         backgroundColor: '#efefef',
-        padding: '13px 25px',
+        padding: '13px 8px 13px 25px',
         lineHeight: '20px'
       },
       type: {
@@ -40,26 +41,53 @@ export class DisclosureDetailHeading extends ResponsiveComponent {
       },
       details: {
         fontSize: 15
+      },
+      backButton: {
+        float: 'right',
+        width: 155,
+        marginTop: 15
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let disclosure = this.props.disclosure;
-    return (
-      <div style={merge(styles.container, this.props.style)} >
-        <div style={styles.heading}>
-          <span style={styles.disclosure}>{disclosure.type} Disclosure •</span>
-          <span>ID</span>
-          <span style={styles.id}>#{disclosure.id}</span>
+
+    let dateSection;
+    if (disclosure.revisedDate) {
+      dateSection = (
+        <div style={merge(styles.details)}>
+          <span style={styles.label}>Revised On:</span>
+          <span style={styles.value}>{formatDate(disclosure.revisedDate)} • {ConfigStore.getDisclosureStatusString(disclosure.statusCd)}</span>
         </div>
+      );
+    }
+    else {
+      dateSection = (
         <div style={merge(styles.details)}>
           <span style={styles.label}>Submitted On:</span>
-          <span style={styles.value}>{new Date(disclosure.submittedOn).toDateString()} • {disclosure.status}</span>
+          <span style={styles.value}>{formatDate(disclosure.submittedDate)} • {ConfigStore.getDisclosureStatusString(disclosure.statusCd)}</span>
         </div>
-        <div style={styles.details}>
-          <span style={styles.label}>Reporter:</span>
-          <span style={styles.value}>{disclosure.submittedBy}</span>
-        </div>
+      );
+    }
+
+    return (
+      <div style={merge(styles.container, this.props.style)} >
+        <Link to={`/`}>
+          <KButton style={styles.backButton}>
+            Back To List View
+          </KButton>
+        </Link>
+        <span>
+          <div style={styles.heading}>
+            <span style={styles.disclosure}>{ConfigStore.getDisclosureTypeString(disclosure.typeCd)} •</span>
+            <span>ID</span>
+            <span style={styles.id}>#{disclosure.id}</span>
+          </div>
+          <div style={styles.details}>
+            <span style={styles.label}>Submitted By:</span>
+            <span style={styles.value}>{disclosure.submittedBy}</span>
+          </div>
+          {dateSection}
+        </span>
       </div>
     );
   }

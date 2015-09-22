@@ -24,6 +24,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('user_id').notNullable();
     table.string('submitted_by', 200);
     table.dateTime('submitted_date');
+    table.dateTime('revised_date');
     table.dateTime('start_date').notNullable();
     table.dateTime('expired_date');
     table.dateTime('last_review_date');

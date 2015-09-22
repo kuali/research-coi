@@ -1,17 +1,13 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {AdminStore} from '../../../stores/AdminStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
-import {isAfterStartDate, isBeforeEndDate, sortFunction, typeFilter} from '../AdminFilters';
 
-
-export class DetailView extends ResponsiveComponent {
+export class DetailView extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.onChange = this.onChange.bind(this);
     let store = AdminStore.getState();
@@ -23,12 +19,9 @@ export class DetailView extends ResponsiveComponent {
     this.searchFilter = this.searchFilter.bind(this);
   }
 
-  shouldComponentUpdate() { return true; }
-
   componentDidMount() {
     AdminStore.listen(this.onChange);
-    if (this.props.params !== undefined &&
-        this.props.params.id !== undefined) {
+    if (this.props.params !== undefined && this.props.params.id !== undefined) {
       AdminActions.loadDisclosure(this.props.params.id);
     }
   }
@@ -66,20 +59,18 @@ export class DetailView extends ResponsiveComponent {
     return filtered;
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
+        overflowY: 'hidden'
       },
       details: {
-        height: '100%'
       },
       list: {
         width: 320
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+
     let disclosureDetail;
     if (this.state.applicationState.selectedDisclosure) {
       disclosureDetail = (
@@ -104,6 +95,10 @@ export class DetailView extends ResponsiveComponent {
           query={this.state.applicationState.query}
           filters={this.state.applicationState.filters}
           sortDirection={this.state.applicationState.sortDirection}
+          count={this.state.applicationState.summaryCount}
+          searchTerm={this.state.applicationState.effectiveSearchValue}
+          loadingMore={this.state.applicationState.loadingMore}
+          loadedAll={this.state.applicationState.loadedAll}
         />
         <div className="inline-flexbox fill" style={styles.details}>
           {disclosureDetail}

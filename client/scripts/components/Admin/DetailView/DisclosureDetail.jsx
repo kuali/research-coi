@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureDetailHeading} from './DisclosureDetailHeading';
 import {ActionButtons} from './ActionButtons';
@@ -9,10 +8,9 @@ import {AdminDeclarationsSummary} from './AdminDeclarationsSummary';
 import {ApprovalConfirmation} from './ApprovalConfirmation';
 import {RejectionConfirmation} from './RejectionConfirmation';
 
-export class DisclosureDetail extends ResponsiveComponent {
+export class DisclosureDetail extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
   }
 
   makeEntityMap(entities) {
@@ -26,13 +24,13 @@ export class DisclosureDetail extends ResponsiveComponent {
     return result;
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
+  render() {
     let nameMap = this.makeEntityMap(this.props.disclosure.entities);
 
-    let desktopStyles = {
-      container: {},
+    let styles = {
+      container: {
+        width: '100%'
+      },
       actionButtons: {
         position: 'fixed',
         top: 186,
@@ -63,7 +61,6 @@ export class DisclosureDetail extends ResponsiveComponent {
         marginBottom: 25
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >

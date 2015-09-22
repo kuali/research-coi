@@ -229,13 +229,20 @@ exports.seed = function(knex, Promise) {
     console.log('Seed - disclosure');
     var disclosures = [];
     for (var i = 0; i < 172; i++) {
+      var submittedDate = new Date(new Date() - Math.floor(Math.random() * 7606400000));
+      var revisedDate = null;
+      if (i % 4 === 0) {
+        revisedDate = new Date(submittedDate.getTime() + 259200000);
+      }
+
       disclosures.push(
         knex('disclosure').insert({
           user_id: Math.floor(Math.random() * 1000000),
           submitted_by: getFirstName(Math.floor(Math.random() * 20)) + ' ' + getLastName(Math.floor(Math.random() * 20)),
           type_cd: Math.floor(Math.random() * 3) + 1,
           title: 'Title - what is this?' + i,
-          submitted_date: new Date(new Date() - Math.floor(Math.random() * 7606400000)),
+          submitted_date: submittedDate,
+          revised_date: revisedDate,
           disposition_type_cd: 1,
           start_date: new Date(),
           expired_date: new Date(),

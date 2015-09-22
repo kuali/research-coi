@@ -1,26 +1,41 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {getStatusText} from '../../../statusText';
 import {formatDate} from '../../../formatDate';
 import {AdminActions} from '../../../actions/AdminActions';
 
-export class DisclosureListItem extends ResponsiveComponent {
+export class DisclosureListItem extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.selectDisclosure = this.selectDisclosure.bind(this);
+    this.highlightSearchTerm = this.highlightSearchTerm.bind(this);
+  }
+
+  highlightSearchTerm(value) {
+    let start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
+    if (start >= 0) {
+      let matchingValue = value.substr(start, this.props.searchTerm.length);
+      return (
+        <span>
+          {value.substr(0, start) + ''}
+          <span className="highlight">
+            {matchingValue}
+          </span>
+          {value.substr(start + this.props.searchTerm.length)}
+        </span>
+      );
+    }
+    else {
+      return value;
+    }
   }
 
   selectDisclosure() {
     AdminActions.loadDisclosure(this.props.disclosure.id);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         borderBottom: '1px solid #6d6d6d',
         padding: 6,
@@ -33,29 +48,28 @@ export class DisclosureListItem extends ResponsiveComponent {
         fontWeight: 'bold'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let disclosure = this.props.disclosure;
     let dateToShow;
-    if (disclosure.revisedOn) {
+    if (disclosure.revised_date) {
       dateToShow = (
-        <div>Revised: {formatDate(disclosure.revisedOn)}</div>
+        <div>{formatDate(disclosure.revised_date)} - Revised</div>
       );
     }
     else {
       dateToShow = (
-        <div>Submitted for Approval: {formatDate(disclosure.submittedOn)}</div>
+        <div>{formatDate(disclosure.submitted_date)} - Submitted for Approval</div>
       );
     }
 
     return (
       <li style={merge(styles.container, this.props.style)} onClick={this.selectDisclosure}>
         <div style={styles.disclosureType}>
-          {disclosure.type === 'ANNUAL' ? 'Annual' : 'Project'} Disclosure
+          {this.highlightSearchTerm(disclosure.type)}
         </div>
-        <div>Reporter: {disclosure.submittedBy}</div>
+        <div>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
         {dateToShow}
-        <div>Status: {getStatusText(disclosure.status)}</div>
+        <div>Status: {this.highlightSearchTerm(disclosure.status)}</div>
       </li>
     );
   }

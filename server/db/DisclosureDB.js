@@ -218,7 +218,7 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
   var disclosure;
   let knex = getKnex(dbInfo);
   Promise.all([
-    knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
+    knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.revised_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
       .from('disclosure as de')
       .where('id', disclosureId),
     knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.is_public as isPublic', 'e.type_cd as type', 'e.is_sponsor as isSponsor', 'e.name', 'e.description')
@@ -345,7 +345,7 @@ const SUMMARY_PAGE_SIZE = 40;
 export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, start, filters, callback) => {
   let knex = getKnex(dbInfo);
 
-  let query = knex('disclosure').select('submitted_by', 'disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
+  let query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
     .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
     .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd');
 
