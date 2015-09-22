@@ -158,35 +158,36 @@ class _DisclosureStore extends AutoBindingStore {
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
-    let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
-      return answer.questionId === question.id;
+    let answer = this.applicationState.currentDisclosureState.disclosure.answers.find(ans => {
+      return ans.questionId === question.id;
     });
-    if (existingAnswer) {
-      existingAnswer.answer.value = question.answer.value;
-      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
-        .send(existingAnswer)
-        .type('application/json')
-        .end(function(err, res){
-          if (!err && res.ok) {
-            console.log('updated question answer');
-          } else {
-            console.error('Error: ' + res.text);
-          }
-        });
+
+    if (answer) {
+      answer.answer.value = question.answer.value;
+    } else {
+      answer = {questionId: question.id, answer: question.answer};
     }
-    else {
-      let newAnswer = {questionId: question.id, answer: question.answer};
-      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
+
+    if (answer.id) {
+      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
+      .send(answer)
+      .type('application/json')
+      .end((err, res)=>{
+        if (!err) {
+          answer = res.body;
+          this.emitChange();
+        }
+      });
+    } else {
       request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
-        .send(newAnswer)
-        .type('application/json')
-        .end(function(err, res){
-          if (!err && res.ok) {
-            console.log('inserted question answer');
-          } else {
-            console.error('Error: ' + res.text);
-          }
-        });
+      .send(answer)
+      .type('application/json')
+      .end((err, res)=>{
+        if (!err ) {
+          this.applicationState.currentDisclosureState.disclosure.answers.push(res.body);
+          this.emitChange();
+        }
+      });
     }
   }
 
@@ -234,7 +235,11 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   advanceQuestion() {
-    if (this.applicationState.currentDisclosureState.question >= window.config.questions.screening.length) {
+    let parentQuestions = window.config.questions.screening.filter(question=>{
+      return !question.parent;
+    });
+
+    if (this.applicationState.currentDisclosureState.question >= parentQuestions.length) {
       this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
     }
     else {
@@ -243,6 +248,9 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   previousQuestion() {
+    let parentQuestions = window.config.questions.screening.filter(question=>{
+      return !question.parent;
+    });
     switch (this.applicationState.currentDisclosureState.step) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE:
         if (this.applicationState.currentDisclosureState.question > 1) {
@@ -251,7 +259,7 @@ class _DisclosureStore extends AutoBindingStore {
         break;
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
-        this.applicationState.currentDisclosureState.question = window.config.questions.screening.length;
+        this.applicationState.currentDisclosureState.question = parentQuestions.length;
         break;
       case COIConstants.DISCLOSURE_STEP.ENTITIES:
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;

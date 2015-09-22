@@ -10,13 +10,11 @@ export class TextAreaControl extends React.Component {
   }
 
   answer(evt) {
-    this.props.onChange(evt);
+    this.props.onChange(evt, this.props.questionId);
   }
 
   submit() {
-    if (this.props.isValid){
-      this.props.onClick();
-    }
+    this.props.onClick(this.props.answer, this.props.questionId);
   }
 
   render() {
@@ -32,10 +30,12 @@ export class TextAreaControl extends React.Component {
       }
     };
 
+    let nextButton = this.props.isParent ? <NextButton onClick={this.submit} isValid={this.props.isValid}/> : {};
+
     return (
       <div>
         <textarea id="textarea" ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.answer} />
-        <NextButton onClick={this.submit} isValid={this.props.isValid}/>
+        {nextButton}
         <div style={{clear: 'both'}}/>
       </div>
     );

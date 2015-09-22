@@ -11,13 +11,11 @@ export class DateControl extends React.Component {
   }
 
   answerDate(newDate) {
-    this.props.onChange(newDate);
+    this.props.onChange(newDate, this.props.questionId);
   }
 
   submit() {
-    if (this.props.isValid){
-      this.props.onClick();
-    }
+    this.props.onClick(this.props.answer, this.props.questionId);
   }
 
   render() {
@@ -27,10 +25,12 @@ export class DateControl extends React.Component {
       }
     };
 
+    let nextButton = this.props.isParent ? <NextButton onClick={this.submit} isValid={this.props.isValid}/> : {};
+
     return (
       <div>
         <DatePicker id="questionDate" style={styles.datepicker} onChange={this.answerDate} value={this.props.answer} />
-        <NextButton onClick={this.submit} isValid={this.props.isValid}/>
+        {nextButton}
         <div style={{clear: 'both'}}/>
       </div>
     );

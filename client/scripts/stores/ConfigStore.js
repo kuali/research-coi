@@ -350,7 +350,7 @@ class _ConfigStore extends AutoBindingStore {
   criteriaChanged(params) {
     let question = this.findQuestion(params.category, params.questionId);
     if (question) {
-      question.displayCriteria = params.newValue;
+      question.question.displayCriteria = params.newValue;
     }
 
     this.dirty = true;

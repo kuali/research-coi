@@ -8,7 +8,7 @@ export class RadioControl extends React.Component {
   }
 
   answer(evt) {
-    this.props.onChange(evt);
+    this.props.onChange(evt, this.props.questionId, this.props.isParent);
   }
 
   render() {

@@ -33,25 +33,49 @@ export class QuestionnaireSummary extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let summaries;
+    let summaries = [];
     if (this.props.answers) {
-      summaries = this.props.answers.map(a=>{
+      let questionAnswer = this.props.answers.map(a=>{
         a.question = this.getQuestion(a.questionId);
         return a;
-      }).filter(a=>{
-        return a.question;
-      }).sort((a, b)=>{
-        return a.question.order - b.question.order;
-      }).map((answer, index) => {
-        return (
+      });
+
+      let parents = [];
+      let subs = [];
+
+      questionAnswer.forEach(answer=>{
+        if (answer.question && !answer.question.parent) {
+          parents.push(answer);
+        } else if (answer.question) {
+          subs.push(answer);
+        }
+      });
+
+      parents.sort((a, b)=>{
+        return a.question.question.order - b.question.question.order;
+      }).forEach((answer, index) => {
+        summaries.push(
           <QuestionSummary
-            number={index + 1}
-            text={answer.question.question.text}
             answer={answer.answer.value}
-            questionId={answer.questionId}
+            question={answer.question}
+            index={index}
             key={answer.id}
           />
         );
+        subs.filter(subAnswer=>{
+          return answer.question.id === subAnswer.question.parent;
+        }).sort((a, b)=>{
+          return a.question.question.order - b.question.question.order;
+        }).forEach((subAnswer) => {
+          summaries.push(
+          <QuestionSummary
+          answer={subAnswer.answer.value}
+          question={subAnswer.question}
+          index={index}
+          key={subAnswer.id}
+          />
+          );
+        });
       });
     }
 

@@ -183,19 +183,23 @@ export let saveExistingDisclosureNested = (dbInfo, userId, record, callback) => 
   //implement
 };
 
-export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
+export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body, callback) => {
   let knex = getKnex(dbInfo);
+  let answer = body;
   knex('questionnaire_answer').insert({
     question_id: body.questionId,
     answer: JSON.stringify(body.answer)
   }).then(result =>{
+    answer.id = result[0];
     return knex('disclosure_answer').insert({
       disclosure_id: disclosureId,
-      questionnaire_answer_id: result[0]});
+      questionnaire_answer_id: result[0]}).then(()=>{
+        callback(undefined, body);
+      });
   });
 };
 
-export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
+export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body, callback) => {
   let knex = getKnex(dbInfo);
   knex.select('qa.id')
   .from('disclosure_answer as da')
@@ -204,7 +208,9 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body) => 
   .andWhere('qa.question_id', body.questionId).then(result => {
     return knex('questionnaire_answer')
     .where('id', result[0].id)
-    .update('answer', JSON.stringify(body.answer));
+    .update('answer', JSON.stringify(body.answer)).then(()=>{
+      callback(undefined, body);
+    });
   });
 };
 
