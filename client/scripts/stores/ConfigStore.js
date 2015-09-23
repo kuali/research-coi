@@ -532,6 +532,8 @@ class _ConfigStore extends AutoBindingStore {
     this.config.relationshipPersonTypes.forEach(typeRecord => {
       this.codeMaps.relationshipPersonType[typeRecord.typeCd] = typeRecord;
     });
+
+    this.isLoaded = true;
   }
 
   loadAllConfigData() {

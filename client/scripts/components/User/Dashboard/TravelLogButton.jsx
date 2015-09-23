@@ -1,6 +1,9 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 import Router from 'react-router';
+import ConfigStore from '../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../COIConstants';
+
 let Link = Router.Link;
 
 export class TravelLogButton extends React.Component {
@@ -38,7 +41,7 @@ export class TravelLogButton extends React.Component {
         <div>
           <span>
             <div style={styles.primary}>Update</div>
-            <div style={styles.secondary}>Travel Log</div>
+            <div style={styles.secondary}>{ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.TRAVEL)}</div>
           </span>
         </div>
       </Link>

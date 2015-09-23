@@ -42,7 +42,7 @@ class _DisclosureStore extends AutoBindingStore {
         }
       },
       newEntityFormStep: -1,
-      activeEntityView: COIConstants.DISCLOSURE_STATUS.ACTIVE,
+      activeEntityView: 1,
       declarationStates: {
         projects: {},
         entities: {},
@@ -114,7 +114,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   loadDisclosureData(disclosureType) {
-    if (disclosureType === 'Annual') {
+    if (disclosureType === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
       request.get('/api/coi/disclosures/annual')
       .end((err, disclosure) => {
         if (!err) {

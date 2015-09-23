@@ -15,8 +15,16 @@ export let COIConstants = {
     CERTIFICATION: 'Certification'
   },
   DISCLOSURE_STATUS: {
-    ACTIVE: 1,
-    INACTIVE: 0
+    IN_PROGRESS: 1,
+    IN_REVIEW: 2,
+    APPROVED: 3,
+    DISAPPROVED: 4
+  },
+  DISCLOSURE_TYPE: {
+    MANUAL: '1',
+    ANNUAL: '2',
+    PROJECT: '3',
+    TRAVEL: '4'
   },
   SORT_DIRECTION: {
     ASCENDING: 'ASCENDING',
