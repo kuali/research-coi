@@ -19,8 +19,6 @@ class _DisclosureActions {
 
   answerMultiple(question) { this.dispatch(question); }
 
-  advanceQuestion() { this.dispatch(); }
-
   previousQuestion() { this.dispatch(); }
 
   setCurrentQuestion(newQuestionId) { this.dispatch(newQuestionId); }

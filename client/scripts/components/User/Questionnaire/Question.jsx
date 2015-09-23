@@ -27,10 +27,8 @@ export class Question extends ResponsiveComponent {
   }
 
   answerAndSubmit(evt, questionId, isParent) {
-    DisclosureActions.submitQuestion({id: questionId, answer: {value: evt.target.value}});
-    if (!this.isSubQuestionForAnswer(evt.target.value) && isParent ) {
-      DisclosureActions.advanceQuestion();
-    }
+    let advance = !this.isSubQuestionForAnswer(evt.target.value) && isParent;
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: evt.target.value}, advance: advance});
   }
 
   isSubQuestionForAnswer(value) {
@@ -54,26 +52,24 @@ export class Question extends ResponsiveComponent {
   }
 
   submit(answer, questionId) {
-    DisclosureActions.submitQuestion({id: questionId, answer: {value: answer}});
-    DisclosureActions.advanceQuestion();
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: answer}, advance: true});
   }
 
   submitMultiple(answer, questionId) {
-    DisclosureActions.submitQuestion({id: questionId, answer: {value: answer}});
-    DisclosureActions.advanceQuestion();
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: answer}, advance: true});
   }
 
   answerDate(newDate, questionId) {
-    DisclosureActions.submitQuestion({id: questionId, answer: {value: newDate}});
+    DisclosureActions.submitQuestion({id: questionId, answer: {value: newDate}, advance: true});
   }
 
-  submitSubQuestions() {
-    this.props.subQuestions.forEach(subQuestion=>{
+    submitSubQuestions() {
+    this.props.subQuestions.forEach((subQuestion, index)=>{
       if (subQuestion.question.displayCriteria === this.props.answer) {
-        DisclosureActions.submitQuestion({id: subQuestion.id, answer: {value: subQuestion.answer}});
+        let advance = this.props.subQuestions.length - 1 === index;
+        DisclosureActions.submitQuestion({id: subQuestion.id, answer: {value: subQuestion.answer}, advance: advance});
       }
     });
-    DisclosureActions.advanceQuestion();
   }
 
   getControl(question, answer) {
@@ -188,12 +184,15 @@ export class Question extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
-    let subQuestions = this.props.subQuestions.filter(subQuestion=>{
+    let isValid = true;
+    let subQuestions = [];
+    let nextButton = {};
+    this.props.subQuestions.filter(subQuestion=>{
       return subQuestion.question.displayCriteria === this.props.answer;
     }).sort((a, b)=>{
       return a.question.order - b.question.order;
-    }).map(subQuestion=>{
-      return (
+    }).forEach(subQuestion=>{
+      subQuestions.push(
         <div style={{clear: 'both', marginTop: 40}}>
           <div style={{color: '#1481A3', fontSize: 28, marginBottom: 10}}>
             {subQuestion.question.numberToShow}
@@ -206,22 +205,16 @@ export class Question extends ResponsiveComponent {
           </div>
         </div>
       );
-    });
 
-    let nextButton = this.props.subQuestions.length > 0 ? <NextButton onClick={this.submit} isValid={true}/> : {};
-
-    if (this.props.subQuestions.length ) {
-      let isValid = true;
-      this.props.subQuestions.forEach(subQuestion =>{
-        if (!subQuestion.answer) {
-          isValid = false;
-        }
-      });
+      if (!subQuestion.answer) {
+        isValid = false;
+      }
 
       nextButton = (
-        <NextButton onClick={this.submitSubQuestions} isValid={isValid}/>
+      <NextButton onClick={this.submitSubQuestions} isValid={isValid}/>
       );
-    }
+
+    });
 
     return (
       <span style={merge(styles.container, this.props.style)}>

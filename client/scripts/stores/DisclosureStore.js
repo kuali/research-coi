@@ -167,6 +167,7 @@ class _DisclosureStore extends AutoBindingStore {
       answer.answer.value = question.answer.value;
     } else {
       answer = {questionId: question.id, answer: question.answer};
+      this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
     }
 
     if (answer.id) {
@@ -176,6 +177,9 @@ class _DisclosureStore extends AutoBindingStore {
       .end((err, res)=>{
         if (!err) {
           answer = res.body;
+          if (question.advance) {
+            this.advanceQuestion();
+          }
           this.emitChange();
         }
       });
@@ -185,7 +189,10 @@ class _DisclosureStore extends AutoBindingStore {
       .type('application/json')
       .end((err, res)=>{
         if (!err ) {
-          this.applicationState.currentDisclosureState.disclosure.answers.push(res.body);
+          answer = res.body;
+          if (question.advance) {
+            this.advanceQuestion();
+          }
           this.emitChange();
         }
       });
