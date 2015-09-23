@@ -406,7 +406,8 @@ exports.seed = function(knex, Promise) {
             order: 1,
             text: 'From any for-profit organization, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director\'s fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other intellectual property; or other direct payments exceeding $5,000?',
             type: 'Yes/No',
-            validations: ['required']
+            validations: ['required'],
+            numberToShow: 1
           })
         }).then(function (parentId) {
           return Promise.all([
@@ -418,8 +419,8 @@ exports.seed = function(knex, Promise) {
                 order: 1,
                 text: 'If Yes, did the organization send you on vacation?',
                 type: 'Text area',
-                validations: ['select1', 'required'],
-                displayCriteria: 'Yes'
+                displayCriteria: 'Yes',
+                numberToShow: '1-A'
               })
             }).then(function(questionId) {
               return knex('questionnaire_answer').insert({
@@ -462,7 +463,7 @@ exports.seed = function(knex, Promise) {
             order: 2,
             text: 'From any privately held organization, do you have stock, stock options, or other equity interest of any value?',
             type: 'Yes/No',
-            validations: ['required']
+            numberToShow: 2
           })
         })
           .then(function(questionId) {
@@ -489,7 +490,7 @@ exports.seed = function(knex, Promise) {
             order: 3,
             text: 'Some publicly traded stock must be disclosed, but only in specific circumstances. Do you own stock, which in aggregate exceeds $5,000, in a company that provides funds to this institution in support of your Institutional Responsibilities (e.g. teaching, research, committee, or other administrative responsibilities)? When aggregating, please consider stock, stock options, warrants and other existing or contingent ownership interests in the publicly held company. Do not consider investments where you do not directly influence investment decisions, such as mutual funds and retirement accounts.',
             type: 'Yes/No',
-            validations: ['required']
+            numberToShow: 3
           })
         })
         .then(function(questionId) {
@@ -516,7 +517,7 @@ exports.seed = function(knex, Promise) {
             order: 4,
             text: 'From US educational institutions, US teaching hospitals or US research institutions affiliated with US educational institutions: Did you receive in the last 12 months, or do you expect to receive in the next 12 months, payments for services, which in aggregate exceed $5,000 (e.g. payments for consulting, board positions, patents, copyrights or other intellectual property)? Exclude payments for scholarly or academic works (i.e. peer-reviewed (vs. editorial reviewed) articles or books based on original research or experimentation, published by an academic association or a university/academic press).',
             type: 'Yes/No',
-            validations: ['required']
+            numberToShow: 4
           })
         })
         .then(function(questionId) {
