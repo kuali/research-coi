@@ -4,6 +4,8 @@ import {merge} from '../../../merge';
 import Router from 'react-router';
 let Link = Router.Link;
 import {PlusIcon} from '../../DynamicIcons/PlusIcon';
+import ConfigStore from '../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../COIConstants';
 
 export class NewDisclosureButton extends ResponsiveComponent {
   constructor() {
@@ -78,8 +80,8 @@ export class NewDisclosureButton extends ResponsiveComponent {
       <Link to="disclosure" query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
-            <div style={styles.primary}>{this.props.type === 'Annual' ? 'Update' : 'New'}</div>
-            <div style={styles.secondary}>{this.props.type} Disclosure</div>
+            <div style={styles.primary}>{this.props.type === COIConstants.DISCLOSURE_TYPE.ANNUAL ? 'Update' : 'New'}</div>
+            <div style={styles.secondary}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
           </span>
         </div>
       </Link>

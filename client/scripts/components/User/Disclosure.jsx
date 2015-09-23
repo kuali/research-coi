@@ -221,7 +221,7 @@ export class Disclosure extends ResponsiveComponent {
         const PROJECTS_PERCENTAGE = 75;
         percent = PROJECTS_PERCENTAGE;
         let disclosureType = this.context.router.getCurrentQuery().type;
-        if (disclosureType === 'Manual') {
+        if (disclosureType === COIConstants.DISCLOSURE_TYPE.MANUAL) {
           let disclosure = this.state.applicationState.currentDisclosureState.disclosure;
           currentStep = (
             <ManualEvent

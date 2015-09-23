@@ -3,7 +3,6 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import {EntityForm} from './EntityForm';
-import {COIConstants} from '../../../../../COIConstants';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class Entity extends ResponsiveComponent {
@@ -22,13 +21,7 @@ export class Entity extends ResponsiveComponent {
   }
 
   toggleStatus() {
-    let active;
-    if (this.props.entity.active === COIConstants.DISCLOSURE_STATUS.ACTIVE) {
-      active = COIConstants.DISCLOSURE_STATUS.INACTIVE;
-    }
-    else {
-      active = COIConstants.DISCLOSURE_STATUS.ACTIVE;
-    }
+    let active = this.props.entity.active === 1 ? 0 : 1
     DisclosureActions.setEntityActiveStatus(active, this.props.id);
   }
 
@@ -87,7 +80,7 @@ export class Entity extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let statusButton;
-    if (this.props.entity.active === COIConstants.DISCLOSURE_STATUS.ACTIVE) {
+    if (this.props.entity.active === 1) {
       statusButton = (<KButton onClick={this.toggleStatus} style={styles.button}>Deactivate</KButton>);
     } else {
       statusButton = (<KButton onClick={this.toggleStatus} style={styles.button}>Reactivate</KButton>);

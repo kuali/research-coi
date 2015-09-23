@@ -1,7 +1,6 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {COIConstants} from '../../../../../COIConstants';
 
 export class StatusField extends ResponsiveComponent {
   constructor() {
@@ -57,8 +56,8 @@ export class StatusField extends ResponsiveComponent {
       dom = (
         <select required ref="select" value={this.props.value} onChange={this.setStatus} style={styles.select}>
           <option value="">--SELECT--</option>
-          <option value={COIConstants.DISCLOSURE_STATUS.ACTIVE}>Active</option>
-          <option value={COIConstants.DISCLOSURE_STATUS.INACTIVE}>Inactive</option>
+          <option value={1}>Active</option>
+          <option value={0}>Inactive</option>
         </select>
       );
     }

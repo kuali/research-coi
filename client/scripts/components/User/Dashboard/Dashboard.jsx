@@ -9,6 +9,8 @@ import {DisclosureTable} from './DisclosureTable';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {TravelLogButton} from './TravelLogButton';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {COIConstants} from '../../../../../COIConstants';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class Dashboard extends ResponsiveComponent {
   constructor() {
@@ -16,11 +18,15 @@ export class Dashboard extends ResponsiveComponent {
     this.commonStyles = {};
 
     let storeState = DisclosureStore.getState();
+    let configState = ConfigStore.getState();
 
     this.state = {
       applicationState: storeState.applicationState,
-      disclosureSummaries: storeState.disclosureSummariesForUser
+      disclosureSummaries: storeState.disclosureSummariesForUser,
+      configLoaded: configState.isLoaded
     };
+
+
 
     this.onChange = this.onChange.bind(this);
   }
@@ -29,6 +35,7 @@ export class Dashboard extends ResponsiveComponent {
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
+    ConfigStore.listen(this.onChange);
     DisclosureActions.loadDisclosureSummaries();
   }
 
@@ -38,9 +45,11 @@ export class Dashboard extends ResponsiveComponent {
 
   onChange() {
     let storeState = DisclosureStore.getState();
+    let configState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      disclosureSummaries: storeState.disclosureSummariesForUser
+      disclosureSummaries: storeState.disclosureSummariesForUser,
+      configLoaded: configState.isLoaded
     });
   }
 
@@ -151,28 +160,66 @@ export class Dashboard extends ResponsiveComponent {
     }
 
     let annualDisclosureButton;
-    let annualDisclosureInRoute = this.state.disclosureSummaries.find(summary=>{
-      return summary.type === 2 && summary.status > 1;
+    let travelLogButton;
+    let manualDisclosureButton;
+
+    let annualDisclosureEnabled;
+    let manualDisclosureEnabled;
+    let travelLogEnabled;
+
+    window.config.disclosureTypes.forEach(type=>{
+      switch(type.typeCd.toString()) {
+        case COIConstants.DISCLOSURE_TYPE.ANNUAL:
+          annualDisclosureEnabled = type.enabled === 1;
+          break;
+        case COIConstants.DISCLOSURE_TYPE.MANUAL:
+          manualDisclosureEnabled = type.enabled === 1;
+          break;
+        case COIConstants.DISCLOSURE_TYPE.TRAVEL:
+          travelLogEnabled = type.enabled === 1;
+          break;
+      }
     });
 
-    if (!annualDisclosureInRoute) {
-      annualDisclosureButton = (
+    if (annualDisclosureEnabled) {
+      let annualDisclosureInRoute = this.state.disclosureSummaries.find(summary=> {
+        return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL && summary.status !== COIConstants.DISCLOSURE_STATUS.IN_PROGRESS;
+      });
+      if (!annualDisclosureInRoute) {
+        annualDisclosureButton = (
         <div>
-          <NewDisclosureButton type="Annual"/>
+          <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.ANNUAL}/>
+        </div>
+        );
+      }
+    }
+
+    if (travelLogEnabled) {
+      travelLogButton = (
+        <div>
+          <TravelLogButton/>
         </div>
       );
     }
+
+    if (manualDisclosureEnabled) {
+      manualDisclosureButton = (
+        <div>
+          <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.MANUAL} />
+        </div>
+      )
+    }
+    if (!this.state.configLoaded) {
+      return (<div/>);
+    }
+
 
     return (
       <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
           {annualDisclosureButton}
-          <div>
-          <TravelLogButton/>
-          </div>
-          <div>
-            <NewDisclosureButton type="Manual" />
-          </div>
+          {travelLogButton}
+          {manualDisclosureButton}
           <div>
             <FinancialEntitiesButton />
           </div>

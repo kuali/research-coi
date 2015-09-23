@@ -5,6 +5,7 @@ import {KButton} from '../../KButton';
 import Router from 'react-router';
 import {formatDate} from '../../../formatDate';
 import ConfigStore from '../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../COIConstants';
 
 let Link = Router.Link;
 
@@ -83,7 +84,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
     let styles = merge(this.commonStyles, mobileStyles);
 
     let extraInfo;
-    if (this.props.type === 'Annual') {
+    if (this.props.type === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
       extraInfo = (
         <div style={styles.extra}>
           <span style={styles.label}>Expires On: </span>
@@ -183,7 +184,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
 
     let button;
 
-    if (this.props.status === 1) {
+    if (this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS) {
       button = (
         <Link to="disclosure" query={{type: this.props.type }}>
           <KButton style={styles.button}>Update &gt;</KButton>
