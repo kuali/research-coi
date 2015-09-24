@@ -188,6 +188,8 @@ export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body, callback
       questionnaire_answer_id: result[0]}).then(()=>{
         callback(undefined, body);
       });
+  }).catch(err => {
+    callback(err);
   });
 };
 
@@ -203,6 +205,8 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body, cal
     .update('answer', JSON.stringify(body.answer)).then(()=>{
       callback(undefined, body);
     });
+  }).catch(err => {
+    callback(err);
   });
 };
 
@@ -324,6 +328,8 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
 
   query.then(count => {
     callback(undefined, count);
+  }).catch(err => {
+    callback(err);
   });
 };
 
@@ -382,6 +388,8 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
   query.limit(SUMMARY_PAGE_SIZE).offset(+start)
   .then(rows => {
     callback(undefined, rows);
+  }).catch(err => {
+    callback(err);
   });
 };
 
