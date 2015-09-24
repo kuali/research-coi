@@ -93,6 +93,8 @@ let createCollectionQueries = (dbInfo, collection, tableProps, callback, optiona
       });
     }
   }));
+
+  return queries;
 };
 
 let convertQuestionFormat = (questions) =>{
@@ -238,7 +240,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
   );
 
   queries.push(
-    query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(result=>{
+    query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(result => {
       if (result[0]) {
         return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.screening), {
           pk: 'id',
@@ -247,7 +249,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
           parent: {key: 'questionnaire_id', value: result[0].id}
         }, callback);
       } else {
-        return query('questionnaire').insert({version: 1, type_cd: 1}).then(id=>{
+        return query('questionnaire').insert({version: 1, type_cd: 1}).then(id => {
           return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.screening), {
             pk: 'id',
             table: 'questionnaire_question',
@@ -260,7 +262,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
   );
 
   queries.push(
-    query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc').then(result=>{
+    query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc').then(result => {
       if (result[0]) {
         return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.entities), {
           pk: 'id',
@@ -269,7 +271,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
           parent: {key: 'questionnaire_id', value: result[0].id}
         }, callback);
       } else {
-        return query('questionnaire').insert({version: 1, type_cd: 2}).then(id=>{
+        return query('questionnaire').insert({version: 1, type_cd: 2}).then(id => {
           return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.entities), {
             pk: 'id',
             table: 'questionnaire_question',
@@ -286,7 +288,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
   );
 
   Promise.all(queries)
-  .then(() =>{
+  .then(() => {
     callback(undefined, camelizeJson(config));
   })
   .catch(function(err) {
@@ -295,7 +297,4 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
     }
     callback(err);
   });
-
 };
-
-
