@@ -29,18 +29,6 @@ class _AdminActions {
 
   toggleRejectionConfirmation() { this.dispatch(); }
 
-  showProjectComments() { this.dispatch(); }
-
-  showQuestionnaireComments() { this.dispatch(); }
-
-  showEntitiesComments() { this.dispatch(); }
-
-  hideProjectComments() { this.dispatch(); }
-
-  hideQuestionnaireComments() { this.dispatch(); }
-
-  hideEntitiesComments() { this.dispatch(); }
-
   clearTypeFilter() { this.dispatch(); }
 
   toggleTypeFilter(toToggle) { this.dispatch(toToggle); }

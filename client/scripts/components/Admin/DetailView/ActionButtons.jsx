@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {ApproveIcon} from '../../DynamicIcons/ApproveIcon';
 import {AddReviewerIcon} from '../../DynamicIcons/AddReviewerIcon';
@@ -8,10 +7,9 @@ import {RecommendedStatusIcon} from '../../DynamicIcons/RecommendedStatusIcon';
 import {SendBackIcon} from '../../DynamicIcons/SendBackIcon';
 import {AdminActions} from '../../../actions/AdminActions';
 
-export class ActionButtons extends ResponsiveComponent {
+export class ActionButtons extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
   }
 
   approve() {
@@ -22,14 +20,12 @@ export class ActionButtons extends ResponsiveComponent {
     AdminActions.toggleRejectionConfirmation();
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         color: '#6d6d6d',
         fontSize: 15,
-        width: 185
+        width: 210
       },
       icon: {
         width: 30,
@@ -48,7 +44,6 @@ export class ActionButtons extends ResponsiveComponent {
         cursor: 'pointer'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <div style={merge(styles.container, this.props.style)} >
@@ -56,27 +51,25 @@ export class ActionButtons extends ResponsiveComponent {
           <ApproveIcon style={styles.icon} />
           <span style={styles.label}>APPROVE</span>
         </div>
-        <div style={styles.button}>
-          <RecommendedStatusIcon style={styles.icon} />
-          <span style={styles.label}>
-            <div>RECOMMENDED</div>
-            <div>STATUS</div>
-          </span>
-        </div>
         <div onClick={this.reject} style={styles.button}>
           <SendBackIcon style={styles.icon} />
           <span style={styles.label}>SEND BACK</span>
         </div>
         <div style={styles.button}>
-          <InProgressIcon style={styles.icon} />
-          <span style={styles.label}>SET TO IN PROGRESS</span>
-        </div>
-        <div style={styles.button}>
           <AddReviewerIcon style={styles.icon} />
           <span style={styles.label}>
-            <div>ADD ADDITIONAL</div>
-            <div>REVIEWERS</div>
+            <div>ADDITIONAL REVIEW</div>
           </span>
+        </div>
+        <div style={styles.button}>
+          <RecommendedStatusIcon style={styles.icon} />
+          <span style={styles.label}>
+            <div>REVIEW COMMENTS</div>
+          </span>
+        </div>
+        <div style={styles.button}>
+          <InProgressIcon style={styles.icon} />
+          <span style={styles.label}>ACTION LOG</span>
         </div>
       </div>
     );

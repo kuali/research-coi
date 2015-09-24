@@ -207,7 +207,7 @@ export class Dashboard extends ResponsiveComponent {
         <div>
           <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.MANUAL} />
         </div>
-      )
+      );
     }
     if (!this.state.configLoaded) {
       return (<div/>);

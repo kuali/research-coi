@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureDetailHeading} from './DisclosureDetailHeading';
 import {ActionButtons} from './ActionButtons';
@@ -9,10 +8,11 @@ import {AdminDeclarationsSummary} from './AdminDeclarationsSummary';
 import {ApprovalConfirmation} from './ApprovalConfirmation';
 import {RejectionConfirmation} from './RejectionConfirmation';
 
-export class DisclosureDetail extends ResponsiveComponent {
+export class DisclosureDetail extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
+
+    this.findScreeningQuestion = this.findScreeningQuestion.bind(this);
   }
 
   makeEntityMap(entities) {
@@ -26,22 +26,43 @@ export class DisclosureDetail extends ResponsiveComponent {
     return result;
   }
 
-  renderMobile() {}
+  findScreeningQuestion(questionId) {
+    return this.props.config.questions.screening.find(question => {
+      if (question.id === questionId) {
+        return true;
+      }
+      return false;
+    });
+  }
 
-  renderDesktop() {
+  compare(a, b) {
+    if (a > b) {
+      return 1;
+    }
+    else if (a === b) {
+      return 0;
+    }
+    else {
+      return -1;
+    }
+  }
+
+  render() {
     let nameMap = this.makeEntityMap(this.props.disclosure.entities);
 
-    let desktopStyles = {
-      container: {},
+    let styles = {
+      container: {
+        width: '100%'
+      },
       actionButtons: {
         position: 'fixed',
-        top: 186,
+        top: 145,
         right: 20,
         display: this.props.showApproval || this.props.showRejection ? 'none' : 'block'
       },
       bottom: {
         position: 'relative',
-        padding: '25px 225px 25px 25px',
+        padding: '25px 270px 25px 25px',
         overflowY: 'auto'
       },
       confirmation: {
@@ -63,7 +84,58 @@ export class DisclosureDetail extends ResponsiveComponent {
         marginBottom: 25
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+
+    let screeningQuestions = this.props.config.questions.screening.sort((a, b) => {
+      let aParent, bParent;
+      if (a.parent) {
+        aParent = this.findScreeningQuestion(a.parent);
+      }
+      if (b.parent) {
+        bParent = this.findScreeningQuestion(b.parent);
+      }
+
+      if (!aParent && !bParent) {
+        return this.compare(a.question.order, b.question.order);
+      }
+      else if (a.parent && b.parent) {
+        if (a.parent === b.parent) {
+          return this.compare(a.question.order, b.question.order);
+        }
+        else {
+          return this.compare(aParent.question.order, bParent.question.order);
+        }
+      }
+      else if (a.parent && !b.parent) {
+        return this.compare(aParent.question.order, b.question.order);
+      }
+      else {
+        return this.compare(a.question.order, bParent.question.order);
+      }
+    }).map(question => {
+      return {
+        id: question.id,
+        parent: question.parent,
+        order: question.question.order,
+        numberToShow: question.question.numberToShow,
+        text: question.question.text,
+        type: question.question.type
+      };
+    });
+    let screeningAnswers = {};
+    this.props.disclosure.answers.forEach(answer => {
+      screeningAnswers[answer.questionId] = answer.answer.value;
+    });
+
+    let commentCounts = {
+      1: 99,
+      2: 999,
+      3: 9,
+      4: -2,
+      5: 88,
+      6: 33,
+      7: 3,
+      8: 9999
+    };
 
     return (
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
@@ -73,23 +145,19 @@ export class DisclosureDetail extends ResponsiveComponent {
           <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
           <ActionButtons style={styles.actionButtons} />
           <AdminQuestionnaireSummary
-            questions={this.props.disclosure.questionnaire}
+            questions={screeningQuestions}
+            answers={screeningAnswers}
+            commentCounts={commentCounts}
             style={styles.questionnaire}
-            id={this.props.disclosure.id}
-            comment={this.props.disclosure.comments ? this.props.disclosure.comments.questionnaire : null}
-            expandedComments={this.props.showingQuestionnaireComments} />
+          />
           <AdminEntitiesSummary
             entities={this.props.disclosure.entities}
-            style={styles.entities}
-            id={this.props.disclosure.id}
-            comment={this.props.disclosure.comments ? this.props.disclosure.comments.entities : null}
-            expandedComments={this.props.showingEntitiesComments} />
+            style={styles.entities} />
           <AdminDeclarationsSummary
             names={nameMap}
             relationships={this.props.disclosure.projects}
             id={this.props.disclosure.id}
-            comment={this.props.disclosure.comments ? this.props.disclosure.comments.projects : null}
-            expandedComments={this.props.showingProjectComments} />
+            comment={this.props.disclosure.comments ? this.props.disclosure.comments.projects : null} />
         </div>
       </div>
     );

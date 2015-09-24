@@ -1,23 +1,50 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureListItem} from './DisclosureListItem';
-import {DisclosureListFilterHeader} from './DisclosureListFilterHeader';
+import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
+import {SearchFilterGroup} from '../SearchFilterGroup';
+import {AdminActions} from '../../../actions/AdminActions';
+import {KButton} from '../../KButton';
+import ConfigStore from '../../../stores/ConfigStore';
 
-export class DisclosureList extends ResponsiveComponent {
+export class DisclosureList extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
-    this.state = {};
   }
 
-  shouldComponentUpdate() { return true; }
+  componentDidMount() {
+    let theList = React.findDOMNode(this.refs.theList);
+    let enabled = true;
+    theList.addEventListener('scroll', () => {
+      if (enabled) {
+        enabled = false;
+        setTimeout(() => {
+          enabled = true;
+        }, 100);
 
-  renderMobile() {
+        if ((theList.clientHeight + theList.scrollTop) > (theList.scrollHeight - 300)) {
+          if (!this.props.loadingMore) {
+            AdminActions.loadMore();
+          }
+        }
+      }
+    });
   }
 
-  renderDesktop() {
-    let desktopStyles = {
+  loadMore() {
+    AdminActions.loadMore();
+  }
+
+  doSearch() {
+    AdminActions.doSearch();
+  }
+
+  changeSearch(newSearch) {
+    AdminActions.changeSearch(newSearch);
+  }
+
+  render() {
+    let styles = {
       container: {
         backgroundColor: '#e0e0e0',
         borderLeft: '1px solid #6d6d6d',
@@ -33,44 +60,94 @@ export class DisclosureList extends ResponsiveComponent {
         overflowY: 'auto',
         width: '100%'
       },
-      search: {
-        backgroundColor: '#cdcdcd',
-        height: 50
+      filterGroup: {
+        backgroundColor: '#49899D'
       },
-      filter: {
-        backgroundColor: '#5d5d5d'
+      heading: {
+        color: 'white',
+        backgroundColor: '#2B5866',
+        textAlign: 'right',
+        padding: '8px 70px 8px 0',
+        fontWeight: 'bold',
+        fontSize: 17
+      },
+      loadMoreButton: {
+        textAlign: 'center',
+        margin: '10px 0'
+      },
+      loadingIndicator: {
+        textAlign: 'center',
+        margin: '10px 0',
+        color: '#777'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
-    let disclosures = [];
     let disclosuresJsx;
-    let selectedId = this.props.selected;
     if (this.props.summaries) {
-      disclosures = this.props.summaries;
+      disclosuresJsx = this.props.summaries.map(disclosure => {
+        return (
+          <DisclosureListItem
+            key={disclosure.id}
+            disclosure={disclosure}
+            selected={disclosure.id === this.props.selected}
+            searchTerm={this.props.searchTerm}
+          />
+        );
+      });
     }
 
-    disclosuresJsx = disclosures.map(function(disclosure) {
-      return (
-        <DisclosureListItem
-          key={disclosure.id}
-          disclosure={disclosure}
-          selected={disclosure.id === selectedId}
-        />
+    let loadMoreButton;
+    if (!this.props.loadedAll && !this.props.loadingMore) {
+      loadMoreButton = (
+        <div style={styles.loadMoreButton}>
+          <KButton onClick={this.loadMore}>Load more</KButton>
+        </div>
       );
+    }
+
+    let loadingIndicator;
+    if (this.props.loadingMore) {
+      loadingIndicator = (
+        <div style={styles.loadingIndicator}>
+          <span>Loading more...</span>
+        </div>
+      );
+    }
+
+    let possibleStatuses = ConfigStore.getState().config.disclosureStatus.map(status => {
+      return status.description;
+    });
+
+    let possibleTypes = ConfigStore.getState().config.disclosureTypes.map(type => {
+      return type.description;
     });
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <DisclosureListFilterHeader
-          count={disclosures.length}
-          styles={styles.filter}
-          query={this.props.query}
-          filters={this.props.filters}
-          sortDirection={this.props.sortDirection}
-        />
-        <ul className="fill" style={styles.list}>
+      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
+        <div>
+          <DisclosureFilterSearch
+            query={this.props.filters.search}
+            onChange={this.changeSearch}
+            onSearch={this.doSearch}
+          />
+          <div style={styles.heading} onClick={this.toggleFilters}>
+            {this.props.count} Disclosures Shown
+          </div>
+          <SearchFilterGroup
+            style={styles.filterGroup}
+            filters={this.props.filters}
+            possibleStatuses={possibleStatuses}
+            possibleTypes={possibleTypes}
+            activeStatusFilters={this.props.filters.status}
+            activeTypeFilters={this.props.filters.type}
+            showDateSort={false}
+          />
+        </div>
+        <ul className="fill" style={styles.list} ref="theList">
           {disclosuresJsx}
+
+          {loadMoreButton}
+          {loadingIndicator}
         </ul>
       </div>
     );

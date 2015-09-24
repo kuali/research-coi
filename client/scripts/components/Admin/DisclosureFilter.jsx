@@ -1,7 +1,7 @@
 import React from 'react/addons';
 import {merge} from '../../merge';
 
-export default class DisclosureListFilter extends React.Component {
+export default class DisclosureFilter extends React.Component {
   constructor() {
     super();
 

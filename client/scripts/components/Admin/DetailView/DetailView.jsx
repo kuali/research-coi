@@ -1,48 +1,54 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {AdminStore} from '../../../stores/AdminStore';
+import ConfigStore from '../../../stores/ConfigStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
-import {isAfterStartDate, isBeforeEndDate, sortFunction, typeFilter} from '../AdminFilters';
 
-
-export class DetailView extends ResponsiveComponent {
+export class DetailView extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.onChange = this.onChange.bind(this);
     let store = AdminStore.getState();
+    let configStore = ConfigStore.getState();
     this.state = {
       summaries: store.disclosureSummaries,
-      applicationState: store.applicationState
+      applicationState: store.applicationState,
+      config: configStore.config
     };
 
     this.searchFilter = this.searchFilter.bind(this);
   }
 
-  shouldComponentUpdate() { return true; }
-
   componentDidMount() {
     AdminStore.listen(this.onChange);
-    if (this.props.params !== undefined &&
-        this.props.params.id !== undefined) {
+    if (this.props.params !== undefined && this.props.params.id !== undefined) {
       AdminActions.loadDisclosure(this.props.params.id);
     }
+    ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
     AdminStore.unlisten(this.onChange);
   }
 
+  componentWillReceiveProps(nextProps) {
+    AdminActions.loadDisclosure(nextProps.params.id);
+  }
+
   onChange() {
+    let newState = {};
+    let config = ConfigStore.getState();
+    if (config.isLoaded) {
+      newState.config = config.config;
+    }
     let store = AdminStore.getState();
-    this.setState({
-      summaries: store.disclosureSummaries,
-      applicationState: store.applicationState
-    });
+    newState.summaries = store.disclosureSummaries;
+    newState.applicationState = store.applicationState;
+
+    this.setState(newState);
   }
 
   searchFilter(disclosure) {
@@ -66,30 +72,26 @@ export class DetailView extends ResponsiveComponent {
     return filtered;
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
+        overflowY: 'hidden'
       },
       details: {
-        height: '100%'
       },
       list: {
         width: 320
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+
     let disclosureDetail;
-    if (this.state.applicationState.selectedDisclosure) {
+    if (this.state.applicationState.selectedDisclosure && this.state.config) {
       disclosureDetail = (
         <DisclosureDetail
           disclosure={this.state.applicationState.selectedDisclosure}
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
-          showingQuestionnaireComments={this.state.applicationState.showingQuestionnaireComments}
-          showingEntitiesComments={this.state.applicationState.showingEntitiesComments}
-          showingProjectComments={this.state.applicationState.showingProjectComments}
+          config={this.state.config}
         />
       );
     }
@@ -104,6 +106,10 @@ export class DetailView extends ResponsiveComponent {
           query={this.state.applicationState.query}
           filters={this.state.applicationState.filters}
           sortDirection={this.state.applicationState.sortDirection}
+          count={this.state.applicationState.summaryCount}
+          searchTerm={this.state.applicationState.effectiveSearchValue}
+          loadingMore={this.state.applicationState.loadingMore}
+          loadedAll={this.state.applicationState.loadedAll}
         />
         <div className="inline-flexbox fill" style={styles.details}>
           {disclosureDetail}

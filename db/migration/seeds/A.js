@@ -1,7 +1,11 @@
 /*eslint-disable camelcase */
 
-function getLastName(num) {
-  switch (num % 20) {
+function randomNumberBetween(lowest, highest) {
+  return Math.floor(Math.random() * (highest - lowest + 1)) + lowest;
+}
+
+function getRandomLastName() {
+  switch (randomNumberBetween(0, 19) % 20) {
     case 0: return 'Anderson';
     case 1: return 'Carhart';
     case 2: return 'Edmunds';
@@ -25,8 +29,8 @@ function getLastName(num) {
   }
 }
 
-function getFirstName(num) {
-  switch (num % 20) {
+function getRandomFirstName() {
+  switch (randomNumberBetween(0, 19) % 20) {
     case 0: return 'Chloe';
     case 1: return 'James';
     case 2: return 'Eleanor';
@@ -48,6 +52,154 @@ function getFirstName(num) {
     case 18: return 'Chris';
     case 19: return 'Terry';
   }
+}
+
+function insertDeclaration(knex, entityId, projectId) {
+  return Promise.all([
+    knex('declaration').insert({
+      fin_entity_id: entityId,
+      project_id: projectId,
+      type_cd: knex('declaration_type').max('type_cd'),
+      comments: 'The Molecular Disentropization project has no conflict with Apple'
+    })
+  ]);
+}
+
+function insertProject(knex, disclosureId) {
+  return knex('project').insert({
+    disclosure_id: disclosureId,
+    name: 'Molecular Disentropization',
+    type_cd: 1,
+    role_cd: 'PI',
+    sponsor_cd: '000100'
+  });
+}
+
+function insertRelationship(knex, entityId) {
+  return knex('relationship').insert({
+    fin_entity_id: entityId,
+    relationship_cd: knex('relationship_category_type').max('type_cd'),
+    person_cd: knex('relationship_person_type').max('type_cd'),
+    type_cd: knex('relationship_type').max('type_cd'),
+    amount_cd: knex('relationship_amount_type').max('type_cd'),
+    comments: 'Rel 1 Comments'
+  });
+}
+
+function insertEntity(knex, disclosureId, name, description) {
+  return knex('fin_entity').insert({
+    disclosure_id: disclosureId,
+    active: true,
+    is_public: true,
+    type_cd: 1,
+    is_sponsor: true,
+    name: name,
+    description: description
+  })
+  .then(function(entityId){
+    return insertRelationship(knex, entityId);
+  });
+}
+
+function insertQuestionnaireSubquestion(knex, questionnaireId, parentId, numberToShow) {
+  return knex('questionnaire_question').insert({
+    questionnaire_id: questionnaireId,
+    parent: parentId,
+    active: true,
+    question: JSON.stringify({
+      order: 1,
+      text: 'If Yes, did the organization send you on vacation?',
+      type: 'Text area',
+      displayCriteria: 'Yes',
+      numberToShow: numberToShow + '-A'
+    })
+  });
+}
+
+function insertDisclosureAnswer(knex, disclosureId, questionnaireAnswerId) {
+  return knex('disclosure_answer').insert({
+    disclosure_id: disclosureId,
+    questionnaire_answer_id: questionnaireAnswerId
+  });
+}
+
+function insertQuestionnaireAnswer(knex, disclosureId, questionnaireId, questionId) {
+  return knex('questionnaire_answer').insert({
+    question_id: questionId,
+    answer: JSON.stringify({
+      value: 'no'
+    })
+  }).then(function(questionnaireAnswerId){
+    return insertDisclosureAnswer(knex, disclosureId, questionnaireAnswerId[0]);
+  });
+}
+
+function insertQuestionnaireQuestion(knex, questionnaireId, text, numberToShow) {
+  return knex('questionnaire_question').insert({
+    questionnaire_id: questionnaireId,
+    active: true,
+    question: JSON.stringify({
+      order: numberToShow,
+      text: text,
+      type: 'Yes/No',
+      validations: ['required'],
+      numberToShow: numberToShow
+    })
+  }).then(function (parentId) {
+    return insertQuestionnaireSubquestion(knex, questionnaireId, parentId[0], numberToShow);
+  });
+}
+
+function insertQuestionAnswers(knex, disclosureId) {
+  return knex('questionnaire_question').count('id as count').then(function(count) {
+    console.log(count[0].count + ' questions!');
+    var statements = [];
+    for (var i = 1; i < count[0].count; i++) {
+      statements.push(insertQuestionnaireAnswer(knex, disclosureId, 1, i));
+    }
+
+    return Promise.all(statements);
+  });
+}
+
+function insertDisclosure(knex) {
+  var submittedDate = new Date(new Date().getTime() - randomNumberBetween(1, 7606400000));
+  var revisedDate = null;
+  if (randomNumberBetween(1, 4) === 1) {
+    revisedDate = new Date(submittedDate.getTime() + 259200000);
+  }
+
+  return knex('disclosure').insert({
+    user_id: randomNumberBetween(1, 1000000),
+    submitted_by: getRandomFirstName() + ' ' + getRandomLastName(),
+    type_cd: randomNumberBetween(1, 4),
+    title: 'Title - what is this?' + randomNumberBetween(1, 2000),
+    submitted_date: submittedDate,
+    revised_date: revisedDate,
+    disposition_type_cd: 1,
+    start_date: new Date(),
+    expired_date: new Date(),
+    status_cd: randomNumberBetween(1, 4),
+    last_review_date: new Date(),
+    approved_date: new Date()
+  }).then(function(disclosureId) {
+    return Promise.all([
+      insertProject(knex, disclosureId).then(function(projectId) {
+        return Promise.all([
+          insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
+          insertEntity(knex, disclosureId, 'Monsanto', 'Crazy company that wants to patent life'),
+          insertEntity(knex, disclosureId, 'Xerox', 'This is a company that makes copiers and stuff like that')
+        ]).then(function(entities) {
+          return Promise.all([
+            insertDeclaration(knex, entities[0], projectId),
+            insertDeclaration(knex, entities[1], projectId),
+            insertDeclaration(knex, entities[2], projectId)
+          ]);
+        });
+      }),
+      insertQuestionAnswers(knex, disclosureId)
+    ]);
+  });
 }
 
 exports.seed = function(knex, Promise) {
@@ -226,113 +378,32 @@ exports.seed = function(knex, Promise) {
       })
     ]);
   }).then(function() {
+    console.log('Seed - questionnaire_type');
+    return Promise.all([
+      knex('questionnaire_type').insert({type_cd: 1, description: 'Screening'}),
+      knex('questionnaire_type').insert({type_cd: 2, description: 'Entity'})
+    ]);
+  }).then(function() {
+    return knex('questionnaire').insert({
+      instructions: 'Please fill out this questionnaire in order to document your disclosure activities. Thanks! No taking $$ from vendors.',
+      version: 1,
+      type_cd: 1
+    })
+    .then(function(questionnaireId) {
+      return Promise.all([
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'From any for-profit organization, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director\'s fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other intellectual property; or other direct payments exceeding $5,000?', 1),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'From any privately held organization, do you have stock, stock options, or other equity interest of any value?', 2),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Some publicly traded stock must be disclosed, but only in specific circumstances. Do you own stock, which in aggregate exceeds $5,000, in a company that provides funds to this institution in support of your Institutional Responsibilities (e.g. teaching, research, committee, or other administrative responsibilities)? When aggregating, please consider stock, stock options, warrants and other existing or contingent ownership interests in the publicly held company. Do not consider investments where you do not directly influence investment decisions, such as mutual funds and retirement accounts.', 3),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'From US educational institutions, US teaching hospitals or US research institutions affiliated with US educational institutions: Did you receive in the last 12 months, or do you expect to receive in the next 12 months, payments for services, which in aggregate exceed $5,000 (e.g. payments for consulting, board positions, patents, copyrights or other intellectual property)? Exclude payments for scholarly or academic works (i.e. peer-reviewed (vs. editorial reviewed) articles or books based on original research or experimentation, published by an academic association or a university/academic press).', 4)
+      ]);
+    });
+  }).then(function() {
     console.log('Seed - disclosure');
     var disclosures = [];
     for (var i = 0; i < 172; i++) {
-      disclosures.push(
-        knex('disclosure').insert({
-          user_id: Math.floor(Math.random() * 1000000),
-          submitted_by: getFirstName(Math.floor(Math.random() * 20)) + ' ' + getLastName(Math.floor(Math.random() * 20)),
-          type_cd: Math.floor(Math.random() * 3) + 1,
-          title: 'Title - what is this?' + i,
-          submitted_date: new Date(new Date() - Math.floor(Math.random() * 7606400000)),
-          disposition_type_cd: 1,
-          start_date: new Date(),
-          expired_date: new Date(),
-          status_cd: Math.floor(Math.random() * 3) + 1,
-          last_review_date: new Date(),
-          approved_date: new Date()
-        })
-      );
+      disclosures.push(insertDisclosure(knex));
     }
-
     return Promise.all(disclosures);
-  }).then(function() {
-    console.log('Seed - project');
-    return Promise.all([
-      knex('disclosure').min('id as id')
-      .then(function(row) {
-        return knex('project').insert({
-          disclosure_id: row[0].id,
-          name: 'Molecular Disentropization',
-          type_cd: 1,
-          role_cd: 'PI',
-          sponsor_cd: '000100'
-        });
-      })
-    ]);
-  }).then(function() {
-    console.log('Seed - fin_entity');
-    return Promise.all([
-      knex('disclosure').min('id as id')
-      .then(function(row) {
-        return knex('fin_entity').insert({
-          disclosure_id: row[0].id,
-          active: true,
-          is_public: true,
-          type_cd: 1,
-          is_sponsor: true,
-          name: 'Apple',
-          description: 'Entity 1 - Petroleum extraction in deep water'
-        })
-        .then(function(id){
-          return knex('relationship').insert({
-            fin_entity_id: id[0],
-            relationship_cd: knex('relationship_category_type').max('type_cd'),
-            person_cd: knex('relationship_person_type').max('type_cd'),
-            type_cd: knex('relationship_type').max('type_cd'),
-            amount_cd: knex('relationship_amount_type').max('type_cd'),
-            comments: 'Rel 1 Comments'
-          });
-        });
-      }),
-      knex('fin_entity').insert({
-        disclosure_id: knex('disclosure').max('id'),
-        active: false,
-        is_public: true,
-        type_cd: 1,
-        is_sponsor: true,
-        name: 'Pfizer',
-        description: 'Entity 2 - Petroleum extraction in deep water'
-      }),
-      knex('fin_entity').insert({
-        disclosure_id: knex('disclosure').max('id'),
-        active: false,
-        is_public: true,
-        type_cd: 1,
-        is_sponsor: false,
-        name: 'Johnson & Johnson',
-        description: 'Entity 3 - Petroleum extraction in deep water'
-      }),
-      knex('fin_entity').insert({
-        disclosure_id: knex('disclosure').max('id'),
-        active: false,
-        is_public: false,
-        type_cd: 1,
-        is_sponsor: false,
-        name: 'PepsiCo',
-        description: 'Entity 4 - Petroleum extraction in deep water'
-      }),
-      knex('fin_entity').insert({
-        disclosure_id: knex('disclosure').max('id'),
-        active: true,
-        is_public: true,
-        type_cd: 1,
-        is_sponsor: true,
-        name: 'Rockwell Collins',
-        description: 'Entity 1 - Glyphosate as a carcinogen'
-      })
-    ]);
-  }).then(function() {
-    console.log('Seed - declaration');
-    return Promise.all([
-      knex('declaration').insert({
-        fin_entity_id: knex('fin_entity').max('id'),
-        project_id: knex('project').max('id'),
-        type_cd: knex('declaration_type').max('type_cd'),
-        comments: 'The Molecular Disentropization project has no conflict with Apple'
-      })
-    ]);
   }).then(function() {
     console.log('Seed - config');
     return knex('config').insert({
@@ -341,7 +412,7 @@ exports.seed = function(knex, Promise) {
         peopleEnabled: true,
         sponsorLookup: true,
 
-        dueDate: new Date(2015,1,1),
+        dueDate: new Date(2015, 1, 1),
         isRollingDueDate: false,
         instructions: {
           'Questionnaire': 'Questionnaire Instructions',
@@ -355,7 +426,7 @@ exports.seed = function(knex, Promise) {
           required: true
         }
       })
-    })
+    });
   }).then(function() {
     console.log('Seed - travel_log_entry');
     return Promise.all([
@@ -383,162 +454,6 @@ exports.seed = function(knex, Promise) {
         end_date: new Date(2015, 7, 3),
         reason: 'To give a talk on string theory'
       })
-    ]);
-  }).then(function() {
-    console.log('Seed - questionnaire_type');
-    return Promise.all([
-      knex('questionnaire_type').insert({type_cd: 1, description: 'Screening'}),
-      knex('questionnaire_type').insert({type_cd: 2, description: 'Entity'})
-    ]);
-  }).then(function() {
-    return Promise.all([
-    knex('questionnaire').insert({
-      instructions: 'Please fill out this questionnaire in order to document your disclosure activities. Thanks! No taking $$ from vendors.',
-      version: 1,
-      type_cd: 1
-    })
-    .then(function(questionnaireId) {
-      return Promise.all([
-        knex('questionnaire_question').insert({
-          questionnaire_id: questionnaireId[0],
-          active: true,
-          question: JSON.stringify({
-            order: 1,
-            text: 'From any for-profit organization, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director\'s fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other intellectual property; or other direct payments exceeding $5,000?',
-            type: 'Yes/No',
-            validations: ['required'],
-            numberToShow: 1
-          })
-        }).then(function (parentId) {
-          return Promise.all([
-            knex('questionnaire_question').insert({
-              questionnaire_id: questionnaireId[0],
-              parent: parentId[0],
-              active: true,
-              question: JSON.stringify({
-                order: 1,
-                text: 'If Yes, did the organization send you on vacation?',
-                type: 'Text area',
-                displayCriteria: 'Yes',
-                numberToShow: '1-A'
-              })
-            }).then(function(questionId) {
-              return knex('questionnaire_answer').insert({
-                question_id: questionId[0],
-                answer: JSON.stringify({
-                  value: 'no'
-                })
-              })
-              .then(function(questionnaireAnswerId){
-                return knex('disclosure').min('id as id')
-                .then(function(row) {
-                  return knex('disclosure_answer').insert({
-                    disclosure_id: row[0].id,
-                    questionnaire_answer_id: questionnaireAnswerId[0]
-                  });
-                });
-              });
-            }),
-            knex('questionnaire_answer').insert({
-              question_id: parentId[0],
-              answer: JSON.stringify({
-                value: 'yes'
-              })
-            })
-            .then(function(questionnaireAnswerId){
-              return knex('disclosure').min('id as id')
-              .then(function(row) {
-                return knex('disclosure_answer').insert({
-                  disclosure_id: row[0].id,
-                  questionnaire_answer_id: questionnaireAnswerId[0]
-                });
-              });
-            })
-          ]);
-        }),
-        knex('questionnaire_question').insert({
-          questionnaire_id: questionnaireId[0],
-          active: true,
-          question: JSON.stringify({
-            order: 2,
-            text: 'From any privately held organization, do you have stock, stock options, or other equity interest of any value?',
-            type: 'Yes/No',
-            numberToShow: 2
-          })
-        })
-          .then(function(questionId) {
-          return knex('questionnaire_answer').insert({
-            question_id: questionId[0],
-            answer: JSON.stringify({
-              value: 'no'
-            })
-          })
-          .then(function(questionnaireAnswerId){
-            return knex('disclosure').min('id as id')
-            .then(function(row) {
-              return knex('disclosure_answer').insert({
-                disclosure_id: row[0].id,
-                questionnaire_answer_id: questionnaireAnswerId[0]
-              });
-            });
-          });
-        }),
-        knex('questionnaire_question').insert({
-          questionnaire_id: questionnaireId[0],
-          active: true,
-          question: JSON.stringify({
-            order: 3,
-            text: 'Some publicly traded stock must be disclosed, but only in specific circumstances. Do you own stock, which in aggregate exceeds $5,000, in a company that provides funds to this institution in support of your Institutional Responsibilities (e.g. teaching, research, committee, or other administrative responsibilities)? When aggregating, please consider stock, stock options, warrants and other existing or contingent ownership interests in the publicly held company. Do not consider investments where you do not directly influence investment decisions, such as mutual funds and retirement accounts.',
-            type: 'Yes/No',
-            numberToShow: 3
-          })
-        })
-        .then(function(questionId) {
-          return knex('questionnaire_answer').insert({
-            question_id: questionId[0],
-            answer: JSON.stringify({
-              value: 'no'
-            })
-          })
-          .then(function(questionnaireAnswerId){
-            return knex('disclosure').min('id as id')
-            .then(function(row) {
-              return knex('disclosure_answer').insert({
-                disclosure_id: row[0].id,
-                questionnaire_answer_id: questionnaireAnswerId[0]
-              });
-            });
-          });
-        }),
-        knex('questionnaire_question').insert({
-          questionnaire_id: questionnaireId[0],
-          active: true,
-          question: JSON.stringify({
-            order: 4,
-            text: 'From US educational institutions, US teaching hospitals or US research institutions affiliated with US educational institutions: Did you receive in the last 12 months, or do you expect to receive in the next 12 months, payments for services, which in aggregate exceed $5,000 (e.g. payments for consulting, board positions, patents, copyrights or other intellectual property)? Exclude payments for scholarly or academic works (i.e. peer-reviewed (vs. editorial reviewed) articles or books based on original research or experimentation, published by an academic association or a university/academic press).',
-            type: 'Yes/No',
-            numberToShow: 4
-          })
-        })
-        .then(function(questionId) {
-          return knex('questionnaire_answer').insert({
-            question_id: questionId[0],
-            answer: JSON.stringify({
-              value: 'yes'
-            })
-          })
-          .then(function(questionnaireAnswerId){
-            return knex('disclosure').min('id as id')
-            .then(function(row) {
-              return knex('disclosure_answer').insert({
-                disclosure_id: row[0].id,
-                questionnaire_answer_id: questionnaireAnswerId[0]
-              });
-            });
-          });
-        })
-      ]);
-    })
     ]);
   });
 };
