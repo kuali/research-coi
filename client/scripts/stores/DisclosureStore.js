@@ -66,13 +66,23 @@ class _DisclosureStore extends AutoBindingStore {
       validatingEntityRelationshipStep: false
     };
 
-    this.projects = [];
+    this.loadProjects();
 
     this.entities = [];
     this.declarations = [];
     this.archivedDisclosures = [];
     this.archivedDisclosureDetail = undefined;
     this.disclosureSummariesForUser = [];
+  }
+
+  loadProjects() {
+    request.get('/api/coi/projects')
+           .end((err, projects) => {
+             if (!err) {
+               this.projects = projects.body;
+               this.emitChange();
+             }
+           });
   }
 
   refreshArchivedDisclosures() {
@@ -120,26 +130,10 @@ class _DisclosureStore extends AutoBindingStore {
         if (!err) {
           this.applicationState.currentDisclosureState.disclosure = disclosure.body;
           this.entities = disclosure.body.entities;
-          this.projects = this.populateSponsorNames(disclosure.body.projects);
           this.declarations = disclosure.body.declarations;
           this.emitChange();
         }
       });
-    }
-  }
-
-  populateSponsorNames(projects) {
-    return projects.map(project =>{
-      project.sponsor = this.getSponsorName(project.sponsorCd);
-      return project;
-    });
-  }
-
-  getSponsorName(sponsorCd) {
-    switch (sponsorCd) {
-      case '000100': return 'Air Force';
-      case '000340': return 'NIH';
-      case '000500': return 'NSF';
     }
   }
 
@@ -718,7 +712,7 @@ class _DisclosureStore extends AutoBindingStore {
       this.entityRelationChosen({
         relationType: 'PROJECT',
         finEntityId: params.finEntityId,
-        projectId: project.projectId,
+        projectId: project.id,
         typeCd: params.newValue
       });
     });

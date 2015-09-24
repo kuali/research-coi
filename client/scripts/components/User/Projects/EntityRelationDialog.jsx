@@ -111,22 +111,22 @@ export class EntityRelationDialog extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let projectRelations = [];
-    this.props.projects.forEach((element) => {
+    this.props.projects.forEach(project => {
       projectRelations.push(
         <ProjectRelation
-          project={element}
+          project={project}
           finEntityId={this.props.finEntityId}
-          typeCd={this.findDeclarationTypeByProject(element.projectId)}
-          comments={this.findCommentByProject(element.projectId)}
+          typeCd={this.findDeclarationTypeByProject(project.id)}
+          comments={this.findCommentByProject(project.id)}
           declarationTypes={this.props.declarationTypes}
-          key={element.projectId}
+          key={project.id}
         />
       );
     });
 
     let declarationTypeOptions = this.props.declarationTypes.map(option =>{
       return (
-      <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
+        <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
       );
     });
 

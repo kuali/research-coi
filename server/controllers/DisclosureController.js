@@ -302,6 +302,7 @@ export let init = app => {
 
   app.put('/api/coi/disclosure/:id/declaration', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
+    req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
     DisclosureDB.saveDeclaration(req.dbInfo, userInfo.id, req.body, function(err, declaration){
       if (err) {
         console.error(err);
@@ -314,6 +315,7 @@ export let init = app => {
 
   app.post('/api/coi/disclosure/:id/declaration', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
+    req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
     DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.body, function(err, declaration){
       if (err) {
         console.error(err);

@@ -1,17 +1,21 @@
-import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
+/*eslint camelcase:0 */
+let getKnex;
+try {
+  let extensions = require('research-extensions');
+  getKnex = extensions.getKnex;
+}
+catch (err) {
+  getKnex = require('./ConnectionManager');
+}
 
-export let saveProject = (dbInfo, record, callback, optionalTrx) => {
-  saveSingleRecord(dbInfo, record, callback, {table: 'project', pk: 'id'}, optionalTrx);
-};
-
-export let getExistingProject = (dbInfo, record, callback, optionalTrx) => {
-  getExistingSingleRecord(dbInfo, record, callback, {table: 'project', pk: 'id'}, optionalTrx);
-};
-
-export let saveExistingProject = (dbInfo, record, callback, optionalTrx) => {
-  saveExistingSingleRecord(dbInfo, record, callback, {table: 'project', pk: 'id'}, optionalTrx);
-};
-
-export let deleteExistingProject = (dbInfo, record, callback, optionalTrx) => {
-  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'project', pk: 'id'}, optionalTrx);
+export let getProjects = (dbInfo, userId, callback) => {
+  let knex = getKnex(dbInfo);
+  knex.select('id', 'name', 'type_cd as typeCd', 'role_cd as roleCd', 'sponsor_cd as sponsorCd').from('project').where({
+    user_id: userId
+  }).then(result =>{
+    callback(undefined, result);
+  })
+  .catch(err => {
+    callback(err);
+  });
 };

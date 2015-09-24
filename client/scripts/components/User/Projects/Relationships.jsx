@@ -7,6 +7,7 @@ import {Entity} from './Entity';
 import {Toggle} from '../Toggle';
 import {Instructions} from '../Instructions';
 import {COIConstants} from '../../../../../COIConstants';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class Relationships extends ResponsiveComponent {
   constructor() {
@@ -26,11 +27,11 @@ export class Relationships extends ResponsiveComponent {
 
   openNext(currentIndex, type) {
     if (type === 'PROJECT') {
-      let currentId = this.props.projects[currentIndex].projectId;
+      let currentId = this.props.projects[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let nextId;
       if (this.props.projects[currentIndex + 1]) {
-        nextId = this.props.projects[currentIndex + 1].projectId;
+        nextId = this.props.projects[currentIndex + 1].id;
         DisclosureActions.toggleDeclaration(nextId, type);
       }
     }
@@ -47,11 +48,11 @@ export class Relationships extends ResponsiveComponent {
 
   openPrevious(currentIndex, type) {
     if (type === 'PROJECT') {
-      let currentId = this.props.projects[currentIndex].projectId;
+      let currentId = this.props.projects[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let previousId;
       if (this.props.projects[currentIndex - 1]) {
-        previousId = this.props.projects[currentIndex - 1].projectId;
+        previousId = this.props.projects[currentIndex - 1].id;
         DisclosureActions.toggleDeclaration(previousId, type);
       }
     }
@@ -130,25 +131,24 @@ export class Relationships extends ResponsiveComponent {
     let declarations;
     if (projectView) {
       for (let i = 0; i < this.props.projects.length; i++) {
-        declarations = this.getProjectDeclarations(this.props.projects[i].projectId);
+        declarations = this.getProjectDeclarations(this.props.projects[i].id);
 
         relationshipNodes.push(
           <Project
             declarations={declarations}
             entities={this.props.entities}
-            title={this.props.projects[i].title}
-            type={this.props.projects[i].type}
-            role={this.props.projects[i].role}
-            sponsor={this.props.projects[i].sponsor}
-            cosponsor={this.props.projects[i].cosponsor}
-            projectId={this.props.projects[i].projectId}
+            title={this.props.projects[i].name}
+            type={ConfigStore.getProjectTypeString(this.props.projects[i].typeCd)}
+            role={ConfigStore.getProjectRoleTypeString(this.props.projects[i].roleCd)}
+            sponsor={this.props.projects[i].sponsorCd}
+            projectId={this.props.projects[i].id}
             declarationTypes={this.props.declarationTypes}
-            open={this.isProjectDeclarationOpen(this.props.projects[i].projectId)}
+            open={this.isProjectDeclarationOpen(this.props.projects[i].id)}
             onNext={this.openNext}
             id={i}
             projectCount={this.props.projects.length}
             onPrevious={this.openPrevious}
-            key={this.props.projects[i].projectId}
+            key={this.props.projects[i].id}
           />
         );
       }
