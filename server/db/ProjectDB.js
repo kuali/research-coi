@@ -10,7 +10,7 @@ catch (err) {
 
 export let getProjects = (dbInfo, userId, callback) => {
   let knex = getKnex(dbInfo);
-  knex.select('id', 'name', 'type_cd', 'role_cd', 'sponsor_cd').from('project').where({
+  knex.select('id', 'name', 'type_cd as typeCd', 'role_cd as roleCd', 'sponsor_cd as sponsorCd').from('project').where({
     user_id: userId
   }).then(result =>{
     callback(undefined, result);
