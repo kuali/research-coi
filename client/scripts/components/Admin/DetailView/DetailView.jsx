@@ -34,6 +34,10 @@ export class DetailView extends React.Component {
     AdminStore.unlisten(this.onChange);
   }
 
+  componentWillReceiveProps(nextProps) {
+    AdminActions.loadDisclosure(nextProps.params.id);
+  }
+
   onChange() {
     let newState = {};
     let config = ConfigStore.getState();

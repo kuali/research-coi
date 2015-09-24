@@ -2,12 +2,13 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
 import {AdminActions} from '../../../actions/AdminActions';
+import ReactRouter from 'react-router';
+let Link = ReactRouter.Link;
 
 export class DisclosureListItem extends React.Component {
   constructor() {
     super();
 
-    this.selectDisclosure = this.selectDisclosure.bind(this);
     this.highlightSearchTerm = this.highlightSearchTerm.bind(this);
   }
 
@@ -28,10 +29,6 @@ export class DisclosureListItem extends React.Component {
     else {
       return value;
     }
-  }
-
-  selectDisclosure() {
-    AdminActions.loadDisclosure(this.props.disclosure.id);
   }
 
   render() {
@@ -63,14 +60,16 @@ export class DisclosureListItem extends React.Component {
     }
 
     return (
-      <li style={merge(styles.container, this.props.style)} onClick={this.selectDisclosure}>
-        <div style={styles.disclosureType}>
-          {this.highlightSearchTerm(disclosure.type)}
-        </div>
-        <div>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
-        {dateToShow}
-        <div>Status: {this.highlightSearchTerm(disclosure.status)}</div>
-      </li>
+      <Link to={`/detailview/${this.props.disclosure.id}`}>
+        <li style={merge(styles.container, this.props.style)}>
+          <div style={styles.disclosureType}>
+            {this.highlightSearchTerm(disclosure.type)}
+          </div>
+          <div>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
+          {dateToShow}
+          <div>Status: {this.highlightSearchTerm(disclosure.status)}</div>
+        </li>
+      </Link>
     );
   }
 }
