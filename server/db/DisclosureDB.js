@@ -220,10 +220,6 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
-    knex.select('p.id as projectId', 'p.name as title', 'pt.description as type', 'p.role_cd as role', 'p.sponsor_cd as sponsorCd')
-      .from('project as p')
-      .innerJoin('project_type as pt', 'pt.type_cd', 'p.type_cd' )
-      .where('disclosure_id', disclosureId),
     knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments')
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
@@ -237,8 +233,7 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
     disclosure = result[0][0];
     disclosure.entities = result[1];
     disclosure.answers = result[2];
-    disclosure.projects = result[3];
-    disclosure.declarations = result[4];
+    disclosure.declarations = result[3];
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
@@ -279,7 +274,6 @@ export let getAnnualDisclosure = (dbInfo, userId, piName, callback) => {
         newDisclosure.id = id[0];
         newDisclosure.answers = [];
         newDisclosure.entities = [];
-        newDisclosure.projects = [];
         newDisclosure.declarations = [];
         callback(undefined, newDisclosure);
       })

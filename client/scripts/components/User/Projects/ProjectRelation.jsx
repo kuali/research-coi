@@ -13,11 +13,11 @@ export class ProjectRelation extends ResponsiveComponent {
   }
 
   relationChosen(evt) {
-    DisclosureActions.entityRelationChosen('PROJECT', this.props.finEntityId, this.props.project.projectId, parseInt(evt.target.value));
+    DisclosureActions.entityRelationChosen('PROJECT', this.props.finEntityId, this.props.project.id, parseInt(evt.target.value));
   }
 
   commentMade() {
-    DisclosureActions.declarationCommentedOn('PROJECT', this.props.finEntityId, this.props.project.projectId, this.refs.comment.getDOMNode().value);
+    DisclosureActions.declarationCommentedOn('PROJECT', this.props.finEntityId, this.props.project.id, this.refs.comment.getDOMNode().value);
   }
 
   renderMobile() {}
@@ -49,7 +49,7 @@ export class ProjectRelation extends ResponsiveComponent {
         checked={this.props.typeCd === type.typeCd}
         value={type.typeCd}
         onChange={this.relationChosen}
-        name={this.props.project.projectId + 'relation' + this.props.finEntityId}
+        name={this.props.project.id + 'relation' + this.props.finEntityId}
         />
         <span style={{fontSize: 14, marginLeft: 6}}>{type.description}</span>
       </div>
@@ -59,7 +59,7 @@ export class ProjectRelation extends ResponsiveComponent {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <span style={{width: '25%', display: 'inline-block', verticalAlign: 'top'}}>
-          {this.props.project.title}
+          {this.props.project.name}
         </span>
         <span style={{width: '30%', display: 'inline-block', verticalAlign: 'top'}}>
           {declarationTypeOptions}

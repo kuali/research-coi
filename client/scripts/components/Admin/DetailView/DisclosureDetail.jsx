@@ -35,18 +35,6 @@ export class DisclosureDetail extends React.Component {
     });
   }
 
-  compare(a, b) {
-    if (a > b) {
-      return 1;
-    }
-    else if (a === b) {
-      return 0;
-    }
-    else {
-      return -1;
-    }
-  }
-
   render() {
     let nameMap = this.makeEntityMap(this.props.disclosure.entities);
 
@@ -95,21 +83,21 @@ export class DisclosureDetail extends React.Component {
       }
 
       if (!aParent && !bParent) {
-        return this.compare(a.question.order, b.question.order);
+        return a.question.order - b.question.order;
       }
       else if (a.parent && b.parent) {
         if (a.parent === b.parent) {
-          return this.compare(a.question.order, b.question.order);
+          return a.question.order - b.question.order;
         }
         else {
-          return this.compare(aParent.question.order, bParent.question.order);
+          return aParent.question.order - bParent.question.order;
         }
       }
       else if (a.parent && !b.parent) {
-        return this.compare(aParent.question.order, b.question.order);
+        return aParent.question.order - b.question.order;
       }
       else {
-        return this.compare(a.question.order, bParent.question.order);
+        return a.question.order - bParent.question.order;
       }
     }).map(question => {
       return {

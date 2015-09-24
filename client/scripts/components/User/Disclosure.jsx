@@ -58,7 +58,7 @@ export class Disclosure extends ResponsiveComponent {
         let existingRelation = relations.find(relation => {
           return relation.finEntityId === entity.id &&
             (
-              relation.projectId === project.projectId
+              relation.projectId === project.id
             );
         });
 

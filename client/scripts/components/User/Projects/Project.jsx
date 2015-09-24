@@ -120,7 +120,6 @@ export class Project extends ResponsiveComponent {
           type={this.props.type}
           role={this.props.role}
           sponsor={this.props.sponsor}
-          cosponsor={this.props.cosponsor}
           projectId={this.props.projectId}
           declarationTypes={this.props.declarationTypes}
           id={this.props.id}

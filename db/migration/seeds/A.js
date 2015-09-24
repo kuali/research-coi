@@ -54,9 +54,10 @@ function getRandomFirstName() {
   }
 }
 
-function insertDeclaration(knex, entityId, projectId) {
+function insertDeclaration(knex, disclosureId, entityId, projectId) {
   return Promise.all([
     knex('declaration').insert({
+      disclosure_id: disclosureId,
       fin_entity_id: entityId,
       project_id: projectId,
       type_cd: knex('declaration_type').max('type_cd'),
@@ -65,10 +66,10 @@ function insertDeclaration(knex, entityId, projectId) {
   ]);
 }
 
-function insertProject(knex, disclosureId) {
+function insertProject(knex, userId) {
   return knex('project').insert({
-    disclosure_id: disclosureId,
-    name: 'Molecular Disentropization',
+    user_id: userId,
+    name: 'Molecular Disentropization #' + randomNumberBetween(1, 200000),
     type_cd: 1,
     role_cd: 'PI',
     sponsor_cd: '000100'
@@ -152,7 +153,6 @@ function insertQuestionnaireQuestion(knex, questionnaireId, text, numberToShow) 
 
 function insertQuestionAnswers(knex, disclosureId) {
   return knex('questionnaire_question').count('id as count').then(function(count) {
-    console.log(count[0].count + ' questions!');
     var statements = [];
     for (var i = 1; i < count[0].count; i++) {
       statements.push(insertQuestionnaireAnswer(knex, disclosureId, 1, i));
@@ -162,15 +162,33 @@ function insertQuestionAnswers(knex, disclosureId) {
   });
 }
 
+function hashCode(toHash){
+  var hash = 0;
+  if (toHash.length === 0) { return hash; }
+  for (var i = 0; i < toHash.length; i++) {
+    var char = toHash.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
+
+var userNumber = 0;
+function getNextUserId() {
+  userNumber++;
+  return hashCode('p' + userNumber);
+}
+
 function insertDisclosure(knex) {
   var submittedDate = new Date(new Date().getTime() - randomNumberBetween(1, 7606400000));
   var revisedDate = null;
   if (randomNumberBetween(1, 4) === 1) {
     revisedDate = new Date(submittedDate.getTime() + 259200000);
   }
+  var userId = getNextUserId();
 
   return knex('disclosure').insert({
-    user_id: randomNumberBetween(1, 1000000),
+    user_id: userId,
     submitted_by: getRandomFirstName() + ' ' + getRandomLastName(),
     type_cd: randomNumberBetween(1, 4),
     title: 'Title - what is this?' + randomNumberBetween(1, 2000),
@@ -184,18 +202,17 @@ function insertDisclosure(knex) {
     approved_date: new Date()
   }).then(function(disclosureId) {
     return Promise.all([
-      insertProject(knex, disclosureId).then(function(projectId) {
+      Promise.all([
+        insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
+        insertEntity(knex, disclosureId, 'Monsanto', 'Crazy company that wants to patent life'),
+        insertEntity(knex, disclosureId, 'Xerox', 'This is a company that makes copiers and stuff like that'),
+        insertProject(knex, userId)
+      ]).then(function(results) {
         return Promise.all([
-          insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
-          insertEntity(knex, disclosureId, 'Monsanto', 'Crazy company that wants to patent life'),
-          insertEntity(knex, disclosureId, 'Xerox', 'This is a company that makes copiers and stuff like that')
-        ]).then(function(entities) {
-          return Promise.all([
-            insertDeclaration(knex, entities[0], projectId),
-            insertDeclaration(knex, entities[1], projectId),
-            insertDeclaration(knex, entities[2], projectId)
-          ]);
-        });
+          insertDeclaration(knex, disclosureId, results[0], results[3]),
+          insertDeclaration(knex, disclosureId, results[1], results[3]),
+          insertDeclaration(knex, disclosureId, results[2], results[3])
+        ]);
       }),
       insertQuestionAnswers(knex, disclosureId)
     ]);

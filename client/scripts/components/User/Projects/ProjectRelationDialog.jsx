@@ -132,7 +132,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
 
     let declarationTypeOptions = this.props.declarationTypes.map(option =>{
       return (
-      <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
+        <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
       );
     });
 

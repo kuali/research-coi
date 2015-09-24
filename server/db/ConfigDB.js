@@ -137,7 +137,8 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     }),
     query('config').select('config').where('name', 'General Config'),
     query.select('*').from('disclosure_status'),
-    query.select('*').from('project_type')
+    query.select('*').from('project_type'),
+    query.select('*').from('project_role')
   ])
   .then(result=>{
     config.entityTypes = result[0];
@@ -167,6 +168,7 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
 
     config.disclosureStatus = result[11];
     config.projectTypes = result[12];
+    config.projectRoleTypes = result[13];
 
     config = camelizeJson(config);
 

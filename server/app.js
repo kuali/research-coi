@@ -1,6 +1,7 @@
 import * as ConfigController from './controllers/ConfigController';
 import * as DisclosureController from './controllers/DisclosureController';
 import * as TravelLogController from './controllers/TravelLogController';
+import * as ProjectController from './controllers/ProjectController';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -30,6 +31,7 @@ export function run() {
   ConfigController.init(app);
   DisclosureController.init(app);
   TravelLogController.init(app);
+  ProjectController.init(app);
 
   let portNumber = config ? config.port : 8090;
   let server = app.listen(portNumber);

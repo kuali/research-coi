@@ -98,7 +98,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   // -- sponsor_cd comes from an external system.  no fk constraint.
   .createTable('project', function(table) {
     table.increments('id').notNullable();
-    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
+    table.integer('user_id').notNullable();
     table.string('name', 200).notNullable();
     table.integer('type_cd').notNullable().references('type_cd').inTable('project_type');
     table.string('role_cd', 50).notNullable().references('role_cd').inTable('project_role');
@@ -115,6 +115,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   })
   .createTable('declaration', function(table) {
     table.increments('id').notNullable();
+    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
     table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
     table.integer('project_id').unsigned().notNullable().index().references('id').inTable('project');
     table.integer('type_cd').unsigned().index().references('type_cd').inTable('declaration_type');
