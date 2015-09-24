@@ -1,6 +1,7 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {AdminStore} from '../../../stores/AdminStore';
+import ConfigStore from '../../../stores/ConfigStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
@@ -11,9 +12,11 @@ export class DetailView extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     let store = AdminStore.getState();
+    let configStore = ConfigStore.getState();
     this.state = {
       summaries: store.disclosureSummaries,
-      applicationState: store.applicationState
+      applicationState: store.applicationState,
+      config: configStore.config
     };
 
     this.searchFilter = this.searchFilter.bind(this);
@@ -24,6 +27,7 @@ export class DetailView extends React.Component {
     if (this.props.params !== undefined && this.props.params.id !== undefined) {
       AdminActions.loadDisclosure(this.props.params.id);
     }
+    ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
@@ -31,11 +35,16 @@ export class DetailView extends React.Component {
   }
 
   onChange() {
+    let newState = {};
+    let config = ConfigStore.getState();
+    if (config.isLoaded) {
+      newState.config = config.config;
+    }
     let store = AdminStore.getState();
-    this.setState({
-      summaries: store.disclosureSummaries,
-      applicationState: store.applicationState
-    });
+    newState.summaries = store.disclosureSummaries;
+    newState.applicationState = store.applicationState;
+
+    this.setState(newState);
   }
 
   searchFilter(disclosure) {
@@ -72,15 +81,13 @@ export class DetailView extends React.Component {
     };
 
     let disclosureDetail;
-    if (this.state.applicationState.selectedDisclosure) {
+    if (this.state.applicationState.selectedDisclosure && this.state.config) {
       disclosureDetail = (
         <DisclosureDetail
           disclosure={this.state.applicationState.selectedDisclosure}
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
-          showingQuestionnaireComments={this.state.applicationState.showingQuestionnaireComments}
-          showingEntitiesComments={this.state.applicationState.showingEntitiesComments}
-          showingProjectComments={this.state.applicationState.showingProjectComments}
+          config={this.state.config}
         />
       );
     }

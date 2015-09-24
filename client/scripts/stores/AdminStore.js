@@ -27,9 +27,6 @@ class _AdminStore extends AutoBindingStore {
       showFiltersOnMobile: false,
       showingApproval: false,
       showingRejection: false,
-      showingQuestionnaireComments: false,
-      showingEntitiesComments: false,
-      showingProjectComments: false,
       selectedDisclosure: undefined,
       loadingMore: false,
       offset: 0,
@@ -170,30 +167,6 @@ class _AdminStore extends AutoBindingStore {
 
   toggleRejectionConfirmation() {
     this.applicationState.showingRejection = !this.applicationState.showingRejection;
-  }
-
-  showProjectComments() {
-    this.applicationState.showingProjectComments = true;
-  }
-
-  showQuestionnaireComments() {
-    this.applicationState.showingQuestionnaireComments = true;
-  }
-
-  showEntitiesComments() {
-    this.applicationState.showingEntitiesComments = true;
-  }
-
-  hideProjectComments() {
-    this.applicationState.showingProjectComments = false;
-  }
-
-  hideQuestionnaireComments() {
-    this.applicationState.showingQuestionnaireComments = false;
-  }
-
-  hideEntitiesComments() {
-    this.applicationState.showingEntitiesComments = false;
   }
 
   clearTypeFilter() {

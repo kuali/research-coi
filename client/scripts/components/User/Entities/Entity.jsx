@@ -21,7 +21,7 @@ export class Entity extends ResponsiveComponent {
   }
 
   toggleStatus() {
-    let active = this.props.entity.active === 1 ? 0 : 1
+    let active = this.props.entity.active === 1 ? 0 : 1;
     DisclosureActions.setEntityActiveStatus(active, this.props.id);
   }
 

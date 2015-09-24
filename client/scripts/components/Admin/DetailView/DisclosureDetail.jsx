@@ -11,6 +11,8 @@ import {RejectionConfirmation} from './RejectionConfirmation';
 export class DisclosureDetail extends React.Component {
   constructor() {
     super();
+
+    this.findScreeningQuestion = this.findScreeningQuestion.bind(this);
   }
 
   makeEntityMap(entities) {
@@ -24,6 +26,27 @@ export class DisclosureDetail extends React.Component {
     return result;
   }
 
+  findScreeningQuestion(questionId) {
+    return this.props.config.questions.screening.find(question => {
+      if (question.id === questionId) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  compare(a, b) {
+    if (a > b) {
+      return 1;
+    }
+    else if (a === b) {
+      return 0;
+    }
+    else {
+      return -1;
+    }
+  }
+
   render() {
     let nameMap = this.makeEntityMap(this.props.disclosure.entities);
 
@@ -33,13 +56,13 @@ export class DisclosureDetail extends React.Component {
       },
       actionButtons: {
         position: 'fixed',
-        top: 186,
+        top: 145,
         right: 20,
         display: this.props.showApproval || this.props.showRejection ? 'none' : 'block'
       },
       bottom: {
         position: 'relative',
-        padding: '25px 225px 25px 25px',
+        padding: '25px 270px 25px 25px',
         overflowY: 'auto'
       },
       confirmation: {
@@ -62,6 +85,58 @@ export class DisclosureDetail extends React.Component {
       }
     };
 
+    let screeningQuestions = this.props.config.questions.screening.sort((a, b) => {
+      let aParent, bParent;
+      if (a.parent) {
+        aParent = this.findScreeningQuestion(a.parent);
+      }
+      if (b.parent) {
+        bParent = this.findScreeningQuestion(b.parent);
+      }
+
+      if (!aParent && !bParent) {
+        return this.compare(a.question.order, b.question.order);
+      }
+      else if (a.parent && b.parent) {
+        if (a.parent === b.parent) {
+          return this.compare(a.question.order, b.question.order);
+        }
+        else {
+          return this.compare(aParent.question.order, bParent.question.order);
+        }
+      }
+      else if (a.parent && !b.parent) {
+        return this.compare(aParent.question.order, b.question.order);
+      }
+      else {
+        return this.compare(a.question.order, bParent.question.order);
+      }
+    }).map(question => {
+      return {
+        id: question.id,
+        parent: question.parent,
+        order: question.question.order,
+        numberToShow: question.question.numberToShow,
+        text: question.question.text,
+        type: question.question.type
+      };
+    });
+    let screeningAnswers = {};
+    this.props.disclosure.answers.forEach(answer => {
+      screeningAnswers[answer.questionId] = answer.answer.value;
+    });
+
+    let commentCounts = {
+      1: 99,
+      2: 999,
+      3: 9,
+      4: -2,
+      5: 88,
+      6: 33,
+      7: 3,
+      8: 9999
+    };
+
     return (
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
         <DisclosureDetailHeading disclosure={this.props.disclosure} />
@@ -70,23 +145,19 @@ export class DisclosureDetail extends React.Component {
           <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
           <ActionButtons style={styles.actionButtons} />
           <AdminQuestionnaireSummary
-            questions={this.props.disclosure.questionnaire}
+            questions={screeningQuestions}
+            answers={screeningAnswers}
+            commentCounts={commentCounts}
             style={styles.questionnaire}
-            id={this.props.disclosure.id}
-            comment={this.props.disclosure.comments ? this.props.disclosure.comments.questionnaire : null}
-            expandedComments={this.props.showingQuestionnaireComments} />
+          />
           <AdminEntitiesSummary
             entities={this.props.disclosure.entities}
-            style={styles.entities}
-            id={this.props.disclosure.id}
-            comment={this.props.disclosure.comments ? this.props.disclosure.comments.entities : null}
-            expandedComments={this.props.showingEntitiesComments} />
+            style={styles.entities} />
           <AdminDeclarationsSummary
             names={nameMap}
             relationships={this.props.disclosure.projects}
             id={this.props.disclosure.id}
-            comment={this.props.disclosure.comments ? this.props.disclosure.comments.projects : null}
-            expandedComments={this.props.showingProjectComments} />
+            comment={this.props.disclosure.comments ? this.props.disclosure.comments.projects : null} />
         </div>
       </div>
     );

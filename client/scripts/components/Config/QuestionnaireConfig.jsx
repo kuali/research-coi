@@ -190,7 +190,7 @@ class QuestionnaireConfig extends React.Component {
     let height;
     if (this.isOpen(question.id)) {
       let editState = this.props.questionsBeingEdited[question.id];
-      if (editState.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+      if (editState.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
         height = heightOfExpandedMultiSelect;
       }
       else {

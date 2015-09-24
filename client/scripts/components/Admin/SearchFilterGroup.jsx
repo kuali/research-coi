@@ -6,7 +6,6 @@ import {AdminActions} from '../../actions/AdminActions';
 import {DisclosureFilterByType} from './DisclosureFilterByType';
 import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
 import {DisclosureFilterByDate} from './DisclosureFilterByDate';
-import {DisclosureListFilter} from './DisclosureListFilter';
 
 export class SearchFilterGroup extends ResponsiveComponent {
   constructor() {

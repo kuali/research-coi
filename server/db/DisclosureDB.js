@@ -175,14 +175,6 @@ export let deleteExistingDeclaration = (dbInfo, userId, record, callback, option
   deleteExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
 };
 
-export let saveDisclosureNested = (dbInfo, userId, record, callback) => {
-  //implement
-};
-
-export let saveExistingDisclosureNested = (dbInfo, userId, record, callback) => {
-  //implement
-};
-
 export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body, callback) => {
   let knex = getKnex(dbInfo);
   let answer = body;

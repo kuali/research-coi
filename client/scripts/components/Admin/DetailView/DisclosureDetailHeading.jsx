@@ -16,7 +16,9 @@ export class DisclosureDetailHeading extends React.Component {
       container: {
         backgroundColor: '#efefef',
         padding: '13px 8px 13px 25px',
-        lineHeight: '20px'
+        lineHeight: '20px',
+        minHeight: 89,
+        boxShadow: '0 1px 1px #CCC'
       },
       type: {
         fontWeight: 'bold'
