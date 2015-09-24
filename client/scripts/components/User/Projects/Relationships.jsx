@@ -130,7 +130,6 @@ export class Relationships extends ResponsiveComponent {
     let relationshipNodes = [];
     let declarations;
     if (projectView) {
-      console.log(this.props.projects);
       for (let i = 0; i < this.props.projects.length; i++) {
         declarations = this.getProjectDeclarations(this.props.projects[i].id);
 
