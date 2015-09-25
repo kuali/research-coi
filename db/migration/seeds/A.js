@@ -91,9 +91,6 @@ function insertEntity(knex, disclosureId, name, description) {
   return knex('fin_entity').insert({
     disclosure_id: disclosureId,
     active: true,
-    is_public: true,
-    type_cd: 1,
-    is_sponsor: true,
     name: name,
     description: description
   })
@@ -135,19 +132,27 @@ function insertQuestionnaireAnswer(knex, disclosureId, questionnaireId, question
   });
 }
 
-function insertQuestionnaireQuestion(knex, questionnaireId, text, numberToShow) {
+function insertQuestionnaireQuestion(knex, questionnaireId, text, numberToShow, type, options, subquestion, requiredNumSelections) {
+  question = {
+    order: numberToShow,
+    text: text,
+    type: type ? type : 'Yes/No',
+    validations: ['required'],
+    numberToShow: numberToShow
+
+  }
+  if (options) {
+    question.options = options;
+    question.requiredNumSelections = requiredNumSelections;
+  }
   return knex('questionnaire_question').insert({
     questionnaire_id: questionnaireId,
     active: true,
-    question: JSON.stringify({
-      order: numberToShow,
-      text: text,
-      type: 'Yes/No',
-      validations: ['required'],
-      numberToShow: numberToShow
-    })
+    question: JSON.stringify(question)
   }).then(function (parentId) {
-    return insertQuestionnaireSubquestion(knex, questionnaireId, parentId[0], numberToShow);
+    if (subquestion) {
+      return insertQuestionnaireSubquestion(knex, questionnaireId, parentId[0], numberToShow);
+    }
   });
 }
 
@@ -255,8 +260,6 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     return knex('questionnaire_question').truncate();
   }).then(function() {
-    return knex('fin_entity_type').truncate();
-  }).then(function() {
     return knex('disclosure').truncate();
   }).then(function() {
     return knex('questionnaire').truncate();
@@ -268,6 +271,8 @@ exports.seed = function(knex, Promise) {
     return knex('disposition_type').truncate();
   }).then(function() {
     return knex('disclosure_type').truncate();
+  }).then(function() {
+    return knex('fin_entity_answer').truncate();
   }).then(function() {
     knex.raw('SET FOREIGN_KEY_CHECKS=1');
   }).then(function() {
@@ -290,15 +295,6 @@ exports.seed = function(knex, Promise) {
     console.log('Seed - disposition_type');
     return Promise.all([
       knex('disposition_type').insert({type_cd: 1, description: '222'})
-    ]);
-  }).then(function() {
-    console.log('Seed - fin_entity_type');
-    return Promise.all([
-      knex('fin_entity_type').insert({type_cd: 1, description: 'State Government'}),
-      knex('fin_entity_type').insert({type_cd: 2, description: 'County Government'}),
-      knex('fin_entity_type').insert({type_cd: 3, description: 'Small Business'}),
-      knex('fin_entity_type').insert({type_cd: 4, description: 'For-profit Organization'}),
-      knex('fin_entity_type').insert({type_cd: 5, description: 'Individual'})
     ]);
   }).then(function() {
     console.log('Seed - project_role');
@@ -408,10 +404,24 @@ exports.seed = function(knex, Promise) {
     })
     .then(function(questionnaireId) {
       return Promise.all([
-        insertQuestionnaireQuestion(knex, questionnaireId[0], 'From any for-profit organization, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director\'s fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other intellectual property; or other direct payments exceeding $5,000?', 1),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'From any for-profit organization, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director\'s fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other intellectual property; or other direct payments exceeding $5,000?', 1, undefined, undefined, true),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'From any privately held organization, do you have stock, stock options, or other equity interest of any value?', 2),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Some publicly traded stock must be disclosed, but only in specific circumstances. Do you own stock, which in aggregate exceeds $5,000, in a company that provides funds to this institution in support of your Institutional Responsibilities (e.g. teaching, research, committee, or other administrative responsibilities)? When aggregating, please consider stock, stock options, warrants and other existing or contingent ownership interests in the publicly held company. Do not consider investments where you do not directly influence investment decisions, such as mutual funds and retirement accounts.', 3),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'From US educational institutions, US teaching hospitals or US research institutions affiliated with US educational institutions: Did you receive in the last 12 months, or do you expect to receive in the next 12 months, payments for services, which in aggregate exceed $5,000 (e.g. payments for consulting, board positions, patents, copyrights or other intellectual property)? Exclude payments for scholarly or academic works (i.e. peer-reviewed (vs. editorial reviewed) articles or books based on original research or experimentation, published by an academic association or a university/academic press).', 4)
+      ]);
+    });
+  }).then(function() {
+    return knex('questionnaire').insert({
+      instructions: 'Please fill out this questionnaire in order to document your disclosure activities. Thanks! No taking $$ from vendors.',
+      version: 1,
+      type_cd: 2
+    })
+    .then(function(questionnaireId) {
+      return Promise.all([
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Type:', 1, "Multiselect", ['State Government', 'County Government', 'Small Business'],false,1),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Is this entity public?', 2, 'Yes/No'),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Does this entity sponsor any', 3),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Describe the entity\'s area of business and your relationship to it:', 4, 'Text area')
       ]);
     });
   }).then(function() {

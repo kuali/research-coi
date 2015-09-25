@@ -19,6 +19,10 @@ class _DisclosureActions {
 
   answerMultiple(question) { this.dispatch(question); }
 
+  answerEntityQuestion(question) {this.dispatch(question); }
+
+  answerEntityMultiple(question) { this.dispatch(question); }
+
   previousQuestion() { this.dispatch(); }
 
   setCurrentQuestion(newQuestionId) { this.dispatch(newQuestionId); }

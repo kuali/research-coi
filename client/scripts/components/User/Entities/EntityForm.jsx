@@ -157,6 +157,7 @@ export class EntityForm extends ResponsiveComponent {
             update={this.props.update}
             name={entity.name}
             type={entity.type}
+            answers={entity.answers}
             isPublic={entity.isPublic}
             isSponsor={entity.isSponsor}
             description={entity.description}
@@ -210,6 +211,7 @@ export class EntityForm extends ResponsiveComponent {
               update={this.props.update}
               name={entity.name}
               type={entity.type}
+              answers={entity.answers}
               isPublic={entity.isPublic}
               isSponsor={entity.isSponsor}
               description={entity.description}

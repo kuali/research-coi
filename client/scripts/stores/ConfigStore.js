@@ -14,7 +14,6 @@ class _ConfigStore extends AutoBindingStore {
       getDeclarationTypeString: this.getDeclarationTypeString,
       getDisclosureStatusString: this.getDisclosureStatusString,
       getDisclosureTypeString: this.getDisclosureTypeString,
-      getFinancialEntityTypeString: this.getFinancialEntityTypeString,
       getProjectTypeString: this.getProjectTypeString,
       getRelationshipCategoryTypeString: this.getRelationshipCategoryTypeString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
@@ -47,7 +46,6 @@ class _ConfigStore extends AutoBindingStore {
         screening: [],
         entities: []
       },
-      entityTypes: [],
       relationshipCategoryTypes: [],
       relationshipTypes: [],
       relationshipPersonType: [],
@@ -514,11 +512,6 @@ class _ConfigStore extends AutoBindingStore {
       this.codeMaps.disclosureType[typeRecord.typeCd] = typeRecord;
     });
 
-    this.codeMaps.financialEntityType = {};
-    this.config.entityTypes.forEach(typeRecord => {
-      this.codeMaps.financialEntityType[typeRecord.typeCd] = typeRecord;
-    });
-
     this.codeMaps.projectType = {};
     this.config.projectTypes.forEach(typeRecord => {
       this.codeMaps.projectType[typeRecord.typeCd] = typeRecord;
@@ -595,16 +588,6 @@ class _ConfigStore extends AutoBindingStore {
 
   getDisclosureTypeString(code) {
     let typeRecord = this.getState().codeMaps.disclosureType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-    else {
-      return 'Undefined';
-    }
-  }
-
-  getFinancialEntityTypeString(code) {
-    let typeRecord = this.getState().codeMaps.financialEntityType[code];
     if (typeRecord) {
       return typeRecord.description;
     }
