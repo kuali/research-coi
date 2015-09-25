@@ -133,7 +133,7 @@ function insertQuestionnaireAnswer(knex, disclosureId, questionnaireId, question
 }
 
 function insertQuestionnaireQuestion(knex, questionnaireId, text, numberToShow, type, options, subquestion, requiredNumSelections) {
-  let question = {
+  var question = {
     order: numberToShow,
     text: text,
     type: type ? type : 'Yes/No',
@@ -276,6 +276,8 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     return knex('disclosure_type').truncate();
   }).then(function() {
+    return knex('config').truncate();
+  }).then(function() {
     return knex('fin_entity_answer').truncate();
   }).then(function() {
     knex.raw('SET FOREIGN_KEY_CHECKS=1');
@@ -402,7 +404,6 @@ exports.seed = function(knex, Promise) {
     ]);
   }).then(function() {
     return knex('questionnaire').insert({
-      instructions: 'Please fill out this questionnaire in order to document your disclosure activities. Thanks! No taking $$ from vendors.',
       version: 1,
       type_cd: 1
     })
@@ -416,7 +417,6 @@ exports.seed = function(knex, Promise) {
     });
   }).then(function() {
     return knex('questionnaire').insert({
-      instructions: 'Please fill out this questionnaire in order to document your disclosure activities. Thanks! No taking $$ from vendors.',
       version: 1,
       type_cd: 2
     })
@@ -447,8 +447,7 @@ exports.seed = function(knex, Promise) {
         isRollingDueDate: false,
         instructions: {
           'Questionnaire': 'Questionnaire Instructions',
-          'Financial Entities Questionnaire': 'Financial Entities Questionnaire Instructions',
-          'Relationship Matrix': 'Relationship Matrix Instructions',
+          'Financial Entities': 'Financial Entities Instructions',
           'Project Declaration': 'Project Declaration Instructions',
           'Certification': 'Certification Instructions'
         },

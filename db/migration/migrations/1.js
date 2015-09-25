@@ -122,7 +122,6 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   .createTable('questionnaire', function(table) {
     table.increments('id').notNullable();
     table.integer('type_cd').notNullable().references('type_cd').inTable('questionnaire_type');
-    table.string('instructions', 4000); // -- markdown
     table.integer('version').unsigned().notNullable();
   })
   .createTable('questionnaire_question', function(table) {
