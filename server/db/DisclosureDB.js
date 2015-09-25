@@ -269,10 +269,10 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
   var disclosure;
   let knex = getKnex(dbInfo);
   Promise.all([
-    knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.revised_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
+    knex.select('de.id', 'de.type_cd as typeCd', 'de.title', 'de.disposition_type_cd as dispositionTypeCd', 'de.status_cd as statusCd', 'de.submitted_by as submittedBy', 'de.submitted_date as submittedDate', 'de.revised_date as revisedDate', 'de.start_date as startDate', 'de.expired_date as expiredDate', 'de.last_review_date as lastReviewDate')
       .from('disclosure as de')
       .where('id', disclosureId),
-    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.name', 'e.description')
+    knex.select('e.id', 'e.disclosure_id as disclosureId', 'e.active', 'e.name', 'e.description')
       .from('fin_entity as e')
       .where('disclosure_id', disclosureId),
     knex.select('qa.id as id', 'qa.question_id as questionId', 'qa.answer as answer')
@@ -282,7 +282,12 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
     knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments')
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
-      .where('fe.disclosure_id', disclosureId)
+      .where('fe.disclosure_id', disclosureId),
+    knex.distinct('p.id as id', 'p.name as name', 'p.type_cd as typeCd', 'p.role_cd as roleCd', 'p.sponsor_cd as sponsorCd')
+      .select()
+      .from('project as p')
+      .innerJoin('declaration as d', 'd.project_id', 'p.id')
+      .where('d.disclosure_id', disclosureId)
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
       callback(new Error('invalid disclosure id'));
@@ -293,45 +298,43 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
     disclosure.entities = result[1];
     disclosure.answers = result[2];
     disclosure.declarations = result[3];
+    disclosure.associatedProjects = result[4];
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
 
     Promise.all([
-    knex.select('r.id', 'r.fin_entity_id', 'r.relationship_cd as relationshipCd', 'rc.description as relationship', 'r.person_cd as personCd', 'rp.description as person', 'r.type_cd as typeCd', 'rt.description as type', 'r.amount_cd as amountCd', 'ra.description as amount', 'r.comments')
-      .from('relationship as r')
-      .innerJoin('relationship_person_type as rp', 'r.person_cd', 'rp.type_cd')
-      .innerJoin('relationship_category_type as rc', 'r.relationship_cd', 'rc.type_cd')
-      .leftJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd' )
-      .leftJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
-      .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
-      .then(relationships => {
+      knex.select('r.id', 'r.fin_entity_id as finEntityId', 'r.relationship_cd as relationshipCd', 'rc.description as relationship', 'r.person_cd as personCd', 'rp.description as person', 'r.type_cd as typeCd', 'rt.description as type', 'r.amount_cd as amountCd', 'ra.description as amount', 'r.comments')
+        .from('relationship as r')
+        .innerJoin('relationship_person_type as rp', 'r.person_cd', 'rp.type_cd')
+        .innerJoin('relationship_category_type as rc', 'r.relationship_cd', 'rc.type_cd')
+        .leftJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd' )
+        .leftJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
+        .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
+        .then(relationships => {
+          disclosure.entities.forEach(entity => {
+            entity.relationships = relationships.filter(relationship => {
+              return relationship.fin_entity_id === entity.id;
+            });
+          });
+        })
+        .catch(err => {
+          callback(err);
+        }),
+      knex.select('qa.question_id as questionId', 'qa.answer as answer', 'fea.fin_entity_id as finEntityId')
+      .from('questionnaire_answer as qa' )
+      .innerJoin('fin_entity_answer as fea', 'fea.questionnaire_answer_id', 'qa.id')
+      .whereIn('fea.fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
+      .then(answers=>{
         disclosure.entities.forEach(entity => {
-          entity.relationships = relationships.filter(relationship => {
-            return relationship.fin_entity_id === entity.id;
+          entity.answers = answers.filter(answer => {
+            return answer.finEntityId === entity.id;
+          }).map(answer=>{
+            answer.answer = JSON.parse(answer.answer);
+            return answer;
           });
         });
       })
-      .catch(err => {
-        callback(err);
-      }),
-    knex.select('qa.question_id as questionId', 'qa.answer as answer', 'fea.fin_entity_id as finEntityId')
-    .from('questionnaire_answer as qa' )
-    .innerJoin('fin_entity_answer as fea', 'fea.questionnaire_answer_id', 'qa.id')
-    .whereIn('fea.fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
-    .then(answers=>{
-      disclosure.entities.forEach(entity => {
-        entity.answers = answers.filter(answer => {
-          return answer.finEntityId === entity.id;
-        }).map(answer=>{
-          answer.answer = JSON.parse(answer.answer);
-          return answer;
-        });
-      });
-    })
-    .catch(err => {
-      callback(err);
-    })
     ]).then(()=>{
       callback(undefined, disclosure);
     }).catch(err=>{

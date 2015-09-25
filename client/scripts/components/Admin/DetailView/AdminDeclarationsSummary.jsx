@@ -1,16 +1,19 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
     super();
+
+    this.findEntityName = this.findEntityName.bind(this);
+  }
+
+  findEntityName(id) {
+    return this.props.entityNameMap[id];
   }
 
   render() {
-    let findEntityName = id => {
-      return this.props.names[id];
-    };
-
     let styles = {
       container: {
         border: '1px solid #999',
@@ -61,59 +64,69 @@ export class AdminDeclarationsSummary extends React.Component {
         paddingBottom: 15,
         borderBottom: 0
       },
+      commentLink: {
+        fontSize: 14,
+        cursor: 'pointer',
+        margin: '14px 0 34px 0',
+        textAlign: 'right'
+      },
       declaration: {
         fontSize: 12,
         marginBottom: 10
       }
     };
 
-    let relationships = [];
-    if(this.props.relationships !== undefined &&
-      this.props.relationships.conflicts !== undefined) {
-      for (let i = 0; i < this.props.relationships.length; i++) {
-        let conflicts = [];
-        for (let j = 0; j < this.props.relationships[i].conflicts.length; j++) {
-          conflicts.push(
+    let projects = [];
+    if(this.props.declarations !== undefined) {
+      this.props.projects.forEach((project, index) => {
+        let declarations = this.props.declarations.filter(declaration => {
+          return declaration.projectId === project.id;
+        }).map(declaration => {
+          return (
             <div
-              key={this.props.relationships[i].conflicts[j].id}
+              key={'decl' + declaration.id}
               style={styles.declaration}
             >
-              <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
-                {findEntityName(this.props.relationships[i].conflicts[j].id)}
-              </span>
-              <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
-                {this.props.relationships[i].conflicts[j].conflict ? 'Conflict' : 'No Conflict'}
-              </span>
-              <span style={merge(styles.comments, {fontStyle: 'italic'})}>
-                {this.props.relationships[i].conflicts[j].comments}
-              </span>
+              <div>
+                <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
+                  {this.findEntityName(declaration.finEntityId)}
+                </span>
+                <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
+                  {ConfigStore.getDeclarationTypeString(declaration.typeCd)}
+                </span>
+                <span style={merge(styles.comments, {fontStyle: 'italic'})}>
+                  {declaration.comments}
+                </span>
+              </div>
+              <div style={styles.commentLink}>
+                <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS (999)</span>
+              </div>
             </div>
           );
-        }
+        });
 
-        let projectName = this.props.relationships[i].name;
-        relationships.push(
+        projects.push(
           <div
-            key={projectName}
-          stylestyle={i === this.props.relationships.length - 1 ? styles.lastrelationship : styles.relationship}
+            key={'proj' + project.id}
+            stylestyle={index === this.props.declarations.length - 1 ? styles.lastrelationship : styles.relationship}
           >
-            <div style={styles.name}>{projectName}</div>
+            <div style={styles.name}>{project.name}</div>
             <div style={styles.titles}>
               <span style={styles.entityName}>FINANCIAL ENTITY</span>
               <span style={styles.conflict}>REPORTER RELATIONSHIP</span>
               <span style={styles.comments}>REPORTER COMMENTS</span>
             </div>
-            {conflicts}
+            {declarations}
           </div>
         );
-      }
+      });
     }
 
     return (
       <div style={merge(styles.container, this.props.style)} >
         <div style={styles.heading}>PROJECT DECLARATIONS</div>
         <div style={styles.body}>
-          {relationships}
+          {projects}
         </div>
       </div>
     );
