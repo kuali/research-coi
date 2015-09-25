@@ -86,7 +86,7 @@ export class Questionnaire extends React.Component {
       });
     }
 
-    let instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE];
+    let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
     let instructions = (
       <Instructions
         text={instructionText}
