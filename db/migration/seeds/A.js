@@ -133,14 +133,14 @@ function insertQuestionnaireAnswer(knex, disclosureId, questionnaireId, question
 }
 
 function insertQuestionnaireQuestion(knex, questionnaireId, text, numberToShow, type, options, subquestion, requiredNumSelections) {
-  question = {
+  let question = {
     order: numberToShow,
     text: text,
     type: type ? type : 'Yes/No',
     validations: ['required'],
     numberToShow: numberToShow
+  };
 
-  }
   if (options) {
     question.options = options;
     question.requiredNumSelections = requiredNumSelections;
@@ -422,7 +422,7 @@ exports.seed = function(knex, Promise) {
     })
     .then(function(questionnaireId) {
       return Promise.all([
-        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Type:', 1, "Multiselect", ['State Government', 'County Government', 'Small Business'],false,1),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Type:', 1, 'Multiselect', ['State Government', 'County Government', 'Small Business'], false, 1),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Is this entity public?', 2, 'Yes/No'),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Does this entity sponsor any', 3),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Describe the entity\'s area of business and your relationship to it:', 4, 'Text area')

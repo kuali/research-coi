@@ -1,7 +1,6 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
-import {AdminActions} from '../../../actions/AdminActions';
 import ReactRouter from 'react-router';
 let Link = ReactRouter.Link;
 
