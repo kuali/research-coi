@@ -63,8 +63,8 @@ export default class Questionnaire extends React.Component {
     };
 
     let instructionText = '';
-    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.ENTITIES_QUESTIONNAIRE]) {
-      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.ENTITIES_QUESTIONNAIRE];
+    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES]) {
+      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
     }
 
     let configSection;
@@ -72,7 +72,7 @@ export default class Questionnaire extends React.Component {
       configSection = (
         <span className="fill">
           <InstructionEditor
-            step={COIConstants.INSTRUCTION_STEP.ENTITIES_QUESTIONNAIRE}
+            step={COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES}
             value={instructionText}
           />
           <QuestionnaireConfig

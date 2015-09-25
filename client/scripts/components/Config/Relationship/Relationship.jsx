@@ -138,11 +138,6 @@ export default class Relationship extends React.Component {
       });
     }
 
-    let instructionText = '';
-    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX]) {
-      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX];
-    }
-
     return (
       <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
         <Sidebar active="relationship" />
@@ -152,10 +147,6 @@ export default class Relationship extends React.Component {
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill">
-              <InstructionEditor
-                step={COIConstants.INSTRUCTION_STEP.RELATIONSHIP_MATRIX}
-                value={instructionText}
-              />
               <Panel title="Relationship Matrix People Configuration">
                 <div style={{padding: '7px 21px 15px 21px'}}>
                   <div style={styles.panelInstructions}>Configure the people types for your relationship matrix:</div>

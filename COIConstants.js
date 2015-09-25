@@ -9,8 +9,7 @@ export let COIConstants = {
   },
   INSTRUCTION_STEP: {
     SCREENING_QUESTIONNAIRE: 'Questionnaire',
-    ENTITIES_QUESTIONNAIRE: 'Financial Entities Questionnaire',
-    RELATIONSHIP_MATRIX: 'Relationship Matrix',
+    FINANCIAL_ENTITIES: 'Financial Entities',
     PROJECT_DECLARATIONS: 'Project Declaration',
     CERTIFICATION: 'Certification'
   },
