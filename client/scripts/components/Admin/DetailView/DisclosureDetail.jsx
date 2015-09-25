@@ -15,12 +15,13 @@ export class DisclosureDetail extends React.Component {
     this.findScreeningQuestion = this.findScreeningQuestion.bind(this);
   }
 
-  makeEntityMap(entities) {
+  makeEntityMap() {
     let result = {};
+    let entities = this.props.disclosure.entities;
     if (entities !== undefined) {
-      for (let i = 0; i < entities.length; i++) {
-        result[entities[i].id] = entities[i].name;
-      }
+      entities.forEach(entity => {
+        result[entity.id] = entity.name;
+      });
     }
 
     return result;
@@ -36,7 +37,7 @@ export class DisclosureDetail extends React.Component {
   }
 
   render() {
-    let nameMap = this.makeEntityMap(this.props.disclosure.entities);
+    let entityNameMap = this.makeEntityMap();
 
     let styles = {
       container: {
@@ -142,10 +143,10 @@ export class DisclosureDetail extends React.Component {
             entities={this.props.disclosure.entities}
             style={styles.entities} />
           <AdminDeclarationsSummary
-            names={nameMap}
-            relationships={this.props.disclosure.projects}
-            id={this.props.disclosure.id}
-            comment={this.props.disclosure.comments ? this.props.disclosure.comments.projects : null} />
+            entityNameMap={entityNameMap}
+            declarations={this.props.disclosure.declarations}
+            projects={this.props.disclosure.associatedProjects}
+            id={this.props.disclosure.id} />
         </div>
       </div>
     );

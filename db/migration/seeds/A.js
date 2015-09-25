@@ -61,15 +61,15 @@ function insertDeclaration(knex, disclosureId, entityId, projectId) {
       fin_entity_id: entityId,
       project_id: projectId,
       type_cd: knex('declaration_type').max('type_cd'),
-      comments: 'The Molecular Disentropization project has no conflict with Apple'
+      comments: 'I need help deciding'
     })
   ]);
 }
 
-function insertProject(knex, userId) {
+function insertProject(knex, userId, title) {
   return knex('project').insert({
     user_id: userId,
-    name: 'Molecular Disentropization #' + randomNumberBetween(1, 200000),
+    name: title,
     type_cd: 1,
     role_cd: 'PI',
     sponsor_cd: '000100'
@@ -211,12 +211,16 @@ function insertDisclosure(knex) {
         insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
         insertEntity(knex, disclosureId, 'Monsanto', 'Crazy company that wants to patent life'),
         insertEntity(knex, disclosureId, 'Xerox', 'This is a company that makes copiers and stuff like that'),
-        insertProject(knex, userId)
+        insertProject(knex, userId, 'Glucose levels in heirloom corn'),
+        insertProject(knex, userId, 'Longevity of car batteries')
       ]).then(function(results) {
         return Promise.all([
           insertDeclaration(knex, disclosureId, results[0], results[3]),
           insertDeclaration(knex, disclosureId, results[1], results[3]),
-          insertDeclaration(knex, disclosureId, results[2], results[3])
+          insertDeclaration(knex, disclosureId, results[2], results[3]),
+          insertDeclaration(knex, disclosureId, results[0], results[4]),
+          insertDeclaration(knex, disclosureId, results[1], results[4]),
+          insertDeclaration(knex, disclosureId, results[2], results[4])
         ]);
       }),
       insertQuestionAnswers(knex, disclosureId)
