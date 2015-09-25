@@ -52,7 +52,8 @@ class _DisclosureStore extends AutoBindingStore {
       declarationView: 0,
       entityStates: {},
       entityInProgress: {
-        active: 1
+        active: 1,
+        answers: []
       },
       potentialRelationship: {
         personCd: '',
@@ -278,6 +279,54 @@ class _DisclosureStore extends AutoBindingStore {
   setCurrentQuestion(newQuestionId) {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = newQuestionId;
+  }
+
+  answerEntityQuestion(question) {
+    let entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
+
+    if (!entity.answers) {
+      entity.answers = [];
+    }
+
+    let existingAnswer = entity.answers.find(answer => {
+      return answer.questionId === question.id;
+    });
+
+    if (existingAnswer) {
+      existingAnswer.answer.value = question.answer.value;
+    }
+    else {
+      let newAnswer = {questionId: question.id, answer: question.answer};
+      entity.answers.push(newAnswer);
+    }
+  }
+
+  answerEntityMultiple(question) {
+    let entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
+    if (!entity.answers) {
+      entity.answers = [];
+    }
+    let existingAnswer = entity.answers.find(answer => {
+      return answer.questionId === question.id;
+    });
+    if (existingAnswer) {
+      if (question.checked) {
+        if (!existingAnswer.answer.value.includes(question.answer.value)) {
+          existingAnswer.answer.value.push(question.answer.value);
+        }
+      } else {
+        let index = existingAnswer.answer.value.indexOf(question.answer.value);
+        if (index > -1) {
+          existingAnswer.answer.value.splice(index, 1);
+        }
+      }
+    }
+    else {
+      let answers = [];
+      answers.push(question.answer.value);
+      let newAnswer = {questionId: question.id, answer: {value: answers}};
+      entity.answers.push(newAnswer);
+    }
   }
 
   nextStep() {
@@ -510,7 +559,8 @@ class _DisclosureStore extends AutoBindingStore {
     else {
       this.applicationState.newEntityFormStep = -1;
       this.applicationState.entityInProgress = {
-        active: 1
+        active: 1,
+        answers: []
       };
     }
   }
@@ -532,7 +582,8 @@ class _DisclosureStore extends AutoBindingStore {
         this.entities.push(res.body);
 
         this.applicationState.entityInProgress = {
-          active: 1
+          active: 1,
+          answers: []
         };
 
         this.applicationState.newEntityFormStep = -1;
@@ -733,7 +784,8 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = 1;
     this.applicationState.entityInProgress = {
-      active: 1
+      active: 1,
+      answers: []
     };
     this.applicationState.entityStates = {};
   }
@@ -797,20 +849,33 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityInformationStepErrors() {
     const storeState = this.getState();
-    let errors = {};
+    let errors = [];
 
-    if (storeState.applicationState.entityInProgress.type === undefined || storeState.applicationState.entityInProgress.type.length === 0) {
-      errors.type = 'Required Field';
-    }
-    if (storeState.applicationState.entityInProgress.isPublic === undefined || storeState.applicationState.entityInProgress.isPublic.length === 0) {
-      errors.isPublic = 'Required Field';
-    }
-    if (storeState.applicationState.entityInProgress.isSponsor === undefined || storeState.applicationState.entityInProgress.isSponsor.length === 0) {
-      errors.isSponsor = 'Required Field';
-    }
-    if (storeState.applicationState.entityInProgress.description === undefined || storeState.applicationState.entityInProgress.description.length === 0) {
-      errors.description = 'Required Field';
-    }
+
+
+    window.config.questions.entities.forEach(question=>{
+
+      let answer = storeState.applicationState.entityInProgress.answers.find(a => {
+        return a.questionId === question.id;
+      });
+
+      let value;
+      if (answer) {
+        value = answer.answer.value;
+      }
+
+      if (question.question.type === COIConstants.QUESTION_TYPE.MULTISELECT && question.question.requiredNumSelections > 1) {
+        if(value instanceof Array) {
+          if (value.length < question.question.requiredNumSelections) {
+            errors.push(question.id);
+          }
+        } else {
+          errors.push(question.id);
+        }
+      } else if (!value) {
+        errors.push(question.id);
+      }
+    });
 
     return errors;
   }

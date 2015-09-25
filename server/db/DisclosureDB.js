@@ -1,5 +1,4 @@
 /*eslint camelcase:0 */
-import {camelizeJson} from './JsonUtils';
 import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
 
 const ONE_DAY = 1000 * 60 * 60 * 24;
@@ -41,34 +40,54 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callbac
   .insert({
     disclosure_id: disclosureId,
     active: financialEntity.active,
-    is_public: financialEntity.isPublic,
-    type_cd: financialEntity.type,
-    is_sponsor: financialEntity.isSponsor,
     name: financialEntity.name,
     description: financialEntity.description
   })
   .then(id => {
     financialEntity.id = id[0];
-    let relationshipQueries = financialEntity.relationships.map(relationship => {
+    let queries = [];
+    financialEntity.relationships.forEach(relationship => {
       relationship.finEntityId = id[0];
-      return knex('relationship')
-      .insert({
-        fin_entity_id: id[0],
-        relationship_cd: relationship.relationshipCd,
-        person_cd: relationship.personCd,
-        type_cd: !relationship.typeCd ? null : relationship.typeCd,
-        amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-        comments: relationship.comments
-      })
-      .then(relationshipId=>{
-        relationship.id = relationshipId[0];
-      })
-      .catch(function(err) {
-        callback(err);
-      });
+      queries.push(
+        knex('relationship')
+        .insert({
+          fin_entity_id: id[0],
+          relationship_cd: relationship.relationshipCd,
+          person_cd: relationship.personCd,
+          type_cd: !relationship.typeCd ? null : relationship.typeCd,
+          amount_cd: !relationship.amountCd ? null : relationship.amountCd,
+          comments: relationship.comments
+        })
+        .then(relationshipId=>{
+          relationship.id = relationshipId[0];
+        })
+        .catch(function(err) {
+          callback(err);
+        })
+      );
     });
 
-    Promise.all(relationshipQueries)
+    financialEntity.answers.forEach(answer=>{
+      queries.push(
+        knex('questionnaire_answer').insert({
+          question_id: answer.questionId,
+          answer: JSON.stringify(answer.answer)
+        }).then(result =>{
+          answer.id = result[0];
+          return knex('fin_entity_answer').insert({
+            fin_entity_id: id[0],
+            questionnaire_answer_id: result[0]})
+          .catch(err=>{
+            callback(err);
+          });
+        })
+        .catch(err=>{
+          callback(err);
+        })
+      );
+    });
+
+    Promise.all(queries)
     .then(()=>{
       callback(undefined, financialEntity);
     })
@@ -91,34 +110,70 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, ca
   .update({
     disclosure_id: disclosureId,
     active: financialEntity.active,
-    is_public: financialEntity.isPublic,
-    type_cd: financialEntity.type,
-    is_sponsor: financialEntity.isSponsor,
     name: financialEntity.name,
     description: financialEntity.description
   }).then(()=>{
-    let relationshipQueries = financialEntity.relationships.map(relationship => {
+    let queries = [];
+
+    financialEntity.relationships.map(relationship => {
       if (!relationship.id) {
         relationship.finEntityId = financialEntity.id;
-        return knex('relationship')
-        .insert({
-          fin_entity_id: financialEntity.id,
-          relationship_cd: relationship.relationshipCd,
-          person_cd: relationship.personCd,
-          type_cd: !relationship.typeCd ? null : relationship.typeCd,
-          amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-          comments: relationship.comments
-        })
-        .then(relationshipId=>{
-          relationship.id = relationshipId[0];
-        })
-        .catch(function(err) {
-          callback(err);
-        });
+        queries.push(
+          knex('relationship')
+          .insert({
+            fin_entity_id: financialEntity.id,
+            relationship_cd: relationship.relationshipCd,
+            person_cd: relationship.personCd,
+            type_cd: !relationship.typeCd ? null : relationship.typeCd,
+            amount_cd: !relationship.amountCd ? null : relationship.amountCd,
+            comments: relationship.comments
+          })
+          .then(relationshipId=>{
+            relationship.id = relationshipId[0];
+          })
+          .catch(function(err) {
+            callback(err);
+          })
+        );
       }
     });
 
-    Promise.all(relationshipQueries)
+
+    financialEntity.answers.forEach(answer=>{
+      if (answer.id) {
+        queries.push(
+          knex('questionnaire_answer').update({
+            question_id: answer.questionId,
+            answer: JSON.stringify(answer.answer)
+          })
+          .where('id', answer.id)
+          .catch(err=>{
+            callback(err);
+          })
+        );
+      } else {
+        queries.push(
+          knex('questionnaire_answer').insert({
+            question_id: answer.questionId,
+            answer: JSON.stringify(answer.answer)
+          }).then(result =>{
+            answer.id = result[0];
+            return knex('fin_entity_answer').insert({
+              fin_entity_id: financialEntity.id,
+              questionnaire_answer_id: result[0]})
+            .catch(err=>{
+              callback(err);
+            });
+          })
+          .catch(err=>{
+            callback(err);
+          })
+        );
+      }
+    });
+
+
+    Promise.all(queries)
     .then(()=>{
       callback(undefined, financialEntity);
     })
@@ -217,7 +272,7 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
     knex.select('de.id', 'de.type_cd', 'de.title', 'de.disposition_type_cd', 'de.status_cd', 'de.submitted_by', 'de.submitted_date', 'de.revised_date', 'de.start_date', 'de.expired_date', 'de.last_review_date')
       .from('disclosure as de')
       .where('id', disclosureId),
-    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.is_public as isPublic', 'e.type_cd as type', 'e.is_sponsor as isSponsor', 'e.name', 'e.description')
+    knex.select('e.id', 'e.disclosure_id', 'e.active', 'e.name', 'e.description')
       .from('fin_entity as e')
       .where('disclosure_id', disclosureId),
     knex.select('qa.id as id', 'qa.question_id as questionId', 'qa.answer as answer')
@@ -241,6 +296,8 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
+
+    Promise.all([
     knex.select('r.id', 'r.fin_entity_id', 'r.relationship_cd as relationshipCd', 'rc.description as relationship', 'r.person_cd as personCd', 'rp.description as person', 'r.type_cd as typeCd', 'rt.description as type', 'r.amount_cd as amountCd', 'ra.description as amount', 'r.comments')
       .from('relationship as r')
       .innerJoin('relationship_person_type as rp', 'r.person_cd', 'rp.type_cd')
@@ -254,12 +311,32 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
             return relationship.fin_entity_id === entity.id;
           });
         });
-
-        callback(undefined, camelizeJson(disclosure));
       })
       .catch(err => {
         callback(err);
+      }),
+    knex.select('qa.question_id as questionId', 'qa.answer as answer', 'fea.fin_entity_id as finEntityId')
+    .from('questionnaire_answer as qa' )
+    .innerJoin('fin_entity_answer as fea', 'fea.questionnaire_answer_id', 'qa.id')
+    .whereIn('fea.fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
+    .then(answers=>{
+      disclosure.entities.forEach(entity => {
+        entity.answers = answers.filter(answer => {
+          return answer.finEntityId === entity.id;
+        }).map(answer=>{
+          answer.answer = JSON.parse(answer.answer);
+          return answer;
+        });
       });
+    })
+    .catch(err => {
+      callback(err);
+    })
+    ]).then(()=>{
+      callback(undefined, disclosure);
+    }).catch(err=>{
+      callback(err);
+    });
   })
   .catch(err => {
     callback(err);

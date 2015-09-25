@@ -1,46 +1,32 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {SponsorField} from './SponsorField';
-import {TypeField} from './TypeField';
-import {PublicField} from './PublicField';
-import {DescriptionField} from './DescriptionField';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
+import {Question} from './Question';
+import {COIConstants} from '../../../../../COIConstants';
 
-export class EntityFormInformationStep extends ResponsiveComponent {
+export class EntityFormInformationStep extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
-    this.setType = this.setType.bind(this);
-    this.setPublic = this.setPublic.bind(this);
-    this.setSponsor = this.setSponsor.bind(this);
-    this.setDescription = this.setDescription.bind(this);
+    this.getAnswer = this.getAnswer.bind(this);
   }
 
-  setType(newType) {
-    DisclosureActions.setEntityType(newType, this.props.id);
+  getAnswer(id) {
+    let answer = this.props.answers.find(a => {
+      return a.questionId === id;
+    });
+    if (answer) {
+      return answer.answer.value;
+    }
   }
 
-  setPublic(newValue) {
-    DisclosureActions.setEntityPublic(newValue, this.props.id);
-  }
+  render() {
+    let validationErrors;
+    if (this.props.validating) {
+      validationErrors = DisclosureStore.entityInformationStepErrors();
+    }
 
-  setSponsor(newValue) {
-    DisclosureActions.setEntityIsSponsor(newValue, this.props.id);
-  }
-
-  setDescription(newDescription) {
-    DisclosureActions.setEntityDescription(newDescription, this.props.id);
-  }
-
-  renderMobile() {}
-
-  renderDesktop() {
-    let validationErrors = DisclosureStore.entityInformationStepErrors();
-
-    let desktopStyles = {
+    let styles = {
       container: {
       },
       title: {
@@ -48,28 +34,17 @@ export class EntityFormInformationStep extends ResponsiveComponent {
         fontSize: 17,
         color: '#1481A3'
       },
-      left: {
+      column: {
         width: '33%',
         display: 'inline-block',
         verticalAlign: 'top'
       },
-      right: {
+      longColumn: {
         width: '66%',
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      middle: {
-        width: '100%',
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      innerRight: {
-        width: '50%',
         display: 'inline-block',
         verticalAlign: 'top'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let heading = null;
     if (!this.props.update) {
@@ -85,65 +60,37 @@ export class EntityFormInformationStep extends ResponsiveComponent {
       }
     }
 
-    let type = this.props.type;
-    let isPublic = this.props.isPublic;
-    let description = this.props.description;
 
-    let sponsorValue;
-    if (this.props.isSponsor === 1) {
-      sponsorValue = 'Yes';
-    }
-    else if (this.props.isSponsor === undefined) {
-      sponsorValue = 'Not Set';
-    }
-    else {
-      sponsorValue = 'No';
-    }
+    let questions = window.config.questions.entities.sort((a, b)=>{
+      return a.question.order - b.question.order;
+    }).map((question, index)=>{
+      let columnStyle;
+      if (question.question.type === COIConstants.QUESTION_TYPE.TEXTAREA) {
+        columnStyle = styles.longColumn;
+      } else {
+        columnStyle = styles.column;
+      }
+      return (
+        <div style={columnStyle}>
+          <Question
+          readonly={this.props.readonly}
+          entityId={this.props.id}
+          id={question.id}
+          answer={this.getAnswer(question.id)}
+          question={question}
+          disclosureid={this.props.disclosureid}
+          key={index}
+          invalid={validationErrors ? validationErrors.includes(question.id) : false}
+          />
+        </div>
+      );
+    });
 
     return (
       <span style={merge(styles.container, this.props.style)}>
         {heading}
-
-        <div style={{marginTop: this.props.update ? 0 : 20}}>
-          <span style={styles.left}>
-            <div style={{marginBottom: 20}}>
-              <TypeField
-                value={type}
-                options = {this.props.entityTypes}
-                readonly={this.props.readonly}
-                onChange={this.setType}
-                invalid={this.props.validating && validationErrors.type}
-              />
-            </div>
-            <div>
-              <SponsorField
-                value={sponsorValue}
-                readonly={this.props.readonly}
-                onChange={this.setSponsor}
-                invalid={this.props.validating && validationErrors.isSponsor}
-              />
-            </div>
-          </span>
-          <span style={styles.right}>
-            <div style={{marginBottom: 20}}>
-              <span style={styles.middle}>
-                <PublicField
-                  value={isPublic}
-                  readonly={this.props.readonly}
-                  onChange={this.setPublic}
-                  invalid={this.props.validating && validationErrors.isPublic}
-                />
-              </span>
-            </div>
-            <div>
-              <DescriptionField
-                value={description}
-                readonly={this.props.readonly}
-                onChange={this.setDescription}
-                invalid={this.props.validating && validationErrors.description}
-              />
-            </div>
-          </span>
+        <div>
+          {questions}
         </div>
       </span>
     );

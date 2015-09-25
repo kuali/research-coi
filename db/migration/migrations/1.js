@@ -31,18 +31,10 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.dateTime('approved_date');
     table.engine('InnoDB');
   })
-  .createTable('fin_entity_type', function(table) {
-    table.integer('type_cd').notNullable().primary();
-    table.string('description', 50).notNullable();
-    table.engine('InnoDB');
-  })
   .createTable('fin_entity', function(table) {
     table.increments('id').notNullable();
     table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
     table.boolean('active');
-    table.boolean('is_public');
-    table.integer('type_cd').references('type_cd').inTable('fin_entity_type');
-    table.boolean('is_sponsor');
     table.string('name', 200);
     table.string('description', 200);
     table.engine('InnoDB');
@@ -150,6 +142,12 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
     table.integer('questionnaire_answer_id').unsigned().notNullable().index().references('id').inTable('questionnaire_answer');
     table.unique(['disclosure_id', 'questionnaire_answer_id']);
+  })
+  .createTable('fin_entity_answer', function(table) {
+    table.increments('id').notNullable();
+    table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
+    table.integer('questionnaire_answer_id').unsigned().notNullable().index().references('id').inTable('questionnaire_answer');
+    table.unique(['fin_entity_id', 'questionnaire_answer_id']);
   })
   .createTable('travel_log_entry', function(table) {
     table.increments('id').notNullable();

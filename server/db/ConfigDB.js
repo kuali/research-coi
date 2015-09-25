@@ -119,7 +119,6 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query = knex;
   }
   Promise.all([
-    query.select('*').from('fin_entity_type'),
     query.select('*').from('relationship_category_type'),
     query.select('*').from('relationship_type').where('active', true),
     query.select('*').from('relationship_amount_type').where('active', true),
@@ -143,38 +142,37 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     query.select('*').from('project_role')
   ])
   .then(result=>{
-    config.entityTypes = result[0];
-    config.matrixTypes = result[1];
+    config.matrixTypes = result[0];
     config.matrixTypes.map(type => {
-      type.typeOptions = result[2].filter(relationType =>{
+      type.typeOptions = result[1].filter(relationType =>{
         return relationType.relationship_cd === type.type_cd;
       });
-      type.amountOptions = result[3].filter(amountType =>{
+      type.amountOptions = result[2].filter(amountType =>{
         return amountType.relationship_cd === type.type_cd;
       });
       return type;
     });
-    config.relationshipPersonTypes = result[4];
-    config.declarationTypes = result[5];
-    config.disclosureTypes = result[6];
-    config.notifications = result[7];
+    config.relationshipPersonTypes = result[3];
+    config.declarationTypes = result[4];
+    config.disclosureTypes = result[5];
+    config.notifications = result[6];
     config.questions = {};
-    config.questions.screening = result[8] ? result[8].map(question=>{
+    config.questions.screening = result[7] ? result[7].map(question=>{
       question.question = JSON.parse(question.question);
       return question;
     }) : [];
-    config.questions.entities = result[9] ? result[9].map(question=>{
+    config.questions.entities = result[8] ? result[8].map(question=>{
       question.question = JSON.parse(question.question);
       return question;
     }) : [];
 
-    config.disclosureStatus = result[11];
-    config.projectTypes = result[12];
-    config.projectRoleTypes = result[13];
+    config.disclosureStatus = result[10];
+    config.projectTypes = result[11];
+    config.projectRoleTypes = result[12];
 
     config = camelizeJson(config);
 
-    config.general = JSON.parse(result[10][0].config);
+    config.general = JSON.parse(result[9][0].config);
     callback(undefined, config);
   })
   .catch(function(err) {
