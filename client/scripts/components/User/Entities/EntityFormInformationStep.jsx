@@ -23,7 +23,7 @@ export class EntityFormInformationStep extends React.Component {
   render() {
     let validationErrors;
     if (this.props.validating) {
-      validationErrors = DisclosureStore.entityInformationStepErrors();
+      validationErrors = DisclosureStore.entityInformationStepErrors(this.props.id);
     }
 
     let styles = {

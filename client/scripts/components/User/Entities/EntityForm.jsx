@@ -30,7 +30,7 @@ export class EntityForm extends ResponsiveComponent {
       case 0:
         return DisclosureStore.entityNameStepComplete();
       case 1:
-        return DisclosureStore.entityInformationStepComplete();
+        return DisclosureStore.entityInformationStepComplete(this.props.entity.id);
       case 2:
         return DisclosureStore.entityRelationshipStepComplete();
     }
@@ -69,7 +69,7 @@ export class EntityForm extends ResponsiveComponent {
   }
 
   submit() {
-    if (DisclosureStore.entityIsSubmittable()) {
+    if (DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id)) {
       DisclosureActions.turnOffValidation(this.props.step);
       DisclosureActions.saveInProgressEntity(this.props.entity);
     }
@@ -83,13 +83,16 @@ export class EntityForm extends ResponsiveComponent {
   }
 
   done() {
-    if (!this.props.editing || DisclosureStore.entityIsSubmittable(this.props.entity.id)) {
+    let entityRelationshipsAreSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id);
+    let entityInformationIsSubmittable = DisclosureStore.entityInformationStepComplete(this.props.entity.id);
+    if (!this.props.editing || (entityRelationshipsAreSubmittable && entityInformationIsSubmittable)) {
       DisclosureActions.entityFormClosed(this.props.entity);
       DisclosureActions.turnOffValidation(1);
       DisclosureActions.turnOffValidation(2);
     }
-    else {
+    else if (!entityInformationIsSubmittable) {
       DisclosureActions.turnOnValidation(1);
+    } else if (!entityRelationshipsAreSubmittable) {
       DisclosureActions.turnOnValidation(2);
     }
   }
@@ -177,7 +180,8 @@ export class EntityForm extends ResponsiveComponent {
         </div>
       );
 
-      let doneButtonStyle = DisclosureStore.entityIsSubmittable(entity.id) ? styles.button : merge(styles.button, styles.disabled);
+      let entityIsSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id) && DisclosureStore.entityInformationStepComplete(this.props.entity.id);
+      let doneButtonStyle = entityIsSubmittable ? styles.button : merge(styles.button, styles.disabled);
       if (this.props.editing) {
         buttons = (
           <span>

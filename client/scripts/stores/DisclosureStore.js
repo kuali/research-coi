@@ -20,7 +20,7 @@ class _DisclosureStore extends AutoBindingStore {
       entityInformationStepComplete: this.entityInformationStepComplete,
       entityRelationshipStepErrors: this.entityRelationshipStepErrors,
       entityRelationshipStepComplete: this.entityRelationshipStepComplete,
-      entityIsSubmittable: this.entityIsSubmittable
+      entityRelationshipsAreSubmittable: this.entityRelationshipsAreSubmittable
     });
 
     // initialize state here
@@ -847,15 +847,24 @@ class _DisclosureStore extends AutoBindingStore {
     return true;
   }
 
-  entityInformationStepErrors() {
-    const storeState = this.getState();
+  entityInformationStepErrors(entityId) {
     let errors = [];
 
+    const storeState = this.getState();
+    let entity;
+    if (entityId) {
+      entity = storeState.entities.find(ent => {
+        return ent.id === entityId;
+      });
+    }
+    else {
+      entity = storeState.applicationState.entityInProgress;
+    }
 
 
     window.config.questions.entities.forEach(question=>{
 
-      let answer = storeState.applicationState.entityInProgress.answers.find(a => {
+      let answer = entity.answers.find(a => {
         return a.questionId === question.id;
       });
 
@@ -880,8 +889,8 @@ class _DisclosureStore extends AutoBindingStore {
     return errors;
   }
 
-  entityInformationStepComplete() {
-    let errors = this.entityInformationStepErrors();
+  entityInformationStepComplete(entityId) {
+    let errors = this.entityInformationStepErrors(entityId);
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -938,7 +947,7 @@ class _DisclosureStore extends AutoBindingStore {
     return true;
   }
 
-  entityIsSubmittable(id) {
+  entityRelationshipsAreSubmittable(id) {
     const storeState = this.getState();
     let entity;
     if (id) {
