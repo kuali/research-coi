@@ -74,7 +74,9 @@ export class DisclosureDetail extends React.Component {
       }
     };
 
-    let screeningQuestions = this.props.config.questions.screening.sort((a, b) => {
+    let screeningQuestions = this.props.config.questions.screening.filter(question => {
+      return question.active !== 0;
+    }).sort((a, b) => {
       let aParent, bParent;
       if (a.parent) {
         aParent = this.findScreeningQuestion(a.parent);
@@ -110,6 +112,18 @@ export class DisclosureDetail extends React.Component {
         type: question.question.type
       };
     });
+
+    let entityQuestions = this.props.config.questions.entities.filter(question => {
+      return question.active !== 0;
+    }).sort((a, b) => {
+      return a.question.order - b.question.order;
+    }).map(question => {
+      return {
+        id: question.id,
+        text: question.question.text,
+        type: question.question.type
+      };
+    });
     let screeningAnswers = {};
     this.props.disclosure.answers.forEach(answer => {
       screeningAnswers[answer.questionId] = answer.answer.value;
@@ -140,6 +154,7 @@ export class DisclosureDetail extends React.Component {
             style={styles.questionnaire}
           />
           <AdminEntitiesSummary
+            questions={entityQuestions}
             entities={this.props.disclosure.entities}
             style={styles.entities} />
           <AdminDeclarationsSummary

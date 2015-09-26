@@ -314,7 +314,7 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
         .then(relationships => {
           disclosure.entities.forEach(entity => {
             entity.relationships = relationships.filter(relationship => {
-              return relationship.fin_entity_id === entity.id;
+              return relationship.finEntityId === entity.id;
             });
           });
         })

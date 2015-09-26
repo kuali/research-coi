@@ -1,10 +1,65 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
-import {EntityRelationshipSummary} from './EntityRelationshipSummary';
+import EntityRelationshipSummary from '../../EntityRelationshipSummary';
+import {COIConstants} from '../../../../../COIConstants';
+import {formatDate} from '../../../formatDate';
 
 export class AdminEntitiesSummary extends React.Component {
   constructor() {
     super();
+
+    this.getQuestionAnswer = this.getQuestionAnswer.bind(this);
+  }
+
+  getQuestionAnswer(questionId, entity, type) {
+    let theAnswer = entity.answers.find(answer => {
+      return answer.questionId === questionId;
+    });
+    if (!theAnswer) {
+      return '';
+    }
+    else {
+      switch (type) {
+        case COIConstants.QUESTION_TYPE.DATE:
+          if (isNaN(theAnswer.answer.value)) {
+            return theAnswer.answer.value;
+          }
+          else {
+            return formatDate(theAnswer.answer.value);
+          }
+          break;
+        case COIConstants.QUESTION_TYPE.TEXTAREA:
+          return (
+            <div>
+              {theAnswer.answer.value}
+            </div>
+          );
+        case COIConstants.QUESTION_TYPE.MULTISELECT:
+          if (Array.isArray(theAnswer.answer.value)) {
+            let answers = theAnswer.answer.value.map((answer, index, array) => {
+              let answerToShow = answer;
+              if (index !== array.length - 1) {
+                answerToShow += ', ';
+              }
+              return (
+                <span key={'ans' + questionId + index}>{answerToShow}</span>
+              );
+            });
+
+            return (
+              <div>
+                {answers}
+              </div>
+            );
+          }
+          else {
+            return theAnswer.answer.value;
+          }
+          break;
+        default:
+          return theAnswer.answer.value;
+      }
+    }
   }
 
   render() {
@@ -45,15 +100,6 @@ export class AdminEntitiesSummary extends React.Component {
         marginLeft: 4,
         display: 'inline-block'
       },
-      descriptionLabel: {
-        fontWeight: 'bold',
-        marginTop: 10,
-        marginBottom: 2
-      },
-      relationshipDescription: {
-        fontSize: 11,
-        fontStyle: 'italic'
-      },
       relationshipsLabel: {
         fontSize: 15,
         marginBottom: 8
@@ -70,60 +116,65 @@ export class AdminEntitiesSummary extends React.Component {
       lastEntity: {
         padding: '20px 0'
       },
+      commentLink: {
+        fontSize: 14,
+        cursor: 'pointer',
+        margin: '25px 0 34px 0',
+        textAlign: 'right'
+      },
       relationshipSummary: {
         marginBottom: 10
       }
     };
 
-    let entities = [];
+    let entities;
     if(this.props.entities !== undefined) {
-      for (let i = 0; i < this.props.entities.length; i++) {
-        let relationships = [];
-        for (let j = 0; j < this.props.entities[i].relationships.length; j++) {
-          relationships.push(
+      entities = this.props.entities.map((entity, index) => {
+        let relationships = entity.relationships.map(relationship => {
+          return (
             <EntityRelationshipSummary
-              key={i + ':' + j}
+              key={'rel' + relationship.id}
               style={styles.relationshipSummary}
-              relationship={this.props.entities[i].relationships[j]}
+              person={relationship.person}
+              relationship={relationship.relationship}
+              type={relationship.type}
+              amount={relationship.amount}
+              comment={relationship.comments}
+              readonly={true}
             />
           );
-        }
+        });
 
-        entities.push(
+        let fields = this.props.questions.map(question => {
+          return (
+            <div key={'qa' + question.id} style={{marginBottom: 8}}>
+              <span style={styles.fieldLabel}>{question.text}:</span>
+              <span style={styles.fieldValue}>{this.getQuestionAnswer(question.id, entity, question.type)}</span>
+            </div>
+          );
+        });
+        return (
           <div
-            key={i}
-            style={(i === this.props.entities.length - 1) ? styles.lastEntity : styles.entity}
+            key={'ent' + entity.id}
+            style={(index === this.props.entities.length - 1) ? styles.lastEntity : styles.entity}
           >
-          <div style={styles.name}>{this.props.entities[i].name}</div>
-          <div>
-            <span style={styles.left}>
-              <div>
-                <span style={styles.fieldLabel}>Status:</span>
-                <span style={styles.fieldValue}>{this.props.entities[i].status}</span>
-              </div>
-              <div>
-                <span style={styles.fieldLabel}>Public/Private:</span>
-                <span style={styles.fieldValue}>{this.props.entities[i].public ? 'Public' : 'Private'}</span>
-              </div>
-              <div>
-                <span style={styles.fieldLabel}>Type:</span>
-                <span style={styles.fieldValue}>{this.props.entities[i].type}</span>
-              </div>
-              <div>
-                <span style={styles.fieldLabel}>Sponsor Research:</span>
-                <span style={styles.fieldValue}>{this.props.entities[i].sponsorResearch ? 'YES' : 'NO'}</span>
-              </div>
-              <div style={styles.descriptionLabel}>Description of Relationship</div>
-              <div style={styles.relationshipDescription}>{this.props.entities[i].description}</div>
-            </span>
-            <span style={styles.relations}>
-              <div style={styles.relationshipsLabel}>Relationship(s):</div>
-              {relationships}
-            </span>
+            <div style={styles.name}>{entity.name}</div>
+            <div>
+              <span style={styles.left}>
+                {fields}
+              </span>
+              <span style={styles.relations}>
+                <div style={styles.relationshipsLabel}>Relationship(s):</div>
+                {relationships}
+
+                <div style={styles.commentLink}>
+                  <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS (999)</span>
+                </div>
+              </span>
+            </div>
           </div>
-        </div>
-      );
-      }
+        );
+      });
     }
 
     return (

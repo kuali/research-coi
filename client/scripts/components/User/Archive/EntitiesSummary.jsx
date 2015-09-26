@@ -1,18 +1,14 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {EntityRelationshipSummary} from './EntityRelationshipSummary';
+import EntityRelationshipSummary from '../../EntityRelationshipSummary';
 
-export class EntitiesSummary extends ResponsiveComponent {
+export class EntitiesSummary extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         border: '1px solid #999',
         boxShadow: '0 0 15px #E6E6E6',
@@ -91,7 +87,6 @@ export class EntitiesSummary extends ResponsiveComponent {
         marginBottom: 10
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let entities = [];
     if(this.props.entities !== undefined) {
@@ -102,7 +97,12 @@ export class EntitiesSummary extends ResponsiveComponent {
             <EntityRelationshipSummary
               key={i + ':' + j}
               style={styles.relationshipSummary}
-              relationship={this.props.entities[i].relationships[j]}
+              person={this.props.entities[i].relationships[j].person}
+              relationship={this.props.entities[i].relationships[j].relationship}
+              type={this.props.entities[i].relationships[j].type}
+              amount={this.props.entities[i].relationships[j].amount}
+              comment={this.props.entities[i].relationships[j].comments}
+              readonly={true}
             />
           );
         }
