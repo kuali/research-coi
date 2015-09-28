@@ -1,12 +1,11 @@
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
+import React from 'react/addons';
+import {merge} from '../merge';
+import {DisclosureActions} from '../actions/DisclosureActions';
 
-export class RelationshipSummary extends ResponsiveComponent {
+export default class EntityRelationshipSummary extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
+
     this.remove = this.remove.bind(this);
   }
 
@@ -14,32 +13,40 @@ export class RelationshipSummary extends ResponsiveComponent {
     DisclosureActions.removeEntityRelationship(this.props.id, this.props.entityId);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
-        backgroundColor: '#1481A3',
-        borderRadius: 10,
-        padding: 13,
         color: 'white',
+        backgroundColor: window.config.colors.three,
+        padding: 13,
+        borderRadius: 10,
         fontSize: 15
       },
       removeButton: {
         'float': 'right',
         backgroundColor: 'transparent',
         border: 0,
-        color: 'white'
+        color: 'white',
+        fontWeight: 'normal'
+      },
+      summary: {
+        marginBottom: 7,
+        fontWeight: 'bold'
+      },
+      commentLabel: {
+        marginBottom: 5
+      },
+      commentValue: {
+        fontSize: 14
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let commentSection;
     if (this.props.comment) {
       commentSection = (
         <div>
-          <div style={{marginBottom: 5}}>Comments:</div>
-          <div style={{fontSize: 14}}>
+          <div style={styles.commentLabel}>Comments:</div>
+          <div style={styles.commentValue}>
             {this.props.comment}
           </div>
         </div>
@@ -55,9 +62,9 @@ export class RelationshipSummary extends ResponsiveComponent {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <div style={{marginBottom: 7}}>
+        <div style={styles.summary}>
           {removeButton}
-          <span style={{fontWeight: 'bold'}}>
+          <span>
             {this.props.person + ' • '}
             {this.props.relationship + ' • '}
             {this.props.type ? this.props.type + ' • ' : ''}

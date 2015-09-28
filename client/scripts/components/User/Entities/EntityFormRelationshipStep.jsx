@@ -2,7 +2,7 @@ import React from 'react/addons';  //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {ToggleSet} from './ToggleSet';
-import {RelationshipSummary} from './RelationshipSummary';
+import EntityRelationshipSummary from '../../EntityRelationshipSummary';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {KButton} from '../../KButton';
@@ -220,7 +220,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     if (this.props.relations) {
       relationshipSummaries = this.props.relations.map(relation => {
         return (
-          <RelationshipSummary
+          <EntityRelationshipSummary
             readonly={this.props.readonly}
             entityId={this.props.id}
             style={{marginBottom: 20}}
