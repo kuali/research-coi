@@ -19,7 +19,7 @@ export default class CommentPanel extends React.Component {
         color: 'white',
         padding: '10px 20px',
         marginBottom: 20,
-        boxShadow: '0px 20px 53px black',
+        boxShadow: '22px 50px 100px black',
         zIndex: 99,
         position: 'relative',
         backgroundColor: 'black'

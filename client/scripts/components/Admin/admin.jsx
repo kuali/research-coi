@@ -15,7 +15,8 @@ class App extends SizeAwareComponent {
   render() {
     let styles = {
       container: {
-        height: '100%'
+        height: '100%',
+        overflowX: 'hidden'
       },
       header: {
         boxShadow: '0 1px 6px #D1D1D1',
