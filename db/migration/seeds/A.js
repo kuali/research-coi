@@ -66,13 +66,29 @@ function insertDeclaration(knex, disclosureId, entityId, projectId) {
   ]);
 }
 
-function insertProject(knex, userId, title) {
+function insertProject(knex, title) {
+  var startDate = new Date(new Date().getTime() - randomNumberBetween(1, 7606400000));
+  var endDate = new Date(startDate.getTime() + 1000000000);
+
   return knex('project').insert({
-    user_id: userId,
-    name: title,
+    title: title,
     type_cd: 1,
-    role_cd: 'PI',
-    sponsor_cd: '000100'
+    source_system: 'COI-SEED',
+    source_identifier: randomNumberBetween(1, 9999999999),
+    source_status: '1',
+    sponsor_cd: '000010',
+    sponsor_name: 'Air Force',
+    start_date: startDate,
+    end_date: endDate
+  });
+}
+
+function insertProjectPerson(knex, userId, role, projectId) {
+  return knex('project_person').insert({
+    project_id: projectId,
+    person_id: userId,
+    role_cd: role,
+    active: true
   });
 }
 
@@ -211,8 +227,8 @@ function insertDisclosure(knex) {
         insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
         insertEntity(knex, disclosureId, 'Monsanto', 'Crazy company that wants to patent life'),
         insertEntity(knex, disclosureId, 'Xerox', 'This is a company that makes copiers and stuff like that'),
-        insertProject(knex, userId, 'Glucose levels in heirloom corn'),
-        insertProject(knex, userId, 'Longevity of car batteries')
+        insertProject(knex, 'Glucose levels in heirloom corn'),
+        insertProject(knex, 'Longevity of car batteries')
       ]).then(function(results) {
         return Promise.all([
           insertDeclaration(knex, disclosureId, results[0], results[3]),
@@ -220,7 +236,9 @@ function insertDisclosure(knex) {
           insertDeclaration(knex, disclosureId, results[2], results[3]),
           insertDeclaration(knex, disclosureId, results[0], results[4]),
           insertDeclaration(knex, disclosureId, results[1], results[4]),
-          insertDeclaration(knex, disclosureId, results[2], results[4])
+          insertDeclaration(knex, disclosureId, results[2], results[4]),
+          insertProjectPerson(knex, userId, 'PI', results[3]),
+          insertProjectPerson(knex, 123456, 'KP', results[3])
         ]);
       }),
       insertQuestionAnswers(knex, disclosureId)
@@ -305,15 +323,19 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     console.log('Seed - project_role');
     return Promise.all([
-      knex('project_role').insert({role_cd: 'PI', description: 'Principal Investigator'})
+      knex('project_role').insert({role_cd: 'PI', description: 'Principal Investigator'}),
+      knex('project_role').insert({role_cd: 'COI', description: 'Co-Investigator'}),
+      knex('project_role').insert({role_cd: 'KP', description: 'Key Person'}),
+      knex('project_role').insert({role_cd: 'MPI', description: 'Multiple Principal Investigator'})
     ]);
   }).then(function() {
     console.log('Seed - project_type');
     return Promise.all([
-      knex('project_type').insert({type_cd: 1, description: 'Research'}),
-      knex('project_type').insert({type_cd: 2, description: 'Administration'}),
-      knex('project_type').insert({type_cd: 3, description: 'Resubmission'}),
-      knex('project_type').insert({type_cd: 4, description: 'Classification'})
+      knex('project_type').insert({type_cd: 1, description: 'Proposal'}),
+      knex('project_type').insert({type_cd: 2, description: 'Institutional Proposal'}),
+      knex('project_type').insert({type_cd: 3, description: 'IRB Protocol'}),
+      knex('project_type').insert({type_cd: 4, description: 'IACUC Protocol'}),
+      knex('project_type').insert({type_cd: 5, description: 'Award'})
     ]);
   }).then(function() {
     console.log('Seed - relationship_person_type');

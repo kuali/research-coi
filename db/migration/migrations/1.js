@@ -90,11 +90,25 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   // -- sponsor_cd comes from an external system.  no fk constraint.
   .createTable('project', function(table) {
     table.increments('id').notNullable();
-    table.integer('user_id').notNullable();
-    table.string('name', 200).notNullable();
+    table.string('title', 200).notNullable();
     table.integer('type_cd').notNullable().references('type_cd').inTable('project_type');
+    table.string('source_system', 20).notNullable();
+    table.string('source_identifier', 50).notNullable();
+    table.unique(['source_system', 'source_identifier']);
+    table.string('source_status', 75);
+    table.string('sponsor_cd', 6);
+    table.string('sponsor_name', 200);
+    table.dateTime('start_date');
+    table.dateTime('end_date');
+    table.engine('InnoDB');
+  })
+  .createTable('project_person', function(table) {
+    table.increments('id').notNullable();
+    table.integer('project_id').unsigned().notNullable().references('id').inTable('project');
+    table.string('person_id', 40).notNullable();
     table.string('role_cd', 50).notNullable().references('role_cd').inTable('project_role');
-    table.string('sponsor_cd', 6).notNullable();
+    table.unique(['project_id', 'person_id', 'role_cd']);
+    table.boolean('active').notNullable();
     table.engine('InnoDB');
   })
   .createTable('declaration_type', function(table) {
