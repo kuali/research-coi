@@ -42,6 +42,12 @@ class _AdminActions {
   loadMore() {
     this.dispatch();
   }
+
+  showCommentPanel() { this.dispatch(); }
+
+  showAdditionalReviewPanel() { this.dispatch(); }
+
+  hideAdditionalReviewPanel() { this.dispatch(); }
 }
 
 export let AdminActions = alt.createActions(_AdminActions);

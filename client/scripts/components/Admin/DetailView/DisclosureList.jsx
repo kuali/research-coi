@@ -50,7 +50,9 @@ export class DisclosureList extends React.Component {
         borderLeft: '1px solid #6d6d6d',
         borderRight: '1px solid #6d6d6d',
         verticalAlign: 'top',
-        boxShadow: '2px 1px 6px #D1D1D1'
+        boxShadow: '2px 1px 6px #D1D1D1',
+        transition: 'width .3s ease-in-out',
+        overflowX: 'hidden'
       },
       list: {
         listStyleType: 'none',
@@ -58,7 +60,7 @@ export class DisclosureList extends React.Component {
         padding: 0,
         overflowX: 'hidden',
         overflowY: 'auto',
-        width: '100%'
+        width: 320
       },
       filterGroup: {
         backgroundColor: '#49899D'
@@ -124,7 +126,7 @@ export class DisclosureList extends React.Component {
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <div>
+        <div style={{width: 320}}>
           <DisclosureFilterSearch
             query={this.props.filters.search}
             onChange={this.changeSearch}

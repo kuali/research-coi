@@ -31,7 +31,10 @@ class _AdminStore extends AutoBindingStore {
       loadingMore: false,
       offset: 0,
       loadedAll: false,
-      summaryCount: 0
+      summaryCount: 0,
+      listShowing: true,
+      commentPanelShowing: false,
+      additionalReviewShowing: false
     };
 
     this.disclosureSummaries = [];
@@ -229,6 +232,21 @@ class _AdminStore extends AutoBindingStore {
                this.emitChange();
              }
            });
+  }
+
+  showCommentPanel() {
+    this.applicationState.listShowing = false;
+    this.applicationState.commentPanelShowing = true;
+  }
+
+  showAdditionalReviewPanel() {
+    this.applicationState.listShowing = false;
+    this.applicationState.additionalReviewShowing = true;
+  }
+
+  hideAdditionalReviewPanel() {
+    this.applicationState.listShowing = true;
+    this.applicationState.additionalReviewShowing = false;
   }
 }
 

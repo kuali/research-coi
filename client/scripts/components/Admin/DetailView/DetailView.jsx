@@ -5,6 +5,8 @@ import ConfigStore from '../../../stores/ConfigStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
+import CommentPanel from './CommentPanel';
+import AdditionalReviewPanel from './AdditionalReviewPanel';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -73,14 +75,41 @@ export class DetailView extends React.Component {
   }
 
   render() {
+    let panelWidth = 244;
+
+    let sidePanel;
+    if (this.state.applicationState.commentPanelShowing) {
+      sidePanel = (
+        <CommentPanel />
+      );
+      panelWidth = 444;
+    }
+    else if (this.state.applicationState.additionalReviewShowing) {
+      sidePanel = (
+        <AdditionalReviewPanel />
+      );
+      panelWidth = 444;
+    }
+
     let styles = {
       container: {
-        overflowY: 'hidden'
+        overflowY: 'hidden',
+        position: 'relative'
       },
       details: {
       },
       list: {
-        width: 320
+        width: this.state.applicationState.listShowing ? 320 : 0,
+        overflowX: this.state.applicationState.listShowing ? 'initial' : 'hidden'
+      },
+      sidePanel: {
+        position: 'absolute',
+        backgroundColor: '#DADADA',
+        color: 'black',
+        height: '100%',
+        width: panelWidth,
+        transform: this.state.applicationState.listShowing ? 'translateX(0%)' : 'translateX(-100%)',
+        transition: 'transform .3s ease-in-out'
       }
     };
 
@@ -92,6 +121,7 @@ export class DetailView extends React.Component {
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
           config={this.state.config}
+          actionButtonWidth={panelWidth + 26}
         />
       );
     }
@@ -114,6 +144,9 @@ export class DetailView extends React.Component {
         <div className="inline-flexbox fill" style={styles.details}>
           {disclosureDetail}
         </div>
+        <span style={styles.sidePanel}>
+          {sidePanel}
+        </span>
       </div>
     );
   }
