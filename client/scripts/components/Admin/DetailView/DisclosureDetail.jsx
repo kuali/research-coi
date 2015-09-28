@@ -51,7 +51,7 @@ export class DisclosureDetail extends React.Component {
       },
       bottom: {
         position: 'relative',
-        padding: '25px ' + this.props.actionButtonWidth + 'px 25px 25px',
+        padding: '25px 270px 25px 25px',
         overflowY: 'auto'
       },
       confirmation: {

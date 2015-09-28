@@ -239,6 +239,11 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.commentPanelShowing = true;
   }
 
+  hideCommentPanel() {
+    this.applicationState.listShowing = true;
+    this.applicationState.commentPanelShowing = false;
+  }
+
   showAdditionalReviewPanel() {
     this.applicationState.listShowing = false;
     this.applicationState.additionalReviewShowing = true;

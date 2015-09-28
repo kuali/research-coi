@@ -75,40 +75,36 @@ export class DetailView extends React.Component {
   }
 
   render() {
-    let panelWidth = 244;
-
     let sidePanel;
     if (this.state.applicationState.commentPanelShowing) {
       sidePanel = (
         <CommentPanel />
       );
-      panelWidth = 444;
     }
     else if (this.state.applicationState.additionalReviewShowing) {
       sidePanel = (
         <AdditionalReviewPanel />
       );
-      panelWidth = 444;
     }
 
     let styles = {
       container: {
-        overflowY: 'hidden',
-        position: 'relative'
+        position: 'relative',
+        transform: this.state.applicationState.listShowing ? 'translateX(0px)' : 'translateX(-320px)',
+        transition: 'transform .3s ease-in-out'
       },
       details: {
       },
       list: {
-        width: this.state.applicationState.listShowing ? 320 : 0,
-        overflowX: this.state.applicationState.listShowing ? 'initial' : 'hidden'
+        width: 320
       },
       sidePanel: {
         position: 'absolute',
         backgroundColor: '#DADADA',
         color: 'black',
         height: '100%',
-        width: panelWidth,
-        transform: this.state.applicationState.listShowing ? 'translateX(0%)' : 'translateX(-100%)',
+        width: 570,
+        transform: this.state.applicationState.listShowing ? 'translateX(0%)' : 'translateX(-250px)',
         transition: 'transform .3s ease-in-out'
       }
     };
@@ -121,7 +117,6 @@ export class DetailView extends React.Component {
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
           config={this.state.config}
-          actionButtonWidth={panelWidth + 26}
         />
       );
     }

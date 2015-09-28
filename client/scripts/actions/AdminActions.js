@@ -45,6 +45,8 @@ class _AdminActions {
 
   showCommentPanel() { this.dispatch(); }
 
+  hideCommentPanel() { this.dispatch(); }
+
   showAdditionalReviewPanel() { this.dispatch(); }
 
   hideAdditionalReviewPanel() { this.dispatch(); }
