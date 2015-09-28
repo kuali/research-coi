@@ -5,7 +5,7 @@ import ConfigStore from '../../../stores/ConfigStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
-import CommentPanel from './CommentPanel';
+import CommentingPanel from './CommentingPanel';
 import AdditionalReviewPanel from './AdditionalReviewPanel';
 
 export class DetailView extends React.Component {
@@ -76,9 +76,17 @@ export class DetailView extends React.Component {
 
   render() {
     let sidePanel;
-    if (this.state.applicationState.commentPanelShowing) {
+    if (this.state.applicationState.commentingPanelShowing) {
+      let comments = this.state.applicationState.selectedDisclosure.comments;
+
       sidePanel = (
-        <CommentPanel />
+        <CommentingPanel
+          topic="Question #1"
+          topicSection={'dfd'}
+          topicId={3}
+          comments={comments}
+          disclosureId={this.state.applicationState.selectedDisclosure.id}
+        />
       );
     }
     else if (this.state.applicationState.additionalReviewShowing) {
