@@ -1,6 +1,7 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import ConfigStore from '../../../stores/ConfigStore';
+import {AdminActions} from '../../../actions/AdminActions';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
@@ -11,6 +12,10 @@ export class AdminDeclarationsSummary extends React.Component {
 
   findEntityName(id) {
     return this.props.entityNameMap[id];
+  }
+
+  showComments() {
+    AdminActions.showCommentingPanel();
   }
 
   render() {
@@ -98,7 +103,7 @@ export class AdminDeclarationsSummary extends React.Component {
                   {declaration.comments}
                 </span>
               </div>
-              <div style={styles.commentLink}>
+              <div style={styles.commentLink} onClick={this.showComments}>
                 <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS (999)</span>
               </div>
             </div>

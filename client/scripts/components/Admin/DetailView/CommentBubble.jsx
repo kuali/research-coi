@@ -15,7 +15,8 @@ export default class CommentBubble extends React.Component {
       },
       date: {
         float: 'right',
-        color: '#666'
+        color: '#666',
+        fontSize: 14
       },
       author: {
         fontWeight: 'bold',

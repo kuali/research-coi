@@ -21,7 +21,7 @@ export class ActionButtons extends React.Component {
   }
 
   showComments() {
-    AdminActions.showCommentingPanel();
+    AdminActions.showCommentSummary();
   }
 
   showAdditionalReview() {

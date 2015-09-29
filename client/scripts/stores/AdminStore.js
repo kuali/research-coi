@@ -33,8 +33,9 @@ class _AdminStore extends AutoBindingStore {
       loadedAll: false,
       summaryCount: 0,
       listShowing: true,
-      commentPanelShowing: false,
-      additionalReviewShowing: false
+      commentingPanelShowing: false,
+      additionalReviewShowing: false,
+      commentSummaryShowing: false
     };
 
     this.disclosureSummaries = [];
@@ -88,6 +89,29 @@ class _AdminStore extends AutoBindingStore {
     request.get('/api/coi/disclosures/' + id)
            .end((err, disclosure) => {
              if (!err) {
+               disclosure.body.comments = [
+                 {
+                   id: 3,
+                   date: new Date(),
+                   author: 'Adam the admin',
+                   commentText: 'This needs to improved. Please try again.',
+                   isCurrentUser: true
+                 },
+                 {
+                   id: 4,
+                   date: new Date(),
+                   author: 'Iggy the investigator',
+                   commentText: 'Really?  Like how? Maybe give some detail...',
+                   isCurrentUser: false
+                 },
+                 {
+                   id: 5,
+                   date: new Date(),
+                   author: 'Adam the admin',
+                   commentText: 'I don\'t appreciate you attitude. I\'ll look at your disclosure next month.',
+                   isCurrentUser: true
+                 }
+               ];
                this.applicationState.selectedDisclosure = disclosure.body;
                this.emitChange();
              }
@@ -234,14 +258,17 @@ class _AdminStore extends AutoBindingStore {
            });
   }
 
-  showCommentPanel() {
+  showCommentingPanel() {
     this.applicationState.listShowing = false;
-    this.applicationState.commentPanelShowing = true;
+    this.applicationState.commentingPanelShowing = true;
   }
 
-  hideCommentPanel() {
+  hideCommentingPanel() {
     this.applicationState.listShowing = true;
-    this.applicationState.commentPanelShowing = false;
+    setTimeout(() => {
+      this.applicationState.commentingPanelShowing = false;
+      this.emitChange();
+    }, 400);
   }
 
   showAdditionalReviewPanel() {
@@ -251,7 +278,40 @@ class _AdminStore extends AutoBindingStore {
 
   hideAdditionalReviewPanel() {
     this.applicationState.listShowing = true;
-    this.applicationState.additionalReviewShowing = false;
+    setTimeout(() => {
+      this.applicationState.additionalReviewShowing = false;
+      this.emitChange();
+    }, 400);
+  }
+
+  showCommentSummary() {
+    this.applicationState.listShowing = false;
+    this.applicationState.commentSummaryShowing = true;
+  }
+
+  hideCommentSummary() {
+    this.applicationState.listShowing = true;
+    setTimeout(() => {
+      this.applicationState.commentSummaryShowing = false;
+      this.emitChange();
+    }, 400);
+  }
+
+  makeComment(params) {
+    this.applicationState.selectedDisclosure.comments.push(
+      {
+        disclosureId: params.disclosureId,
+        section: params.topicSection,
+        topicId: params.topicId,
+        visibleToPI: params.visibleToPI,
+        visibleToReviewers: params.visibleToReviewers,
+        commentText: params.commentText,
+        date: new Date(),
+        isCurrentUser: true,
+        author: 'Nodnarb Sllohcin',
+        id: new Date().getTime()
+      }
+    );
   }
 }
 

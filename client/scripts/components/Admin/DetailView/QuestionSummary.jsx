@@ -2,8 +2,13 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
 import {COIConstants} from '../../../../../COIConstants';
+import {AdminActions} from '../../../actions/AdminActions';
 
 export default class QuestionSummary extends React.Component {
+  showComments() {
+    AdminActions.showCommentingPanel();
+  }
+
   render() {
     let styles = {
       container: {
@@ -52,7 +57,7 @@ export default class QuestionSummary extends React.Component {
                 {this.props.question.type === COIConstants.QUESTION_TYPE.DATE ? formatDate(this.props.answer) : this.props.answer}
               </div>
             </span>
-            <span style={styles.commentLink}>
+            <span style={styles.commentLink} onClick={this.showComments}>
               <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS ({this.props.commentCount})</span>
             </span>
           </div>

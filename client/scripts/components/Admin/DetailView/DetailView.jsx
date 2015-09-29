@@ -7,6 +7,7 @@ import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
 import CommentingPanel from './CommentingPanel';
 import AdditionalReviewPanel from './AdditionalReviewPanel';
+import CommentSummary from './CommentSummary';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -92,6 +93,13 @@ export class DetailView extends React.Component {
     else if (this.state.applicationState.additionalReviewShowing) {
       sidePanel = (
         <AdditionalReviewPanel />
+      );
+    }
+    else if (this.state.applicationState.commentSummaryShowing) {
+      sidePanel = (
+        <CommentSummary
+
+        />
       );
     }
 

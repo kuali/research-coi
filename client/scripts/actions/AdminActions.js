@@ -43,13 +43,28 @@ class _AdminActions {
     this.dispatch();
   }
 
-  showCommentPanel() { this.dispatch(); }
+  showCommentingPanel() { this.dispatch(); }
 
-  hideCommentPanel() { this.dispatch(); }
+  hideCommentingPanel() { this.dispatch(); }
 
   showAdditionalReviewPanel() { this.dispatch(); }
 
   hideAdditionalReviewPanel() { this.dispatch(); }
+
+  showCommentSummary() { this.dispatch(); }
+
+  hideCommentSummary() { this.dispatch(); }
+
+  makeComment(disclosureId, topicSection, topicId, visibleToPI, visibleToReviewers, commentText) {
+    this.dispatch({
+      disclosureId: disclosureId,
+      topicSection: topicSection,
+      topicId: topicId,
+      visibleToPI: visibleToPI,
+      visibleToReviewers: visibleToReviewers,
+      commentText: commentText
+    });
+  }
 }
 
 export let AdminActions = alt.createActions(_AdminActions);

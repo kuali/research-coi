@@ -58,11 +58,11 @@ export default class CommentingPanel extends React.Component {
         cursor: 'pointer'
       },
       topic: {
-        width: '40%',
+        width: '50%',
         borderBottom: '1px solid white',
         display: 'inline-block',
         fontSize: 18,
-        paddingBottom: 3
+        paddingBottom: 6
       },
       controls: {
         color: 'white',
