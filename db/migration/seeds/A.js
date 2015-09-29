@@ -247,67 +247,13 @@ function insertDisclosure(knex) {
 }
 
 exports.seed = function(knex, Promise) {
-  console.log('Truncating tables');
-  //temp raw statement to get seed data working
-  return knex.raw('SET FOREIGN_KEY_CHECKS=0').then(function(){
-    return knex('declaration').truncate();
-  }).then(function() {
-    return knex('relationship').truncate();
-  }).then(function() {
-    return knex('travel_log_entry').truncate();
-  }).then(function() {
-    return knex('disclosure_answer').truncate();
-  }).then(function() {
-    return knex('project').truncate();
-  }).then(function() {
-    return knex('questionnaire_answer').truncate();
-  }).then(function() {
-    return knex('declaration_type').truncate();
-  }).then(function() {
-    return knex('relationship_type').truncate();
-  }).then(function() {
-    return knex('relationship_amount_type').truncate();
-  }).then(function() {
-    return knex('relationship_person_type').truncate();
-  }).then(function() {
-    return knex('relationship_category_type').truncate();
-  }).then(function() {
-    return knex('fin_entity').truncate();
-  }).then(function() {
-    return knex('questionnaire_question').update({parent: null});
-  }).then(function() {
-    return knex('project_role').truncate();
-  }).then(function() {
-    return knex('project_type').truncate();
-  }).then(function() {
-    return knex('questionnaire_question').truncate();
-  }).then(function() {
-    return knex('disclosure').truncate();
-  }).then(function() {
-    return knex('questionnaire').truncate();
-  }).then(function() {
-    return knex('questionnaire_type').truncate();
-  }).then(function() {
-    return knex('disclosure_status').truncate();
-  }).then(function() {
-    return knex('disposition_type').truncate();
-  }).then(function() {
-    return knex('disclosure_type').truncate();
-  }).then(function() {
-    return knex('config').truncate();
-  }).then(function() {
-    return knex('fin_entity_answer').truncate();
-  }).then(function() {
-    knex.raw('SET FOREIGN_KEY_CHECKS=1');
-  }).then(function() {
-    console.log('Seed - disclosure_status');
-    return Promise.all([
-      knex('disclosure_status').insert({status_cd: 1, description: 'In progress'}),
-      knex('disclosure_status').insert({status_cd: 2, description: 'Routed for Review'}),
-      knex('disclosure_status').insert({status_cd: 3, description: 'Approved'}),
-      knex('disclosure_status').insert({status_cd: 4, description: 'Disapproved'})
-    ]);
-  }).then(function() {
+  console.log('Seed - disclosure_status');
+  return Promise.all([
+    knex('disclosure_status').insert({status_cd: 1, description: 'In progress'}),
+    knex('disclosure_status').insert({status_cd: 2, description: 'Routed for Review'}),
+    knex('disclosure_status').insert({status_cd: 3, description: 'Approved'}),
+    knex('disclosure_status').insert({status_cd: 4, description: 'Disapproved'})
+  ]).then(function() {
     console.log('Seed - disclosure_type');
     return Promise.all([
       knex('disclosure_type').insert({type_cd: 1, description: 'Manual Disclosure', enabled: true}),
