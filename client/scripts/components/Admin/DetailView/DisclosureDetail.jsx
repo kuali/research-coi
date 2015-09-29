@@ -161,7 +161,6 @@ export class DisclosureDetail extends React.Component {
             <AdminDeclarationsSummary
               entityNameMap={entityNameMap}
               declarations={this.props.disclosure.declarations}
-              projects={this.props.disclosure.associatedProjects}
               id={this.props.disclosure.id} />
           </span>
           <span style={{}}>

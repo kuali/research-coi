@@ -6,12 +6,27 @@ import {AdminActions} from '../../../actions/AdminActions';
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
     super();
-
-    this.findEntityName = this.findEntityName.bind(this);
   }
 
-  findEntityName(id) {
-    return this.props.entityNameMap[id];
+  getUniqueProjects(declarations) {
+    let projects = [];
+    let alreadyAdded = {};
+
+    declarations.forEach(declaration => {
+      if (!alreadyAdded[declaration.projectId]) {
+        projects.push({
+          id: declaration.projectId,
+          name: declaration.projectTitle
+        });
+        alreadyAdded[declaration.projectId] = true;
+      }
+    });
+
+    projects.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+
+    return projects;
   }
 
   showComments() {
@@ -83,7 +98,10 @@ export class AdminDeclarationsSummary extends React.Component {
 
     let projects = [];
     if(this.props.declarations !== undefined) {
-      this.props.projects.forEach((project, index) => {
+
+      let uniqueProjects = this.getUniqueProjects(this.props.declarations);
+
+      projects = uniqueProjects.map((project, index) => {
         let declarations = this.props.declarations.filter(declaration => {
           return declaration.projectId === project.id;
         }).map(declaration => {
@@ -94,7 +112,7 @@ export class AdminDeclarationsSummary extends React.Component {
             >
               <div>
                 <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
-                  {this.findEntityName(declaration.finEntityId)}
+                  {declaration.entityName}
                 </span>
                 <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
                   {ConfigStore.getDeclarationTypeString(declaration.typeCd)}
@@ -110,11 +128,9 @@ export class AdminDeclarationsSummary extends React.Component {
           );
         });
 
-        projects.push(
-          <div
-            key={'proj' + project.id}
-            stylestyle={index === this.props.declarations.length - 1 ? styles.lastrelationship : styles.relationship}
-          >
+        return (
+          <div key={'proj' + project.id}
+            style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}>
             <div style={styles.name}>{project.name}</div>
             <div style={styles.titles}>
               <span style={styles.entityName}>FINANCIAL ENTITY</span>
