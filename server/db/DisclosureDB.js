@@ -279,14 +279,10 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
-    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments')
+    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments', 'p.title as projectTitle', 'fe.name as entityName')
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
-      .where('fe.disclosure_id', disclosureId),
-    knex.distinct('p.id as id', 'p.name as name', 'p.type_cd as typeCd', 'p.role_cd as roleCd', 'p.sponsor_cd as sponsorCd')
-      .select()
-      .from('project as p')
-      .innerJoin('declaration as d', 'd.project_id', 'p.id')
+      .innerJoin('project as p', 'p.id', 'd.project_id')
       .where('d.disclosure_id', disclosureId)
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
@@ -298,7 +294,6 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
     disclosure.entities = result[1];
     disclosure.answers = result[2];
     disclosure.declarations = result[3];
-    disclosure.associatedProjects = result[4];
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
