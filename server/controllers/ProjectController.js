@@ -14,4 +14,17 @@ export let init = app => {
       }
     });
   });
+
+  app.post('/api/coi/projects', function(req, res, next) {
+    //api key needed
+    ProjectDB.saveProjects(req.dbInfo, req.body, function(err, projects) {
+      if (err) {
+        console.error(err);
+        next(err);
+      }
+      else {
+        res.send(projects);
+      }
+    });
+  });
 };
