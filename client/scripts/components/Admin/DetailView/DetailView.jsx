@@ -5,6 +5,9 @@ import ConfigStore from '../../../stores/ConfigStore';
 import {DisclosureDetail} from './DisclosureDetail';
 import {DisclosureList} from './DisclosureList';
 import {AdminActions} from '../../../actions/AdminActions';
+import CommentingPanel from './CommentingPanel';
+import AdditionalReviewPanel from './AdditionalReviewPanel';
+import CommentSummary from './CommentSummary';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -73,14 +76,52 @@ export class DetailView extends React.Component {
   }
 
   render() {
+    let sidePanel;
+    if (this.state.applicationState.commentingPanelShowing) {
+      let comments = this.state.applicationState.selectedDisclosure.comments;
+
+      sidePanel = (
+        <CommentingPanel
+          topic="Question #1"
+          topicSection={'dfd'}
+          topicId={3}
+          comments={comments}
+          disclosureId={this.state.applicationState.selectedDisclosure.id}
+        />
+      );
+    }
+    else if (this.state.applicationState.additionalReviewShowing) {
+      sidePanel = (
+        <AdditionalReviewPanel />
+      );
+    }
+    else if (this.state.applicationState.commentSummaryShowing) {
+      sidePanel = (
+        <CommentSummary
+
+        />
+      );
+    }
+
     let styles = {
       container: {
-        overflowY: 'hidden'
+        position: 'relative',
+        transform: this.state.applicationState.listShowing ? 'translateX(0px)' : 'translateX(-320px)',
+        transition: 'transform .3s ease-in-out'
       },
       details: {
       },
       list: {
         width: 320
+      },
+      sidePanel: {
+        position: 'absolute',
+        backgroundColor: '#DADADA',
+        color: 'black',
+        height: '100%',
+        width: 570,
+        transform: this.state.applicationState.listShowing ? 'translateX(0%)' : 'translateX(-250px)',
+        transition: 'transform .3s ease-in-out'
       }
     };
 
@@ -114,6 +155,9 @@ export class DetailView extends React.Component {
         <div className="inline-flexbox fill" style={styles.details}>
           {disclosureDetail}
         </div>
+        <span style={styles.sidePanel}>
+          {sidePanel}
+        </span>
       </div>
     );
   }

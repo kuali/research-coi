@@ -3,12 +3,17 @@ import {merge} from '../../../merge';
 import EntityRelationshipSummary from '../../EntityRelationshipSummary';
 import {COIConstants} from '../../../../../COIConstants';
 import {formatDate} from '../../../formatDate';
+import {AdminActions} from '../../../actions/AdminActions';
 
 export class AdminEntitiesSummary extends React.Component {
   constructor() {
     super();
 
     this.getQuestionAnswer = this.getQuestionAnswer.bind(this);
+  }
+
+  showComments() {
+    AdminActions.showCommentingPanel();
   }
 
   getQuestionAnswer(questionId, entity, type) {
@@ -167,7 +172,7 @@ export class AdminEntitiesSummary extends React.Component {
                 <div style={styles.relationshipsLabel}>Relationship(s):</div>
                 {relationships}
 
-                <div style={styles.commentLink}>
+                <div style={styles.commentLink} onClick={this.showComments}>
                   <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS (999)</span>
                 </div>
               </span>

@@ -44,15 +44,14 @@ export class DisclosureDetail extends React.Component {
         width: '100%'
       },
       actionButtons: {
-        position: 'fixed',
         top: 145,
         right: 20,
         display: this.props.showApproval || this.props.showRejection ? 'none' : 'block'
       },
       bottom: {
         position: 'relative',
-        padding: '25px 270px 25px 25px',
-        overflowY: 'auto'
+        padding: '25px 25px 25px 25px',
+        minHeight: 0
       },
       confirmation: {
         display: this.props.showApproval ? 'block' : 'none',
@@ -71,6 +70,10 @@ export class DisclosureDetail extends React.Component {
       },
       entities: {
         marginBottom: 25
+      },
+      detailsFromPI: {
+        overflowY: 'auto',
+        paddingRight: 35
       }
     };
 
@@ -143,25 +146,29 @@ export class DisclosureDetail extends React.Component {
     return (
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
         <DisclosureDetailHeading disclosure={this.props.disclosure} />
-        <div className="fill" ref="bottom" style={styles.bottom}>
-          <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
-          <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
-          <ActionButtons style={styles.actionButtons} />
-          <AdminQuestionnaireSummary
-            questions={screeningQuestions}
-            answers={screeningAnswers}
-            commentCounts={commentCounts}
-            style={styles.questionnaire}
-          />
-          <AdminEntitiesSummary
-            questions={entityQuestions}
-            entities={this.props.disclosure.entities}
-            style={styles.entities} />
-          <AdminDeclarationsSummary
-            entityNameMap={entityNameMap}
-            declarations={this.props.disclosure.declarations}
-            projects={this.props.disclosure.associatedProjects}
-            id={this.props.disclosure.id} />
+        <div className="fill flexbox row" style={styles.bottom}>
+          <span className="fill" style={styles.detailsFromPI}>
+            <AdminQuestionnaireSummary
+              questions={screeningQuestions}
+              answers={screeningAnswers}
+              commentCounts={commentCounts}
+              style={styles.questionnaire}
+            />
+            <AdminEntitiesSummary
+              questions={entityQuestions}
+              entities={this.props.disclosure.entities}
+              style={styles.entities} />
+            <AdminDeclarationsSummary
+              entityNameMap={entityNameMap}
+              declarations={this.props.disclosure.declarations}
+              projects={this.props.disclosure.associatedProjects}
+              id={this.props.disclosure.id} />
+          </span>
+          <span style={{}}>
+            <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
+            <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
+            <ActionButtons style={styles.actionButtons} />
+          </span>
         </div>
       </div>
     );

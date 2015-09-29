@@ -20,6 +20,14 @@ export class ActionButtons extends React.Component {
     AdminActions.toggleRejectionConfirmation();
   }
 
+  showComments() {
+    AdminActions.showCommentSummary();
+  }
+
+  showAdditionalReview() {
+    AdminActions.showAdditionalReviewPanel();
+  }
+
   render() {
     let styles = {
       container: {
@@ -55,13 +63,13 @@ export class ActionButtons extends React.Component {
           <SendBackIcon style={styles.icon} />
           <span style={styles.label}>SEND BACK</span>
         </div>
-        <div style={styles.button}>
+        <div onClick={this.showAdditionalReview} style={styles.button}>
           <AddReviewerIcon style={styles.icon} />
           <span style={styles.label}>
             <div>ADDITIONAL REVIEW</div>
           </span>
         </div>
-        <div style={styles.button}>
+        <div onClick={this.showComments} style={styles.button}>
           <RecommendedStatusIcon style={styles.icon} />
           <span style={styles.label}>
             <div>REVIEW COMMENTS</div>
