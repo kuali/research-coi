@@ -4,7 +4,6 @@ import {formatDate} from '../../../formatDate';
 
 export default class CommentBubble extends React.Component {
   render() {
-    console.log(this.props.new);
     let styles = {
       container: {
         backgroundColor: this.props.isUser ? 'white' : '#AAA',
