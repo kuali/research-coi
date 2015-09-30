@@ -17,7 +17,8 @@ class _ConfigStore extends AutoBindingStore {
       getProjectTypeString: this.getProjectTypeString,
       getRelationshipCategoryTypeString: this.getRelationshipCategoryTypeString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
-      getProjectRoleTypeString: this.getProjectRoleTypeString
+      getProjectRoleTypeString: this.getProjectRoleTypeString,
+      getQuestionNumberToShow: this.getQuestionNumberToShow
     });
 
     this.applicationState = {
@@ -633,6 +634,31 @@ class _ConfigStore extends AutoBindingStore {
     }
     else {
       return 'Undefined';
+    }
+  }
+
+  getQuestionNumberToShow(type, questionId) {
+    let questions = this.getState().config.questions;
+    let collection;
+    switch (type) {
+      case COIConstants.QUESTIONNAIRE_TYPE.SCREENING:
+        collection = questions.screening;
+        break;
+      case COIConstants.QUESTIONNAIRE_TYPE.ENTITIES:
+        collection = questions.entities;
+        break;
+      default:
+        return undefined;
+    }
+    let theQuestion = collection.find(question => {
+      return question.id === questionId;
+    });
+
+    if (theQuestion) {
+      return theQuestion.question.numberToShow;
+    }
+    else {
+      return undefined;
     }
   }
 }

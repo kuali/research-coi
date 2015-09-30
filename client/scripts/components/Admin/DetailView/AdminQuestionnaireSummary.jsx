@@ -5,6 +5,14 @@ import QuestionSummary from './QuestionSummary';
 export class AdminQuestionnaireSummary extends React.Component {
   constructor() {
     super();
+
+    this.getCommentCount = this.getCommentCount.bind(this);
+  }
+
+  getCommentCount(id) {
+    return this.props.comments.filter(comment => {
+      return comment.topicId === id;
+    }).length;
   }
 
   render() {
@@ -35,7 +43,7 @@ export class AdminQuestionnaireSummary extends React.Component {
             key={question.id}
             question={question}
             answer={this.props.answers[question.id]}
-            commentCount={this.props.commentCounts[question.id]}
+            commentCount={this.getCommentCount(question.id)}
           />
         );
       });

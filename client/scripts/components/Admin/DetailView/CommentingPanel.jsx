@@ -55,10 +55,11 @@ export default class CommentingPanel extends React.Component {
       close: {
         float: 'right',
         fontWeight: 'bold',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        marginBottom: 8
       },
       topic: {
-        width: '50%',
+        minWidth: '50%',
         borderBottom: '1px solid white',
         display: 'inline-block',
         fontSize: 18,
@@ -111,7 +112,7 @@ export default class CommentingPanel extends React.Component {
             isUser={comment.isCurrentUser}
             date={comment.date}
             author={comment.author}
-            text={comment.commentText}
+            text={comment.text}
             style={styles.comment}
           />
         );

@@ -265,6 +265,48 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body, cal
   });
 };
 
+export let retrieveComments = (dbInfo, userId, disclosureId) => {
+  let knex = getKnex(dbInfo);
+
+  return knex('comment')
+    .select('id', 'disclosure_id as disclosureId', 'topic_section as topicSection', 'topic_id as topicId', 'text', 'author', 'user_id as userId', 'date', 'pi_visible as piVisible', 'reviewer_visible as reviewerVisible')
+    .where('disclosure_id', disclosureId)
+    .then(comments => {
+      comments.forEach(comment => {
+        comment.isCurrentUser = comment.userId === userId;
+      });
+      return comments;
+    })
+    .catch(err => {
+      throw err;
+    });
+};
+
+export let addComment = (dbInfo, userInfo, comment, callback) => {
+  let knex = getKnex(dbInfo);
+
+  knex('comment')
+    .insert({
+      disclosure_id: comment.disclosureId,
+      topic_section: comment.topicSection,
+      topic_id: comment.topicId,
+      text: comment.text,
+      user_id: userInfo.id,
+      author: userInfo.displayName,
+      date: new Date(),
+      pi_visible: comment.visibleToPI,
+      reviewer_visible: comment.visibleToReviewers
+    }).then(() => {
+      retrieveComments(dbInfo, userInfo.id, comment.disclosureId)
+      .then(comments => {
+        callback(undefined, comments);
+      });
+    })
+    .catch(err => {
+      callback(err);
+    });
+};
+
 export let get = (dbInfo, userId, disclosureId, callback) => {
   var disclosure;
   let knex = getKnex(dbInfo);
@@ -283,7 +325,8 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
       .innerJoin('project as p', 'p.id', 'd.project_id')
-      .where('d.disclosure_id', disclosureId)
+      .where('d.disclosure_id', disclosureId),
+    retrieveComments(dbInfo, userId, disclosureId)
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
       callback(new Error('invalid disclosure id'));
@@ -294,6 +337,7 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
     disclosure.entities = result[1];
     disclosure.answers = result[2];
     disclosure.declarations = result[3];
+    disclosure.comments = result[4];
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });

@@ -361,4 +361,36 @@ export let init = app => {
       }
     });
   });
+
+  app.post('/api/coi/disclosure/:id/comment', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    let comment = req.body;
+
+    if (!comment.topicSection ||
+        !comment.topicId ||
+        comment.visibleToPI === undefined ||
+        comment.visibleToReviewers === undefined ||
+        !comment.text ||
+        isNaN(req.params.id)
+       ) {
+      next(new Error('invalid comment body'));
+    }
+    else {
+      DisclosureDB.addComment(req.dbInfo, userInfo, {
+        topicSection: comment.topicSection,
+        topicId: comment.topicId,
+        visibleToPI: comment.visibleToPI,
+        visibleToReviewers: comment.visibleToReviewers,
+        text: comment.text,
+        disclosureId: req.params.id
+      }, (err, updatedComments) => {
+        if (err) {
+          console.error(err);
+          next(err);
+        } else {
+          res.send(updatedComments);
+        }
+      });
+    }
+  });
 };
