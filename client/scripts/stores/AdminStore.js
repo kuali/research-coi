@@ -235,10 +235,18 @@ class _AdminStore extends AutoBindingStore {
            });
   }
 
-  updateCurrentComments() {
+  updateCurrentComments(transitionLast) {
     this.applicationState.currentComments = this.applicationState.selectedDisclosure.comments.filter(comment => {
       return comment.topicSection === this.applicationState.commentTopic && comment.topicId === this.applicationState.commentId;
     });
+
+    if (transitionLast && this.applicationState.currentComments.length > 0) {
+      this.applicationState.currentComments[this.applicationState.currentComments.length - 1].new = true;
+      setTimeout(() => {
+        delete this.applicationState.currentComments[this.applicationState.currentComments.length - 1].new;
+        this.emitChange();
+      }, 30);
+    }
   }
 
   showCommentingPanel(params) {
@@ -248,7 +256,7 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.commentId = params.id;
     this.applicationState.commentTitle = params.title;
 
-    this.updateCurrentComments();
+    this.updateCurrentComments(false);
   }
 
   hideCommentingPanel() {
@@ -297,7 +305,7 @@ class _AdminStore extends AutoBindingStore {
            .end((err, updatedComments) => {
              if (!err) {
                this.applicationState.selectedDisclosure.comments = updatedComments.body;
-               this.updateCurrentComments();
+               this.updateCurrentComments(true);
                this.emitChange();
              }
            });
