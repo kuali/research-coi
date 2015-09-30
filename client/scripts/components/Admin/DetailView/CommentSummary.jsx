@@ -35,7 +35,12 @@ export default class CommentSummary extends React.Component {
       }
     });
 
-    return this.getUniqueTopics(questionComments).map(topicId => {
+    return this.getUniqueTopics(questionComments).sort((a, b) => {
+      let aName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, a);
+      let bName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, b);
+
+      return String(aName).localeCompare(String(bName));
+    }).map(topicId => {
       let comments = questionComments.filter(comment => {
         return comment.topicId === topicId;
       });
