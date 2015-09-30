@@ -440,7 +440,7 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
   if (filters.search) {
     query = query.where(function() {
       this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
-         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
+         // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
          .orWhere('submitted_by', 'like', '%' + filters.search + '%');
     });
   }
@@ -481,7 +481,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
   if (filters.search) {
     query.where(function() {
       this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
-         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
+         // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
          .orWhere('submitted_by', 'like', '%' + filters.search + '%');
     });
   }

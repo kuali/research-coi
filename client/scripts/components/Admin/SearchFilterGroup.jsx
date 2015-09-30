@@ -3,7 +3,6 @@ import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {SearchFilter} from './SearchFilter';
 import {AdminActions} from '../../actions/AdminActions';
-import {DisclosureFilterByType} from './DisclosureFilterByType';
 import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
 import {DisclosureFilterByDate} from './DisclosureFilterByDate';
 
@@ -101,11 +100,11 @@ export class SearchFilterGroup extends ResponsiveComponent {
           sortDirection={this.props.sortDirection}
           showSort={this.props.showDateSort}
         />
-        <DisclosureFilterByType
+        {/*<DisclosureFilterByType
           active={this.props.activeTypeFilters && this.props.activeTypeFilters.length > 0}
           activeFilters={this.props.activeTypeFilters}
           possibleTypes={this.props.possibleTypes}
-        />
+        />*/}
         <DisclosureFilterByStatus
           active={this.props.activeStatusFilters && this.props.activeStatusFilters.length > 0}
           activeFilters={this.props.activeStatusFilters}
