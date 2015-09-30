@@ -3,12 +3,10 @@ import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
 import ActionPanel from '../ActionPanel';
-import InstructionEditor from '../InstructionEditor';
 import EditableList from '../EditableList';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
 import RelationshipType from './RelationshipType';
-import {COIConstants} from '../../../../../COIConstants';
 
 export default class Relationship extends React.Component {
   constructor() {
