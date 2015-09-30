@@ -89,29 +89,6 @@ class _AdminStore extends AutoBindingStore {
     request.get('/api/coi/disclosures/' + id)
            .end((err, disclosure) => {
              if (!err) {
-               disclosure.body.comments = [
-                 {
-                   id: 3,
-                   date: new Date(),
-                   author: 'Adam the admin',
-                   commentText: 'This needs to improved. Please try again.',
-                   isCurrentUser: true
-                 },
-                 {
-                   id: 4,
-                   date: new Date(),
-                   author: 'Iggy the investigator',
-                   commentText: 'Really?  Like how? Maybe give some detail...',
-                   isCurrentUser: false
-                 },
-                 {
-                   id: 5,
-                   date: new Date(),
-                   author: 'Adam the admin',
-                   commentText: 'I don\'t appreciate you attitude. I\'ll look at your disclosure next month.',
-                   isCurrentUser: true
-                 }
-               ];
                this.applicationState.selectedDisclosure = disclosure.body;
                this.emitChange();
              }
@@ -258,9 +235,20 @@ class _AdminStore extends AutoBindingStore {
            });
   }
 
-  showCommentingPanel() {
+  updateCurrentComments() {
+    this.applicationState.currentComments = this.applicationState.selectedDisclosure.comments.filter(comment => {
+      return comment.topicSection === this.applicationState.commentTopic && comment.topicId === this.applicationState.commentId;
+    });
+  }
+
+  showCommentingPanel(params) {
     this.applicationState.listShowing = false;
     this.applicationState.commentingPanelShowing = true;
+    this.applicationState.commentTopic = params.topic;
+    this.applicationState.commentId = params.id;
+    this.applicationState.commentTitle = params.title;
+
+    this.updateCurrentComments();
   }
 
   hideCommentingPanel() {
@@ -298,20 +286,21 @@ class _AdminStore extends AutoBindingStore {
   }
 
   makeComment(params) {
-    this.applicationState.selectedDisclosure.comments.push(
-      {
-        disclosureId: params.disclosureId,
-        section: params.topicSection,
-        topicId: params.topicId,
-        visibleToPI: params.visibleToPI,
-        visibleToReviewers: params.visibleToReviewers,
-        commentText: params.commentText,
-        date: new Date(),
-        isCurrentUser: true,
-        author: 'Nodnarb Sllohcin',
-        id: new Date().getTime()
-      }
-    );
+    request.post('/api/coi/disclosure/' + this.applicationState.selectedDisclosure.id + '/comment')
+           .send({
+             topicSection: params.topicSection,
+             topicId: params.topicId,
+             visibleToPI: params.visibleToPI,
+             visibleToReviewers: params.visibleToReviewers,
+             text: params.commentText
+           })
+           .end((err, updatedComments) => {
+             if (!err) {
+               this.applicationState.selectedDisclosure.comments = updatedComments.body;
+               this.updateCurrentComments();
+               this.emitChange();
+             }
+           });
   }
 }
 

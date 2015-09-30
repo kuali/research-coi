@@ -7,6 +7,7 @@ import {AdminEntitiesSummary} from './AdminEntitiesSummary';
 import {AdminDeclarationsSummary} from './AdminDeclarationsSummary';
 import {ApprovalConfirmation} from './ApprovalConfirmation';
 import {RejectionConfirmation} from './RejectionConfirmation';
+import {COIConstants} from '../../../../../COIConstants';
 
 export class DisclosureDetail extends React.Component {
   constructor() {
@@ -132,16 +133,17 @@ export class DisclosureDetail extends React.Component {
       screeningAnswers[answer.questionId] = answer.answer.value;
     });
 
-    let commentCounts = {
-      1: 99,
-      2: 999,
-      3: 9,
-      4: -2,
-      5: 88,
-      6: 33,
-      7: 3,
-      8: 9999
-    };
+    let questionnaireComments = this.props.disclosure.comments.filter(comment => {
+      return comment.topicSection === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+    });
+
+    let entitiesComments = this.props.disclosure.comments.filter(comment => {
+      return comment.topicSection === COIConstants.DISCLOSURE_STEP.ENTITIES;
+    });
+
+    let declarationsComments = this.props.disclosure.comments.filter(comment => {
+      return comment.topicSection === COIConstants.DISCLOSURE_STEP.PROJECTS;
+    });
 
     return (
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
@@ -151,16 +153,18 @@ export class DisclosureDetail extends React.Component {
             <AdminQuestionnaireSummary
               questions={screeningQuestions}
               answers={screeningAnswers}
-              commentCounts={commentCounts}
+              comments={questionnaireComments}
               style={styles.questionnaire}
             />
             <AdminEntitiesSummary
               questions={entityQuestions}
               entities={this.props.disclosure.entities}
+              comments={entitiesComments}
               style={styles.entities} />
             <AdminDeclarationsSummary
               entityNameMap={entityNameMap}
               declarations={this.props.disclosure.declarations}
+              comments={declarationsComments}
               id={this.props.disclosure.id} />
           </span>
           <span style={{}}>

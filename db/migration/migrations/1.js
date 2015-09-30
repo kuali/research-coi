@@ -181,6 +181,18 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   .createTable('config', function(table) {
     table.text('name');
     table.text('config'); //--json object with config elements
+  })
+  .createTable('comment', function(table) {
+    table.increments('id').notNullable();
+    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
+    table.string('topic_section', 50).notNullable();
+    table.integer('topic_id').unsigned().notNullable();
+    table.text('text').notNullable();
+    table.integer('user_id').notNullable();
+    table.string('author', 50).notNullable();
+    table.dateTime('date').notNullable();
+    table.boolean('pi_visible').notNullable();
+    table.boolean('reviewer_visible').notNullable();
   });
 };
 

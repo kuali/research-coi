@@ -5,8 +5,14 @@ import {COIConstants} from '../../../../../COIConstants';
 import {AdminActions} from '../../../actions/AdminActions';
 
 export default class QuestionSummary extends React.Component {
+  constructor() {
+    super();
+
+    this.showComments = this.showComments.bind(this);
+  }
+
   showComments() {
-    AdminActions.showCommentingPanel();
+    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE, this.props.question.id, 'Question #' + this.props.question.numberToShow);
   }
 
   render() {

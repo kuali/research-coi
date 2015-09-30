@@ -52,5 +52,9 @@ export let COIConstants = {
     MULTISELECT: 'Multiselect'
   },
   RETURN_KEY: 13,
-  TMP_PLACEHOLDER: 'TMP'
+  TMP_PLACEHOLDER: 'TMP',
+  QUESTIONNAIRE_TYPE: {
+    SCREENING: 'screening',
+    ENTITY: 'entities'
+  }
 };

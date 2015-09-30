@@ -78,13 +78,13 @@ export class DetailView extends React.Component {
   render() {
     let sidePanel;
     if (this.state.applicationState.commentingPanelShowing) {
-      let comments = this.state.applicationState.selectedDisclosure.comments;
+      let comments = this.state.applicationState.currentComments;
 
       sidePanel = (
         <CommentingPanel
-          topic="Question #1"
-          topicSection={'dfd'}
-          topicId={3}
+          topic={this.state.applicationState.commentTitle}
+          topicSection={this.state.applicationState.commentTopic}
+          topicId={this.state.applicationState.commentId}
           comments={comments}
           disclosureId={this.state.applicationState.selectedDisclosure.id}
         />
@@ -98,7 +98,7 @@ export class DetailView extends React.Component {
     else if (this.state.applicationState.commentSummaryShowing) {
       sidePanel = (
         <CommentSummary
-
+          disclosure={this.state.applicationState.selectedDisclosure}
         />
       );
     }

@@ -1,11 +1,17 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
-import ConfigStore from '../../../stores/ConfigStore';
-import {AdminActions} from '../../../actions/AdminActions';
+import DeclarationSummary from './DeclarationSummary';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
     super();
+    this.getCommentCount = this.getCommentCount.bind(this);
+  }
+
+  getCommentCount(id) {
+    return this.props.comments.filter(comment => {
+      return comment.topicId === id;
+    }).length;
   }
 
   getUniqueProjects(declarations) {
@@ -27,10 +33,6 @@ export class AdminDeclarationsSummary extends React.Component {
     });
 
     return projects;
-  }
-
-  showComments() {
-    AdminActions.showCommentingPanel();
   }
 
   render() {
@@ -83,16 +85,6 @@ export class AdminDeclarationsSummary extends React.Component {
       lastrelationship: {
         paddingBottom: 15,
         borderBottom: 0
-      },
-      commentLink: {
-        fontSize: 14,
-        cursor: 'pointer',
-        margin: '14px 0 34px 0',
-        textAlign: 'right'
-      },
-      declaration: {
-        fontSize: 12,
-        marginBottom: 10
       }
     };
 
@@ -106,25 +98,11 @@ export class AdminDeclarationsSummary extends React.Component {
           return declaration.projectId === project.id;
         }).map(declaration => {
           return (
-            <div
+            <DeclarationSummary
               key={'decl' + declaration.id}
-              style={styles.declaration}
-            >
-              <div>
-                <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
-                  {declaration.entityName}
-                </span>
-                <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
-                  {ConfigStore.getDeclarationTypeString(declaration.typeCd)}
-                </span>
-                <span style={merge(styles.comments, {fontStyle: 'italic'})}>
-                  {declaration.comments}
-                </span>
-              </div>
-              <div style={styles.commentLink} onClick={this.showComments}>
-                <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS (999)</span>
-              </div>
-            </div>
+              declaration={declaration}
+              commentCount={this.getCommentCount(declaration.id)}
+            />
           );
         });
 

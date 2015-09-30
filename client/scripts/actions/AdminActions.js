@@ -43,7 +43,13 @@ class _AdminActions {
     this.dispatch();
   }
 
-  showCommentingPanel() { this.dispatch(); }
+  showCommentingPanel(topic, id, title) {
+    this.dispatch({
+      topic: topic,
+      id: id,
+      title: title
+    });
+  }
 
   hideCommentingPanel() { this.dispatch(); }
 
