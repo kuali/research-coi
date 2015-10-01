@@ -421,11 +421,29 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
-      query.where('submitted_date', '>=', new Date(filters.date.start));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '>=', new Date(filters.date.start));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '>=', new Date(filters.date.start));
+        });
+      });
     }
 
     if (filters.date.end && !isNaN(filters.date.end)) {
-      query.where('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+      });
     }
   }
   if (filters.status && filters.status.length > 0) {
@@ -462,11 +480,29 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
-      query.where('submitted_date', '>=', new Date(filters.date.start));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '>=', new Date(filters.date.start));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '>=', new Date(filters.date.start));
+        });
+      });
     }
 
     if (filters.date.end && !isNaN(filters.date.end)) {
-      query.where('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+      });
     }
   }
   if (filters.status && filters.status.length > 0) {
@@ -504,7 +540,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
   }
 
   query.orderBy(dbSortColumn, dbSortDirection);
-  query.limit(SUMMARY_PAGE_SIZE).offset(+start)
+  query.limit(SUMMARY_PAGE_SIZE).offset(+start).debug()
   .then(rows => {
     callback(undefined, rows);
   }).catch(err => {
