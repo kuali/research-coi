@@ -209,7 +209,7 @@ export class TravelLogForm extends React.Component {
                   <div style={{marginBottom: 5, fontWeight: '500'}}>AMOUNT</div>
                   <div style={{position: 'relative'}}>
                     <span style={styles.currency}>$</span>
-                    <input required ref="amount" onChange={this.validateForm} onKeyPress={this.validateNumeric} type="text" style={amount}/>
+                    <input required ref="amount" onChange={this.validateForm} onKeyPress={this.validateNumeric} type="text" name="Amount" style={amount}/>
                   </div>
                 </span>
               </div>
@@ -219,7 +219,7 @@ export class TravelLogForm extends React.Component {
                 <span style={styles.field}>
                   <div style={{marginBottom: 5, fontWeight: '500'}}>DESTINATION</div>
                   <div>
-                    <input required ref="destination" onChange={this.validateForm} type="text" style={styles.input}/>
+                    <input required ref="destination" onChange={this.validateForm} type="text" name="Destination" style={styles.input}/>
                   </div>
                 </span>
               </div>

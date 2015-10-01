@@ -72,33 +72,33 @@ export class Entry extends React.Component {
         <div>
           <div style={styles.left}>
             <div>
-              <div style={styles.entityName}>
+              <div name="Name" style={styles.entityName}>
                 {this.props.travelLog.entityName}
                 <span style={styles.midDot}>&middot;</span>
               </div>
               <div style={styles.dates}>
                 <span style={styles.label}>Dates:</span>
-                <span style={styles.data}>{formatDate(this.props.travelLog.startDate)} - {formatDate(this.props.travelLog.endDate)}</span>
+                <span name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDate(this.props.travelLog.startDate)} - {formatDate(this.props.travelLog.endDate)}</span>
               </div>
             </div>
             <div style={styles.middle}>
               <div style={styles.destination}>
                 <span style={styles.label}>Destination:</span>
-                <span style={styles.data}>{this.props.travelLog.destination}</span>
+                <span name="Destination" data-for={this.props.travelLog.entityName} style={styles.data}>{this.props.travelLog.destination}</span>
               </div>
               <div style={styles.amount}>
                 <span style={styles.label}>Amount:</span>
-                <span style={styles.data}>${this.props.travelLog.amount}</span>
+                <span name="Amount" data-for={this.props.travelLog.entityName} style={styles.data}>${this.props.travelLog.amount}</span>
               </div>
             </div>
             <div style={styles.reason}>
               <span style={styles.label}>Reason:</span>
-              <span style={styles.data}>{this.props.travelLog.reason}</span>
+              <span name="Reason" data-for={this.props.travelLog.entityName} style={styles.data}>{this.props.travelLog.reason}</span>
             </div>
           </div>
           <div style={styles.buttons}>
-            <ProminentButton style={styles.button}>Edit</ProminentButton>
-            <ProminentButton style={styles.button}>Delete</ProminentButton>
+            <ProminentButton name="Edit" data-for={this.props.travelLog.entityName} style={styles.button}>Edit</ProminentButton>
+            <ProminentButton name="Delete" data-for={this.props.travelLog.entityName} style={styles.button}>Delete</ProminentButton>
           </div>
         </div>
       </div>
