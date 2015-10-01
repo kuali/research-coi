@@ -153,8 +153,14 @@ class _AdminStore extends AutoBindingStore {
     this.refreshDisclosures();
   }
 
-  changeSubmittedByFilter(newFilter) {
-    this.applicationState.filters.submittedBy = newFilter;
+  clearSubmittedByFilter() {
+    this.applicationState.filters.submittedBy = undefined;
+    this.refreshDisclosures();
+  }
+
+  setSubmittedByFilter(name) {
+    this.applicationState.filters.submittedBy = name;
+    this.refreshDisclosures();
   }
 
   changeReporterFilter(newFilter) {

@@ -435,7 +435,7 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
     query.whereIn('disclosure_type.description', filters.type);
   }
   if (filters.submittedBy) {
-    query.where('submitted_by', query.submittedBy);
+    query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
     query = query.where(function() {
@@ -476,7 +476,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
     query.whereIn('disclosure_type.description', filters.type);
   }
   if (filters.submittedBy) {
-    query.where('submitted_by', query.submittedBy);
+    query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
     query.where(function() {

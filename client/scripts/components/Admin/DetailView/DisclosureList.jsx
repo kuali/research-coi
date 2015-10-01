@@ -141,6 +141,7 @@ export class DisclosureList extends React.Component {
             possibleTypes={possibleTypes}
             activeStatusFilters={this.props.filters.status}
             activeTypeFilters={this.props.filters.type}
+            activePIFilter={this.props.filters.submittedBy}
             showDateSort={false}
           />
         </div>

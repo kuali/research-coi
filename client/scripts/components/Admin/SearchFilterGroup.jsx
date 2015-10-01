@@ -5,6 +5,7 @@ import {SearchFilter} from './SearchFilter';
 import {AdminActions} from '../../actions/AdminActions';
 import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
 import {DisclosureFilterByDate} from './DisclosureFilterByDate';
+import {DisclosureFilterByPI} from './DisclosureFilterByPI';
 
 export class SearchFilterGroup extends ResponsiveComponent {
   constructor() {
@@ -109,6 +110,10 @@ export class SearchFilterGroup extends ResponsiveComponent {
           active={this.props.activeStatusFilters && this.props.activeStatusFilters.length > 0}
           activeFilters={this.props.activeStatusFilters}
           possibleStatuses={this.props.possibleStatuses}
+        />
+        <DisclosureFilterByPI
+          active={this.props.activePIFilter}
+          piName={this.props.activePIFilter}
         />
       </div>
     );

@@ -158,6 +158,7 @@ export class ListView extends React.Component {
             possibleTypes={possibleTypes}
             activeStatusFilters={this.state.data.applicationState.filters.status}
             activeTypeFilters={this.state.data.applicationState.filters.type}
+            activePIFilter={this.state.data.applicationState.filters.submittedBy}
             showDateSort={false}
           />
         </span>
