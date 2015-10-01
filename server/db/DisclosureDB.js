@@ -540,7 +540,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
   }
 
   query.orderBy(dbSortColumn, dbSortDirection);
-  query.limit(SUMMARY_PAGE_SIZE).offset(+start).debug()
+  query.limit(SUMMARY_PAGE_SIZE).offset(+start)
   .then(rows => {
     callback(undefined, rows);
   }).catch(err => {
