@@ -109,8 +109,6 @@ export class DetailView extends React.Component {
         transform: this.state.applicationState.listShowing ? 'translateX(0px)' : 'translateX(-320px)',
         transition: 'transform .3s ease-in-out'
       },
-      details: {
-      },
       list: {
         width: 320
       },
@@ -152,7 +150,7 @@ export class DetailView extends React.Component {
           loadingMore={this.state.applicationState.loadingMore}
           loadedAll={this.state.applicationState.loadedAll}
         />
-        <div className="inline-flexbox fill" style={styles.details}>
+        <div className="inline-flexbox fill">
           {disclosureDetail}
         </div>
         <span style={styles.sidePanel}>

@@ -31,6 +31,10 @@ select, input, textarea {
   background-color: #F9F9F9;
 }
 
+.autosuggest-results > li:hover {
+  background-color: #EEE;
+}
+
 /* These classes allow us to use vendor prefixes for flexbox (can't do with React inline styles) */
 .flexbox {
   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6 */

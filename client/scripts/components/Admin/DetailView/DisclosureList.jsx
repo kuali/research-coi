@@ -51,8 +51,7 @@ export class DisclosureList extends React.Component {
         borderRight: '1px solid #6d6d6d',
         verticalAlign: 'top',
         boxShadow: '2px 1px 6px #D1D1D1',
-        transition: 'width .3s ease-in-out',
-        overflowX: 'hidden'
+        transition: 'width .3s ease-in-out'
       },
       list: {
         listStyleType: 'none',
@@ -142,6 +141,7 @@ export class DisclosureList extends React.Component {
             possibleTypes={possibleTypes}
             activeStatusFilters={this.props.filters.status}
             activeTypeFilters={this.props.filters.type}
+            activePIFilter={this.props.filters.submittedBy}
             showDateSort={false}
           />
         </div>

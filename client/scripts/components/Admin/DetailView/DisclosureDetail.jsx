@@ -16,6 +16,11 @@ export class DisclosureDetail extends React.Component {
     this.findScreeningQuestion = this.findScreeningQuestion.bind(this);
   }
 
+  componentWillReceiveProps() {
+    let detailPanel = React.findDOMNode(this.refs.detailPanel);
+    detailPanel.scrollTop = 0;
+  }
+
   makeEntityMap() {
     let result = {};
     let entities = this.props.disclosure.entities;
@@ -149,7 +154,7 @@ export class DisclosureDetail extends React.Component {
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
         <DisclosureDetailHeading disclosure={this.props.disclosure} />
         <div className="fill flexbox row" style={styles.bottom}>
-          <span className="fill" style={styles.detailsFromPI}>
+          <span className="fill" style={styles.detailsFromPI} ref="detailPanel">
             <AdminQuestionnaireSummary
               questions={screeningQuestions}
               answers={screeningAnswers}
@@ -167,7 +172,7 @@ export class DisclosureDetail extends React.Component {
               comments={declarationsComments}
               id={this.props.disclosure.id} />
           </span>
-          <span style={{}}>
+          <span>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
             <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
             <ActionButtons style={styles.actionButtons} />

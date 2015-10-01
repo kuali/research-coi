@@ -11,7 +11,9 @@ export default class CommentBubble extends React.Component {
         width: '60%',
         display: 'inline-block',
         padding: '8px 15px 15px 15px',
-        marginLeft: this.props.isUser ? '35%' : '5%'
+        marginLeft: this.props.isUser ? '35%' : '5%',
+        transform: this.props.new ? 'translateY(125%)' : 'translateY(0%)',
+        transition: 'transform .2s ease-out'
       },
       date: {
         float: 'right',

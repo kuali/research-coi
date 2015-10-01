@@ -7,6 +7,7 @@
     font-size: 16px;
     border: 1px solid #aaaaaa;
     border-radius: 4px;
+    padding: 5px;
 }
 .react-autosuggest input[aria-expanded="true"] {
     border-bottom-left-radius: 0;

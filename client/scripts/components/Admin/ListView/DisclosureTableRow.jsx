@@ -46,9 +46,9 @@ export class DisclosureTableRow extends React.Component {
             {this.highlightSearchTerm(this.props.submittedBy)}
           </Link>
         </span>
-        <span role="gridcell" style={styles.value}>
+        {/*<span role="gridcell" style={styles.value}>
           {this.highlightSearchTerm(this.props.type)}
-        </span>
+        </span>*/}
         <span role="gridcell" style={styles.value}>
           {this.highlightSearchTerm(this.props.status)}
         </span>

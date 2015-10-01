@@ -114,6 +114,7 @@ export default class CommentingPanel extends React.Component {
             author={comment.author}
             text={comment.text}
             style={styles.comment}
+            new={comment.new}
           />
         );
       });

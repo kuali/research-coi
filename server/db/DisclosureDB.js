@@ -421,11 +421,29 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
-      query.where('submitted_date', '>=', new Date(filters.date.start));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '>=', new Date(filters.date.start));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '>=', new Date(filters.date.start));
+        });
+      });
     }
 
     if (filters.date.end && !isNaN(filters.date.end)) {
-      query.where('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+      });
     }
   }
   if (filters.status && filters.status.length > 0) {
@@ -435,12 +453,12 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
     query.whereIn('disclosure_type.description', filters.type);
   }
   if (filters.submittedBy) {
-    query.where('submitted_by', query.submittedBy);
+    query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
     query = query.where(function() {
       this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
-         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
+         // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
          .orWhere('submitted_by', 'like', '%' + filters.search + '%');
     });
   }
@@ -462,11 +480,29 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
-      query.where('submitted_date', '>=', new Date(filters.date.start));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '>=', new Date(filters.date.start));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '>=', new Date(filters.date.start));
+        });
+      });
     }
 
     if (filters.date.end && !isNaN(filters.date.end)) {
-      query.where('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+      query.where(function() {
+        this.where(function() {
+          this.whereNotNull('revised_date')
+            .andWhere('revised_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+        this.orWhere(function() {
+          this.whereNull('revised_date')
+            .andWhere('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
+        });
+      });
     }
   }
   if (filters.status && filters.status.length > 0) {
@@ -476,12 +512,12 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
     query.whereIn('disclosure_type.description', filters.type);
   }
   if (filters.submittedBy) {
-    query.where('submitted_by', query.submittedBy);
+    query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
     query.where(function() {
       this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
-         .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
+         // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
          .orWhere('submitted_by', 'like', '%' + filters.search + '%');
     });
   }

@@ -42,6 +42,9 @@ export class DisclosureListItem extends React.Component {
       },
       disclosureType: {
         fontWeight: 'bold'
+      },
+      submittedBy: {
+        fontWeight: 'bold'
       }
     };
 
@@ -61,10 +64,10 @@ export class DisclosureListItem extends React.Component {
     return (
       <Link to={`/detailview/${this.props.disclosure.id}`}>
         <li style={merge(styles.container, this.props.style)}>
-          <div style={styles.disclosureType}>
+          {/*<div style={styles.disclosureType}>
             {this.highlightSearchTerm(disclosure.type)}
-          </div>
-          <div>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
+          </div>*/}
+          <div style={styles.submittedBy}>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
           {dateToShow}
           <div>Status: {this.highlightSearchTerm(disclosure.status)}</div>
         </li>

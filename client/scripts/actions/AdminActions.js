@@ -17,7 +17,9 @@ class _AdminActions {
 
   clearDateFilter() { this.dispatch(); }
 
-  changeSubmittedByFilter(newFilter) { this.dispatch(newFilter); }
+  clearSubmittedByFilter() { this.dispatch(); }
+
+  setSubmittedByFilter(name) { this.dispatch(name); }
 
   changeReporterFilter(newFilter) { this.dispatch(newFilter); }
 

@@ -5,7 +5,7 @@ function randomNumberBetween(lowest, highest) {
 }
 
 function getRandomLastName() {
-  switch (randomNumberBetween(0, 19) % 20) {
+  switch (randomNumberBetween(0, 33)) {
     case 0: return 'Anderson';
     case 1: return 'Carhart';
     case 2: return 'Edmunds';
@@ -26,11 +26,25 @@ function getRandomLastName() {
     case 17: return 'Giles';
     case 18: return 'Boudwin';
     case 19: return 'Williams';
+    case 20: return 'Dilly';
+    case 21: return 'Day';
+    case 22: return 'Somerset';
+    case 23: return 'Blaney';
+    case 24: return 'Soltesz';
+    case 25: return 'Olausson';
+    case 26: return 'Bowers';
+    case 27: return 'Andrus';
+    case 28: return 'Thacker';
+    case 29: return 'Hunter';
+    case 30: return 'Ferrell';
+    case 31: return 'Bateman';
+    case 32: return 'Wages';
+    case 33: return 'Kang';
   }
 }
 
 function getRandomFirstName() {
-  switch (randomNumberBetween(0, 19) % 20) {
+  switch (randomNumberBetween(0, 33)) {
     case 0: return 'Chloe';
     case 1: return 'James';
     case 2: return 'Eleanor';
@@ -50,7 +64,21 @@ function getRandomFirstName() {
     case 16: return 'Hannah';
     case 17: return 'Joe';
     case 18: return 'Chris';
-    case 19: return 'Terry';
+    case 19: return 'Harold';
+    case 20: return 'Ben';
+    case 21: return 'Lindsay';
+    case 22: return 'Abby';
+    case 23: return 'Melanie';
+    case 24: return 'Emily';
+    case 25: return 'Martina';
+    case 26: return 'Heather';
+    case 27: return 'Rick';
+    case 28: return 'John';
+    case 29: return 'Bryan';
+    case 30: return 'Doug';
+    case 31: return 'Travis';
+    case 32: return 'Terry';
+    case 33: return 'Sophie';
   }
 }
 
@@ -399,7 +427,7 @@ exports.seed = function(knex, Promise) {
   }).then(function() {
     console.log('Seed - disclosure');
     var disclosures = [];
-    for (var i = 0; i < 172; i++) {
+    for (var i = 0; i < 500; i++) {
       disclosures.push(insertDisclosure(knex));
     }
     return Promise.all(disclosures);
