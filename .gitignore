@@ -34,3 +34,6 @@ COI.mwb.bak
 
 *.sublime-workspace
 *.sublime-project
+
+# RubyMine project configuration files
+*.idea
