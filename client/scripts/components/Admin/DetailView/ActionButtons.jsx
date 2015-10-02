@@ -63,12 +63,6 @@ export class ActionButtons extends React.Component {
           <SendBackIcon style={styles.icon} />
           <span style={styles.label}>SEND BACK</span>
         </div>
-        <div onClick={this.showAdditionalReview} style={styles.button}>
-          <AddReviewerIcon style={styles.icon} />
-          <span style={styles.label}>
-            <div>ADDITIONAL REVIEW</div>
-          </span>
-        </div>
         <div onClick={this.showComments} style={styles.button}>
           <RecommendedStatusIcon style={styles.icon} />
           <span style={styles.label}>

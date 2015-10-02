@@ -19,9 +19,6 @@ export default class CommentingPanel extends React.Component {
     let piCheck = React.findDOMNode(this.refs.piCheck);
     let visibleToPI = piCheck.checked;
     piCheck.checked = false;
-    let addRevCheck = React.findDOMNode(this.refs.addRevCheck);
-    let visibleToReviewers = addRevCheck.checked;
-    addRevCheck.checked = false;
     let textarea = React.findDOMNode(this.refs.commentText);
     let commentText = textarea.value;
     textarea.value = '';
@@ -31,7 +28,7 @@ export default class CommentingPanel extends React.Component {
       this.props.topicSection,
       this.props.topicId,
       visibleToPI,
-      visibleToReviewers,
+      false,
       commentText
     );
 
@@ -145,10 +142,6 @@ export default class CommentingPanel extends React.Component {
             <div>
               <input type="checkbox" id="piCheck" ref="piCheck" />
               <label htmlFor="piCheck" style={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
-            </div>
-            <div>
-              <input type="checkbox" id="addRevCheck" ref="addRevCheck" />
-              <label htmlFor="addRevCheck" style={styles.checkLabel}>ADDITIONAL REVIEWER</label>
             </div>
             <div>
               <KButton style={{marginTop: 25}} onClick={this.makeComment}>Submit</KButton>
