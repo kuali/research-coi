@@ -1,5 +1,15 @@
 import * as DisclosureDB from '../db/DisclosureDB';
 import {getUserInfo} from '../AuthService';
+import multer from 'multer';
+
+let upload;
+try {
+  let extensions = require('research-extensions');
+  upload = extensions.storage;
+}
+catch (err) {
+  upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
+}
 
 export let init = app => {
   // Returns summaries of all archived disclosures for the user
@@ -276,9 +286,9 @@ export let init = app => {
     });
   });
 
-  app.post('/api/coi/disclosure/:id/financial-entity', function(req, res, next) {
+  app.post('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.id, req.params.id, req.body, function(err, financialEntity) {
+    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files, function(err, financialEntity) {
       if (err) {
         console.error(err);
         next(err);
@@ -288,9 +298,9 @@ export let init = app => {
     });
   });
 
-  app.put('/api/coi/disclosure/:id/financial-entity', function(req, res, next) {
+  app.put('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveNewFinancialEntity(req.dbInfo, userInfo.id, req.params.id, req.body, function(err, financialEntity) {
+    DisclosureDB.saveNewFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files, function(err, financialEntity) {
       if (err) {
         console.error(err);
         next(err);

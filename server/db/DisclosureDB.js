@@ -1,5 +1,6 @@
 /*eslint camelcase:0 */
 import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
+import * as FileService from '../services/fileService/FileService';
 
 const ONE_DAY = 1000 * 60 * 60 * 24;
 
@@ -32,10 +33,9 @@ export let saveFinEntity = (dbInfo, userId, record, callback, optionalTrx) => {
   saveSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
 };
 
-export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callback) => {
+export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEntity, files, callback) => {
   let knex = getKnex(dbInfo);
 
-  let financialEntity = body;
   knex('fin_entity')
   .insert({
     disclosure_id: disclosureId,
@@ -65,6 +65,27 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callbac
           callback(err);
         })
       );
+
+      financialEntity.files = [];
+
+      files.forEach(file=>{
+        let fileData = {
+          file_type: file.fieldname,
+          ref_id: financialEntity.id,
+          type: file.mimetype,
+          path: file.path,
+          name: file.originalname
+        };
+        queries.push(knex('file')
+        .insert(fileData)
+        .then(fileId=>{
+          fileData.id = fileId[0];
+          financialEntity.files.push(fileData);
+        })
+        .catch(function(err) {
+          callback(err);
+        }));
+      });
     });
 
     financialEntity.answers.forEach(answer=>{
@@ -100,7 +121,7 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, body, callbac
   });
 };
 
-export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, callback) => {
+export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, files, callback) => {
   let knex = getKnex(dbInfo);
 
   let financialEntity = body;
@@ -172,6 +193,53 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, ca
       }
     });
 
+    queries.push(
+      knex.select('*')
+      .from('file')
+      .where('ref_id', financialEntity.id)
+      .then(results=>{
+        if (results) {
+          results.forEach(result=>{
+            let match = financialEntity.files.find(file=>{
+              return result.id === file.id;
+            });
+            if (!match) {
+              queries.push(
+              knex('file').where('id', result.id).del().then(()=>{
+                FileService.deleteFile(result.path, err=>{
+                  callback(err);
+                });
+              }).catch(err=>{
+                callback(err);
+              })
+              );
+            }
+          });
+        }
+      })
+      .catch(err=>{
+        callback(err);
+      })
+    );
+
+    files.forEach(file=>{
+      let fileData = {
+        file_type: file.fieldname,
+        ref_id: financialEntity.id,
+        type: file.mimetype,
+        path: file.path,
+        name: file.originalname
+      };
+      queries.push(knex('file')
+      .insert(fileData)
+      .then(id=>{
+        fileData.id = id[0];
+        financialEntity.files.push(fileData);
+      })
+      .catch(function(err) {
+        callback(err);
+      }));
+    });
 
     Promise.all(queries)
     .then(()=>{
@@ -373,6 +441,22 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
             return answer;
           });
         });
+      })
+      .catch(err=>{
+        callback(err);
+      }),
+      knex.select('*')
+      .from('file')
+      .whereIn('ref_id', disclosure.entities.map(entity => { return entity.id; }))
+      .then(files=>{
+        disclosure.entities.forEach(entity => {
+          entity.files = files.filter(file => {
+            return file.ref_id === entity.id;
+          });
+        });
+      })
+      .catch(err=>{
+        callback(err);
       })
     ]).then(()=>{
       callback(undefined, disclosure);
