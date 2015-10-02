@@ -329,6 +329,23 @@ class _DisclosureStore extends AutoBindingStore {
     }
   }
 
+  addEntityAttachments(data) {
+    let entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
+    if(!entity.files) {
+      entity.files = [];
+    }
+
+    data.files.forEach(file=>{
+      entity.files.push(file);
+    });
+  }
+
+  deleteEntityAttachment(data) {
+    let entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
+    entity.files.splice(data.index, 1);
+  }
+
+
   nextStep() {
     switch (this.applicationState.currentDisclosureState.step) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
@@ -523,10 +540,25 @@ class _DisclosureStore extends AutoBindingStore {
         this.addEntityRelationship(entity.id);
       }
 
+      let formData = new FormData();
+      let existingFiles = [];
+      if (entity.files && entity.files.length > 0) {
+        entity.files.forEach(file=> {
+          if (file.preview) {
+            formData.append('attachments', file);
+          } else {
+            existingFiles.push(file);
+          }
+        });
+      }
+
+      entity.files = existingFiles;
+
+      formData.append('entity', JSON.stringify(entity));
+
       if (this.applicationState.entityStates[entity.id].editing === true) {
         request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
-        .send(entity)
-        .type('application/json')
+        .send(formData)
         .end((err, res) => {
           if (!err) {
 
@@ -574,9 +606,17 @@ class _DisclosureStore extends AutoBindingStore {
       this.entities = [];
     }
 
+    let formData = new FormData();
+    if (entity.files && entity.files.length > 0) {
+      entity.files.forEach(file=> {
+        formData.append('attachments', file);
+      });
+    }
+
+    formData.append('entity', JSON.stringify(entity));
+
     request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
-    .send(entity)
-    .type('application/json')
+    .send(formData)
     .end((err, res) => {
       if (!err) {
         this.entities.push(res.body);

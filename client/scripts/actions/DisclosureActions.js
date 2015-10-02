@@ -192,6 +192,10 @@ class _DisclosureActions {
   certify(value) { this.dispatch(value); }
 
   submitDisclosure() { this.dispatch(); }
+
+  addEntityAttachments(files, entityId) { this.dispatch({files: files, entityId: entityId}); }
+
+  deleteEntityAttachment(index, entityId) { this.dispatch({index: index, entityId: entityId}); }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

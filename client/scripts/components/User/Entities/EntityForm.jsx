@@ -159,12 +159,8 @@ export class EntityForm extends ResponsiveComponent {
             readonly={!this.props.editing}
             update={this.props.update}
             name={entity.name}
-            type={entity.type}
             answers={entity.answers}
-            isPublic={entity.isPublic}
-            isSponsor={entity.isSponsor}
-            description={entity.description}
-            entityTypes={window.config.entityTypes}
+            files={entity.files}
             validating={this.props.appState.validatingEntityInformationStep}
           />
           <EntityFormRelationshipStep
@@ -214,12 +210,8 @@ export class EntityForm extends ResponsiveComponent {
             <EntityFormInformationStep
               update={this.props.update}
               name={entity.name}
-              type={entity.type}
               answers={entity.answers}
-              isPublic={entity.isPublic}
-              isSponsor={entity.isSponsor}
-              description={entity.description}
-              entityTypes={window.config.entityTypes}
+              files={entity.files}
               validating={this.props.appState.validatingEntityInformationStep}
             />
           );

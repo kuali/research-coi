@@ -3,12 +3,16 @@ import {merge} from '../../../merge';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {Question} from './Question';
 import {COIConstants} from '../../../../../COIConstants';
+import {FileUpload} from '../../FileUpload';
+import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class EntityFormInformationStep extends React.Component {
   constructor() {
     super();
 
     this.getAnswer = this.getAnswer.bind(this);
+    this.addEntityAttachments = this.addEntityAttachments.bind(this);
+    this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
   }
 
   getAnswer(id) {
@@ -18,6 +22,14 @@ export class EntityFormInformationStep extends React.Component {
     if (answer) {
       return answer.answer.value;
     }
+  }
+
+  addEntityAttachments(files) {
+    DisclosureActions.addEntityAttachments(files, this.props.id);
+  }
+
+  deleteEntityAttachment(index) {
+    DisclosureActions.deleteEntityAttachment(index, this.props.id);
   }
 
   render() {
@@ -92,6 +104,15 @@ export class EntityFormInformationStep extends React.Component {
         <div>
           {questions}
         </div>
+        <FileUpload
+          readonly={this.props.readonly}
+          onDrop={this.addEntityAttachments}
+          delete={this.deleteEntityAttachment}
+          getFile={this.getFile}
+          files={this.props.files}>
+          <p>Drag and Drop or Click to upload your attachments</p>
+          <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
+        </FileUpload>
       </span>
     );
   }
