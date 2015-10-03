@@ -10,7 +10,7 @@ catch (err) {
 
 export let getFile = (dbInfo, path, callback) => {
   let knex = getKnex(dbInfo);
-  knex.select('*').from('file').where('path', path).then(result=>{
+  knex.select('*').from('file').where('path', path).then(result => {
     callback(undefined, result);
   })
   .catch(err => {

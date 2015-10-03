@@ -16,6 +16,7 @@ export let saveSingleRecord = (dbInfo, record, callback, tableProps, optionalTrx
   let recordId = record[camelizeJson(tableProps.pk)];
   if (recordId) {
     callback('Record already has an ' + tableProps.pk + ' ' + recordId + ' for table ' + tableProps.table);
+    return;
   }
 
   let query;
@@ -26,18 +27,18 @@ export let saveSingleRecord = (dbInfo, record, callback, tableProps, optionalTrx
     query = knex;
   }
   query.insert(snakeizeJson(record))
-  .into(tableProps.table)
-  .then(function (result) {
-    let updatedRecord = _.clone(record);
-    updatedRecord[camelizeJson(tableProps).pk] = result[0];
-    callback(null, updatedRecord);
-  })
-  .catch(function(err) {
-    if (optionalTrx) {
-      optionalTrx.rollback();
-    }
-    callback(err);
-  });
+    .into(tableProps.table)
+    .then(result => {
+      let updatedRecord = _.clone(record);
+      updatedRecord[camelizeJson(tableProps).pk] = result[0];
+      callback(null, updatedRecord);
+    })
+    .catch(err => {
+      if (optionalTrx) {
+        optionalTrx.rollback();
+      }
+      callback(err);
+    });
 };
 
 export let getExistingSingleRecord = (dbInfo, recordId, callback, tableProps, optionalTrx) => {
@@ -45,6 +46,7 @@ export let getExistingSingleRecord = (dbInfo, recordId, callback, tableProps, op
 
   if (!recordId) {
     callback('Record does not have an ' + tableProps.pk + ' for table ' + tableProps.table);
+    return;
   }
 
   let query;
@@ -56,17 +58,17 @@ export let getExistingSingleRecord = (dbInfo, recordId, callback, tableProps, op
   }
 
   query.select('*')
-  .from(tableProps.table)
-  .where(tableProps.pk, recordId)
-  .then(function (result) {
-    callback(null, camelizeJson(result));
-  })
-  .catch(function(err) {
-    if (optionalTrx) {
-      optionalTrx.rollback();
-    }
-    callback(err);
-  });
+    .from(tableProps.table)
+    .where(tableProps.pk, recordId)
+    .then(result => {
+      callback(null, camelizeJson(result));
+    })
+    .catch(err => {
+      if (optionalTrx) {
+        optionalTrx.rollback();
+      }
+      callback(err);
+    });
 };
 
 export let saveExistingSingleRecord = (dbInfo, record, callback, tableProps, optionalTrx) => {
@@ -75,6 +77,7 @@ export let saveExistingSingleRecord = (dbInfo, record, callback, tableProps, opt
   let recordId = record[camelizeJson(tableProps).pk];
   if (!recordId) {
     callback('Record does not have an ' + tableProps.pk + ' for table ' + tableProps.table);
+    return;
   }
 
   let query;
@@ -85,18 +88,18 @@ export let saveExistingSingleRecord = (dbInfo, record, callback, tableProps, opt
     query = knex;
   }
   query.update(snakeizeJson(record))
-  .table(tableProps.table)
-  .where(tableProps.pk, recordId)
-  .then(function (result) {  //eslint-disable-line no-unused-vars
-    let updatedRecord = _.clone(record);
-    callback(null, updatedRecord);
-  })
-  .catch(function(err) {
-    if (optionalTrx) {
-      optionalTrx.rollback();
-    }
-    callback(err);
-  });
+    .table(tableProps.table)
+    .where(tableProps.pk, recordId)
+    .then(() => {
+      let updatedRecord = _.clone(record);
+      callback(null, updatedRecord);
+    })
+    .catch(err => {
+      if (optionalTrx) {
+        optionalTrx.rollback();
+      }
+      callback(err);
+    });
 };
 
 export let deleteExistingSingleRecord = (dbInfo, recordId, callback, tableProps, optionalTrx) => {
@@ -104,6 +107,7 @@ export let deleteExistingSingleRecord = (dbInfo, recordId, callback, tableProps,
 
   if (!recordId) {
     callback('Record does not have an ' + tableProps.pk + ' for table ' + tableProps.table);
+    return;
   }
 
   let query;
@@ -114,24 +118,16 @@ export let deleteExistingSingleRecord = (dbInfo, recordId, callback, tableProps,
     query = knex;
   }
   query.delete()
-  .from(tableProps.table)
-  .where(tableProps.pk, recordId)
-  .then(function (result) {
-    callback(null, result);
-  })
-  .catch(function(err) {
-    if (optionalTrx) {
-      optionalTrx.rollback();
-    }
-    callback(err);
-  });
-
-  if (optionalTrx) {
-    query(optionalTrx);
-  } else {
-    knex.transaction(function(trx) {
-      query(trx);
+    .from(tableProps.table)
+    .where(tableProps.pk, recordId)
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(err => {
+      if (optionalTrx) {
+        optionalTrx.rollback();
+      }
+      callback(err);
     });
-  }
 };
 

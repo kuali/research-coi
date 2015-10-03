@@ -36,16 +36,16 @@ export let getTravelLogEntries = (dbInfo, userId, callback, optionalTrx) => {
     query = knex;
   }
   query.select('fe.name as entityName', 'tle.amount', 'tle.start_date as startDate', 'tle.end_date as endDate', 'tle.destination', 'tle.reason')
-  .from('travel_log_entry as tle')
-  .innerJoin('fin_entity as fe', 'fe.id', 'tle.fin_entity_id')
-  .orderBy('fe.name', 'ASC')
-  .then(function (result) {
-    callback(null, result);
-  })
-  .catch(function(err) {
-    if (optionalTrx) {
-      optionalTrx.rollback();
-    }
-    callback(err);
-  });
+    .from('travel_log_entry as tle')
+    .innerJoin('fin_entity as fe', 'fe.id', 'tle.fin_entity_id')
+    .orderBy('fe.name', 'ASC')
+    .then(function (result) {
+      callback(null, result);
+    })
+    .catch(function(err) {
+      if (optionalTrx) {
+        optionalTrx.rollback();
+      }
+      callback(err);
+    });
 };
