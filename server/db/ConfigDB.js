@@ -20,7 +20,7 @@ let mockDB = {
   }
 };
 
-let createCollectionQueries = (dbInfo, collection, tableProps, callback, optionalTrx) => {
+let createCollectionQueries = (dbInfo, collection, tableProps, optionalTrx) => {
   let knex = getKnex(dbInfo);
 
   let query;
@@ -83,7 +83,7 @@ let convertQuestionFormat = (questions) =>{
   });
 };
 
-export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
+export let getConfig = (dbInfo, userId, optionalTrx) => {
   var config = mockDB.UIT;
   let knex = getKnex(dbInfo);
 
@@ -94,7 +94,7 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
   else {
     query = knex;
   }
-  Promise.all([
+  return Promise.all([
     query.select('*').from('relationship_category_type'),
     query.select('*').from('relationship_type').where('active', true),
     query.select('*').from('relationship_amount_type').where('active', true),
@@ -149,17 +149,11 @@ export let getConfig = (dbInfo, userId, callback, optionalTrx) => {
     config = camelizeJson(config);
 
     config.general = JSON.parse(result[9][0].config);
-    callback(undefined, config);
-  })
-  .catch(err => {
-    if (optionalTrx) {
-      optionalTrx.rollback();
-    }
-    callback(err);
+    return config;
   });
 };
 
-export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
+export let setConfig = (dbInfo, userId, body, optionalTrx) => {
   let config = snakeizeJson(body);
   let knex = getKnex(dbInfo);
   let query;
@@ -181,9 +175,9 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
       })
       .where('type_cd', type.type_cd);
 
-      let typeOptionsQueries = createCollectionQueries(dbInfo, type.type_options, {pk: 'type_cd', table: 'relationship_type', where: {key: 'relationship_cd', value: type.type_cd}}, callback);
+      let typeOptionsQueries = createCollectionQueries(dbInfo, type.type_options, {pk: 'type_cd', table: 'relationship_type', where: {key: 'relationship_cd', value: type.type_cd}});
 
-      let amountOptionsQueries = createCollectionQueries(dbInfo, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type', where: {key: 'relationship_cd', value: type.type_cd}}, callback);
+      let amountOptionsQueries = createCollectionQueries(dbInfo, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type', where: {key: 'relationship_cd', value: type.type_cd}});
 
       matrixTypeQueries.push(matrixTypeQuery);
       matrixTypeQueries.push(typeOptionsQueries);
@@ -194,19 +188,19 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
   );
 
   queries.push(
-    createCollectionQueries(dbInfo, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'}, callback)
+    createCollectionQueries(dbInfo, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})
   );
 
   queries.push(
-    createCollectionQueries(dbInfo, config.relationship_person_types, {pk: 'type_cd', table: 'relationship_person_type'}, callback)
+    createCollectionQueries(dbInfo, config.relationship_person_types, {pk: 'type_cd', table: 'relationship_person_type'})
   );
 
   queries.push(
-    createCollectionQueries(dbInfo, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'}, callback)
+    createCollectionQueries(dbInfo, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'})
   );
 
   queries.push(
-    createCollectionQueries(dbInfo, config.notifications, {pk: 'id', table: 'notification'}, callback)
+    createCollectionQueries(dbInfo, config.notifications, {pk: 'id', table: 'notification'})
   );
 
   queries.push(
@@ -218,7 +212,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
             table: 'questionnaire_question',
             where: {key: 'questionnaire_id', value: result[0].id},
             parent: {key: 'questionnaire_id', value: result[0].id}
-          }, callback);
+          });
         } else {
           return query('questionnaire').insert({version: 1, type_cd: 1}).then(id => {
             return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.screening), {
@@ -226,7 +220,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
               table: 'questionnaire_question',
               where: {key: 'questionnaire_id', value: id[0]},
               parent: {key: 'questionnaire_id', value: id[0]}
-            }, callback);
+            });
           });
         }
       })
@@ -241,7 +235,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
             table: 'questionnaire_question',
             where: {key: 'questionnaire_id', value: result[0].id},
             parent: {key: 'questionnaire_id', value: result[0].id}
-          }, callback);
+          });
         } else {
           return query('questionnaire').insert({version: 1, type_cd: 2}).then(id => {
             return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.entities), {
@@ -249,7 +243,7 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
               table: 'questionnaire_question',
               where: {key: 'questionnaire_id', value: id[0]},
               parent: {key: 'questionnaire_id', value: id[0]}
-            }, callback);
+            });
           });
         }
       })
@@ -259,14 +253,8 @@ export let setConfig = (dbInfo, userId, body, callback, optionalTrx) => {
     query('config').update({config: JSON.stringify(body.general)}).where('name', 'General Config')
   );
 
-  Promise.all(queries)
+  return Promise.all(queries)
     .then(() => {
-      callback(undefined, camelizeJson(config));
-    })
-    .catch(err => {
-      if (optionalTrx) {
-        optionalTrx.rollback();
-      }
-      callback(err);
+      return camelizeJson(config);
     });
 };

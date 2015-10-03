@@ -22,21 +22,16 @@ let queryWithoutIndex = (knex, term) => {
     .limit(10);
 };
 
-export let getSuggestions = (dbInfo, term, callback) => {
+export let getSuggestions = (dbInfo, term) => {
   let knex = getKnex(dbInfo);
 
-  queryUsingIndex(knex, term)
-  .then(result =>{
-    if (result.length < 10) {
-      return queryWithoutIndex(knex, term).then(noIndexResult => {
-        callback(undefined, noIndexResult);
-      });
-    }
-    else {
-      callback(undefined, result);
-    }
-  })
-  .catch(err => {
-    callback(err);
-  });
+  return queryUsingIndex(knex, term)
+    .then(result =>{
+      if (result.length < 10) {
+        return queryWithoutIndex(knex, term);
+      }
+      else {
+        return result;
+      }
+    });
 };

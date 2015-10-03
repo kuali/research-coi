@@ -1,5 +1,5 @@
 /*eslint camelcase:0 */
-import {saveSingleRecord, getExistingSingleRecord, saveExistingSingleRecord, deleteExistingSingleRecord} from './CommonDB';
+import {saveSingleRecord, saveExistingSingleRecord} from './CommonDB';
 import * as FileService from '../services/fileService/FileService';
 
 const ONE_DAY = 1000 * 60 * 60 * 24;
@@ -13,30 +13,10 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let saveDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
-};
-
-export let getExistingDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
-  getExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
-};
-
-export let saveExistingDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
-};
-
-export let deleteExistingDisclosure = (dbInfo, userId, record, callback, optionalTrx) => {
-  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'disclosure', pk: 'id'}, optionalTrx);
-};
-
-export let saveFinEntity = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
-};
-
-export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEntity, files, callback) => {
+export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEntity, files) => {
   let knex = getKnex(dbInfo);
 
-  knex('fin_entity')
+  return knex('fin_entity')
     .insert({
       disclosure_id: disclosureId,
       active: financialEntity.active,
@@ -103,20 +83,17 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEnti
 
       return Promise.all(queries)
         .then(() => {
-          callback(undefined, financialEntity);
+          return financialEntity;
         });
-    })
-    .catch(err => {
-      callback(err);
     });
 };
 
-export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, files, callback) => {
+export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, files) => {
   let knex = getKnex(dbInfo);
 
   let financialEntity = body;
 
-  knex('fin_entity')
+  return knex('fin_entity')
     .where('id', financialEntity.id)
     .update({
       disclosure_id: disclosureId,
@@ -146,7 +123,6 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, fi
           );
         }
       });
-
 
       financialEntity.answers.forEach(answer=>{
         if (answer.id) {
@@ -187,7 +163,7 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, fi
                     knex('file').where('id', result.id).del()
                     .then(() => {
                       FileService.deleteFile(result.path, err => {
-                        callback(err);
+                        throw err;
                       });
                     })
                   );
@@ -217,62 +193,23 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, fi
 
       return Promise.all(queries)
         .then(() => {
-          callback(undefined, financialEntity);
+          return financialEntity;
         });
-    })
-    .catch(err => {
-      callback(err);
     });
 };
 
-export let getExistingEntity = (dbInfo, userId, record, callback, optionalTrx) => {
-  getExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
+export let saveDeclaration = (dbInfo, userId, record, optionalTrx) => {
+  return saveSingleRecord(dbInfo, record, {table: 'declaration', pk: 'id'}, optionalTrx);
 };
 
-export let saveExistingFinEntity = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
+export let saveExistingDeclaration = (dbInfo, userId, record, optionalTrx) => {
+  return saveExistingSingleRecord(dbInfo, record, {table: 'declaration', pk: 'id'}, optionalTrx);
 };
 
-export let deleteExistingEntity = (dbInfo, userId, record, callback, optionalTrx) => {
-  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'fin_entity', pk: 'id'}, optionalTrx);
-};
-
-export let saveRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
-};
-
-export let getExistingRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
-  getExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
-};
-
-export let saveExistingRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
-};
-
-export let deleteExistingRelationship = (dbInfo, userId, record, callback, optionalTrx) => {
-  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'relationship', pk: 'id'}, optionalTrx);
-};
-
-export let saveDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
-};
-
-export let getExistingDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
-  getExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
-};
-
-export let saveExistingDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
-  saveExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
-};
-
-export let deleteExistingDeclaration = (dbInfo, userId, record, callback, optionalTrx) => {
-  deleteExistingSingleRecord(dbInfo, record, callback, {table: 'declaration', pk: 'id'}, optionalTrx);
-};
-
-export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body, callback) => {
+export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   let knex = getKnex(dbInfo);
   let answer = body;
-  knex('questionnaire_answer').insert({
+  return knex('questionnaire_answer').insert({
     question_id: body.questionId,
     answer: JSON.stringify(body.answer)
   }).then(result => {
@@ -280,16 +217,14 @@ export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body, callback
     return knex('disclosure_answer').insert({
       disclosure_id: disclosureId,
       questionnaire_answer_id: result[0]}).then(() => {
-        callback(undefined, body);
+        return body;
       });
-  }).catch(err => {
-    callback(err);
   });
 };
 
-export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body, callback) => {
+export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   let knex = getKnex(dbInfo);
-  knex.select('qa.id')
+  return knex.select('qa.id')
     .from('disclosure_answer as da')
     .innerJoin('questionnaire_answer as qa', 'da.questionnaire_answer_id', 'qa.id')
     .where('da.disclosure_id', disclosureId)
@@ -299,10 +234,8 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body, cal
         .where('id', result[0].id)
         .update('answer', JSON.stringify(body.answer))
         .then(() => {
-          callback(undefined, body);
+          return body;
         });
-    }).catch(err => {
-      callback(err);
     });
 };
 
@@ -323,10 +256,10 @@ let retrieveComments = (dbInfo, userId, disclosureId) => {
     });
 };
 
-export let addComment = (dbInfo, userInfo, comment, callback) => {
+export let addComment = (dbInfo, userInfo, comment) => {
   let knex = getKnex(dbInfo);
 
-  knex('comment')
+  return knex('comment')
     .insert({
       disclosure_id: comment.disclosureId,
       topic_section: comment.topicSection,
@@ -338,20 +271,14 @@ export let addComment = (dbInfo, userInfo, comment, callback) => {
       pi_visible: comment.visibleToPI,
       reviewer_visible: comment.visibleToReviewers
     }).then(() => {
-      retrieveComments(dbInfo, userInfo.id, comment.disclosureId)
-      .then(comments => {
-        callback(undefined, comments);
-      });
-    })
-    .catch(err => {
-      callback(err);
+      return retrieveComments(dbInfo, userInfo.id, comment.disclosureId);
     });
 };
 
-export let get = (dbInfo, userId, disclosureId, callback) => {
+export let get = (dbInfo, userId, disclosureId) => {
   var disclosure;
   let knex = getKnex(dbInfo);
-  Promise.all([
+  return Promise.all([
     knex.select('de.id', 'de.type_cd as typeCd', 'de.title', 'de.disposition_type_cd as dispositionTypeCd', 'de.status_cd as statusCd', 'de.submitted_by as submittedBy', 'de.submitted_date as submittedDate', 'de.revised_date as revisedDate', 'de.start_date as startDate', 'de.expired_date as expiredDate', 'de.last_review_date as lastReviewDate')
       .from('disclosure as de')
       .where('id', disclosureId),
@@ -422,20 +349,23 @@ export let get = (dbInfo, userId, disclosureId, callback) => {
           });
         })
     ]).then(()=>{
-      callback(undefined, disclosure);
+      return disclosure;
     });
-  })
-  .catch(err => {
-    callback(err);
   });
 };
 
-export let getAnnualDisclosure = (dbInfo, userId, piName, callback) => {
+export let getAnnualDisclosure = (dbInfo, userId, piName) => {
   let knex = getKnex(dbInfo);
-  knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userId)
+  return knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userId)
     .then(result => {
       if (result.length < 1) {
-        let newDisclosure = {type_cd: 2, status_cd: 1, start_date: new Date(), user_id: userId, submitted_by: piName};
+        let newDisclosure = {
+          type_cd: 2,
+          status_cd: 1,
+          start_date: new Date(),
+          user_id: userId,
+          submitted_by: piName
+        };
         return knex('disclosure')
           .insert(newDisclosure)
           .then(id => {
@@ -443,18 +373,16 @@ export let getAnnualDisclosure = (dbInfo, userId, piName, callback) => {
             newDisclosure.answers = [];
             newDisclosure.entities = [];
             newDisclosure.declarations = [];
-            callback(undefined, newDisclosure);
+            return newDisclosure;
           });
       }
-
-      return get(dbInfo, userId, result[0].id, callback);
-    })
-    .catch(err => {
-      callback(err);
+      else {
+        return get(dbInfo, userId, result[0].id);
+      }
     });
 };
 
-export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
+export let getSummariesForReviewCount = (dbInfo, userId, filters) => {
   let knex = getKnex(dbInfo);
 
   let query = knex('disclosure').count('id as rowcount')
@@ -463,12 +391,12 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
-      query.where(() => {
-        this.where(() => {
+      query.where(function() {
+        this.where(function() {
           this.whereNotNull('revised_date')
             .andWhere('revised_date', '>=', new Date(filters.date.start));
         });
-        this.orWhere(() => {
+        this.orWhere(function() {
           this.whereNull('revised_date')
             .andWhere('submitted_date', '>=', new Date(filters.date.start));
         });
@@ -476,12 +404,12 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
     }
 
     if (filters.date.end && !isNaN(filters.date.end)) {
-      query.where(() => {
-        this.where(() => {
+      query.where(function() {
+        this.where(function() {
           this.whereNotNull('revised_date')
             .andWhere('revised_date', '<=', new Date(filters.date.end + ONE_DAY));
         });
-        this.orWhere(() => {
+        this.orWhere(function() {
           this.whereNull('revised_date')
             .andWhere('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
         });
@@ -498,22 +426,18 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters, callback) => {
     query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
-    query = query.where(() => {
+    query = query.where(function() {
       this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
          // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
          .orWhere('submitted_by', 'like', '%' + filters.search + '%');
     });
   }
 
-  query.then(count => {
-    callback(undefined, count);
-  }).catch(err => {
-    callback(err);
-  });
+  return query;
 };
 
 const SUMMARY_PAGE_SIZE = 40;
-export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, start, filters, callback) => {
+export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, start, filters) => {
   let knex = getKnex(dbInfo);
 
   let query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
@@ -522,12 +446,12 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
-      query.where(() => {
-        this.where(() => {
+      query.where(function() {
+        this.where(function() {
           this.whereNotNull('revised_date')
             .andWhere('revised_date', '>=', new Date(filters.date.start));
         });
-        this.orWhere(() => {
+        this.orWhere(function() {
           this.whereNull('revised_date')
             .andWhere('submitted_date', '>=', new Date(filters.date.start));
         });
@@ -535,12 +459,12 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
     }
 
     if (filters.date.end && !isNaN(filters.date.end)) {
-      query.where(() => {
-        this.where(() => {
+      query.where(function() {
+        this.where(function() {
           this.whereNotNull('revised_date')
             .andWhere('revised_date', '<=', new Date(filters.date.end + ONE_DAY));
         });
-        this.orWhere(() => {
+        this.orWhere(function() {
           this.whereNull('revised_date')
             .andWhere('submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
         });
@@ -557,7 +481,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
     query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
-    query.where(() => {
+    query.where(function() {
       this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
          // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
          .orWhere('submitted_by', 'like', '%' + filters.search + '%');
@@ -582,53 +506,30 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
   }
 
   query.orderBy(dbSortColumn, dbSortDirection);
-  query.limit(SUMMARY_PAGE_SIZE).offset(+start)
-    .then(rows => {
-      callback(undefined, rows);
-    }).catch(err => {
-      callback(err);
-    });
+  return query.limit(SUMMARY_PAGE_SIZE).offset(+start);
 };
 
-export let getSummariesForUser = (dbInfo, userId, callback) => {
+export let getSummariesForUser = (dbInfo, userId) => {
   let knex = getKnex(dbInfo);
-  knex.select('expired_date', 'type_cd as type', 'title', 'status_cd as status', 'last_review_date', 'id')
+  return knex.select('expired_date', 'type_cd as type', 'title', 'status_cd as status', 'last_review_date', 'id')
     .from('disclosure as d')
-    .where('d.user_id', userId)
-    .then(rows => {
-      callback(undefined, rows);
-    })
-    .catch(err => {
-      callback(err);
-    });
+    .where('d.user_id', userId);
 };
 
-export let submit = (dbInfo, displayName, disclosureId, callback) => {
+export let submit = (dbInfo, displayName, disclosureId) => {
   let knex = getKnex(dbInfo);
-  knex('disclosure')
+  return knex('disclosure')
     .update({
       status_cd: 2,
       submitted_by: displayName,
       submitted_date: new Date()
     })
-    .where('id', disclosureId)
-    .then(() => {
-      callback(undefined);
-    })
-    .catch(err => {
-      callback(err);
-    });
+    .where('id', disclosureId);
 };
 
-export let getArchivedDisclosures = (dbInfo, userId, callback) => {
+export let getArchivedDisclosures = (dbInfo, userId) => {
   let knex = getKnex(dbInfo);
-  knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')
+  return knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')
     .from('disclosure as de')
-    .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
-    .then(rows => {
-      callback(undefined, rows);
-    })
-    .catch(err => {
-      callback(err);
-    });
+    .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd');
 };

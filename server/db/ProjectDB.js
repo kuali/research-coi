@@ -8,26 +8,20 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let getProjects = (dbInfo, userId, callback) => {
+export let getProjects = (dbInfo, userId) => {
   let knex = getKnex(dbInfo);
-  knex.select('p.id as id', 'p.title as name', 'p.type_cd as typeCd', 'person.role_cd as roleCd', 'p.sponsor_cd as sponsorCd')
+  return knex.select('p.id as id', 'p.title as name', 'p.type_cd as typeCd', 'person.role_cd as roleCd', 'p.sponsor_cd as sponsorCd')
     .from('project as p')
     .innerJoin('project_person as person', 'p.id', 'person.project_id')
     .where({
       'person.person_id': userId,
       'person.active': 1
-    })
-  .then(result =>{
-    callback(undefined, result);
-  })
-  .catch(err => {
-    callback(err);
-  });
+    });
 };
 
-export let saveProjects = (dbInfo, projects, callback) => {
+export let saveProjects = (dbInfo, projects) => {
   let knex = getKnex(dbInfo);
-  knex.select('id').from('project').where({
+  return knex.select('id').from('project').where({
     source_system: projects.sourceSystem,
     source_identifier: projects.sourceIdentifier
   }).then(projectIdResult => {
@@ -37,12 +31,6 @@ export let saveProjects = (dbInfo, projects, callback) => {
     } else {
       return saveNewProjects(dbInfo, projects);
     }
-  })
-  .then(() => {
-    callback();
-  })
-  .catch(err => {
-    callback(err);
   });
 };
 

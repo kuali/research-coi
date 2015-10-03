@@ -12,218 +12,54 @@ catch (err) {
 }
 
 export let init = app => {
-  // Returns summaries of all archived disclosures for the user
-  /*
-    [
-      {
-        id,
-        type,
-        title,
-        date_submitted,
-        date_approved,
-        project_start_date,
-        project_type
-      }
-    ]
-  */
   app.get('/api/coi/disclosures/archived', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.getArchivedDisclosures(req.dbInfo, userInfo.id, function(err, disclosures) {
-      if (err) {
+    DisclosureDB.getArchivedDisclosures(req.dbInfo, userInfo.id)
+      .then(disclosures => {
+        res.send(disclosures);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      }
-      else {
-        res.send(disclosures);
-      }
-    });
+      });
   });
 
-  // Returns summaries of all non-archived disclosures for the current user
-  /*
-    [
-      {
-        id,
-        type,
-        title,
-        expiration_date,
-        status,
-        last_review_date
-      }
-    ]
-  */
   app.get('/api/coi/disclosure-user-summaries', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.getSummariesForUser(req.dbInfo, userInfo.id, function(err, disclosures) {
-      if (err) {
+    DisclosureDB.getSummariesForUser(req.dbInfo, userInfo.id)
+      .then(disclosures => {
+        res.send(disclosures);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      }
-      else {
-        res.send(disclosures);
-      }
-    });
+      });
   });
 
-  // Returns details of a disclosure
-  /*
-    {
-      id,
-      type,
-      version,
-      date_submitted,
-      date_approved,
-      questionnaire: {
-        question_number: answer
-      },
-      entities: [
-        {
-          entity_id,
-          name,
-          is_active,
-          is_public,
-          type,
-          is_sponsor,
-          description,
-          relationships: [
-            id,
-            person,
-            type,
-            relationship_category,
-            amount,
-            comment
-          ]
-        }
-      ],
-      declarations: [
-        {
-          project_id,
-          project_name,
-          entities_id,
-          entity_name,
-          disposition,
-          comments
-        }
-      ]
-    }
-  */
-
-  app.get('/api/coi/disclosures/annual', function(req, res, next){
+  app.get('/api/coi/disclosures/annual', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.getAnnualDisclosure(req.dbInfo, userInfo.id, userInfo.displayName, function(err, disclosure) {
-      if (err) {
+    DisclosureDB.getAnnualDisclosure(req.dbInfo, userInfo.id, userInfo.displayName)
+      .then(disclosure => {
+        res.send(disclosure);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(disclosure);
-      }
-    });
+      });
   });
 
   app.get('/api/coi/disclosures/:id', function(req, res, next){
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.get(req.dbInfo, userInfo.id, req.params.id, function(err, disclosure) {
-      if (err) {
+    DisclosureDB.get(req.dbInfo, userInfo.id, req.params.id)
+      .then(disclosure => {
+        res.send(disclosure);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(disclosure);
-      }
-    });
+      });
   });
 
-  // Save existing disclosure with this data
-  /*
-    {
-      id,
-      type,
-      version,
-      date_submitted,
-      date_approved,
-      questionnaire: {
-        question_number: answer
-      },
-      entities: [
-        {
-          entity_id,
-          name,
-          is_active,
-          is_public,
-          type,
-          is_sponsor,
-          description,
-          relationships: [
-            id,
-            person,
-            type,
-            relationship_category,
-            amount,
-            comment
-          ]
-        }
-      ],
-      declarations: [
-        {
-          project_id,
-          project_name,
-          entities_id,
-          entity_name,
-          disposition,
-          comments
-        }
-      ]
-    }
-  */
-  app.put('/api/coi/disclosure/:id', function(req, res){
-    let userInfo = getUserInfo(req.cookies.authToken);
-    res.sendStatus(202);
-    res.send(DisclosureDB.saveExisting(req.dbInfo, userInfo.id, req.params.id, req.body));
-  });
-
-  // Save new disclosure with this data
-  /*
-    {
-      id,
-      type,
-      version,
-      date_submitted,
-      date_approved,
-      questionnaire: {
-        question_number: answer
-      },
-      entities: [
-        {
-          entity_id,
-          name,
-          is_active,
-          is_public,
-          type,
-          is_sponsor,
-          description,
-          relationships: [
-            id,
-            person,
-            type,
-            relationship_category,
-            amount,
-            comment
-          ]
-        }
-      ],
-      declarations: [
-        {
-          project_id,
-          project_name,
-          entities_id,
-          entity_name,
-          disposition,
-          comments
-        }
-      ]
-    }
-  */
-
-  // Admin stuff
   app.get('/api/coi/disclosure-summaries', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     let sortColumn = 'DATE_SUBMITTED';
@@ -251,14 +87,14 @@ export let init = app => {
     if (req.query.start && !isNaN(req.query.start)) {
       start = req.query.start;
     }
-    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, start, filters, (err, summaries) => {
-      if (err) {
+    DisclosureDB.getSummariesForReview(req.dbInfo, userInfo.id, sortColumn, sortDirection, start, filters)
+      .then(summaries => {
+        res.send(summaries);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(summaries);
-      }
-    });
+      });
   });
 
   app.get('/api/coi/disclosure-summaries/count', function(req, res, next) {
@@ -276,100 +112,100 @@ export let init = app => {
       }
     }
 
-    DisclosureDB.getSummariesForReviewCount(req.dbInfo, userInfo.id, filters, (err, count) => {
-      if (err) {
+    DisclosureDB.getSummariesForReviewCount(req.dbInfo, userInfo.id, filters)
+      .then(count => {
+        res.send(count);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(count);
-      }
-    });
+      });
   });
 
   app.post('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files, function(err, financialEntity) {
-      if (err) {
+    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files)
+      .then(financialEntity => {
+        res.send(financialEntity);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(financialEntity);
-      }
-    });
+      });
   });
 
   app.put('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveNewFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files, function(err, financialEntity) {
-      if (err) {
+    DisclosureDB.saveNewFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files)
+      .then(financialEntity => {
+        res.send(financialEntity);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(financialEntity);
-      }
-    });
+      });
   });
 
   app.put('/api/coi/disclosure/:id/declaration', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
-    DisclosureDB.saveDeclaration(req.dbInfo, userInfo.id, req.body, function(err, declaration){
-      if (err) {
+    DisclosureDB.saveDeclaration(req.dbInfo, userInfo.id, req.body)
+      .then(declaration => {
+        res.send(declaration);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(declaration);
-      }
-    }, undefined);
+      });
   });
 
   app.post('/api/coi/disclosure/:id/declaration', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
-    DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.body, function(err, declaration){
-      if (err) {
+    DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.body)
+      .then(declaration => {
+        res.send(declaration);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(declaration);
-      }
-    }, undefined);
+      });
   });
 
   app.post('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body, function(err, answer) {
-      if (err) {
+    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
+      .then(answer => {
+        res.send(answer);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(answer);
-      }
-    });
+      });
   });
 
   app.put('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body, function(err, answer) {
-      if (err) {
+    DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
+      .then(answer => {
+        res.send(answer);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.send(answer);
-      }
-    });
+      });
   });
 
   app.post('/api/coi/disclosure/:id/submit', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.submit(req.dbInfo, userInfo.displayName, req.params.id, function(err) {
-      if (err) {
+    DisclosureDB.submit(req.dbInfo, userInfo.displayName, req.params.id)
+      .then(() => {
+        res.sendStatus(202);
+      })
+      .catch(err => {
         console.error(err);
         next(err);
-      } else {
-        res.sendStatus(202);
-      }
-    });
+      });
   });
 
   app.post('/api/coi/disclosure/:id/comment', (req, res, next) => {
@@ -393,13 +229,13 @@ export let init = app => {
         visibleToReviewers: comment.visibleToReviewers,
         text: comment.text,
         disclosureId: req.params.id
-      }, (err, updatedComments) => {
-        if (err) {
-          console.error(err);
-          next(err);
-        } else {
-          res.send(updatedComments);
-        }
+      })
+      .then(updatedComments => {
+        res.send(updatedComments);
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
       });
     }
   });
