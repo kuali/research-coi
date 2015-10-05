@@ -139,7 +139,7 @@ export class Relationships extends ResponsiveComponent {
             entities={this.props.entities}
             title={this.props.projects[i].name}
             type={ConfigStore.getProjectTypeString(this.props.projects[i].typeCd)}
-            role={ConfigStore.getProjectRoleTypeString(this.props.projects[i].roleCd)}
+            role={this.props.projects[i].roleCd}
             sponsor={this.props.projects[i].sponsorCd}
             projectId={this.props.projects[i].id}
             declarationTypes={this.props.declarationTypes}
