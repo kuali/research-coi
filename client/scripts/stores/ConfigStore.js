@@ -17,7 +17,6 @@ class _ConfigStore extends AutoBindingStore {
       getProjectTypeString: this.getProjectTypeString,
       getRelationshipCategoryTypeString: this.getRelationshipCategoryTypeString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
-      getProjectRoleTypeString: this.getProjectRoleTypeString,
       getQuestionNumberToShow: this.getQuestionNumberToShow
     });
 
@@ -518,11 +517,6 @@ class _ConfigStore extends AutoBindingStore {
       this.codeMaps.projectType[typeRecord.typeCd] = typeRecord;
     });
 
-    this.codeMaps.projectRoleType = {};
-    this.config.projectRoleTypes.forEach(typeRecord => {
-      this.codeMaps.projectRoleType[typeRecord.roleCd] = typeRecord;
-    });
-
     this.codeMaps.relationshipCategoryType = {};
     this.config.matrixTypes.forEach(typeRecord => {
       this.codeMaps.relationshipCategoryType[typeRecord.typeCd] = typeRecord;
@@ -599,16 +593,6 @@ class _ConfigStore extends AutoBindingStore {
 
   getProjectTypeString(code) {
     let typeRecord = this.getState().codeMaps.projectType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-    else {
-      return 'Undefined';
-    }
-  }
-
-  getProjectRoleTypeString(code) {
-    let typeRecord = this.getState().codeMaps.projectRoleType[code];
     if (typeRecord) {
       return typeRecord.description;
     }
