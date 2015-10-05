@@ -1,6 +1,7 @@
 /*eslint camelcase:0 */
 import {saveSingleRecord, saveExistingSingleRecord} from './CommonDB';
 import * as FileService from '../services/fileService/FileService';
+import {COIConstants} from '../../COIConstants';
 
 const ONE_DAY = 1000 * 60 * 60 * 24;
 
@@ -256,6 +257,35 @@ let retrieveComments = (dbInfo, userId, disclosureId) => {
     });
 };
 
+let flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('*')
+    .from('pi_review')
+    .where({
+      'disclosure_id': disclosureId,
+      'target_type': section,
+      'target_id': id
+    }).then(rows => {
+      if (rows.length > 0) {
+        return knex('pi_review').update({
+          'reviewed_on': null
+        }).where({
+          'disclosure_id': disclosureId,
+          'target_type': section,
+          'target_id': id
+        });
+      }
+      else {
+        return knex('pi_review').insert({
+          'disclosure_id': disclosureId,
+          'target_type': section,
+          'target_id': id
+        });
+      }
+    });
+};
+
 export let addComment = (dbInfo, userInfo, comment) => {
   let knex = getKnex(dbInfo);
 
@@ -271,7 +301,15 @@ export let addComment = (dbInfo, userInfo, comment) => {
       pi_visible: comment.visibleToPI,
       reviewer_visible: comment.visibleToReviewers
     }).then(() => {
-      return retrieveComments(dbInfo, userInfo.id, comment.disclosureId);
+      let statements = [
+        retrieveComments(dbInfo, userInfo.id, comment.disclosureId)
+      ];
+      if (comment.visibleToPI) {
+        statements.push(
+          flagPIReviewNeeded(dbInfo, comment.disclosureId, comment.topicSection, comment.topicId)
+        );
+      }
+      return Promise.all(statements);
     });
 };
 

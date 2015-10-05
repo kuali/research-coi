@@ -1,4 +1,5 @@
 import * as DisclosureDB from '../db/DisclosureDB';
+import * as PIReviewDB from '../db/PIReviewDB';
 import {getUserInfo} from '../AuthService';
 import multer from 'multer';
 
@@ -223,20 +224,33 @@ export let init = app => {
     }
     else {
       DisclosureDB.addComment(req.dbInfo, userInfo, {
-        topicSection: comment.topicSection,
-        topicId: comment.topicId,
-        visibleToPI: comment.visibleToPI,
-        visibleToReviewers: comment.visibleToReviewers,
-        text: comment.text,
-        disclosureId: req.params.id
-      })
-      .then(updatedComments => {
-        res.send(updatedComments);
+          topicSection: comment.topicSection,
+          topicId: comment.topicId,
+          visibleToPI: comment.visibleToPI,
+          visibleToReviewers: comment.visibleToReviewers,
+          text: comment.text,
+          disclosureId: req.params.id
+        })
+        .then(result => {
+          res.send(result[0]);
+        })
+        .catch(err => {
+          console.error(err);
+          next(err);
+        });
+    }
+  });
+
+  app.get('/api/coi/disclosure/:id/pi-review-items', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    PIReviewDB.getPIReviewItems(req.dbInfo, userInfo, req.params.id)
+      .then(result => {
+        res.send(result);
       })
       .catch(err => {
         console.error(err);
         next(err);
       });
-    }
   });
 };
