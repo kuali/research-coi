@@ -10,6 +10,7 @@ import {Dashboard} from './Dashboard/Dashboard';
 import {Disclosure} from './Disclosure';
 import {TravelLog} from './TravelLog/TravelLog';
 import {Archive} from './Archive/Archive';
+import {Revise} from './Revise/Revise';
 import {ArchiveDetail} from './Archive/ArchiveDetail';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
@@ -47,6 +48,7 @@ let routes = (
     <Route name="disclosure" path="/disclosure" handler={Disclosure} />
     <Route name="travelLog" path="/travelLog" handler={TravelLog} />
     <Route name="archive" path="/archive" handler={Archive} />
+    <Route name="revise" path="/revise/:id" handler={Revise} />
     <DefaultRoute handler={Dashboard} />
   </Route>
 );

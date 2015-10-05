@@ -26,20 +26,21 @@ export class RadioControl extends React.Component {
       }
     };
 
-    let options = this.props.options.map(option=> {
+    let options = this.props.options.map(option => {
       return (
-      <span style={styles.option}>
-            <div>
-              <input
-              key={option}
+        <span style={styles.option} key={option}>
+          <div>
+            <input
               id={'multi_' + option}
               value={option}
               checked={this.props.answer === option}
               onChange={this.answer}
               type="radio"
-              style={styles.radio}/>
-            </div>
-            <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
+              style={styles.radio}
+              name="radioControl"
+            />
+          </div>
+          <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
       </span>
       );
     });

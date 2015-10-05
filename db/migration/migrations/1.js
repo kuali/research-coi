@@ -201,6 +201,12 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.dateTime('date').notNullable();
     table.boolean('pi_visible').notNullable();
     table.boolean('reviewer_visible').notNullable();
+  })
+  .createTable('pi_review', function(table) {
+    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
+    table.string('target_type', 25).notNullable();
+    table.integer('target_id').unsigned().notNullable();
+    table.dateTime('reviewed_on');
   });
 };
 
