@@ -4,6 +4,7 @@ import {merge} from '../../../merge';
 import {COIConstants} from '../../../../../COIConstants';
 import {Instructions} from '../Instructions';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {FileUpload} from '../../FileUpload';
 
 export class Certify extends ResponsiveComponent {
   constructor() {
@@ -11,6 +12,16 @@ export class Certify extends ResponsiveComponent {
     this.commonStyles = {};
 
     this.certify = this.certify.bind(this);
+    this.addDisclosureAttachment = this.addDisclosureAttachment.bind(this);
+    this.deleteDisclosureAttachment = this.deleteDisclosureAttachment.bind(this);
+  }
+
+  addDisclosureAttachment(files) {
+    DisclosureActions.addDisclosureAttachment(files);
+  }
+
+  deleteDisclosureAttachment(index) {
+    DisclosureActions.deleteDisclosureAttachment(index);
   }
 
   certify(evt) {
@@ -77,6 +88,13 @@ export class Certify extends ResponsiveComponent {
                 </span>
               );
             })}
+            <FileUpload
+            onDrop={this.addDisclosureAttachment}
+            delete={this.deleteDisclosureAttachment}
+            files={this.props.files}>
+              <p>Drag and Drop or Click to upload your attachments</p>
+              <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
+            </FileUpload>
             {agreement}
           </span>
         </div>

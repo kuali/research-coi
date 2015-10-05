@@ -27,7 +27,7 @@ export class Entity extends ResponsiveComponent {
       return 'Action Required';
     }
     else {
-      let worstDeclaration = this.props.declarations[0].typeCd;
+      let worstDeclaration = 1;
 
       this.props.declarations.forEach(element => {
         if (worstDeclaration !== 2 && element.type > 1) {

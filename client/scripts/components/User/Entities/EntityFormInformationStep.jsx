@@ -108,7 +108,6 @@ export class EntityFormInformationStep extends React.Component {
           readonly={this.props.readonly}
           onDrop={this.addEntityAttachments}
           delete={this.deleteEntityAttachment}
-          getFile={this.getFile}
           files={this.props.files}>
           <p>Drag and Drop or Click to upload your attachments</p>
           <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
