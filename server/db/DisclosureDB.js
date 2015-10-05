@@ -48,11 +48,13 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEnti
 
         files.forEach(file=>{
           let fileData = {
-            file_type: file.fieldname,
+            file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
             ref_id: financialEntity.id,
             type: file.mimetype,
             path: file.path,
-            name: file.originalname
+            name: file.originalname,
+            user_id: userId,
+            upload_date: new Date()
           };
           queries.push(
             knex('file')
@@ -152,7 +154,10 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, fi
       queries.push(
         knex.select('*')
           .from('file')
-          .where('ref_id', financialEntity.id)
+          .where({
+            ref_id: financialEntity.id,
+            file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
+          })
           .then(results => {
             if (results) {
               results.forEach(result => {
@@ -163,8 +168,14 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, fi
                   queries.push(
                     knex('file').where('id', result.id).del()
                     .then(() => {
-                      FileService.deleteFile(result.path, err => {
-                        throw err;
+                      return new Promise((resolve, reject) => {
+                        FileService.deleteFile(result.path, err => {
+                          if (err) {
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
+                        });
                       });
                     })
                   );
@@ -176,11 +187,12 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, fi
 
       files.forEach(file => {
         let fileData = {
-          file_type: file.fieldname,
+          file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
           ref_id: financialEntity.id,
           type: file.mimetype,
           path: file.path,
-          name: file.originalname
+          name: file.originalname,
+          user_id: userId
         };
         queries.push(
           knex('file')
@@ -332,7 +344,8 @@ export let get = (dbInfo, userId, disclosureId) => {
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
       .innerJoin('project as p', 'p.id', 'd.project_id')
       .where('d.disclosure_id', disclosureId),
-    retrieveComments(dbInfo, userId, disclosureId)
+    retrieveComments(dbInfo, userId, disclosureId),
+    knex.select('id', 'name', 'path').from('file').where({ref_id: disclosureId, file_type: COIConstants.FILE_TYPE.DISCLOSURE})
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
       throw new Error('invalid disclosure id');
@@ -343,6 +356,7 @@ export let get = (dbInfo, userId, disclosureId) => {
     disclosure.answers = result[2];
     disclosure.declarations = result[3];
     disclosure.comments = result[4];
+    disclosure.files = result[5];
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });
@@ -379,6 +393,7 @@ export let get = (dbInfo, userId, disclosureId) => {
       knex.select('*')
         .from('file')
         .whereIn('ref_id', disclosure.entities.map(entity => { return entity.id; }))
+        .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY)
         .then(files=>{
           disclosure.entities.forEach(entity => {
             entity.files = files.filter(file => {
@@ -565,7 +580,7 @@ export let submit = (dbInfo, displayName, disclosureId) => {
     .where('id', disclosureId);
 };
 
-export let getArchivedDisclosures = (dbInfo, userId) => {
+export let getArchivedDisclosures = (dbInfo, userId) => { //eslint-disable-line no-unused-vars
   let knex = getKnex(dbInfo);
   return knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')
     .from('disclosure as de')

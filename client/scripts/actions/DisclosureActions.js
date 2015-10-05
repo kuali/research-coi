@@ -196,6 +196,11 @@ class _DisclosureActions {
   addEntityAttachments(files, entityId) { this.dispatch({files: files, entityId: entityId}); }
 
   deleteEntityAttachment(index, entityId) { this.dispatch({index: index, entityId: entityId}); }
+
+  addDisclosureAttachment(files) { this.dispatch(files); }
+
+  deleteDisclosureAttachment(index) { this.dispatch(index); }
+
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

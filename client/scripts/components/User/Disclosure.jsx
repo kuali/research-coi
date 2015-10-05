@@ -38,7 +38,8 @@ export class Disclosure extends ResponsiveComponent {
       applicationState: storeState.applicationState,
       entities: storeState.entities,
       projects: storeState.projects,
-      declarations: storeState.declarations
+      declarations: storeState.declarations,
+      files: storeState.files
     };
 
     this.onChange = this.onChange.bind(this);
@@ -111,7 +112,8 @@ export class Disclosure extends ResponsiveComponent {
       applicationState: storeState.applicationState,
       entities: storeState.entities,
       projects: storeState.projects,
-      declarations: storeState.declarations
+      declarations: storeState.declarations,
+      files: storeState.files
     });
   }
 
@@ -269,6 +271,7 @@ export class Disclosure extends ResponsiveComponent {
           <Certify
             instructionsShowing={this.state.applicationState.instructionsShowing}
             isCertified = {this.state.applicationState.currentDisclosureState.isCertified}
+            files={this.state.files}
           />
         );
         heading = 'Certification';

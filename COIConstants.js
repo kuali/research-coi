@@ -19,6 +19,11 @@ export let COIConstants = {
     APPROVED: 3,
     DISAPPROVED: 4
   },
+  FILE_TYPE: {
+    FINANCIAL_ENTITY: 'financialEntity',
+    DISCLOSURE: 'disclosure',
+    MANAGEMENT_PLAN: 'managementPlan'
+  },
   DISCLOSURE_TYPE: {
     MANUAL: '1',
     ANNUAL: '2',

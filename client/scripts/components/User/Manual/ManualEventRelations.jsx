@@ -28,7 +28,7 @@ export class ManualEventRelations extends ResponsiveComponent {
       return 'Action Required';
     }
     else {
-      let worstDeclaration = this.props.declarations[0].typeCd;
+      let worstDeclaration = 1;
 
       this.props.declarations.forEach(element => {
         if (worstDeclaration !== 2 && element.typeCd > 1) {
@@ -187,6 +187,7 @@ export class ManualEventRelations extends ResponsiveComponent {
         </div>
 
         {relationshipDialog}
+
       </div>
     );
   }

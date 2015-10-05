@@ -132,6 +132,7 @@ class _DisclosureStore extends AutoBindingStore {
           this.applicationState.currentDisclosureState.disclosure = disclosure.body;
           this.entities = disclosure.body.entities;
           this.declarations = disclosure.body.declarations;
+          this.files = disclosure.body.files;
           this.emitChange();
         }
       });
@@ -344,7 +345,6 @@ class _DisclosureStore extends AutoBindingStore {
     let entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
     entity.files.splice(data.index, 1);
   }
-
 
   nextStep() {
     switch (this.applicationState.currentDisclosureState.step) {
@@ -1051,6 +1051,45 @@ class _DisclosureStore extends AutoBindingStore {
         break;
     }
   }
+
+  addDisclosureAttachment(files) {
+    if (!this.files) {
+      this.files = [];
+    }
+
+    let formData = new FormData();
+    files.forEach(file => {
+      formData.append('attachments', file);
+    });
+
+    formData.append('data', JSON.stringify({refId: this.applicationState.currentDisclosureState.disclosure.id, type: COIConstants.FILE_TYPE.DISCLOSURE}));
+
+    request.put('/api/coi/file')
+    .send(formData)
+    .end((err, res) => {
+      if (!err) {
+        res.body.forEach(file => {
+          this.files.push(file);
+          this.emitChange();
+        });
+      }
+    });
+  }
+
+  deleteDisclosureAttachment(index) {
+    let file = this.files[index];
+
+    request.del('/api/coi/file')
+    .send(file)
+    .type('application/json')
+    .end(err=>{
+      if (!err) {
+        this.files.splice(index, 1);
+        this.emitChange();
+      }
+    });
+  }
+
 
   certify(value) {
     this.applicationState.currentDisclosureState.isCertified = value;
