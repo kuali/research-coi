@@ -295,14 +295,6 @@ exports.seed = function(knex, Promise) {
       knex('disposition_type').insert({type_cd: 1, description: '222'})
     ]);
   }).then(function() {
-    console.log('Seed - project_role');
-    return Promise.all([
-      knex('project_role').insert({role_cd: 'PI', description: 'Principal Investigator'}),
-      knex('project_role').insert({role_cd: 'COI', description: 'Co-Investigator'}),
-      knex('project_role').insert({role_cd: 'KP', description: 'Key Person'}),
-      knex('project_role').insert({role_cd: 'MPI', description: 'Multiple Principal Investigator'})
-    ]);
-  }).then(function() {
     console.log('Seed - project_type');
     return Promise.all([
       knex('project_type').insert({type_cd: 1, description: 'Proposal'}),
