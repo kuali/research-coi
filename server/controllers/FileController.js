@@ -1,5 +1,5 @@
 import * as FileService from '../services/fileService/FileService';
-import * as FileDb from '../db/FileDb';
+import * as FileDb from '../db/FileDB';
 import {getUserInfo} from '../AuthService';
 import multer from 'multer';
 
