@@ -1,5 +1,6 @@
 import {AdminActions} from '../actions/AdminActions';
 import {AutoBindingStore} from './AutoBindingStore';
+import {COIConstants} from '../../../COIConstants';
 import alt from '../alt';
 import request from 'superagent';
 
@@ -315,6 +316,40 @@ class _AdminStore extends AutoBindingStore {
                this.emitChange();
              }
            });
+  }
+
+  addManagementPlan(files) {
+    let formData = new FormData();
+    files.forEach(file => {
+      formData.append('attachments', file);
+    });
+
+    formData.append('data', JSON.stringify({refId: this.applicationState.selectedDisclosure.id, type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN}));
+
+    request.put('/api/coi/file')
+    .send(formData)
+    .end((err, res) => {
+      if (!err) {
+        res.body.forEach(file => {
+          this.applicationState.selectedDisclosure.managementPlan.push(file);
+          this.emitChange();
+        });
+      }
+    });
+  }
+
+  deleteManagementPlan() {
+    let file = this.applicationState.selectedDisclosure.managementPlan[0];
+
+    request.del('/api/coi/file')
+    .send(file)
+    .type('application/json')
+    .end(err=>{
+      if (!err) {
+        this.applicationState.selectedDisclosure.managementPlan.splice(0, 1);
+        this.emitChange();
+      }
+    });
   }
 }
 

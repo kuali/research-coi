@@ -177,10 +177,10 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.increments('id').notNullable();
     table.string('file_type').notNullable();
     table.integer('ref_id').unsigned().notNullable();
-    table.integer('user_id').notNullable();
     table.string('type').notNullable();
     table.string('path').notNullable();
     table.string('name').notNullable();
+    table.string('uploaded_by').notNullable();
     table.dateTime('upload_date');
   })
   .createTable('config', function(table) {

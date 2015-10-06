@@ -1,10 +1,26 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 import {AdminActions} from '../../../actions/AdminActions';
+import {FileUpload} from '../../FileUpload';
 
 export default class AdditionalReviewPanel extends React.Component {
+  constructor() {
+    super();
+
+    this.addManagementPlan = this.addManagementPlan.bind(this);
+    this.deleteManagementPlan = this.deleteManagementPlan.bind(this);
+  }
+
   done() {
     AdminActions.hideAdditionalReviewPanel();
+  }
+
+  addManagementPlan(files) {
+    AdminActions.addManagementPlan(files);
+  }
+
+  deleteManagementPlan() {
+    AdminActions.deleteManagementPlan();
   }
 
   render() {
@@ -59,6 +75,20 @@ export default class AdditionalReviewPanel extends React.Component {
       }
     };
 
+    let fileUploadStyles = {
+      deleteButton: {
+        width: 90,
+        fontSize: 12
+      },
+      middle: {
+        width: '60%',
+        display: 'inline-block',
+        textAlign: 'center',
+        verticalAlign: 'middle',
+        fontSize: 12
+      }
+    };
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={{paddingBottom: 20, borderBottom: '1px solid #888'}}>
@@ -66,28 +96,26 @@ export default class AdditionalReviewPanel extends React.Component {
           <span style={styles.title}>ADDITIONAL REVIEW</span>
         </div>
         <div style={{paddingTop: 12}}>
-          <button style={styles.download}>Download Template</button>
           <span style={styles.subLabel}>MANAGEMENT PLAN</span>
         </div>
 
-        <div style={styles.dragAndDrop}>
-          Drag and Drop or Upload your Management Plan
-        </div>
+
+        <FileUpload
+          fileType='Management Plan'
+          readonly={false}
+          onDrop={this.addManagementPlan}
+          delete={this.deleteManagementPlan}
+          files={this.props.managementPlan}
+          multiple={false}
+          styles={fileUploadStyles}>
+          <p>Drag and Drop or Click to upload your attachments</p>
+          <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
+        </FileUpload>
 
         <div style={styles.complete}>
           <input id="mpcomplete" type="checkbox" style={{marginRight: 5, verticalAlign: 'middle'}}/>
           <label htmlFor="mpcomplete">Management Plan Complete</label>
         </div>
-
-        <div style={styles.additionalReviewerLabel}>
-          <span style={styles.subLabel}>ADDITIONAL REVIEWERS</span>
-        </div>
-
-        <div style={styles.searchLabel}>
-          SEARCH REVIEWERS
-        </div>
-
-        <input type="text" style={styles.searchBox} />
       </div>
     );
   }

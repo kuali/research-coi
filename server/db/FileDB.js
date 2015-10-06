@@ -14,7 +14,7 @@ export let getFile = (dbInfo, path) => {
   return knex.select('*').from('file').where('path', path);
 };
 
-export let saveNewFiles = (dbInfo, body, files, userId) => {
+export let saveNewFiles = (dbInfo, body, files, userName) => {
   let knex = getKnex(dbInfo);
   let fileData = [];
   return Promise.all(
@@ -25,7 +25,7 @@ export let saveNewFiles = (dbInfo, body, files, userId) => {
         type: file.mimetype,
         path: file.path,
         name: file.originalname,
-        user_id: userId,
+        uploaded_by: userName,
         upload_date: new Date()
       };
       return knex('file')

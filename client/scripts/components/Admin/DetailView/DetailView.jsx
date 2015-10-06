@@ -93,7 +93,8 @@ export class DetailView extends React.Component {
     }
     else if (this.state.applicationState.additionalReviewShowing) {
       sidePanel = (
-        <AdditionalReviewPanel />
+        <AdditionalReviewPanel
+          managementPlan={this.state.applicationState.selectedDisclosure.managementPlan}/>
       );
     }
     else if (this.state.applicationState.commentSummaryShowing) {

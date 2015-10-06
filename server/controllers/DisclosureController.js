@@ -125,7 +125,7 @@ export let init = app => {
 
   app.post('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files)
+    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.displayName, req.params.id, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
         res.send(financialEntity);
       })
@@ -137,7 +137,7 @@ export let init = app => {
 
   app.put('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveNewFinancialEntity(req.dbInfo, userInfo.id, req.params.id, JSON.parse(req.body.entity), req.files)
+    DisclosureDB.saveNewFinancialEntity(req.dbInfo, userInfo.displayName, req.params.id, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
         res.send(financialEntity);
       })

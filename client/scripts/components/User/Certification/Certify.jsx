@@ -89,9 +89,12 @@ export class Certify extends ResponsiveComponent {
               );
             })}
             <FileUpload
+            fileType='Attachment'
+            readOnly={false}
             onDrop={this.addDisclosureAttachment}
             delete={this.deleteDisclosureAttachment}
-            files={this.props.files}>
+            files={this.props.files}
+            multiple={true}>
               <p>Drag and Drop or Click to upload your attachments</p>
               <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
             </FileUpload>
