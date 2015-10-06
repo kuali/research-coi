@@ -51,7 +51,7 @@ export let saveNewFinancialEntity = (dbInfo, displayName, disclosureId, financia
             file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
             ref_id: financialEntity.id,
             type: file.mimetype,
-            path: file.path,
+            key: file.filename,
             name: file.originalname,
             uploaded_by: displayName,
             upload_date: new Date()
@@ -169,7 +169,7 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
                     knex('file').where('id', result.id).del()
                     .then(() => {
                       return new Promise((resolve, reject) => {
-                        FileService.deleteFile(result.path, err => {
+                        FileService.deleteFile(result.key, err => {
                           if (err) {
                             reject(err);
                           } else {
@@ -190,7 +190,7 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
           file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
           ref_id: financialEntity.id,
           type: file.mimetype,
-          path: file.path,
+          key: file.filename,
           name: file.originalname,
           uploaded_by: displayName,
           upload_date: new Date()
@@ -346,13 +346,13 @@ export let get = (dbInfo, userId, disclosureId) => {
       .innerJoin('project as p', 'p.id', 'd.project_id')
       .where('d.disclosure_id', disclosureId),
     retrieveComments(dbInfo, userId, disclosureId),
-    knex.select('id', 'name', 'path')
+    knex.select('id', 'name', 'key')
     .from('file')
     .where({
       ref_id: disclosureId,
       file_type: COIConstants.FILE_TYPE.DISCLOSURE
     }),
-    knex.select('id', 'name', 'path')
+    knex.select('id', 'name', 'key')
     .from('file')
     .where({
       ref_id: disclosureId,
