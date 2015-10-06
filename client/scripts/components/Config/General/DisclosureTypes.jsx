@@ -33,12 +33,9 @@ export default class DisclosureTypes extends React.Component {
       rows = (
         <span>
           <div style={styles.optionRow}>
-            <DisclosureType type={this.props.types[0]} />
             <DisclosureType type={this.props.types[1]} />
           </div>
           <div style={styles.optionRow}>
-            <DisclosureType type={this.props.types[2]} />
-            <DisclosureType type={this.props.types[3]} />
           </div>
         </span>
       );
