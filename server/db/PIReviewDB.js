@@ -10,7 +10,97 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-let getQuestionsToReview = (knex, disclosureId, reviewItems) => {
+let isDisclosureUsers = (dbInfo, disclosureId, userId) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('user_id')
+    .from('disclosure')
+    .where({
+      'id': disclosureId,
+      'user_id': userId
+    })
+    .then(result => {
+      return result.length > 0;
+    });
+};
+
+let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targetId, comment) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('c.id')
+    .from('comment as c')
+    .where({
+      'c.disclosure_id': disclosureId,
+      'c.topic_section': targetType,
+      'c.topic_id': targetId,
+      'c.user_id': userInfo.id
+    })
+    .then(comments => {
+      if (comments.length > 0) {
+        return knex('comment as c')
+          .update({
+            'text': comment
+          })
+          .where({
+            'c.disclosure_id': disclosureId,
+            'c.topic_section': targetType,
+            'c.topic_id': targetId,
+            'c.user_id': userInfo.id
+          });
+      }
+      else {
+        return knex('comment').insert({
+          'disclosure_id': disclosureId,
+          'topic_section': targetType,
+          'topic_id': targetId,
+          'text': comment,
+          'user_id': userInfo.id,
+          'author': userInfo.displayName,
+          'date': new Date(),
+          'pi_visible': true,
+          'reviewer_visible': true
+        });
+      }
+    });
+};
+
+export let recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('disclosure_id as disclosureId', 'target_type as targetType', 'target_id as targetId')
+    .from('pi_review')
+    .where('id', reviewId)
+    .then(reviewItem => {
+      return isDisclosureUsers(dbInfo, reviewItem[0].disclosureId, userInfo.id)
+        .then(isSubmitter => {
+          if (isSubmitter) {
+            return Promise.all([
+              knex('pi_review')
+                .update({
+                  'reviewed_on': new Date()
+                }).where({
+                  'id': reviewId
+                }),
+                updatePIResponseComment(
+                  dbInfo,
+                  userInfo,
+                  reviewItem[0].disclosureId,
+                  reviewItem[0].targetType,
+                  reviewItem[0].targetId,
+                  comment
+                )
+            ]).then(() => {
+              return;
+            });
+          }
+          else {
+            return 'Unauthorized';
+          }
+        });
+    });
+};
+
+let getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
   let questionIDs = reviewItems.reduce((previous, current) => {
     previous.push(current.targetId);
     return previous;
@@ -25,7 +115,7 @@ let getQuestionsToReview = (knex, disclosureId, reviewItems) => {
     })
     .andWhere('qq.id', 'in', questionIDs)
     .then(questions => {
-      return knex.select('topic_id as topicId', 'text', 'author', 'date')
+      return knex.select('id', 'topic_id as topicId', 'text', 'author', 'date', 'user_id as userId')
         .from('comment as c')
         .where({
           'disclosure_id': disclosureId,
@@ -39,18 +129,33 @@ let getQuestionsToReview = (knex, disclosureId, reviewItems) => {
               return questionToTest.id === comment.topicId;
             });
             if (question) {
-              if (!question.comments) {
-                question.comments = [];
+              if (comment.userId === userId) {
+                question.piResponse = comment;
               }
-              question.comments.push(comment);
+              else {
+                if (!question.comments) {
+                  question.comments = [];
+                }
+                question.comments.push(comment);
+              }
             }
           });
           return questions;
         });
+    }).then(questions => {
+      questions.map(question => {
+        let piReviewRecord = reviewItems.find(item => {
+          return item.targetId === question.id;
+        });
+        question.reviewId = piReviewRecord.id;
+        question.reviewedOn = piReviewRecord.reviewedOn;
+        return question;
+      });
+      return questions;
     });
 };
 
-let getEntitiesToReview = (knex, disclosureId, reviewItems) => {
+let getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
   let entityIDs = reviewItems.reduce((previous, current) => {
     previous.push(current.targetId);
     return previous;
@@ -91,14 +196,14 @@ let getEntitiesToReview = (knex, disclosureId, reviewItems) => {
     });
 };
 
-let getDeclarationsToReview = (knex, disclosureId, reviewItems) => {
+let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
   return ['coming soon' + reviewItems.length];
 };
 
 export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
   let knex = getKnex(dbInfo);
 
-  return knex.select('p.target_type as targetType', 'p.target_id as targetId', 'p.reviewed_on as reviewedOn')
+  return knex.select('p.id', 'p.target_type as targetType', 'p.target_id as targetId', 'p.reviewed_on as reviewedOn')
     .from('pi_review as p')
     .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
     .where({
@@ -107,17 +212,17 @@ export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
     })
     .then(rows => {
       return Promise.all([
-        getQuestionsToReview(knex, disclosureId,
+        getQuestionsToReview(knex, disclosureId, userInfo.id,
           rows.filter(row => {
             return row.targetType === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
           })
         ),
-        getEntitiesToReview(knex, disclosureId,
+        getEntitiesToReview(knex, disclosureId, userInfo.id,
           rows.filter(row => {
             return row.targetType === COIConstants.DISCLOSURE_STEP.ENTITIES;
           })
         ),
-        getDeclarationsToReview(knex, disclosureId,
+        getDeclarationsToReview(knex, disclosureId, userInfo.id,
           rows.filter(row => {
             return row.targetType === COIConstants.DISCLOSURE_STEP.PROJECTS;
           })

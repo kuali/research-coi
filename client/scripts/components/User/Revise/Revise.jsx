@@ -98,6 +98,21 @@ export class Revise extends React.Component {
       }
     ];
 
+    let details;
+    if (this.state.disclosure) {
+      details = (
+        <span className="fill" style={styles.disclosure}>
+          <QuestionnaireSection
+            questions={this.state.disclosure.questions}
+          />
+          <EntitySection
+            entitiesToReview={entitiesToReview}
+          />
+          <DeclarationSection />
+        </span>
+      );
+    }
+
     let certText = 'This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! ';
     return (
       <div className="fill flexbox column" style={merge(styles.container, this.props.style)}>
@@ -107,15 +122,8 @@ export class Revise extends React.Component {
           returnedDate={new Date()}
         />
         <div className="flexbox row fill">
-          <span className="fill" style={styles.disclosure}>
-            <QuestionnaireSection
-              questions={questions}
-            />
-            <EntitySection
-              entitiesToReview={entitiesToReview}
-            />
-            <DeclarationSection />
-          </span>
+          {details}
+
           <SidePanel
             certificationText={certText}
             showingCertification={false}

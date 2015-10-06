@@ -1,7 +1,7 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 import CheckLink from './CheckLink';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
+import PIReviewActions from '../../../actions/PIReviewActions';
 import {COIConstants} from '../../../../../COIConstants';
 import {RadioControl} from '../Questionnaire/RadioControl';
 import {TextAreaControl} from '../Questionnaire/TextAreaControl';
@@ -141,7 +141,7 @@ export default class Question extends React.Component {
     else if (this.state.responding) {
       newState.responded = true;
       let textarea = React.findDOMNode(this.refs.responseText);
-      DisclosureActions.piRespond(textarea.text);
+      PIReviewActions.respond(this.props.reviewId, textarea.value);
     }
 
     this.setState(newState);
