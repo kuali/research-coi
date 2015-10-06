@@ -73,6 +73,11 @@ class _AdminActions {
       commentText: commentText
     });
   }
+
+  addManagementPlan(files) { this.dispatch(files); }
+
+  deleteManagementPlan() { this.dispatch(); }
+
 }
 
 export let AdminActions = alt.createActions(_AdminActions);

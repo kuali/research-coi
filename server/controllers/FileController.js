@@ -36,7 +36,7 @@ export let init = app => {
 
   app.put('/api/coi/file', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    FileDb.saveNewFiles(req.dbInfo, JSON.parse(req.body.data), req.files, userInfo.id)
+    FileDb.saveNewFiles(req.dbInfo, JSON.parse(req.body.data), req.files, userInfo.displayName)
       .then(result => {
         res.send(result);
       }).catch(err => {

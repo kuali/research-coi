@@ -14,7 +14,7 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEntity, files) => {
+export let saveNewFinancialEntity = (dbInfo, displayName, disclosureId, financialEntity, files) => {
   let knex = getKnex(dbInfo);
 
   return knex('fin_entity')
@@ -53,7 +53,7 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEnti
             type: file.mimetype,
             path: file.path,
             name: file.originalname,
-            user_id: userId,
+            uploaded_by: displayName,
             upload_date: new Date()
           };
           queries.push(
@@ -91,7 +91,7 @@ export let saveNewFinancialEntity = (dbInfo, userId, disclosureId, financialEnti
     });
 };
 
-export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, files) => {
+export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, body, files) => {
   let knex = getKnex(dbInfo);
 
   let financialEntity = body;
@@ -192,7 +192,8 @@ export let saveExistingFinancialEntity = (dbInfo, userId, disclosureId, body, fi
           type: file.mimetype,
           path: file.path,
           name: file.originalname,
-          user_id: userId
+          uploaded_by: displayName,
+          upload_date: new Date()
         };
         queries.push(
           knex('file')
@@ -345,7 +346,18 @@ export let get = (dbInfo, userId, disclosureId) => {
       .innerJoin('project as p', 'p.id', 'd.project_id')
       .where('d.disclosure_id', disclosureId),
     retrieveComments(dbInfo, userId, disclosureId),
-    knex.select('id', 'name', 'path').from('file').where({ref_id: disclosureId, file_type: COIConstants.FILE_TYPE.DISCLOSURE})
+    knex.select('id', 'name', 'path')
+    .from('file')
+    .where({
+      ref_id: disclosureId,
+      file_type: COIConstants.FILE_TYPE.DISCLOSURE
+    }),
+    knex.select('id', 'name', 'path')
+    .from('file')
+    .where({
+      ref_id: disclosureId,
+      file_type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN
+    })
   ]).then(result => {
     if (result[0].length === 0) { // There should be more checks like this
       throw new Error('invalid disclosure id');
@@ -357,6 +369,7 @@ export let get = (dbInfo, userId, disclosureId) => {
     disclosure.declarations = result[3];
     disclosure.comments = result[4];
     disclosure.files = result[5];
+    disclosure.managementPlan = result[6];
     disclosure.answers.forEach(answer =>{
       answer.answer = JSON.parse(answer.answer);
     });

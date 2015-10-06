@@ -1,6 +1,6 @@
 import React from 'react/addons';
-import {ProminentButton} from './ProminentButton';
 import Dropzone from 'react-dropzone';
+import {merge} from '../merge';
 
 export class FileUpload extends React.Component {
   constructor() {
@@ -19,7 +19,7 @@ export class FileUpload extends React.Component {
   }
 
   render() {
-    let styles = {
+    let defaultStyles = {
       dropZone: {
         width: '100%',
         display: 'inline-block',
@@ -51,8 +51,21 @@ export class FileUpload extends React.Component {
         display: 'inline-block',
         border: '3px solid grey',
         marginTop: 10
+      },
+      deleteButton: {
+        backgroundColor: 'white',
+        color: '#666666',
+        border: '1px Solid #DEDEDE',
+        borderRadius: 7,
+        width: 124,
+        padding: 7,
+        fontSize: 14,
+        outline: 0,
+        cursor: 'pointer'
       }
     };
+
+    let styles = merge(defaultStyles, this.props.styles);
 
     let files;
     if (this.props.files) {
@@ -73,17 +86,17 @@ export class FileUpload extends React.Component {
 
         if (!this.props.readonly) {
           deleteButton = (
-           <ProminentButton onClick={this.onDelete} value={index}>Delete File</ProminentButton>
+           <button onClick={this.onDelete} style={styles.deleteButton} value={index}>Delete File</button>
           );
         }
 
         return (
-          <div value={index} style={styles.file}>
+          <div value={index} key={'file_' + index} style={styles.file}>
             <div style={styles.left}>
               {downloadLink}
             </div>
             <div style={styles.middle}>
-              <p>Attachment Uploaded</p>
+              <p>{this.props.fileType} Uploaded</p>
               <p>File Name: {file.name}</p>
             </div>
             <div style={styles.right}>
@@ -96,13 +109,15 @@ export class FileUpload extends React.Component {
 
     let dropzone;
 
-    if (!this.props.readonly) {
+    let readOnly = (this.props.multiple === false && this.props.files.length > 0) || this.props.readonly;
+    if (!readOnly) {
       dropzone = (
         <Dropzone
         onDrop={this.onDrop}
         accept='.pdf'
         style={styles.dropZone}
-        activeStyle={styles.dropZoneActive} >
+        activeStyle={styles.dropZoneActive}
+        multiple={this.props.multiple}>
           <div style={styles.left}>
             {/*icon goes here*/}
           </div>
@@ -112,6 +127,7 @@ export class FileUpload extends React.Component {
         </Dropzone>
       );
     }
+
     return (
     <div>
       {dropzone}
