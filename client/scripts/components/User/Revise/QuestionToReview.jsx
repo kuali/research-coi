@@ -90,6 +90,7 @@ export default class QuestionToReview extends React.Component {
         </span>
 
         <Question
+          reviewId={this.props.reviewId}
           text={this.props.text}
           answer={this.props.answer}
           type={this.props.type}

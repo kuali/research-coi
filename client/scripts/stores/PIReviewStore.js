@@ -24,6 +24,36 @@ class _PIReviewStore extends AutoBindingStore {
              }
            });
   }
+
+  respond(params) {
+    let questionToRespondTo = this.disclosure.questions.find(question => {
+      return params.reviewId === question.reviewId;
+    });
+    if (questionToRespondTo) {
+      questionToRespondTo.reviewedOn = new Date();
+    }
+
+    let entityToRespondTo = this.disclosure.entities.find(entity => {
+      return params.reviewId === entity.reviewId;
+    });
+    if (entityToRespondTo) {
+      entityToRespondTo.reviewedOn = new Date();
+    }
+
+    let declarationToRespondTo = this.disclosure.declarations.find(declaration => {
+      return params.reviewId === declaration.reviewId;
+    });
+    if (declarationToRespondTo) {
+      declarationToRespondTo.reviewedOn = new Date();
+    }
+
+    request.post('/api/coi/pi-response/' + params.reviewId)
+      .send({
+        comment: params.comment
+      })
+      .end(() => {
+      });
+  }
 }
 
 export let PIReviewStore = alt.createStore(_PIReviewStore, 'PIReviewStore');
