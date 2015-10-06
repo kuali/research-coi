@@ -284,10 +284,10 @@ exports.seed = function(knex, Promise) {
   ]).then(function() {
     console.log('Seed - disclosure_type');
     return Promise.all([
-      knex('disclosure_type').insert({type_cd: 1, description: 'Manual Disclosure', enabled: true}),
+      knex('disclosure_type').insert({type_cd: 1, description: 'Manual Disclosure', enabled: false}),
       knex('disclosure_type').insert({type_cd: 2, description: 'Annual Disclosure', enabled: true}),
-      knex('disclosure_type').insert({type_cd: 3, description: 'Project Disclosure', enabled: true}),
-      knex('disclosure_type').insert({type_cd: 4, description: 'Travel Log', enabled: true})
+      knex('disclosure_type').insert({type_cd: 3, description: 'Project Disclosure', enabled: false}),
+      knex('disclosure_type').insert({type_cd: 4, description: 'Travel Log', enabled: false})
     ]);
   }).then(function() {
     console.log('Seed - disposition_type');
