@@ -13,7 +13,8 @@ export class ListView extends React.Component {
     super();
 
     this.state = {
-      data: AdminStore.getState()
+      data: AdminStore.getState(),
+      config: ConfigStore.getState().config
     };
 
     this.changeSearch = this.changeSearch.bind(this);
@@ -23,6 +24,7 @@ export class ListView extends React.Component {
 
   componentDidMount() {
     AdminStore.listen(this.onChange);
+    ConfigStore.listen(this.onChange);
 
     let rightPanel = React.findDOMNode(this.refs.rightPanel);
     let enabled = true;
@@ -48,11 +50,13 @@ export class ListView extends React.Component {
 
   componentWillUnmount() {
     AdminStore.unlisten(this.onChange);
+    ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
     this.setState({
-      data: AdminStore.getState()
+      data: AdminStore.getState(),
+      config: ConfigStore.getState().config
     });
   }
 
@@ -132,13 +136,19 @@ export class ListView extends React.Component {
       );
     }
 
-    let possibleStatuses = ConfigStore.getState().config.disclosureStatus.map(status => {
-      return status.description;
-    });
+    let possibleStatuses = [];
+    if (this.state.config.disclosureStatus) {
+      possibleStatuses = this.state.config.disclosureStatus.map(status => {
+        return status.description;
+      });
+    }
 
-    let possibleTypes = ConfigStore.getState().config.disclosureTypes.map(type => {
-      return type.description;
-    });
+    let possibleTypes = [];
+    if (this.state.config.disclosureTypes) {
+      this.state.config.disclosureTypes.map(type => {
+        return type.description;
+      });
+    }
 
     return (
       <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>

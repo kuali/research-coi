@@ -35,6 +35,7 @@ export class DetailView extends React.Component {
 
   componentWillUnmount() {
     AdminStore.unlisten(this.onChange);
+    ConfigStore.unlisten(this.onChange);
   }
 
   componentWillReceiveProps(nextProps) {

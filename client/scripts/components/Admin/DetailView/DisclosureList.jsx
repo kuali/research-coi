@@ -115,13 +115,20 @@ export class DisclosureList extends React.Component {
       );
     }
 
-    let possibleStatuses = ConfigStore.getState().config.disclosureStatus.map(status => {
-      return status.description;
-    });
 
-    let possibleTypes = ConfigStore.getState().config.disclosureTypes.map(type => {
-      return type.description;
-    });
+    let possibleStatuses = [];
+    if (ConfigStore.getState().config.disclosureStatus) {
+      possibleStatuses = ConfigStore.getState().config.disclosureStatus.map(status => {
+        return status.description;
+      });
+    }
+
+    let possibleTypes = [];
+    if (ConfigStore.getState().config.disclosureTypes) {
+      ConfigStore.getState().config.disclosureTypes.map(type => {
+        return type.description;
+      });
+    }
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
