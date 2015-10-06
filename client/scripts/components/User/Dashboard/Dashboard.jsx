@@ -221,9 +221,6 @@ export class Dashboard extends ResponsiveComponent {
           {travelLogButton}
           {manualDisclosureButton}
           <div>
-            <FinancialEntitiesButton />
-          </div>
-          <div>
             <DisclosureArchiveButton style={styles.borderBottom} />
           </div>
         </span>
