@@ -76,9 +76,9 @@ export class FileUpload extends React.Component {
           downloadLink = (
             <a href={file.preview}>download</a>
           );
-        } else if(file.path) {
+        } else if(file.key) {
           downloadLink = (
-            <a href={'/api/coi/file/' + encodeURIComponent(file.path)}>download</a>
+            <a href={'/api/coi/file/' + encodeURIComponent(file.key)}>download</a>
           );
         }
 

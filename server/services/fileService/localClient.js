@@ -1,7 +1,10 @@
 import fs from 'fs';
+import path from 'path';
+
+let filePath = process.env.LOCAL_FILE_DESTINATION || 'uploads/';
 
 export function getFile(key, callback) {
-  let stream = fs.createReadStream(key);
+  let stream = fs.createReadStream(path.join(filePath, key));
   stream.on('error', err=>{
     callback(err);
   });
@@ -9,7 +12,7 @@ export function getFile(key, callback) {
 }
 
 export function deleteFile(key, callback) {
-  fs.unlink(key, err=>{
+  fs.unlink(path.join(filePath, key), err=>{
     callback(err);
   });
 }
