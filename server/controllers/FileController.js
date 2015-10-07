@@ -20,7 +20,7 @@ export let init = app => {
           res.sendStatus(403);
         } else {
           res.setHeader('Content-disposition', 'attachment; filename="' + result[0].name + '"');
-          FileService.getFile(req.params.key, error => {
+          FileService.getFile(req.dbInfo, req.params.key, error => {
             if (error) {
               console.error(error);
               next(error);

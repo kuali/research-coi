@@ -10,8 +10,8 @@ catch (err) {
 }
 
 
-export function getFile(key, callback) {
-  return client.getFile(key, callback);
+export function getFile(dbInfo, key, callback) {
+  return client.getFile(dbInfo, key, callback);
 }
 
 export function deleteFile(key, callback) {

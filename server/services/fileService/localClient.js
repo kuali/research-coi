@@ -3,7 +3,7 @@ import path from 'path';
 
 let filePath = process.env.LOCAL_FILE_DESTINATION || 'uploads/';
 
-export function getFile(key, callback) {
+export function getFile(dbInfo, key, callback) {
   let stream = fs.createReadStream(path.join(filePath, key));
   stream.on('error', err=>{
     callback(err);
