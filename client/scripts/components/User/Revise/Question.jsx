@@ -3,11 +3,11 @@ import {merge} from '../../../merge';
 import CheckLink from './CheckLink';
 import PIReviewActions from '../../../actions/PIReviewActions';
 import {COIConstants} from '../../../../../COIConstants';
-import {RadioControl} from '../Questionnaire/RadioControl';
-import {TextAreaControl} from '../Questionnaire/TextAreaControl';
-import {CheckboxControl} from '../Questionnaire/CheckboxControl';
-import {NumericControl} from '../Questionnaire/NumericControl';
-import {DateControl} from '../Questionnaire/DateControl';
+import {RadioControl} from '../RadioControl';
+import {TextAreaControl} from '../TextAreaControl';
+import {CheckboxControl} from '../CheckboxControl';
+import {NumericControl} from '../NumericControl';
+import {DateControl} from '../DateControl';
 
 export default class Question extends React.Component {
   constructor() {
@@ -26,6 +26,10 @@ export default class Question extends React.Component {
     this.done = this.done.bind(this);
   }
 
+  changeAnswer(newAnswer) {
+    PIReviewActions.changeAnswerToQuestion(this.props.reviewId, newAnswer);
+  }
+
   getControl(question, answer) {
     switch (this.props.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
@@ -33,7 +37,7 @@ export default class Question extends React.Component {
           <RadioControl
             options={['Yes', 'No']}
             answer={answer}
-            onChange={this.answerAndSubmit}
+            onChange={this.changeAnswer}
             isParent={true}
             questionId={this.props.id}
           />

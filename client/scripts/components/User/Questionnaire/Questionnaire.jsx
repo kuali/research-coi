@@ -62,14 +62,14 @@ export class Questionnaire extends React.Component {
         if (question.question.type === COIConstants.QUESTION_TYPE.YESNO) {
           subQuestions = this.props.questions.filter(subQuestion =>{
             return subQuestion.parent === question.id;
-          }).map(subQuestion=>{
+          }).map(subQuestion => {
             subQuestion.answer = this.getAnswer(subQuestion.id);
             return subQuestion;
           });
         }
 
         return (
-          <span>
+          <span key={index}>
             <Question
               id={question.id}
               answer={answer}
@@ -79,7 +79,6 @@ export class Questionnaire extends React.Component {
               question={question}
               subQuestions={subQuestions}
               disclosureid={this.props.disclosureid}
-              key={index}
             />
           </span>
         );

@@ -58,7 +58,7 @@ export default class QuestionToReview extends React.Component {
       }
     };
 
-    let comments = this.props.comments.map(comment => {
+    let comments = this.props.question.comments.map(comment => {
       return (
         <div style={styles.comment} key={comment.id}>
           <div style={styles.commentTitle}>Comment from {comment.author}:</div>
@@ -69,7 +69,7 @@ export default class QuestionToReview extends React.Component {
     });
 
     let icon;
-    if (this.props.completed) {
+    if (this.props.question.reviewedOn !== null) {
       icon = (
         <i className="fa fa-check-circle" style={styles.completed}></i>
       );
@@ -80,20 +80,22 @@ export default class QuestionToReview extends React.Component {
       );
     }
 
+    let questionDetails = JSON.parse(this.props.question.question);
+    let answer = JSON.parse(this.props.question.answer);
     return (
       <div className="flexbox row" style={merge(styles.container, this.props.style)}>
         <span style={styles.statusIcon}>
           {icon}
         </span>
         <span style={styles.questionNumber}>
-          {this.props.numberToShow}
+          {questionDetails.numberToShow}
         </span>
 
         <Question
-          reviewId={this.props.reviewId}
-          text={this.props.text}
-          answer={this.props.answer}
-          type={this.props.type}
+          reviewId={this.props.question.reviewId}
+          text={questionDetails.text}
+          answer={answer.value}
+          type={questionDetails.type}
         />
 
         <span style={styles.comments}>

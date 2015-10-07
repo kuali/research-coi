@@ -22,18 +22,10 @@ export default class QuestionnaireSection extends React.Component {
     };
 
     let questions = this.props.questions.map((question, index) => {
-      let questionDetails = JSON.parse(question.question);
-      let answer = JSON.parse(question.answer);
       return (
         <QuestionToReview
           key={question.id}
-          completed={question.reviewedOn !== null}
-          reviewId={question.reviewId}
-          numberToShow={questionDetails.numberToShow}
-          text={questionDetails.text}
-          answer={answer.value}
-          type={questionDetails.type}
-          comments={question.comments}
+          question={question}
           style={{marginBottom: index === this.props.questions.length - 1 ? 0 : 40}}
         />
       );
