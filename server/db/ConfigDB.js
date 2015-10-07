@@ -20,57 +20,68 @@ let mockDB = {
   }
 };
 
-let createCollectionQueries = (dbInfo, collection, tableProps, optionalTrx) => {
-  let knex = getKnex(dbInfo);
-
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
-  }
-  else {
-    query = knex;
-  }
-
-  let queries = [];
+let createDeleteQueries = (query, collection, tableProps) => {
 
   let sel = query(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where.key, tableProps.where.value);
   }
 
-  queries.push(
-    sel.then(results => {
-      results.forEach(result => {
+  return sel.then(results => {
+    Promise.all(
+      results.filter(result => {
         let match = collection.find(item => {
           return item[tableProps.pk] && (item[tableProps.pk] === result[tableProps.pk]);
         });
-        if (!match) {
-          queries.push(
-            query(tableProps.table)
-              .update({active: false})
-              .where(tableProps.pk, result[tableProps.pk])
-          );
-        }
-      });
-    })
-  );
+        return !match
+      }).map(result => {
+        return query(tableProps.table)
+        .update({active: false})
+        .where(tableProps.pk, result[tableProps.pk])
+      })
+    );
+  })
+}
 
-  queries.push(collection.map(line => {
-    if (line[tableProps.pk] === undefined) {
+let createInsertQueries = (query, collection, tableProps) => {
+  return Promise.all(
+    collection.map(line => {
       line.active = true;
       if (tableProps.parent) {
         line[tableProps.parent.key] = tableProps.parent.value;
       }
       return query(tableProps.table)
-        .insert(line, tableProps.pk);
-    } else {
-      return query(tableProps.table)
-        .update(line)
-        .where(tableProps.pk, line[tableProps.pk]);
-    }
-  }));
+      .insert(line, tableProps.pk);
+    })
+  );
+}
 
-  return queries;
+let createUpdateQueries = (query, collection, tableProps) => {
+  return Promise.all(
+    collection.map(line => {
+      return query(tableProps.table)
+      .update(line)
+      .where(tableProps.pk, line[tableProps.pk]);
+    })
+  );
+}
+
+let createCollectionQueries = (query, collection, tableProps) => {
+  let updates = [];
+  let inserts = [];
+  collection.forEach(line => {
+    if (line[tableProps.pk] === undefined) {
+      inserts.push(line);
+    } else {
+      updates.push(line);
+    }
+  });
+
+  return Promise.all([
+    createDeleteQueries(query, collection, tableProps),
+    createInsertQueries(query, inserts, tableProps),
+    createUpdateQueries(query, updates, tableProps)
+  ])
 };
 
 let convertQuestionFormat = (questions) =>{
@@ -161,51 +172,49 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
   else {
     query = knex;
   }
-  let queries = [];
-  queries.push(
-    config.matrix_types.map(type => {
-      let matrixTypeQueries = [];
 
-      let matrixTypeQuery = query('relationship_category_type').update({
+  let queries = [];
+
+  config.matrix_types.forEach(type => {
+    queries.push(
+      query('relationship_category_type').update({
         enabled: type.enabled,
         type_enabled: type.type_enabled,
         amount_enabled: type.amount_enabled
       })
-      .where('type_cd', type.type_cd);
+      .where('type_cd', type.type_cd)
+    )
 
-      let typeOptionsQueries = createCollectionQueries(dbInfo, type.type_options, {pk: 'type_cd', table: 'relationship_type', where: {key: 'relationship_cd', value: type.type_cd}});
+    queries.push(
+      createCollectionQueries(query, type.type_options, {pk: 'type_cd', table: 'relationship_type', where: {key: 'relationship_cd', value: type.type_cd}})
+    )
 
-      let amountOptionsQueries = createCollectionQueries(dbInfo, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type', where: {key: 'relationship_cd', value: type.type_cd}});
+    queries.push(
+      createCollectionQueries(query, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type', where: {key: 'relationship_cd', value: type.type_cd}})
+    )
+  })
 
-      matrixTypeQueries.push(matrixTypeQuery);
-      matrixTypeQueries.push(typeOptionsQueries);
-      matrixTypeQueries.push(amountOptionsQueries);
-
-      return matrixTypeQueries;
-    })
+  queries.push(
+    createCollectionQueries(query, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})
   );
 
   queries.push(
-    createCollectionQueries(dbInfo, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})
+    createCollectionQueries(query, config.relationship_person_types, {pk: 'type_cd', table: 'relationship_person_type'})
   );
 
   queries.push(
-    createCollectionQueries(dbInfo, config.relationship_person_types, {pk: 'type_cd', table: 'relationship_person_type'})
+    createCollectionQueries(query, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'})
   );
 
   queries.push(
-    createCollectionQueries(dbInfo, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'})
-  );
-
-  queries.push(
-    createCollectionQueries(dbInfo, config.notifications, {pk: 'id', table: 'notification'})
+    createCollectionQueries(query, config.notifications, {pk: 'id', table: 'notification'})
   );
 
   queries.push(
     query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc')
       .then(result => {
         if (result[0]) {
-          return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.screening), {
+          return createCollectionQueries(query, convertQuestionFormat(config.questions.screening), {
             pk: 'id',
             table: 'questionnaire_question',
             where: {key: 'questionnaire_id', value: result[0].id},
@@ -213,7 +222,7 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
           });
         } else {
           return query('questionnaire').insert({version: 1, type_cd: 1}).then(id => {
-            return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.screening), {
+            return createCollectionQueries(query, convertQuestionFormat(config.questions.screening), {
               pk: 'id',
               table: 'questionnaire_question',
               where: {key: 'questionnaire_id', value: id[0]},
@@ -228,7 +237,7 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
     query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc')
       .then(result => {
         if (result[0]) {
-          return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.entities), {
+          return createCollectionQueries(query, convertQuestionFormat(config.questions.entities), {
             pk: 'id',
             table: 'questionnaire_question',
             where: {key: 'questionnaire_id', value: result[0].id},
@@ -236,7 +245,7 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
           });
         } else {
           return query('questionnaire').insert({version: 1, type_cd: 2}).then(id => {
-            return createCollectionQueries(dbInfo, convertQuestionFormat(config.questions.entities), {
+            return createCollectionQueries(query, convertQuestionFormat(config.questions.entities), {
               pk: 'id',
               table: 'questionnaire_question',
               where: {key: 'questionnaire_id', value: id[0]},
