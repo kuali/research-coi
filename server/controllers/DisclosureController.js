@@ -175,7 +175,7 @@ export let init = app => {
 
   app.post('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
+    DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
       .then(answer => {
         res.send(answer);
       })
@@ -187,7 +187,7 @@ export let init = app => {
 
   app.put('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
+    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
       .then(answer => {
         res.send(answer);
       })

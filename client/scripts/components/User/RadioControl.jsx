@@ -37,7 +37,7 @@ export class RadioControl extends React.Component {
               onChange={this.answer}
               type="radio"
               style={styles.radio}
-              name="radioControl"
+              name={'radioControl:' + this.props.questionId}
             />
           </div>
           <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>

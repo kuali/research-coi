@@ -55,6 +55,10 @@ export class DatePicker extends ResponsiveComponent {
     };
     let styles = merge(this.commonStyles, desktopStyles);
 
+    if (this.props.direction === 'Up') {
+      styles.calendar.bottom = 30;
+    }
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         <input

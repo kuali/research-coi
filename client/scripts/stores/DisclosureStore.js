@@ -166,32 +166,26 @@ class _DisclosureStore extends AutoBindingStore {
       this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
     }
 
+    let processResponse = (err, res) => {
+      if (!err) {
+        answer = res.body;
+        if (question.advance) {
+          this.advanceQuestion();
+        }
+        this.emitChange();
+      }
+    };
+
     if (answer.id) {
-      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
-      .send(answer)
-      .type('application/json')
-      .end((err, res)=>{
-        if (!err) {
-          answer = res.body;
-          if (question.advance) {
-            this.advanceQuestion();
-          }
-          this.emitChange();
-        }
-      });
-    } else {
       request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
-      .send(answer)
-      .type('application/json')
-      .end((err, res)=>{
-        if (!err ) {
-          answer = res.body;
-          if (question.advance) {
-            this.advanceQuestion();
-          }
-          this.emitChange();
-        }
-      });
+        .send(answer)
+        .type('application/json')
+        .end(processResponse);
+    } else {
+      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
+        .send(answer)
+        .type('application/json')
+        .end(processResponse);
     }
   }
 
