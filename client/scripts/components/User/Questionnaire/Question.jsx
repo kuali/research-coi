@@ -13,6 +13,10 @@ export class Question extends React.Component {
   constructor() {
     super();
 
+    this.state = {
+      controlValid: {}
+    };
+
     this.answer = this.answer.bind(this);
     this.answerAndSubmit = this.answerAndSubmit.bind(this);
     this.submit = this.submit.bind(this);
@@ -23,14 +27,26 @@ export class Question extends React.Component {
     this.anySubQuestionsTriggeredBy = this.anySubQuestionsTriggeredBy.bind(this);
     this.submitSubQuestions = this.submitSubQuestions.bind(this);
     this.next = this.next.bind(this);
+    this.controlValidityChanged = this.controlValidityChanged.bind(this);
+    this.questionIsValid = this.questionIsValid.bind(this);
   }
 
-  answerAndSubmit(evt, questionId, isParent) {
-    let advance = isParent && !this.anySubQuestionsTriggeredBy(evt.target.value);
+  questionIsValid() {
+    for (var key in this.state.controlValid) {
+      if (this.state.controlValid[key] !== true) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  answerAndSubmit(answer, questionId, isParent) {
+    let advance = isParent && !this.anySubQuestionsTriggeredBy(answer);
     DisclosureActions.submitQuestion({
       id: questionId,
       answer: {
-        value: evt.target.value
+        value: answer
       },
       advance: advance
     });
@@ -44,22 +60,22 @@ export class Question extends React.Component {
     return subQuestion !== undefined;
   }
 
-  answer(evt, questionId) {
+  answer(answer, questionId) {
     DisclosureActions.answerQuestion({
       id: questionId,
       answer: {
-        value: evt.target.value
+        value: answer
       }
     });
   }
 
-  answerMultiple(evt, questionId) {
+  answerMultiple(value, checked, questionId) {
     DisclosureActions.answerMultiple({
       id: questionId,
       answer: {
-        value: evt.target.value
+        value: value
       },
-      checked: evt.target.checked
+      checked: checked
     });
   }
 
@@ -110,6 +126,14 @@ export class Question extends React.Component {
     });
   }
 
+  controlValidityChanged(questionId, isValid) {
+    let newControlValid = this.state.controlValid;
+    newControlValid[questionId] = isValid;
+    this.setState({
+      controlValid: newControlValid
+    });
+  }
+
   getControl(question, answer) {
     switch (question.question.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
@@ -120,6 +144,7 @@ export class Question extends React.Component {
             onChange={question.parent ? this.answer : this.answerAndSubmit}
             isParent={!question.parent}
             questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.YESNONA:
@@ -130,6 +155,7 @@ export class Question extends React.Component {
             onChange={question.parent ? this.answer : this.answerAndSubmit}
             isParent={!question.parent}
             questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.TEXTAREA:
@@ -137,21 +163,21 @@ export class Question extends React.Component {
           <TextAreaControl
             answer={answer}
             onChange={this.answer}
-            isValid={answer ? true : false}
             isParent={!question.parent}
             questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.MULTISELECT:
-        let valid = answer && answer.length >= parseInt(question.question.requiredNumSelections);
         return (
           <CheckboxControl
             options={question.question.options}
             answer={answer}
             onChange={this.answerMultiple}
-            isValid={valid}
             isParent={!question.parent}
             questionId={question.id}
+            required={parseInt(question.question.requiredNumSelections)}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.NUMBER:
@@ -159,9 +185,9 @@ export class Question extends React.Component {
           <NumericControl
             answer={answer}
             onChange={this.answer}
-            isValid={answer ? true : false}
             isParent={!question.parent}
             questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.DATE:
@@ -169,9 +195,9 @@ export class Question extends React.Component {
           <DateControl
             answer={answer}
             onChange={this.answerDate}
-            isValid={answer ? true : false}
             isParent={!question.parent}
             questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
     }
@@ -232,7 +258,7 @@ export class Question extends React.Component {
       }
     };
 
-    let isValid = true;
+    let isValid = this.questionIsValid();
     let subQuestions = [];
     this.props.subQuestions.filter(subQuestion => {
       return subQuestion.question.displayCriteria === this.props.answer;
@@ -243,7 +269,7 @@ export class Question extends React.Component {
       if (index === array.length - 1) {
         nextDiv = (
           <div style={styles.nextButton}>
-            <NextButton onClick={this.next} isValid={true} />
+            <NextButton onClick={this.next} isValid={isValid} />
           </div>
         );
       }

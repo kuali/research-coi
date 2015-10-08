@@ -169,7 +169,7 @@ function insertQuestionnaireAnswer(knex, disclosureId, questionnaireId, question
   return knex('questionnaire_answer').insert({
     question_id: questionId,
     answer: JSON.stringify({
-      value: 'no'
+      value: 'No'
     })
   }).then(function(questionnaireAnswerId){
     return insertDisclosureAnswer(knex, disclosureId, questionnaireAnswerId[0]);
@@ -251,26 +251,23 @@ function insertDisclosure(knex) {
     approved_date: new Date()
   }).then(function(disclosureId) {
     return Promise.all([
-      Promise.all([
-        insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
-        insertEntity(knex, disclosureId, 'Monsanto', 'Crazy company that wants to patent life'),
-        insertEntity(knex, disclosureId, 'Xerox', 'This is a company that makes copiers and stuff like that'),
-        insertProject(knex, 'Glucose levels in heirloom corn'),
-        insertProject(knex, 'Longevity of car batteries')
-      ]).then(function(results) {
-        return Promise.all([
-          insertDeclaration(knex, disclosureId, results[0], results[3]),
-          insertDeclaration(knex, disclosureId, results[1], results[3]),
-          insertDeclaration(knex, disclosureId, results[2], results[3]),
-          insertDeclaration(knex, disclosureId, results[0], results[4]),
-          insertDeclaration(knex, disclosureId, results[1], results[4]),
-          insertDeclaration(knex, disclosureId, results[2], results[4]),
-          insertProjectPerson(knex, userId, 'PI', results[3]),
-          insertProjectPerson(knex, 123456, 'KP', results[3])
-        ]);
-      }),
-      insertQuestionAnswers(knex, disclosureId)
-    ]);
+      insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
+      insertEntity(knex, disclosureId, 'Monsanto', 'Crazy company that wants to patent life'),
+      insertEntity(knex, disclosureId, 'Xerox', 'This is a company that makes copiers and stuff like that'),
+      insertProject(knex, 'Glucose levels in heirloom corn'),
+      insertProject(knex, 'Longevity of car batteries')
+    ]).then(function(results) {
+      return Promise.all([
+        insertDeclaration(knex, disclosureId, results[0], results[3]),
+        insertDeclaration(knex, disclosureId, results[1], results[3]),
+        insertDeclaration(knex, disclosureId, results[2], results[3]),
+        insertDeclaration(knex, disclosureId, results[0], results[4]),
+        insertDeclaration(knex, disclosureId, results[1], results[4]),
+        insertDeclaration(knex, disclosureId, results[2], results[4]),
+        insertProjectPerson(knex, userId, 'PI', results[3]),
+        insertProjectPerson(knex, 123456, 'KP', results[3])
+      ]);
+    });
   });
 }
 

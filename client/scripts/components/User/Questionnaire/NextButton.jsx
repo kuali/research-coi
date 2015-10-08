@@ -17,7 +17,7 @@ export class NextButton extends React.Component {
   render() {
     let styles = {
       icon: {
-        color: '#1481A3',
+        color: this.props.isValid ? '#1481A3' : '#AAA',
         marginRight: 3,
         width: 33,
         fontSize: 26,
