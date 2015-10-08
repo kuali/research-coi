@@ -283,10 +283,11 @@ function insertFakeProject(knex, userId) {
 exports.seed = function(knex, Promise) {
   console.log('Seed - disclosure_status');
   return Promise.all([
-    knex('disclosure_status').insert({status_cd: 1, description: 'In progress'}),
-    knex('disclosure_status').insert({status_cd: 2, description: 'Routed for Review'}),
-    knex('disclosure_status').insert({status_cd: 3, description: 'Approved'}),
-    knex('disclosure_status').insert({status_cd: 4, description: 'Disapproved'})
+    knex('disclosure_status').insert({status_cd: 1, description: 'In Progress'}),
+    knex('disclosure_status').insert({status_cd: 2, description: 'Submitted for Approval'}),
+    knex('disclosure_status').insert({status_cd: 3, description: 'Up to Date'}),
+    knex('disclosure_status').insert({status_cd: 4, description: 'Updates Required'}),
+    knex('disclosure_status').insert({status_cd: 5, description: 'Expired'})
   ]).then(function() {
     console.log('Seed - disclosure_type');
     return Promise.all([
