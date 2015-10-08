@@ -15,9 +15,10 @@ export let COIConstants = {
   },
   DISCLOSURE_STATUS: {
     IN_PROGRESS: 1,
-    IN_REVIEW: 2,
-    APPROVED: 3,
-    DISAPPROVED: 4
+    SUBMITTED_FOR_APPROVAL: 2,
+    UP_TO_DATE: 3,
+    UPDATES_REQUIRED: 4,
+    EXPIRED: 5
   },
   FILE_TYPE: {
     FINANCIAL_ENTITY: 'financialEntity',
