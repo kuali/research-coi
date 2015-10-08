@@ -212,6 +212,27 @@ class _ConfigActions {
     });
   }
 
+  destinationEnabledChanged(typeCd, newValue) {
+    this.dispatch({
+      typeCd: typeCd,
+      newValue: newValue
+    });
+  }
+
+  dateEnabledChanged(typeCd, newValue) {
+    this.dispatch({
+      typeCd: typeCd,
+      newValue: newValue
+    });
+  }
+
+  reasonEnabledChanged(typeCd, newValue) {
+    this.dispatch({
+      typeCd: typeCd,
+      newValue: newValue
+    });
+  }
+
   setCertificationText(newText) { this.dispatch(newText); }
 
   setCertificationRequired(newValue) { this.dispatch(newValue); }

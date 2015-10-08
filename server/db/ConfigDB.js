@@ -33,15 +33,15 @@ let createDeleteQueries = (query, collection, tableProps) => {
         let match = collection.find(item => {
           return item[tableProps.pk] && (item[tableProps.pk] === result[tableProps.pk]);
         });
-        return !match
+        return !match;
       }).map(result => {
         return query(tableProps.table)
         .update({active: false})
-        .where(tableProps.pk, result[tableProps.pk])
+        .where(tableProps.pk, result[tableProps.pk]);
       })
     );
-  })
-}
+  });
+};
 
 let createInsertQueries = (query, collection, tableProps) => {
   return Promise.all(
@@ -54,7 +54,7 @@ let createInsertQueries = (query, collection, tableProps) => {
       .insert(line, tableProps.pk);
     })
   );
-}
+};
 
 let createUpdateQueries = (query, collection, tableProps) => {
   return Promise.all(
@@ -64,7 +64,7 @@ let createUpdateQueries = (query, collection, tableProps) => {
       .where(tableProps.pk, line[tableProps.pk]);
     })
   );
-}
+};
 
 let createCollectionQueries = (query, collection, tableProps) => {
   let updates = [];
@@ -81,7 +81,7 @@ let createCollectionQueries = (query, collection, tableProps) => {
     createDeleteQueries(query, collection, tableProps),
     createInsertQueries(query, inserts, tableProps),
     createUpdateQueries(query, updates, tableProps)
-  ])
+  ]);
 };
 
 let convertQuestionFormat = (questions) =>{
@@ -180,19 +180,22 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
       query('relationship_category_type').update({
         enabled: type.enabled,
         type_enabled: type.type_enabled,
-        amount_enabled: type.amount_enabled
+        amount_enabled: type.amount_enabled,
+        destination_enabled: type.destination_enabled,
+        date_enabled: type.date_enabled,
+        reason_enabled: type.reason_enabled
       })
       .where('type_cd', type.type_cd)
-    )
+    );
 
     queries.push(
       createCollectionQueries(query, type.type_options, {pk: 'type_cd', table: 'relationship_type', where: {key: 'relationship_cd', value: type.type_cd}})
-    )
+    );
 
     queries.push(
       createCollectionQueries(query, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type', where: {key: 'relationship_cd', value: type.type_cd}})
-    )
-  })
+    );
+  });
 
   queries.push(
     createCollectionQueries(query, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})

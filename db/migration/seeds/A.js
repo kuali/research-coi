@@ -328,7 +328,7 @@ exports.seed = function(knex, Promise) {
     console.log('Seed - relationship_type');
     return Promise.all([
       knex('relationship_category_type')
-      .insert({type_cd: 1, description: 'Ownership', enabled: true, type_enabled: true, amount_enabled: true})
+      .insert({type_cd: 1, description: 'Ownership', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
       .then(function(){
         return Promise.all([
         knex('relationship_type').insert({relationship_cd: 1, description: 'Stock', active: true}),
@@ -341,7 +341,7 @@ exports.seed = function(knex, Promise) {
         knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Does not apply', active: true})]);
       }),
       knex('relationship_category_type')
-      .insert({type_cd: 2, description: 'Offices/Positions', enabled: true, type_enabled: true, amount_enabled: true})
+      .insert({type_cd: 2, description: 'Offices/Positions', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
       .then(function() {
         return Promise.all([
         knex('relationship_type').insert({relationship_cd: 2, description: 'Board Member', active: true}),
@@ -355,7 +355,7 @@ exports.seed = function(knex, Promise) {
         knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Does not apply', active: true})]);
       }),
       knex('relationship_category_type')
-      .insert({type_cd: 3, description: 'Paid Activities', enabled: true, type_enabled: false, amount_enabled: true})
+      .insert({type_cd: 3, description: 'Paid Activities', enabled: true, type_enabled: false, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
       .then(function() {
         return Promise.all([
           knex('relationship_amount_type').insert({relationship_cd: 3, description: '$1 - $5,000', active: true}),
@@ -366,7 +366,7 @@ exports.seed = function(knex, Promise) {
         ]);
       }),
       knex('relationship_category_type')
-      .insert({type_cd: 4, description: 'Intellectual Property', enabled: true, type_enabled: true, amount_enabled: true})
+      .insert({type_cd: 4, description: 'Intellectual Property', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
       .then(function() {
         return Promise.all([
         knex('relationship_type').insert({relationship_cd: 4, description: 'Royalty Income', active: true}),
@@ -378,7 +378,7 @@ exports.seed = function(knex, Promise) {
         knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Does not apply', active: true})]);
       }),
       knex('relationship_category_type')
-      .insert({type_cd: 5, description: 'Other', enabled: true, type_enabled: true, amount_enabled: true})
+      .insert({type_cd: 5, description: 'Other', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
       .then(function() {
         return Promise.all([
         knex('relationship_type').insert({relationship_cd: 5, description: 'Contract', active: true}),
@@ -388,7 +388,9 @@ exports.seed = function(knex, Promise) {
         knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Over $10,000', active: true}),
         knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Privately Held, no valuation', active: true}),
         knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Does not apply', active: true})]);
-      })
+      }),
+      knex('relationship_category_type')
+      .insert({type_cd: 6, description: 'Travel', enabled: false, type_enabled: false, amount_enabled: true, destination_enabled: true, date_enabled: true, reason_enabled: true})
     ]);
   }).then(function() {
     console.log('Seed - questionnaire_type');
