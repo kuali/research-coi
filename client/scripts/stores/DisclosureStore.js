@@ -476,6 +476,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     let relation = this.applicationState.potentialRelationship;
 
+    relation.id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
     let matrixType = window.config.matrixTypes.find(matrix=>{
       return matrix.typeCd === relation.relationshipCd;
     });
