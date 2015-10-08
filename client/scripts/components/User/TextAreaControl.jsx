@@ -18,7 +18,7 @@ export class TextAreaControl extends React.Component {
         height: 160,
         padding: 10,
         fontSize: 16,
-        margin: '2px 0 30px 0',
+        marginTop: 2,
         borderRadius: 5,
         border: '1px solid #AAA'
       }

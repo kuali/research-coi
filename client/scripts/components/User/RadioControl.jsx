@@ -19,10 +19,16 @@ export class RadioControl extends React.Component {
       },
       radio: {
         width: 22,
-        height: '4em'
+        height: '4em',
+        verticalAlign: 'middle'
       },
       label: {
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: 80,
+        display: 'inline-block',
+        verticalAlign: 'middle',
+        fontWeight: 'bold',
+        paddingLeft: 5
       }
     };
 
@@ -39,8 +45,8 @@ export class RadioControl extends React.Component {
               style={styles.radio}
               name={'radioControl:' + this.props.questionId}
             />
+            <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
           </div>
-          <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
       </span>
       );
     });

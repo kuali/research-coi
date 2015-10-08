@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {NextIcon} from '../../DynamicIcons/NextIcon';
 import {merge} from '../../../merge';
 
 export class NextButton extends React.Component {
@@ -21,11 +20,10 @@ export class NextButton extends React.Component {
         color: '#1481A3',
         marginRight: 3,
         width: 33,
-        height: 33,
+        fontSize: 26,
         verticalAlign: 'middle'
       },
       next: {
-        float: 'right',
         display: 'inline-block',
         cursor: 'pointer'
       },
@@ -47,8 +45,8 @@ export class NextButton extends React.Component {
 
     return (
       <div style={nextStyle} onClick={this.submit}>
-        <NextIcon style={styles.icon}/>
-        <span style={styles.text}>Next</span>
+        <span style={styles.text}>NEXT</span>
+        <i className="fa fa-arrow-right" style={styles.icon}></i>
       </div>
     );
   }

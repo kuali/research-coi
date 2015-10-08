@@ -22,6 +22,7 @@ export class Question extends React.Component {
     this.getControl = this.getControl.bind(this);
     this.anySubQuestionsTriggeredBy = this.anySubQuestionsTriggeredBy.bind(this);
     this.submitSubQuestions = this.submitSubQuestions.bind(this);
+    this.next = this.next.bind(this);
   }
 
   answerAndSubmit(evt, questionId, isParent) {
@@ -87,16 +88,24 @@ export class Question extends React.Component {
       id: questionId,
       answer: {
         value: newDate
-      },
-      advance: true
+      }
     });
   }
 
+  next() {
+    this.submit(this.props.answer, this.props.id);
+    this.submitSubQuestions();
+  }
+
   submitSubQuestions() {
-    this.props.subQuestions.forEach((subQuestion, index)=>{
+    this.props.subQuestions.forEach(subQuestion => {
       if (subQuestion.question.displayCriteria === this.props.answer) {
-        let advance = this.props.subQuestions.length - 1 === index;
-        DisclosureActions.submitQuestion({id: subQuestion.id, answer: {value: subQuestion.answer}, advance: advance});
+        DisclosureActions.submitQuestion({
+          id: subQuestion.id,
+          answer: {
+            value: subQuestion.answer
+          }
+        });
       }
     });
   }
@@ -108,7 +117,7 @@ export class Question extends React.Component {
           <RadioControl
             options={['Yes', 'No']}
             answer={answer}
-            onChange={this.answerAndSubmit}
+            onChange={question.parent ? this.answer : this.answerAndSubmit}
             isParent={!question.parent}
             questionId={question.id}
           />
@@ -118,7 +127,7 @@ export class Question extends React.Component {
           <RadioControl
             options={['Yes', 'No', 'N/A']}
             answer={answer}
-            onChange={this.answerAndSubmit}
+            onChange={question.parent ? this.answer : this.answerAndSubmit}
             isParent={!question.parent}
             questionId={question.id}
           />
@@ -128,7 +137,6 @@ export class Question extends React.Component {
           <TextAreaControl
             answer={answer}
             onChange={this.answer}
-            onClick={this.submit}
             isValid={answer ? true : false}
             isParent={!question.parent}
             questionId={question.id}
@@ -161,7 +169,6 @@ export class Question extends React.Component {
           <DateControl
             answer={answer}
             onChange={this.answerDate}
-            onClick={this.submit}
             isValid={answer ? true : false}
             isParent={!question.parent}
             questionId={question.id}
@@ -174,15 +181,15 @@ export class Question extends React.Component {
     let styles = {
       container: {
         display: 'inline-block',
-        padding: 1
+        padding: '0 1px',
+        overflowX: 'hidden'
       },
       counter: {
-        'float': 'right',
-        fontSize: 17,
-        marginTop: 30
+        textAlign: 'right',
+        fontSize: 17
       },
       controls: {
-        marginTop: 20
+        marginTop: 10
       },
       nums: {
         fontSize: 38,
@@ -192,27 +199,69 @@ export class Question extends React.Component {
       text: {
         fontSize: 20,
         lineHeight: '28px'
+      },
+      panel: {
+        backgroundColor: 'white',
+        borderRadius: 5,
+        boxShadow: '0px 0px 3px 1px #CCC',
+        zIndex: 2,
+        position: 'relative',
+        margin: 3
+      },
+      nextButton: {
+        textAlign: 'right',
+        borderTop: '1px solid #CCC',
+        padding: '10px 20px'
+      },
+      topPanel: {
+        padding: '25px 30px'
+      },
+      subQuestionPanel: {
+        backgroundColor: 'white',
+        border: '1px solid #CCC',
+        margin: '-5px 3px 0 3px'
+      },
+      subQuestionContent: {
+        padding: '25px 30px'
+      },
+      numberToShow: {
+        color: '#1481A3',
+        fontSize: 28,
+        marginBottom: 10,
+        fontWeight: 'bold'
       }
     };
 
     let isValid = true;
     let subQuestions = [];
-    this.props.subQuestions.filter(subQuestion=>{
+    this.props.subQuestions.filter(subQuestion => {
       return subQuestion.question.displayCriteria === this.props.answer;
     }).sort((a, b)=>{
       return a.question.order - b.question.order;
-    }).forEach((subQuestion, index) => {
+    }).forEach((subQuestion, index, array) => {
+      let nextDiv;
+      if (index === array.length - 1) {
+        nextDiv = (
+          <div style={styles.nextButton}>
+            <NextButton onClick={this.next} isValid={true} />
+          </div>
+        );
+      }
+
       subQuestions.push(
-        <div key={index} style={{clear: 'both', marginTop: 40}}>
-          <div style={{color: '#1481A3', fontSize: 28, marginBottom: 10}}>
-            {subQuestion.question.numberToShow}
+        <div key={index} style={styles.subQuestionPanel}>
+          <div style={styles.subQuestionContent}>
+            <div style={styles.numberToShow}>
+              {subQuestion.question.numberToShow}
+            </div>
+            <div style={styles.text}>
+              {subQuestion.question.text}
+            </div>
+            <div style={styles.controls}>
+              {this.getControl(subQuestion, subQuestion.answer)}
+            </div>
           </div>
-          <div style={styles.text}>
-            {subQuestion.question.text}
-          </div>
-          <div style={styles.controls}>
-            {this.getControl(subQuestion, subQuestion.answer)}
-          </div>
+          {nextDiv}
         </div>
       );
 
@@ -222,29 +271,41 @@ export class Question extends React.Component {
     });
 
     let nextButton;
-    if (subQuestions.length > 0) {
+    if (
+      subQuestions.length === 0 && (
+        this.props.question.question.type !== COIConstants.QUESTION_TYPE.YESNO &&
+        this.props.question.question.type !== COIConstants.QUESTION_TYPE.YESNONA
+      )
+    ) {
       nextButton = (
-       <NextButton onClick={this.submitSubQuestions} isValid={isValid}/>
+        <div style={styles.nextButton}>
+          <NextButton onClick={this.next} isValid={isValid}/>
+        </div>
       );
     }
 
     return (
       <span style={merge(styles.container, this.props.style)}>
-        <div style={styles.text}>
-          {this.props.question.question.text}
-        </div>
-        <div style={styles.controls}>
-          {this.getControl(this.props.question, this.props.answer)}
-          <span style={styles.counter}>
-            QUESTION
-            <span style={styles.nums}>
-              {this.props.number}/{this.props.of}
-            </span>
-          </span>
-        </div>
-        {subQuestions}
+        <div style={styles.panel}>
+          <div style={styles.topPanel}>
+            <div style={styles.text}>
+              {this.props.question.question.text}
+            </div>
+            <div style={styles.controls}>
+              {this.getControl(this.props.question, this.props.answer)}
+              <div style={styles.counter}>
+                QUESTION
+                <span style={styles.nums}>
+                  {this.props.number}/{this.props.of}
+                </span>
+              </div>
+            </div>
+          </div>
 
-        {nextButton}
+          {nextButton}
+        </div>
+
+        {subQuestions}
       </span>
     );
   }

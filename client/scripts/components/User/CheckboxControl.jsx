@@ -19,10 +19,16 @@ export class CheckboxControl extends React.Component {
       },
       radio: {
         width: 22,
-        height: '4em'
+        height: '4em',
+        verticalAlign: 'middle'
       },
       label: {
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: 80,
+        display: 'inline-block',
+        verticalAlign: 'middle',
+        fontWeight: 'bold',
+        paddingLeft: 5
       }
     };
 
@@ -35,10 +41,9 @@ export class CheckboxControl extends React.Component {
       }
 
       return (
-        <span style={styles.option}>
+        <span style={styles.option} key={option}>
           <div>
             <input
-              key={option}
               id={'multi_' + option}
               value={option}
               checked={checked}
@@ -46,8 +51,8 @@ export class CheckboxControl extends React.Component {
               type="checkbox"
               style={styles.radio}
             />
+            <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
           </div>
-          <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
         </span>
       );
     });
