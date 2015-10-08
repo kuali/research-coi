@@ -1,14 +1,12 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {COIConstants} from '../../../../../COIConstants';
 import {formatDate} from '../../../../scripts/formatDate';
 
-export class QuestionSummary extends ResponsiveComponent {
+export class QuestionSummary extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.reviewQuestion = this.reviewQuestion.bind(this);
   }
@@ -17,12 +15,10 @@ export class QuestionSummary extends ResponsiveComponent {
     DisclosureActions.setCurrentQuestion(+(this.props.index));
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
-        margin: '30px 0px'
+        margin: '35px 0px'
       },
       option: {
         display: 'inline-block',
@@ -30,7 +26,8 @@ export class QuestionSummary extends ResponsiveComponent {
       },
       counter: {
         display: 'inline-block',
-        width: '10%',
+        width: this.props.question.parent !== null ? 170 : 100,
+        paddingLeft: this.props.question.parent !== null ? 80 : 0,
         fontSize: 17,
         verticalAlign: 'top'
       },
@@ -43,31 +40,30 @@ export class QuestionSummary extends ResponsiveComponent {
       },
       nums: {
         fontSize: 28,
-        marginLeft: 10,
-        color: '#1481A3'
+        marginLeft: 10
       },
       question: {
-        width: '78%',
-        display: 'inline-block',
         marginTop: 3,
         lineHeight: '22px'
       },
       answer: {
         display: 'inline-block',
-        width: '12%',
-        verticalAlign: 'top',
-        textAlign: 'right'
+        verticalAlign: 'top'
       },
       editlink: {
-        fontSize: 12,
+        fontSize: 15,
         margin: '10px 0 0 8px',
-        color: '#1481A3',
+        color: '#51D6FF',
         cursor: 'pointer',
-        borderBottom: '1px dotted #1481A3',
+        borderBottom: '1px dotted #51D6FF',
         display: 'inline-block'
+      },
+      answerLabel: {
+        color: '#51D6FF',
+        fontSize: 18,
+        marginRight: 7
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let answer = this.props.answer;
     switch(this.props.question.question.type) {
@@ -81,18 +77,26 @@ export class QuestionSummary extends ResponsiveComponent {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className="flexbox row" style={merge(styles.container, this.props.style)}>
         <span style={styles.counter}>
           <span style={styles.nums}>
             {this.props.question.question.numberToShow}
           </span>
         </span>
 
-        <span style={styles.question}>{this.props.question.question.text}</span>
-
-        <span style={styles.answer}>
-          <div style={{fontSize: 25}}>{answer}</div>
-          <span onClick={this.reviewQuestion} style={styles.editlink}>&lt; EDIT</span>
+        <span className="fill" style={styles.question}>
+          <div>{this.props.question.question.text}</div>
+          <div style={{marginTop: 15}} className="flexbox row">
+            <span className="fill" style={styles.answer}>
+              <span style={styles.answerLabel}>Answer: </span>
+              <span style={{fontSize: 20}}>
+                {answer}
+              </span>
+            </span>
+            <span onClick={this.reviewQuestion}>
+              <span style={styles.editlink}>&lt; EDIT</span>
+            </span>
+          </div>
         </span>
       </div>
     );

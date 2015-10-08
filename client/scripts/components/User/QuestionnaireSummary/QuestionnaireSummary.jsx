@@ -28,7 +28,14 @@ export class QuestionnaireSummary extends ResponsiveComponent {
         overflow: 'hidden'
       },
       summaryArea: {
-        padding: '46px 0 0 50px'
+        padding: '23px 29px',
+        backgroundColor: 'white',
+        margin: '35px 5px 3px 39px',
+        boxShadow: '0px 0px 3px 1px #CCC'
+      },
+      title: {
+        fontWeight: 'bold',
+        fontSize: 18
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -59,7 +66,7 @@ export class QuestionnaireSummary extends ResponsiveComponent {
             answer={answer.answer.value}
             question={answer.question}
             index={index}
-            key={answer.id}
+            key={'a' + answer.id}
           />
         );
         subs.filter(subAnswer=>{
@@ -68,12 +75,12 @@ export class QuestionnaireSummary extends ResponsiveComponent {
           return a.question.question.order - b.question.question.order;
         }).forEach((subAnswer) => {
           summaries.push(
-          <QuestionSummary
-          answer={subAnswer.answer.value}
-          question={subAnswer.question}
-          index={index}
-          key={subAnswer.id}
-          />
+            <QuestionSummary
+              answer={subAnswer.answer.value}
+              question={subAnswer.question}
+              index={index}
+              key={'sa' + subAnswer.id}
+            />
           );
         });
       });
@@ -92,7 +99,9 @@ export class QuestionnaireSummary extends ResponsiveComponent {
         {instructions}
 
         <div style={styles.summaryArea}>
-          <div>Please review your questionnaire summary for accuracy before moving on:</div>
+          <div style={styles.title}>
+            Please review your questionnaire summary for accuracy before moving on:
+          </div>
           {summaries}
         </div>
       </span>
