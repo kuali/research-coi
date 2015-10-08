@@ -132,11 +132,7 @@ export default class EntitySummary extends React.Component {
         <EntityRelationshipSummary
           key={'rel' + relationship.id}
           style={styles.relationshipSummary}
-          person={relationship.person}
-          relationship={relationship.relationship}
-          type={relationship.type}
-          amount={relationship.amount}
-          comment={relationship.comments}
+          relationship={relationship}
           readonly={true}
         />
       );

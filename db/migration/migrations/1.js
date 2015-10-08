@@ -160,13 +160,13 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('questionnaire_answer_id').unsigned().notNullable().index().references('id').inTable('questionnaire_answer');
     table.unique(['fin_entity_id', 'questionnaire_answer_id']);
   })
-  .createTable('travel_log_entry', function(table) {
+  .createTable('travel_relationship', function(table) {
     table.increments('id').notNullable();
-    table.integer('fin_entity_id').unsigned().notNullable().index().references('id').inTable('fin_entity');
+    table.integer('relationship_id').unsigned().notNullable().index().references('id').inTable('relationship');
     table.decimal('amount', 12, 2);
     table.text('destination');
-    table.dateTime('start_date');
-    table.dateTime('end_date');
+    table.date('start_date');
+    table.date('end_date');
     table.text('reason');
   })
   .createTable('notification', function(table) {

@@ -97,11 +97,7 @@ export class EntitiesSummary extends React.Component {
             <EntityRelationshipSummary
               key={i + ':' + j}
               style={styles.relationshipSummary}
-              person={this.props.entities[i].relationships[j].person}
-              relationship={this.props.entities[i].relationships[j].relationship}
-              type={this.props.entities[i].relationships[j].type}
-              amount={this.props.entities[i].relationships[j].amount}
-              comment={this.props.entities[i].relationships[j].comments}
+              relationship={this.props.entities[i].relationships[j]}
               readonly={true}
             />
           );

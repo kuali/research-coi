@@ -60,7 +60,8 @@ class _DisclosureStore extends AutoBindingStore {
         relationshipCd: '',
         typeCd: '',
         amountCd: '',
-        comments: ''
+        comments: '',
+        travel: {}
       },
       validatingEntityNameStep: false,
       validatingEntityInformationStep: false,
@@ -433,6 +434,66 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.potentialRelationship.personCd = personCd;
   }
 
+  setEntityRelationshipTravelAmount(amount) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    if (!this.applicationState.potentialRelationship.travel) {
+      this.applicationState.potentialRelationship.travel = {};
+    }
+
+    this.applicationState.potentialRelationship.travel.amount = amount;
+  }
+
+  setEntityRelationshipTravelDestination(destination) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    if (!this.applicationState.potentialRelationship.travel) {
+      this.applicationState.potentialRelationship.travel = {};
+    }
+
+    this.applicationState.potentialRelationship.travel.destination = destination;
+  }
+
+  setEntityRelationshipTravelStartDate(date) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    if (!this.applicationState.potentialRelationship.travel) {
+      this.applicationState.potentialRelationship.travel = {};
+    }
+
+    this.applicationState.potentialRelationship.travel.startDate = date;
+  }
+
+  setEntityRelationshipTravelEndDate(date) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    if (!this.applicationState.potentialRelationship.travel) {
+      this.applicationState.potentialRelationship.travel = {};
+    }
+
+    this.applicationState.potentialRelationship.travel.endDate = date;
+  }
+
+  setEntityRelationshipTravelReason(reason) {
+    if (!this.applicationState.potentialRelationship) {
+      this.applicationState.potentialRelationship = {};
+    }
+
+    if (!this.applicationState.potentialRelationship.travel) {
+      this.applicationState.potentialRelationship.travel = {};
+    }
+
+    this.applicationState.potentialRelationship.travel.reason = reason;
+  }
+
   setEntityRelationshipRelation(relationshipCd) {
     if (!this.applicationState.potentialRelationship) {
       this.applicationState.potentialRelationship = {};
@@ -496,7 +557,8 @@ class _DisclosureStore extends AutoBindingStore {
       typeCd: '',
       amount: '',
       amountCd: '',
-      comments: ''
+      comments: '',
+      travel: {}
     };
   }
 
@@ -960,10 +1022,44 @@ class _DisclosureStore extends AutoBindingStore {
       }
 
       if (matrixType.amountEnabled === 1) {
-        if (potentialRelationship.amountCd === undefined || potentialRelationship.amountCd.length === 0) {
-          errors.amount = 'Required Field';
+        if (matrixType.description === 'Travel') {
+          if (potentialRelationship.travel.amount === undefined || potentialRelationship.travel.amount.length === 0) {
+            errors.travelAmount = 'Required Field';
+          } else if (isNaN(potentialRelationship.travel.amount)) {
+            errors.travelAmount = 'Numeric Value Only';
+          }
+        } else {
+          if (potentialRelationship.amountCd === undefined || potentialRelationship.amountCd.length === 0) {
+            errors.amount = 'Required Field';
+          }
         }
       }
+
+      if (matrixType.destinationEnabled === 1) {
+        if (potentialRelationship.travel.destination === undefined || potentialRelationship.travel.destination.length === 0) {
+          errors.travelDestination = 'Required Field';
+        }
+      }
+
+      if (matrixType.dateEnabled === 1) {
+        if (potentialRelationship.travel.startDate === undefined || potentialRelationship.travel.startDate.length === 0) {
+          errors.travelStartDate = 'Required Field';
+        }
+        if (potentialRelationship.travel.endDate === undefined || potentialRelationship.travel.endDate.length === 0) {
+          errors.travelEndDate = 'Required Field';
+        }
+        if (potentialRelationship.travel.startDate && potentialRelationship.travel.endDate &&
+          potentialRelationship.travel.startDate > potentialRelationship.travel.endDate) {
+          errors.travelEndDate = 'Return date must be after departure date';
+        }
+      }
+
+      if (matrixType.reasonEnabled === 1) {
+        if (potentialRelationship.travel.reason === undefined || potentialRelationship.travel.reason.length === 0) {
+          errors.travelReason = 'Required Field';
+        }
+      }
+
     }
     else {
       errors.relation = 'Required Field';

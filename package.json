@@ -27,6 +27,7 @@
     "lodash": "3.10.0",
     "multer": "1.0.5",
     "mysql": "2.8.0",
+    "numeral": "1.5.3",
     "object-assign": "2.0.0",
     "react": "0.13.3",
     "react-autosuggest": "1.18.3",
