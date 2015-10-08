@@ -106,8 +106,10 @@ export default class EntitySummary extends React.Component {
       commentLink: {
         fontSize: 14,
         cursor: 'pointer',
-        margin: '25px 0 34px 0',
-        textAlign: 'right'
+        textAlign: 'right',
+        verticalAlign: 'bottom',
+        width: '30%',
+        display: 'inline-block'
       },
       relationshipsLabel: {
         fontSize: 15,
@@ -115,6 +117,15 @@ export default class EntitySummary extends React.Component {
       },
       relationshipSummary: {
         marginBottom: 10
+      },
+      bottom: {
+        margin: '25px 0 34px 0',
+        width: '100%',
+        display: 'inline-block'
+      },
+      bottomLeft:{
+        width: '70%',
+        display: 'inline-block'
       }
     };
 
@@ -138,6 +149,15 @@ export default class EntitySummary extends React.Component {
       );
     });
 
+
+    let files = this.props.entity.files.map(file=>{
+      return (
+        <div key={file.id} style={{marginBottom: 5}}>
+          <a style={{color: window.config.colors.three, borderBottom: '1px dotted' + window.config.colors.three}} href={'/api/coi/file/' + encodeURIComponent(file.key)}>{file.name}</a>
+        </div>
+      );
+    });
+
     return (
       <div
         style={merge(this.props.isLast ? styles.lastEntity : styles.entity, this.props.style)}
@@ -150,11 +170,16 @@ export default class EntitySummary extends React.Component {
           <span style={styles.relations}>
             <div style={styles.relationshipsLabel}>Relationship(s):</div>
             {relationships}
-
+          </span>
+          <div style={styles.bottom}>
+            <div style={styles.bottomLeft}>
+              <div>Attachments</div>
+              {files}
+            </div>
             <div style={styles.commentLink} onClick={this.showComments}>
               <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS ({this.props.commentCount})</span>
             </div>
-          </span>
+          </div>
         </div>
       </div>
     );

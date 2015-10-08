@@ -59,6 +59,10 @@ class _AdminActions {
 
   hideAdditionalReviewPanel() { this.dispatch(); }
 
+  showGeneralAttachmentsPanel() { this.dispatch(); }
+
+  hideGeneralAttachmentsPanel() { this.dispatch(); }
+
   showCommentSummary() { this.dispatch(); }
 
   hideCommentSummary() { this.dispatch(); }

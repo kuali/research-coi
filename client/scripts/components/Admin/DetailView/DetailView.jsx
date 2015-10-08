@@ -8,6 +8,7 @@ import {AdminActions} from '../../../actions/AdminActions';
 import CommentingPanel from './CommentingPanel';
 import AdditionalReviewPanel from './AdditionalReviewPanel';
 import CommentSummary from './CommentSummary';
+import GeneralAttachmentsPanel from './GeneralAttachmentsPanel';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -101,6 +102,13 @@ export class DetailView extends React.Component {
       sidePanel = (
         <CommentSummary
           disclosure={this.state.applicationState.selectedDisclosure}
+        />
+      );
+    }
+    else if (this.state.applicationState.generalAttachmentsShowing) {
+      sidePanel = (
+        <GeneralAttachmentsPanel
+          files={this.state.applicationState.selectedDisclosure.files}
         />
       );
     }
