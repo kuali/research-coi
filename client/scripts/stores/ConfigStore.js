@@ -459,6 +459,39 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
+  destinationEnabledChanged(params) {
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
+    });
+
+    if (target) {
+      target.destinationEnabled = params.newValue;
+    }
+    this.dirty = true;
+  }
+
+  dateEnabledChanged(params) {
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
+    });
+
+    if (target) {
+      target.dateEnabled = params.newValue;
+    }
+    this.dirty = true;
+  }
+
+  reasonEnabledChanged(params) {
+    let target = this.config.matrixTypes.find(matrixType => {
+      return matrixType.typeCd === params.typeCd;
+    });
+
+    if (target) {
+      target.reasonEnabled = params.newValue;
+    }
+    this.dirty = true;
+  }
+
   typeOptionsChanged(params) {
     let target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;

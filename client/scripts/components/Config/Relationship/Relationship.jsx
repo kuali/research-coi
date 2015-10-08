@@ -7,6 +7,7 @@ import EditableList from '../EditableList';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
 import RelationshipType from './RelationshipType';
+import TravelRelationshipType from './TravelRelationshipType';
 
 export default class Relationship extends React.Component {
   constructor() {
@@ -73,6 +74,17 @@ export default class Relationship extends React.Component {
     ConfigActions.amountOptionsChanged(relationshipType, newList);
   }
 
+  destinationEnabledChanged(typeCd, newValue) {
+    ConfigActions.destinationEnabledChanged(typeCd, newValue);
+  }
+
+  dateEnabledChanged(typeCd, newValue) {
+    ConfigActions.dateEnabledChanged(typeCd, newValue);
+  }
+
+  reasonEnabledChanged(typeCd, newValue) {
+    ConfigActions.reasonEnabledChanged(typeCd, newValue);
+  }
 
   render() {
     let styles = {
@@ -116,23 +128,43 @@ export default class Relationship extends React.Component {
     let matrixTypes;
     if (this.state.matrixTypes) {
       matrixTypes = this.state.matrixTypes.map(matrixType => {
-        return (
-          <RelationshipType
-            key={matrixType.name}
-            typeCd={matrixType.typeCd}
-            name={matrixType.description}
-            enabled={matrixType.enabled}
-            typeEnabled={matrixType.typeEnabled}
-            amountEnabled={matrixType.amountEnabled}
-            typeOptions={matrixType.typeOptions}
-            amountOptions={matrixType.amountOptions}
-            enabledChanged={this.enabledChanged}
-            typeEnabledChanged={this.typeEnabledChanged}
-            amountEnabledChanged={this.amountEnabledChanged}
-            typeOptionsChanged={this.typeOptionsChanged}
-            amountOptionsChanged={this.amountOptionsChanged}
-          />
-        );
+        if (matrixType.description === 'Travel') {
+          return (
+            <TravelRelationshipType
+              key={matrixType.name}
+              typeCd={matrixType.typeCd}
+              name={matrixType.description}
+              enabled={matrixType.enabled}
+              amountEnabled={matrixType.amountEnabled}
+              enabledChanged={this.enabledChanged}
+              amountEnabledChanged={this.amountEnabledChanged}
+              destinationEnabled={matrixType.destinationEnabled}
+              dateEnabled={matrixType.dateEnabled}
+              reasonEnabled={matrixType.reasonEnabled}
+              destinationEnabledChanged={this.destinationEnabledChanged}
+              dateEnabledChanged={this.dateEnabledChanged}
+              reasonEnabledChanged={this.reasonEnabledChanged}
+            />
+          );
+        } else {
+          return (
+            <RelationshipType
+              key={matrixType.name}
+              typeCd={matrixType.typeCd}
+              name={matrixType.description}
+              enabled={matrixType.enabled}
+              typeEnabled={matrixType.typeEnabled}
+              amountEnabled={matrixType.amountEnabled}
+              typeOptions={matrixType.typeOptions}
+              amountOptions={matrixType.amountOptions}
+              enabledChanged={this.enabledChanged}
+              typeEnabledChanged={this.typeEnabledChanged}
+              amountEnabledChanged={this.amountEnabledChanged}
+              typeOptionsChanged={this.typeOptionsChanged}
+              amountOptionsChanged={this.amountOptionsChanged}
+            />
+          );
+        }
       });
     }
 

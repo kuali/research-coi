@@ -51,6 +51,9 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.boolean('enabled').notNullable();
     table.boolean('type_enabled').notNullable();
     table.boolean('amount_enabled').notNullable();
+    table.boolean('destination_enabled').notNullable();
+    table.boolean('date_enabled').notNullable();
+    table.boolean('reason_enabled').notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship_type', function(table) {
