@@ -239,14 +239,14 @@ function insertDisclosure(knex) {
   return knex('disclosure').insert({
     user_id: userId,
     submitted_by: getRandomFirstName() + ' ' + getRandomLastName(),
-    type_cd: randomNumberBetween(1, 4),
+    type_cd: 2,
     title: 'Title - what is this?' + randomNumberBetween(1, 2000),
     submitted_date: submittedDate,
     revised_date: revisedDate,
     disposition_type_cd: 1,
     start_date: new Date(),
     expired_date: new Date(),
-    status_cd: randomNumberBetween(1, 4),
+    status_cd: 1,
     last_review_date: new Date(),
     approved_date: new Date()
   }).then(function(disclosureId) {
@@ -271,6 +271,12 @@ function insertDisclosure(knex) {
       }),
       insertQuestionAnswers(knex, disclosureId)
     ]);
+  });
+}
+
+function insertFakeProject(knex, userId) {
+  insertProject(knex, 'Longevity of car batteries').then(function(results) {
+    return insertProjectPerson(knex, userId, 'PI', results[0]);
   });
 }
 
@@ -473,5 +479,10 @@ exports.seed = function(knex, Promise) {
         reason: 'To give a talk on string theory'
       })
     ]);
+  }).then(function() {
+    console.log('Seed - Lots of fake projects');
+    for (var i = 501; i < 1000; i++) {
+      insertFakeProject(knex, getNextUserId());
+    }
   });
 };
