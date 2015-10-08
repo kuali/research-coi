@@ -175,7 +175,7 @@ export class DisclosureDetail extends React.Component {
           <span>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
             <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
-            <ActionButtons style={styles.actionButtons} />
+            <ActionButtons style={styles.actionButtons} showAttachments={this.props.disclosure.files.length > 0}/>
           </span>
         </div>
       </div>

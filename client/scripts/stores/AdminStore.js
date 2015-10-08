@@ -287,6 +287,19 @@ class _AdminStore extends AutoBindingStore {
     }, 400);
   }
 
+  showGeneralAttachmentsPanel() {
+    this.applicationState.listShowing = false;
+    this.applicationState.generalAttachmentsShowing = true;
+  }
+
+  hideGeneralAttachmentsPanel() {
+    this.applicationState.listShowing = true;
+    setTimeout(() => {
+      this.applicationState.generalAttachmentShowing = false;
+      this.emitChange();
+    }, 400);
+  }
+
   showCommentSummary() {
     this.applicationState.listShowing = false;
     this.applicationState.commentSummaryShowing = true;
