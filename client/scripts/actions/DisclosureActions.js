@@ -74,6 +74,16 @@ class _DisclosureActions {
 
   setEntityRelationshipPerson(person) { this.dispatch(person); }
 
+  setEntityRelationshipTravelAmount(amount) { this.dispatch(amount); }
+
+  setEntityRelationshipTravelDestination(destination) { this.dispatch(destination); }
+
+  setEntityRelationshipTravelStartDate(date) { this.dispatch(date); }
+
+  setEntityRelationshipTravelEndDate(date) { this.dispatch(date); }
+
+  setEntityRelationshipTravelReason(reason) { this.dispatch(reason); }
+
   setEntityRelationshipRelation(relation) { this.dispatch(relation); }
 
   setEntityRelationshipType(type) { this.dispatch(type); }

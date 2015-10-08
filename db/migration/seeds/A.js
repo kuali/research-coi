@@ -454,26 +454,26 @@ exports.seed = function(knex, Promise) {
       })
     });
   }).then(function() {
-    console.log('Seed - travel_log_entry');
+    console.log('Seed - travel_relationship');
     return Promise.all([
-      knex('travel_log_entry').insert({
-        fin_entity_id: knex('fin_entity').min('id'),
+      knex('travel_relationship').insert({
+        relationship_id: knex('relationship').min('id'),
         amount: 1000.00,
         destination: 'Hilo, HI',
         start_date: new Date(2015, 4, 2),
         end_date: new Date(2015, 4, 5),
         reason: 'To give a talk on dark matter'
       }),
-      knex('travel_log_entry').insert({
-        fin_entity_id: knex('fin_entity').max('id'),
+      knex('travel_relationship').insert({
+        relationship_id: knex('relationship').max('id'),
         amount: 2000.00,
         destination: 'Atlanta, GA',
         start_date: new Date(2015, 4, 13),
         end_date: new Date(2015, 4, 16),
         reason: 'To give a talk on quasars'
       }),
-      knex('travel_log_entry').insert({
-        fin_entity_id: knex('fin_entity').max('id'),
+      knex('travel_relationship').insert({
+        relationship_id: knex('relationship').max('id'),
         amount: 3000.00,
         destination: 'Atlanta, GA',
         start_date: new Date(2015, 7, 1),

@@ -50,7 +50,8 @@ export class DatePicker extends ResponsiveComponent {
         display: this.state.showingCalendar ? 'block' : 'none',
         border: '1px solid rgb(119, 119, 119)',
         backgroundColor: 'white',
-        marginTop: 5
+        marginTop: 5,
+        zIndex: 99
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);

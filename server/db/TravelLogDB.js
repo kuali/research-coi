@@ -17,8 +17,9 @@ export let getTravelLogEntries = (dbInfo, userId, optionalTrx) => {
   else {
     query = knex;
   }
-  return query.select('fe.name as entityName', 'tle.amount', 'tle.start_date as startDate', 'tle.end_date as endDate', 'tle.destination', 'tle.reason')
-    .from('travel_log_entry as tle')
-    .innerJoin('fin_entity as fe', 'fe.id', 'tle.fin_entity_id')
+  return query.select('fe.name as entityName', 'tr.amount', 'tr.start_date as startDate', 'tr.end_date as endDate', 'tr.destination', 'tr.reason')
+    .from('travel_relationship as t')
+    .innerJoin('relationship a r', 'r.id', 'tr.relationship_id' )
+    .innerJoin('fin_entity as fe', 'fe.id', 'r.fin_entity_id')
     .orderBy('fe.name', 'ASC');
 };

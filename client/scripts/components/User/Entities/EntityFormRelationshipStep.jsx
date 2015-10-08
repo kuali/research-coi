@@ -6,6 +6,8 @@ import EntityRelationshipSummary from '../../EntityRelationshipSummary';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {KButton} from '../../KButton';
+import RelationshipTextField from './RelationshipTextField';
+import RelationshipDateField from './RelationshipDateField';
 
 export class EntityFormRelationshipStep extends ResponsiveComponent {
   constructor() {
@@ -25,6 +27,11 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     this.relationChosen = this.relationChosen.bind(this);
     this.commentChanged = this.commentChanged.bind(this);
     this.getMatrixType = this.getMatrixType.bind(this);
+    this.amountChanged = this.amountChanged.bind(this);
+    this.destinationChanged = this.destinationChanged.bind(this);
+    this.startDateSelected = this.startDateSelected.bind(this);
+    this.endDateSelected = this.endDateSelected.bind(this);
+    this.reasonChanged = this.reasonChanged.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -59,6 +66,25 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     DisclosureActions.setEntityRelationshipPerson(parseInt(this.refs.personSelect.getDOMNode().value));
   }
 
+  amountChanged(value) {
+    DisclosureActions.setEntityRelationshipTravelAmount(value);
+  }
+
+  destinationChanged(value) {
+    DisclosureActions.setEntityRelationshipTravelDestination(value);
+  }
+
+  startDateSelected(newDate) {
+    DisclosureActions.setEntityRelationshipTravelStartDate(newDate);
+  }
+
+  endDateSelected(newDate) {
+    DisclosureActions.setEntityRelationshipTravelEndDate(newDate);
+  }
+
+  reasonChanged(value) {
+    DisclosureActions.setEntityRelationshipTravelReason(value);
+  }
   commentChanged() {
     DisclosureActions.setEntityRelationshipComment(this.refs.commentTextArea.getDOMNode().value);
   }
@@ -205,14 +231,73 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         return <option key={type.typeCd} value={type.typeCd}>{type.description}</option>;
       });
 
-      amountSection = (
-        <div style={styles.amountSection}>
-          <div style={labelStyle}>Amount</div>
-          <select onChange={this.amountSelected} ref="amountSelect" value={this.props.appState.potentialRelationship.amountCd} style={dropDownStyle}>
-            <option value="">--SELECT--</option>
-            {amountTypeOptions}
-          </select>
-        </div>
+      if (this.state.matrixType.description === 'Travel') {
+        amountSection = (
+          <RelationshipTextField
+            invalid={this.props.validating && validationErrors.travelAmount ? true : false}
+            onChange={this.amountChanged}
+            value={this.props.appState.potentialRelationship.travel.amount}
+            label='Amount'
+          />
+        );
+      } else {
+        amountSection = (
+          <div style={styles.amountSection}>
+            <div style={labelStyle}>Amount</div>
+            <select onChange={this.amountSelected} ref="amountSelect"
+                    value={this.props.appState.potentialRelationship.amountCd} style={dropDownStyle}>
+              <option value="">--SELECT--</option>
+              {amountTypeOptions}
+            </select>
+          </div>
+        );
+      }
+    }
+
+    let destination;
+    if (this.state.relation !== '' && this.state.matrixType.destinationEnabled === 1) {
+      destination = (
+        <RelationshipTextField
+          invalid={this.props.validating && validationErrors.travelDestination ? true : false}
+          onChange={this.destinationChanged}
+          value={this.props.appState.potentialRelationship.travel.destination}
+          label='Destination'
+        />
+      );
+    }
+
+
+    let departureDate;
+    let returnDate;
+    if (this.state.relation !== '' && this.state.matrixType.dateEnabled === 1) {
+      departureDate = (
+        <RelationshipDateField
+          invalid={this.props.validating && validationErrors.travelStartDate ? true : false}
+          onChange={this.startDateSelected}
+          value={this.props.appState.potentialRelationship.travel.startDate}
+          label='Departure Date'
+        />
+      );
+
+      returnDate = (
+        <RelationshipDateField
+          invalid={this.props.validating && validationErrors.travelEndDate ? true : false}
+          onChange={this.endDateSelected}
+          value={this.props.appState.potentialRelationship.travel.endDate}
+          label='Return Date'
+        />
+      );
+    }
+
+    let reason;
+    if (this.state.relation !== '' && this.state.matrixType.reasonEnabled === 1) {
+      reason = (
+        <RelationshipTextField
+        invalid={this.props.validating && validationErrors.travelReason ? true : false}
+        onChange={this.reasonChanged}
+        value={this.props.appState.potentialRelationship.travel.reason}
+        label='Reason'
+        />
       );
     }
 
@@ -224,12 +309,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
             readonly={this.props.readonly}
             entityId={this.props.id}
             style={{marginBottom: 20}}
-            id={relation.id}
-            person={relation.person}
-            relationship={relation.relationship}
-            type={relation.type}
-            amount={relation.amount}
-            comment={relation.comments}
+            relationship={relation}
             key={relation.id}
           />
         );
@@ -294,6 +374,10 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
               </div>
               {typeSection}
               {amountSection}
+              {destination}
+              {departureDate}
+              {returnDate}
+              {reason}
             </span>
             <span style={styles.right}>
               <div style={relationStyle}>Relationship</div>

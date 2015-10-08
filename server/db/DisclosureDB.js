@@ -41,6 +41,17 @@ export let saveNewFinancialEntity = (dbInfo, displayName, disclosureId, financia
           })
           .then(relationshipId=>{
             relationship.id = relationshipId[0];
+            if (relationship.relationshipCd === 6) {
+              return knex('travel_relationship')
+              .insert({
+                relationship_id: relationshipId[0],
+                amount: relationship.travel.amount,
+                destination: relationship.travel.destination,
+                start_date: new Date(relationship.travel.startDate),
+                end_date: new Date(relationship.travel.endDate),
+                reason: relationship.travel.reason
+              });
+            }
           })
         );
 
@@ -107,8 +118,33 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
     .then(() => {
       let queries = [];
 
+      queries.push(
+        knex('relationship')
+        .select('*')
+        .where('fin_entity_id', financialEntity.id)
+        .then(dbRelationships => {
+          return Promise.all(
+            dbRelationships.filter(dbRelationship => {
+              let match = financialEntity.relationships.find(relationship => {
+                return relationship.id === dbRelationship.id;
+              });
+              return !match;
+            }).map(dbRelationship => {
+              return knex('travel_relationship')
+              .del()
+              .where('relationship_id', dbRelationship.id)
+              .then(() => {
+                return knex('relationship')
+                .del()
+                .where('id', dbRelationship.id);
+              });
+            })
+          );
+        })
+      );
+
       financialEntity.relationships.map(relationship => {
-        if (!relationship.id) {
+        if (isNaN(relationship.id)) {
           relationship.finEntityId = financialEntity.id;
           queries.push(
             knex('relationship')
@@ -122,6 +158,17 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
             })
             .then(relationshipId=>{
               relationship.id = relationshipId[0];
+              if (relationship.relationshipCd === 6) {
+                return knex('travel_relationship')
+                .insert({
+                  relationship_id: relationshipId[0],
+                  amount: relationship.travel.amount,
+                  destination: relationship.travel.destination,
+                  start_date: new Date(relationship.travel.startDate),
+                  end_date: new Date(relationship.travel.endDate),
+                  reason: relationship.travel.reason
+                });
+              }
             })
           );
         }
@@ -383,9 +430,19 @@ export let get = (dbInfo, userId, disclosureId) => {
         .leftJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
         .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
         .then(relationships => {
-          disclosure.entities.forEach(entity => {
-            entity.relationships = relationships.filter(relationship => {
-              return relationship.finEntityId === entity.id;
+          return knex('travel_relationship')
+          .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
+          .whereIn('relationship_id', relationships.map(relationship => { return relationship.id; }))
+          .then(travels=> {
+            disclosure.entities.forEach(entity => {
+              entity.relationships = relationships.filter(relationship => {
+                return relationship.finEntityId === entity.id;
+              }).map(relationship=> {
+                relationship.travel = travels.find(travel => {
+                  return travel.relationshipId === relationship.id;
+                });
+                return relationship;
+              });
             });
           });
         }),
