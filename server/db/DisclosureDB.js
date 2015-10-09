@@ -54,28 +54,6 @@ export let saveNewFinancialEntity = (dbInfo, displayName, disclosureId, financia
             }
           })
         );
-
-        financialEntity.files = [];
-
-        files.forEach(file=>{
-          let fileData = {
-            file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
-            ref_id: financialEntity.id,
-            type: file.mimetype,
-            key: file.filename,
-            name: file.originalname,
-            uploaded_by: displayName,
-            upload_date: new Date()
-          };
-          queries.push(
-            knex('file')
-              .insert(fileData)
-              .then(fileId=>{
-                fileData.id = fileId[0];
-                financialEntity.files.push(fileData);
-              })
-          );
-        });
       });
 
       financialEntity.answers.forEach(answer=>{
@@ -92,6 +70,27 @@ export let saveNewFinancialEntity = (dbInfo, displayName, disclosureId, financia
                 questionnaire_answer_id: result[0]
               });
           })
+        );
+      });
+
+      financialEntity.files = [];
+      files.forEach(file=>{
+        let fileData = {
+          file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+          ref_id: financialEntity.id,
+          type: file.mimetype,
+          key: file.filename,
+          name: file.originalname,
+          uploaded_by: displayName,
+          upload_date: new Date()
+        };
+        queries.push(
+        knex('file')
+        .insert(fileData)
+        .then(fileId=>{
+          fileData.id = fileId[0];
+          financialEntity.files.push(fileData);
+        })
         );
       });
 
@@ -438,8 +437,8 @@ export let get = (dbInfo, userId, disclosureId) => {
               entity.relationships = relationships.filter(relationship => {
                 return relationship.finEntityId === entity.id;
               }).map(relationship=> {
-                let travel = travels.find(travel => {
-                  return travel.relationshipId === relationship.id;
+                let travel = travels.find(item => {
+                  return item.relationshipId === relationship.id;
                 });
                 relationship.travel = travel ? travel : {};
                 return relationship;
