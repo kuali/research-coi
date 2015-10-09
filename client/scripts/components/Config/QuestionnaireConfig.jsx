@@ -315,10 +315,10 @@ class QuestionnaireConfig extends React.Component {
           questionnaireCategory={this.props.questionnaireCategory}
           editState={this.props.questionsBeingEdited[question.id]}
           questionMoved={this.questionMoved}
-          makeSubQuestion={this.makeSubQuestion}
+          makeSubQuestion={this.props.disableSubQuestions ? () => {} : this.makeSubQuestion}
           makeMainQuestion={this.makeMainQuestion}
-          subQuestionMoved={this.subQuestionMoved}
-          subQuestionMovedToParent={this.subQuestionMovedToParent}
+          subQuestionMoved={this.props.disableSubQuestions ? () => {} : this.subQuestionMoved}
+          subQuestionMovedToParent={this.props.disableSubQuestions ? () => {} : this.subQuestionMovedToParent}
           number={question.question.numberToShow}
           key={question.id}
           id={question.id}
@@ -334,10 +334,10 @@ class QuestionnaireConfig extends React.Component {
             questionnaireCategory={this.props.questionnaireCategory}
             editState={this.props.questionsBeingEdited[subQuestion.id]}
             questionMoved={this.questionMoved}
-            makeSubQuestion={this.makeSubQuestion}
+            makeSubQuestion={this.props.disableSubQuestions ? () => {} : this.makeSubQuestion}
             makeMainQuestion={this.makeMainQuestion}
-            subQuestionMoved={this.subQuestionMoved}
-            subQuestionMovedToParent={this.subQuestionMovedToParent}
+            subQuestionMoved={this.props.disableSubQuestions ? () => {} : this.subQuestionMoved}
+            subQuestionMovedToParent={this.props.disableSubQuestions ? () => {} : this.subQuestionMovedToParent}
             number={subQuestion.question.numberToShow}
             key={subQuestion.id}
             id={subQuestion.id}
