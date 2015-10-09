@@ -77,8 +77,6 @@ export default class General extends React.Component {
                   types={this.state.disclosureTypes}
                   appState={this.state.applicationState}
                 />
-
-                <SponsorLookup enabled={this.state.sponsorLookup} />
               </Panel>
 
               <Panel title="Expiration Notifications">
@@ -88,6 +86,10 @@ export default class General extends React.Component {
                   notifications={this.state.notifications}
                   appState={this.state.applicationState}
                 />
+              </Panel>
+
+              <Panel title="Sponsor Table Lookup">
+                <SponsorLookup enabled={this.state.sponsorLookup} />
               </Panel>
             </span>
             <ActionPanel visible={this.state.dirty} />
