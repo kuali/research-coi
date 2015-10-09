@@ -20,7 +20,7 @@ class _AdminStore extends AutoBindingStore {
           end: undefined
         },
         submittedBy: undefined,
-        status: [],
+        status: ['Submitted for Approval'],
         type: [],
         search: ''
       },
