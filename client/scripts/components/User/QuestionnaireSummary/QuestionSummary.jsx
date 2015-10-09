@@ -12,7 +12,7 @@ export class QuestionSummary extends React.Component {
   }
 
   reviewQuestion() {
-    DisclosureActions.setCurrentQuestion(+(this.props.index));
+    DisclosureActions.setCurrentQuestion(this.props.index + 1);
   }
 
   render() {

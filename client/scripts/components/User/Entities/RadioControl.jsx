@@ -42,10 +42,10 @@ export class RadioControl extends React.Component {
       return (
       <span style={styles.option}>
         <div>
-          <label htmlFor={'multi_' + option} style={styles.label}>
+          <label htmlFor={'multi_' + option + '_' + this.props.questionId} style={styles.label}>
             <input
             key={option}
-            id={'multi_' + option}
+            id={'multi_' + option + '_' + this.props.questionId}
             value={option}
             checked={this.props.answer === option}
             onChange={this.answer}
