@@ -20,7 +20,6 @@ export class Question extends React.Component {
     this.answer = this.answer.bind(this);
     this.answerAndSubmit = this.answerAndSubmit.bind(this);
     this.submit = this.submit.bind(this);
-    this.submitMultiple = this.submitMultiple.bind(this);
     this.answerMultiple = this.answerMultiple.bind(this);
     this.answerDate = this.answerDate.bind(this);
     this.getControl = this.getControl.bind(this);
@@ -93,16 +92,6 @@ export class Question extends React.Component {
   }
 
   submit(answer, questionId) {
-    DisclosureActions.submitQuestion({
-      id: questionId,
-      answer: {
-        value: answer
-      },
-      advance: true
-    });
-  }
-
-  submitMultiple(answer, questionId) {
     DisclosureActions.submitQuestion({
       id: questionId,
       answer: {
