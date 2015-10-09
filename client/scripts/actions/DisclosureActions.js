@@ -211,6 +211,7 @@ class _DisclosureActions {
 
   deleteDisclosureAttachment(index) { this.dispatch(index); }
 
+  deleteAnswersTo(toDelete) { this.dispatch(toDelete); }
 }
 
 export let DisclosureActions = alt.createActions(_DisclosureActions);

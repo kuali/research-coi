@@ -253,4 +253,33 @@ export let init = app => {
         next(err);
       });
   });
+
+  app.delete('/api/coi/disclosure/:id/answers', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    let toDelete = [];
+    let proposedDeletions = req.body.toDelete !== undefined ? req.body.toDelete : [];
+
+    if (Array.isArray(proposedDeletions)) {
+      proposedDeletions.forEach(proposedDeletion => {
+        if (Number.isInteger(proposedDeletion)) {
+          toDelete.push(proposedDeletion);
+        }
+      });
+    }
+
+    if (toDelete.length > 0) {
+      DisclosureDB.deleteAnswers(req.dbInfo, userInfo, req.params.id, toDelete)
+        .then(() => {
+          res.status(204).end();
+        })
+        .catch(err => {
+          console.error(err);
+          next(err);
+        });
+    }
+    else {
+      res.status(400).end();
+    }
+  });
 };

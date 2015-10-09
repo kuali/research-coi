@@ -657,3 +657,31 @@ export let getArchivedDisclosures = (dbInfo, userId) => { //eslint-disable-line 
     .from('disclosure as de')
     .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd');
 };
+
+export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('qa.id as questionnaireAnswerId', 'da.id as disclosureAnswerId')
+    .from('disclosure_answer as da')
+    .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
+    .whereIn('qa.question_id', answersToDelete)
+    .andWhere('da.disclosure_id', disclosureId)
+    .then(results => {
+      let questionnaireAnswerIds = results.map(row => {
+        return row.questionnaireAnswerId;
+      });
+      let disclosureAnswerIds = results.map(row => {
+        return row.disclosureAnswerId;
+      });
+
+      return knex('disclosure_answer')
+        .whereIn('id', disclosureAnswerIds)
+        .del()
+        .then(() => {
+          return knex('questionnaire_answer')
+            .whereIn('id', questionnaireAnswerIds)
+            .del()
+            .then(() => { return; });
+        });
+    });
+};

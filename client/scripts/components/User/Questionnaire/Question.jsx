@@ -41,7 +41,20 @@ export class Question extends React.Component {
     return true;
   }
 
+  deleteIrrelaventAnswers(questionId, newAnswer) {
+    let toDelete = this.props.allQuestions.filter(question => {
+      return question.parent === questionId;
+    }).filter(question => {
+      return question.question.displayCriteria !== newAnswer;
+    }).map(question => {
+      return question.id;
+    });
+
+    DisclosureActions.deleteAnswersTo(toDelete);
+  }
+
   answerAndSubmit(answer, questionId, isParent) {
+    this.deleteIrrelaventAnswers(questionId, answer);
     let advance = isParent && !this.anySubQuestionsTriggeredBy(answer);
     DisclosureActions.submitQuestion({
       id: questionId,
@@ -135,14 +148,16 @@ export class Question extends React.Component {
   }
 
   getControl(question, answer) {
+    let isSubQuestion = question.parent !== null;
+
     switch (question.question.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
         return (
           <RadioControl
             options={['Yes', 'No']}
             answer={answer}
-            onChange={question.parent ? this.answer : this.answerAndSubmit}
-            isParent={!question.parent}
+            onChange={isSubQuestion ? this.answer : this.answerAndSubmit}
+            isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
           />
@@ -152,8 +167,8 @@ export class Question extends React.Component {
           <RadioControl
             options={['Yes', 'No', 'N/A']}
             answer={answer}
-            onChange={question.parent ? this.answer : this.answerAndSubmit}
-            isParent={!question.parent}
+            onChange={isSubQuestion ? this.answer : this.answerAndSubmit}
+            isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
           />
@@ -163,7 +178,7 @@ export class Question extends React.Component {
           <TextAreaControl
             answer={answer}
             onChange={this.answer}
-            isParent={!question.parent}
+            isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
           />
@@ -174,7 +189,7 @@ export class Question extends React.Component {
             options={question.question.options}
             answer={answer}
             onChange={this.answerMultiple}
-            isParent={!question.parent}
+            isParent={!isSubQuestion}
             questionId={question.id}
             required={parseInt(question.question.requiredNumSelections)}
             onValidityChange={this.controlValidityChanged}
@@ -185,7 +200,7 @@ export class Question extends React.Component {
           <NumericControl
             answer={answer}
             onChange={this.answer}
-            isParent={!question.parent}
+            isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
           />
@@ -195,7 +210,7 @@ export class Question extends React.Component {
           <DateControl
             answer={answer}
             onChange={this.answerDate}
-            isParent={!question.parent}
+            isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
           />

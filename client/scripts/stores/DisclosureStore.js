@@ -402,7 +402,7 @@ class _DisclosureStore extends AutoBindingStore {
     entity.active = params.active;
 
     let formData = new FormData();
-    formData.append('entity',JSON.stringify(entity));
+    formData.append('entity', JSON.stringify(entity));
     request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
     .send(formData)
     .end();
@@ -1197,6 +1197,24 @@ class _DisclosureStore extends AutoBindingStore {
         this.toggleConfirmationMessage();
       }
     });
+  }
+
+  deleteAnswersTo(toDelete) {
+    let answerObject = this.applicationState.currentDisclosureState.disclosure.answers;
+    if (answerObject) {
+      this.applicationState.currentDisclosureState.disclosure.answers = answerObject.filter(answer => {
+        return !toDelete.includes(answer.questionId);
+      });
+    }
+
+    if (toDelete.length > 0) {
+      request.del('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/answers')
+        .send({
+          toDelete: toDelete
+        })
+        .type('application/json')
+        .end();
+    }
   }
 }
 

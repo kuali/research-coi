@@ -79,6 +79,7 @@ export class Questionnaire extends React.Component {
               question={question}
               subQuestions={subQuestions}
               disclosureid={this.props.disclosureid}
+              allQuestions={this.props.questions}
             />
           </span>
         );
