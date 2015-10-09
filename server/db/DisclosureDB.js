@@ -438,9 +438,10 @@ export let get = (dbInfo, userId, disclosureId) => {
               entity.relationships = relationships.filter(relationship => {
                 return relationship.finEntityId === entity.id;
               }).map(relationship=> {
-                relationship.travel = travels.find(travel => {
+                let travel = travels.find(travel => {
                   return travel.relationshipId === relationship.id;
                 });
+                relationship.travel = travel ? travel : {};
                 return relationship;
               });
             });
