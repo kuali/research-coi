@@ -57,7 +57,7 @@ export class RadioControl extends React.Component {
         <span style={styles.option} key={option}>
           <div>
             <input
-              id={'multi_' + option}
+              id={'multi_' + option + '_' + this.props.questionId}
               value={option}
               checked={this.props.answer === option}
               onChange={this.onChange}
@@ -65,7 +65,7 @@ export class RadioControl extends React.Component {
               style={styles.radio}
               name={'radioControl:' + this.props.questionId}
             />
-            <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
+            <label htmlFor={'multi_' + option + '_' + this.props.questionId} style={styles.label}>{option}</label>
           </div>
       </span>
       );
