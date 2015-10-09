@@ -169,7 +169,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     let processResponse = (err, res) => {
       if (!err) {
-        answer = res.body;
+        answer.id = res.body.id;
         if (question.advance) {
           this.advanceQuestion();
         }

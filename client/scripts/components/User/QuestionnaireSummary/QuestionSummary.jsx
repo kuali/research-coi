@@ -71,7 +71,7 @@ export class QuestionSummary extends React.Component {
         answer = formatDate(this.props.answer);
         break;
       case COIConstants.QUESTION_TYPE.MULTISELECT:
-        if (this.props.question.question.requiredNumSelections > 1) {
+        if (this.props.answer.length > 1) {
           answer = this.props.answer.join(', ');
         }
     }
