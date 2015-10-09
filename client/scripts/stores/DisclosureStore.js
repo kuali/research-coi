@@ -400,9 +400,11 @@ class _DisclosureStore extends AutoBindingStore {
   setEntityActiveStatus(params) {
     let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
     entity.active = params.active;
+
+    let formData = new FormData();
+    formData.append('entity',JSON.stringify(entity));
     request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
-    .send(entity)
-    .type('application/json')
+    .send(formData)
     .end();
   }
 
