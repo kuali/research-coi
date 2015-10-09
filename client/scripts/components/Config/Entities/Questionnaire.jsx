@@ -80,6 +80,7 @@ export default class Questionnaire extends React.Component {
             questions={this.state.questions}
             questionsBeingEdited={this.state.applicationState.questionsBeingEdited.entities}
             newQuestion={this.state.applicationState.newQuestion.entities}
+            disableSubQuestions={true}
           />
         </span>
       );
