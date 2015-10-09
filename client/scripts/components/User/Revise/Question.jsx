@@ -24,32 +24,63 @@ export default class Question extends React.Component {
     this.respond = this.respond.bind(this);
     this.cancel = this.cancel.bind(this);
     this.done = this.done.bind(this);
+
+    this.changeAnswer = this.changeAnswer.bind(this);
+    this.answerAndSubmit = this.answerAndSubmit.bind(this);
+    this.answer = this.answer.bind(this);
+    this.answerMultiple = this.answerMultiple.bind(this);
+    this.submitMultiple = this.submitMultiple.bind(this);
   }
 
   changeAnswer(newAnswer) {
     PIReviewActions.changeAnswerToQuestion(this.props.reviewId, newAnswer);
   }
 
-  getControl(question, answer) {
+  answerAndSubmit(evt) {
+    this.changeAnswer(evt.target.value);
+  }
+
+  anySubQuestionsTriggeredBy(value) {
+    let subQuestion = this.props.subQuestions.find(question => {
+      return question.question.displayCriteria === value;
+    });
+
+    return subQuestion !== undefined;
+  }
+
+  answer(evt) {
+    this.changeAnswer(evt.target.value);
+  }
+
+  answerMultiple(evt) {
+    // Test THIS!
+    this.changeAnswer(evt.target.value);
+  }
+
+  submitMultiple(answer) {
+    this.changeAnswer(answer);
+  }
+
+  getControl(answer) {
     switch (this.props.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
         return (
           <RadioControl
             options={['Yes', 'No']}
             answer={answer}
-            onChange={this.changeAnswer}
+            onChange={this.answerAndSubmit}
             isParent={true}
-            questionId={this.props.id}
+            questionId={this.props.question.id}
           />
         );
       case COIConstants.QUESTION_TYPE.YESNONA:
         return (
           <RadioControl
-            options={['Yes', 'No', 'NA']}
+            options={['Yes', 'No', 'N/A']}
             answer={answer}
             onChange={this.answerAndSubmit}
             isParent={true}
-            questionId={this.props.id}
+            questionId={this.props.question.id}
           />
         );
       case COIConstants.QUESTION_TYPE.TEXTAREA:
@@ -57,58 +88,41 @@ export default class Question extends React.Component {
           <TextAreaControl
             answer={answer}
             onChange={this.answer}
-            onClick={this.submit}
             isValid={answer ? true : false}
             isParent={true}
-            questionId={this.props.id}
+            questionId={this.props.question.id}
           />
         );
       case COIConstants.QUESTION_TYPE.MULTISELECT:
-        if (question.question.requiredNumSelections === '1') {
-          return (
-            <RadioControl
-              options={question.question.options}
-              answer={answer}
-              onChange={this.answerAndSubmit}
-              isParent={true}
-              questionId={this.props.id}
-            />
-          );
-        } else {
-          let valid = answer && answer.length >= parseInt(question.question.requiredNumSelections);
-          return (
-            <CheckboxControl
-              options={question.question.options}
-              answer={answer}
-              onChange={this.answerMultiple}
-              onClick={this.submitMultiple}
-              isValid={valid}
-              isParent={true}
-              questionId={this.props.id}
-            />
-          );
-        }
-        break;
+        let valid = answer && answer.length >= parseInt(this.props.questionDetails.requiredNumSelections);
+        return (
+          <CheckboxControl
+            options={this.props.questionDetails.options}
+            answer={answer}
+            onChange={this.answerMultiple}
+            isValid={valid}
+            isParent={true}
+            questionId={this.props.question.id}
+          />
+        );
       case COIConstants.QUESTION_TYPE.NUMBER:
         return (
           <NumericControl
             answer={answer}
             onChange={this.answer}
-            onClick={this.submit}
             isValid={answer ? true : false}
             isParent={true}
-            questionId={this.props.id}
+            questionId={this.props.question.id}
           />
         );
       case COIConstants.QUESTION_TYPE.DATE:
         return (
           <DateControl
             answer={answer}
-            onChange={this.answerDate}
-            onClick={this.submit}
+            onChange={this.changeAnswer}
             isValid={answer ? true : false}
             isParent={true}
-            questionId={this.props.id}
+            questionId={this.props.question.id}
           />
         );
     }
@@ -212,7 +226,7 @@ export default class Question extends React.Component {
     if (this.state.revising) {
       answerArea = (
         <div>
-          {this.getControl()}
+          {this.getControl(this.props.answer)}
         </div>
       );
     }

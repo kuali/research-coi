@@ -1,14 +1,34 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 
 export class RadioControl extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
 
-    this.answer = this.answer.bind(this);
+    let validity = this.isValid(props.answer);
+    this.state = {
+      valid: validity
+    };
+    props.onValidityChange(props.questionId, validity);
+
+    this.onChange = this.onChange.bind(this);
   }
 
-  answer(evt) {
-    this.props.onChange(evt, this.props.questionId, this.props.isParent);
+  componentWillReceiveProps(nextProps) {
+    let validity = this.isValid(nextProps.answer);
+    if (validity !== this.state.valid) {
+      this.setState({
+        valid: validity
+      });
+      this.props.onValidityChange(this.props.questionId, validity);
+    }
+  }
+
+  isValid(answer) {
+    return answer !== undefined && answer.length > 0;
+  }
+
+  onChange(evt) {
+    this.props.onChange(evt.target.value, this.props.questionId, this.props.isParent);
   }
 
   render() {
@@ -19,10 +39,16 @@ export class RadioControl extends React.Component {
       },
       radio: {
         width: 22,
-        height: '4em'
+        height: '4em',
+        verticalAlign: 'middle'
       },
       label: {
-        cursor: 'pointer'
+        cursor: 'pointer',
+        width: 80,
+        display: 'inline-block',
+        verticalAlign: 'middle',
+        fontWeight: 'bold',
+        paddingLeft: 5
       }
     };
 
@@ -34,13 +60,13 @@ export class RadioControl extends React.Component {
               id={'multi_' + option}
               value={option}
               checked={this.props.answer === option}
-              onChange={this.answer}
+              onChange={this.onChange}
               type="radio"
               style={styles.radio}
               name={'radioControl:' + this.props.questionId}
             />
+            <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
           </div>
-          <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
       </span>
       );
     });
