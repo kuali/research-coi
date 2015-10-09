@@ -154,25 +154,27 @@ export class Relationships extends ResponsiveComponent {
       }
     }
     else {
-      for (let i = 0; i < this.props.entities.length; i++) {
-        declarations = this.getEntityDeclarations(this.props.entities[i].id);
+      this.props.entities.filter(entity => {
+        return entity.active === 1;
+      }).forEach((entity,index) =>{
+        declarations = this.getEntityDeclarations(entity.id);
 
         relationshipNodes.push(
           <Entity
-            entity={this.props.entities[i]}
+            entity={entity}
             declarations={declarations}
             projects={this.props.projects}
-            title={this.props.entities[i].name}
+            title={entity.name}
             declarationTypes={this.props.declarationTypes}
-            open={this.isEntityDeclarationOpen(this.props.entities[i].id)}
+            open={this.isEntityDeclarationOpen(entity.id)}
             onNext={this.openNext}
             onPrevious={this.openPrevious}
-            id={i}
+            id={index}
             entityCount={this.props.entities.length}
-            key={this.props.entities[i].id}
+            key={entity.id}
           />
         );
-      }
+      });
     }
 
     let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];

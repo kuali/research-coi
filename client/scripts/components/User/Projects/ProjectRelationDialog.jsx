@@ -116,7 +116,10 @@ export class ProjectRelationDialog extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     let entityRelations = [];
-    this.props.entities.forEach((element) => {
+    this.props.entities.filter(element => {
+      return element.active === 1;
+    })
+    .forEach((element) => {
       entityRelations.push(
         <EntityRelation
           entity={element}
