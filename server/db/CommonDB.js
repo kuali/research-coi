@@ -99,3 +99,17 @@ export let deleteExistingSingleRecord = (dbInfo, recordId, tableProps, optionalT
     .from(tableProps.table)
     .where(tableProps.pk, recordId);
 };
+
+export let isDisclosureUsers = (dbInfo, disclosureId, userId) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('user_id')
+    .from('disclosure')
+    .where({
+      'id': disclosureId,
+      'user_id': userId
+    })
+    .then(result => {
+      return result.length > 0;
+    });
+};

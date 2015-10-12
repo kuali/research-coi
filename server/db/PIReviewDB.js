@@ -1,5 +1,7 @@
 /*eslint camelcase:0 */
 import {COIConstants} from '../../COIConstants';
+import {isDisclosureUsers} from './CommonDB';
+import {camelizeJson} from './JsonUtils';
 
 let getKnex;
 try {
@@ -10,17 +12,15 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-let isDisclosureUsers = (dbInfo, disclosureId, userId) => {
+export let verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
   let knex = getKnex(dbInfo);
 
-  return knex.select('user_id')
-    .from('disclosure')
+  return knex.count('d.user_id')
+    .from('pi_review as p')
+    .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
     .where({
-      'id': disclosureId,
-      'user_id': userId
-    })
-    .then(result => {
-      return result.length > 0;
+      'p.id': reviewId,
+      'd.user_id': userId
     });
 };
 
@@ -140,6 +140,7 @@ let getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
               }
             }
           });
+
           return questions;
         });
     }).then(questions => {
@@ -152,6 +153,39 @@ let getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
         return question;
       });
       return questions;
+    });
+};
+
+export let reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('qa.id')
+    .from('pi_review as pr')
+    .innerJoin('questionnaire_question as qq', 'pr.target_id', 'qq.id')
+    .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
+    .innerJoin('disclosure_answer as da', {
+      'da.disclosure_id': 'pr.disclosure_id',
+      'da.questionnaire_answer_id': 'qa.id'
+    })
+    .where({
+      'pr.target_type': COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+      'pr.id': reviewId
+    })
+    .then(rows => {
+      if (rows.length > 0) {
+        let answerToStore = {
+          value: answer
+        };
+        return knex('questionnaire_answer')
+          .where('id', rows[0].id)
+          .update('answer', JSON.stringify(answerToStore))
+          .then(() => {
+            return true;
+          });
+      }
+      else {
+        return false;
+      }
     });
 };
 

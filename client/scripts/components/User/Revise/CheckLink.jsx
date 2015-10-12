@@ -6,11 +6,11 @@ export default class CheckLink extends React.Component {
     let styles = {
       container: {
         marginRight: 20,
-        cursor: 'pointer'
+        cursor: this.props.disabled ? 'default' : 'pointer'
       },
       link: {
-        borderBottom: this.props.checked ? '1px dashed #00D000' : '1px dashed #888',
-        color: this.props.checked ? '#00D000' : '#666'
+        borderBottom: this.props.disabled ? '#AAA' : this.props.checked ? '1px dashed #00D000' : '1px dashed #888',
+        color: this.props.disabled ? '#AAA' : this.props.checked ? '#00D000' : '#666'
       },
       checkmark: {
         color: '#00D000',

@@ -16,12 +16,47 @@ export let init = app => {
       });
   });
 
+  /**
+    @Role: PI
+  */
   app.post('/api/coi/pi-response/:reviewId', (req, res, next) => {
-    let userInfo = getUserInfo(req.cookies.authToken); // eslint-disable-line no-unused-vars
-    // authorization check here
-    PIReviewDB.recordPIResponse(req.dbInfo, userInfo, req.params.reviewId, req.body.comment)
-      .then(response => {
-        res.send(response);
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+      .then(isAllowed => {
+        if (isAllowed) {
+          return PIReviewDB.recordPIResponse(req.dbInfo, userInfo, req.params.reviewId, req.body.comment)
+            .then(response => {
+              res.send(response);
+            });
+        }
+        else {
+          res.status(403).end();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
+
+  /**
+    @Role: PI
+  */
+  app.put('/api/coi/pi-revise/:reviewId', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+      .then(isAllowed => {
+        if (isAllowed) {
+          return PIReviewDB.reviseQuestion(req.dbInfo, userInfo, req.params.reviewId, req.body.answer)
+            .then(response => {
+              res.send(response);
+            });
+        }
+        else {
+          res.status(403).end();
+        }
       })
       .catch(err => {
         console.error(err);

@@ -9,6 +9,13 @@ class _PIReviewActions {
       comment: comment
     });
   }
+
+  revise(reviewId, newAnswer) {
+    this.dispatch({
+      reviewId: reviewId,
+      newAnswer: newAnswer
+    });
+  }
 }
 
 export default alt.createActions(_PIReviewActions);
