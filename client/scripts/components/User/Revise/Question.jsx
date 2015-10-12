@@ -17,7 +17,8 @@ export default class Question extends React.Component {
       revising: false,
       responding: false,
       responded: false,
-      revised: false
+      revised: false,
+      isValid: true
     };
 
     this.revise = this.revise.bind(this);
@@ -26,51 +27,104 @@ export default class Question extends React.Component {
     this.done = this.done.bind(this);
 
     this.changeAnswer = this.changeAnswer.bind(this);
-    this.answerAndSubmit = this.answerAndSubmit.bind(this);
+    this.answerParent = this.answerParent.bind(this);
     this.answer = this.answer.bind(this);
     this.answerMultiple = this.answerMultiple.bind(this);
-    this.submitMultiple = this.submitMultiple.bind(this);
+    this.controlValidityChanged = this.controlValidityChanged.bind(this);
   }
 
   changeAnswer(newAnswer) {
-    PIReviewActions.changeAnswerToQuestion(this.props.reviewId, newAnswer);
+    PIReviewActions.revise(this.props.reviewId, newAnswer);
   }
 
-  answerAndSubmit(evt) {
-    this.changeAnswer(evt.target.value);
+  // answerAndSubmit(evt) {
+  //   this.changeAnswer(evt.target.value);
+  // }
+
+  deleteIrrelaventAnswers(questionId, newAnswer) {
+    // let toDelete = this.props.allQuestions.filter(question => {
+    //   return question.parent === questionId;
+    // }).filter(question => {
+    //   return question.question.displayCriteria !== newAnswer;
+    // }).map(question => {
+    //   return question.id;
+    // });
+
+    // DisclosureActions.deleteAnswersTo(toDelete);
+  }
+
+  answerParent(answer, questionId, isParent) {
+    // this.deleteIrrelaventAnswers(questionId, answer);
+    // let advance = isParent && !this.anySubQuestionsTriggeredBy(answer);
+    // DisclosureActions.submitQuestion({
+    //   id: questionId,
+    //   answer: {
+    //     value: answer
+    //   },
+    //   advance: advance
+    // });
   }
 
   anySubQuestionsTriggeredBy(value) {
-    let subQuestion = this.props.subQuestions.find(question => {
-      return question.question.displayCriteria === value;
-    });
+    // let subQuestion = this.props.subQuestions.find(question => {
+    //   return question.question.displayCriteria === value;
+    // });
 
-    return subQuestion !== undefined;
+    // return subQuestion !== undefined;
   }
 
-  answer(evt) {
-    this.changeAnswer(evt.target.value);
-  }
-
-  answerMultiple(evt) {
-    // Test THIS!
-    this.changeAnswer(evt.target.value);
-  }
-
-  submitMultiple(answer) {
+  answer(answer, questionId) {
     this.changeAnswer(answer);
   }
 
-  getControl(answer) {
-    switch (this.props.type) {
+  answerMultiple(value, checked) {
+    let newAnswer = Array.from(this.props.answer);
+    if (checked) {
+      if (!newAnswer.includes(value)) {
+        newAnswer.push(value);
+      }
+    }
+    else {
+      newAnswer = this.props.answer.filter(answer => {
+        return answer !== value;
+      });
+    }
+    this.changeAnswer(newAnswer);
+  }
+
+  // submit(answer, questionId) {
+    // DisclosureActions.submitQuestion({
+    //   id: questionId,
+    //   answer: {
+    //     value: answer
+    //   },
+    //   advance: true
+    // });
+  // }
+
+  answerDate(newDate, questionId) {
+    this.changeAnswer(newDate);
+  }
+
+  controlValidityChanged(questionId, isValid) {
+    this.setState({
+      isValid: isValid
+    });
+  }
+
+  getControl(question, answer) {
+    let isSubQuestion = question.parent !== null;
+
+    switch (question.question.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
         return (
           <RadioControl
             options={['Yes', 'No']}
             answer={answer}
-            onChange={this.answerAndSubmit}
-            isParent={true}
-            questionId={this.props.question.id}
+            onChange={isSubQuestion ? this.answer : this.answerParent}
+            isParent={!isSubQuestion}
+            questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.YESNONA:
@@ -78,9 +132,10 @@ export default class Question extends React.Component {
           <RadioControl
             options={['Yes', 'No', 'N/A']}
             answer={answer}
-            onChange={this.answerAndSubmit}
-            isParent={true}
-            questionId={this.props.question.id}
+            onChange={isSubQuestion ? this.answer : this.answerAndSubmit}
+            isParent={!isSubQuestion}
+            questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.TEXTAREA:
@@ -88,21 +143,21 @@ export default class Question extends React.Component {
           <TextAreaControl
             answer={answer}
             onChange={this.answer}
-            isValid={answer ? true : false}
-            isParent={true}
-            questionId={this.props.question.id}
+            isParent={!isSubQuestion}
+            questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.MULTISELECT:
-        let valid = answer && answer.length >= parseInt(this.props.questionDetails.requiredNumSelections);
         return (
           <CheckboxControl
-            options={this.props.questionDetails.options}
+            options={question.question.options}
             answer={answer}
             onChange={this.answerMultiple}
-            isValid={valid}
-            isParent={true}
-            questionId={this.props.question.id}
+            isParent={!isSubQuestion}
+            questionId={question.id}
+            required={parseInt(question.question.requiredNumSelections)}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.NUMBER:
@@ -110,19 +165,19 @@ export default class Question extends React.Component {
           <NumericControl
             answer={answer}
             onChange={this.answer}
-            isValid={answer ? true : false}
-            isParent={true}
-            questionId={this.props.question.id}
+            isParent={!isSubQuestion}
+            questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
       case COIConstants.QUESTION_TYPE.DATE:
         return (
           <DateControl
             answer={answer}
-            onChange={this.changeAnswer}
-            isValid={answer ? true : false}
-            isParent={true}
-            questionId={this.props.question.id}
+            onChange={this.answerDate}
+            isParent={!isSubQuestion}
+            questionId={question.id}
+            onValidityChange={this.controlValidityChanged}
           />
         );
     }
@@ -200,7 +255,7 @@ export default class Question extends React.Component {
       actions = (
         <span style={styles.actions}>
           <CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>
-          <CheckLink checked={false} onClick={this.done}>DONE</CheckLink>
+          <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
         </span>
       );
     }
@@ -226,14 +281,21 @@ export default class Question extends React.Component {
     if (this.state.revising) {
       answerArea = (
         <div>
-          {this.getControl(this.props.answer)}
+          {this.getControl(this.props.question, this.props.answer)}
         </div>
       );
     }
     else {
-      answerArea = (
-        <div>{this.props.answer}</div>
-      );
+      if (this.props.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+        answerArea = (
+          <div>{this.props.answer.join(', ')}</div>
+        );
+      }
+      else {
+        answerArea = (
+          <div>{this.props.answer}</div>
+        );
+      }
     }
 
     return (

@@ -20,6 +20,26 @@ class _PIReviewStore extends AutoBindingStore {
            .end((err, disclosure) => {
              if (!err) {
                this.disclosure = disclosure.body;
+
+               if (this.disclosure.questions) {
+                 this.disclosure.questions.forEach(question => {
+                   if (question.question) {
+                     question.question = JSON.parse(question.question);
+                     if (question.question.required_num_selections) {
+                       question.question.requiredNumSelections = question.question.required_num_selections;
+                       delete question.question.required_num_selections;
+                     }
+                     if (question.question.number_to_show) {
+                       question.question.numberToShow = question.question.number_to_show;
+                       delete question.question.number_to_show;
+                     }
+                   }
+                   if (question.answer) {
+                     question.answer = JSON.parse(question.answer);
+                   }
+                 });
+               }
+
                this.emitChange();
              }
            });
@@ -50,6 +70,25 @@ class _PIReviewStore extends AutoBindingStore {
     request.post('/api/coi/pi-response/' + params.reviewId)
       .send({
         comment: params.comment
+      })
+      .end(() => {
+      });
+  }
+
+  revise(params) {
+    let questionToRevise = this.disclosure.questions.find(question => {
+      return params.reviewId === question.reviewId;
+    });
+    if (questionToRevise) {
+      questionToRevise.answer = {
+        value: params.newAnswer
+      };
+      questionToRevise.reviewedOn = new Date();
+    }
+
+    request.put('/api/coi/pi-revise/' + params.reviewId)
+      .send({
+        answer: params.newAnswer
       })
       .end(() => {
       });

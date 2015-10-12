@@ -80,8 +80,8 @@ export default class QuestionToReview extends React.Component {
       );
     }
 
-    let questionDetails = JSON.parse(this.props.question.question);
-    let answer = JSON.parse(this.props.question.answer);
+    let questionDetails = this.props.question.question;
+    let answer = this.props.question.answer;
     return (
       <div className="flexbox row" style={merge(styles.container, this.props.style)}>
         <span style={styles.statusIcon}>
