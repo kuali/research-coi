@@ -216,6 +216,8 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('target_type', 25).notNullable();
     table.integer('target_id').unsigned().notNullable();
     table.dateTime('reviewed_on');
+    table.boolean('revised');
+    table.boolean('responded_to');
   });
 };
 

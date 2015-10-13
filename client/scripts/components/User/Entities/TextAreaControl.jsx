@@ -4,16 +4,11 @@ export class TextAreaControl extends React.Component {
   constructor() {
     super();
 
-    this.answer = this.answer.bind(this);
-    this.submit = this.submit.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  answer(evt) {
-    this.props.onChange(evt, this.props.questionId);
-  }
-
-  submit() {
-    this.props.onClick(this.props.answer, this.props.questionId);
+  onChange(evt) {
+    this.props.onChange(evt.target.value, this.props.questionId);
   }
 
   render() {
@@ -40,7 +35,7 @@ export class TextAreaControl extends React.Component {
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-      <div style={styles.invalidError}>Required Field</div>
+        <div style={styles.invalidError}>Required Field</div>
       );
     }
 
@@ -54,7 +49,7 @@ export class TextAreaControl extends React.Component {
 
     return (
       <div>
-        <textarea id="textarea" ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.answer} />
+        <textarea id="textarea" ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.onChange} />
         {requiredFieldError}
       </div>
     );

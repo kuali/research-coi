@@ -57,7 +57,7 @@ export class CheckboxControl extends React.Component {
       }
     };
 
-    let options = this.props.options.map(option => {
+    let options = this.props.options.map((option, index) => {
       let checked = {};
       if (this.props.answer instanceof Array) {
         checked = this.props.answer.includes(option);
@@ -66,7 +66,7 @@ export class CheckboxControl extends React.Component {
       }
 
       return (
-        <span style={styles.option} key={option}>
+        <span style={styles.option} key={this.props.questionId + '_' + index}>
           <div>
             <input
               id={'multi_' + option}

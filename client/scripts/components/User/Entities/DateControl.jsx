@@ -6,16 +6,11 @@ export class DateControl extends React.Component {
   constructor() {
     super();
 
-    this.answerDate = this.answerDate.bind(this);
-    this.submit = this.submit.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  answerDate(newDate) {
+  onChange(newDate) {
     this.props.onChange(newDate, this.props.questionId);
-  }
-
-  submit() {
-    this.props.onClick(this.props.answer, this.props.questionId);
   }
 
   render() {
@@ -61,7 +56,7 @@ export class DateControl extends React.Component {
         id="questionDate"
         textFieldStyle={styles.textbox}
         style={styles.datepicker}
-        onChange={this.answerDate}
+        onChange={this.onChange}
         value={this.props.answer}
       />
       {requiredFieldError}

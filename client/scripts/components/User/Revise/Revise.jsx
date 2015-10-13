@@ -47,70 +47,29 @@ export class Revise extends React.Component {
       }
     };
 
-    let comments = [
-      {
-        date: (new Date().getTime() - 100000000),
-        text: 'You did a pretty good job with this... but not good enough. We need you to try again and not mess things up this time.',
-        author: 'Yrag Nosrekliw',
-        id: 22
-      },
-      {
-        date: new Date(),
-        text: 'Just to clarify what we need: Can you answer this question more precisely.  Is it true or is it false?',
-        author: 'Leoj Nilhed',
-        id: 33
-      }
-    ];
-
-    let questions = [
-      {
-        completed: false,
-        numberToShow: '2/5',
-        text: 'This is the question text. Do you have a fear of bears, snakes, or rats? This is the question text.  Do you have a fear of bears, snakes, or rats? This is the question text.  Do you have a fear of bears, snakes, or rats? This is the question text.  Do you have a fear of bears, snakes, or rats? This is the question text.  Do you have a fear of bears, snakes, or rats? This is the question text.  Do you have a fear of bears, snakes, or rats? This is the question text.  Do you have a fear of bears, snakes, or rats?',
-        answer: 'Yes',
-        type: COIConstants.QUESTION_TYPE.YESNO,
-        comments: comments,
-        id: 44
-      },
-      {
-        completed: true,
-        numberToShow: '4/5',
-        text: 'Have you ever been sent money by a relative?',
-        answer: 'Yes',
-        type: COIConstants.QUESTION_TYPE.YESNO,
-        comments: comments,
-        id: 55
-      }
-    ];
-
-    let entitiesToReview = [
-      {
-        completed: true,
-        comments: comments,
-        entity: {
-        }
-      },
-      {
-        completed: false,
-        comments: comments,
-        entity: {
-        }
-      }
-    ];
-
-    let details;
+    let questionnaire, entities, declarations;
     if (this.state.disclosure) {
-      details = (
-        <span className="fill" style={styles.disclosure}>
+      if (this.state.disclosure.questions && this.state.disclosure.questions.length > 0) {
+        questionnaire = (
           <QuestionnaireSection
             questions={this.state.disclosure.questions}
           />
+        );
+      }
+
+      if (this.state.disclosure.entities && this.state.disclosure.entities.length > 0) {
+        entities = (
           <EntitySection
-            entitiesToReview={entitiesToReview}
+            entitiesToReview={this.state.disclosure.entities}
           />
+        );
+      }
+
+      if (this.state.disclosure.declarations && this.state.disclosure.declarations.length > 0) {
+        declarations = (
           <DeclarationSection />
-        </span>
-      );
+        );
+      }
     }
 
     let certText = 'This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! ';
@@ -122,7 +81,11 @@ export class Revise extends React.Component {
           returnedDate={new Date()}
         />
         <div className="flexbox row fill">
-          {details}
+          <span className="fill" style={styles.disclosure}>
+            {questionnaire}
+            {entities}
+            {declarations}
+          </span>
 
           <SidePanel
             certificationText={certText}

@@ -4,16 +4,11 @@ export class NumericControl extends React.Component {
   constructor() {
     super();
 
-    this.answer = this.answer.bind(this);
-    this.submit = this.submit.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  answer(evt) {
-    this.props.onChange(evt, this.props.questionId);
-  }
-
-  submit() {
-    this.props.onClick(this.props.answer, this.props.questionId);
+  onChange(evt) {
+    this.props.onChange(evt.target.value, this.props.questionId);
   }
 
   render() {
@@ -55,7 +50,7 @@ export class NumericControl extends React.Component {
     return (
     <div>
       <div style={styles.container}>
-        <input style={styles.textbox} type="number" id="number" onChange={this.answer} value={this.props.answer} />
+        <input style={styles.textbox} type="number" id="number" onChange={this.onChange} value={this.props.answer} />
       </div>
       {requiredFieldError}
     </div>

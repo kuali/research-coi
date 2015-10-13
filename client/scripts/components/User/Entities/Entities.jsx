@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {NewEntityButton} from './NewEntityButton';
 import {FEPlaceHolder} from '../../DynamicIcons/FEPlaceHolder';
@@ -10,10 +9,9 @@ import {Instructions} from '../Instructions';
 import {COIConstants} from '../../../../../COIConstants';
 import {Toggle} from '../Toggle';
 
-export class Entities extends ResponsiveComponent {
+export class Entities extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
   }
 
   shouldComponentUpdate() { return true; }
@@ -26,10 +24,8 @@ export class Entities extends ResponsiveComponent {
     DisclosureActions.changeActiveEntityView(newView);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         overflow: 'hidden'
       },
@@ -56,7 +52,6 @@ export class Entities extends ResponsiveComponent {
         marginTop: -61
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let viewToggle;
     let entities;

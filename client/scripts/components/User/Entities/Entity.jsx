@@ -1,14 +1,12 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import {EntityForm} from './EntityForm';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 
-export class Entity extends ResponsiveComponent {
+export class Entity extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.toggleStatus = this.toggleStatus.bind(this);
     this.showForm = this.showForm.bind(this);
@@ -25,10 +23,8 @@ export class Entity extends ResponsiveComponent {
     DisclosureActions.setEntityActiveStatus(active, this.props.id);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         display: 'block',
         marginBottom: 25,
@@ -77,7 +73,6 @@ export class Entity extends ResponsiveComponent {
         verticalAlign: 'top'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let statusButton;
     if (this.props.entity.active === 1) {

@@ -29,7 +29,7 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.log(err);
+        console.error(err);
         next(err);
       });
   });

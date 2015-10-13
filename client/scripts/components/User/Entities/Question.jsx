@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {COIConstants} from '../../../../../COIConstants';
 import {RadioControl} from './RadioControl';
 import {TextAreaControl} from './TextAreaControl';
@@ -11,102 +10,102 @@ export class Question extends React.Component {
   constructor() {
     super();
 
-    this.answer = this.answer.bind(this);
-    this.answerDate = this.answerDate.bind(this);
-    this.answerMultiple = this.answerMultiple.bind(this);
+    this.onAnswer = this.onAnswer.bind(this);
+    this.onAnswerMultiple = this.onAnswerMultiple.bind(this);
     this.getControl = this.getControl.bind(this);
   }
 
-  answer(evt, questionId) {
-    DisclosureActions.answerEntityQuestion({entityId: this.props.entityId, id: questionId, answer: {value: evt.target.value}});
+  onAnswer(newValue, questionId) {
+    this.props.onAnswer(newValue, questionId);
   }
 
-  answerDate(newDate, questionId) {
-    DisclosureActions.answerEntityQuestion({entityId: this.props.entityId, id: questionId, answer: {value: newDate}});
-  }
+  onAnswerMultiple(value, checked, questionId) {
+    let newAnswer;
+    if (this.props.answer) {
+      newAnswer = Array.from(this.props.answer);
+    }
+    else {
+      newAnswer = [];
+    }
 
-  answerMultiple(evt, questionId) {
-    DisclosureActions.answerEntityMultiple({entityId: this.props.entityId, id: questionId, answer: {value: evt.target.value}, checked: evt.target.checked});
+    if (checked) {
+      if (!newAnswer.includes(value)) {
+        newAnswer.push(value);
+      }
+    }
+    else {
+      newAnswer = this.props.answer.filter(answer => {
+        return answer !== value;
+      });
+    }
+
+    this.props.onAnswer(newAnswer, questionId);
   }
 
   getControl(question, answer) {
     switch (question.question.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
         return (
-        <RadioControl
-          readonly={this.props.readonly}
-          options={['Yes', 'No']}
-          answer={answer}
-          onChange={this.answer}
-          questionId={question.id}
-          invalid={this.props.invalid}
-        />
-        );
-      case COIConstants.QUESTION_TYPE.YESNONA:
-        return (
-        <RadioControl
-          readonly={this.props.readonly}
-          options={['Yes', 'No', 'NA']}
-          answer={answer}
-          onChange={this.answer}
-          questionId={question.id}
-          invalid={this.props.invalid}
-        />
-        );
-      case COIConstants.QUESTION_TYPE.TEXTAREA:
-        return (
-        <TextAreaControl
-          readonly={this.props.readonly}
-          answer={answer}
-          onChange={this.answer}
-          questionId={question.id}
-          invalid={this.props.invalid}
-        />
-        );
-      case COIConstants.QUESTION_TYPE.MULTISELECT:
-        if (question.question.requiredNumSelections.toString() === '1') {
-          return (
           <RadioControl
             readonly={this.props.readonly}
-            options={question.question.options}
+            options={['Yes', 'No']}
             answer={answer}
-            onChange={this.answer}
+            onChange={this.onAnswer}
             questionId={question.id}
             invalid={this.props.invalid}
           />
-          );
-        } else {
-          return (
+        );
+      case COIConstants.QUESTION_TYPE.YESNONA:
+        return (
+          <RadioControl
+            readonly={this.props.readonly}
+            options={['Yes', 'No', 'NA']}
+            answer={answer}
+            onChange={this.onAnswer}
+            questionId={question.id}
+            invalid={this.props.invalid}
+          />
+        );
+      case COIConstants.QUESTION_TYPE.TEXTAREA:
+        return (
+          <TextAreaControl
+            readonly={this.props.readonly}
+            answer={answer}
+            onChange={this.onAnswer}
+            questionId={question.id}
+            invalid={this.props.invalid}
+          />
+        );
+      case COIConstants.QUESTION_TYPE.MULTISELECT:
+        return (
           <CheckboxControl
             readonly={this.props.readonly}
             options={question.question.options}
             answer={answer}
-            onChange={this.answerMultiple}
+            onChange={this.onAnswerMultiple}
             questionId={question.id}
             invalid={this.props.invalid}
           />
-          );
-        }
-        break;
+        );
       case COIConstants.QUESTION_TYPE.NUMBER:
         return (
-        <NumericControl
-          readonly={this.props.readonly}
-          answer={answer}
-          onChange={this.answer}
-          questionId={question.id}
-          invalid={this.props.invalid}
-        />
+          <NumericControl
+            readonly={this.props.readonly}
+            answer={answer}
+            onChange={this.onAnswer}
+            questionId={question.id}
+            invalid={this.props.invalid}
+          />
         );
       case COIConstants.QUESTION_TYPE.DATE:
         return (
-        <DateControl
-          readonly={this.props.readonly}
-          answer={answer}
-          onChange={this.answerDate}
-          questionId={question.id}
-          invalid={this.props.invalid}
-        />
+          <DateControl
+            readonly={this.props.readonly}
+            answer={answer}
+            onChange={this.onAnswer}
+            questionId={question.id}
+            invalid={this.props.invalid}
+          />
         );
     }
   }

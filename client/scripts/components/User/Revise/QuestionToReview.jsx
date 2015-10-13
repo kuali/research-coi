@@ -5,8 +5,6 @@ import Question from './Question';
 
 /*
   Question states to account for:
-  1. A main question (flagged) with no sub questions
-     - Show and let them edit it
   2. A main question (flagged) with sub questions (none flagged)
      - Show normal flow for that question. If it triggers sub questions, so be it. (Possibly erasing old answers)
   3. A main question (flagged) with sub questions (some flagged)
@@ -98,6 +96,8 @@ export default class QuestionToReview extends React.Component {
           text={questionDetails.text}
           answer={answer.value}
           type={questionDetails.type}
+          revised={this.props.question.revised}
+          respondedTo={this.props.question.respondedTo}
         />
 
         <span style={styles.comments}>
