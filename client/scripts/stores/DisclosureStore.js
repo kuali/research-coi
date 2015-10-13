@@ -27,7 +27,7 @@ class _DisclosureStore extends AutoBindingStore {
     this.disclosures = [];
 
     this.applicationState = {
-      archiveFilter: 'ALL',
+      archiveFilter: '2',
       archiveQuery: '',
       archiveSortField: COIConstants.ARCHIVE_SORT_FIELD.START,
       archiveSortDirection: COIConstants.SORT_DIRECTION.DESCENDING,

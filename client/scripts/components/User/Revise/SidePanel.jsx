@@ -1,7 +1,5 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {DeleteIcon} from '../../DynamicIcons/DeleteIcon';
-import {NextIcon} from '../../DynamicIcons/NextIcon';
 import {KButton} from '../../KButton';
 
 export default class SidePanel extends React.Component {
@@ -30,15 +28,13 @@ export default class SidePanel extends React.Component {
       },
       submitIcon: {
         color: submitEnabled ? '#333' : '#CCC',
-        width: 30,
-        height: 36,
+        fontSize: 35,
         verticalAlign: 'middle',
         margin: '0 10px 5px 15px'
       },
       cancelIcon: {
         color: '#333',
-        width: 30,
-        height: 36,
+        fontSize: 35,
         verticalAlign: 'middle',
         margin: '0 10px 0 15px'
       },
@@ -92,11 +88,11 @@ export default class SidePanel extends React.Component {
         <div>
           <div style={styles.message}>{message}</div>
           <div style={styles.submit}>
-            <NextIcon style={styles.submitIcon} />
+            <i className="fa fa-arrow-circle-right" style={styles.submitIcon}></i>
             SUBMIT
           </div>
           <div style={styles.cancel}>
-            <DeleteIcon style={styles.cancelIcon} />
+            <i className="fa fa-times-circle" style={styles.cancelIcon}></i>
             CANCEL
           </div>
         </div>
