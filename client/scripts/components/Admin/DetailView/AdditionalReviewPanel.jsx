@@ -111,11 +111,6 @@ export default class AdditionalReviewPanel extends React.Component {
           <p>Drag and Drop or Click to upload your attachments</p>
           <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
         </FileUpload>
-
-        <div style={styles.complete}>
-          <input id="mpcomplete" type="checkbox" style={{marginRight: 5, verticalAlign: 'middle'}}/>
-          <label htmlFor="mpcomplete">Management Plan Complete</label>
-        </div>
       </div>
     );
   }

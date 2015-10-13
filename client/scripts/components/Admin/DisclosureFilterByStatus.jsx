@@ -47,17 +47,19 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       }
     };
 
-    let options = this.props.possibleStatuses.map((status, index) => {
+    let options = this.props.possibleStatuses.sort((a, b) => {
+      return a.label.localeCompare(b.label);
+    }).map((status, index) => {
       let id = 'statFilt' + index;
       return (
-        <div style={styles.checkbox} key={status}>
+        <div style={styles.checkbox} key={status.code}>
           <input
             id={id}
             type="checkbox"
-            checked={this.isChecked(status)}
+            checked={this.isChecked(status.code)}
             onChange={this.toggleFilter}
           />
-          <label htmlFor={id}>{status}</label>
+          <label htmlFor={id}>{status.label}</label>
         </div>
       );
     });

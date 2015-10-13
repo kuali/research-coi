@@ -1,6 +1,5 @@
 import React from 'react/addons';
 import {merge} from '../../merge';
-import {DeleteIcon} from '../DynamicIcons/DeleteIcon';
 import ConfigActions from '../../actions/ConfigActions';
 
 export default class UndoButton extends React.Component {
@@ -20,8 +19,7 @@ export default class UndoButton extends React.Component {
         cursor: 'pointer'
       },
       undoIcon: {
-        width: 30,
-        height: 35,
+        fontSize: 28,
         color: '#EC6F41',
         verticalAlign: 'middle',
         marginTop: 3
@@ -36,7 +34,7 @@ export default class UndoButton extends React.Component {
 
     return (
       <div className="flexbox row" onClick={this.undo} style={merge(styles.container, this.props.style)}>
-        <DeleteIcon style={styles.undoIcon} />
+        <i className="fa fa-times-circle" style={styles.undoIcon}></i>
         <span className="fill" style={styles.undoText}>CANCEL AND UNDO CHANGES</span>
       </div>
     );

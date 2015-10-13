@@ -89,7 +89,7 @@ function insertDeclaration(knex, disclosureId, entityId, projectId) {
       fin_entity_id: entityId,
       project_id: projectId,
       type_cd: knex('declaration_type').max('type_cd'),
-      comments: 'I need help deciding'
+      comments: ''
     })
   ]);
 }
@@ -278,13 +278,22 @@ function insertFakeProject(knex, userId) {
 }
 
 exports.seed = function(knex, Promise) {
+  /*
+    1 = PI: In Progress            , Admin: <not shown>
+    2 = PI: Submitted for Approval , Admin: Submitted for Approval
+    3 = PI: Up to date             , Admin: Approved
+    4 = PI: Updates Required       , Admin: Sent back
+    5 = PI: Expired                , Admin: Expired
+    6 = PI: Resubmitted            , Admin: Resubmitted
+  */
   console.log('Seed - disclosure_status');
   return Promise.all([
     knex('disclosure_status').insert({status_cd: 1, description: 'In Progress'}),
     knex('disclosure_status').insert({status_cd: 2, description: 'Submitted for Approval'}),
     knex('disclosure_status').insert({status_cd: 3, description: 'Up to Date'}),
     knex('disclosure_status').insert({status_cd: 4, description: 'Updates Required'}),
-    knex('disclosure_status').insert({status_cd: 5, description: 'Expired'})
+    knex('disclosure_status').insert({status_cd: 5, description: 'Expired'}),
+    knex('disclosure_status').insert({status_cd: 6, description: 'Resubmitted'})
   ]).then(function() {
     console.log('Seed - disclosure_type');
     return Promise.all([
@@ -418,7 +427,7 @@ exports.seed = function(knex, Promise) {
       return Promise.all([
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Type:', 1, 'Multiselect', ['State Government', 'County Government', 'Small Business'], false, 1),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Is this entity public?', 2, 'Yes/No'),
-        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Does this entity sponsor any', 3),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Does this entity sponsor any of your research?', 3),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Describe the entity\'s area of business and your relationship to it:', 4, 'Text area')
       ]);
     });

@@ -52,8 +52,8 @@ export default class Notification extends React.Component {
       reminderText: {
         display: 'block',
         width: '100%',
-        fontSize: 11,
-        margin: '5px 0 30px 0',
+        fontSize: 16,
+        margin: '7px 5px 30px 5px',
         color: '#333',
         whiteSpace: 'pre',
         wordWrap: 'break-word'

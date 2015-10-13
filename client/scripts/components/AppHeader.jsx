@@ -5,7 +5,6 @@ import ReactRouter from 'react-router';
 let Link = ReactRouter.Link;
 import {KualiLogo} from './DynamicIcons/KualiLogo';
 import {ActionListIcon} from './DynamicIcons/ActionListIcon';
-import {HomeIcon} from './DynamicIcons/HomeIcon';
 import {ProfileIcon} from './DynamicIcons/ProfileIcon';
 import {HeaderButton} from './HeaderButton';
 import {HamburgerIcon} from './DynamicIcons/HamburgerIcon';
@@ -30,14 +29,17 @@ export class AppHeader extends ResponsiveComponent {
         fontSize: 20,
         fontWeight: '300',
         verticalAlign: 'middle',
-        paddingLeft: 5
+        paddingLeft: 5,
+        paddingRight: 18,
+        borderRight: '1px solid',
+        marginRight: 15
       },
       modulename: {
         color: 'black',
-        fontSize: 8,
+        fontSize: 16,
         fontWeight: '300',
-        verticalAlign: 'middle',
-        paddingLeft: 5
+        paddingLeft: 5,
+        paddingTop: 7
       },
       searchIcon: {
         width: '28px',
@@ -101,18 +103,19 @@ export class AppHeader extends ResponsiveComponent {
     return (
       <header style={merge(styles.container, this.props.style)}>
         <span style={{margin: '6px 0', display: 'inline-block'}}>
-          <KualiLogo style={styles.logo} />
+          <Link to={this.props.homelink}>
+            <KualiLogo style={styles.logo} />
+            <span style={styles.product}>
+              Kuali
+              <span style={{fontWeight: 'bold'}}>Research</span>
+            </span>
+          </Link>
           <span style={styles.kuali}>
-            <div style={styles.product}>Kuali<span style={{fontWeight: 'bold'}}>Research</span></div>
-            <div style={styles.modulename}>CONFLICT OF INTEREST</div>
+            <div style={styles.modulename}>Conflict Of Interest</div>
           </span>
         </span>
         <span style={styles.controls}>
           <span>
-            <Link to={this.props.homelink}>
-              <HeaderButton icon={HomeIcon} label="HOME" />
-            </Link>
-            <HeaderButton icon={ActionListIcon} label="ACTION LIST" />
             <HeaderButton icon={ProfileIcon} label="ACCOUNT" />
           </span>
         </span>

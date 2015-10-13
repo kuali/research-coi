@@ -13,6 +13,7 @@ class _ConfigStore extends AutoBindingStore {
     this.exportPublicMethods({
       getDeclarationTypeString: this.getDeclarationTypeString,
       getDisclosureStatusString: this.getDisclosureStatusString,
+      getAdminDisclosureStatusString: this.getAdminDisclosureStatusString,
       getDisclosureTypeString: this.getDisclosureTypeString,
       getProjectTypeString: this.getProjectTypeString,
       getRelationshipCategoryTypeString: this.getRelationshipCategoryTypeString,
@@ -611,6 +612,18 @@ class _ConfigStore extends AutoBindingStore {
     }
     else {
       return 'Undefined';
+    }
+  }
+
+  getAdminDisclosureStatusString(code) {
+    switch(code) {
+      case 1:
+      case 3:
+        return 'Approved';
+      case 4:
+        return 'Sent back';
+      default:
+        return this.getDisclosureStatusString(code);
     }
   }
 

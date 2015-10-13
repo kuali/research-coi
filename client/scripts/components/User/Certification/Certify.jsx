@@ -1,15 +1,13 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {COIConstants} from '../../../../../COIConstants';
 import {Instructions} from '../Instructions';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {FileUpload} from '../../FileUpload';
 
-export class Certify extends ResponsiveComponent {
+export class Certify extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.certify = this.certify.bind(this);
     this.addDisclosureAttachment = this.addDisclosureAttachment.bind(this);
@@ -30,10 +28,8 @@ export class Certify extends ResponsiveComponent {
 
   shouldComponentUpdate() { return true; }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         overflow: 'hidden'
       },
@@ -46,9 +42,17 @@ export class Certify extends ResponsiveComponent {
       },
       ul: {
         fontSize: '16px'
+      },
+      cert: {
+        backgroundColor: 'white',
+        padding: '20px 30px',
+        borderRadius: 5,
+        boxShadow: '0 0 3px 0px #CCC',
+        marginRight: 3,
+        marginBottom: 3,
+        display: 'inline-block'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
     let instructions = (
@@ -79,7 +83,7 @@ export class Certify extends ResponsiveComponent {
         {instructions}
 
         <div style={styles.content}>
-          <span style={{display: 'inline-block'}}>
+          <span style={styles.cert}>
             {window.config.general.certificationOptions.text.split('\n').map(function(item) {
               return (
                 <span>

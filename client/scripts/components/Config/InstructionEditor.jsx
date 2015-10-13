@@ -42,8 +42,9 @@ export default class InstructionEditor extends React.Component {
       flipper: {
         position: 'absolute',
         right: 22,
-        transform: this.state.open ? 'rotateX(180deg)' : 'rotateX(0deg)',
-        transition: 'transform .3s linear'
+        transform: this.state.open ? 'rotateZ(-180deg)' : 'rotateZ(0deg) translateY(-3px)',
+        transition: 'transform .3s linear',
+        fontSize: 25
       },
       top: {
         padding: '10px 20px',
@@ -82,7 +83,9 @@ export default class InstructionEditor extends React.Component {
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.top} onClick={this.toggle}>
           {this.props.step} Instructions
-          <span style={styles.flipper}>V</span>
+          <span style={styles.flipper}>
+            <i className="fa fa-caret-down"></i>
+          </span>
         </div>
         <div style={{overflow: 'hidden'}}>
           <div style={styles.bottom}>

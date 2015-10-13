@@ -509,8 +509,7 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters) => {
   let knex = getKnex(dbInfo);
 
   let query = knex('disclosure').count('id as rowcount')
-    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
-    .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd');
+    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd');
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
@@ -540,7 +539,7 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters) => {
     }
   }
   if (filters.status && filters.status.length > 0) {
-    query.whereIn('disclosure_status.description', filters.status);
+    query.whereIn('disclosure.status_cd', filters.status);
   }
   if (filters.type && filters.type.length > 0) {
     query.whereIn('disclosure_type.description', filters.type);
@@ -550,9 +549,8 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters) => {
   }
   if (filters.search) {
     query = query.where(function() {
-      this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
+      this.where('submitted_by', 'like', '%' + filters.search + '%');
          // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
-         .orWhere('submitted_by', 'like', '%' + filters.search + '%');
     });
   }
 
@@ -563,9 +561,8 @@ const SUMMARY_PAGE_SIZE = 40;
 export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, start, filters) => {
   let knex = getKnex(dbInfo);
 
-  let query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure_status.description as status', 'disclosure_type.description as type', 'id', 'submitted_date')
-    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd')
-    .innerJoin('disclosure_status', 'disclosure_status.status_cd', 'disclosure.status_cd');
+  let query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure.status_cd as statusCd', 'disclosure_type.description as type', 'id', 'submitted_date')
+    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd');
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
@@ -595,7 +592,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
     }
   }
   if (filters.status && filters.status.length > 0) {
-    query.whereIn('disclosure_status.description', filters.status);
+    query.whereIn('disclosure.status_cd', filters.status);
   }
   if (filters.type && filters.type.length > 0) {
     query.whereIn('disclosure_type.description', filters.type);
@@ -605,9 +602,8 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
   }
   if (filters.search) {
     query.where(function() {
-      this.where('disclosure_status.description', 'like', '%' + filters.search + '%')
+      this.where('submitted_by', 'like', '%' + filters.search + '%');
          // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
-         .orWhere('submitted_by', 'like', '%' + filters.search + '%');
     });
   }
 
@@ -618,7 +614,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
       dbSortColumn = 'submitted_date';
       break;
     case 'STATUS':
-      dbSortColumn = 'status';
+      dbSortColumn = 'statusCd';
       break;
     case 'TYPE':
       dbSortColumn = 'type';
@@ -629,6 +625,7 @@ export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, s
   }
 
   query.orderBy(dbSortColumn, dbSortDirection);
+  query.orderBy('id', 'desc');
   return query.limit(SUMMARY_PAGE_SIZE).offset(+start);
 };
 

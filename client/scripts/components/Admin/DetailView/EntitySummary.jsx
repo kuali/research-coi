@@ -132,7 +132,7 @@ export default class EntitySummary extends React.Component {
     let fields = this.props.questions.map(question => {
       return (
         <div key={'qa' + question.id} style={{marginBottom: 8}}>
-          <span style={styles.fieldLabel}>{question.text}:</span>
+          <span style={styles.fieldLabel}>{question.text}</span>
           <span style={styles.fieldValue}>{this.getQuestionAnswer(question.id, this.props.entity, question.type)}</span>
         </div>
       );

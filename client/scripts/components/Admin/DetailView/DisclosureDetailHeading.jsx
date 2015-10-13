@@ -58,7 +58,7 @@ export class DisclosureDetailHeading extends React.Component {
       dateSection = (
         <div style={merge(styles.details)}>
           <span style={styles.label}>Revised On:</span>
-          <span style={styles.value}>{formatDate(disclosure.revisedDate)} • {ConfigStore.getDisclosureStatusString(disclosure.statusCd)}</span>
+          <span style={styles.value}>{formatDate(disclosure.revisedDate)} • {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</span>
         </div>
       );
     }
@@ -66,7 +66,7 @@ export class DisclosureDetailHeading extends React.Component {
       dateSection = (
         <div style={merge(styles.details)}>
           <span style={styles.label}>Submitted On:</span>
-          <span style={styles.value}>{formatDate(disclosure.submittedDate)} • {ConfigStore.getDisclosureStatusString(disclosure.statusCd)}</span>
+          <span style={styles.value}>{formatDate(disclosure.submittedDate)} • {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</span>
         </div>
       );
     }

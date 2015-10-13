@@ -115,13 +115,13 @@ export class DisclosureList extends React.Component {
       );
     }
 
-
-    let possibleStatuses = [];
-    if (ConfigStore.getState().config.disclosureStatus) {
-      possibleStatuses = ConfigStore.getState().config.disclosureStatus.map(status => {
-        return status.description;
-      });
-    }
+    let possibleStatuses = [
+      {code: 2, label: ConfigStore.getAdminDisclosureStatusString(2)},
+      {code: 3, label: ConfigStore.getAdminDisclosureStatusString(3)},
+      {code: 4, label: ConfigStore.getAdminDisclosureStatusString(4)},
+      {code: 5, label: ConfigStore.getAdminDisclosureStatusString(5)},
+      {code: 6, label: ConfigStore.getAdminDisclosureStatusString(6)}
+    ];
 
     let possibleTypes = [];
     if (ConfigStore.getState().config.disclosureTypes) {
