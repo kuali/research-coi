@@ -2,6 +2,7 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
 import ReactRouter from 'react-router';
+import ConfigStore from '../../../stores/ConfigStore';
 let Link = ReactRouter.Link;
 
 export class DisclosureListItem extends React.Component {
@@ -69,7 +70,7 @@ export class DisclosureListItem extends React.Component {
           </div>*/}
           <div style={styles.submittedBy}>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
           {dateToShow}
-          <div>Status: {this.highlightSearchTerm(disclosure.status)}</div>
+          <div>Status: {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</div>
         </li>
       </Link>
     );

@@ -20,7 +20,7 @@ class _AdminStore extends AutoBindingStore {
           end: undefined
         },
         submittedBy: undefined,
-        status: ['Submitted for Approval'],
+        status: [2, 4, 5, 6],
         type: [],
         search: ''
       },
@@ -206,10 +206,10 @@ class _AdminStore extends AutoBindingStore {
 
   toggleStatusFilter(toToggle) {
     let index = this.applicationState.filters.status.findIndex(filter => {
-      return filter === toToggle;
+      return filter === toToggle.code;
     });
     if (index === -1) {
-      this.applicationState.filters.status.push(toToggle);
+      this.applicationState.filters.status.push(toToggle.code);
     }
     else {
       this.applicationState.filters.status.splice(index, 1);

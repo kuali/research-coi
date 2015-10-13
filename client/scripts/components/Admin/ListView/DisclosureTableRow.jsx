@@ -50,7 +50,7 @@ export class DisclosureTableRow extends React.Component {
           {this.highlightSearchTerm(this.props.type)}
         </span>*/}
         <span role="gridcell" style={styles.value}>
-          {this.highlightSearchTerm(this.props.status)}
+          {this.props.status}
         </span>
         <span role="gridcell" style={styles.value}>
           {formatDate(this.props.submittedDate)}

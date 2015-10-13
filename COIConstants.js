@@ -14,11 +14,12 @@ export let COIConstants = {
     CERTIFICATION: 'Certification'
   },
   DISCLOSURE_STATUS: {
-    IN_PROGRESS: 1,
+    IN_PROGRESS: 1,            // Admin: <not shown>
     SUBMITTED_FOR_APPROVAL: 2,
-    UP_TO_DATE: 3,
-    UPDATES_REQUIRED: 4,
-    EXPIRED: 5
+    UP_TO_DATE: 3,             // Admin: Approved
+    UPDATES_REQUIRED: 4,       // Admin: Sent back
+    EXPIRED: 5,
+    RESUBMITTED: 6
   },
   FILE_TYPE: {
     FINANCIAL_ENTITY: 'financialEntity',
