@@ -89,7 +89,7 @@ function insertDeclaration(knex, disclosureId, entityId, projectId) {
       fin_entity_id: entityId,
       project_id: projectId,
       type_cd: knex('declaration_type').max('type_cd'),
-      comments: 'I need help deciding'
+      comments: ''
     })
   ]);
 }
@@ -427,7 +427,7 @@ exports.seed = function(knex, Promise) {
       return Promise.all([
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Type:', 1, 'Multiselect', ['State Government', 'County Government', 'Small Business'], false, 1),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Is this entity public?', 2, 'Yes/No'),
-        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Does this entity sponsor any', 3),
+        insertQuestionnaireQuestion(knex, questionnaireId[0], 'Does this entity sponsor any of your research?', 3),
         insertQuestionnaireQuestion(knex, questionnaireId[0], 'Describe the entity\'s area of business and your relationship to it:', 4, 'Text area')
       ]);
     });

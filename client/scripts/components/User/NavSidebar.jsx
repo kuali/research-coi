@@ -2,9 +2,6 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {ProgressIndicator} from './ProgressIndicator';
-import {DeleteIcon} from '../DynamicIcons/DeleteIcon';
-import {NextIcon} from '../DynamicIcons/NextIcon';
-import {PreviousIcon} from '../DynamicIcons/PreviousIcon';
 import {COIConstants} from '../../../../COIConstants';
 import {DisclosureActions} from '../../actions/DisclosureActions';
 
@@ -48,11 +45,10 @@ export class NavSidebar extends ResponsiveComponent {
         color: '#1481A3',
         display: this.props.question <= 1 && this.props.step === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE ? 'none' : 'block'
       },
-      icon: {
+      icons: {
         color: '#1481A3',
+        fontSize: 33,
         marginRight: 3,
-        width: 33,
-        height: 33,
         verticalAlign: 'middle'
       },
       nextquestion: {
@@ -90,7 +86,7 @@ export class NavSidebar extends ResponsiveComponent {
     ) {
       nextStep = (
         <div onClick={this.nextStep} style={styles.nextquestion}>
-          <NextIcon style={styles.icon} />
+          <i className="fa fa-arrow-circle-right" style={styles.icons}></i>
           <span style={styles.stepLabel}>
             NEXT STEP
           </span>
@@ -103,7 +99,7 @@ export class NavSidebar extends ResponsiveComponent {
     if (this.props.step === COIConstants.DISCLOSURE_STEP.CERTIFY) {
       cancel = (
         <div onClick={this.closeDisclosure} style={styles.nextquestion}>
-          <DeleteIcon style={styles.icon} />
+          <i className="fa fa-times-circle" style={styles.icons}></i>
           <span style={styles.stepLabel}>
             CANCEL
           </span>
@@ -118,7 +114,7 @@ export class NavSidebar extends ResponsiveComponent {
       }
       submit = (
         <div onClick={this.submitDisclosure} style={submitStyle}>
-          <NextIcon style={styles.icon} />
+          <i className="fa fa-arrow-circle-right" style={styles.icons}></i>
           <span style={styles.stepLabel}>
             SUBMIT
           </span>
@@ -143,7 +139,7 @@ export class NavSidebar extends ResponsiveComponent {
 
         <div style={styles.stepButtons}>
           <div onClick={this.goBack} style={styles.prevquestion}>
-            <PreviousIcon style={styles.icon} />
+            <i className="fa fa-arrow-circle-left" style={styles.icons}></i>
             <span style={styles.stepLabel}>
               {previousLabel}
             </span>

@@ -1,6 +1,5 @@
 import React from 'react/addons';
 import {merge} from '../../merge';
-import CheckmarkIcon from '../DynamicIcons/CheckmarkIcon';
 import ConfigActions from '../../actions/ConfigActions';
 
 export default class SaveButton extends React.Component {
@@ -20,8 +19,7 @@ export default class SaveButton extends React.Component {
         cursor: 'pointer'
       },
       saveIcon: {
-        width: 30,
-        height: 35,
+        fontSize: 28,
         color: '#EC6F41',
         verticalAlign: 'middle'
       },
@@ -37,7 +35,7 @@ export default class SaveButton extends React.Component {
     return (
       <div className="flexbox row" onClick={this.save} style={merge(styles.container, this.props.style)}>
         <span>
-          <CheckmarkIcon style={styles.saveIcon} />
+          <i className="fa fa-check" style={styles.saveIcon}></i>
         </span>
         <span className="fill" style={styles.saveText}>SAVE CHANGES</span>
       </div>

@@ -52,8 +52,8 @@ export default class NewQuestion extends React.Component {
         padding: 10
       },
       dropdown: {
-        padding: 10,
         border: '1px solid #AAA',
+        borderRadius: 5,
         width: 150,
         fontSize: 17,
         height: 28
