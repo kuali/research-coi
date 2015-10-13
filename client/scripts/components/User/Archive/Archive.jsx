@@ -121,13 +121,6 @@ export class Archive extends ResponsiveComponent {
     return (
       <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
-
-          <FilterType type={DISCLOSURE_TYPE.ALL} active={this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.ALL}>
-            ALL DISCLOSURES
-          </FilterType>
-          <FilterType type={DISCLOSURE_TYPE.PROJECT} active={this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.PROJECT}>
-            PROJECT DISCLOSURES
-          </FilterType>
           <FilterType type={DISCLOSURE_TYPE.ANNUAL} active={this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.ANNUAL}>
             ANNUAL DISCLOSURES
           </FilterType>
