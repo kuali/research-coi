@@ -10,7 +10,7 @@ catch (err) {
 
 export let getProjects = (dbInfo, userId) => {
   let knex = getKnex(dbInfo);
-  return knex.select('p.id as id', 'p.title as name', 'p.type_cd as typeCd', 'person.role_cd as roleCd', 'p.sponsor_cd as sponsorCd')
+  return knex.select('p.id as id', 'p.title as name', 'p.type_cd as typeCd', 'person.role_cd as roleCd', 'p.sponsor_name as sponsorName')
     .from('project as p')
     .innerJoin('project_person as person', 'p.id', 'person.project_id')
     .where({

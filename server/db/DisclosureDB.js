@@ -386,10 +386,12 @@ export let get = (dbInfo, userId, disclosureId) => {
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
-    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments', 'p.title as projectTitle', 'fe.name as entityName')
+    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments', 'p.title as projectTitle', 'fe.name as entityName', 'p.type_cd as projectTypeCd', 'p.sponsor_name as sponsorName', 'pp.role_cd as roleCd')
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
       .innerJoin('project as p', 'p.id', 'd.project_id')
+      .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
+      .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
       .where('d.disclosure_id', disclosureId),
     retrieveComments(dbInfo, userId, disclosureId),
     knex.select('id', 'name', 'key')

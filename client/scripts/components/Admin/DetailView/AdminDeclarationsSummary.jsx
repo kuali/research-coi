@@ -1,6 +1,7 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import DeclarationSummary from './DeclarationSummary';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
@@ -22,7 +23,10 @@ export class AdminDeclarationsSummary extends React.Component {
       if (!alreadyAdded[declaration.projectId]) {
         projects.push({
           id: declaration.projectId,
-          name: declaration.projectTitle
+          name: declaration.projectTitle,
+          type: ConfigStore.getProjectTypeString(declaration.projectTypeCd),
+          role: declaration.roleCd,
+          sponsor: declaration.sponsorName
         });
         alreadyAdded[declaration.projectId] = true;
       }
@@ -85,6 +89,14 @@ export class AdminDeclarationsSummary extends React.Component {
       lastrelationship: {
         paddingBottom: 15,
         borderBottom: 0
+      },
+      label: {
+        paddingRight: 5
+      },
+      field: {
+        display:'inline-block',
+        width: '100%',
+        padding: '0px 0px 10px 10px'
       }
     };
 
@@ -110,6 +122,18 @@ export class AdminDeclarationsSummary extends React.Component {
           <div key={'proj' + project.id}
             style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}>
             <div style={styles.name}>{project.name}</div>
+            <div style={styles.field}>
+              <label style={styles.label}>Project Type:</label>
+              <span style={{fontWeight: 'bold'}}>{project.type}</span>
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Project Role:</label>
+              <span style={{fontWeight: 'bold'}}>{project.role}</span>
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Sponsor:</label>
+              <span style={{fontWeight: 'bold'}}>{project.sponsor}</span>
+            </div>
             <div style={styles.titles}>
               <span style={styles.entityName}>FINANCIAL ENTITY</span>
               <span style={styles.conflict}>REPORTER RELATIONSHIP</span>
