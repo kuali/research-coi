@@ -23,13 +23,19 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('status_cd').notNullable().references('status_cd').inTable('disclosure_status');
     table.integer('user_id').notNullable();
     table.string('submitted_by', 200).index();
-    table.string('approved_by', 200);
     table.dateTime('submitted_date').index();
     table.dateTime('revised_date').index();
     table.dateTime('start_date').notNullable();
     table.dateTime('expired_date');
     table.dateTime('last_review_date');
-    table.dateTime('approved_date');
+    table.engine('InnoDB');
+  })
+  .createTable('disclosure_archive', function(table) {
+    table.increments('id').notNullable();
+    table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
+    table.string('approved_by', 200).notNullable();
+    table.dateTime('approved_date').notNullable();
+    table.text('disclosure').notNullable();
     table.engine('InnoDB');
   })
   .createTable('fin_entity', function(table) {

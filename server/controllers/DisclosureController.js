@@ -211,7 +211,7 @@ export let init = app => {
 
   app.post('/api/coi/disclosure/:id/approve', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.approve(req.dbInfo, userInfo.displayName, req.params.id)
+    DisclosureDB.approve(req.dbInfo, req.body, userInfo.displayName, req.params.id)
     .then(() => {
       res.sendStatus(202);
     })

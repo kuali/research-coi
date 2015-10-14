@@ -247,8 +247,7 @@ function insertDisclosure(knex) {
     start_date: new Date(),
     expired_date: new Date(),
     status_cd: 1,
-    last_review_date: new Date(),
-    approved_date: new Date()
+    last_review_date: new Date()
   }).then(function(disclosureId) {
     return Promise.all([
       insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
