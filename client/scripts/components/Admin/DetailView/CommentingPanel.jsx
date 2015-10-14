@@ -117,6 +117,30 @@ export default class CommentingPanel extends React.Component {
       });
     }
 
+    let commentForm;
+    if (!this.props.isApproved) {
+      commentForm = (
+        <div style={styles.controls}>
+            <span style={styles.commentText}>
+              <div>COMMENT:</div>
+              <div>
+                <textarea style={styles.textbox} ref="commentText" />
+              </div>
+            </span>
+            <span style={styles.right}>
+              <div>RECIPIENT:</div>
+              <div>
+                <input type="checkbox" id="piCheck" ref="piCheck" />
+                <label htmlFor="piCheck" style={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
+              </div>
+              <div>
+                <KButton style={{marginTop: 25}} onClick={this.makeComment}>Submit</KButton>
+              </div>
+            </span>
+        </div>
+      );
+    }
+
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.heading}>
@@ -130,24 +154,7 @@ export default class CommentingPanel extends React.Component {
           </div>
         </div>
 
-        <div style={styles.controls}>
-          <span style={styles.commentText}>
-            <div>COMMENT:</div>
-            <div>
-              <textarea style={styles.textbox} ref="commentText" />
-            </div>
-          </span>
-          <span style={styles.right}>
-            <div>RECIPIENT:</div>
-            <div>
-              <input type="checkbox" id="piCheck" ref="piCheck" />
-              <label htmlFor="piCheck" style={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
-            </div>
-            <div>
-              <KButton style={{marginTop: 25}} onClick={this.makeComment}>Submit</KButton>
-            </div>
-          </span>
-        </div>
+        {commentForm}
       </div>
     );
   }

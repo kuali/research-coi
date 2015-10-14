@@ -9,6 +9,7 @@ import CommentingPanel from './CommentingPanel';
 import AdditionalReviewPanel from './AdditionalReviewPanel';
 import CommentSummary from './CommentSummary';
 import GeneralAttachmentsPanel from './GeneralAttachmentsPanel';
+import {COIConstants} from '../../../../../COIConstants';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -89,13 +90,15 @@ export class DetailView extends React.Component {
           topicId={this.state.applicationState.commentId}
           comments={comments}
           disclosureId={this.state.applicationState.selectedDisclosure.id}
+          isApproved={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}
         />
       );
     }
     else if (this.state.applicationState.additionalReviewShowing) {
       sidePanel = (
         <AdditionalReviewPanel
-          managementPlan={this.state.applicationState.selectedDisclosure.managementPlan}/>
+          managementPlan={this.state.applicationState.selectedDisclosure.managementPlan}
+          isApproved={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}/>
       );
     }
     else if (this.state.applicationState.commentSummaryShowing) {

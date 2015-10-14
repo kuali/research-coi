@@ -11,7 +11,7 @@ export class ApprovalConfirmation extends ResponsiveComponent {
   }
 
   approve() {
-    AdminActions.toggleApprovalConfirmation();
+    AdminActions.approveDisclosure();
   }
 
   cancel() {
