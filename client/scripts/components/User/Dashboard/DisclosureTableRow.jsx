@@ -184,7 +184,7 @@ export class DisclosureTableRow extends ResponsiveComponent {
 
     let button;
 
-    if (this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS) {
+    if (this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS || this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
       button = (
         <Link to="disclosure" query={{type: this.props.type }}>
           <KButton style={styles.button}>Update &gt;</KButton>

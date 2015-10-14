@@ -176,6 +176,16 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.showingApproval = !this.applicationState.showingApproval;
   }
 
+  approveDisclosure() {
+    request.post('/api/coi/disclosure/' + this.applicationState.selectedDisclosure.id + '/approve')
+    .end((err)=>{
+      if (!err) {
+        this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+        this.applicationState.showingApproval = !this.applicationState.showingApproval;
+      }
+    });
+  }
+
   toggleRejectionConfirmation() {
     this.applicationState.showingRejection = !this.applicationState.showingRejection;
   }

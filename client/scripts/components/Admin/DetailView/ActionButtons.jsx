@@ -64,17 +64,29 @@ export class ActionButtons extends React.Component {
       );
     }
 
-    return (
-      <div style={merge(styles.container, this.props.style)} >
-        {generalAttachmentButton}
+    let approveButton;
+    let sendBackButton;
+    if (!this.props.isApproved) {
+      approveButton = (
         <div onClick={this.approve} style={styles.button}>
           <i className="fa fa-check" style={styles.icon}></i>
           <span style={styles.label}>APPROVE</span>
         </div>
+      );
+
+      sendBackButton = (
         <div onClick={this.reject} style={styles.button}>
           <i className="fa fa-rotate-left" style={styles.icon}></i>
           <span style={styles.label}>SEND BACK</span>
         </div>
+      );
+    }
+
+    return (
+      <div style={merge(styles.container, this.props.style)} >
+        {generalAttachmentButton}
+        {approveButton}
+        {sendBackButton}
         <div onClick={this.showAdditionalReview} style={styles.button}>
           <i className="fa fa-plus" style={styles.icon}></i>
           <span style={styles.label}>

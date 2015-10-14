@@ -29,6 +29,8 @@ class _AdminActions {
 
   toggleApprovalConfirmation() { this.dispatch(); }
 
+  approveDisclosure() { this.dispatch(); }
+
   toggleRejectionConfirmation() { this.dispatch(); }
 
   clearTypeFilter() { this.dispatch(); }

@@ -642,11 +642,22 @@ export let submit = (dbInfo, displayName, disclosureId) => {
   let knex = getKnex(dbInfo);
   return knex('disclosure')
     .update({
-      status_cd: 2,
+      status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
       submitted_by: displayName,
       submitted_date: new Date()
     })
     .where('id', disclosureId);
+};
+
+export let approve = (dbInfo, displayName, disclosureId) => {
+  let knex = getKnex(dbInfo);
+  return knex('disclosure')
+  .update({
+    status_cd: COIConstants.DISCLOSURE_STATUS.UP_TO_DATE,
+    approved_by: displayName,
+    approved_date: new Date()
+  })
+  .where('id', disclosureId);
 };
 
 export let getArchivedDisclosures = (dbInfo, userId) => { //eslint-disable-line no-unused-vars

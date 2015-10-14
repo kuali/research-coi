@@ -209,6 +209,18 @@ export let init = app => {
       });
   });
 
+  app.post('/api/coi/disclosure/:id/approve', function(req, res, next) {
+    let userInfo = getUserInfo(req.cookies.authToken);
+    DisclosureDB.approve(req.dbInfo, userInfo.displayName, req.params.id)
+    .then(() => {
+      res.sendStatus(202);
+    })
+    .catch(err => {
+      console.error(err);
+      next(err);
+    });
+  });
+
   app.post('/api/coi/disclosure/:id/comment', (req, res, next) => {
     let userInfo = getUserInfo(req.cookies.authToken);
     let comment = req.body;

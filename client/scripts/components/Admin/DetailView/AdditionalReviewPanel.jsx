@@ -102,7 +102,7 @@ export default class AdditionalReviewPanel extends React.Component {
 
         <FileUpload
           fileType='Management Plan'
-          readonly={false}
+          readonly={this.props.isApproved}
           onDrop={this.addManagementPlan}
           delete={this.deleteManagementPlan}
           files={this.props.managementPlan}

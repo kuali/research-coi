@@ -183,7 +183,7 @@ export class Dashboard extends ResponsiveComponent {
 
     if (annualDisclosureEnabled) {
       let annualDisclosureInRoute = this.state.disclosureSummaries.find(summary=> {
-        return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL && summary.status !== COIConstants.DISCLOSURE_STATUS.IN_PROGRESS;
+        return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL && summary.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS;
       });
       if (!annualDisclosureInRoute) {
         annualDisclosureButton = (
