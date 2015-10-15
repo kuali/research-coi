@@ -4,7 +4,8 @@ import {formatDate} from '../../../formatDate';
 import CheckLink from './CheckLink';
 import PIReviewActions from '../../../actions/PIReviewActions';
 import {EntityFormInformationStep} from '../Entities/EntityFormInformationStep';
-// import {EntityFormRelationshipStep} from '../Entities/EntityFormRelationshipStep';
+import {EntityFormRelationshipStep} from '../Entities/EntityFormRelationshipStep';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
 
 export default class EntityToReview extends React.Component {
   constructor(props) {
@@ -23,10 +24,41 @@ export default class EntityToReview extends React.Component {
     this.cancel = this.cancel.bind(this);
     this.done = this.done.bind(this);
     this.onAnswerQuestion = this.onAnswerQuestion.bind(this);
+    this.onAddRelationship = this.onAddRelationship.bind(this);
+    this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
+
+    this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    DisclosureStore.listen(this.onChange);
+    this.onChange();
+  }
+
+  componentWillUnmount() {
+    DisclosureStore.unlisten(this.onChange);
+  }
+
+  onChange() {
+    let storeState = DisclosureStore.getState();
+    this.setState({
+      appState: storeState.applicationState
+    });
+  }
+
+  onRemoveRelationship(relationshipId) {
+    PIReviewActions.removeRelationship(this.props.entity.id, this.props.entity.reviewId, relationshipId);
   }
 
   onAnswerQuestion(newValue, questionId) {
     PIReviewActions.reviseEntityQuestion(this.props.entity.reviewId, questionId, newValue);
+    this.setState({
+      revised: true
+    });
+  }
+
+  onAddRelationship(newRelationship) {
+    PIReviewActions.addRelationship(this.props.entity.reviewId, newRelationship);
     this.setState({
       revised: true
     });
@@ -195,16 +227,17 @@ export default class EntityToReview extends React.Component {
               validating={false}
               onAnswerQuestion={this.onAnswerQuestion}
             />
-            {/*<EntityFormRelationshipStep
-              id={1}
-              readonly={false}
+            <EntityFormRelationshipStep
+              id={this.props.entity.id}
+              readonly={!this.state.revising}
               update={true}
-              relations={[]}
-              name={'Barnicles!'}
+              relations={this.props.entity.relationships}
               style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
               validating={false}
-              appState={this.props.appState}
-            />*/}
+              appState={this.state.appState}
+              onAddRelationship={this.onAddRelationship}
+              onRemoveRelationship={this.onRemoveRelationship}
+            />
           </div>
           {responseText}
           <div>

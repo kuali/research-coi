@@ -14,12 +14,15 @@ catch (err) {
 export let verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
   let knex = getKnex(dbInfo);
 
-  return knex.count('d.user_id')
+  return knex.count('d.user_id as theCount')
     .from('pi_review as p')
     .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
     .where({
       'p.id': reviewId,
       'd.user_id': userId
+    })
+    .then(rows => {
+      return rows[0].theCount === 1;
     });
 };
 
@@ -63,6 +66,23 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
     });
 };
 
+let updateReviewRecord = (knex, reviewId, values) => {
+  let newValues = {
+    reviewed_on: new Date()
+  };
+  if (values.revised !== undefined) {
+    newValues.revised = true;
+  }
+  if (values.respondedTo !== undefined) {
+    newValues.responded_to = true;
+  }
+
+  return knex('pi_review')
+    .update(newValues).where({
+      'id': reviewId
+    });
+};
+
 export let recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
   let knex = getKnex(dbInfo);
 
@@ -74,21 +94,17 @@ export let recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
         .then(isSubmitter => {
           if (isSubmitter) {
             return Promise.all([
-              knex('pi_review')
-                .update({
-                  'reviewed_on': new Date(),
-                  'responded_to': true
-                }).where({
-                  'id': reviewId
-                }),
-                updatePIResponseComment(
-                  dbInfo,
-                  userInfo,
-                  reviewItem[0].disclosureId,
-                  reviewItem[0].targetType,
-                  reviewItem[0].targetId,
-                  comment
-                )
+              updateReviewRecord(knex, reviewId, {
+                respondedTo: true
+              }),
+              updatePIResponseComment(
+                dbInfo,
+                userInfo,
+                reviewItem[0].disclosureId,
+                reviewItem[0].targetType,
+                reviewItem[0].targetId,
+                comment
+              )
             ]).then(() => {
               return;
             });
@@ -255,12 +271,7 @@ export let reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, newAn
           return false;
         }
       }),
-    knex('pi_review')
-      .update({
-        'reviewed_on': new Date(),
-        'revised': true
-      })
-      .where('id', reviewId)
+    updateReviewRecord(knex, reviewId, {revised: true})
   ]);
 };
 
@@ -296,12 +307,7 @@ export let reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
           return false;
         }
       }),
-    knex('pi_review')
-      .update({
-        'reviewed_on': new Date(),
-        'revised': true
-      })
-      .where('id', reviewId)
+    updateReviewRecord(knex, reviewId, {revised: true})
   ]);
 };
 
@@ -317,6 +323,22 @@ let getEntitiesAnswers = (knex, entityIDs) => {
     .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
     .innerJoin('fin_entity_answer as fa', 'fa.questionnaire_answer_id', 'qa.id')
     .where('fa.fin_entity_id', 'in', entityIDs);
+};
+
+let getRelationships = (knex, entityIDs) => {
+  return knex.select('r.id', 'r.comments as comment', 'c.description as relationship', 'p.description as person', 't.description as type', 'a.description as amount', 'r.fin_entity_id as finEntityId')
+    .from('relationship as r')
+    .innerJoin('relationship_category_type as c', 'c.type_cd', 'r.relationship_cd')
+    .innerJoin('relationship_person_type as p', 'p.type_cd', 'r.person_cd')
+    .innerJoin('relationship_type as t', function() {
+      this.on('r.relationship_cd', 't.relationship_cd')
+        .andOn('r.type_cd', 't.type_cd');
+    })
+    .innerJoin('relationship_amount_type as a', function() {
+      this.on('r.relationship_cd', 'a.relationship_cd')
+        .andOn('r.amount_cd', 'a.type_cd');
+    })
+    .where('fin_entity_id', 'in', entityIDs);
 };
 
 let setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
@@ -335,17 +357,34 @@ let setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
   });
 };
 
+let setRelationshipsForEntities = (entities, relationships) => {
+  relationships.forEach(relationship => {
+    let entity = entities.find(entityToTest => {
+      return entityToTest.id === relationship.finEntityId;
+    });
+
+    if (entity) {
+      if (entity.relationships === undefined) {
+        entity.relationships = [];
+      }
+      entity.relationships.push(relationship);
+    }
+  });
+};
+
 let getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
   let entityIDs = extractTargetIDs(reviewItems);
 
   return Promise.all([
     getEntityNames(knex, entityIDs),
     getEntitiesAnswers(knex, entityIDs),
-    getEntityComments(knex, disclosureId, entityIDs)
+    getEntityComments(knex, disclosureId, entityIDs),
+    getRelationships(knex, entityIDs)
   ])
-  .then(([entities, entityQuestionAnswers, comments]) => {
+  .then(([entities, entityQuestionAnswers, comments, relationships]) => {
     setQuestionAnswersForEntities(entities, entityQuestionAnswers);
     setPIResponseForTopics(entities, comments, userId);
+    setRelationshipsForEntities(entities, relationships);
     setAdminCommentsForTopics(entities, comments, userId);
     setPIReviewDataForTopics(entities, reviewItems);
     return entities;
@@ -393,6 +432,74 @@ export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
+let getReviewTarget = (knex, reviewId) => {
+  return knex.select('target_type as targetType', 'target_id as targetId')
+    .from('pi_review as p')
+    .where({
+      'p.id': reviewId
+    }).then(rows => {
+      return rows[0];
+    });
+};
+
+export let addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => {
+  let knex = getKnex(dbInfo);
+
+  return getReviewTarget(knex, reviewId)
+    .then(reviewTarget => {
+      return knex('relationship')
+        .insert({
+          fin_entity_id: reviewTarget.targetId,
+          relationship_cd: newRelationship.relationshipCd,
+          person_cd: newRelationship.personCd,
+          type_cd: newRelationship.typeCd,
+          amount_cd: newRelationship.amountCd,
+          comments: newRelationship.comments
+        })
+        .then(() => {
+          return Promise.all([
+            getRelationships(knex, [reviewTarget.targetId]),
+            updateReviewRecord(knex, reviewId, {revised: true})
+          ])
+          .then(([relationships]) => {
+            return relationships;
+          });
+        });
+    });
+};
+
+let verifyRelationshipIsUsers = (knex, userId, relationshipId) => {
+  return knex.select('')
+    .from('relationship as r')
+    .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
+    .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
+    .where({
+      'd.user_id': userId,
+      'r.id': relationshipId
+    })
+    .then(rows => {
+      return rows.length > 0;
+    });
+};
+
+export let removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => {
+  let knex = getKnex(dbInfo);
+
+  return verifyRelationshipIsUsers(knex, userInfo.id, relationshipId)
+    .then(isAllowed => {
+      if (isAllowed) {
+        return Promise.all([
+          updateReviewRecord(knex, reviewId, {revised: true}),
+          knex('relationship')
+            .where('id', relationshipId)
+            .del()
+        ]);
+      }
+      else {
+        return 'Unauthorized';
+      }
+    });
+};
 
 // ///-------------------------------------------------------
 

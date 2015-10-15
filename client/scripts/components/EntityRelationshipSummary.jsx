@@ -12,7 +12,12 @@ export default class EntityRelationshipSummary extends React.Component {
   }
 
   remove() {
-    DisclosureActions.removeEntityRelationship(this.props.relationship.id, this.props.entityId);
+    if (this.props.onRemove) {
+      this.props.onRemove(this.props.relationship.id, this.props.entityId);
+    }
+    else {
+      DisclosureActions.removeEntityRelationship(this.props.relationship.id, this.props.entityId);
+    }
   }
 
   render() {
@@ -61,6 +66,7 @@ export default class EntityRelationshipSummary extends React.Component {
         <button onClick={this.remove} style={styles.removeButton}>X</button>
       );
     }
+
     if (this.props.relationship.relationship === 'Travel') {
       let dateRange = formatDate(this.props.relationship.travel.startDate) + ' - ' + formatDate(this.props.relationship.travel.endDate);
       return (

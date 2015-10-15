@@ -1,5 +1,4 @@
 import React from 'react/addons';  //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {ToggleSet} from './ToggleSet';
 import EntityRelationshipSummary from '../../EntityRelationshipSummary';
@@ -9,10 +8,9 @@ import {KButton} from '../../KButton';
 import RelationshipTextField from './RelationshipTextField';
 import RelationshipDateField from './RelationshipDateField';
 
-export class EntityFormRelationshipStep extends ResponsiveComponent {
+export class EntityFormRelationshipStep extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.state = {
       typeOptions: [],
@@ -32,9 +30,14 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     this.startDateSelected = this.startDateSelected.bind(this);
     this.endDateSelected = this.endDateSelected.bind(this);
     this.reasonChanged = this.reasonChanged.bind(this);
+    this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
+
+  onRemoveRelationship(relationshipId, entityId) {
+    this.props.onRemoveRelationship(relationshipId, entityId);
+  }
 
   addRelation() {
     let validationErrors = DisclosureStore.entityRelationshipStepErrors();
@@ -42,8 +45,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
 
     const stepNumber = 2;
     if (isValid) {
-      DisclosureActions.turnOffValidation(stepNumber);
-      DisclosureActions.addEntityRelationship(this.props.id);
+      this.props.onAddRelationship(this.props.appState.potentialRelationship);
 
       this.setState({
         relation: ''
@@ -103,13 +105,11 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
     });
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
+  render() {
     let validationErrors = DisclosureStore.entityRelationshipStepErrors();
     let isValid = Object.keys(validationErrors).length === 0;
 
-    let desktopStyles = {
+    let styles = {
       container: {
         width: '100%'
       },
@@ -190,7 +190,6 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         color: 'red'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let typeSection;
     if (this.state.relation !== '' && this.state.matrixType.typeEnabled === 1) {
@@ -311,6 +310,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
             style={{marginBottom: 20}}
             relationship={relation}
             key={relation.id}
+            onRemove={this.onRemoveRelationship}
           />
         );
       });
@@ -421,7 +421,7 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
         {relationshipEditor}
 
         <div style={!this.props.readonly ? styles.submittedrelations : {}}>
-          <div style={{color: this.props.update ? 'black' : '#555', marginBottom: 12}}>My Financial Entities:</div>
+          <div style={{color: this.props.update ? 'black' : '#555', marginBottom: 12}}>Relationships:</div>
           {relationshipSummaries}
         </div>
       </div>

@@ -84,4 +84,38 @@ export let init = app => {
         next(err);
       });
   });
+
+  app.post('/api/coi/pi-revise/:reviewId/entity-relationship', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+      .then(isAllowed => {
+        if (isAllowed) {
+          return PIReviewDB.addRelationship(req.dbInfo, userInfo, req.params.reviewId, req.body)
+            .then(response => {
+              res.send(response);
+            });
+        }
+        else {
+          res.status(403).end();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
+
+  app.delete('/api/coi/pi-revise/:reviewId/entity-relationship/:relationshipId', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    PIReviewDB.removeRelationship(req.dbInfo, userInfo, req.params.reviewId, req.params.relationshipId)
+      .then(() => {
+        res.status(204).end();
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
 };
