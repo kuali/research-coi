@@ -114,7 +114,6 @@ export class FileUpload extends React.Component {
       dropzone = (
         <Dropzone
         onDrop={this.onDrop}
-        accept='.pdf'
         style={styles.dropZone}
         activeStyle={styles.dropZoneActive}
         multiple={this.props.multiple}>
