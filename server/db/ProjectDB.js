@@ -36,27 +36,29 @@ export let saveProjects = (dbInfo, projects) => {
 
 let saveProjectPersons = (dbInfo, persons, projectId) => {
   let knex = getKnex(dbInfo);
-  return knex.select('person_id').from('project_person').where('project_id', projectId)
+  return knex.select('person_id', 'source_person_type').from('project_person').where('project_id', projectId)
     .then(personIdResult => {
-      if (persons) {
+      if (persons && persons.length > 0) {
         let queries = persons.map(person => {
           if (personIdResult.find(pr => {
-            return pr.person_id === person.personId;
+            return pr.person_id === person.personId && pr.source_person_type === person.sourcePersonType;
           })) {
-            return knex('project_person').update({'active': true, 'role_cd': person.roleCode}).where({'person_id': person.personId, 'project_id': projectId});
+            return knex('project_person').update({'active': 1, 'role_cd': person.roleCode}).where({'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
           } else {
-            return knex('project_person').insert({'active': true, 'role_cd': person.roleCode, 'person_id': person.personId, 'project_id': projectId});
+            return knex('project_person').insert({'active': 1, 'role_cd': person.roleCode, 'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
           }
         });
 
-        let deactiveIds = personIdResult.filter(pr => {
+        let deactiveQueries = personIdResult.filter(pr => {
           return persons.find(person => {
-            return parseInt(person.personId) === pr.person_id;
+            return person.personId === pr.person_id && person.sourcePersonType === pr.source_person_type;
           }) === undefined;
+        }).map(result => {
+          return knex('project_person').update('active', 0).where({'person_id': result.person_id, 'source_person_type': result.source_person_type, 'project_id': projectId});
         });
 
-        if (deactiveIds.length > 0) {
-          queries.push(knex('project_person').update('active', false).whereIn('person_id', deactiveIds).where('project_id', projectId));
+        if (deactiveQueries.length > 0) {
+          queries = queries.concat(deactiveQueries);
         }
 
         return Promise.all(queries);
@@ -111,6 +113,7 @@ let saveNewProjects = (dbInfo, projects) => {
           return knex('project_person').insert({
             project_id: projectId,
             person_id: person.personId,
+            source_person_type: person.sourcePersonType,
             role_cd: person.roleCode
           });
         });

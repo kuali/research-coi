@@ -115,6 +115,7 @@ function insertProjectPerson(knex, userId, role, projectId) {
   return knex('project_person').insert({
     project_id: projectId,
     person_id: userId,
+    source_person_type: 'COI-SEED',
     role_cd: role,
     active: true
   });

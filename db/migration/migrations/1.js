@@ -111,8 +111,9 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.increments('id').notNullable();
     table.integer('project_id').unsigned().notNullable().references('id').inTable('project');
     table.string('person_id', 40).notNullable();
+    table.string('source_person_type', 20).notNullable();
     table.string('role_cd', 50).notNullable();
-    table.unique(['project_id', 'person_id', 'role_cd']);
+    table.unique(['project_id', 'person_id', 'source_person_type', 'role_cd'], 'proj_person_role_unqiue');
     table.boolean('active').notNullable();
     table.engine('InnoDB');
   })
