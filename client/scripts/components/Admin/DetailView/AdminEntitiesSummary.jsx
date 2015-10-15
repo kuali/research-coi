@@ -36,7 +36,10 @@ export class AdminEntitiesSummary extends React.Component {
 
     let entities;
     if(this.props.entities !== undefined) {
-      entities = this.props.entities.map((entity, index) => {
+      entities = this.props.entities.filter(entity => {
+        return entity.active === 1;
+      })
+      .map((entity, index) => {
         return (
           <EntitySummary
             key={'ent' + entity.id}
