@@ -1,5 +1,5 @@
 /*eslint camelcase:0 */
-import {isDisclosureUsers, saveSingleRecord, saveExistingSingleRecord} from './CommonDB';
+import {isDisclosureUsers} from './CommonDB';
 import * as FileService from '../services/fileService/FileService';
 import {COIConstants} from '../../COIConstants';
 
@@ -258,12 +258,29 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
     });
 };
 
-export let saveDeclaration = (dbInfo, userId, record, optionalTrx) => {
-  return saveSingleRecord(dbInfo, record, {table: 'declaration', pk: 'id'}, optionalTrx);
+export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
+  let knex = getKnex(dbInfo);
+  return knex('declaration').insert({
+    project_id: record.projectId,
+    disclosure_id: disclosureId,
+    fin_entity_id: record.finEntityId,
+    type_cd: record.typeCd,
+    comments: record.comments
+  }).then(id => {
+    record.id = id[0];
+    return record;
+  });
 };
 
-export let saveExistingDeclaration = (dbInfo, userId, record, optionalTrx) => {
-  return saveExistingSingleRecord(dbInfo, record, {table: 'declaration', pk: 'id'}, optionalTrx);
+export let saveExistingDeclaration = (dbInfo, userId, disclosureId, record) => {
+  let knex = getKnex(dbInfo);
+  return knex('declaration').update({
+    project_id: record.projectId,
+    disclosure_id: disclosureId,
+    fin_entity_id: record.finEntityId,
+    type_cd: record.typeCd,
+    comments: record.comments
+  }).where('id', record.id);
 };
 
 export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
@@ -674,7 +691,7 @@ export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
           knex('disclosure_answer').del().where('disclosure_id', disclosureId)
         ])
         .then(result => {
-          return knex('questionnaire_answer').del().whereIn('id', result[0].map(disclosureAnswer => {return disclosureAnswer.questionnaire_answer_id;}));
+          return knex('questionnaire_answer').del().whereIn('id', result[0].map(disclosureAnswer => { return disclosureAnswer.questionnaire_answer_id; }));
         });
       });
     });

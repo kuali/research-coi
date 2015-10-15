@@ -150,7 +150,7 @@ export let init = app => {
   app.put('/api/coi/disclosure/:id/declaration', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
-    DisclosureDB.saveDeclaration(req.dbInfo, userInfo.id, req.body)
+    DisclosureDB.saveDeclaration(req.dbInfo, userInfo.id, req.params.id, req.body)
       .then(declaration => {
         res.send(declaration);
       })
@@ -163,9 +163,9 @@ export let init = app => {
   app.post('/api/coi/disclosure/:id/declaration', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
-    DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.body)
-      .then(declaration => {
-        res.send(declaration);
+    DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.params.id, req.body)
+      .then(() => {
+        res.sendStatus(202);
       })
       .catch(err => {
         console.error(err);
