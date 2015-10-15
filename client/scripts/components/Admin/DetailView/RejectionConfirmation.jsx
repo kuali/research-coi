@@ -11,7 +11,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
   }
 
   reject() {
-    AdminActions.toggleRejectionConfirmation();
+    AdminActions.rejectDisclosure();
   }
 
   cancel() {
@@ -51,18 +51,35 @@ export class RejectionConfirmation extends ResponsiveComponent {
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
+    let rejectionSection;
+    if (this.props.canReject) {
+      rejectionSection = (
+        <div style={merge(styles.container, this.props.style)} >
+          <div style={styles.question}>
+            Are you sure you want to send this disclosure back for further review?
+          </div>
 
-    return (
-      <div style={merge(styles.container, this.props.style)} >
-        <div style={styles.question}>
-          Are you sure you want to send this disclosure back for further review?
+          <div style={styles.generalComments}>Add general comments:</div>
+          <textarea ref="comments" style={styles.commentText} />
+
+          <KButton onClick={this.reject} style={styles.button}>YES, CONFIRM</KButton>
+          <KButton onClick={this.cancel} style={styles.button}>NO, CANCEL</KButton>
         </div>
+      );
+    } else {
+      rejectionSection = (
+        <div style={merge(styles.container, this.props.style)} >
+          <div style={styles.question}>
+            Please add one or more comments before sending back a disclosure.
+          </div>
 
-        <div style={styles.generalComments}>Add general comments:</div>
-        <textarea ref="comments" style={styles.commentText} />
-
-        <KButton onClick={this.reject} style={styles.button}>YES, CONFIRM</KButton>
-        <KButton onClick={this.cancel} style={styles.button}>NO, CANCEL</KButton>
+          <KButton onClick={this.cancel} style={styles.button}>CLOSE</KButton>
+        </div>
+      );
+    }
+    return (
+      <div>
+        {rejectionSection}
       </div>
     );
   }

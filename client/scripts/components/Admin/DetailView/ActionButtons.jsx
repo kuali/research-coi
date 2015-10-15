@@ -66,7 +66,7 @@ export class ActionButtons extends React.Component {
 
     let approveButton;
     let sendBackButton;
-    if (!this.props.isApproved) {
+    if (!this.props.readonly) {
       approveButton = (
         <div onClick={this.approve} style={styles.button}>
           <i className="fa fa-check" style={styles.icon}></i>

@@ -33,6 +33,8 @@ class _AdminActions {
 
   toggleRejectionConfirmation() { this.dispatch(); }
 
+  rejectDisclosure() { this.dispatch(); }
+
   clearTypeFilter() { this.dispatch(); }
 
   toggleTypeFilter(toToggle) { this.dispatch(toToggle); }

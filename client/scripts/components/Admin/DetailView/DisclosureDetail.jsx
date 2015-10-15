@@ -174,11 +174,11 @@ export class DisclosureDetail extends React.Component {
           </span>
           <span>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
-            <RejectionConfirmation id={this.props.disclosure.id} style={styles.rejection} />
+            <RejectionConfirmation id={this.props.disclosure.id} canReject={this.props.disclosure.comments.length > 0 } style={styles.rejection} />
             <ActionButtons
               style={styles.actionButtons}
               showAttachments={this.props.disclosure.files.length > 0}
-              isApproved={this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}/>
+              readonly={this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE || this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED}/>
           </span>
         </div>
       </div>
