@@ -366,7 +366,12 @@ export class EntityFormRelationshipStep extends ResponsiveComponent {
               <div style={styles.personSection}>
                 <div style={personLabelStyle}>Person</div>
                 <div>
-                  <select onChange={this.personSelected} ref="personSelect" value={this.props.appState.potentialRelationship.personCd} style={personDropDownStyle}>
+                  <select
+                    onChange={this.personSelected}
+                    ref="personSelect"
+                    value={this.props.appState.potentialRelationship.personCd}
+                    style={personDropDownStyle}
+                  >
                     <option value="">--SELECT--</option>
                     {relationshipPersonTypeOptions}
                   </select>

@@ -13,14 +13,19 @@ export class EntityFormInformationStep extends React.Component {
     this.getAnswer = this.getAnswer.bind(this);
     this.addEntityAttachments = this.addEntityAttachments.bind(this);
     this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
+    this.onAnswer = this.onAnswer.bind(this);
+  }
+
+  onAnswer(newValue, questionId) {
+    this.props.onAnswerQuestion(newValue, questionId);
   }
 
   getAnswer(id) {
-    let answer = this.props.answers.find(a => {
-      return a.questionId === id;
+    let answerForId = this.props.answers.find(answer => {
+      return answer.questionId === id;
     });
-    if (answer) {
-      return answer.answer.value;
+    if (answerForId) {
+      return answerForId.answer.value;
     }
   }
 
@@ -83,16 +88,16 @@ export class EntityFormInformationStep extends React.Component {
         columnStyle = styles.column;
       }
       return (
-        <div style={columnStyle}>
+        <div style={columnStyle} key={index}>
           <Question
-          readonly={this.props.readonly}
-          entityId={this.props.id}
-          id={question.id}
-          answer={this.getAnswer(question.id)}
-          question={question}
-          disclosureid={this.props.disclosureid}
-          key={index}
-          invalid={validationErrors ? validationErrors.includes(question.id) : false}
+            readonly={this.props.readonly}
+            entityId={this.props.id}
+            id={question.id}
+            answer={this.getAnswer(question.id)}
+            question={question}
+            disclosureid={this.props.disclosureid}
+            invalid={validationErrors ? validationErrors.includes(question.id) : false}
+            onAnswer={this.onAnswer}
           />
         </div>
       );
@@ -110,7 +115,8 @@ export class EntityFormInformationStep extends React.Component {
           onDrop={this.addEntityAttachments}
           delete={this.deleteEntityAttachment}
           files={this.props.files}
-          multiple={true}>
+          multiple={true}
+        >
           <p>Drag and Drop or Click to upload your attachments</p>
           <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
         </FileUpload>

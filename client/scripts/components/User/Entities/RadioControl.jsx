@@ -4,11 +4,11 @@ export class RadioControl extends React.Component {
   constructor() {
     super();
 
-    this.answer = this.answer.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  answer(evt) {
-    this.props.onChange(evt, this.props.questionId, this.props.isParent);
+  onChange(evt) {
+    this.props.onChange(evt.target.value, this.props.questionId, this.props.isParent);
   }
 
   render() {
@@ -34,27 +34,26 @@ export class RadioControl extends React.Component {
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-      <div style={styles.invalidError}>Required Field</div>
+        <div style={styles.invalidError}>Required Field</div>
       );
     }
 
-    let options = this.props.options.map(option=> {
+    let options = this.props.options.map((option, index) => {
       return (
-      <span style={styles.option}>
-        <div>
-          <label htmlFor={'multi_' + option + '_' + this.props.questionId} style={styles.label}>
-            <input
-            key={option}
-            id={'multi_' + option + '_' + this.props.questionId}
-            value={option}
-            checked={this.props.answer === option}
-            onChange={this.answer}
-            type="radio"
-            />
-            {option}
-          </label>
-        </div>
-      </span>
+        <span style={styles.option} key={this.props.questionId + '_' + index}>
+          <div>
+            <label htmlFor={'multi_' + option + '_' + this.props.questionId} style={styles.label}>
+              <input
+                id={'multi_' + option + '_' + this.props.questionId}
+                value={option}
+                checked={this.props.answer === option}
+                onChange={this.onChange}
+                type="radio"
+              />
+              {option}
+            </label>
+          </div>
+        </span>
       );
     });
 
@@ -67,11 +66,10 @@ export class RadioControl extends React.Component {
     }
 
     return (
-    <div style={styles.container}>
-      {options}
-      {requiredFieldError}
-    </div>
-
+      <div style={styles.container}>
+        {options}
+        {requiredFieldError}
+      </div>
     );
   }
 }

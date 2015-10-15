@@ -52,9 +52,9 @@ export class RadioControl extends React.Component {
       }
     };
 
-    let options = this.props.options.map(option => {
+    let options = this.props.options.map((option, index) => {
       return (
-        <span style={styles.option} key={option}>
+        <span style={styles.option} key={this.props.questionId + '_' + index}>
           <div>
             <input
               id={'multi_' + option + '_' + this.props.questionId}
@@ -67,7 +67,7 @@ export class RadioControl extends React.Component {
             />
             <label htmlFor={'multi_' + option + '_' + this.props.questionId} style={styles.label}>{option}</label>
           </div>
-      </span>
+        </span>
       );
     });
 

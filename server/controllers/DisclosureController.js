@@ -160,9 +160,11 @@ export let init = app => {
       });
   });
 
+  /**
+    @Role: PI
+  */
   app.post('/api/coi/disclosure/:id/declaration', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
     DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.params.id, req.body)
       .then(() => {
         res.sendStatus(202);

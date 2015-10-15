@@ -274,13 +274,24 @@ export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
 
 export let saveExistingDeclaration = (dbInfo, userId, disclosureId, record) => {
   let knex = getKnex(dbInfo);
-  return knex('declaration').update({
-    project_id: record.projectId,
-    disclosure_id: disclosureId,
-    fin_entity_id: record.finEntityId,
-    type_cd: record.typeCd,
-    comments: record.comments
-  }).where('id', record.id);
+
+  return isDisclosureUsers(dbInfo, disclosureId, userId)
+    .then(isSubmitter => {
+      if (isSubmitter) {
+        return knex('declaration')
+          .update({
+            'type_cd': record.typeCd,
+            'comments': record.comments
+          })
+          .where({
+            'disclosure_id': disclosureId,
+            id: record.id
+          });
+      }
+      else {
+        return 'Unauthorized';
+      }
+    });
 };
 
 export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {

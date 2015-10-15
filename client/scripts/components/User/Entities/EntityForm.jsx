@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {ProminentButton} from '../../ProminentButton';
 import {merge} from '../../../merge';
 import {EntityFormNameStep} from './EntityFormNameStep';
@@ -8,10 +7,9 @@ import {EntityFormRelationshipStep} from './EntityFormRelationshipStep';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 
-export class EntityForm extends ResponsiveComponent {
+export class EntityForm extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.next = this.next.bind(this);
     this.back = this.back.bind(this);
@@ -21,6 +19,17 @@ export class EntityForm extends ResponsiveComponent {
     this.edit = this.edit.bind(this);
     this.undo = this.undo.bind(this);
     this.isCurrentStepValid = this.isCurrentStepValid.bind(this);
+    this.onAnswerQuestion = this.onAnswerQuestion.bind(this);
+  }
+
+  onAnswerQuestion(newValue, questionId) {
+    DisclosureActions.answerEntityQuestion({
+      entityId: this.props.entity.id,
+      id: questionId,
+      answer: {
+        value: newValue
+      }
+    });
   }
 
   shouldComponentUpdate() { return true; }
@@ -101,10 +110,8 @@ export class EntityForm extends ResponsiveComponent {
     DisclosureActions.undoEntityChanges(this.props.snapshot);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         display: 'inline-block',
         borderRadius: 5,
@@ -132,7 +139,6 @@ export class EntityForm extends ResponsiveComponent {
         textAlign: 'right'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let currentStep;
     let submitButton;
@@ -162,6 +168,7 @@ export class EntityForm extends ResponsiveComponent {
             answers={entity.answers}
             files={entity.files}
             validating={this.props.appState.validatingEntityInformationStep}
+            onAnswerQuestion={this.onAnswerQuestion}
           />
           <EntityFormRelationshipStep
             id={entity.id}
@@ -213,6 +220,7 @@ export class EntityForm extends ResponsiveComponent {
               answers={entity.answers}
               files={entity.files}
               validating={this.props.appState.validatingEntityInformationStep}
+              onAnswerQuestion={this.onAnswerQuestion}
             />
           );
 

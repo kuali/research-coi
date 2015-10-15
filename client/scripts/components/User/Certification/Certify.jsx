@@ -84,21 +84,17 @@ export class Certify extends React.Component {
 
         <div style={styles.content}>
           <span style={styles.cert}>
-            {window.config.general.certificationOptions.text.split('\n').map(function(item) {
-              return (
-                <span>
-                  {item}
-                  <br/>
-                </span>
-              );
-            })}
+            <div style={{whiteSpace: 'pre-wrap'}}>
+              {window.config.general.certificationOptions.text}
+            </div>
             <FileUpload
-            fileType='Attachment'
-            readOnly={false}
-            onDrop={this.addDisclosureAttachment}
-            delete={this.deleteDisclosureAttachment}
-            files={this.props.files}
-            multiple={true}>
+              fileType='Attachment'
+              readOnly={false}
+              onDrop={this.addDisclosureAttachment}
+              delete={this.deleteDisclosureAttachment}
+              files={this.props.files}
+              multiple={true}
+            >
               <p>Drag and Drop or Click to upload your attachments</p>
               <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
             </FileUpload>

@@ -24,10 +24,10 @@ export default class EntitySection extends React.Component {
     let entities = this.props.entitiesToReview.map((entitytoReview, index) => {
       return (
         <EntityToReview
-          key={index}
-          entity={entitytoReview.entity}
-          completed={entitytoReview.completed}
-          comments={entitytoReview.comments}
+          key={entitytoReview.id}
+          entity={entitytoReview}
+          respondedTo={entitytoReview.respondedTo}
+          revised={entitytoReview.revised}
           style={{marginBottom: index === this.props.entitiesToReview.length - 1 ? 0 : 40}}
         />
       );
@@ -36,7 +36,7 @@ export default class EntitySection extends React.Component {
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.title}>
-          ENTITIES
+          FINANCIAL ENTITIES
         </div>
         <div className="fill" style={styles.body}>
           {entities}

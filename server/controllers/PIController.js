@@ -63,4 +63,25 @@ export let init = app => {
         next(err);
       });
   });
+
+  app.put('/api/coi/pi-revise/:reviewId/entity-question/:questionId', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+      .then(isAllowed => {
+        if (isAllowed) {
+          return PIReviewDB.reviseEntityQuestion(req.dbInfo, userInfo, req.params.reviewId, req.params.questionId, req.body.answer)
+            .then(response => {
+              res.send(response);
+            });
+        }
+        else {
+          res.status(403).end();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
 };

@@ -10,14 +10,14 @@ import {NumericControl} from '../NumericControl';
 import {DateControl} from '../DateControl';
 
 export default class Question extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
 
     this.state = {
       revising: false,
       responding: false,
-      responded: false,
-      revised: false,
+      responded: props.respondedTo !== null,
+      revised: props.revised !== null,
       isValid: true
     };
 
@@ -33,8 +33,19 @@ export default class Question extends React.Component {
     this.controlValidityChanged = this.controlValidityChanged.bind(this);
   }
 
+  componentWillReceiveProps(newProps) {
+    if (newProps.revised !== this.props.revised) {
+      this.setState({
+        revised: newProps.revised
+      });
+    }
+  }
+
   changeAnswer(newAnswer) {
     PIReviewActions.revise(this.props.reviewId, newAnswer);
+    this.setState({
+      revised: true
+    });
   }
 
   // answerAndSubmit(evt) {
@@ -73,7 +84,7 @@ export default class Question extends React.Component {
     // return subQuestion !== undefined;
   }
 
-  answer(answer, questionId) {
+  answer(answer) {
     this.changeAnswer(answer);
   }
 
@@ -101,10 +112,6 @@ export default class Question extends React.Component {
     //   advance: true
     // });
   // }
-
-  answerDate(newDate, questionId) {
-    this.changeAnswer(newDate);
-  }
 
   controlValidityChanged(questionId, isValid) {
     this.setState({
@@ -174,7 +181,7 @@ export default class Question extends React.Component {
         return (
           <DateControl
             answer={answer}
-            onChange={this.answerDate}
+            onChange={this.answer}
             isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
@@ -270,9 +277,13 @@ export default class Question extends React.Component {
 
     let responseText;
     if (this.state.responding) {
+      let defaultText;
+      if (this.props.question.piResponse) {
+        defaultText = this.props.question.piResponse.text;
+      }
       responseText = (
         <div>
-          <textarea ref="responseText" style={styles.responseText} />
+          <textarea ref="responseText" style={styles.responseText} defaultValue={defaultText} />
         </div>
       );
     }

@@ -4,16 +4,11 @@ export class CheckboxControl extends React.Component {
   constructor() {
     super();
 
-    this.answerMultiple = this.answerMultiple.bind(this);
-    this.submitMultiple = this.submitMultiple.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  answerMultiple(evt) {
-    this.props.onChange(evt, this.props.questionId);
-  }
-
-  submitMultiple() {
-    this.props.onClick(this.props.answer, this.props.questionId);
+  onChange(evt) {
+    this.props.onChange(evt.target.value, evt.target.checked, this.props.questionId);
   }
 
   render() {
@@ -23,8 +18,7 @@ export class CheckboxControl extends React.Component {
         marginRight: 30
       },
       radio: {
-        width: 22,
-        height: '4em'
+        width: 22
       },
       label: {
         cursor: 'pointer'
@@ -46,7 +40,7 @@ export class CheckboxControl extends React.Component {
       );
     }
 
-    let options = this.props.options.map(option=> {
+    let options = this.props.options.map((option, index) => {
       let checked = {};
       if (this.props.answer instanceof Array) {
         checked = this.props.answer.includes(option);
@@ -55,17 +49,18 @@ export class CheckboxControl extends React.Component {
       }
 
       return (
-        <span style={styles.option}>
-          <div>
+        <span style={styles.option} key={this.props.questionId + '_' + index}>
+          <span>
             <input
-            key={option}
-            id={'multi_' + option}
-            value={option}
-            checked={checked}
-            onChange={this.answerMultiple}
-            type="checkbox"
-            style={styles.radio}/>
-          </div>
+              key={option}
+              id={'multi_' + option}
+              value={option}
+              checked={checked}
+              onChange={this.onChange}
+              type="checkbox"
+              style={styles.radio}
+            />
+          </span>
           <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
         </span>
       );

@@ -2,7 +2,6 @@ import PIReviewActions from '../actions/PIReviewActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import request from 'superagent';
-import {COIConstants} from '../../../COIConstants';
 
 class _PIReviewStore extends AutoBindingStore {
   constructor() {
@@ -40,6 +39,14 @@ class _PIReviewStore extends AutoBindingStore {
                  });
                }
 
+               if (this.disclosure.entities) {
+                 this.disclosure.entities.forEach(entity => {
+                   entity.answers.forEach(answer => {
+                     answer.answer = JSON.parse(answer.answer);
+                   });
+                 });
+               }
+
                this.emitChange();
              }
            });
@@ -51,6 +58,9 @@ class _PIReviewStore extends AutoBindingStore {
     });
     if (questionToRespondTo) {
       questionToRespondTo.reviewedOn = new Date();
+      questionToRespondTo.piResponse = {
+        text: params.comment
+      };
     }
 
     let entityToRespondTo = this.disclosure.entities.find(entity => {
@@ -90,8 +100,33 @@ class _PIReviewStore extends AutoBindingStore {
       .send({
         answer: params.newAnswer
       })
-      .end(() => {
+      .end();
+  }
+
+  reviseEntityQuestion(params) {
+    let entityToRevise = this.disclosure.entities.find(entity => {
+      return params.reviewId === entity.reviewId;
+    });
+    if (entityToRevise) {
+      let theAnswer = entityToRevise.answers.find(answer => {
+        return answer.questionId === params.questionId;
       });
+
+      if (theAnswer) {
+        theAnswer.answer = {
+          value: params.newValue
+        };
+      }
+
+      entityToRevise.reviewedOn = new Date();
+      entityToRevise.revised = 1;
+    }
+
+    request.put(`/api/coi/pi-revise/${params.reviewId}/entity-question/${params.questionId}`)
+      .send({
+        answer: params.newValue
+      })
+      .end();
   }
 }
 
