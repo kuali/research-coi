@@ -674,11 +674,20 @@ export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
           knex('disclosure_answer').del().where('disclosure_id', disclosureId)
         ])
         .then(result => {
-          return knex('questionnaire_answer').del().whereIn('id', result[0].map(disclosureAnswer => {return disclosureAnswer.questionnaire_answer_id}));
+          return knex('questionnaire_answer').del().whereIn('id', result[0].map(disclosureAnswer => {return disclosureAnswer.questionnaire_answer_id;}));
         });
       });
     });
   });
+};
+
+export let reject = (dbInfo, displayName, disclosureId) => {
+  let knex = getKnex(dbInfo);
+  return knex('disclosure')
+  .update({
+    status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED
+  })
+  .where('id', disclosureId);
 };
 
 export let getArchivedDisclosures = (dbInfo, userId) => { //eslint-disable-line no-unused-vars

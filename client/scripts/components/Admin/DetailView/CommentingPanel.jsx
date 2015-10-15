@@ -118,7 +118,7 @@ export default class CommentingPanel extends React.Component {
     }
 
     let commentForm;
-    if (!this.props.isApproved) {
+    if (!this.props.readonly) {
       commentForm = (
         <div style={styles.controls}>
             <span style={styles.commentText}>

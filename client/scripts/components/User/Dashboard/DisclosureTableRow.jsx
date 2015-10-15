@@ -190,6 +190,10 @@ export class DisclosureTableRow extends ResponsiveComponent {
           <KButton style={styles.button}>Update &gt;</KButton>
         </Link>
       );
+    } else if (this.props.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED) {
+      button = (
+      <KButton style={styles.button}>Revise &gt;</KButton>
+      );
     } else {
       button = (
         <KButton style={styles.button}>View &gt;</KButton>
