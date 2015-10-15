@@ -94,7 +94,7 @@ export class AdminDeclarationsSummary extends React.Component {
         paddingRight: 5
       },
       field: {
-        display:'inline-block',
+        display: 'inline-block',
         width: '100%',
         padding: '0px 0px 10px 10px'
       }
@@ -107,7 +107,7 @@ export class AdminDeclarationsSummary extends React.Component {
 
       projects = uniqueProjects.map((project, index) => {
         let declarations = this.props.declarations.filter(declaration => {
-          return declaration.projectId === project.id;
+          return declaration.projectId === project.id && declaration.finEntityActive === 1;
         }).map(declaration => {
           return (
             <DeclarationSummary

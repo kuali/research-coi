@@ -30,7 +30,7 @@ export class Entity extends ResponsiveComponent {
       let worstDeclaration = 1;
 
       this.props.declarations.forEach(element => {
-        if (worstDeclaration !== 2 && element.type > 1) {
+        if (worstDeclaration !== 2 && element.typeCd > 1) {
           worstDeclaration = element.typeCd;
         }
       });

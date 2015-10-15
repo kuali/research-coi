@@ -182,11 +182,11 @@ export class Dashboard extends ResponsiveComponent {
     });
 
     if (annualDisclosureEnabled) {
-      let annualDisclosureInRoute = this.state.disclosureSummaries.find(summary=> {
-        return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL &&
-          (summary.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS || summary.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED);
+      let annualDisclosure = this.state.disclosureSummaries.find(summary=> {
+        return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL;
       });
-      if (!annualDisclosureInRoute) {
+      if (!annualDisclosure || annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
+          annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
         annualDisclosureButton = (
         <div>
           <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.ANNUAL}/>
