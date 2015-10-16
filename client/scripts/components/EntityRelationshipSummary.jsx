@@ -34,21 +34,17 @@ export default class EntityRelationshipSummary extends React.Component {
         marginBottom: 7,
         fontWeight: 'bold'
       },
-      commentLabel: {
-        marginBottom: 5
-      },
       commentValue: {
         fontSize: 14
       }
     };
 
     let commentSection;
-    if (this.props.comment) {
+    if (this.props.relationship.comments) {
       commentSection = (
         <div>
-          <div style={styles.commentLabel}>Comments:</div>
           <div style={styles.commentValue}>
-            {this.props.relationship.comment}
+            {this.props.relationship.comments}
           </div>
         </div>
       );
@@ -64,35 +60,35 @@ export default class EntityRelationshipSummary extends React.Component {
     if (this.props.relationship.relationship === 'Travel') {
       let dateRange = formatDate(this.props.relationship.travel.startDate) + ' - ' + formatDate(this.props.relationship.travel.endDate);
       return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.summary}>
-          {removeButton}
-          <span>
-            {this.props.relationship.person + ' • '}
-            {this.props.relationship.relationship + ' • '}
-            {this.props.relationship.travel.amount ? numeral(this.props.relationship.travel.amount).format('$0,0.00') + ' • ' : ''}
-            {this.props.relationship.travel.destination ? this.props.relationship.travel.destination + ' • ' : ''}
-            {dateRange ? dateRange + ' • ' : ''}
-            {this.props.relationship.travel.reason ? this.props.relationship.travel.reason : ''}
-          </span>
+        <div style={merge(styles.container, this.props.style)}>
+          <div style={styles.summary}>
+            {removeButton}
+            <span>
+              {this.props.relationship.person + ' • '}
+              {this.props.relationship.relationship + ' • '}
+              {this.props.relationship.travel.amount ? numeral(this.props.relationship.travel.amount).format('$0,0.00') + ' • ' : ''}
+              {this.props.relationship.travel.destination ? this.props.relationship.travel.destination + ' • ' : ''}
+              {dateRange ? dateRange + ' • ' : ''}
+              {this.props.relationship.travel.reason ? this.props.relationship.travel.reason : ''}
+            </span>
+          </div>
+          {commentSection}
         </div>
-        {commentSection}
-      </div>
       );
     } else {
       return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.summary}>
-          {removeButton}
-          <span>
-            {this.props.relationship.person + ' • '}
-            {this.props.relationship.relationship + ' • '}
-            {this.props.relationship.type ? this.props.relationship.type + ' • ' : ''}
-            {this.props.relationship.amount ? this.props.relationship.amount : ''}
-          </span>
+        <div style={merge(styles.container, this.props.style)}>
+          <div style={styles.summary}>
+            {removeButton}
+            <span>
+              {this.props.relationship.person + ' • '}
+              {this.props.relationship.relationship + ' • '}
+              {this.props.relationship.type ? this.props.relationship.type + ' • ' : ''}
+              {this.props.relationship.amount ? this.props.relationship.amount : ''}
+            </span>
+          </div>
+          {commentSection}
         </div>
-        {commentSection}
-      </div>
       );
     }
 

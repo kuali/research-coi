@@ -141,7 +141,7 @@ class _PIReviewStore extends AutoBindingStore {
       }
       entityToRevise.relationships.push({
         amount: '',
-        comment: params.newRelationship.comments,
+        comments: params.newRelationship.comments,
         finEntityId: entityToRevise.id,
         id: new Date().getTime(),
         person: '',

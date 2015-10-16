@@ -326,7 +326,7 @@ let getEntitiesAnswers = (knex, entityIDs) => {
 };
 
 let getRelationships = (knex, entityIDs) => {
-  return knex.select('r.id', 'r.comments as comment', 'c.description as relationship', 'p.description as person', 't.description as type', 'a.description as amount', 'r.fin_entity_id as finEntityId')
+  return knex.select('r.id', 'r.comments as comments', 'c.description as relationship', 'p.description as person', 't.description as type', 'a.description as amount', 'r.fin_entity_id as finEntityId')
     .from('relationship as r')
     .innerJoin('relationship_category_type as c', 'c.type_cd', 'r.relationship_cd')
     .innerJoin('relationship_person_type as p', 'p.type_cd', 'r.person_cd')

@@ -123,7 +123,7 @@ export default class EntitySummary extends React.Component {
         width: '100%',
         display: 'inline-block'
       },
-      bottomLeft:{
+      bottomLeft: {
         width: '70%',
         display: 'inline-block'
       }
