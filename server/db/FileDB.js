@@ -9,9 +9,9 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let getFile = (dbInfo, key) => {
+export let getFile = (dbInfo, id) => {
   let knex = getKnex(dbInfo);
-  return knex.select('*').from('file').where('key', key);
+  return knex.select('*').from('file').where('id', id);
 };
 
 export let saveNewFiles = (dbInfo, body, files, userName) => {
@@ -40,11 +40,11 @@ export let saveNewFiles = (dbInfo, body, files, userName) => {
   });
 };
 
-export let deleteFiles = (dbInfo, file) => {
+export let deleteFiles = (dbInfo, file, fileId) => {
   let knex = getKnex(dbInfo);
   return knex('file')
     .del()
-    .where('id', file.id)
+    .where('id', fileId)
     .then(()=>{
       return new Promise((resolve, reject) => {
         FileService.deleteFile(file.key, err => {

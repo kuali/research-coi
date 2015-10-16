@@ -363,7 +363,7 @@ class _AdminStore extends AutoBindingStore {
 
     formData.append('data', JSON.stringify({refId: this.applicationState.selectedDisclosure.id, type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN}));
 
-    request.put('/api/coi/file')
+    request.post('/api/coi/files')
     .send(formData)
     .end((err, res) => {
       if (!err) {
@@ -378,7 +378,7 @@ class _AdminStore extends AutoBindingStore {
   deleteManagementPlan() {
     let file = this.applicationState.selectedDisclosure.managementPlan[0];
 
-    request.del('/api/coi/file')
+    request.del('/api/coi/files/' + file.id)
     .send(file)
     .type('application/json')
     .end(err=>{
