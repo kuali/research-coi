@@ -13,7 +13,7 @@ catch (err) {
 }
 
 export let init = app => {
-  app.get('/api/coi/disclosures/archived', function(req, res, next) {
+  app.get('/api/coi/archived-disclosures', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     DisclosureDB.getArchivedDisclosures(req.dbInfo, userInfo.id)
       .then(disclosures => {
@@ -123,9 +123,9 @@ export let init = app => {
       });
   });
 
-  app.post('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.displayName, req.params.id, JSON.parse(req.body.entity), req.files)
+    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, userInfo.displayName, req.params.id, req.params.entityId, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
         res.send(financialEntity);
       })
@@ -135,7 +135,7 @@ export let init = app => {
       });
   });
 
-  app.put('/api/coi/disclosure/:id/financial-entity', upload.array('attachments'), function(req, res, next) {
+  app.post('/api/coi/disclosures/:id/financial-entities', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     DisclosureDB.saveNewFinancialEntity(req.dbInfo, userInfo.displayName, req.params.id, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
@@ -147,7 +147,7 @@ export let init = app => {
       });
   });
 
-  app.put('/api/coi/disclosure/:id/declaration', function(req, res, next) {
+  app.post('/api/coi/disclosures/:id/declarations', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
     DisclosureDB.saveDeclaration(req.dbInfo, userInfo.id, req.params.id, req.body)
@@ -163,9 +163,9 @@ export let init = app => {
   /**
     @Role: PI
   */
-  app.post('/api/coi/disclosure/:id/declaration', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/declarations/:declarationId', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.params.id, req.body)
+    DisclosureDB.saveExistingDeclaration(req.dbInfo, userInfo.id, req.params.id, req.params.declarationId, req.body)
       .then(() => {
         res.sendStatus(202);
       })
@@ -175,7 +175,7 @@ export let init = app => {
       });
   });
 
-  app.post('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
+  app.post('/api/coi/disclosures/:id/question-answers', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     DisclosureDB.saveNewQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
       .then(answer => {
@@ -187,9 +187,9 @@ export let init = app => {
       });
   });
 
-  app.put('/api/coi/disclosure/:id/question/answer', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/question-answers/:questionId', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
-    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.body)
+    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, userInfo.id, req.params.id, req.params.questionId, req.body)
       .then(answer => {
         res.send(answer);
       })
@@ -199,7 +199,7 @@ export let init = app => {
       });
   });
 
-  app.post('/api/coi/disclosure/:id/submit', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/submit', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     DisclosureDB.submit(req.dbInfo, userInfo.displayName, req.params.id)
       .then(() => {
@@ -211,7 +211,7 @@ export let init = app => {
       });
   });
 
-  app.post('/api/coi/disclosure/:id/approve', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/approve', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     DisclosureDB.approve(req.dbInfo, req.body, userInfo.displayName, req.params.id)
     .then(() => {
@@ -223,7 +223,7 @@ export let init = app => {
     });
   });
 
-  app.post('/api/coi/disclosure/:id/reject', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/reject', function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     DisclosureDB.reject(req.dbInfo, userInfo.displayName, req.params.id)
     .then(() => {
@@ -235,7 +235,7 @@ export let init = app => {
     });
   });
 
-  app.post('/api/coi/disclosure/:id/comment', (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/comments', (req, res, next) => {
     let userInfo = getUserInfo(req.cookies.authToken);
     let comment = req.body;
 
@@ -267,7 +267,7 @@ export let init = app => {
     }
   });
 
-  app.get('/api/coi/disclosure/:id/pi-review-items', (req, res, next) => {
+  app.get('/api/coi/disclosures/:id/pi-review-items', (req, res, next) => {
     let userInfo = getUserInfo(req.cookies.authToken);
 
     PIReviewDB.getPIReviewItems(req.dbInfo, userInfo, req.params.id)
@@ -280,7 +280,7 @@ export let init = app => {
       });
   });
 
-  app.delete('/api/coi/disclosure/:id/answers', (req, res, next) => {
+  app.delete('/api/coi/disclosures/:id/question-answers', (req, res, next) => {
     let userInfo = getUserInfo(req.cookies.authToken);
 
     let toDelete = [];

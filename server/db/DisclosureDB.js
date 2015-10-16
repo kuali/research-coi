@@ -101,13 +101,13 @@ export let saveNewFinancialEntity = (dbInfo, displayName, disclosureId, financia
     });
 };
 
-export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, body, files) => {
+export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, entityId, body, files) => {
   let knex = getKnex(dbInfo);
 
   let financialEntity = body;
 
   return knex('fin_entity')
-    .where('id', financialEntity.id)
+    .where('id', entityId)
     .update({
       disclosure_id: disclosureId,
       active: financialEntity.active,
@@ -120,7 +120,7 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
       queries.push(
         knex('relationship')
         .select('*')
-        .where('fin_entity_id', financialEntity.id)
+        .where('fin_entity_id', entityId)
         .then(dbRelationships => {
           return Promise.all(
             dbRelationships.filter(dbRelationship => {
@@ -144,11 +144,11 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
 
       financialEntity.relationships.map(relationship => {
         if (isNaN(relationship.id)) {
-          relationship.finEntityId = financialEntity.id;
+          relationship.finEntityId = entityId;
           queries.push(
             knex('relationship')
             .insert({
-              fin_entity_id: financialEntity.id,
+              fin_entity_id: entityId,
               relationship_cd: relationship.relationshipCd,
               person_cd: relationship.personCd,
               type_cd: !relationship.typeCd ? null : relationship.typeCd,
@@ -190,7 +190,7 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
             }).then(result =>{
               answer.id = result[0];
               return knex('fin_entity_answer').insert({
-                fin_entity_id: financialEntity.id,
+                fin_entity_id: entityId,
                 questionnaire_answer_id: result[0]});
             })
           );
@@ -201,7 +201,7 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
         knex.select('*')
           .from('file')
           .where({
-            ref_id: financialEntity.id,
+            ref_id: entityId,
             file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
           })
           .then(results => {
@@ -234,7 +234,7 @@ export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, bod
       files.forEach(file => {
         let fileData = {
           file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
-          ref_id: financialEntity.id,
+          ref_id: entityId,
           type: file.mimetype,
           key: file.filename,
           name: file.originalname,
@@ -272,7 +272,7 @@ export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
   });
 };
 
-export let saveExistingDeclaration = (dbInfo, userId, disclosureId, record) => {
+export let saveExistingDeclaration = (dbInfo, userId, disclosureId, declarationId, record) => {
   let knex = getKnex(dbInfo);
 
   return isDisclosureUsers(dbInfo, disclosureId, userId)
@@ -285,7 +285,7 @@ export let saveExistingDeclaration = (dbInfo, userId, disclosureId, record) => {
           })
           .where({
             'disclosure_id': disclosureId,
-            id: record.id
+            id: declarationId
           });
       }
       else {
@@ -310,13 +310,13 @@ export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   });
 };
 
-export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
+export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questionId, body) => {
   let knex = getKnex(dbInfo);
   return knex.select('qa.id')
     .from('disclosure_answer as da')
     .innerJoin('questionnaire_answer as qa', 'da.questionnaire_answer_id', 'qa.id')
     .where('da.disclosure_id', disclosureId)
-    .andWhere('qa.question_id', body.questionId)
+    .andWhere('qa.question_id', questionId)
     .then(result => {
       return knex('questionnaire_answer')
         .where('id', result[0].id)
