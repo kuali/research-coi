@@ -35,7 +35,7 @@ export default class AdditionalReviewPanel extends React.Component {
     let files = this.props.files.map(file=>{
       return (
         <div key={file.id} style={{marginBottom: 5}}>
-          <a style={styles.fileLink} href={'/api/coi/file/' + encodeURIComponent(file.key)}>{file.name}</a>
+          <a style={styles.fileLink} href={'/api/coi/files/' + encodeURIComponent(file.id)}>{file.name}</a>
         </div>
       );
     });

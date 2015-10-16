@@ -153,7 +153,7 @@ export default class EntitySummary extends React.Component {
     let files = this.props.entity.files.map(file=>{
       return (
         <div key={file.id} style={{marginBottom: 5}}>
-          <a style={{color: window.config.colors.three, borderBottom: '1px dotted' + window.config.colors.three}} href={'/api/coi/file/' + encodeURIComponent(file.key)}>{file.name}</a>
+          <a style={{color: window.config.colors.three, borderBottom: '1px dotted' + window.config.colors.three}} href={'/api/coi/files/' + encodeURIComponent(file.id)}>{file.name}</a>
         </div>
       );
     });

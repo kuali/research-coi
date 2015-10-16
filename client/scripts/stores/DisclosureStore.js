@@ -1157,7 +1157,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     formData.append('data', JSON.stringify({refId: this.applicationState.currentDisclosureState.disclosure.id, type: COIConstants.FILE_TYPE.DISCLOSURE}));
 
-    request.put('/api/coi/file')
+    request.post('/api/coi/files')
     .send(formData)
     .end((err, res) => {
       if (!err) {
@@ -1172,7 +1172,7 @@ class _DisclosureStore extends AutoBindingStore {
   deleteDisclosureAttachment(index) {
     let file = this.files[index];
 
-    request.del('/api/coi/file')
+    request.del('/api/coi/files/' + file.id)
     .send(file)
     .type('application/json')
     .end(err=>{

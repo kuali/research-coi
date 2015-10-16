@@ -13,14 +13,14 @@ catch (err) {
 }
 
 export let init = app => {
-  app.get('/api/coi/file/:key', function(req, res, next){
-    FileDb.getFile(req.dbInfo, req.params.key)
+  app.get('/api/coi/files/:id', function(req, res, next){
+    FileDb.getFile(req.dbInfo, req.params.id)
       .then(result => {
         if (result.length < 1) {
           res.sendStatus(403);
         } else {
           res.setHeader('Content-disposition', 'attachment; filename="' + result[0].name + '"');
-          FileService.getFile(req.dbInfo, req.params.key, error => {
+          FileService.getFile(req.dbInfo, result[0].key, error => {
             if (error) {
               console.error(error);
               next(error);
@@ -34,7 +34,7 @@ export let init = app => {
       });
   });
 
-  app.put('/api/coi/file', upload.array('attachments'), function(req, res, next) {
+  app.post('/api/coi/files', upload.array('attachments'), function(req, res, next) {
     let userInfo = getUserInfo(req.cookies.authToken);
     FileDb.saveNewFiles(req.dbInfo, JSON.parse(req.body.data), req.files, userInfo.displayName)
       .then(result => {
@@ -45,8 +45,8 @@ export let init = app => {
       });
   });
 
-  app.delete('/api/coi/file', function(req, res, next) {
-    FileDb.deleteFiles(req.dbInfo, req.body)
+  app.delete('/api/coi/files/:id', function(req, res, next) {
+    FileDb.deleteFiles(req.dbInfo, req.body, req.params.id)
     .then(() => {
       res.sendStatus(202);
     })
