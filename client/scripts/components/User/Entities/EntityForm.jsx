@@ -20,6 +20,18 @@ export class EntityForm extends React.Component {
     this.undo = this.undo.bind(this);
     this.isCurrentStepValid = this.isCurrentStepValid.bind(this);
     this.onAnswerQuestion = this.onAnswerQuestion.bind(this);
+    this.onAddRelationship = this.onAddRelationship.bind(this);
+    this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
+  }
+
+  onRemoveRelationship(relationshipId, entityId) {
+    DisclosureActions.removeEntityRelationship(relationshipId, entityId);
+  }
+
+  onAddRelationship() {
+    const stepNumber = 2;
+    DisclosureActions.turnOffValidation(stepNumber);
+    DisclosureActions.addEntityRelationship(this.props.entity.id);
   }
 
   onAnswerQuestion(newValue, questionId) {
@@ -179,6 +191,8 @@ export class EntityForm extends React.Component {
             style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
             validating={this.props.appState.validatingEntityRelationshipStep}
             appState={this.props.appState}
+            onAddRelationship={this.onAddRelationship}
+            onRemoveRelationship={this.onRemoveRelationship}
           />
         </div>
       );
@@ -237,6 +251,8 @@ export class EntityForm extends React.Component {
               name={this.props.entity.name}
               appState={this.props.appState}
               validating={this.props.appState.validatingEntityRelationshipStep}
+              onAddRelationship={this.onAddRelationship}
+              onRemoveRelationship={this.onRemoveRelationship}
             />
           );
 

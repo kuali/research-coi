@@ -14,6 +14,14 @@ class _PIReviewActions {
   reviseEntityQuestion(reviewId, questionId, newValue) {
     this.dispatch({reviewId, questionId, newValue});
   }
+
+  addRelationship(reviewId, newRelationship) {
+    this.dispatch({reviewId, newRelationship});
+  }
+
+  removeRelationship(entityId, reviewId, relationshipId) {
+    this.dispatch({entityId, reviewId, relationshipId});
+  }
 }
 
 export default alt.createActions(_PIReviewActions);

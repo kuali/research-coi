@@ -21,11 +21,13 @@ export class EntityFormInformationStep extends React.Component {
   }
 
   getAnswer(id) {
-    let answerForId = this.props.answers.find(answer => {
-      return answer.questionId === id;
-    });
-    if (answerForId) {
-      return answerForId.answer.value;
+    if (this.props.answers) {
+      let answerForId = this.props.answers.find(answer => {
+        return answer.questionId === id;
+      });
+      if (answerForId) {
+        return answerForId.answer.value;
+      }
     }
   }
 

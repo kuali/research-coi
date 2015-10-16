@@ -26,10 +26,16 @@ export default class QuestionToReview extends React.Component {
         width: 60,
         fontSize: 22
       },
+      commentSection: {
+        width: 300
+      },
       comments: {
-        width: 300,
         backgroundColor: '#EEE',
-        borderRadius: 5
+        borderRadius: 5,
+        padding: '1px 10px'
+      },
+      comment: {
+        margin: '15px 10px'
       },
       commentTitle: {
         fontWeight: 'bold',
@@ -42,9 +48,6 @@ export default class QuestionToReview extends React.Component {
       },
       commentText: {
         fontSize: 14
-      },
-      comment: {
-        margin: '11px 15px'
       },
       completed: {
         color: 'green',
@@ -100,8 +103,10 @@ export default class QuestionToReview extends React.Component {
           respondedTo={this.props.question.respondedTo}
         />
 
-        <span style={styles.comments}>
-          {comments}
+        <span style={styles.commentSection}>
+          <div style={styles.comments}>
+            {comments}
+          </div>
         </span>
       </div>
     );

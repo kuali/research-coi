@@ -15,7 +15,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   loadDisclosure(disclosureId) {
-    request.get('/api/coi/disclosure/' + disclosureId + '/pi-review-items')
+    request.get(`/api/coi/disclosure/${disclosureId}/pi-review-items`)
            .end((err, disclosure) => {
              if (!err) {
                this.disclosure = disclosure.body;
@@ -41,9 +41,11 @@ class _PIReviewStore extends AutoBindingStore {
 
                if (this.disclosure.entities) {
                  this.disclosure.entities.forEach(entity => {
-                   entity.answers.forEach(answer => {
-                     answer.answer = JSON.parse(answer.answer);
-                   });
+                   if (entity.answers) {
+                     entity.answers.forEach(answer => {
+                       answer.answer = JSON.parse(answer.answer);
+                     });
+                   }
                  });
                }
 
@@ -77,7 +79,7 @@ class _PIReviewStore extends AutoBindingStore {
       declarationToRespondTo.reviewedOn = new Date();
     }
 
-    request.post('/api/coi/pi-response/' + params.reviewId)
+    request.post(`/api/coi/pi-response/${params.reviewId}`)
       .send({
         comment: params.comment
       })
@@ -96,7 +98,7 @@ class _PIReviewStore extends AutoBindingStore {
       questionToRevise.reviewedOn = new Date();
     }
 
-    request.put('/api/coi/pi-revise/' + params.reviewId)
+    request.put(`/api/coi/pi-revise/${params.reviewId}`)
       .send({
         answer: params.newAnswer
       })
@@ -126,6 +128,55 @@ class _PIReviewStore extends AutoBindingStore {
       .send({
         answer: params.newValue
       })
+      .end();
+  }
+
+  addRelationship(params) {
+    let entityToRevise = this.disclosure.entities.find(entity => {
+      return params.reviewId === entity.reviewId;
+    });
+    if (entityToRevise) {
+      if (entityToRevise.relationships === undefined) {
+        entityToRevise.relationships = [];
+      }
+      entityToRevise.relationships.push({
+        amount: '',
+        comments: params.newRelationship.comments,
+        finEntityId: entityToRevise.id,
+        id: new Date().getTime(),
+        person: '',
+        relationship: '',
+        type: ''
+      });
+
+      entityToRevise.reviewedOn = new Date();
+      entityToRevise.revised = 1;
+    }
+
+    request.post(`/api/coi/pi-revise/${params.reviewId}/entity-relationship`)
+      .send(params.newRelationship)
+      .end((err, relationships) => {
+        if (!err) {
+          entityToRevise.relationships = relationships.body;
+          this.emitChange();
+        }
+      });
+  }
+
+  removeRelationship(params) {
+    let entityToRevise = this.disclosure.entities.find(entity => {
+      return params.entityId === entity.id;
+    });
+    if (entityToRevise) {
+      entityToRevise.relationships = entityToRevise.relationships.filter(relationship => {
+        return relationship.id !== params.relationshipId;
+      });
+
+      entityToRevise.reviewedOn = new Date();
+      entityToRevise.revised = 1;
+    }
+
+    request.del(`/api/coi/pi-revise/${params.reviewId}/entity-relationship/${params.relationshipId}`)
       .end();
   }
 }
