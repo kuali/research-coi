@@ -26,7 +26,6 @@ export default class DeclarationSection extends React.Component {
           DECLARATIONS
         </div>
         <div className="fill" style={styles.body}>
-
           
         </div>
       </div>

@@ -41,9 +41,11 @@ class _PIReviewStore extends AutoBindingStore {
 
                if (this.disclosure.entities) {
                  this.disclosure.entities.forEach(entity => {
-                   entity.answers.forEach(answer => {
-                     answer.answer = JSON.parse(answer.answer);
-                   });
+                   if (entity.answers) {
+                     entity.answers.forEach(answer => {
+                       answer.answer = JSON.parse(answer.answer);
+                     });
+                   }
                  });
                }
 

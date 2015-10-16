@@ -28,7 +28,7 @@ export default class EntitySection extends React.Component {
           entity={entitytoReview}
           respondedTo={entitytoReview.respondedTo}
           revised={entitytoReview.revised}
-          style={{marginBottom: index === this.props.entitiesToReview.length - 1 ? 0 : 40}}
+          style={{marginBottom: index === this.props.entitiesToReview.length - 1 ? 0 : 50}}
         />
       );
     });

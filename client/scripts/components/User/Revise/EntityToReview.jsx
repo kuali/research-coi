@@ -104,15 +104,9 @@ export default class EntityToReview extends React.Component {
   render() {
     let styles = {
       container: {
-        marginBottom: 40
       },
       statusIcon: {
         width: 45
-      },
-      comments: {
-        width: 300,
-        backgroundColor: '#EEE',
-        borderRadius: 5
       },
       commentTitle: {
         fontWeight: 'bold',
@@ -126,8 +120,16 @@ export default class EntityToReview extends React.Component {
       commentText: {
         fontSize: 14
       },
+      commentSection: {
+        width: 300
+      },
+      comments: {
+        backgroundColor: '#EEE',
+        borderRadius: 5,
+        padding: '1px 10px'
+      },
       comment: {
-        margin: '11px 15px'
+        margin: '15px 10px'
       },
       completed: {
         color: 'green',
@@ -244,8 +246,10 @@ export default class EntityToReview extends React.Component {
             {actions}
           </div>
         </span>
-        <span style={styles.comments}>
-          {comments}
+        <span style={styles.commentSection}>
+          <div style={styles.comments}>
+            {comments}
+          </div>
         </span>
       </div>
     );
