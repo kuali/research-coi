@@ -1,6 +1,5 @@
 import React from 'react/addons';
 import {merge} from '../merge';
-import {DisclosureActions} from '../actions/DisclosureActions';
 import {formatDate} from '../formatDate';
 import numeral from 'numeral';
 
@@ -12,12 +11,7 @@ export default class EntityRelationshipSummary extends React.Component {
   }
 
   remove() {
-    if (this.props.onRemove) {
-      this.props.onRemove(this.props.relationship.id, this.props.entityId);
-    }
-    else {
-      DisclosureActions.removeEntityRelationship(this.props.relationship.id, this.props.entityId);
-    }
+    this.props.onRemove(this.props.relationship.id, this.props.entityId);
   }
 
   render() {
