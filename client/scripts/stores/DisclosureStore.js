@@ -88,7 +88,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   refreshArchivedDisclosures() {
-    request.get('/api/coi/disclosures/archived')
+    request.get('/api/coi/archived-disclosures')
            .end((err, disclosures) => {
              if (!err) {
                this.archivedDisclosures = disclosures.body;
@@ -178,12 +178,12 @@ class _DisclosureStore extends AutoBindingStore {
     };
 
     if (answer.id) {
-      request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
+      request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers/' + answer.questionId)
         .send(answer)
         .type('application/json')
         .end(processResponse);
     } else {
-      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/question/answer')
+      request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers')
         .send(answer)
         .type('application/json')
         .end(processResponse);
@@ -403,7 +403,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     let formData = new FormData();
     formData.append('entity', JSON.stringify(entity));
-    request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
+    request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id)
     .send(formData)
     .end();
   }
@@ -616,7 +616,7 @@ class _DisclosureStore extends AutoBindingStore {
       formData.append('entity', JSON.stringify(entity));
 
       if (this.applicationState.entityStates[entity.id].editing === true) {
-        request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
+        request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id )
         .send(formData)
         .end((err, res) => {
           if (!err) {
@@ -674,7 +674,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     formData.append('entity', JSON.stringify(entity));
 
-    request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entity')
+    request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities')
     .send(formData)
     .end((err, res) => {
       if (!err) {
@@ -789,7 +789,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     if (existing) {
       existing.typeCd = params.typeCd;
-      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
       .send(existing)
       .type('application/json')
       .end();
@@ -800,7 +800,7 @@ class _DisclosureStore extends AutoBindingStore {
         typeCd: params.typeCd
       };
       newRelation[field] = params.projectId;
-      request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
       .send(newRelation)
       .type('application/json')
       .end((err, res) => {
@@ -834,7 +834,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     if (existing) {
       existing.comments = params.comments;
-      request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
       .send(existing)
       .type('application/json')
       .end();
@@ -845,7 +845,7 @@ class _DisclosureStore extends AutoBindingStore {
         comments: params.comments
       };
       newRelation[field] = params.projectId;
-      request.put('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/declaration')
+      request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
       .send(newRelation)
       .type('application/json')
       .end((err, res) => {
@@ -1189,7 +1189,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   submitDisclosure() {
-    request.post('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/submit')
+    request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/submit')
     .end((err)=>{
       if (!err) {
         this.resetDisclosure();
@@ -1208,7 +1208,7 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
     if (toDelete.length > 0) {
-      request.del('/api/coi/disclosure/' + this.applicationState.currentDisclosureState.disclosure.id + '/answers')
+      request.del('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers')
         .send({
           toDelete: toDelete
         })

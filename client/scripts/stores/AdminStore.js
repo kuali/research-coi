@@ -177,7 +177,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   approveDisclosure() {
-    request.post('/api/coi/disclosure/' + this.applicationState.selectedDisclosure.id + '/approve')
+    request.put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/approve')
     .send(this.applicationState.selectedDisclosure)
     .type('application/json')
     .end((err)=>{
@@ -194,7 +194,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   rejectDisclosure() {
-    request.post('/api/coi/disclosure/' + this.applicationState.selectedDisclosure.id + '/reject')
+    request.put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/reject')
     .end((err)=>{
       if (!err) {
         this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
@@ -338,7 +338,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   makeComment(params) {
-    request.post('/api/coi/disclosure/' + this.applicationState.selectedDisclosure.id + '/comment')
+    request.post('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/comments')
            .send({
              topicSection: params.topicSection,
              topicId: params.topicId,
