@@ -1,5 +1,6 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
+import ProjectToReview from './ProjectToReview';
 
 export default class DeclarationSection extends React.Component {
   render() {
@@ -16,17 +17,29 @@ export default class DeclarationSection extends React.Component {
         borderBottom: '1px solid #DDD'
       },
       body: {
-        padding: '10px 18px'
+        padding: 23
       }
     };
+
+    let projects = this.props.declarationsToReview;
+
+    let projectsJSX = projects.map((project, index) => {
+      return (
+        <ProjectToReview
+          key={project.id}
+          project={project}
+          last={index === projects.length - 1}
+        />
+      );
+    });
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.title}>
-          DECLARATIONS
+          PROJECT DECLARATIONS
         </div>
         <div className="fill" style={styles.body}>
-          
+          {projectsJSX}
         </div>
       </div>
     );

@@ -164,6 +164,10 @@ let getEntityComments = (knex, disclosureId, topicIDs) => {
   return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.ENTITIES);
 };
 
+let getDeclarationComments = (knex, disclosureId, topicIDs) => {
+  return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.PROJECTS);
+};
+
 let setAdminCommentsForTopics = (topics, comments, currentUserId) => {
   comments.filter(comment => {
     return comment.userId !== currentUserId;
@@ -391,8 +395,97 @@ let getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
   });
 };
 
+let getProjects = (knex, declarationIDs, disclosureId) => {
+  return knex.distinct('p.title', 'p.id')
+    .from('declaration as d')
+    .innerJoin('project as p', 'p.id', 'd.project_id')
+    .whereIn('d.id', declarationIDs)
+    .andWhere({
+      'd.disclosure_id': disclosureId
+    });
+};
+
+let getEntitesWithTheseDeclarations = (knex, declarationIDs, disclosureId) => {
+  return knex.distinct('fe.name', 'fe.id', 'd.project_id as projectId')
+    .from('declaration as d')
+    .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
+    .whereIn('d.id', declarationIDs)
+    .andWhere({
+      'd.disclosure_id': disclosureId
+    });
+};
+
+let getDeclarations = (knex, declarationIDs, disclosureId) => {
+  return knex.select('d.id', 'd.fin_entity_id as finEntityId', 'd.project_id as projectId', 'd.type_cd as typeCd', 'd.comments')
+    .from('declaration as d')
+    .whereIn('d.id', declarationIDs)
+    .andWhere({
+      'd.disclosure_id': disclosureId
+    });
+};
+
+let setPIReviewDataForDeclaration = (target, declaration, reviewItems) => {
+  let piReviewRecord = reviewItems.find(item => {
+    return item.targetId === declaration.id;
+  });
+
+  if (piReviewRecord) {
+    target.reviewId = piReviewRecord.id;
+    target.reviewedOn = piReviewRecord.reviewedOn;
+    target.revised = piReviewRecord.revised;
+    target.respondedTo = piReviewRecord.respondedTo;
+  }
+};
+
 let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
-  return ['coming soon' + reviewItems.length];
+  let declarationIDs = extractTargetIDs(reviewItems);
+
+  return Promise.all([
+    getProjects(knex, declarationIDs, disclosureId),
+    getEntitesWithTheseDeclarations(knex, declarationIDs, disclosureId),
+    getDeclarationComments(knex, disclosureId, declarationIDs),
+    getDeclarations(knex, declarationIDs, disclosureId)
+  ]).then(([projects, entities, comments, declarations]) => {
+    entities.forEach(entity => {
+      let declaration = declarations.find(declarationToTest => {
+        return declarationToTest.finEntityId === entity.id && declarationToTest.projectId === entity.projectId;
+      });
+
+      if (declaration) {
+        entity.comments = declaration.comments;
+        entity.relationshipCd = declaration.typeCd;
+
+        entity.adminComments = comments.filter(comment => {
+          return comment.topicId === declaration.id && comment.userId !== userId;
+        }).sort((a, b) => {
+          return a.date - b.date;
+        });
+
+        let piResponse = comments.find(comment => {
+          return comment.topicId === declaration.id && comment.userId === userId;
+        });
+
+        if (piResponse) {
+          entity.piResponse = piResponse;
+        }
+
+        setPIReviewDataForDeclaration(entity, declaration, reviewItems);
+      }
+
+      let project = projects.find(projectToCheck => {
+        return projectToCheck.id === entity.projectId;
+      });
+
+      if (project) {
+        if (project.entities === undefined) {
+          project.entities = [];
+        }
+        project.entities.push(entity);
+      }
+    });
+
+    return projects;
+  });
 };
 
 export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
@@ -501,25 +594,23 @@ export let removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => 
     });
 };
 
-// ///-------------------------------------------------------
+export let reviseDeclaration = (dbInfo, userInfo, reviewId, declaration) => {
+  let knex = getKnex(dbInfo);
 
-//       let entityQueries = rows.filter(row => {
-//         return row.targetType === COIConstants.DISCLOSURE_STEP.ENTITIES;
-//       }).map(entity => {
-//         return knex.select('fe.id')
-//           .from('fin_entity as fe')
-//           .where({
-//             'fe.id': entity.targetId
-//           });
-//       });
-
-//       let declarationQueries = rows.filter(row => {
-//         return row.targetType === COIConstants.DISCLOSURE_STEP.PROJECTS;
-//       }).map(declaration => {
-//         return knex.select('de.id')
-//           .from('declaration as de')
-//           .where({
-//             'de.id': declaration.targetId
-//           });
-//       });
-// };
+  return knex.select('target_id as targetId')
+    .from('pi_review')
+    .where('id', reviewId)
+    .then(targetIds => {
+      return Promise.all([
+        knex('declaration')
+          .update({
+            comments: declaration.comment,
+            type_cd: declaration.disposition
+          })
+          .where({
+            id: targetIds[0].targetId
+          }),
+        updateReviewRecord(knex, reviewId, {revised: true})
+      ]);
+    });
+};

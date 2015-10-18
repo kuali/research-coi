@@ -118,4 +118,25 @@ export let init = app => {
         next(err);
       });
   });
+
+  app.put('/api/coi/pi-revise/:reviewId/declaration', (req, res, next) => {
+    let userInfo = getUserInfo(req.cookies.authToken);
+
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+      .then(isAllowed => {
+        if (isAllowed) {
+          PIReviewDB.reviseDeclaration(req.dbInfo, userInfo, req.params.reviewId, req.body)
+            .then(() => {
+              res.status(204).end();
+            });
+        }
+        else {
+          res.status(403).end();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
 };

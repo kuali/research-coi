@@ -15,7 +15,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   loadDisclosure(disclosureId) {
-    request.get(`/api/coi/disclosure/${disclosureId}/pi-review-items`)
+    request.get(`/api/coi/disclosures/${disclosureId}/pi-review-items`)
            .end((err, disclosure) => {
              if (!err) {
                this.disclosure = disclosure.body;
@@ -72,12 +72,16 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRespondTo.reviewedOn = new Date();
     }
 
-    let declarationToRespondTo = this.disclosure.declarations.find(declaration => {
-      return params.reviewId === declaration.reviewId;
+    this.disclosure.declarations.forEach(project => {
+      project.entities.forEach(entity => {
+        if (entity.reviewId === params.reviewId) {
+          entity.reviewedOn = new Date();
+          entity.piResponse = {
+            text: params.comment
+          };
+        }
+      });
     });
-    if (declarationToRespondTo) {
-      declarationToRespondTo.reviewedOn = new Date();
-    }
 
     request.post(`/api/coi/pi-response/${params.reviewId}`)
       .send({
@@ -177,6 +181,26 @@ class _PIReviewStore extends AutoBindingStore {
     }
 
     request.del(`/api/coi/pi-revise/${params.reviewId}/entity-relationship/${params.relationshipId}`)
+      .end();
+  }
+
+  reviseDeclaration(params) {
+    this.disclosure.declarations.forEach(project => {
+      project.entities.forEach(entity => {
+        if (entity.reviewId === params.reviewId) {
+          entity.reviewedOn = new Date();
+          entity.revised = true;
+          entity.comments = params.declarationComment;
+          entity.relationshipCd = parseInt(params.disposition);
+        }
+      });
+    });
+
+    request.put(`/api/coi/pi-revise/${params.reviewId}/declaration`)
+      .send({
+        disposition: params.disposition,
+        comment: params.declarationComment
+      })
       .end();
   }
 }
