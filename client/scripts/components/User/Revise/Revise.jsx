@@ -6,7 +6,6 @@ import QuestionnaireSection from './QuestionnaireSection';
 import EntitySection from './EntitySection';
 import DeclarationSection from './DeclarationSection';
 import SidePanel from './SidePanel';
-import {COIConstants} from '../../../../../COIConstants';
 import PIReviewActions from '../../../actions/PIReviewActions';
 
 export class Revise extends React.Component {

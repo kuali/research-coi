@@ -124,7 +124,7 @@ export default class EntityToReview extends React.Component {
         width: 300
       },
       comments: {
-        backgroundColor: '#EEE',
+        backgroundColor: '#D8E9EB',
         borderRadius: 5,
         padding: '1px 10px'
       },
