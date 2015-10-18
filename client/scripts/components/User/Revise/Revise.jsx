@@ -67,7 +67,9 @@ export class Revise extends React.Component {
 
       if (this.state.disclosure.declarations && this.state.disclosure.declarations.length > 0) {
         declarations = (
-          <DeclarationSection />
+          <DeclarationSection
+            declarationsToReview={this.state.disclosure.declarations}
+          />
         );
       }
     }

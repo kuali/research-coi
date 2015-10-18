@@ -22,6 +22,10 @@ class _PIReviewActions {
   removeRelationship(entityId, reviewId, relationshipId) {
     this.dispatch({entityId, reviewId, relationshipId});
   }
+
+  reviseDeclaration(reviewId, disposition, declarationComment) {
+    this.dispatch({reviewId, disposition, declarationComment});
+  }
 }
 
 export default alt.createActions(_PIReviewActions);
