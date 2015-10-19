@@ -7,8 +7,8 @@ export default function authentication(req, res, next) {
       res.sendStatus(401);
     } else {
       req.userInfo = userInfo;
+      next();
     }
-    next();
   }).catch(err => {
     console.err(err);
     next(err);

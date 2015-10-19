@@ -13,6 +13,7 @@ export let init = app => {
   });
 
   app.post('/api/coi/projects', function(req, res, next) {
+    console.log(req.body)
     ProjectDB.saveProjects(req.dbInfo, req.body)
       .then(projects => {
         res.send(projects);

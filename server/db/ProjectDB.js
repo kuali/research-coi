@@ -105,7 +105,7 @@ let saveNewProjects = (dbInfo, projects) => {
       sponsor_name: projects.sponsorName,
       start_date: projects.startDate,
       end_date: projects.endDate
-    })
+    }).debug()
     .then(insertResult => {
       if (projects.persons) {
         let projectId = insertResult[0];
@@ -115,7 +115,7 @@ let saveNewProjects = (dbInfo, projects) => {
             person_id: person.personId,
             source_person_type: person.sourcePersonType,
             role_cd: person.roleCode
-          });
+          }).debug();
         });
         return Promise.all(inserts);
       }
