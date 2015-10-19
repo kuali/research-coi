@@ -49,6 +49,25 @@ export default class QuestionSummary extends React.Component {
       }
     };
 
+    let commentLink;
+    if (this.props.question.parent) {
+      commentLink = (
+        <span style={{width: 125}}>
+          <span>
+          </span>
+        </span>
+      );
+    }
+    else {
+      commentLink = (
+        <span style={styles.commentLink} onClick={this.showComments}>
+          <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>
+            COMMENTS ({this.props.commentCount})
+          </span>
+        </span>
+      );
+    }
+
     return (
       <div style={merge(styles.container, this.props.style)} className="flexbox row">
         <span style={this.props.question.parent ? styles.subQuestionNumber : styles.number}>
@@ -63,9 +82,7 @@ export default class QuestionSummary extends React.Component {
                 {this.props.question.type === COIConstants.QUESTION_TYPE.DATE ? formatDate(this.props.answer) : this.props.answer}
               </div>
             </span>
-            <span style={styles.commentLink} onClick={this.showComments}>
-              <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS ({this.props.commentCount})</span>
-            </span>
+            {commentLink}
           </div>
         </span>
       </div>
