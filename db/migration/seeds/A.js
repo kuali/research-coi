@@ -272,7 +272,7 @@ function insertDisclosure(knex) {
 }
 
 function insertFakeProject(knex, userId) {
-  insertProject(knex, 'Longevity of car batteries').then(function(results) {
+  return insertProject(knex, 'Longevity of car batteries').then(function(results) {
     return insertProjectPerson(knex, userId, 'PI', results[0]);
   });
 }
@@ -490,8 +490,12 @@ exports.seed = function(knex, Promise) {
     ]);
   }).then(function() {
     console.log('Seed - Lots of fake projects');
-    for (var i = 501; i < 1000; i++) {
-      insertFakeProject(knex, getNextUserId());
-    }
+    return Promise.all([
+      insertFakeProject(knex, 100000000008),
+      insertFakeProject(knex, 10000000005),
+      insertFakeProject(knex, 10000000007),
+      insertFakeProject(knex, 10000000030),
+      insertFakeProject(knex, 10000000002),
+    ]);
   });
 };

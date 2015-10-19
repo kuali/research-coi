@@ -8,8 +8,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
+import apiAuthentication from './middleware/apiAuthentication';
 import viewRenderer from './middleware/viewRenderer';
-import {authView} from './AuthService';
 
 export function run() {
   let app = express();
@@ -25,8 +25,8 @@ export function run() {
 
   app.use('/coi', express.static('client'));
   app.use(cookieParser());
-  app.use('/coi/auth', authView); // Temporary stubbed out auth service
-  app.use(authentication);
+  app.use('/api', apiAuthentication);
+  app.use('/coi', authentication);
   app.use('/coi', viewRenderer);
   app.use('/coi/', viewRenderer);
   app.use(bodyParser.json());

@@ -1,10 +1,8 @@
 import * as ConfigDB from '../db/ConfigDB';
-import {getUserInfo} from '../AuthService';
 
 export let init = app => {
   app.get('/api/coi/config', function(req, res, next) {
-    let userInfo = getUserInfo(req.cookies.authToken);
-    ConfigDB.getConfig(req.dbInfo, userInfo.id)
+    ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
       .then(config => {
         res.send(config);
       })
@@ -15,10 +13,9 @@ export let init = app => {
   });
 
   app.post('/api/coi/config/', function(req, res, next){
-    let userInfo = getUserInfo(req.cookies.authToken);
-    ConfigDB.setConfig(req.dbInfo, userInfo.id, req.body)
+    ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body)
       .then(() => {
-        return ConfigDB.getConfig(req.dbInfo, userInfo.id)
+        return ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
           .then(config => {
             res.send(config);
           });

@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import request from 'superagent';
 import {COIConstants} from '../../../COIConstants';
+import {processResponse} from '../HttpUtils';
 
 class _ConfigStore extends AutoBindingStore {
   constructor() {
@@ -566,7 +567,8 @@ class _ConfigStore extends AutoBindingStore {
 
   loadAllConfigData() {
     // Then load config and re-render
-    request.get('/api/coi/config', (err, config) => {
+    request.get('/api/coi/config')
+    .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
 
@@ -574,7 +576,7 @@ class _ConfigStore extends AutoBindingStore {
 
         this.emitChange();
       }
-    });
+    }));
     this.dirty = false;
   }
 
@@ -582,12 +584,12 @@ class _ConfigStore extends AutoBindingStore {
     request.post('/api/coi/config')
     .send(this.config)
     .type('application/json')
-    .end((err, config) => {
+    .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
         this.emitChange();
       }
-    });
+    }));
     this.dirty = false;
   }
 

@@ -1,11 +1,8 @@
 import * as PIDB from '../db/PIDB';
 import * as PIReviewDB from '../db/PIReviewDB';
-import {getUserInfo} from '../AuthService';
 
 export let init = app => {
   app.get('/api/coi/pi', function(req, res, next) {
-    let userInfo = getUserInfo(req.cookies.authToken); // eslint-disable-line no-unused-vars
-    // authorization check here
     PIDB.getSuggestions(req.dbInfo, req.query.term)
       .then(suggestions => {
         res.send(suggestions);
@@ -20,12 +17,10 @@ export let init = app => {
     @Role: PI
   */
   app.post('/api/coi/pi-response/:reviewId', (req, res, next) => {
-    let userInfo = getUserInfo(req.cookies.authToken);
-
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
-          return PIReviewDB.recordPIResponse(req.dbInfo, userInfo, req.params.reviewId, req.body.comment)
+          return PIReviewDB.recordPIResponse(req.dbInfo, req.userInfo, req.params.reviewId, req.body.comment)
             .then(response => {
               res.send(response);
             });
@@ -44,12 +39,11 @@ export let init = app => {
     @Role: PI
   */
   app.put('/api/coi/pi-revise/:reviewId', (req, res, next) => {
-    let userInfo = getUserInfo(req.cookies.authToken);
 
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
-          return PIReviewDB.reviseQuestion(req.dbInfo, userInfo, req.params.reviewId, req.body.answer)
+          return PIReviewDB.reviseQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.body.answer)
             .then(response => {
               res.send(response);
             });
@@ -65,12 +59,11 @@ export let init = app => {
   });
 
   app.put('/api/coi/pi-revise/:reviewId/entity-question/:questionId', (req, res, next) => {
-    let userInfo = getUserInfo(req.cookies.authToken);
 
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
-          return PIReviewDB.reviseEntityQuestion(req.dbInfo, userInfo, req.params.reviewId, req.params.questionId, req.body.answer)
+          return PIReviewDB.reviseEntityQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.params.questionId, req.body.answer)
             .then(response => {
               res.send(response);
             });
@@ -86,12 +79,10 @@ export let init = app => {
   });
 
   app.post('/api/coi/pi-revise/:reviewId/entity-relationship', (req, res, next) => {
-    let userInfo = getUserInfo(req.cookies.authToken);
-
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
-          return PIReviewDB.addRelationship(req.dbInfo, userInfo, req.params.reviewId, req.body)
+          return PIReviewDB.addRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.body)
             .then(response => {
               res.send(response);
             });
@@ -107,9 +98,7 @@ export let init = app => {
   });
 
   app.delete('/api/coi/pi-revise/:reviewId/entity-relationship/:relationshipId', (req, res, next) => {
-    let userInfo = getUserInfo(req.cookies.authToken);
-
-    PIReviewDB.removeRelationship(req.dbInfo, userInfo, req.params.reviewId, req.params.relationshipId)
+    PIReviewDB.removeRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.params.relationshipId)
       .then(() => {
         res.status(204).end();
       })
@@ -120,12 +109,10 @@ export let init = app => {
   });
 
   app.put('/api/coi/pi-revise/:reviewId/declaration', (req, res, next) => {
-    let userInfo = getUserInfo(req.cookies.authToken);
-
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, userInfo.id)
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
-          PIReviewDB.reviseDeclaration(req.dbInfo, userInfo, req.params.reviewId, req.body)
+          PIReviewDB.reviseDeclaration(req.dbInfo, req.userInfo, req.params.reviewId, req.body)
             .then(() => {
               res.status(204).end();
             });

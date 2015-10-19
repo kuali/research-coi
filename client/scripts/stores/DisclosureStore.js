@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import request from 'superagent';
 import {COIConstants} from '../../../COIConstants';
+import {processResponse} from '../HttpUtils';
 
 let cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
@@ -79,22 +80,22 @@ class _DisclosureStore extends AutoBindingStore {
 
   loadProjects() {
     request.get('/api/coi/projects')
-           .end((err, projects) => {
+           .end(processResponse((err, projects) => {
              if (!err) {
                this.projects = projects.body;
                this.emitChange();
              }
-           });
+           }));
   }
 
   refreshArchivedDisclosures() {
     request.get('/api/coi/archived-disclosures')
-           .end((err, disclosures) => {
+           .end(processResponse((err, disclosures) => {
              if (!err) {
                this.archivedDisclosures = disclosures.body;
                this.emitChange();
              }
-           });
+           }));
   }
 
   loadArchivedDisclosures() {
@@ -103,22 +104,22 @@ class _DisclosureStore extends AutoBindingStore {
 
   loadArchivedDisclosureDetail(id) {
     request.get('/api/coi/disclosures/' + id)
-           .end((err, disclosure) => {
+           .end(processResponse((err, disclosure) => {
              if (!err) {
                this.archivedDisclosureDetail = disclosure.body;
                this.emitChange();
              }
-           });
+           }));
   }
 
   refreshDisclosureSummaries() {
     request.get('/api/coi/disclosure-user-summaries')
-           .end((err, disclosures) => {
-             if (!err) {
-               this.disclosureSummariesForUser = disclosures.body;
-               this.emitChange();
-             }
-           });
+      .end(processResponse((err, disclosures) => {
+        if (!err) {
+          this.disclosureSummariesForUser = disclosures.body;
+          this.emitChange();
+        }
+      }));
   }
 
   loadDisclosureSummaries() {
@@ -128,7 +129,7 @@ class _DisclosureStore extends AutoBindingStore {
   loadDisclosureData(disclosureType) {
     if (disclosureType === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
       request.get('/api/coi/disclosures/annual')
-      .end((err, disclosure) => {
+      .end(processResponse((err, disclosure) => {
         if (!err) {
           this.applicationState.currentDisclosureState.disclosure = disclosure.body;
           this.entities = disclosure.body.entities;
@@ -136,7 +137,7 @@ class _DisclosureStore extends AutoBindingStore {
           this.files = disclosure.body.files;
           this.emitChange();
         }
-      });
+      }));
     }
   }
 
@@ -167,26 +168,31 @@ class _DisclosureStore extends AutoBindingStore {
       this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
     }
 
-    let processResponse = (err, res) => {
-      if (!err) {
-        answer.id = res.body.id;
-        if (question.advance) {
-          this.advanceQuestion();
-        }
-        this.emitChange();
-      }
-    };
-
     if (answer.id) {
       request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers/' + answer.questionId)
         .send(answer)
         .type('application/json')
-        .end(processResponse);
+        .end(processResponse((err, res) => {
+          if (!err) {
+            answer.id = res.body.id;
+            if (question.advance) {
+              this.advanceQuestion();
+            }
+            this.emitChange();
+          }
+        }));
     } else {
       request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers')
         .send(answer)
         .type('application/json')
-        .end(processResponse);
+        .end(processResponse((err, res) => {
+          if(!err) {answer.id = res.body.id;
+            if (question.advance) {
+              this.advanceQuestion();
+            }
+            this.emitChange();
+          }
+        }));
     }
   }
 
@@ -405,7 +411,7 @@ class _DisclosureStore extends AutoBindingStore {
     formData.append('entity', JSON.stringify(entity));
     request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id)
     .send(formData)
-    .end();
+    .end(processResponse(() => {}));
   }
 
   setEntityType(params) {
@@ -618,7 +624,7 @@ class _DisclosureStore extends AutoBindingStore {
       if (this.applicationState.entityStates[entity.id].editing === true) {
         request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id )
         .send(formData)
-        .end((err, res) => {
+        .end(processResponse((err, res) => {
           if (!err) {
 
             let index = this.entities.findIndex(existingEntity => {
@@ -637,7 +643,7 @@ class _DisclosureStore extends AutoBindingStore {
             this.applicationState.entityStates[entity.id].editing = false;
             this.emitChange();
           }
-        });
+        }));
       } else {
         if (!this.applicationState.entityStates[entity.id]) {
           this.applicationState.entityStates[entity.id] = {};
@@ -676,7 +682,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities')
     .send(formData)
-    .end((err, res) => {
+    .end(processResponse((err, res) => {
       if (!err) {
         this.entities.push(res.body);
 
@@ -689,7 +695,7 @@ class _DisclosureStore extends AutoBindingStore {
 
         this.emitChange();
       }
-    });
+    }));
   }
 
   changeActiveEntityView(newView) {
@@ -792,7 +798,7 @@ class _DisclosureStore extends AutoBindingStore {
       request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
       .send(existing)
       .type('application/json')
-      .end();
+      .end(processResponse(() => {}));
     }
     else {
       let newRelation = {
@@ -803,12 +809,12 @@ class _DisclosureStore extends AutoBindingStore {
       request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
       .send(newRelation)
       .type('application/json')
-      .end((err, res) => {
+      .end(processResponse((err, res) => {
         if (!err) {
           this.declarations.push(res.body);
           this.emitChange();
         }
-      });
+      }));
     }
   }
 
@@ -837,7 +843,7 @@ class _DisclosureStore extends AutoBindingStore {
       request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
       .send(existing)
       .type('application/json')
-      .end();
+      .end(processResponse(() => {}));
     }
     else {
       let newRelation = {
@@ -848,12 +854,12 @@ class _DisclosureStore extends AutoBindingStore {
       request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
       .send(newRelation)
       .type('application/json')
-      .end((err, res) => {
+      .end(processResponse((err, res) => {
         if (!err) {
           this.declarations.push(res.body);
           this.emitChange();
         }
-      });
+      }));
     }
   }
 
@@ -1159,14 +1165,14 @@ class _DisclosureStore extends AutoBindingStore {
 
     request.post('/api/coi/files')
     .send(formData)
-    .end((err, res) => {
+    .end(processResponse((err, res) => {
       if (!err) {
         res.body.forEach(file => {
           this.files.push(file);
           this.emitChange();
         });
       }
-    });
+    }));
   }
 
   deleteDisclosureAttachment(index) {
@@ -1175,12 +1181,12 @@ class _DisclosureStore extends AutoBindingStore {
     request.del('/api/coi/files/' + file.id)
     .send(file)
     .type('application/json')
-    .end(err=>{
+    .end(processResponse((err) => {
       if (!err) {
         this.files.splice(index, 1);
         this.emitChange();
       }
-    });
+    }));
   }
 
 
@@ -1190,13 +1196,13 @@ class _DisclosureStore extends AutoBindingStore {
 
   submitDisclosure() {
     request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/submit')
-    .end((err)=>{
+    .end(processResponse(err => {
       if (!err) {
         this.resetDisclosure();
         window.location = '#/dashboard';
         this.toggleConfirmationMessage();
       }
-    });
+    }));
   }
 
   deleteAnswersTo(toDelete) {
@@ -1213,7 +1219,7 @@ class _DisclosureStore extends AutoBindingStore {
           toDelete: toDelete
         })
         .type('application/json')
-        .end();
+        .end(processResponse(() => {}));
     }
   }
 }

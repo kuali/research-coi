@@ -1,6 +1,5 @@
 import * as FileService from '../services/fileService/FileService';
 import * as FileDb from '../db/FileDB';
-import {getUserInfo} from '../AuthService';
 import multer from 'multer';
 
 let upload;
@@ -35,8 +34,7 @@ export let init = app => {
   });
 
   app.post('/api/coi/files', upload.array('attachments'), function(req, res, next) {
-    let userInfo = getUserInfo(req.cookies.authToken);
-    FileDb.saveNewFiles(req.dbInfo, JSON.parse(req.body.data), req.files, userInfo.displayName)
+    FileDb.saveNewFiles(req.dbInfo, JSON.parse(req.body.data), req.files, req.userInfo.name)
       .then(result => {
         res.send(result);
       }).catch(err => {

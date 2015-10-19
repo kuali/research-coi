@@ -382,14 +382,14 @@ export let addComment = (dbInfo, userInfo, comment) => {
       topic_section: comment.topicSection,
       topic_id: comment.topicId,
       text: comment.text,
-      user_id: userInfo.id,
-      author: userInfo.displayName,
+      user_id: userInfo.schoolId,
+      author: userInfo.name,
       date: new Date(),
       pi_visible: comment.visibleToPI,
       reviewer_visible: comment.visibleToReviewers
     }).then(() => {
       let statements = [
-        retrieveComments(dbInfo, userInfo.id, comment.disclosureId)
+        retrieveComments(dbInfo, userInfo.schoolId, comment.disclosureId)
       ];
       if (comment.visibleToPI) {
         statements.push(
@@ -728,7 +728,7 @@ export let getArchivedDisclosures = (dbInfo, userId) => { //eslint-disable-line 
 export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {
   let knex = getKnex(dbInfo);
 
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.id)
+  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (isSubmitter) {
         return knex.select('qa.id as questionnaireAnswerId', 'da.id as disclosureAnswerId')

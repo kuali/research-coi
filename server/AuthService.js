@@ -1,65 +1,43 @@
-export function authView(req, res) {
-  res.sendFile('auth.html', {
-    root: 'views'
+import https from 'https';
+import cache from './LruCache';
+
+export function getUserInfo(req) {
+  let options = {
+    protocol: 'https:',
+    host: req.hostname,
+    path: '/api/users/current',
+    headers: {
+      'Accept': 'application/vnd.kuali.v1+json',
+      'Authorization': 'Bearer ' + req.cookies.authToken
+    }
+  };
+
+  let cachedUserInfo = req.cookies.authToken ? cache.get(req.cookies.authToken) : undefined;
+  return new Promise((resolve, reject) => {
+    if (cachedUserInfo) {
+      resolve(cachedUserInfo);
+    } else {
+      https.get(options, response => {
+        if (response.statusCode !== 200) {
+          resolve();
+        } else {
+          let body = '';
+          response.on('data', function (chunk) {
+            body += chunk;
+          });
+          response.on('end', () => {
+            let userInfo = JSON.parse(body);
+            cache.set(req.cookies.authToken, userInfo);
+            resolve(userInfo);
+          });
+          response.on('error', (err) => {
+            reject(err);
+          });
+        }
+      }).on('error', err => {
+        reject(err);
+      });
+    }
   });
-}
 
-function hashCode(toHash){
-  var hash = 0;
-  if (toHash.length === 0) { return hash; }
-  for (let i = 0; i < toHash.length; i++) {
-    let char = toHash.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return hash;
-}
-
-export function getUserInfo(token) {
-  let lowercaseToken = token.toLowerCase();
-  if (lowercaseToken.startsWith('a')) {
-    return {
-      id: hashCode(token),
-      name: token + 'user',
-      username: token,
-      email: token + '@email.com',
-      createdAt: 1259218800,
-      updatedAt: 1259218800,
-      role: 'admin',
-      firstName: 'Admin',
-      lastName: 'User',
-      displayName: 'Admin User',
-      phone: '801-322-3323'
-    };
-  }
-  else if (lowercaseToken.startsWith('su')) {
-    return {
-      id: hashCode(token),
-      name: token + 'user',
-      username: token,
-      email: token + '@email.com',
-      createdAt: 1259218800,
-      updatedAt: 1259218800,
-      role: 'admin',
-      firstName: 'Super',
-      lastName: 'User',
-      displayName: 'Super User',
-      phone: '801-322-3323'
-    };
-  }
-  else {
-    return {
-      id: hashCode(token),
-      name: token + 'user',
-      username: token,
-      email: token + '@email.com',
-      createdAt: 1259218800,
-      updatedAt: 1259218800,
-      role: 'user',
-      firstName: 'Normal',
-      lastName: 'User',
-      displayName: 'Normal User',
-      phone: '801-322-3323'
-    };
-  }
 }

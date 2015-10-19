@@ -21,7 +21,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('title', 200);
     table.integer('disposition_type_cd').references('type_cd').inTable('disposition_type');
     table.integer('status_cd').notNullable().references('status_cd').inTable('disclosure_status');
-    table.integer('user_id').notNullable();
+    table.string('user_id', 40).notNullable();
     table.string('submitted_by', 200).index();
     table.dateTime('submitted_date').index();
     table.dateTime('revised_date').index();
@@ -204,7 +204,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('topic_section', 50).notNullable();
     table.integer('topic_id').unsigned().notNullable();
     table.text('text').notNullable();
-    table.integer('user_id').notNullable();
+    table.string('user_id', 40).notNullable();
     table.string('author', 50).notNullable();
     table.dateTime('date').notNullable();
     table.boolean('pi_visible').notNullable();
