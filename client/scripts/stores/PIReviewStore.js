@@ -2,6 +2,7 @@ import PIReviewActions from '../actions/PIReviewActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import request from 'superagent';
+import {processResponse} from '../HttpUtils';
 
 class _PIReviewStore extends AutoBindingStore {
   constructor() {
@@ -16,7 +17,7 @@ class _PIReviewStore extends AutoBindingStore {
 
   loadDisclosure(disclosureId) {
     request.get(`/api/coi/disclosures/${disclosureId}/pi-review-items`)
-           .end((err, disclosure) => {
+           .end(processResponse((err, disclosure) => {
              if (!err) {
                this.disclosure = disclosure.body;
 
@@ -51,7 +52,7 @@ class _PIReviewStore extends AutoBindingStore {
 
                this.emitChange();
              }
-           });
+           }));
   }
 
   respond(params) {
@@ -87,8 +88,8 @@ class _PIReviewStore extends AutoBindingStore {
       .send({
         comment: params.comment
       })
-      .end(() => {
-      });
+      .end(processResponse(() => {
+      }));
   }
 
   revise(params) {
@@ -106,7 +107,7 @@ class _PIReviewStore extends AutoBindingStore {
       .send({
         answer: params.newAnswer
       })
-      .end();
+      .end(processResponse(() => {}));
   }
 
   reviseEntityQuestion(params) {
@@ -132,7 +133,7 @@ class _PIReviewStore extends AutoBindingStore {
       .send({
         answer: params.newValue
       })
-      .end();
+      .end(processResponse(() => {}));
   }
 
   addRelationship(params) {
@@ -159,12 +160,12 @@ class _PIReviewStore extends AutoBindingStore {
 
     request.post(`/api/coi/pi-revise/${params.reviewId}/entity-relationship`)
       .send(params.newRelationship)
-      .end((err, relationships) => {
+      .end(processResponse((err, relationships) => {
         if (!err) {
           entityToRevise.relationships = relationships.body;
           this.emitChange();
         }
-      });
+      }));
   }
 
   removeRelationship(params) {
@@ -181,7 +182,7 @@ class _PIReviewStore extends AutoBindingStore {
     }
 
     request.del(`/api/coi/pi-revise/${params.reviewId}/entity-relationship/${params.relationshipId}`)
-      .end();
+      .end(processResponse(() => {}));
   }
 
   reviseDeclaration(params) {
@@ -201,7 +202,7 @@ class _PIReviewStore extends AutoBindingStore {
         disposition: params.disposition,
         comment: params.declarationComment
       })
-      .end();
+      .end(processResponse(() => {}));
   }
 }
 

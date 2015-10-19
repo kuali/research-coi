@@ -2,6 +2,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import {TravelLogActions} from '../actions/TravelLogActions.js';
 import alt from '../alt';
 import request from 'superagent';
+import {processResponse} from '../HttpUtils';
 
 class _TravelLogStore extends AutoBindingStore {
   constructor() {
@@ -12,12 +13,12 @@ class _TravelLogStore extends AutoBindingStore {
 
   refreshTravelLogEntries() {
     request.get('/api/coi/travelLogEntries/')
-      .end((err, travelLog) => {
+      .end(processResponse((err, travelLog) => {
         if (!err) {
           this.entries = travelLog.body;
           this.emitChange();
         }
-      });
+      }));
   }
 
   loadTravelLogEntries() {

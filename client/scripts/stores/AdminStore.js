@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import {COIConstants} from '../../../COIConstants';
 import alt from '../alt';
 import request from 'superagent';
+import {processResponse} from '../HttpUtils';
 
 const PAGE_SIZE = 40;
 
@@ -51,13 +52,13 @@ class _AdminStore extends AutoBindingStore {
   loadSummaryCount() {
     request.get('/api/coi/disclosure-summaries/count')
            .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
-           .end((err, theCount) => {
+           .end(processResponse((err, theCount) => {
              if (!err) {
                this.applicationState.summaryCount = theCount.body[0].rowcount;
                this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
                this.emitChange();
              }
-           });
+           }));
   }
 
   refreshDisclosures() {
@@ -69,7 +70,7 @@ class _AdminStore extends AutoBindingStore {
            .query({sortDirection: this.applicationState.sortDirection})
            .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
            .query({start: this.applicationState.offset})
-           .end((err, summaries) => {
+           .end(processResponse((err, summaries) => {
              if (!err) {
                this.disclosureSummaries = summaries.body;
                this.applicationState.loadingMore = false;
@@ -83,17 +84,17 @@ class _AdminStore extends AutoBindingStore {
 
                this.emitChange();
              }
-           });
+           }));
   }
 
   loadDisclosure(id) {
     request.get('/api/coi/disclosures/' + id)
-           .end((err, disclosure) => {
+           .end(processResponse((err, disclosure) => {
              if (!err) {
                this.applicationState.selectedDisclosure = disclosure.body;
                this.emitChange();
              }
-           });
+           }));
   }
 
   changeSort(newSortField) {
@@ -180,13 +181,13 @@ class _AdminStore extends AutoBindingStore {
     request.put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/approve')
     .send(this.applicationState.selectedDisclosure)
     .type('application/json')
-    .end((err)=>{
+    .end(processResponse(err => {
       if (!err) {
         this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
         this.applicationState.showingApproval = !this.applicationState.showingApproval;
         this.emitChange();
       }
-    });
+    }));
   }
 
   toggleRejectionConfirmation() {
@@ -195,13 +196,13 @@ class _AdminStore extends AutoBindingStore {
 
   rejectDisclosure() {
     request.put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/reject')
-    .end((err)=>{
+    .end(processResponse(err => {
       if (!err) {
         this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
         this.applicationState.showingRejection = !this.applicationState.showingRejection;
         this.emitChange();
       }
-    });
+    }));
   }
 
   clearTypeFilter() {
@@ -255,7 +256,7 @@ class _AdminStore extends AutoBindingStore {
            .query({sortDirection: this.applicationState.sortDirection})
            .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
            .query({start: this.applicationState.offset})
-           .end((err, summaries) => {
+           .end(processResponse((err, summaries) => {
              if (!err) {
                this.disclosureSummaries = this.disclosureSummaries.concat(summaries.body);
                this.applicationState.loadingMore = false;
@@ -263,7 +264,7 @@ class _AdminStore extends AutoBindingStore {
 
                this.emitChange();
              }
-           });
+           }));
   }
 
   updateCurrentComments(transitionLast) {
@@ -346,13 +347,13 @@ class _AdminStore extends AutoBindingStore {
              visibleToReviewers: params.visibleToReviewers,
              text: params.commentText
            })
-           .end((err, updatedComments) => {
+           .end(processResponse((err, updatedComments) => {
              if (!err) {
                this.applicationState.selectedDisclosure.comments = updatedComments.body;
                this.updateCurrentComments(true);
                this.emitChange();
              }
-           });
+           }));
   }
 
   addManagementPlan(files) {
@@ -365,14 +366,14 @@ class _AdminStore extends AutoBindingStore {
 
     request.post('/api/coi/files')
     .send(formData)
-    .end((err, res) => {
+    .end(processResponse((err, res) => {
       if (!err) {
         res.body.forEach(file => {
           this.applicationState.selectedDisclosure.managementPlan.push(file);
           this.emitChange();
         });
       }
-    });
+    }));
   }
 
   deleteManagementPlan() {
@@ -381,12 +382,12 @@ class _AdminStore extends AutoBindingStore {
     request.del('/api/coi/files/' + file.id)
     .send(file)
     .type('application/json')
-    .end(err=>{
+    .end(processResponse((err) => {
       if (!err) {
         this.applicationState.selectedDisclosure.managementPlan.splice(0, 1);
         this.emitChange();
       }
-    });
+    }));
   }
 }
 

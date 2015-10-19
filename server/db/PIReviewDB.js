@@ -35,7 +35,7 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
       'c.disclosure_id': disclosureId,
       'c.topic_section': targetType,
       'c.topic_id': targetId,
-      'c.user_id': userInfo.id
+      'c.user_id': userInfo.schoolId
     })
     .then(comments => {
       if (comments.length > 0) {
@@ -47,7 +47,7 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
             'c.disclosure_id': disclosureId,
             'c.topic_section': targetType,
             'c.topic_id': targetId,
-            'c.user_id': userInfo.id
+            'c.user_id': userInfo.schoolId
           });
       }
       else {
@@ -56,8 +56,8 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
           'topic_section': targetType,
           'topic_id': targetId,
           'text': comment,
-          'user_id': userInfo.id,
-          'author': userInfo.displayName,
+          'user_id': userInfo.schoolId,
+          'author': userInfo.name,
           'date': new Date(),
           'pi_visible': true,
           'reviewer_visible': true
@@ -90,7 +90,7 @@ export let recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
     .from('pi_review')
     .where('id', reviewId)
     .then(reviewItem => {
-      return isDisclosureUsers(dbInfo, reviewItem[0].disclosureId, userInfo.id)
+      return isDisclosureUsers(dbInfo, reviewItem[0].disclosureId, userInfo.schoolId)
         .then(isSubmitter => {
           if (isSubmitter) {
             return Promise.all([
@@ -496,21 +496,21 @@ export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
     .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
     .where({
       'p.disclosure_id': disclosureId,
-      'd.user_id': userInfo.id
+      'd.user_id': userInfo.schoolId
     })
     .then(rows => {
       return Promise.all([
-        getQuestionsToReview(knex, disclosureId, userInfo.id,
+        getQuestionsToReview(knex, disclosureId, userInfo.schoolId,
           rows.filter(row => {
             return row.targetType === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
           })
         ),
-        getEntitiesToReview(knex, disclosureId, userInfo.id,
+        getEntitiesToReview(knex, disclosureId, userInfo.schoolId,
           rows.filter(row => {
             return row.targetType === COIConstants.DISCLOSURE_STEP.ENTITIES;
           })
         ),
-        getDeclarationsToReview(knex, disclosureId, userInfo.id,
+        getDeclarationsToReview(knex, disclosureId, userInfo.schoolId,
           rows.filter(row => {
             return row.targetType === COIConstants.DISCLOSURE_STEP.PROJECTS;
           })
@@ -578,7 +578,7 @@ let verifyRelationshipIsUsers = (knex, userId, relationshipId) => {
 export let removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => {
   let knex = getKnex(dbInfo);
 
-  return verifyRelationshipIsUsers(knex, userInfo.id, relationshipId)
+  return verifyRelationshipIsUsers(knex, userInfo.schoolId, relationshipId)
     .then(isAllowed => {
       if (isAllowed) {
         return Promise.all([
