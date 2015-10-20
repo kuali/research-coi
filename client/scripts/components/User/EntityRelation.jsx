@@ -42,14 +42,14 @@ export class EntityRelation extends ResponsiveComponent {
 
     let declarationTypeOptions = this.props.declarationTypes.map(type =>{
       return (
-        <div>
+        <div key={type.typeCd}>
           <input
-          type="radio"
-          ref="none"
-          checked={this.props.typeCd === type.typeCd}
-          value={type.typeCd}
-          onChange={this.relationChosen}
-          name={this.props.entity.id + 'relation' + this.props.projectId}
+            type="radio"
+            ref="none"
+            checked={this.props.typeCd === type.typeCd}
+            value={type.typeCd}
+            onChange={this.relationChosen}
+            name={this.props.entity.id + 'relation' + this.props.projectId}
           />
           <span style={{fontSize: 14, marginLeft: 6}}>{type.description}</span>
         </div>

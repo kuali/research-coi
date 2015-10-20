@@ -673,3 +673,14 @@ export let reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
       }
     });
 };
+
+export let getPIResponseInfo = (dbInfo, userInfo, disclosureId) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('target_id as targetId', 'target_type as targetType', 'reviewed_on as reviewedOn')
+    .from('pi_review')
+    .where('disclosure_id', disclosureId)
+    .then(reviewRecords => {
+      return reviewRecords;
+    });
+};

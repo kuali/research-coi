@@ -25,7 +25,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
       container: {
         color: 'white',
         fontSize: 15,
-        width: 185,
+        width: 210,
         backgroundColor: window.config.colors.three,
         padding: '20px 17px'
       },

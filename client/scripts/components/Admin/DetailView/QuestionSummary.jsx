@@ -20,6 +20,11 @@ export default class QuestionSummary extends React.Component {
       container: {
         marginBottom: 10
       },
+      highlighted: {
+        borderLeft: '10px solid #F57C00',
+        marginLeft: -20,
+        paddingLeft: 10
+      },
       number: {
         width: 50,
         fontSize: 20
@@ -68,8 +73,13 @@ export default class QuestionSummary extends React.Component {
       );
     }
 
+    let effectiveStyle = merge(styles.container, this.props.style);
+    if (this.props.changedByPI) {
+      effectiveStyle = merge(effectiveStyle, styles.highlighted);
+    }
+
     return (
-      <div style={merge(styles.container, this.props.style)} className="flexbox row">
+      <div style={effectiveStyle} className="flexbox row">
         <span style={this.props.question.parent ? styles.subQuestionNumber : styles.number}>
           <div>{this.props.question.numberToShow}</div>
         </span>

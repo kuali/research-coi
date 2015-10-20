@@ -7,6 +7,18 @@ export class AdminQuestionnaireSummary extends React.Component {
     super();
 
     this.getCommentCount = this.getCommentCount.bind(this);
+    this.wasRespondedTo = this.wasRespondedTo.bind(this);
+  }
+
+  wasRespondedTo(id) {
+    if (this.props.piResponses && Array.isArray(this.props.piResponses)) {
+      return this.props.piResponses.some(response => {
+        return response.targetId === id;
+      });
+    }
+    else {
+      return false;
+    }
   }
 
   getCommentCount(id) {
@@ -46,6 +58,7 @@ export class AdminQuestionnaireSummary extends React.Component {
             question={question}
             answer={this.props.answers[question.id]}
             commentCount={this.getCommentCount(question.id)}
+            changedByPI={this.wasRespondedTo(question.id)}
           />
         );
       });

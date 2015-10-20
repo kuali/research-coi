@@ -6,6 +6,18 @@ export class AdminEntitiesSummary extends React.Component {
   constructor() {
     super();
     this.getCommentCount = this.getCommentCount.bind(this);
+    this.wasRespondedTo = this.wasRespondedTo.bind(this);
+  }
+
+  wasRespondedTo(id) {
+    if (this.props.piResponses && Array.isArray(this.props.piResponses)) {
+      return this.props.piResponses.some(response => {
+        return response.targetId === id;
+      });
+    }
+    else {
+      return false;
+    }
   }
 
   getCommentCount(id) {
@@ -47,6 +59,7 @@ export class AdminEntitiesSummary extends React.Component {
             questions={this.props.questions}
             entity={entity}
             commentCount={this.getCommentCount(entity.id)}
+            changedByPI={this.wasRespondedTo(entity.id)}
           />
         );
       });

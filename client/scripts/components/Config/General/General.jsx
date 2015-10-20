@@ -6,7 +6,6 @@ import ActionPanel from '../ActionPanel';
 import DisclosureTypes from './DisclosureTypes';
 import NotificationDetails from './NotificationDetails';
 import ConfigStore from '../../../stores/ConfigStore';
-import SponsorLookup from './SponsorLookup';
 
 export default class General extends React.Component {
   constructor() {
