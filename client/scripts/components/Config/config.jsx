@@ -4,9 +4,7 @@ let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
-import request from 'superagent';
-import cookies from 'cookies-js';
-import {processResponse} from '../../HttpUtils';
+import {processResponse, createRequest} from '../../HttpUtils';
 
 import {AppHeader} from '../AppHeader';
 import GeneralConfiguration from './General/General';
@@ -50,8 +48,7 @@ let routes = (
 );
 
 // Then load config and re-render
-request.get('/api/coi/config')
-.set('Authorization', 'Bearer ' + cookies.get('authToken'))
+createRequest().get('/api/coi/config')
 .end(processResponse((err, config) => {
   if (!err) {
     window.config = config.body;

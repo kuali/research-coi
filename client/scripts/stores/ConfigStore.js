@@ -1,10 +1,8 @@
 import ConfigActions from '../actions/ConfigActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
-import request from 'superagent';
-import cookies from 'cookies-js';
 import {COIConstants} from '../../../COIConstants';
-import {processResponse} from '../HttpUtils';
+import {processResponse, createRequest} from '../HttpUtils';
 
 class _ConfigStore extends AutoBindingStore {
   constructor() {
@@ -568,8 +566,7 @@ class _ConfigStore extends AutoBindingStore {
 
   loadAllConfigData() {
     // Then load config and re-render
-    request.get('/api/coi/config')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/config')
     .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
@@ -583,8 +580,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   saveAll() {
-    request.post('/api/coi/config')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().post('/api/coi/config')
     .send(this.config)
     .type('application/json')
     .end(processResponse((err, config) => {

@@ -1,3 +1,6 @@
+import defaults from 'superagent-defaults';
+import cookies from 'cookies-js';
+
 export function processResponse(callback) {
   return (err, res) => {
     if (!err) {
@@ -6,4 +9,10 @@ export function processResponse(callback) {
       window.location = '/auth/';
     }
   };
+}
+
+export function createRequest() {
+  let request = defaults();
+  request.set('Authorization', 'Bearer ' + cookies.get('authToken'));
+  return request;
 }

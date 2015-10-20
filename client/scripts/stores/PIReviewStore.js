@@ -1,9 +1,7 @@
 import PIReviewActions from '../actions/PIReviewActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
-import request from 'superagent';
-import {processResponse} from '../HttpUtils';
-import cookies from 'cookies-js';
+import {processResponse, createRequest} from '../HttpUtils';
 
 class _PIReviewStore extends AutoBindingStore {
   constructor() {
@@ -17,8 +15,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   loadDisclosure(disclosureId) {
-    request.get(`/api/coi/disclosures/${disclosureId}/pi-review-items`)
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get(`/api/coi/disclosures/${disclosureId}/pi-review-items`)
            .end(processResponse((err, disclosure) => {
              if (!err) {
                this.disclosure = disclosure.body;
@@ -112,8 +109,7 @@ class _PIReviewStore extends AutoBindingStore {
       });
     });
 
-    request.post(`/api/coi/pi-response/${params.reviewId}`)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().post(`/api/coi/pi-response/${params.reviewId}`)
       .send({
         comment: params.comment
       })
@@ -132,8 +128,7 @@ class _PIReviewStore extends AutoBindingStore {
       questionToRevise.reviewedOn = new Date();
     }
 
-    request.put(`/api/coi/pi-revise/${params.reviewId}`)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put(`/api/coi/pi-revise/${params.reviewId}`)
       .send({
         answer: params.newAnswer
       })
@@ -159,8 +154,7 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRevise.revised = 1;
     }
 
-    request.put(`/api/coi/pi-revise/${params.reviewId}/entity-question/${params.questionId}`)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put(`/api/coi/pi-revise/${params.reviewId}/entity-question/${params.questionId}`)
       .send({
         answer: params.newValue
       })
@@ -189,8 +183,7 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRevise.revised = 1;
     }
 
-    request.post(`/api/coi/pi-revise/${params.reviewId}/entity-relationship`)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().post(`/api/coi/pi-revise/${params.reviewId}/entity-relationship`)
       .send(params.newRelationship)
       .end(processResponse((err, relationships) => {
         if (!err) {
@@ -213,8 +206,7 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRevise.revised = 1;
     }
 
-    request.del(`/api/coi/pi-revise/${params.reviewId}/entity-relationship/${params.relationshipId}`)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().del(`/api/coi/pi-revise/${params.reviewId}/entity-relationship/${params.relationshipId}`)
       .end(processResponse(() => {}));
   }
 
@@ -230,8 +222,7 @@ class _PIReviewStore extends AutoBindingStore {
       });
     });
 
-    request.put(`/api/coi/pi-revise/${params.reviewId}/declaration`)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put(`/api/coi/pi-revise/${params.reviewId}/declaration`)
       .send({
         disposition: params.disposition,
         comment: params.declarationComment
@@ -254,8 +245,7 @@ class _PIReviewStore extends AutoBindingStore {
       questionToRevise.reviewedOn = new Date();
     }
 
-    request.put(`/api/coi/pi-revise/${params.reviewId}/subquestion-answer/${params.subQuestionId}`)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put(`/api/coi/pi-revise/${params.reviewId}/subquestion-answer/${params.subQuestionId}`)
       .send({
         answer: {
           value: params.answer
@@ -267,8 +257,7 @@ class _PIReviewStore extends AutoBindingStore {
 
   deleteAnswers(params) {
     if (params.toDelete.length > 0) {
-      request.del(`/api/coi/pi-revise/${params.reviewId}/question-answers`)
-        .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().del(`/api/coi/pi-revise/${params.reviewId}/question-answers`)
         .send({
           toDelete: params.toDelete
         })

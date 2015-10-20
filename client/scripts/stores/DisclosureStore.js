@@ -1,10 +1,8 @@
 import {DisclosureActions} from '../actions/DisclosureActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
-import request from 'superagent';
 import {COIConstants} from '../../../COIConstants';
-import {processResponse} from '../HttpUtils';
-import cookies from 'cookies-js';
+import {processResponse, createRequest} from '../HttpUtils';
 
 let cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
@@ -80,8 +78,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   loadProjects() {
-    request.get('/api/coi/projects')
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/projects')
            .end(processResponse((err, projects) => {
              if (!err) {
                this.projects = projects.body;
@@ -91,8 +88,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   refreshArchivedDisclosures() {
-    request.get('/api/coi/archived-disclosures')
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/archived-disclosures')
            .end(processResponse((err, disclosures) => {
              if (!err) {
                this.archivedDisclosures = disclosures.body;
@@ -106,8 +102,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   loadArchivedDisclosureDetail(id) {
-    request.get('/api/coi/disclosures/' + id)
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/disclosures/' + id)
            .end(processResponse((err, disclosure) => {
              if (!err) {
                this.archivedDisclosureDetail = disclosure.body;
@@ -117,8 +112,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   refreshDisclosureSummaries() {
-    request.get('/api/coi/disclosure-user-summaries')
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/disclosure-user-summaries')
       .end(processResponse((err, disclosures) => {
         if (!err) {
           this.disclosureSummariesForUser = disclosures.body;
@@ -133,8 +127,7 @@ class _DisclosureStore extends AutoBindingStore {
 
   loadDisclosureData(disclosureType) {
     if (disclosureType === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
-      request.get('/api/coi/disclosures/annual')
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().get('/api/coi/disclosures/annual')
       .end(processResponse((err, disclosure) => {
         if (!err) {
           this.applicationState.currentDisclosureState.disclosure = disclosure.body;
@@ -175,8 +168,7 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
     if (answer.id) {
-      request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers/' + answer.questionId)
-        .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers/' + answer.questionId)
         .send(answer)
         .type('application/json')
         .end(processResponse((err, res) => {
@@ -189,8 +181,7 @@ class _DisclosureStore extends AutoBindingStore {
           }
         }));
     } else {
-      request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers')
-        .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers')
         .send(answer)
         .type('application/json')
         .end(processResponse((err, res) => {
@@ -417,8 +408,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     let formData = new FormData();
     formData.append('entity', JSON.stringify(entity));
-    request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id)
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id)
     .send(formData)
     .end(processResponse(() => {}));
   }
@@ -631,8 +621,7 @@ class _DisclosureStore extends AutoBindingStore {
       formData.append('entity', JSON.stringify(entity));
 
       if (this.applicationState.entityStates[entity.id].editing === true) {
-        request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id )
-        .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+        createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id )
         .send(formData)
         .end(processResponse((err, res) => {
           if (!err) {
@@ -690,8 +679,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     formData.append('entity', JSON.stringify(entity));
 
-    request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities')
     .send(formData)
     .end(processResponse((err, res) => {
       if (!err) {
@@ -806,8 +794,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     if (existing) {
       existing.typeCd = params.typeCd;
-      request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
       .send(existing)
       .type('application/json')
       .end(processResponse(() => {}));
@@ -818,8 +805,7 @@ class _DisclosureStore extends AutoBindingStore {
         typeCd: params.typeCd
       };
       newRelation[field] = params.projectId;
-      request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
       .send(newRelation)
       .type('application/json')
       .end(processResponse((err, res) => {
@@ -853,8 +839,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     if (existing) {
       existing.comments = params.comments;
-      request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations/' + existing.id)
       .send(existing)
       .type('application/json')
       .end(processResponse(() => {}));
@@ -865,8 +850,7 @@ class _DisclosureStore extends AutoBindingStore {
         comments: params.comments
       };
       newRelation[field] = params.projectId;
-      request.post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
-      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/declarations')
       .send(newRelation)
       .type('application/json')
       .end(processResponse((err, res) => {
@@ -1178,8 +1162,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     formData.append('data', JSON.stringify({refId: this.applicationState.currentDisclosureState.disclosure.id, type: COIConstants.FILE_TYPE.DISCLOSURE}));
 
-    request.post('/api/coi/files')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().post('/api/coi/files')
     .send(formData)
     .end(processResponse((err, res) => {
       if (!err) {
@@ -1194,8 +1177,7 @@ class _DisclosureStore extends AutoBindingStore {
   deleteDisclosureAttachment(index) {
     let file = this.files[index];
 
-    request.del('/api/coi/files/' + file.id)
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().del('/api/coi/files/' + file.id)
     .send(file)
     .type('application/json')
     .end(processResponse((err) => {
@@ -1212,8 +1194,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   submitDisclosure() {
-    request.put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/submit')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/submit')
     .end(processResponse(err => {
       if (!err) {
         this.resetDisclosure();
@@ -1232,8 +1213,7 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
     if (toDelete.length > 0) {
-      request.del('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers')
-        .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+      createRequest().del('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers')
         .send({
           toDelete: toDelete
         })

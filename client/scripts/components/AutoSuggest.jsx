@@ -1,6 +1,6 @@
 import React from 'react/addons';
 import {merge} from '../merge';
-import request from 'superagent';
+import {processResponse, createRequest} from '../HttpUtils';
 import {COIConstants} from '../../../COIConstants';
 
 class Suggestion extends React.Component {
@@ -89,17 +89,17 @@ export default class AutoSuggest extends React.Component {
   }
 
   onChange(evt) {
-    request.get(this.props.endpoint)
+    createRequest().get(this.props.endpoint)
       .query({
         term: evt.target.value
       })
-      .end((err, suggestions) => {
+      .end(processResponse((err, suggestions) => {
         if (!err) {
           this.setState({
             suggestions: suggestions.body
           });
         }
-      });
+      }));
 
     this.setState({
       value: evt.target.value

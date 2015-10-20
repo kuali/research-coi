@@ -2,9 +2,7 @@ import {AdminActions} from '../actions/AdminActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import {COIConstants} from '../../../COIConstants';
 import alt from '../alt';
-import request from 'superagent';
-import {processResponse} from '../HttpUtils';
-import cookies from 'cookies-js';
+import {processResponse, createRequest} from '../HttpUtils';
 
 const PAGE_SIZE = 40;
 
@@ -51,8 +49,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   loadSummaryCount() {
-    request.get('/api/coi/disclosure-summaries/count')
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/disclosure-summaries/count')
            .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
            .end(processResponse((err, theCount) => {
              if (!err) {
@@ -67,8 +64,7 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.offset = 0;
     this.applicationState.loadingMore = true;
 
-    request.get('/api/coi/disclosure-summaries')
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})
            .query({sortDirection: this.applicationState.sortDirection})
            .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
@@ -91,8 +87,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   loadDisclosure(id) {
-    request.get('/api/coi/disclosures/' + id)
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/disclosures/' + id)
            .end(processResponse((err, disclosure) => {
              if (!err) {
                this.applicationState.selectedDisclosure = disclosure.body;
@@ -182,8 +177,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   approveDisclosure() {
-    request.put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/approve')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/approve')
     .send(this.applicationState.selectedDisclosure)
     .type('application/json')
     .end(processResponse(err => {
@@ -200,8 +194,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   rejectDisclosure() {
-    request.put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/reject')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/reject')
     .end(processResponse(err => {
       if (!err) {
         this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
@@ -257,8 +250,7 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.loadingMore = true;
     this.applicationState.offset += PAGE_SIZE;
 
-    request.get('/api/coi/disclosure-summaries')
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().get('/api/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})
            .query({sortDirection: this.applicationState.sortDirection})
            .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
@@ -346,8 +338,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   makeComment(params) {
-    request.post('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/comments')
-           .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().post('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/comments')
            .send({
              topicSection: params.topicSection,
              topicId: params.topicId,
@@ -372,8 +363,7 @@ class _AdminStore extends AutoBindingStore {
 
     formData.append('data', JSON.stringify({refId: this.applicationState.selectedDisclosure.id, type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN}));
 
-    request.post('/api/coi/files')
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().post('/api/coi/files')
     .send(formData)
     .end(processResponse((err, res) => {
       if (!err) {
@@ -388,8 +378,7 @@ class _AdminStore extends AutoBindingStore {
   deleteManagementPlan() {
     let file = this.applicationState.selectedDisclosure.managementPlan[0];
 
-    request.del('/api/coi/files/' + file.id)
-    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
+    createRequest().del('/api/coi/files/' + file.id)
     .send(file)
     .type('application/json')
     .end(processResponse((err) => {
