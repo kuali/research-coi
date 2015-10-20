@@ -11,7 +11,46 @@ class _PIReviewStore extends AutoBindingStore {
     });
 
     this.applicationState = {
+      canSubmit: false,
+      showingCertification: false
     };
+  }
+
+  updateCanSubmit() {
+    if (this.disclosure.questions) {
+      let allQuestionsDone = this.disclosure.questions.every(question => {
+        return question.reviewedOn !== null;
+      });
+      if (!allQuestionsDone) {
+        this.applicationState.canSubmit = false;
+        return;
+      }
+    }
+
+    if (this.disclosure.entities) {
+      let allEntitiesDone = this.disclosure.entities.every(entity => {
+        return entity.reviewedOn !== null;
+      });
+      if (!allEntitiesDone) {
+        this.applicationState.canSubmit = false;
+        return;
+      }
+    }
+
+    if (this.disclosure.declarations) {
+      let allDeclarationsDone = this.disclosure.declarations.every(declaration => {
+        let allEntitiesDone = declaration.entities.every(entity => {
+          return entity.reviewedOn !== null;
+        });
+        return allEntitiesDone;
+      });
+      if (!allDeclarationsDone) {
+        this.applicationState.canSubmit = false;
+        return;
+      }
+    }
+
+    this.applicationState.canSubmit = true;
   }
 
   loadDisclosure(disclosureId) {
@@ -75,6 +114,8 @@ class _PIReviewStore extends AutoBindingStore {
                  });
                }
 
+               this.updateCanSubmit();
+
                this.emitChange();
              }
            }));
@@ -109,6 +150,7 @@ class _PIReviewStore extends AutoBindingStore {
       });
     });
 
+    this.updateCanSubmit();
     createRequest().post(`/api/coi/pi-response/${params.reviewId}`)
       .send({
         comment: params.comment
@@ -127,6 +169,8 @@ class _PIReviewStore extends AutoBindingStore {
       };
       questionToRevise.reviewedOn = new Date();
     }
+
+    this.updateCanSubmit();
 
     createRequest().put(`/api/coi/pi-revise/${params.reviewId}`)
       .send({
@@ -153,6 +197,8 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRevise.reviewedOn = new Date();
       entityToRevise.revised = 1;
     }
+
+    this.updateCanSubmit();
 
     createRequest().put(`/api/coi/pi-revise/${params.reviewId}/entity-question/${params.questionId}`)
       .send({
@@ -183,6 +229,8 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRevise.revised = 1;
     }
 
+    this.updateCanSubmit();
+
     createRequest().post(`/api/coi/pi-revise/${params.reviewId}/entity-relationship`)
       .send(params.newRelationship)
       .end(processResponse((err, relationships) => {
@@ -206,6 +254,8 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRevise.revised = 1;
     }
 
+    this.updateCanSubmit();
+
     createRequest().del(`/api/coi/pi-revise/${params.reviewId}/entity-relationship/${params.relationshipId}`)
       .end(processResponse(() => {}));
   }
@@ -222,6 +272,7 @@ class _PIReviewStore extends AutoBindingStore {
       });
     });
 
+    this.updateCanSubmit();
     createRequest().put(`/api/coi/pi-revise/${params.reviewId}/declaration`)
       .send({
         disposition: params.disposition,
@@ -245,6 +296,8 @@ class _PIReviewStore extends AutoBindingStore {
       questionToRevise.reviewedOn = new Date();
     }
 
+    this.updateCanSubmit();
+
     createRequest().put(`/api/coi/pi-revise/${params.reviewId}/subquestion-answer/${params.subQuestionId}`)
       .send({
         answer: {
@@ -264,6 +317,17 @@ class _PIReviewStore extends AutoBindingStore {
         .type('application/json')
         .end();
     }
+  }
+
+  submit() {
+    this.applicationState.showingCertification = true;
+  }
+
+  confirm(disclosureId) {
+    createRequest().put(`/api/coi/pi-revise/${disclosureId}/submit`)
+      .end(processResponse(() => {
+        document.location = '/coi/';
+      }));
   }
 }
 

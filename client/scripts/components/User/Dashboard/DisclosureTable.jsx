@@ -80,6 +80,7 @@ export class DisclosureTable extends ResponsiveComponent {
           title={disclosure.title}
           expiresOn={disclosure.expired_date}
           key={index}
+          disclosureId={disclosure.id}
         />
       );
     }) : null;

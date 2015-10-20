@@ -166,4 +166,15 @@ export let init = app => {
         next(err);
       });
   });
+
+  app.put('/api/coi/pi-revise/:disclosureId/submit', (req, res, next) => {
+    PIReviewDB.reSubmitDisclosure(req.dbInfo, req.userInfo, req.params.disclosureId)
+      .then(() => {
+        res.send({success: true});
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
 };
