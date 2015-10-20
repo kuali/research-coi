@@ -631,10 +631,10 @@ export let reviseSubQuestion = (dbInfo, userInfo, reviewId, subQuestionId, answe
         updateReviewRecord(knex, reviewId, {revised: true})
       ]).then(([rowCount]) => {
         if (rowCount[0].answerCount > 0) {
-          return DisclosureDB.saveExistingQuestionAnswer(dbInfo, userInfo.id, rows[0].disclosureId, subQuestionId, answer);
+          return DisclosureDB.saveExistingQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, subQuestionId, answer);
         }
         else {
-          return DisclosureDB.saveNewQuestionAnswer(dbInfo, userInfo.id, rows[0].disclosureId, {
+          return DisclosureDB.saveNewQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, {
             questionId: subQuestionId,
             answer: answer
           });
