@@ -1,7 +1,7 @@
 import * as ProjectDB from '../db/ProjectDB';
 
 export let init = app => {
-  app.use('/api/coi/projects', function(req, res, next) { // This should be POST only
+  app.post('/api/coi/projects', function(req, res, next) {
     ProjectDB.saveProjects(req.dbInfo, req.body)
       .then(projects => {
         res.send(projects);
