@@ -1,8 +1,8 @@
 import * as ProjectDB from '../db/ProjectDB';
 
 export let init = app => {
-  app.get('/api/coi/projects', function(req, res, next) {
-    ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId)
+  app.use('/api/coi/projects', function(req, res, next) { // This should be POST only
+    ProjectDB.saveProjects(req.dbInfo, req.body)
       .then(projects => {
         res.send(projects);
       })
@@ -12,9 +12,8 @@ export let init = app => {
       });
   });
 
-  app.post('/api/coi/projects', function(req, res, next) {
-    console.log(req.body)
-    ProjectDB.saveProjects(req.dbInfo, req.body)
+  app.get('/api/coi/projects', function(req, res, next) {
+    ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId)
       .then(projects => {
         res.send(projects);
       })
