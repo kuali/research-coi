@@ -1,6 +1,7 @@
 /*eslint camelcase:0 */
 import {COIConstants} from '../../COIConstants';
 import {isDisclosureUsers} from './CommonDB';
+import * as DisclosureDB from './DisclosureDB';
 
 let getKnex;
 try {
@@ -129,7 +130,8 @@ let getQuestions = (knex, disclosureId, questionIDs) => {
     .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
     .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
     .where({
-      'da.disclosure_id': disclosureId
+      'da.disclosure_id': disclosureId,
+      'qq.parent': null
     })
     .andWhere('qq.id', 'in', questionIDs);
 };
@@ -137,10 +139,11 @@ let getQuestions = (knex, disclosureId, questionIDs) => {
 let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
   return knex.select('qq.id', 'qq.question', 'qa.answer', 'qq.parent')
     .from('questionnaire_question as qq')
-    .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
-    .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
-    .where({
-      'da.disclosure_id': disclosureId
+    .leftJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
+    .leftJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
+    .where(function() {
+      this.where('da.disclosure_id', disclosureId)
+        .orWhereNull('da.disclosure_id');
     })
     .andWhere('qq.parent', 'in', potentialParentIDs);
 };
@@ -612,5 +615,41 @@ export let reviseDeclaration = (dbInfo, userInfo, reviewId, declaration) => {
           }),
         updateReviewRecord(knex, reviewId, {revised: true})
       ]);
+    });
+};
+
+export let reviseSubQuestion = (dbInfo, userInfo, reviewId, subQuestionId, answer) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('disclosure_id as disclosureId', 'target_id as targetId')
+    .from('pi_review as p')
+    .where({
+      'p.id': reviewId
+    }).then(rows => {
+      return Promise.all([
+        knex.count('* as answerCount').from('questionnaire_answer').where('question_id', subQuestionId),
+        updateReviewRecord(knex, reviewId, {revised: true})
+      ]).then(([rowCount]) => {
+        if (rowCount[0].answerCount > 0) {
+          return DisclosureDB.saveExistingQuestionAnswer(dbInfo, userInfo.id, rows[0].disclosureId, subQuestionId, answer);
+        }
+        else {
+          return DisclosureDB.saveNewQuestionAnswer(dbInfo, userInfo.id, rows[0].disclosureId, {
+            questionId: subQuestionId,
+            answer: answer
+          });
+        }
+      });
+    });
+};
+
+export let deleteAnswers = (dbInfo, userInfo, reviewId, toDelete) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('p.disclosure_id as disclosureId')
+    .from('pi_review as p')
+    .where('id', reviewId)
+    .then(rows => {
+      return DisclosureDB.deleteAnswers(dbInfo, userInfo, rows[0].disclosureId, toDelete);
     });
 };

@@ -156,7 +156,7 @@ export class Relationships extends ResponsiveComponent {
     else {
       this.props.entities.filter(entity => {
         return entity.active === 1;
-      }).forEach((entity,index) =>{
+      }).forEach((entity, index) =>{
         declarations = this.getEntityDeclarations(entity.id);
 
         relationshipNodes.push(

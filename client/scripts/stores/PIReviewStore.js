@@ -37,6 +37,32 @@ class _PIReviewStore extends AutoBindingStore {
                    if (question.answer) {
                      question.answer = JSON.parse(question.answer);
                    }
+
+                   if (question.subQuestions) {
+                     question.subQuestions = question.subQuestions.map(subQuestion => {
+                       let newSub = {
+                         id: subQuestion.id,
+                         parent: subQuestion.parent,
+                         answer: JSON.parse(subQuestion.answer),
+                         question: JSON.parse(subQuestion.question)
+                       };
+
+                       if (newSub.question.required_num_selections) {
+                         newSub.question.requiredNumSelections = newSub.question.required_num_selections;
+                         delete newSub.question.required_num_selections;
+                       }
+                       if (newSub.question.number_to_show) {
+                         newSub.question.numberToShow = newSub.question.number_to_show;
+                         delete newSub.question.number_to_show;
+                       }
+                       if (newSub.question.display_criteria) {
+                         newSub.question.displayCriteria = newSub.question.display_criteria;
+                         delete newSub.question.display_criteria;
+                       }
+
+                       return newSub;
+                     });
+                   }
                  });
                }
 
@@ -203,6 +229,42 @@ class _PIReviewStore extends AutoBindingStore {
         comment: params.declarationComment
       })
       .end(processResponse(() => {}));
+  }
+
+  reviseSubQuestion(params) {
+    let questionToRevise = this.disclosure.questions.find(question => {
+      return params.reviewId === question.reviewId;
+    });
+    let subQuestionToRevise = questionToRevise.subQuestions.find(subQuestion => {
+      return subQuestion.id === params.subQuestionId;
+    });
+
+    if (subQuestionToRevise) {
+      subQuestionToRevise.answer = {
+        value: params.answer
+      };
+      questionToRevise.reviewedOn = new Date();
+    }
+
+    request.put(`/api/coi/pi-revise/${params.reviewId}/subquestion-answer/${params.subQuestionId}`)
+      .send({
+        answer: {
+          value: params.answer
+        }
+      })
+      .type('application/json')
+      .end();
+  }
+
+  deleteAnswers(params) {
+    if (params.toDelete.length > 0) {
+      request.del(`/api/coi/pi-revise/${params.reviewId}/question-answers`)
+        .send({
+          toDelete: params.toDelete
+        })
+        .type('application/json')
+        .end();
+    }
   }
 }
 
