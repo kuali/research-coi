@@ -87,10 +87,6 @@ export default class General extends React.Component {
                   appState={this.state.applicationState}
                 />
               </Panel>
-
-              <Panel title="Sponsor Table Lookup">
-                <SponsorLookup enabled={this.state.sponsorLookup} />
-              </Panel>
             </span>
             <ActionPanel visible={this.state.dirty} />
           </div>
