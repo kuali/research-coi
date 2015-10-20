@@ -1,7 +1,20 @@
 import {getUserInfo} from '../AuthService';
 
+function getAuthToken(header) {
+  try {
+    let parsedHeader = header.split(' ');
+    if (parsedHeader[0] === 'Bearer') {
+      return parsedHeader[1];
+    } else {
+      return undefined;
+    }
+  } catch(e) {
+    return undefined;
+  }
+}
+
 export default function authentication(req, res, next) {
-  getUserInfo(req)
+  getUserInfo(req.hostname, getAuthToken(req.headers.authorization))
   .then(userInfo => {
     if (!userInfo) {
       res.sendStatus(401);
@@ -14,3 +27,4 @@ export default function authentication(req, res, next) {
     next(err);
   });
 }
+

@@ -2,6 +2,7 @@ import ConfigActions from '../actions/ConfigActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import request from 'superagent';
+import cookies from 'cookies-js';
 import {COIConstants} from '../../../COIConstants';
 import {processResponse} from '../HttpUtils';
 
@@ -568,6 +569,7 @@ class _ConfigStore extends AutoBindingStore {
   loadAllConfigData() {
     // Then load config and re-render
     request.get('/api/coi/config')
+    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
     .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
@@ -582,6 +584,7 @@ class _ConfigStore extends AutoBindingStore {
 
   saveAll() {
     request.post('/api/coi/config')
+    .set('Authorization', 'Bearer ' + cookies.get('authToken'))
     .send(this.config)
     .type('application/json')
     .end(processResponse((err, config) => {

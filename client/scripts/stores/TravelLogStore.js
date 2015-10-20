@@ -3,6 +3,7 @@ import {TravelLogActions} from '../actions/TravelLogActions.js';
 import alt from '../alt';
 import request from 'superagent';
 import {processResponse} from '../HttpUtils';
+import cookies from 'cookies-js';
 
 class _TravelLogStore extends AutoBindingStore {
   constructor() {
@@ -13,6 +14,7 @@ class _TravelLogStore extends AutoBindingStore {
 
   refreshTravelLogEntries() {
     request.get('/api/coi/travelLogEntries/')
+      .set('Authorization', 'Bearer ' + cookies.get('authToken'))
       .end(processResponse((err, travelLog) => {
         if (!err) {
           this.entries = travelLog.body;

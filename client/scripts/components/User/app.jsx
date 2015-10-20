@@ -5,6 +5,7 @@ let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
 import request from 'superagent';
+import cookies from 'cookies-js';
 
 import {Dashboard} from './Dashboard/Dashboard';
 import {Disclosure} from './Disclosure';
@@ -14,6 +15,7 @@ import {Revise} from './Revise/Revise';
 import {ArchiveDetail} from './Archive/ArchiveDetail';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
+import {processResponse} from '../../HttpUtils';
 
 class App extends SizeAwareComponent {
   constructor() {
@@ -30,6 +32,7 @@ class App extends SizeAwareComponent {
         zIndex: 9
       }
     };
+
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
@@ -54,12 +57,14 @@ let routes = (
 );
 
 // Then load config and re-render
-request.get('/api/coi/config', (err, config) => {
+request.get('/api/coi/config')
+.set('Authorization', 'Bearer ' + cookies.get('authToken'))
+.end(processResponse((err, config) => {
   if (!err) {
     window.config = config.body;
     Router.run(routes, (Handler, state) => {
       React.render(<Handler state={state} />, document.body);
     });
   }
-});
+}));
 
