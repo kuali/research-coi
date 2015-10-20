@@ -14,7 +14,12 @@ function getAuthToken(header) {
 }
 
 export default function authentication(req, res, next) {
-  getUserInfo(req.hostname, getAuthToken(req.headers.authorization))
+  let authToken = getAuthToken(req.headers.authorization);
+  if (req.url.startsWith('/coi/files') && req.method === 'GET' && !authToken) {
+    authToken = req.cookies.authToken;
+  }
+
+  getUserInfo(req.hostname, authToken)
   .then(userInfo => {
     if (!userInfo) {
       res.sendStatus(401);
