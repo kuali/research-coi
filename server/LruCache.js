@@ -2,7 +2,7 @@ import LRU from 'lru-cache';
 
 let config;
 let options = {
-  length: function(n) {return n.length;}
+  length: function(n) { return n.length; }
 };
 try {
   let extensions = require('research-extensions');
@@ -15,6 +15,6 @@ catch (err) {
   options.maxAge = process.env.CACHE_MAX_AGE || 60000;
 }
 
-let cache = LRU(options);
+let cache = LRU(options); // eslint-disable-line new-cap
 
 export default cache;
