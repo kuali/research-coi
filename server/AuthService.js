@@ -1,18 +1,18 @@
 import https from 'https';
 import cache from './LruCache';
 
-export function getUserInfo(req) {
+export function getUserInfo(hostname, authToken) {
   let options = {
     protocol: 'https:',
-    host: req.hostname,
+    host: hostname,
     path: '/api/users/current',
     headers: {
       'Accept': 'application/vnd.kuali.v1+json',
-      'Authorization': 'Bearer ' + req.cookies.authToken
+      'Authorization': 'Bearer ' + authToken
     }
   };
 
-  let cachedUserInfo = req.cookies.authToken ? cache.get(req.cookies.authToken) : undefined;
+  let cachedUserInfo = authToken ? cache.get(authToken) : undefined;
   return new Promise((resolve, reject) => {
     if (cachedUserInfo) {
       resolve(cachedUserInfo);
@@ -27,7 +27,7 @@ export function getUserInfo(req) {
           });
           response.on('end', () => {
             let userInfo = JSON.parse(body);
-            cache.set(req.cookies.authToken, userInfo);
+            cache.set(authToken, userInfo);
             resolve(userInfo);
           });
           response.on('error', (err) => {

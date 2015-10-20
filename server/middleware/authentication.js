@@ -1,7 +1,7 @@
 import {getUserInfo} from '../AuthService';
 
 export default function authentication(req, res, next) {
-  getUserInfo(req)
+  getUserInfo(req.hostname, req.cookies.authToken)
   .then(userInfo => {
     if (!userInfo) {
       let returnToValue = encodeURIComponent(req.originalUrl);

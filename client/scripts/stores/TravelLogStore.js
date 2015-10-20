@@ -1,8 +1,7 @@
 import {AutoBindingStore} from './AutoBindingStore';
 import {TravelLogActions} from '../actions/TravelLogActions.js';
 import alt from '../alt';
-import request from 'superagent';
-import {processResponse} from '../HttpUtils';
+import {processResponse, createRequest} from '../HttpUtils';
 
 class _TravelLogStore extends AutoBindingStore {
   constructor() {
@@ -12,7 +11,7 @@ class _TravelLogStore extends AutoBindingStore {
   }
 
   refreshTravelLogEntries() {
-    request.get('/api/coi/travelLogEntries/')
+    createRequest().get('/api/coi/travelLogEntries/')
       .end(processResponse((err, travelLog) => {
         if (!err) {
           this.entries = travelLog.body;

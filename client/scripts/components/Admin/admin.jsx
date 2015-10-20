@@ -4,7 +4,7 @@ let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
-import request from 'superagent';
+import {processResponse, createRequest} from '../../HttpUtils';
 
 import {AppHeader} from '../AppHeader';
 import {DetailView} from './DetailView/DetailView';
@@ -44,11 +44,12 @@ let routes = (
 );
 
 // Then load config and re-render
-request.get('/api/coi/config', (err, config) => {
+createRequest().get('/api/coi/config')
+.end(processResponse((err, config) => {
   if (!err) {
     window.config = config.body;
     Router.run(routes, (Handler, state) => {
       React.render(<Handler state={state} />, document.body);
     });
   }
-});
+}));
