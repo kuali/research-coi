@@ -597,23 +597,25 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getDeclarationTypeString(code) {
-    let typeRecord = this.getState().codeMaps.declarationType[code];
-    if (typeRecord) {
-      return typeRecord.description;
+    let configState = this.getState();
+    if (configState.codeMaps.declarationType) {
+      let typeRecord = configState.codeMaps.declarationType[code];
+      if (typeRecord) {
+        return typeRecord.description;
+      }
     }
-    else {
-      return 'Undefined';
-    }
+    return '';
   }
 
   getDisclosureStatusString(code) {
-    let typeRecord = this.getState().codeMaps.disclosureStatus[code];
-    if (typeRecord) {
-      return typeRecord.description;
+    let configState = this.getState();
+    if (configState.codeMaps.disclosureStatus) {
+      let typeRecord = configState.codeMaps.disclosureStatus[code];
+      if (typeRecord) {
+        return typeRecord.description;
+      }
     }
-    else {
-      return 'Undefined';
-    }
+    return '';
   }
 
   getAdminDisclosureStatusString(code) {
@@ -629,47 +631,52 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getDisclosureTypeString(code) {
-    let typeRecord = this.getState().codeMaps.disclosureType[code];
-    if (typeRecord) {
-      return typeRecord.description;
+    let configState = this.getState();
+    if (configState.codeMaps.disclosureType) {
+      let typeRecord = configState.codeMaps.disclosureType[code];
+      if (typeRecord) {
+        return typeRecord.description;
+      }
     }
-    else {
-      return 'Undefined';
-    }
+    return '';
   }
 
   getProjectTypeString(code) {
-    let typeRecord = this.getState().codeMaps.projectType[code];
-    if (typeRecord) {
-      return typeRecord.description;
+    let configState = this.getState();
+    if (configState.codeMaps.projectType) {
+      let typeRecord = configState.codeMaps.projectType[code];
+      if (typeRecord) {
+        return typeRecord.description;
+      }
     }
-    else {
-      return 'Undefined';
-    }
+    return '';
   }
 
   getRelationshipCategoryTypeString(code) {
-    let typeRecord = this.getState().codeMaps.relationshipCategoryType[code];
-    if (typeRecord) {
-      return typeRecord.description;
+    let configState = this.getState();
+    if (configState.codeMaps.relationshipCategoryType) {
+      let typeRecord = configState.codeMaps.relationshipCategoryType[code];
+      if (typeRecord) {
+        return typeRecord.description;
+      }
     }
-    else {
-      return 'Undefined';
-    }
+    return '';
   }
 
   getRelationshipPersonTypeString(code) {
-    let typeRecord = this.getState().codeMaps.relationshipPersonType[code];
-    if (typeRecord) {
-      return typeRecord.description;
+    let configState = this.getState();
+    if (configState.codeMaps.relationshipPersonType) {
+      let typeRecord = configState.codeMaps.relationshipPersonType[code];
+      if (typeRecord) {
+        return typeRecord.description;
+      }
     }
-    else {
-      return 'Undefined';
-    }
+    return '';
   }
 
   getQuestionNumberToShow(type, questionId) {
-    let questions = this.getState().config.questions;
+    let configState = this.getState();
+    let questions = configState.config.questions;
     let collection;
     switch (type) {
       case COIConstants.QUESTIONNAIRE_TYPE.SCREENING:
