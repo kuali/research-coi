@@ -27,13 +27,13 @@ export default class SidePanel extends React.Component {
         fontSize: 18
       },
       submitIcon: {
-        color: submitEnabled ? '#333' : '#CCC',
+        color: submitEnabled ? '#F57C00' : '#CCC',
         fontSize: 35,
         verticalAlign: 'middle',
         margin: '0 10px 5px 15px'
       },
       cancelIcon: {
-        color: '#333',
+        color: '#F57C00',
         fontSize: 35,
         verticalAlign: 'middle',
         margin: '0 10px 0 15px'

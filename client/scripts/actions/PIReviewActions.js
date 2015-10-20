@@ -26,6 +26,14 @@ class _PIReviewActions {
   reviseDeclaration(reviewId, disposition, declarationComment) {
     this.dispatch({reviewId, disposition, declarationComment});
   }
+
+  reviseSubQuestion(reviewId, subQuestionId, answer) {
+    this.dispatch({reviewId, subQuestionId, answer});
+  }
+
+  deleteAnswers(reviewId, toDelete) {
+    this.dispatch({reviewId, toDelete});
+  }
 }
 
 export default alt.createActions(_PIReviewActions);

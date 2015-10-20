@@ -84,6 +84,10 @@ export default class EntityToReview extends React.Component {
   }
 
   done() {
+    if (!this.state.isValid) {
+      return;
+    }
+
     let newState = {
       revising: false,
       responding: false
@@ -124,7 +128,7 @@ export default class EntityToReview extends React.Component {
         width: 300
       },
       comments: {
-        backgroundColor: '#EEE',
+        backgroundColor: '#D8E9EB',
         borderRadius: 5,
         padding: '1px 10px'
       },
@@ -185,7 +189,7 @@ export default class EntityToReview extends React.Component {
     if (this.state.revising || this.state.responding) {
       actions = (
         <span style={styles.actions}>
-          <CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>
+          {/*<CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>*/}
           <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
         </span>
       );

@@ -35,7 +35,6 @@ export let init = app => {
   });
 
   app.get('/api/coi/disclosures/annual', function(req, res, next) {
-    console.log(req.userInfo)
     DisclosureDB.getAnnualDisclosure(req.dbInfo, req.userInfo.schoolId, req.userInfo.name)
     .then(disclosure => {
       res.send(disclosure);
@@ -251,7 +250,6 @@ export let init = app => {
   });
 
   app.get('/api/coi/disclosures/:id/pi-review-items', (req, res, next) => {
-
     PIReviewDB.getPIReviewItems(req.dbInfo, req.userInfo, req.params.id)
       .then(result => {
         res.send(result);

@@ -7,7 +7,8 @@ export default class RevisionHeader extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        borderBottom: '1px solid #DDD'
       },
       disclosureType: {
         display: 'inline-block',

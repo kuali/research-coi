@@ -13,17 +13,15 @@ export default class CheckLink extends React.Component {
         color: this.props.disabled ? '#AAA' : this.props.checked ? '#00D000' : '#666'
       },
       checkmark: {
-        color: '#00D000',
+        color: this.props.checked ? '#00D000' : 'transparent',
         marginRight: 3
       }
     };
 
-    let check;
-    if (this.props.checked) {
-      check = (
-        <i className="fa fa-check" style={styles.checkmark}></i>
-      );
-    }
+    let check = (
+      <i className="fa fa-check" style={styles.checkmark}></i>
+    );
+
     return (
       <span style={merge(styles.container, this.props.style)} onClick={this.props.onClick}>
         {check}

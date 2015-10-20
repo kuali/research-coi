@@ -9,12 +9,15 @@ export default class QuestionnaireSection extends React.Component {
         margin: '25px 20px 25px 35px',
         backgroundColor: 'white',
         borderRadius: 5,
-        boxShadow: '0 0 10px 2px #DDD'
+        boxShadow: '0 0 10px 2px #DDD',
+        overflow: 'hidden'
       },
       title: {
         fontSize: 23,
         padding: '10px 18px',
-        borderBottom: '1px solid #DDD'
+        borderBottom: '1px solid #DDD',
+        backgroundColor: '#0095A0',
+        color: 'white'
       },
       body: {
         padding: 23

@@ -27,7 +27,6 @@ export default class Question extends React.Component {
     this.done = this.done.bind(this);
 
     this.changeAnswer = this.changeAnswer.bind(this);
-    this.answerParent = this.answerParent.bind(this);
     this.answer = this.answer.bind(this);
     this.answerMultiple = this.answerMultiple.bind(this);
     this.controlValidityChanged = this.controlValidityChanged.bind(this);
@@ -48,70 +47,65 @@ export default class Question extends React.Component {
     });
   }
 
-  // answerAndSubmit(evt) {
-  //   this.changeAnswer(evt.target.value);
-  // }
-
   deleteIrrelaventAnswers(questionId, newAnswer) {
-    // let toDelete = this.props.allQuestions.filter(question => {
-    //   return question.parent === questionId;
-    // }).filter(question => {
-    //   return question.question.displayCriteria !== newAnswer;
-    // }).map(question => {
-    //   return question.id;
-    // });
+    if (this.props.question.subQuestions) {
+      let toDelete = this.props.question.subQuestions.filter(question => {
+        return question.parent === questionId;
+      }).filter(question => {
+        return question.question.displayCriteria !== newAnswer;
+      }).map(question => {
+        return question.id;
+      });
 
-    // DisclosureActions.deleteAnswersTo(toDelete);
+      PIReviewActions.deleteAnswers(this.props.reviewId, toDelete);
+    }
   }
 
-  answerParent(answer, questionId, isParent) {
-    // this.deleteIrrelaventAnswers(questionId, answer);
-    // let advance = isParent && !this.anySubQuestionsTriggeredBy(answer);
-    // DisclosureActions.submitQuestion({
-    //   id: questionId,
-    //   answer: {
-    //     value: answer
-    //   },
-    //   advance: advance
-    // });
-  }
-
-  anySubQuestionsTriggeredBy(value) {
-    // let subQuestion = this.props.subQuestions.find(question => {
-    //   return question.question.displayCriteria === value;
-    // });
-
-    // return subQuestion !== undefined;
-  }
-
-  answer(answer) {
-    this.changeAnswer(answer);
-  }
-
-  answerMultiple(value, checked) {
-    let newAnswer = Array.from(this.props.answer);
-    if (checked) {
-      if (!newAnswer.includes(value)) {
-        newAnswer.push(value);
-      }
+  answer(answer, questionId) {
+    let isParentQuestion = this.props.question.id === questionId;
+    if (isParentQuestion) {
+      this.deleteIrrelaventAnswers(questionId, answer);
+      this.changeAnswer(answer);
     }
     else {
-      newAnswer = this.props.answer.filter(answer => {
-        return answer !== value;
-      });
+      PIReviewActions.reviseSubQuestion(this.props.reviewId, questionId, answer);
     }
-    this.changeAnswer(newAnswer);
   }
 
-  // submit(answer, questionId) {
-    // DisclosureActions.submitQuestion({
-    //   id: questionId,
-    //   answer: {
-    //     value: answer
-    //   },
-    //   advance: true
-    // });
-  // }
+  answerMultiple(value, checked, questionId) {
+    let isParentQuestion = this.props.question.id === questionId;
+    if (isParentQuestion) {
+      let newAnswer = Array.from(this.props.answer);
+      if (checked) {
+        if (!newAnswer.includes(value)) {
+          newAnswer.push(value);
+        }
+      }
+      else {
+        newAnswer = this.props.answer.filter(answer => {
+          return answer !== value;
+        });
+      }
+      this.changeAnswer(newAnswer);
+    }
+    else {
+      let questionBeingAnswered = this.props.question.subQuestions.find(subQuestion => {
+        return subQuestion.id === questionId;
+      });
+      let newAnswer = Array.from(questionBeingAnswered.answer.value);
+      if (checked) {
+        if (!newAnswer.includes(value)) {
+          newAnswer.push(value);
+        }
+      }
+      else {
+        newAnswer = questionBeingAnswered.answer.value.filter(answer => {
+          return answer !== value;
+        });
+      }
+      PIReviewActions.reviseSubQuestion(this.props.reviewId, questionId, newAnswer);
+    }
+  }
 
   controlValidityChanged(questionId, isValid) {
     this.setState({
@@ -128,7 +122,7 @@ export default class Question extends React.Component {
           <RadioControl
             options={['Yes', 'No']}
             answer={answer}
-            onChange={isSubQuestion ? this.answer : this.answerParent}
+            onChange={this.answer}
             isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
@@ -139,7 +133,7 @@ export default class Question extends React.Component {
           <RadioControl
             options={['Yes', 'No', 'N/A']}
             answer={answer}
-            onChange={isSubQuestion ? this.answer : this.answerAndSubmit}
+            onChange={this.answer}
             isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
@@ -210,6 +204,10 @@ export default class Question extends React.Component {
   }
 
   done() {
+    if (!this.state.isValid) {
+      return;
+    }
+
     let newState = {
       revising: false,
       responding: false
@@ -261,7 +259,7 @@ export default class Question extends React.Component {
     if (this.state.revising || this.state.responding) {
       actions = (
         <span style={styles.actions}>
-          <CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>
+          {/*<CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>*/}
           <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
         </span>
       );
@@ -309,6 +307,59 @@ export default class Question extends React.Component {
       }
     }
 
+    let relevantSubQuestions;
+    if (this.props.question.subQuestions && this.props.question.subQuestions.length > 0) {
+      relevantSubQuestions = this.props.question.subQuestions.filter(subQuestionToTest => {
+        return subQuestionToTest.question.displayCriteria === this.props.answer;
+      }).sort((a, b) => {
+        return a.question.order - b.question.order;
+      }).map(subQuestion => {
+        let answerValue;
+        if (subQuestion.answer !== null) {
+          answerValue = subQuestion.answer.value;
+        }
+        if (this.state.revising) {
+          return (
+            <div className="flexbox row" key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
+              <span style={{width: 70, fontSize: 22, verticalAlign: 'top'}}>
+                <div>{subQuestion.question.numberToShow}</div>
+              </span>
+              <span className="fill">
+                <div style={{marginBottom: 10}}>{subQuestion.question.text}</div>
+                <div style={styles.answerLabel}>ANSWER</div>
+                {this.getControl(subQuestion, answerValue)}
+              </span>
+            </div>
+          );
+        }
+        else {
+          let subQuestionAnswer;
+          if (Array.isArray(answerValue)) {
+            subQuestionAnswer = (
+              <div>{answerValue.join(', ')}</div>
+            );
+          }
+          else {
+            subQuestionAnswer = (
+              <div>{answerValue}</div>
+            );
+          }
+          return (
+            <div className="flexbox row" key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
+              <span style={{width: 70, fontSize: 22, verticalAlign: 'top'}}>
+                <div>{subQuestion.question.numberToShow}</div>
+              </span>
+              <span className="fill">
+                <div style={{marginBottom: 10}}>{subQuestion.question.text}</div>
+                <div style={styles.answerLabel}>ANSWER</div>
+                {subQuestionAnswer}
+              </span>
+            </div>
+          );
+        }
+      });
+    }
+
     return (
       <span style={merge(styles.container, this.props.style)} className="fill">
         <div style={styles.text}>
@@ -320,6 +371,7 @@ export default class Question extends React.Component {
             {answerArea}
           </span>
         </div>
+        {relevantSubQuestions}
         {responseText}
         <div>
           {actions}

@@ -39,7 +39,6 @@ export let init = app => {
     @Role: PI
   */
   app.put('/api/coi/pi-revise/:reviewId', (req, res, next) => {
-
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
@@ -59,7 +58,6 @@ export let init = app => {
   });
 
   app.put('/api/coi/pi-revise/:reviewId/entity-question/:questionId', (req, res, next) => {
-
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
@@ -112,9 +110,51 @@ export let init = app => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
         if (isAllowed) {
-          PIReviewDB.reviseDeclaration(req.dbInfo, req.userInfo, req.params.reviewId, req.body)
+          return PIReviewDB.reviseDeclaration(req.dbInfo, req.userInfo, req.params.reviewId, req.body)
             .then(() => {
               res.status(204).end();
+            });
+        }
+        else {
+          res.status(403).end();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
+
+  app.put('/api/coi/pi-revise/:reviewId/subquestion-answer/:subQuestionId', (req, res, next) => {
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
+      .then(isAllowed => {
+        if (isAllowed) {
+          return PIReviewDB.reviseSubQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.params.subQuestionId, req.body)
+            .then(() => {
+              res.status(204).end();
+            });
+        }
+        else {
+          res.status(403).end();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
+
+  app.delete('/api/coi/pi-revise/:reviewId/question-answers', (req, res, next) => {
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
+      .then(isAllowed => {
+        if (isAllowed) {
+          return PIReviewDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.reviewId, req.body.toDelete)
+            .then(() => {
+              res.status(204).end();
+            })
+            .catch(err => {
+              console.error(err);
+              next(err);
             });
         }
         else {
