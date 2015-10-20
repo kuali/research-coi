@@ -14,10 +14,12 @@ export class Revise extends React.Component {
 
     let storeState = PIReviewStore.getState();
     this.state = {
-      disclosure: storeState.disclosure
+      disclosure: storeState.disclosure,
+      applicationState: storeState.applicationState
     };
 
     this.onChange = this.onChange.bind(this);
+    this.onConfirm = this.onConfirm.bind(this);
   }
 
   componentDidMount() {
@@ -32,8 +34,13 @@ export class Revise extends React.Component {
   onChange() {
     let storeState = PIReviewStore.getState();
     this.setState({
-      disclosure: storeState.disclosure
+      disclosure: storeState.disclosure,
+      applicationState: storeState.applicationState
     });
+  }
+
+  onConfirm() {
+    PIReviewActions.confirm(this.props.params.id);
   }
 
   render() {
@@ -73,7 +80,6 @@ export class Revise extends React.Component {
       }
     }
 
-    let certText = 'This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! This should be the configured value! ';
     return (
       <div className="fill flexbox column" style={merge(styles.container, this.props.style)}>
         <RevisionHeader
@@ -89,9 +95,10 @@ export class Revise extends React.Component {
           </span>
 
           <SidePanel
-            certificationText={certText}
-            showingCertification={false}
-            submitEnabled={false}
+            certificationText={window.config.general.certificationOptions.text}
+            showingCertification={this.state.applicationState.showingCertification}
+            submitEnabled={this.state.applicationState.canSubmit}
+            onConfirm={this.onConfirm}
           />
         </div>
       </div>

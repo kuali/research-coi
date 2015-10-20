@@ -495,7 +495,7 @@ exports.seed = function(knex, Promise) {
       insertFakeProject(knex, 10000000005),
       insertFakeProject(knex, 10000000007),
       insertFakeProject(knex, 10000000030),
-      insertFakeProject(knex, 10000000002),
+      insertFakeProject(knex, 10000000002)
     ]);
   });
 };

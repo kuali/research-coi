@@ -653,3 +653,23 @@ export let deleteAnswers = (dbInfo, userInfo, reviewId, toDelete) => {
       return DisclosureDB.deleteAnswers(dbInfo, userInfo, rows[0].disclosureId, toDelete);
     });
 };
+
+export let reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
+  let knex = getKnex(dbInfo);
+
+  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+    .then(isSubmitter => {
+      if (isSubmitter) {
+        return knex('disclosure')
+          .update({
+            status_cd: COIConstants.DISCLOSURE_STATUS.RESUBMITTED
+          })
+          .where({
+            id: disclosureId
+          });
+      }
+      else {
+        return 'Unauthorized';
+      }
+    });
+};

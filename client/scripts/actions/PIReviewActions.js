@@ -34,6 +34,14 @@ class _PIReviewActions {
   deleteAnswers(reviewId, toDelete) {
     this.dispatch({reviewId, toDelete});
   }
+
+  submit() {
+    this.dispatch();
+  }
+
+  confirm(disclosureId) {
+    this.dispatch(disclosureId);
+  }
 }
 
 export default alt.createActions(_PIReviewActions);

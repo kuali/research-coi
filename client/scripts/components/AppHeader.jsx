@@ -4,7 +4,6 @@ import {merge} from '../merge';
 import ReactRouter from 'react-router';
 let Link = ReactRouter.Link;
 import {KualiLogo} from './DynamicIcons/KualiLogo';
-import {ActionListIcon} from './DynamicIcons/ActionListIcon';
 import {ProfileIcon} from './DynamicIcons/ProfileIcon';
 import {HeaderButton} from './HeaderButton';
 import {HamburgerIcon} from './DynamicIcons/HamburgerIcon';

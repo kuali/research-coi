@@ -192,7 +192,9 @@ export class DisclosureTableRow extends ResponsiveComponent {
       );
     } else if (this.props.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED) {
       button = (
-      <KButton style={styles.button}>Revise &gt;</KButton>
+        <Link to={`/revise/${this.props.disclosureId}`}>
+          <KButton style={styles.button}>Revise &gt;</KButton>
+        </Link>
       );
     } else {
       button = (

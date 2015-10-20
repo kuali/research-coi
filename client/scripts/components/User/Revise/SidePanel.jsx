@@ -1,8 +1,38 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
+import Router from 'react-router';
+let Link = Router.Link;
+import PIReviewActions from '../../../actions/PIReviewActions';
 
 export default class SidePanel extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      agreed: false
+    };
+
+    this.onAgreeChange = this.onAgreeChange.bind(this);
+    this.confirm = this.confirm.bind(this);
+  }
+
+  onAgreeChange(evt) {
+    this.setState({
+      agreed: evt.target.checked
+    });
+  }
+
+  confirm() {
+    if (this.state.agreed) {
+      this.props.onConfirm();
+    }
+  }
+
+  submit() {
+    PIReviewActions.submit();
+  }
+
   render() {
     let submitEnabled = this.props.submitEnabled;
 
@@ -39,7 +69,7 @@ export default class SidePanel extends React.Component {
         margin: '0 10px 0 15px'
       },
       certificationPane: {
-        backgroundColor: '#444',
+        backgroundColor: '#0095A0',
         color: 'white',
         padding: '25px 15px'
       },
@@ -53,7 +83,8 @@ export default class SidePanel extends React.Component {
       },
       confirmButton: {
         fontSize: 20,
-        color: 'black'
+        color: this.state.agreed ? 'black' : '#AAA',
+        cursor: this.state.agreed ? 'pointer' : 'default'
       },
       confirmSection: {
         textAlign: 'center',
@@ -67,11 +98,11 @@ export default class SidePanel extends React.Component {
         <div style={styles.certificationPane}>
           <div>{this.props.certificationText}</div>
           <div style={styles.certCheckbox}>
-            <input type="checkbox" id="certCheck" />
+            <input type="checkbox" id="certCheck" onChange={this.onAgreeChange} />
             <label style={styles.agreedLabel} htmlFor="certCheck">Agreed</label>
           </div>
           <div style={styles.confirmSection}>
-            <KButton style={styles.confirmButton}>Confirm</KButton>
+            <KButton onClick={this.confirm} style={styles.confirmButton}>Confirm</KButton>
           </div>
         </div>
       );
@@ -79,7 +110,7 @@ export default class SidePanel extends React.Component {
     else {
       let message;
       if (submitEnabled) {
-        message = 'Yeah, you did it! Now just submit and go get out of here you crazy kid!';
+        message = 'Yeah, you did it! Now just submit and go get out of here you crazy kid! ******** THIS NEEDS TO BE REAL TEXT ******';
       }
       else {
         message = 'Please either revise or respond to each section before resubmitting.';
@@ -87,14 +118,17 @@ export default class SidePanel extends React.Component {
       content = (
         <div>
           <div style={styles.message}>{message}</div>
-          <div style={styles.submit}>
+          <div style={styles.submit} onClick={this.submit}>
             <i className="fa fa-arrow-circle-right" style={styles.submitIcon}></i>
             SUBMIT
           </div>
-          <div style={styles.cancel}>
-            <i className="fa fa-times-circle" style={styles.cancelIcon}></i>
-            CANCEL
-          </div>
+
+          <Link to="dashboard">
+            <div style={styles.cancel}>
+              <i className="fa fa-times-circle" style={styles.cancelIcon}></i>
+              CANCEL
+            </div>
+          </Link>
         </div>
       );
     }
