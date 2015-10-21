@@ -21,16 +21,16 @@ export default function authentication(req, res, next) {
   }
 
   getUserInfo(req.hostname, authToken)
-  .then(userInfo => {
-    if (!userInfo) {
-      res.sendStatus(401);
-    } else {
-      req.userInfo = userInfo;
-      next();
-    }
-  }).catch(err => {
-    Log.error(err);
-    next(err);
-  });
+    .then(userInfo => {
+      if (!userInfo) {
+        res.sendStatus(401);
+      } else {
+        req.userInfo = userInfo;
+        next();
+      }
+    }).catch(err => {
+      Log.error(err);
+      next(err);
+    });
 }
 
