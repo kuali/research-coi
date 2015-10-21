@@ -459,7 +459,7 @@ let getDisclosure = (knex, userInfo, disclosureId) => {
     criteria.user_id = userInfo.schoolId;
   }
 
-  return knex.select('de.id', 'de.type_cd as typeCd', 'de.title', 'de.disposition_type_cd as dispositionTypeCd', 'de.status_cd as statusCd', 'de.submitted_by as submittedBy', 'de.submitted_date as submittedDate', 'de.revised_date as revisedDate', 'de.start_date as startDate', 'de.expired_date as expiredDate', 'de.last_review_date as lastReviewDate')
+  return knex.select('de.id', 'de.type_cd as typeCd', 'de.title', 'de.disposition_type_cd as dispositionTypeCd', 'de.status_cd as statusCd', 'de.submitted_by as submittedBy', 'de.submitted_date as submittedDate', 'de.revised_date as revisedDate', 'de.start_date as startDate', 'de.expired_date as expiredDate', 'de.last_review_date as lastReviewDate', 'de.config_id as configId')
     .from('disclosure as de')
     .where(criteria);
 };
@@ -526,12 +526,8 @@ export let get = (dbInfo, userInfo, disclosureId) => {
       });
 
       return Promise.all([
-        knex.select('r.id', 'r.fin_entity_id as finEntityId', 'r.relationship_cd as relationshipCd', 'rc.description as relationship', 'r.person_cd as personCd', 'rp.description as person', 'r.type_cd as typeCd', 'rt.description as type', 'r.amount_cd as amountCd', 'ra.description as amount', 'r.comments')
+        knex.select('r.id', 'r.fin_entity_id as finEntityId', 'r.relationship_cd as relationshipCd', 'r.person_cd as personCd', 'r.type_cd as typeCd', 'r.amount_cd as amountCd', 'r.comments')
           .from('relationship as r')
-          .innerJoin('relationship_person_type as rp', 'r.person_cd', 'rp.type_cd')
-          .innerJoin('relationship_category_type as rc', 'r.relationship_cd', 'rc.type_cd')
-          .leftJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd' )
-          .leftJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
           .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
           .then(relationships => {
             return knex('travel_relationship')
@@ -587,14 +583,17 @@ export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
   return knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userInfo.schoolId)
     .then(result => {
       if (result.length < 1) {
-        let newDisclosure = {
-          type_cd: 2,
-          status_cd: 1,
-          start_date: new Date(),
-          user_id: userInfo.schoolId,
-          submitted_by: piName
-        };
-        return knex('disclosure')
+        return knex('config').max('id as id')
+        .then(config => {
+          let newDisclosure = {
+            type_cd: 2,
+            status_cd: 1,
+            start_date: new Date(),
+            user_id: userInfo.schoolId,
+            submitted_by: piName,
+            config_id: config[0].id
+          };
+          return knex('disclosure')
           .insert(newDisclosure)
           .then(id => {
             newDisclosure.id = id[0];
@@ -603,6 +602,7 @@ export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
             newDisclosure.declarations = [];
             return newDisclosure;
           });
+        });
       }
       else {
         return get(dbInfo, userInfo, result[0].id);

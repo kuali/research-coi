@@ -17,6 +17,8 @@ class _ConfigStore extends AutoBindingStore {
       getDisclosureTypeString: this.getDisclosureTypeString,
       getProjectTypeString: this.getProjectTypeString,
       getRelationshipCategoryTypeString: this.getRelationshipCategoryTypeString,
+      getRelationshipTypeString: this.getRelationshipTypeString,
+      getRelationshipAmountString: this.getRelationshipAmountString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
       getQuestionNumberToShow: this.getQuestionNumberToShow
     });
@@ -579,6 +581,19 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = false;
   }
 
+  loadConfig(id) {
+    createRequest().get('/api/coi/archived-config/' + id)
+    .end(processResponse((err, config) => {
+      if (!err) {
+        this.config = config.body;
+        console.log(this.config.isLoaded);
+        this.mapCodes();
+
+        this.emitChange();
+      }
+    }));
+  }
+
   saveAll() {
     createRequest().post('/api/coi/config')
     .send(this.config)
@@ -661,6 +676,34 @@ class _ConfigStore extends AutoBindingStore {
       }
     }
     return '';
+  }
+
+  getRelationshipTypeString(categoryCode, typeCode) {
+    let typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
+    if (typeRecord) {
+      let option = typeRecord.typeOptions.find(typeOption => {
+        return typeOption.typeCd === typeCode;
+      });
+
+      return option.description;
+    }
+    else {
+      return 'Undefined';
+    }
+  }
+
+  getRelationshipAmountString(categoryCode, typeCode) {
+    let typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
+    if (typeRecord) {
+      let option = typeRecord.amountOptions.find(amountOption => {
+        return amountOption.typeCd === typeCode;
+      });
+
+      return option.description;
+    }
+    else {
+      return 'Undefined';
+    }
   }
 
   getRelationshipPersonTypeString(code) {

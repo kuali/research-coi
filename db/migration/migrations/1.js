@@ -5,6 +5,10 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.boolean('enabled').notNullable();
     table.engine('InnoDB');
   })
+  .createTable('config', function(table) {
+    table.increments('id').notNullable();
+    table.text('config'); //--json object with config elements
+  })
   .createTable('disclosure_status', function(table) {
     table.integer('status_cd').notNullable().primary();
     table.string('description', 50).notNullable();
@@ -28,6 +32,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.dateTime('start_date').notNullable();
     table.dateTime('expired_date');
     table.dateTime('last_review_date');
+    table.integer('config_id').unsigned().notNullable().index().references('id').inTable('config');
     table.engine('InnoDB');
   })
   .createTable('disclosure_archive', function(table) {
@@ -194,10 +199,6 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('user_id', 40).notNullable();
     table.string('uploaded_by').notNullable();
     table.dateTime('upload_date');
-  })
-  .createTable('config', function(table) {
-    table.text('name');
-    table.text('config'); //--json object with config elements
   })
   .createTable('comment', function(table) {
     table.increments('id').notNullable();

@@ -17,6 +17,17 @@ export let init = app => {
       });
   });
 
+  app.get('/api/coi/archived-config/:id', function(req, res, next) {
+    ConfigDB.getArchivedConfig(req.dbInfo, req.params.id)
+    .then((result) => {
+      res.send(JSON.parse(result[0].config));
+    })
+    .catch(err => {
+      console.error(err);
+      next(err);
+    });
+  });
+  
   /**
     @Role: admin
   */
@@ -30,7 +41,15 @@ export let init = app => {
       .then(() => {
         return ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
           .then(config => {
-            res.send(config);
+            config.general = req.body.general;
+            return ConfigDB.archiveConfig(req.dbInfo, config)
+              .then(() => {
+                res.send(config);
+              })
+              .catch(err => {
+                console.error(err);
+                next(err);
+              });
           });
       })
       .catch(err => {

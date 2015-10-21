@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import {COIConstants} from '../../../COIConstants';
 import {processResponse, createRequest} from '../HttpUtils';
+import ConfigActions from '../actions/ConfigActions';
 
 let cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
@@ -116,7 +117,13 @@ class _DisclosureStore extends AutoBindingStore {
       .end(processResponse((err, disclosures) => {
         if (!err) {
           this.disclosureSummariesForUser = disclosures.body;
-          this.emitChange();
+          createRequest().get('/api/coi/config')
+          .end(processResponse((error, config) => {
+            if (!error) {
+              window.config = config.body;
+              this.emitChange();
+            }
+          }));
         }
       }));
   }
@@ -134,7 +141,14 @@ class _DisclosureStore extends AutoBindingStore {
           this.entities = disclosure.body.entities;
           this.declarations = disclosure.body.declarations;
           this.files = disclosure.body.files;
-          this.emitChange();
+          createRequest().get('/api/coi/archived-config/' + disclosure.body.config_id)
+          .end(processResponse((error, config) => {
+            if (!error) {
+              window.config = config.body;
+              ConfigActions.loadConfig(disclosure.body.config_id);
+              this.emitChange();
+            }
+          }));
         }
       }));
     }

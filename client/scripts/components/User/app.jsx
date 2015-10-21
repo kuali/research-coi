@@ -58,6 +58,7 @@ let routes = (
 createRequest().get('/api/coi/config')
 .end(processResponse((err, config) => {
   if (!err) {
+    console.log('reloaded');
     window.config = config.body;
     Router.run(routes, (Handler, state) => {
       React.render(<Handler state={state} />, document.body);

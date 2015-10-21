@@ -3,6 +3,7 @@ import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import {EntityForm} from './EntityForm';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class Entity extends React.Component {
   constructor() {
@@ -84,7 +85,7 @@ export class Entity extends React.Component {
     let relationships = this.props.entity.relationships.map((relationship) => {
       return (
         <div key={relationship.id}>
-          {relationship.person} - {relationship.relationship}
+          {ConfigStore.getRelationshipPersonTypeString(relationship.personCd)} - {ConfigStore.getRelationshipCategoryTypeString(relationship.relationshipCd)}
         </div>
       );
     });
