@@ -25,7 +25,7 @@ export class ApprovalConfirmation extends ResponsiveComponent {
       container: {
         color: 'white',
         fontSize: 15,
-        width: 185,
+        width: 210,
         backgroundColor: '#1481A3',
         padding: '20px 17px'
       },

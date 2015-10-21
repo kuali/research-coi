@@ -88,12 +88,20 @@ class _AdminStore extends AutoBindingStore {
 
   loadDisclosure(id) {
     createRequest().get('/api/coi/disclosures/' + id)
-           .end(processResponse((err, disclosure) => {
-             if (!err) {
-               this.applicationState.selectedDisclosure = disclosure.body;
-               this.emitChange();
-             }
-           }));
+      .end(processResponse((err, disclosure) => {
+        if (!err) {
+          this.applicationState.selectedDisclosure = disclosure.body;
+          this.emitChange();
+        }
+      }));
+
+    createRequest().get(`/api/coi/disclosures/${id}/pi-responses`)
+      .end(processResponse((err, responses) => {
+        if (!err) {
+          this.applicationState.piResponses = responses.body;
+          this.emitChange();
+        }
+      }));
   }
 
   changeSort(newSortField) {

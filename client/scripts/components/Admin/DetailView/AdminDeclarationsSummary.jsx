@@ -7,6 +7,18 @@ export class AdminDeclarationsSummary extends React.Component {
   constructor() {
     super();
     this.getCommentCount = this.getCommentCount.bind(this);
+    this.wasRespondedTo = this.wasRespondedTo.bind(this);
+  }
+
+  wasRespondedTo(id) {
+    if (this.props.piResponses && Array.isArray(this.props.piResponses)) {
+      return this.props.piResponses.some(response => {
+        return response.targetId === id;
+      });
+    }
+    else {
+      return false;
+    }
   }
 
   getCommentCount(id) {
@@ -114,6 +126,7 @@ export class AdminDeclarationsSummary extends React.Component {
               key={'decl' + declaration.id}
               declaration={declaration}
               commentCount={this.getCommentCount(declaration.id)}
+              changedByPI={this.wasRespondedTo(declaration.id)}
             />
           );
         });

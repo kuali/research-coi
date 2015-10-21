@@ -177,4 +177,15 @@ export let init = app => {
         next(err);
       });
   });
+
+  app.get('/api/coi/disclosures/:id/pi-responses', function(req, res, next) {
+    PIReviewDB.getPIResponseInfo(req.dbInfo, req.userInfo, req.params.id)
+      .then(responses => {
+        res.send(responses);
+      })
+      .catch(err => {
+        console.error(err);
+        next(err);
+      });
+  });
 };

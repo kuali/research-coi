@@ -21,6 +21,11 @@ export default class DeclarationSummary extends React.Component {
         fontSize: 12,
         marginBottom: 10
       },
+      highlighted: {
+        borderLeft: '10px solid #F57C00',
+        marginLeft: -20,
+        paddingLeft: 10
+      },
       entityName: {
         width: '25%',
         display: 'inline-block'
@@ -42,8 +47,14 @@ export default class DeclarationSummary extends React.Component {
       }
     };
 
+    let effectiveStyle = styles.container;
+    if (this.props.changedByPI) {
+      effectiveStyle = merge(effectiveStyle, styles.highlighted);
+    }
+    effectiveStyle = merge(effectiveStyle, this.props.style);
+
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div style={effectiveStyle}>
         <div>
           <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
             {this.props.declaration.entityName}

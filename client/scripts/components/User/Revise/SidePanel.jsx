@@ -110,7 +110,7 @@ export default class SidePanel extends React.Component {
     else {
       let message;
       if (submitEnabled) {
-        message = 'Yeah, you did it! Now just submit and go get out of here you crazy kid! ******** THIS NEEDS TO BE REAL TEXT ******';
+        message = 'Yeah, you did it!  You addressed all the review comments.  Now just submit to send back for approval.';
       }
       else {
         message = 'Please either revise or respond to each section before resubmitting.';

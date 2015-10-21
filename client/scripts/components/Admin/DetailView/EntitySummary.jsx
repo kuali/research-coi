@@ -70,13 +70,15 @@ export default class EntitySummary extends React.Component {
   render() {
     let styles = {
       container: {
+        padding: '20px 0'
       },
       entity: {
-        borderBottom: '1px solid #999',
-        padding: '20px 0'
+        borderBottom: '1px solid #999'
       },
-      lastEntity: {
-        padding: '20px 0'
+      highlighted: {
+        borderLeft: '10px solid #F57C00',
+        marginLeft: -20,
+        paddingLeft: 10
       },
       name: {
         fontSize: 18,
@@ -158,9 +160,18 @@ export default class EntitySummary extends React.Component {
       );
     });
 
+    let effectiveStyle = styles.container;
+    if (this.props.changedByPI) {
+      effectiveStyle = merge(effectiveStyle, styles.highlighted);
+    }
+    if (!this.props.isLast) {
+      effectiveStyle = merge(effectiveStyle, styles.entity);
+    }
+    effectiveStyle = merge(effectiveStyle, this.props.style);
+
     return (
       <div
-        style={merge(this.props.isLast ? styles.lastEntity : styles.entity, this.props.style)}
+        style={effectiveStyle}
       >
         <div style={styles.name}>{this.props.entity.name}</div>
         <div>

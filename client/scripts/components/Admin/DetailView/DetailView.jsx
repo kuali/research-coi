@@ -142,6 +142,7 @@ export class DetailView extends React.Component {
       disclosureDetail = (
         <DisclosureDetail
           disclosure={this.state.applicationState.selectedDisclosure}
+          piResponses={this.state.applicationState.piResponses}
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
           config={this.state.config}

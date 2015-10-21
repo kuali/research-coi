@@ -14,6 +14,7 @@ export class DisclosureDetail extends React.Component {
     super();
 
     this.findScreeningQuestion = this.findScreeningQuestion.bind(this);
+    this.getResponses = this.getResponses.bind(this);
   }
 
   componentWillReceiveProps() {
@@ -42,6 +43,17 @@ export class DisclosureDetail extends React.Component {
     });
   }
 
+  getResponses(type) {
+    let responses = [];
+    if (this.props.piResponses && Array.isArray(this.props.piResponses)) {
+      responses = this.props.piResponses.filter(response => {
+        return response.targetType === type;
+      });
+    }
+
+    return responses;
+  }
+
   render() {
     let entityNameMap = this.makeEntityMap();
 
@@ -61,13 +73,11 @@ export class DisclosureDetail extends React.Component {
       },
       confirmation: {
         display: this.props.showApproval ? 'block' : 'none',
-        position: 'fixed',
         top: 186,
         right: 20
       },
       rejection: {
         display: this.props.showRejection ? 'block' : 'none',
-        position: 'fixed',
         top: 186,
         right: 20
       },
@@ -160,17 +170,22 @@ export class DisclosureDetail extends React.Component {
               answers={screeningAnswers}
               comments={questionnaireComments}
               style={styles.questionnaire}
+              piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE)}
             />
             <AdminEntitiesSummary
               questions={entityQuestions}
               entities={this.props.disclosure.entities}
               comments={entitiesComments}
-              style={styles.entities} />
+              style={styles.entities}
+              piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.ENTITIES)}
+            />
             <AdminDeclarationsSummary
               entityNameMap={entityNameMap}
               declarations={this.props.disclosure.declarations}
               comments={declarationsComments}
-              id={this.props.disclosure.id} />
+              id={this.props.disclosure.id}
+              piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.PROJECTS)}
+            />
           </span>
           <span>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
