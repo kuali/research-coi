@@ -6,7 +6,6 @@ let Link = ReactRouter.Link;
 import {KualiLogo} from './DynamicIcons/KualiLogo';
 import {HamburgerIcon} from './DynamicIcons/HamburgerIcon';
 import {createRequest} from '../HttpUtils';
-import Cookies from 'cookies-js';
 
 export class AppHeader extends ResponsiveComponent {
   constructor() {
