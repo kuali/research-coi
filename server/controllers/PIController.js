@@ -1,20 +1,31 @@
 import * as PIDB from '../db/PIDB';
 import * as PIReviewDB from '../db/PIReviewDB';
+import Log from '../Log';
+import {COIConstants} from '../../COIConstants';
 
 export let init = app => {
+  /**
+    @Role: admin
+  */
   app.get('/api/coi/pi', function(req, res, next) {
+    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+      res.sendStatus(403);
+      return;
+    }
+
     PIDB.getSuggestions(req.dbInfo, req.query.term)
       .then(suggestions => {
         res.send(suggestions);
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
   /**
-    @Role: PI
+    @Role: user
+    Can only respond to review items which are associated with their disclosures
   */
   app.post('/api/coi/pi-response/:reviewId', (req, res, next) => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
@@ -30,13 +41,14 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
   /**
-    @Role: PI
+    @Role: user
+    Can only revise questions which are associated with their disclosures
   */
   app.put('/api/coi/pi-revise/:reviewId', (req, res, next) => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
@@ -52,11 +64,15 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: user
+    Can only revise questions which are associated with their disclosures
+  */
   app.put('/api/coi/pi-revise/:reviewId/entity-question/:questionId', (req, res, next) => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
@@ -71,11 +87,15 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: user
+    Can only add relationships for entities which are associated with their disclosures
+  */
   app.post('/api/coi/pi-revise/:reviewId/entity-relationship', (req, res, next) => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
@@ -90,22 +110,38 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: user
+    Can only remove relationships for entities which are associated with their disclosures
+  */
   app.delete('/api/coi/pi-revise/:reviewId/entity-relationship/:relationshipId', (req, res, next) => {
-    PIReviewDB.removeRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.params.relationshipId)
-      .then(() => {
-        res.status(204).end();
+    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
+      .then(isAllowed => {
+        if (isAllowed) {
+          return PIReviewDB.removeRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.params.relationshipId)
+            .then(() => {
+              res.status(204).end();
+            });
+        }
+        else {
+          res.status(403).end();
+        }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: user
+    Can only revise declarations which are associated with their disclosures
+  */
   app.put('/api/coi/pi-revise/:reviewId/declaration', (req, res, next) => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
@@ -120,11 +156,15 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: user
+    Can only revise subquestions which are associated with their disclosures
+  */
   app.put('/api/coi/pi-revise/:reviewId/subquestion-answer/:subQuestionId', (req, res, next) => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
@@ -139,11 +179,15 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: user
+    Can only remove answers for questions which are associated with their disclosures
+  */
   app.delete('/api/coi/pi-revise/:reviewId/question-answers', (req, res, next) => {
     PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
       .then(isAllowed => {
@@ -153,7 +197,7 @@ export let init = app => {
               res.status(204).end();
             })
             .catch(err => {
-              console.error(err);
+              Log.error(err);
               next(err);
             });
         }
@@ -162,29 +206,41 @@ export let init = app => {
         }
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: user
+    Can only resubmit their own disclosures
+  */
   app.put('/api/coi/pi-revise/:disclosureId/submit', (req, res, next) => {
     PIReviewDB.reSubmitDisclosure(req.dbInfo, req.userInfo, req.params.disclosureId)
       .then(() => {
         res.send({success: true});
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });
 
+  /**
+    @Role: admin
+  */
   app.get('/api/coi/disclosures/:id/pi-responses', function(req, res, next) {
-    PIReviewDB.getPIResponseInfo(req.dbInfo, req.userInfo, req.params.id)
+    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+      res.sendStatus(403);
+      return;
+    }
+
+    PIReviewDB.getPIResponseInfo(req.dbInfo, req.params.id)
       .then(responses => {
         res.send(responses);
       })
       .catch(err => {
-        console.error(err);
+        Log.error(err);
         next(err);
       });
   });

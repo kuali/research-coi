@@ -27,6 +27,12 @@ export function getUserInfo(hostname, authToken) {
           });
           response.on('end', () => {
             let userInfo = JSON.parse(body);
+
+// Remove this code when we have school ids for admin
+if (userInfo.schoolId == undefined) {
+  userInfo.schoolId = 99999999;
+}
+
             cache.set(authToken, userInfo);
             resolve(userInfo);
           });

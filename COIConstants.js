@@ -63,5 +63,9 @@ export let COIConstants = {
   QUESTIONNAIRE_TYPE: {
     SCREENING: 'screening',
     ENTITY: 'entities'
+  },
+  ROLES: {
+    ADMIN: 'admin',
+    USER: 'user'
   }
 };

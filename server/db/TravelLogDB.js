@@ -21,5 +21,7 @@ export let getTravelLogEntries = (dbInfo, userId, optionalTrx) => {
     .from('travel_relationship as t')
     .innerJoin('relationship a r', 'r.id', 'tr.relationship_id' )
     .innerJoin('fin_entity as fe', 'fe.id', 'r.fin_entity_id')
+    .innerJoin('disclosure as d', 'd.id', 'fe.disclosure_id')
+    .where('d.user_id', userId)
     .orderBy('fe.name', 'ASC');
 };
