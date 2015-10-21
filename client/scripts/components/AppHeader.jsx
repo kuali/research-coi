@@ -4,13 +4,18 @@ import {merge} from '../merge';
 import ReactRouter from 'react-router';
 let Link = ReactRouter.Link;
 import {KualiLogo} from './DynamicIcons/KualiLogo';
-import {ProfileIcon} from './DynamicIcons/ProfileIcon';
-import {HeaderButton} from './HeaderButton';
 import {HamburgerIcon} from './DynamicIcons/HamburgerIcon';
+import {createRequest} from '../HttpUtils';
+import Cookies from 'cookies-js';
 
 export class AppHeader extends ResponsiveComponent {
   constructor() {
     super();
+
+    this.state = {
+      usersName: ''
+    };
+
     this.commonStyles = {
       logo: {
         width: 26,
@@ -48,9 +53,10 @@ export class AppHeader extends ResponsiveComponent {
       },
       controls: {
         'float': 'right',
-        cursor: 'pointer',
         display: 'inline-block',
-        height: 42
+        padding: 12,
+        fontSize: 13,
+        color: '#808080'
       },
       icon: {
         color: '#676767',
@@ -63,6 +69,17 @@ export class AppHeader extends ResponsiveComponent {
         height: '100%'
       }
     };
+  }
+
+  componentWillMount() {
+    createRequest().get('/api/coi/username')
+    .end((err, username) => {
+      if (!err) {
+        this.setState({
+          usersName: username.text
+        });
+      }
+    });
   }
 
   renderMobile() {
@@ -95,6 +112,18 @@ export class AppHeader extends ResponsiveComponent {
       container: {
         backgroundColor: 'white',
         padding: '0 10px 0 50px'
+      },
+      usersName: {
+        textTransform: 'uppercase',
+        paddingLeft: 20,
+        verticalAlign: 'middle'
+      },
+      signOut: {
+        borderRight: '1px solid #555555',
+        padding: '0px 20px',
+        verticalAlign: 'middle',
+        cursor: 'pointer',
+        color: '#555555'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -114,9 +143,14 @@ export class AppHeader extends ResponsiveComponent {
           </span>
         </span>
         <span style={styles.controls}>
-          <span>
-            <HeaderButton icon={ProfileIcon} label="ACCOUNT" />
-          </span>
+          {/*<span style={{verticalAlign: 'middle'}}>
+            CONTRAST MODE
+          </span>*/}
+          <a style={styles.signOut} href="/auth/signout?return_to=/coi">
+            <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
+            SIGN OUT
+          </a>
+          <span style={styles.usersName}>Welcome, {this.state.usersName}</span>
         </span>
       </header>
     );

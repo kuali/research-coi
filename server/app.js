@@ -4,6 +4,7 @@ import * as TravelLogController from './controllers/TravelLogController';
 import * as ProjectController from './controllers/ProjectController';
 import * as FileController from './controllers/FileController';
 import * as PIController from './controllers/PIController';
+import * as UserController from './controllers/UserController';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -36,8 +37,8 @@ export function run() {
   TravelLogController.init(app);
   ProjectController.init(app);
   FileController.init(app);
-
   PIController.init(app);
+  UserController.init(app);
 
   let portNumber = config ? config.port : 8090;
   let server = app.listen(portNumber);

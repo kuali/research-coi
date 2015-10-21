@@ -2,21 +2,21 @@ import https from 'https';
 import cache from './LruCache';
 
 export function getUserInfo(hostname, authToken) {
-  let options = {
-    protocol: 'https:',
-    host: hostname,
-    path: '/api/users/current',
-    headers: {
-      'Accept': 'application/vnd.kuali.v1+json',
-      'Authorization': 'Bearer ' + authToken
-    }
-  };
-
-  let cachedUserInfo = authToken ? cache.get(authToken) : undefined;
   return new Promise((resolve, reject) => {
+    let cachedUserInfo = authToken ? cache.get(authToken) : undefined;
     if (cachedUserInfo) {
       resolve(cachedUserInfo);
     } else {
+      let options = {
+        protocol: 'https:',
+        host: hostname,
+        path: '/api/users/current',
+        headers: {
+          'Accept': 'application/vnd.kuali.v1+json',
+          'Authorization': 'Bearer ' + authToken
+        }
+      };
+
       https.get(options, response => {
         if (response.statusCode !== 200) {
           resolve();
