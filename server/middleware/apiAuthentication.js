@@ -1,4 +1,5 @@
 import {getUserInfo} from '../AuthService';
+import Log from '../Log';
 
 function getAuthToken(header) {
   try {
@@ -28,7 +29,7 @@ export default function authentication(req, res, next) {
       next();
     }
   }).catch(err => {
-    console.err(err);
+    Log.error(err);
     next(err);
   });
 }

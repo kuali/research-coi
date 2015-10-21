@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
 import apiAuthentication from './middleware/apiAuthentication';
 import viewRenderer from './middleware/viewRenderer';
+import Log from './Log';
 
 export function run() {
   let app = express();
@@ -20,7 +21,7 @@ export function run() {
     extensions.express(app);
     config = extensions.config;
   } catch (e) {
-    console.log('extensions not found');
+    Log.info('extensions not found');
   }
 
   app.use('/coi', express.static('client'));
@@ -40,13 +41,14 @@ export function run() {
 
   let portNumber = config ? config.port : 8090;
   let server = app.listen(portNumber);
-  console.log('Listening on port ' + portNumber);
+
+  Log.info(`Listening on port ${portNumber}`);
 
   process.on('uncaughtException', function(err) {
-    console.error('Uncaught exception: ' + err);
-    console.log('waiting for pending connections to clear');
+    Log.error(`Uncaught exception: ${err}`);
+    Log.error('waiting for pending connections to clear');
     server.close(() => {
-      console.log('shutting down');
+      Log.error('shutting down');
       process.exit(1); //eslint-disable-line no-process-exit
     });
   });

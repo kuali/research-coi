@@ -492,39 +492,46 @@ let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
 };
 
 export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
-  let knex = getKnex(dbInfo);
+  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error('Attempt to access pi-review-items for a disclosure that isnt the users');
+      }
 
-  return knex.select('p.id', 'p.target_type as targetType', 'p.target_id as targetId', 'p.reviewed_on as reviewedOn', 'p.revised', 'p.responded_to as respondedTo')
-    .from('pi_review as p')
-    .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
-    .where({
-      'p.disclosure_id': disclosureId,
-      'd.user_id': userInfo.schoolId
-    })
-    .then(rows => {
-      return Promise.all([
-        getQuestionsToReview(knex, disclosureId, userInfo.schoolId,
-          rows.filter(row => {
-            return row.targetType === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
-          })
-        ),
-        getEntitiesToReview(knex, disclosureId, userInfo.schoolId,
-          rows.filter(row => {
-            return row.targetType === COIConstants.DISCLOSURE_STEP.ENTITIES;
-          })
-        ),
-        getDeclarationsToReview(knex, disclosureId, userInfo.schoolId,
-          rows.filter(row => {
-            return row.targetType === COIConstants.DISCLOSURE_STEP.PROJECTS;
-          })
-        )
-      ]).then(([questions, entities, declarations]) => {
-        return {
-          questions: questions,
-          entities: entities,
-          declarations: declarations
-        };
-      });
+      let knex = getKnex(dbInfo);
+
+      return knex.select('p.id', 'p.target_type as targetType', 'p.target_id as targetId', 'p.reviewed_on as reviewedOn', 'p.revised', 'p.responded_to as respondedTo')
+        .from('pi_review as p')
+        .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
+        .where({
+          'p.disclosure_id': disclosureId,
+          'd.user_id': userInfo.schoolId
+        })
+        .then(rows => {
+          return Promise.all([
+            getQuestionsToReview(knex, disclosureId, userInfo.schoolId,
+              rows.filter(row => {
+                return row.targetType === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+              })
+            ),
+            getEntitiesToReview(knex, disclosureId, userInfo.schoolId,
+              rows.filter(row => {
+                return row.targetType === COIConstants.DISCLOSURE_STEP.ENTITIES;
+              })
+            ),
+            getDeclarationsToReview(knex, disclosureId, userInfo.schoolId,
+              rows.filter(row => {
+                return row.targetType === COIConstants.DISCLOSURE_STEP.PROJECTS;
+              })
+            )
+          ]).then(([questions, entities, declarations]) => {
+            return {
+              questions: questions,
+              entities: entities,
+              declarations: declarations
+            };
+          });
+        });
     });
 };
 
@@ -674,7 +681,7 @@ export let reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
-export let getPIResponseInfo = (dbInfo, userInfo, disclosureId) => {
+export let getPIResponseInfo = (dbInfo, disclosureId) => {
   let knex = getKnex(dbInfo);
 
   return knex.select('target_id as targetId', 'target_type as targetType', 'reviewed_on as reviewedOn')

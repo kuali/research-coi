@@ -14,315 +14,365 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let saveNewFinancialEntity = (dbInfo, displayName, disclosureId, financialEntity, files) => {
+export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEntity, files) => {
   let knex = getKnex(dbInfo);
 
-  return knex('fin_entity')
-    .insert({
-      disclosure_id: disclosureId,
-      active: financialEntity.active,
-      name: financialEntity.name,
-      description: financialEntity.description
-    })
-    .then(id => {
-      financialEntity.id = id[0];
-      let queries = [];
-      financialEntity.relationships.forEach(relationship => {
-        relationship.finEntityId = id[0];
-        queries.push(
-          knex('relationship')
-          .insert({
-            fin_entity_id: id[0],
-            relationship_cd: relationship.relationshipCd,
-            person_cd: relationship.personCd,
-            type_cd: !relationship.typeCd ? null : relationship.typeCd,
-            amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-            comments: relationship.comments
-          })
-          .then(relationshipId=>{
-            relationship.id = relationshipId[0];
-            if (relationship.relationshipCd === 6) {
-              return knex('travel_relationship')
-              .insert({
-                relationship_id: relationshipId[0],
-                amount: relationship.travel.amount,
-                destination: relationship.travel.destination,
-                start_date: new Date(relationship.travel.startDate),
-                end_date: new Date(relationship.travel.endDate),
-                reason: relationship.travel.reason
-              });
-            }
-          })
-        );
-      });
+  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error('Attempt to associate an entity with a disclosure that isnt the users');
+      }
 
-      financialEntity.answers.forEach(answer=>{
-        queries.push(
-          knex('questionnaire_answer').insert({
-            question_id: answer.questionId,
-            answer: JSON.stringify(answer.answer)
-          })
-          .then(result =>{
-            answer.id = result[0];
-            return knex('fin_entity_answer')
+      return knex('fin_entity')
+        .insert({
+          disclosure_id: disclosureId,
+          active: financialEntity.active,
+          name: financialEntity.name,
+          description: financialEntity.description
+        })
+        .then(id => {
+          financialEntity.id = id[0];
+          let queries = [];
+          financialEntity.relationships.forEach(relationship => {
+            relationship.finEntityId = id[0];
+            queries.push(
+              knex('relationship')
               .insert({
                 fin_entity_id: id[0],
-                questionnaire_answer_id: result[0]
-              });
-          })
-        );
-      });
+                relationship_cd: relationship.relationshipCd,
+                person_cd: relationship.personCd,
+                type_cd: !relationship.typeCd ? null : relationship.typeCd,
+                amount_cd: !relationship.amountCd ? null : relationship.amountCd,
+                comments: relationship.comments
+              })
+              .then(relationshipId=>{
+                relationship.id = relationshipId[0];
+                if (relationship.relationshipCd === 6) {
+                  return knex('travel_relationship')
+                  .insert({
+                    relationship_id: relationshipId[0],
+                    amount: relationship.travel.amount,
+                    destination: relationship.travel.destination,
+                    start_date: new Date(relationship.travel.startDate),
+                    end_date: new Date(relationship.travel.endDate),
+                    reason: relationship.travel.reason
+                  });
+                }
+              })
+            );
+          });
 
-      financialEntity.files = [];
-      files.forEach(file=>{
-        let fileData = {
-          file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
-          ref_id: financialEntity.id,
-          type: file.mimetype,
-          key: file.filename,
-          name: file.originalname,
-          uploaded_by: displayName,
-          upload_date: new Date()
-        };
-        queries.push(
-        knex('file')
-        .insert(fileData)
-        .then(fileId=>{
-          fileData.id = fileId[0];
-          financialEntity.files.push(fileData);
-        })
-        );
-      });
+          financialEntity.answers.forEach(answer=>{
+            queries.push(
+              knex('questionnaire_answer').insert({
+                question_id: answer.questionId,
+                answer: JSON.stringify(answer.answer)
+              })
+              .then(result =>{
+                answer.id = result[0];
+                return knex('fin_entity_answer')
+                  .insert({
+                    fin_entity_id: id[0],
+                    questionnaire_answer_id: result[0]
+                  });
+              })
+            );
+          });
 
-      return Promise.all(queries)
-        .then(() => {
-          return financialEntity;
+          financialEntity.files = [];
+          files.forEach(file=>{
+            let fileData = {
+              file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+              ref_id: financialEntity.id,
+              type: file.mimetype,
+              key: file.filename,
+              name: file.originalname,
+              uploaded_by: userInfo.displayName,
+              upload_date: new Date()
+            };
+            queries.push(
+            knex('file')
+            .insert(fileData)
+            .then(fileId=>{
+              fileData.id = fileId[0];
+              financialEntity.files.push(fileData);
+            })
+            );
+          });
+
+          return Promise.all(queries)
+            .then(() => {
+              return financialEntity;
+            });
         });
     });
 };
 
-export let saveExistingFinancialEntity = (dbInfo, displayName, disclosureId, entityId, body, files) => {
+let isEntityUsers = (knex, entityId, userId) => {
+  return knex.select('e.id')
+    .from('fin_entity as e')
+    .innerJoin('disclosure as d', 'd.id', 'e.disclosure_id')
+    .where({
+      'e.id': entityId,
+      'd.user_id': userId
+    })
+    .then(rows => {
+      return rows.length > 0;
+    });
+};
+
+export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, files) => {
   let knex = getKnex(dbInfo);
 
   let financialEntity = body;
 
-  return knex('fin_entity')
-    .where('id', entityId)
-    .update({
-      disclosure_id: disclosureId,
-      active: financialEntity.active,
-      name: financialEntity.name,
-      description: financialEntity.description
-    })
-    .then(() => {
-      let queries = [];
+  return isEntityUsers(knex, entityId, userInfo.schoolId)
+    .then(isOwner => {
+      if (!isOwner) {
+        throw Error('Attempt to update an entity not owned by user');
+      }
 
-      queries.push(
-        knex('relationship')
-        .select('*')
-        .where('fin_entity_id', entityId)
-        .then(dbRelationships => {
-          return Promise.all(
-            dbRelationships.filter(dbRelationship => {
-              let match = financialEntity.relationships.find(relationship => {
-                return relationship.id === dbRelationship.id;
-              });
-              return !match;
-            }).map(dbRelationship => {
-              return knex('travel_relationship')
-              .del()
-              .where('relationship_id', dbRelationship.id)
-              .then(() => {
-                return knex('relationship')
-                .del()
-                .where('id', dbRelationship.id);
-              });
-            })
-          );
+      return knex('fin_entity')
+        .where('id', entityId)
+        .update({
+          active: financialEntity.active,
+          name: financialEntity.name,
+          description: financialEntity.description
         })
-      );
+        .then(() => {
+          let queries = [];
 
-      financialEntity.relationships.map(relationship => {
-        if (isNaN(relationship.id)) {
-          relationship.finEntityId = entityId;
           queries.push(
             knex('relationship')
-            .insert({
-              fin_entity_id: entityId,
-              relationship_cd: relationship.relationshipCd,
-              person_cd: relationship.personCd,
-              type_cd: !relationship.typeCd ? null : relationship.typeCd,
-              amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-              comments: relationship.comments
-            })
-            .then(relationshipId=>{
-              relationship.id = relationshipId[0];
-              if (relationship.relationshipCd === 6) {
-                return knex('travel_relationship')
-                .insert({
-                  relationship_id: relationshipId[0],
-                  amount: relationship.travel.amount,
-                  destination: relationship.travel.destination,
-                  start_date: new Date(relationship.travel.startDate),
-                  end_date: new Date(relationship.travel.endDate),
-                  reason: relationship.travel.reason
-                });
-              }
-            })
-          );
-        }
-      });
-
-      financialEntity.answers.forEach(answer=>{
-        if (answer.id) {
-          queries.push(
-            knex('questionnaire_answer').update({
-              question_id: answer.questionId,
-              answer: JSON.stringify(answer.answer)
-            })
-            .where('id', answer.id)
-          );
-        } else {
-          queries.push(
-            knex('questionnaire_answer').insert({
-              question_id: answer.questionId,
-              answer: JSON.stringify(answer.answer)
-            }).then(result =>{
-              answer.id = result[0];
-              return knex('fin_entity_answer').insert({
-                fin_entity_id: entityId,
-                questionnaire_answer_id: result[0]});
-            })
-          );
-        }
-      });
-
-      queries.push(
-        knex.select('*')
-          .from('file')
-          .where({
-            ref_id: entityId,
-            file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
-          })
-          .then(results => {
-            if (results) {
-              results.forEach(result => {
-                let match = financialEntity.files.find(file => {
-                  return result.id === file.id;
-                });
-                if (!match) {
-                  queries.push(
-                    knex('file').where('id', result.id).del()
-                    .then(() => {
-                      return new Promise((resolve, reject) => {
-                        FileService.deleteFile(result.key, err => {
-                          if (err) {
-                            reject(err);
-                          } else {
-                            resolve();
-                          }
-                        });
+              .select('*')
+              .where('fin_entity_id', entityId)
+              .then(dbRelationships => {
+                return Promise.all(
+                  dbRelationships.filter(dbRelationship => {
+                    let match = financialEntity.relationships.find(relationship => {
+                      return relationship.id === dbRelationship.id;
+                    });
+                    return !match;
+                  }).map(dbRelationship => {
+                    return knex('travel_relationship')
+                      .del()
+                      .where('relationship_id', dbRelationship.id)
+                      .then(() => {
+                        return knex('relationship')
+                          .del()
+                          .where('id', dbRelationship.id);
                       });
-                    })
-                  );
-                }
-              });
+                  })
+                );
+              })
+          );
+
+          financialEntity.relationships.map(relationship => {
+            if (isNaN(relationship.id)) {
+              relationship.finEntityId = entityId;
+              queries.push(
+                knex('relationship')
+                .insert({
+                  fin_entity_id: entityId,
+                  relationship_cd: relationship.relationshipCd,
+                  person_cd: relationship.personCd,
+                  type_cd: !relationship.typeCd ? null : relationship.typeCd,
+                  amount_cd: !relationship.amountCd ? null : relationship.amountCd,
+                  comments: relationship.comments
+                })
+                .then(relationshipId=>{
+                  relationship.id = relationshipId[0];
+                  if (relationship.relationshipCd === 6) {
+                    return knex('travel_relationship')
+                    .insert({
+                      relationship_id: relationshipId[0],
+                      amount: relationship.travel.amount,
+                      destination: relationship.travel.destination,
+                      start_date: new Date(relationship.travel.startDate),
+                      end_date: new Date(relationship.travel.endDate),
+                      reason: relationship.travel.reason
+                    });
+                  }
+                })
+              );
             }
-          })
-      );
+          });
 
-      files.forEach(file => {
-        let fileData = {
-          file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
-          ref_id: entityId,
-          type: file.mimetype,
-          key: file.filename,
-          name: file.originalname,
-          uploaded_by: displayName,
-          upload_date: new Date()
-        };
-        queries.push(
-          knex('file')
-            .insert(fileData)
-            .then(id => {
-              fileData.id = id[0];
-              financialEntity.files.push(fileData);
-            })
-        );
-      });
+          financialEntity.answers.forEach(answer => {
+            if (answer.id) {
+              queries.push(
+                knex('questionnaire_answer').update({
+                  question_id: answer.questionId,
+                  answer: JSON.stringify(answer.answer)
+                })
+                .where('id', answer.id)
+              );
+            } else {
+              queries.push(
+                knex('questionnaire_answer').insert({
+                  question_id: answer.questionId,
+                  answer: JSON.stringify(answer.answer)
+                }).then(result =>{
+                  answer.id = result[0];
+                  return knex('fin_entity_answer').insert({
+                    fin_entity_id: entityId,
+                    questionnaire_answer_id: result[0]});
+                })
+              );
+            }
+          });
 
-      return Promise.all(queries)
-        .then(() => {
-          return financialEntity;
+          queries.push(
+            knex.select('*')
+              .from('file')
+              .where({
+                ref_id: entityId,
+                file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
+              })
+              .then(results => {
+                if (results) {
+                  results.forEach(result => {
+                    let match = financialEntity.files.find(file => {
+                      return result.id === file.id;
+                    });
+                    if (!match) {
+                      queries.push(
+                        knex('file').where('id', result.id).del()
+                        .then(() => {
+                          return new Promise((resolve, reject) => {
+                            FileService.deleteFile(result.key, err => {
+                              if (err) {
+                                reject(err);
+                              } else {
+                                resolve();
+                              }
+                            });
+                          });
+                        })
+                      );
+                    }
+                  });
+                }
+              })
+          );
+
+          files.forEach(file => {
+            let fileData = {
+              file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+              ref_id: entityId,
+              type: file.mimetype,
+              key: file.filename,
+              name: file.originalname,
+              uploaded_by: userInfo.displayName,
+              upload_date: new Date()
+            };
+            queries.push(
+              knex('file')
+                .insert(fileData)
+                .then(id => {
+                  fileData.id = id[0];
+                  financialEntity.files.push(fileData);
+                })
+            );
+          });
+
+          return Promise.all(queries)
+            .then(() => {
+              return financialEntity;
+            });
         });
     });
 };
 
 export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
-  let knex = getKnex(dbInfo);
-  return knex('declaration').insert({
-    project_id: record.projectId,
-    disclosure_id: disclosureId,
-    fin_entity_id: record.finEntityId,
-    type_cd: record.typeCd,
-    comments: record.comments
-  }).then(id => {
-    record.id = id[0];
-    return record;
-  });
+  return isDisclosureUsers(dbInfo, disclosureId, userId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error('Attempt to create a declaration for a disclosure which isnt the users');
+      }
+
+      let knex = getKnex(dbInfo);
+      return knex('declaration').insert({
+        project_id: record.projectId,
+        disclosure_id: disclosureId,
+        fin_entity_id: record.finEntityId,
+        type_cd: record.typeCd,
+        comments: record.comments
+      }).then(id => {
+        record.id = id[0];
+        return record;
+      });
+    });
 };
 
 export let saveExistingDeclaration = (dbInfo, userId, disclosureId, declarationId, record) => {
-  let knex = getKnex(dbInfo);
-
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
-      if (isSubmitter) {
-        return knex('declaration')
-          .update({
-            'type_cd': record.typeCd,
-            'comments': record.comments
-          })
-          .where({
-            'disclosure_id': disclosureId,
-            id: declarationId
-          });
+      if (!isSubmitter) {
+        throw Error('Attempt to save a declaration on a disclosure that isnt theirs');
       }
-      else {
-        return 'Unauthorized';
-      }
+
+      let knex = getKnex(dbInfo);
+
+      return knex('declaration')
+        .update({
+          'type_cd': record.typeCd,
+          'comments': record.comments
+        })
+        .where({
+          'disclosure_id': disclosureId,
+          id: declarationId
+        });
     });
 };
 
 export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
-  let knex = getKnex(dbInfo);
-  let answer = body;
-  return knex('questionnaire_answer').insert({
-    question_id: body.questionId,
-    answer: JSON.stringify(body.answer)
-  }).then(result => {
-    answer.id = result[0];
-    return knex('disclosure_answer').insert({
-      disclosure_id: disclosureId,
-      questionnaire_answer_id: result[0]}).then(() => {
-        return body;
-      });
-  });
+  return isDisclosureUsers(dbInfo, disclosureId, userId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error('Attempt to save a question answer on a disclosure that isnt theirs');
+      }
+
+      let knex = getKnex(dbInfo);
+      let answer = body;
+      return knex('questionnaire_answer')
+        .insert({
+          question_id: body.questionId,
+          answer: JSON.stringify(body.answer)
+        })
+        .then(result => {
+          answer.id = result[0];
+          return knex('disclosure_answer')
+            .insert({
+              disclosure_id: disclosureId,
+              questionnaire_answer_id: result[0]})
+            .then(() => {
+              return body;
+            });
+        });
+    });
 };
 
 export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questionId, body) => {
-  let knex = getKnex(dbInfo);
-  return knex.select('qa.id')
-    .from('disclosure_answer as da')
-    .innerJoin('questionnaire_answer as qa', 'da.questionnaire_answer_id', 'qa.id')
-    .where('da.disclosure_id', disclosureId)
-    .andWhere('qa.question_id', questionId)
-    .then(result => {
-      return knex('questionnaire_answer')
-        .where('id', result[0].id)
-        .update('answer', JSON.stringify(body.answer))
-        .then(() => {
-          return body;
+  return isDisclosureUsers(dbInfo, disclosureId, userId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error('Attempt to save a question answer on a disclosure that isnt theirs');
+      }
+
+      let knex = getKnex(dbInfo);
+      return knex.select('qa.id')
+        .from('disclosure_answer as da')
+        .innerJoin('questionnaire_answer as qa', 'da.questionnaire_answer_id', 'qa.id')
+        .where('da.disclosure_id', disclosureId)
+        .andWhere('qa.question_id', questionId)
+        .then(result => {
+          return knex('questionnaire_answer')
+            .where('id', result[0].id)
+            .update('answer', JSON.stringify(body.answer))
+            .then(() => {
+              return body;
+            });
         });
     });
 };
@@ -400,13 +450,26 @@ export let addComment = (dbInfo, userInfo, comment) => {
     });
 };
 
-export let get = (dbInfo, userId, disclosureId) => {
+let getDisclosure = (knex, userInfo, disclosureId) => {
+  let criteria = {
+    'id': disclosureId
+  };
+
+  if (userInfo.role !== COIConstants.ROLES.ADMIN) {
+    criteria.user_id = userInfo.schoolId;
+  }
+
+  return knex.select('de.id', 'de.type_cd as typeCd', 'de.title', 'de.disposition_type_cd as dispositionTypeCd', 'de.status_cd as statusCd', 'de.submitted_by as submittedBy', 'de.submitted_date as submittedDate', 'de.revised_date as revisedDate', 'de.start_date as startDate', 'de.expired_date as expiredDate', 'de.last_review_date as lastReviewDate')
+    .from('disclosure as de')
+    .where(criteria);
+};
+
+export let get = (dbInfo, userInfo, disclosureId) => {
   var disclosure;
   let knex = getKnex(dbInfo);
+
   return Promise.all([
-    knex.select('de.id', 'de.type_cd as typeCd', 'de.title', 'de.disposition_type_cd as dispositionTypeCd', 'de.status_cd as statusCd', 'de.submitted_by as submittedBy', 'de.submitted_date as submittedDate', 'de.revised_date as revisedDate', 'de.start_date as startDate', 'de.expired_date as expiredDate', 'de.last_review_date as lastReviewDate')
-      .from('disclosure as de')
-      .where('id', disclosureId),
+    getDisclosure(knex, userInfo, disclosureId),
     knex.select('e.id', 'e.disclosure_id as disclosureId', 'e.active', 'e.name', 'e.description')
       .from('fin_entity as e')
       .where('disclosure_id', disclosureId),
@@ -421,102 +484,114 @@ export let get = (dbInfo, userId, disclosureId) => {
       .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
       .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
       .where('d.disclosure_id', disclosureId),
-    retrieveComments(dbInfo, userId, disclosureId),
+    retrieveComments(dbInfo, userInfo.schoolId, disclosureId),
     knex.select('id', 'name', 'key')
-    .from('file')
-    .where({
-      ref_id: disclosureId,
-      file_type: COIConstants.FILE_TYPE.DISCLOSURE
-    }),
+      .from('file')
+      .where({
+        ref_id: disclosureId,
+        file_type: COIConstants.FILE_TYPE.DISCLOSURE
+      }),
     knex.select('id', 'name', 'key')
-    .from('file')
-    .where({
-      ref_id: disclosureId,
-      file_type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN
-    })
-  ]).then(result => {
-    if (result[0].length === 0) { // There should be more checks like this
-      throw new Error('invalid disclosure id');
-    }
+      .from('file')
+      .where({
+        ref_id: disclosureId,
+        file_type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN
+      }),
+    isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+  ]).then(([
+      disclosureRecords,
+      entityRecords,
+      answerRecords,
+      declarationRecords,
+      commentRecords,
+      fileRecords,
+      managementPlans,
+      isOwner
+    ]) => {
+      if (userInfo.role !== COIConstants.ROLES.ADMIN) {
+        if (!isOwner) {
+          throw Error('Attempt to load disclosure which is not users');
+        }
+      }
 
-    disclosure = result[0][0];
-    disclosure.entities = result[1];
-    disclosure.answers = result[2];
-    disclosure.declarations = result[3];
-    disclosure.comments = result[4];
-    disclosure.files = result[5];
-    disclosure.managementPlan = result[6];
-    disclosure.answers.forEach(answer =>{
-      answer.answer = JSON.parse(answer.answer);
-    });
+      disclosure = disclosureRecords[0];
+      disclosure.entities = entityRecords;
+      disclosure.answers = answerRecords;
+      disclosure.declarations = declarationRecords;
+      disclosure.comments = commentRecords;
+      disclosure.files = fileRecords;
+      disclosure.managementPlan = managementPlans;
+      disclosure.answers.forEach(answer =>{
+        answer.answer = JSON.parse(answer.answer);
+      });
 
-    return Promise.all([
-      knex.select('r.id', 'r.fin_entity_id as finEntityId', 'r.relationship_cd as relationshipCd', 'rc.description as relationship', 'r.person_cd as personCd', 'rp.description as person', 'r.type_cd as typeCd', 'rt.description as type', 'r.amount_cd as amountCd', 'ra.description as amount', 'r.comments')
-        .from('relationship as r')
-        .innerJoin('relationship_person_type as rp', 'r.person_cd', 'rp.type_cd')
-        .innerJoin('relationship_category_type as rc', 'r.relationship_cd', 'rc.type_cd')
-        .leftJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd' )
-        .leftJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
-        .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
-        .then(relationships => {
-          return knex('travel_relationship')
-          .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
-          .whereIn('relationship_id', relationships.map(relationship => { return relationship.id; }))
-          .then(travels=> {
-            disclosure.entities.forEach(entity => {
-              entity.relationships = relationships.filter(relationship => {
-                return relationship.finEntityId === entity.id;
-              }).map(relationship=> {
-                let travel = travels.find(item => {
-                  return item.relationshipId === relationship.id;
+      return Promise.all([
+        knex.select('r.id', 'r.fin_entity_id as finEntityId', 'r.relationship_cd as relationshipCd', 'rc.description as relationship', 'r.person_cd as personCd', 'rp.description as person', 'r.type_cd as typeCd', 'rt.description as type', 'r.amount_cd as amountCd', 'ra.description as amount', 'r.comments')
+          .from('relationship as r')
+          .innerJoin('relationship_person_type as rp', 'r.person_cd', 'rp.type_cd')
+          .innerJoin('relationship_category_type as rc', 'r.relationship_cd', 'rc.type_cd')
+          .leftJoin('relationship_type as rt', 'r.type_cd', 'rt.type_cd' )
+          .leftJoin('relationship_amount_type as ra', 'r.amount_cd', 'ra.type_cd')
+          .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
+          .then(relationships => {
+            return knex('travel_relationship')
+              .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
+              .whereIn('relationship_id', relationships.map(relationship => { return relationship.id; }))
+              .then(travels=> {
+                disclosure.entities.forEach(entity => {
+                  entity.relationships = relationships.filter(relationship => {
+                    return relationship.finEntityId === entity.id;
+                  }).map(relationship=> {
+                    let travel = travels.find(item => {
+                      return item.relationshipId === relationship.id;
+                    });
+                    relationship.travel = travel ? travel : {};
+                    return relationship;
+                  });
                 });
-                relationship.travel = travel ? travel : {};
-                return relationship;
+              });
+          }),
+        knex.select('qa.question_id as questionId', 'qa.answer as answer', 'fea.fin_entity_id as finEntityId')
+          .from('questionnaire_answer as qa' )
+          .innerJoin('fin_entity_answer as fea', 'fea.questionnaire_answer_id', 'qa.id')
+          .whereIn('fea.fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
+          .then(answers=>{
+            disclosure.entities.forEach(entity => {
+              entity.answers = answers.filter(answer => {
+                return answer.finEntityId === entity.id;
+              }).map(answer=>{
+                answer.answer = JSON.parse(answer.answer);
+                return answer;
               });
             });
-          });
-        }),
-      knex.select('qa.question_id as questionId', 'qa.answer as answer', 'fea.fin_entity_id as finEntityId')
-        .from('questionnaire_answer as qa' )
-        .innerJoin('fin_entity_answer as fea', 'fea.questionnaire_answer_id', 'qa.id')
-        .whereIn('fea.fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
-        .then(answers=>{
-          disclosure.entities.forEach(entity => {
-            entity.answers = answers.filter(answer => {
-              return answer.finEntityId === entity.id;
-            }).map(answer=>{
-              answer.answer = JSON.parse(answer.answer);
-              return answer;
+          }),
+        knex.select('*')
+          .from('file')
+          .whereIn('ref_id', disclosure.entities.map(entity => { return entity.id; }))
+          .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY)
+          .then(files=>{
+            disclosure.entities.forEach(entity => {
+              entity.files = files.filter(file => {
+                return file.ref_id === entity.id;
+              });
             });
-          });
-        }),
-      knex.select('*')
-        .from('file')
-        .whereIn('ref_id', disclosure.entities.map(entity => { return entity.id; }))
-        .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY)
-        .then(files=>{
-          disclosure.entities.forEach(entity => {
-            entity.files = files.filter(file => {
-              return file.ref_id === entity.id;
-            });
-          });
-        })
-    ]).then(()=>{
-      return disclosure;
+          })
+      ]).then(()=>{
+        return disclosure;
+      });
     });
-  });
 };
 
-export let getAnnualDisclosure = (dbInfo, userId, piName) => {
+export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
   let knex = getKnex(dbInfo);
-  return knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userId)
+  return knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userInfo.schoolId)
     .then(result => {
       if (result.length < 1) {
         let newDisclosure = {
           type_cd: 2,
           status_cd: 1,
           start_date: new Date(),
-          user_id: userId,
+          user_id: userInfo.schoolId,
           submitted_by: piName
         };
         return knex('disclosure')
@@ -530,12 +605,12 @@ export let getAnnualDisclosure = (dbInfo, userId, piName) => {
           });
       }
       else {
-        return get(dbInfo, userId, result[0].id);
+        return get(dbInfo, userInfo, result[0].id);
       }
     });
 };
 
-export let getSummariesForReviewCount = (dbInfo, userId, filters) => {
+export let getSummariesForReviewCount = (dbInfo, filters) => {
   let knex = getKnex(dbInfo);
 
   let query = knex('disclosure').count('id as rowcount')
@@ -588,7 +663,7 @@ export let getSummariesForReviewCount = (dbInfo, userId, filters) => {
 };
 
 const SUMMARY_PAGE_SIZE = 40;
-export let getSummariesForReview = (dbInfo, userId, sortColumn, sortDirection, start, filters) => {
+export let getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters) => {
   let knex = getKnex(dbInfo);
 
   let query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure.status_cd as statusCd', 'disclosure_type.description as type', 'id', 'submitted_date')
@@ -666,15 +741,22 @@ export let getSummariesForUser = (dbInfo, userId) => {
     .where('d.user_id', userId);
 };
 
-export let submit = (dbInfo, displayName, disclosureId) => {
-  let knex = getKnex(dbInfo);
-  return knex('disclosure')
-    .update({
-      status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
-      submitted_by: displayName,
-      submitted_date: new Date()
-    })
-    .where('id', disclosureId);
+export let submit = (dbInfo, userInfo, disclosureId) => {
+  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error('Attempt to submit a disclosure that isnt theirs');
+      }
+
+      let knex = getKnex(dbInfo);
+      return knex('disclosure')
+        .update({
+          status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+          submitted_by: userInfo.displayName,
+          submitted_date: new Date()
+        })
+        .where('id', disclosureId);
+    });
 };
 
 export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
@@ -718,11 +800,12 @@ export let reject = (dbInfo, displayName, disclosureId) => {
   .where('id', disclosureId);
 };
 
-export let getArchivedDisclosures = (dbInfo, userId) => { //eslint-disable-line no-unused-vars
+export let getArchivedDisclosures = (dbInfo, userId) => {
   let knex = getKnex(dbInfo);
   return knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')
     .from('disclosure as de')
-    .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd');
+    .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
+    .where('de.user_id', userId);
 };
 
 export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {
@@ -730,33 +813,32 @@ export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => 
 
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
-      if (isSubmitter) {
-        return knex.select('qa.id as questionnaireAnswerId', 'da.id as disclosureAnswerId')
-          .from('disclosure_answer as da')
-          .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
-          .whereIn('qa.question_id', answersToDelete)
-          .andWhere('da.disclosure_id', disclosureId)
-          .then(results => {
-            let questionnaireAnswerIds = results.map(row => {
-              return row.questionnaireAnswerId;
-            });
-            let disclosureAnswerIds = results.map(row => {
-              return row.disclosureAnswerId;
-            });
+      if (!isSubmitter) {
+        throw Error('Attempt to delete answers from a disclosure that isnt theirs');
+      }
 
-            return knex('disclosure_answer')
-              .whereIn('id', disclosureAnswerIds)
-              .del()
-              .then(() => {
-                return knex('questionnaire_answer')
-                  .whereIn('id', questionnaireAnswerIds)
-                  .del()
-                  .then(() => { return; });
-              });
+      return knex.select('qa.id as questionnaireAnswerId', 'da.id as disclosureAnswerId')
+        .from('disclosure_answer as da')
+        .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
+        .whereIn('qa.question_id', answersToDelete)
+        .andWhere('da.disclosure_id', disclosureId)
+        .then(results => {
+          let questionnaireAnswerIds = results.map(row => {
+            return row.questionnaireAnswerId;
           });
-      }
-      else {
-        return 'Unauthorized';
-      }
+          let disclosureAnswerIds = results.map(row => {
+            return row.disclosureAnswerId;
+          });
+
+          return knex('disclosure_answer')
+            .whereIn('id', disclosureAnswerIds)
+            .del()
+            .then(() => {
+              return knex('questionnaire_answer')
+                .whereIn('id', questionnaireAnswerIds)
+                .del()
+                .then(() => { return; });
+            });
+        });
     });
 };

@@ -191,6 +191,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('type').notNullable();
     table.string('key').notNullable();
     table.string('name').notNullable();
+    table.string('user_id', 40).notNullable();
     table.string('uploaded_by').notNullable();
     table.dateTime('upload_date');
   })

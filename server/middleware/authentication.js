@@ -1,4 +1,5 @@
 import {getUserInfo} from '../AuthService';
+import Log from '../Log';
 
 export default function authentication(req, res, next) {
   getUserInfo(req.hostname, req.cookies.authToken)
@@ -10,7 +11,7 @@ export default function authentication(req, res, next) {
       next();
     }
   }).catch(err => {
-    console.err(err);
+    Log.error(err);
     next(err);
   });
 }

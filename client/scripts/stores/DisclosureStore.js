@@ -1160,7 +1160,10 @@ class _DisclosureStore extends AutoBindingStore {
       formData.append('attachments', file);
     });
 
-    formData.append('data', JSON.stringify({refId: this.applicationState.currentDisclosureState.disclosure.id, type: COIConstants.FILE_TYPE.DISCLOSURE}));
+    formData.append('data', JSON.stringify({
+      refId: this.applicationState.currentDisclosureState.disclosure.id,
+      type: COIConstants.FILE_TYPE.DISCLOSURE
+    }));
 
     createRequest().post('/api/coi/files')
     .send(formData)
