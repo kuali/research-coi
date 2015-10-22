@@ -16,7 +16,7 @@ export default class QuestionnaireSection extends React.Component {
         fontSize: 23,
         padding: '10px 18px',
         borderBottom: '1px solid #DDD',
-        backgroundColor: '#0095A0',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         color: 'white'
       },
       body: {

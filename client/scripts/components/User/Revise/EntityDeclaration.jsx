@@ -94,7 +94,8 @@ export default class EntityDeclaration extends React.Component {
         width: 300
       },
       comments: {
-        backgroundColor: '#D8E9EB',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#D8E9EB',
+        color: window.colorBlindModeOn ? 'white' : 'black',
         borderRadius: 5,
         padding: '1px 10px'
       },
@@ -102,11 +103,11 @@ export default class EntityDeclaration extends React.Component {
         margin: '15px 10px'
       },
       completed: {
-        color: 'green',
+        color: window.colorBlindModeOn ? 'black' : 'green',
         fontSize: 35
       },
       incomplete: {
-        color: '#E85723',
+        color: window.colorBlindModeOn ? 'black' : '#E85723',
         fontSize: 35
       },
       actions: {

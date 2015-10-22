@@ -107,7 +107,7 @@ export class Entity extends ResponsiveComponent {
         zIndex: 11
       },
       attention: {
-        color: 'red',
+        color: window.colorBlindModeOn ? 'black' : 'red',
         textTransform: 'capitalize'
       }
     };

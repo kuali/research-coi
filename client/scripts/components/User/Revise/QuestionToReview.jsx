@@ -3,16 +3,6 @@ import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
 import Question from './Question';
 
-/*
-  Question states to account for:
-  2. A main question (flagged) with sub questions (none flagged)
-     - Show normal flow for that question. If it triggers sub questions, so be it. (Possibly erasing old answers)
-  3. A main question (flagged) with sub questions (some flagged)
-     - Show normal flow for that question. If it triggers sub questions, so be it. (Possibly erasing old answers)
-  4. A main question (unflagged) with sub questions (some flagged)
-     - Show read-only parent question with only the flagged subquestions, each being editable. Don't show other sub questions.
-*/
-
 export default class QuestionToReview extends React.Component {
   render() {
     let styles = {
@@ -30,7 +20,8 @@ export default class QuestionToReview extends React.Component {
         width: 300
       },
       comments: {
-        backgroundColor: '#D8E9EB',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#D8E9EB',
+        color: window.colorBlindModeOn ? 'white' : 'black',
         borderRadius: 5,
         padding: '1px 10px'
       },
@@ -50,11 +41,11 @@ export default class QuestionToReview extends React.Component {
         fontSize: 14
       },
       completed: {
-        color: 'green',
+        color: window.colorBlindModeOn ? 'black' : 'green',
         fontSize: 35
       },
       incomplete: {
-        color: '#E85723',
+        color: window.colorBlindModeOn ? 'black' : '#E85723',
         fontSize: 35
       }
     };

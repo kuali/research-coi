@@ -102,7 +102,7 @@ export class Project extends ResponsiveComponent {
         marginLeft: 5
       },
       attention: {
-        color: '#D3121C',
+        color: window.colorBlindModeOn ? 'black' : '#D3121C',
         textTransform: 'capitalize',
         marginBottom: 28
       }

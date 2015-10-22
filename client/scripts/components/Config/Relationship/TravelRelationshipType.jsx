@@ -53,7 +53,7 @@ export default class TravelRelationshipType extends RelationshipType {
       },
       closeButton: {
         float: 'right',
-        backgroundColor: '#048EAF',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         border: 0,
         color: 'white',
         borderBottom: '2px solid #A6A6A6',

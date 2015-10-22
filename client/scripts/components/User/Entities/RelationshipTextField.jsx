@@ -15,7 +15,7 @@ export default class RelationshipTextField extends React.Component {
   }
 
   getLabelStyle(invalid) {
-    return invalid === true ? {color: 'red'} : {};
+    return invalid === true ? {color: window.colorBlindModeOn ? 'black' : 'red'} : {};
   }
 
   getInputStyle(invalid, style) {

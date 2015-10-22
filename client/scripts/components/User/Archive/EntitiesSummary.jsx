@@ -15,7 +15,7 @@ export class EntitiesSummary extends React.Component {
         backgroundColor: 'white'
       },
       heading: {
-        backgroundColor: '#1481A3',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',
@@ -23,13 +23,6 @@ export class EntitiesSummary extends React.Component {
       },
       body: {
         padding: '0 20px'
-      },
-      footer: {
-        borderTop: '1px solid #999',
-        backgroundColor: '#1481A3',
-        padding: '4px 15px',
-        minHeight: 33,
-        color: 'white'
       },
       button: {
         padding: '3px 7px',
