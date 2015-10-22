@@ -8,7 +8,7 @@ export let init = app => {
     @Role: admin
   */
   app.get('/api/coi/pi', function(req, res, next) {
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }
@@ -230,7 +230,7 @@ export let init = app => {
     @Role: admin
   */
   app.get('/api/coi/disclosures/:id/pi-responses', function(req, res, next) {
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }
