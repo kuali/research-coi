@@ -16,19 +16,19 @@ export default class DoneLink extends React.Component {
   render() {
     let styles = {
       container: {
-        borderBottom: '1px dotted #D46400',
+        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #F57C00',
         cursor: 'pointer'
       },
       linkText: {
         paddingLeft: 2,
-        color: '#D46400',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         verticalAlign: 'middle',
         fontSize: 8
       },
       icon: {
         width: 15,
         height: 15,
-        color: '#D46400',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         verticalAlign: 'middle'
       }
     };

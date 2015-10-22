@@ -1,6 +1,5 @@
 import React from 'react/addons';
 import {merge} from '../../merge';
-import {ResponsiveComponent} from '../ResponsiveComponent';
 import {Sidebar} from './Sidebar';
 import {DisclosureHeader} from './DisclosureHeader';
 import {DisclosureStore} from '../../stores/DisclosureStore';
@@ -14,11 +13,10 @@ import {Entities} from './Entities/Entities';
 import {Certify} from './Certification/Certify';
 import {NavSidebar} from './NavSidebar';
 
-export class Disclosure extends ResponsiveComponent {
+export class Disclosure extends React.Component {
   constructor(props) {
     super(props);
-    this.commonStyles = {};
-
+    
     // Set up steps for the sidebar
     this.steps = [
       {label: 'Questionnaire', value: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE},
@@ -94,8 +92,6 @@ export class Disclosure extends ResponsiveComponent {
     return undefinedFound;
   }
 
-  shouldComponentUpdate() { return true; }
-
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
     let disclosureType = this.context.router.getCurrentQuery().type;
@@ -117,36 +113,13 @@ export class Disclosure extends ResponsiveComponent {
     });
   }
 
-  renderMobile() {
-    let mobileStyles = {
-      container: {
-        height: 0,
-        position: 'relative'
-      },
-      content: {
-        backgroundColor: '#E8E9E6'
-      }
-    };
-    let styles = merge(this.commonStyles, mobileStyles);
-
-    return (
-      <div className="flexbox column fill" style={merge(styles.container, this.props.style)}>
-        <Sidebar steps={this.steps} activestep={2} />
-        <DisclosureHeader>Financial Entities</DisclosureHeader>
-        <div className="fill" style={styles.content}>
-          Disclosure stuff will be here
-        </div>
-      </div>
-    );
-  }
-
-  renderDesktop() {
+  render() {
     let currentDisclosureId = this.state.applicationState.currentDisclosureState.disclosure.id;
     let currentDisclosureState = this.state.applicationState.currentDisclosureState;
     let currentDisclosureStep = currentDisclosureState.step;
     let currentQuestion = currentDisclosureState.question;
 
-    let desktopStyles = {
+    let styles = {
       container: {
         padding: '0'
       },
@@ -167,7 +140,6 @@ export class Disclosure extends ResponsiveComponent {
         zIndex: 9
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let stepNumber = 0;
     let percent = 0;

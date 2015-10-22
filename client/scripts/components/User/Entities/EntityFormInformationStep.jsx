@@ -51,7 +51,7 @@ export class EntityFormInformationStep extends React.Component {
       title: {
         fontWeight: 'bold',
         fontSize: 17,
-        color: '#1481A3'
+        color: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       column: {
         width: '33%',

@@ -5,13 +5,30 @@ let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
 import {processResponse, createRequest} from '../../HttpUtils';
-
 import {AppHeader} from '../AppHeader';
 import {DetailView} from './DetailView/DetailView';
 import {ListView} from './ListView/ListView';
 import {SizeAwareComponent} from '../SizeAwareComponent';
+import ColorStore from '../../stores/ColorStore';
 
 class App extends SizeAwareComponent {
+  constructor() {
+    super();
+    this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    ColorStore.listen(this.onChange);
+  }
+
+  componentWillUnmount() {
+    ColorStore.unlisten(this.onChange);
+  }
+
+  onChange() {
+    this.forceUpdate();
+  }
+
   render() {
     let styles = {
       container: {
@@ -42,6 +59,8 @@ let routes = (
     <DefaultRoute handler={ListView} />
   </Route>
 );
+
+window.colorBlindModeOn = window.localStorage.getItem('colorBlindModeOn') === 'true';
 
 // Then load config and re-render
 createRequest().get('/api/coi/config')

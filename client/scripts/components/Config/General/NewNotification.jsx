@@ -21,6 +21,14 @@ export default class NewNotifications extends React.Component {
       },
       edit: {
         float: 'right'
+      },
+      expirationMessage: {
+        display: 'block',
+        width: '100%',
+        padding: 10,
+        fontSize: 16,
+        marginTop: 10,
+        borderRadius: 5
       }
     };
 

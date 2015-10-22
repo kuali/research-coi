@@ -28,17 +28,17 @@ export default class NewQuestionButton extends React.Component {
         color: 'black'
       },
       newText: {
-        color: '#535353',
+        color: window.colorBlindModeOn ? 'black' : '#535353',
         fontWeight: 400
       },
       questionText: {
-        color: window.config.colors.two,
-        fontWeight: 400
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontWeight: 'bold'
       },
       img: {
         height: 42,
         width: 42,
-        color: window.config.colors.two
+        color: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       text: {
         verticalAlign: 'middle',

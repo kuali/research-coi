@@ -28,7 +28,7 @@ export class EntityFormNameStep extends ResponsiveComponent {
       title: {
         fontWeight: 'bold',
         fontSize: 17,
-        color: '#1481A3'
+        color: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       entityName: {
         display: 'inline-block',

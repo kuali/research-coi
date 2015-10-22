@@ -15,9 +15,17 @@ export class NextButton extends React.Component {
   }
 
   render() {
+    let iconColor = '#F57C00';
+    if (!this.props.isValid) {
+      iconColor = '#AAA';
+    }
+    else if (window.colorBlindModeOn) {
+      iconColor = 'black';
+    }
+
     let styles = {
       icon: {
-        color: this.props.isValid ? '#1481A3' : '#AAA',
+        color: iconColor,
         marginRight: 3,
         width: 33,
         fontSize: 26,

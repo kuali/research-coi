@@ -35,7 +35,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
       container: {
         color: 'white',
         fontWeight: 'bold',
-        backgroundColor: window.config.colors.two,
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         textAlign: 'center',
         fontSize: 22,
         position: 'relative',
@@ -62,7 +62,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
       container: {
         color: 'white',
         fontWeight: 'bold',
-        backgroundColor: '#1481A3',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         textAlign: 'center',
         fontSize: 22,
         position: 'relative',

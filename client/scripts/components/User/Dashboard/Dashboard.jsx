@@ -26,8 +26,6 @@ export class Dashboard extends ResponsiveComponent {
       configLoaded: configState.isLoaded
     };
 
-
-
     this.onChange = this.onChange.bind(this);
   }
 

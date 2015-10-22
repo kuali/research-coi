@@ -23,7 +23,7 @@ export class NewEntityButton extends ResponsiveComponent {
         fontSize: 23,
         position: 'relative',
         cursor: 'pointer',
-        boxShadow: '0 0 15px #e6e6e6',
+        boxShadow: '0 0 8px #C0C0C0',
         borderRadius: 6
       },
       plus: {
@@ -39,17 +39,17 @@ export class NewEntityButton extends ResponsiveComponent {
         fontWeight: 400
       },
       financialText: {
-        color: '#1481A3',
-        fontWeight: 400
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontWeight: 'bold'
       },
       entityText: {
-        color: '#1481A3',
-        fontWeight: 400
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontWeight: 'bold'
       },
       img: {
         height: 42,
         width: 42,
-        color: '#1481A3'
+        color: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       text: {
         verticalAlign: 'middle',

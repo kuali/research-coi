@@ -5,7 +5,6 @@ let DefaultRoute = Router.DefaultRoute;
 let RouteHandler = Router.RouteHandler;
 import {merge} from '../../merge';
 import {processResponse, createRequest} from '../../HttpUtils';
-
 import {AppHeader} from '../AppHeader';
 import GeneralConfiguration from './General/General';
 import QuestionnaireCustomization from './Questionnaire/Questionnaire';
@@ -13,8 +12,26 @@ import EntitiesQuestionnaire from './Entities/Questionnaire';
 import RelationshipCustomization from './Relationship/Relationship';
 import DeclarationsCustomization from './Declarations/Declarations';
 import CertificationCustomization from './Certification/Certification';
+import ColorStore from '../../stores/ColorStore';
 
 class App extends React.Component {
+  constructor() {
+    super();
+    this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    ColorStore.listen(this.onChange);
+  }
+
+  componentWillUnmount() {
+    ColorStore.unlisten(this.onChange);
+  }
+
+  onChange() {
+    this.forceUpdate();
+  }
+
   render() {
     let styles = {
       container: {
@@ -46,6 +63,8 @@ let routes = (
     <DefaultRoute handler={GeneralConfiguration} />
   </Route>
 );
+
+window.colorBlindModeOn = window.localStorage.getItem('colorBlindModeOn') === 'true';
 
 // Then load config and re-render
 createRequest().get('/api/coi/config')

@@ -16,19 +16,19 @@ export default class EditLink extends React.Component {
   render() {
     let styles = {
       container: {
-        borderBottom: '1px dotted #0000CC',
+        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #0095A0',
         cursor: 'pointer'
       },
       linkText: {
         paddingLeft: 2,
-        color: '#0000CC',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         verticalAlign: 'middle',
         fontSize: 8
       },
       icon: {
         width: 15,
         height: 15,
-        color: '#0000CC',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         verticalAlign: 'middle'
       }
     };

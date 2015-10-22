@@ -224,7 +224,7 @@ export class Question extends React.Component {
       nums: {
         fontSize: 38,
         marginLeft: 10,
-        color: '#1481A3'
+        color: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       text: {
         fontSize: 20,
@@ -255,7 +255,7 @@ export class Question extends React.Component {
         padding: '25px 30px'
       },
       numberToShow: {
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 28,
         marginBottom: 10,
         fontWeight: 'bold'

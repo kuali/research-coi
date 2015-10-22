@@ -79,8 +79,8 @@ export class Entities extends React.Component {
         viewToggle = (
           <Toggle
             values={[
-            {code: 1, description: 'ACTIVE'},
-            {code: 0, description: 'INACTIVE'}
+              {code: 1, description: 'ACTIVE'},
+              {code: 0, description: 'INACTIVE'}
             ]}
             selected={this.props.applicationState.activeEntityView}
             onChange={this.viewChanged}

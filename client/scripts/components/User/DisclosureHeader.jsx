@@ -59,9 +59,8 @@ export class DisclosureHeader extends ResponsiveComponent {
         top: 0,
         position: 'absolute',
         right: '25%',
-        backgroundColor: window.config.colors.four,
-        color: 'black',
-        fontSize: 14,
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontSize: 18,
         cursor: 'pointer',
         marginTop: 0,
         padding: '29px 14px',
@@ -79,7 +78,10 @@ export class DisclosureHeader extends ResponsiveComponent {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <span style={styles.instructionButton} onClick={this.showInstructions}>Instructions</span>
+        <span style={styles.instructionButton} onClick={this.showInstructions}>
+          <i className="fa fa-info-circle" style={{marginRight: 5, fontSize: 20}}></i>
+          Instructions
+        </span>
         <h2 style={styles.heading}>
           {this.props.children}
         </h2>

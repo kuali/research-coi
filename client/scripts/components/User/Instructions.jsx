@@ -44,15 +44,13 @@ export class Instructions extends ResponsiveComponent {
     }
   }
 
-  renderMobile() {}
-
   renderDesktop() {
     let desktopStyles = {
       container: {
         display: this.state.visible ? 'block' : 'none',
         color: 'white',
         whiteSpace: 'normal',
-        backgroundColor: '#444',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '47px 25px 31px 53px',
         transition: 'transform .3s ease-out',
         transform: this.props.collapsed ? 'translateY(-100%)' : 'translateY(0%)'
@@ -62,7 +60,7 @@ export class Instructions extends ResponsiveComponent {
         padding: '14px 14px 0 0'
       },
       closeButton: {
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '3px 16px',
         fontSize: 15,
         marginRight: 23
@@ -72,7 +70,7 @@ export class Instructions extends ResponsiveComponent {
         width: 0,
         height: 0,
         border: '25px solid transparent',
-        borderTopColor: window.config.colors.four,
+        borderTopColor: 'white',
         top: 0,
         right: 25
       }

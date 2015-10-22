@@ -116,7 +116,7 @@ export class EntityFormRelationshipStep extends React.Component {
       title: {
         fontWeight: this.props.update ? 'normal' : 'bold',
         fontSize: 17,
-        color: '#1481A3'
+        color: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       instructions: {
         fontSize: 14,
@@ -156,7 +156,7 @@ export class EntityFormRelationshipStep extends React.Component {
         marginBottom: 20
       },
       addButton: {
-        backgroundColor: this.props.validating && !isValid ? '#D8D8D8' : '#1481A3',
+        backgroundColor: this.props.validating && !isValid ? '#D8D8D8' : window.colorBlindModeOn ? 'black' : '#0095A0',
         color: this.props.validating && !isValid ? '#939393' : 'white',
         padding: '3px 9px 4px 7px',
         marginTop: 10,

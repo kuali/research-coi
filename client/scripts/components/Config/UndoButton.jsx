@@ -20,7 +20,7 @@ export default class UndoButton extends React.Component {
       },
       undoIcon: {
         fontSize: 28,
-        color: '#EC6F41',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         verticalAlign: 'middle',
         marginTop: 3
       },

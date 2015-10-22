@@ -19,7 +19,7 @@ export default class EntityRelationshipSummary extends React.Component {
     let styles = {
       container: {
         color: 'white',
-        backgroundColor: window.config.colors.three,
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: 13,
         borderRadius: 10,
         fontSize: 15

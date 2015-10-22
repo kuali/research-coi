@@ -53,13 +53,13 @@ export class QuestionSummary extends React.Component {
       editlink: {
         fontSize: 15,
         margin: '10px 0 0 8px',
-        color: '#51D6FF',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         cursor: 'pointer',
-        borderBottom: '1px dotted #51D6FF',
+        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #0095A0',
         display: 'inline-block'
       },
       answerLabel: {
-        color: '#51D6FF',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 18,
         marginRight: 7
       }

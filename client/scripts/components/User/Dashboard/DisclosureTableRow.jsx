@@ -1,5 +1,4 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import Router from 'react-router';
@@ -9,12 +8,9 @@ import {COIConstants} from '../../../../../COIConstants';
 
 let Link = Router.Link;
 
-export class DisclosureTableRow extends ResponsiveComponent {
+export class DisclosureTableRow extends React.Component {
   constructor() {
     super();
-
-    this.commonStyles = {
-    };
 
     this.state = {
       expanded: false
@@ -29,107 +25,8 @@ export class DisclosureTableRow extends ResponsiveComponent {
     });
   }
 
-  renderMobile() {
-    let mobileStyles = {
-      container: {
-        fontSize: 13,
-        borderBottom: '5px solid #D7D7D7',
-        backgroundColor: 'white',
-        transform: this.state.expanded ? 'translateX(-30%)' : 'translateX(0%)',
-        whiteSpace: 'nowrap',
-        transition: 'transform .2s ease-in',
-        height: '105px'
-      },
-      disclosureRow: {
-        display: 'inline-flex',
-        flexDirection: 'row',
-        padding: '10px 20px',
-        width: '100%'
-      },
-      detailsButton: {
-        width: '30%',
-        display: 'inline-block',
-        backgroundColor: window.config.colors.two,
-        color: 'white',
-        textAlign: 'center',
-        fontSize: 12,
-        height: '100%',
-        verticalAlign: 'top',
-        padding: '38px 3px 0 3px'
-      },
-      data: {
-        display: 'inline-block',
-        width: '75%',
-        lineHeight: '20px',
-        verticalAlign: 'middle'
-      },
-      type: {
-        fontWeight: 'bold',
-        fontSize: 16
-      },
-      buttons: {
-        display: 'inline-block',
-        width: 50,
-        verticalAlign: 'middle'
-      },
-      button: {
-        fontSize: 45,
-        border: 0,
-        backgroundColor: 'transparent'
-      },
-      label: {
-        fontWeight: '300'
-      }
-    };
-    let styles = merge(this.commonStyles, mobileStyles);
-
-    let extraInfo;
-    if (this.props.type === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
-      extraInfo = (
-        <div style={styles.extra}>
-          <span style={styles.label}>Expires On: </span>
-          {this.props.expiresOn}
-        </div>
-      );
-    }
-    else {
-      extraInfo = (
-        <div style={styles.extra}>
-          <span style={styles.label}>Event Title: </span>
-          {this.props.title}
-        </div>
-      );
-    }
-
-    return (
-      <div style={merge(styles.container, this.props.style)}>
-        <span style={styles.disclosureRow} onClick={this.touch}>
-          <span className="fill" style={styles.data}>
-            <div style={styles.type}>
-              {this.props.type} Disclosure
-            </div>
-            {extraInfo}
-            <div style={styles.status}>
-              {this.props.status}
-            </div>
-            <div style={styles.reviewDate}>
-              <span style={styles.label}>Last Reviewed: </span>
-              {this.props.lastreviewed}
-            </div>
-          </span>
-          <span style={styles.buttons}>
-            <button style={styles.button}>&gt;</button>
-          </span>
-        </span>
-        <span style={styles.detailsButton}>
-          VIEW DETAILS
-        </span>
-      </div>
-    );
-  }
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         padding: '20px 60px',
         borderBottom: '5px solid white',
@@ -144,23 +41,23 @@ export class DisclosureTableRow extends ResponsiveComponent {
       },
       two: {
         width: '25%',
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 18
       },
       three: {
         width: '25%',
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 18
       },
       four: {
         width: '15%'
       },
       type: {
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 17
       },
       extra: {
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 14
       },
       button: {
@@ -168,7 +65,6 @@ export class DisclosureTableRow extends ResponsiveComponent {
         fontSize: 12
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let extraInfo;
     if (this.props.type === 2) {
@@ -201,8 +97,6 @@ export class DisclosureTableRow extends ResponsiveComponent {
         <KButton style={styles.button}>View &gt;</KButton>
       );
     }
-
-
 
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>

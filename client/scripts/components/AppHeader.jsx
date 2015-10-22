@@ -1,13 +1,13 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from './ResponsiveComponent';
 import {merge} from '../merge';
 import ReactRouter from 'react-router';
 let Link = ReactRouter.Link;
 import {KualiLogo} from './DynamicIcons/KualiLogo';
-import {HamburgerIcon} from './DynamicIcons/HamburgerIcon';
 import {createRequest} from '../HttpUtils';
+import ToggleSwitch from './ToggleSwitch';
+import ColorActions from '../actions/ColorActions';
 
-export class AppHeader extends ResponsiveComponent {
+export class AppHeader extends React.Component {
   constructor() {
     super();
 
@@ -15,7 +15,26 @@ export class AppHeader extends ResponsiveComponent {
       usersName: ''
     };
 
-    this.commonStyles = {
+    this.onContrastChange = this.onContrastChange.bind(this);
+  }
+
+  onContrastChange(newValue) {
+    ColorActions.setColorBlindMode(newValue === 'On' ? true : false);
+  }
+
+  componentWillMount() {
+    createRequest().get('/api/coi/username')
+    .end((err, username) => {
+      if (!err) {
+        this.setState({
+          usersName: username.text
+        });
+      }
+    });
+  }
+
+  render() {
+    let styles = {
       logo: {
         width: 26,
         height: 26,
@@ -30,7 +49,7 @@ export class AppHeader extends ResponsiveComponent {
       product: {
         color: 'black',
         fontSize: 20,
-        fontWeight: '300',
+        fontWeight: window.colorBlindModeOn ? 'normal' : '300',
         verticalAlign: 'middle',
         paddingLeft: 5,
         paddingRight: 18,
@@ -40,7 +59,7 @@ export class AppHeader extends ResponsiveComponent {
       modulename: {
         color: 'black',
         fontSize: 16,
-        fontWeight: '300',
+        fontWeight: window.colorBlindModeOn ? 'normal' : '300',
         paddingLeft: 5,
         paddingTop: 7
       },
@@ -53,9 +72,9 @@ export class AppHeader extends ResponsiveComponent {
       controls: {
         'float': 'right',
         display: 'inline-block',
-        padding: 12,
+        padding: 10,
         fontSize: 13,
-        color: '#808080'
+        color: window.colorBlindModeOn ? 'black' : '#808080'
       },
       icon: {
         color: '#676767',
@@ -66,66 +85,24 @@ export class AppHeader extends ResponsiveComponent {
       mobileMenu: {
         color: 'white',
         height: '100%'
-      }
-    };
-  }
-
-  componentWillMount() {
-    createRequest().get('/api/coi/username')
-    .end((err, username) => {
-      if (!err) {
-        this.setState({
-          usersName: username.text
-        });
-      }
-    });
-  }
-
-  renderMobile() {
-    let mobileStyles = {
-      container: {
-        backgroundColor: '#202020',
-        padding: '0 10px 0 6px'
-      }
-    };
-    let styles = merge(this.commonStyles, mobileStyles);
-
-    return (
-      <header style={merge(styles.container, this.props.style)}>
-        <span style={{margin: '6px 0', display: 'inline-block'}}>
-          <KualiLogo style={styles.logo} />
-          <span style={styles.kuali}>
-            <div style={styles.product}>Kuali<span style={{fontWeight: 'bold'}}>Research</span></div>
-            <div style={styles.modulename}>CONFLICT OF INTEREST</div>
-          </span>
-        </span>
-        <span style={styles.controls}>
-          <HamburgerIcon style={styles.mobileMenu} />
-        </span>
-      </header>
-    );
-  }
-
-  renderDesktop() {
-    let desktopStyles = {
+      },
       container: {
         backgroundColor: 'white',
         padding: '0 10px 0 50px'
       },
       usersName: {
         textTransform: 'uppercase',
-        paddingLeft: 20,
+        paddingLeft: 30,
         verticalAlign: 'middle'
       },
       signOut: {
         borderRight: '1px solid #555555',
-        padding: '0px 20px',
+        padding: '0px 30px',
         verticalAlign: 'middle',
         cursor: 'pointer',
-        color: '#555555'
+        color: window.colorBlindModeOn ? 'black' : '#555555'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <header style={merge(styles.container, this.props.style)}>
@@ -142,9 +119,13 @@ export class AppHeader extends ResponsiveComponent {
           </span>
         </span>
         <span style={styles.controls}>
-          {/*<span style={{verticalAlign: 'middle'}}>
-            CONTRAST MODE
-          </span>*/}
+          <span style={{verticalAlign: 'middle'}}>
+            <ToggleSwitch
+              onChange={this.onContrastChange}
+              defaultValue={window.colorBlindModeOn ? 'On' : 'Off'}
+              label="CONTRAST MODE"
+            />
+          </span>
           <a style={styles.signOut} href="/auth/signout?return_to=/coi">
             <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
             SIGN OUT
