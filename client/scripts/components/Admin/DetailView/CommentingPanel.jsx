@@ -37,37 +37,41 @@ export default class CommentingPanel extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: 'black',
-        height: '100%'
+        backgroundColor: 'white',
+        height: '100%',
+        boxShadow: '0 0 10px 0 #AAA'
       },
       heading: {
-        color: 'white',
-        padding: '10px 20px',
+        color: 'black',
+        padding: '18px 20px 10px 20px',
         marginBottom: 20,
-        boxShadow: '22px 50px 100px black',
+        boxShadow: '22px 50px 100px white',
         zIndex: 99,
         position: 'relative',
-        backgroundColor: 'black'
+        backgroundColor: 'white'
       },
       close: {
         float: 'right',
         fontWeight: 'bold',
         cursor: 'pointer',
-        marginBottom: 8
+        marginBottom: 8,
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontSize: 20
       },
       topic: {
         minWidth: '50%',
-        borderBottom: '1px solid white',
+        borderBottom: '1px solid black',
         display: 'inline-block',
         fontSize: 18,
         paddingBottom: 6
       },
       controls: {
-        color: 'white',
+        color: '#333',
         height: 150,
-        backgroundColor: '#444',
+        backgroundColor: '#F2F2F2',
         width: '100%',
-        padding: '10px 20px'
+        padding: '10px 20px',
+        borderTop: '1px solid #333'
       },
       commentText: {
         width: '55%',
@@ -85,7 +89,9 @@ export default class CommentingPanel extends React.Component {
         height: 100,
         borderRadius: 5,
         padding: 5,
-        fontSize: 13
+        fontSize: 13,
+        resize: 'none',
+        border: '1px solid #AAA'
       },
       checkLabel: {
         fontSize: 11
@@ -97,6 +103,13 @@ export default class CommentingPanel extends React.Component {
       comment: {
         marginTop: 10,
         marginBottom: 10
+      },
+      submitButton: {
+        marginTop: 25,
+        backgroundColor: '#00BCD4',
+        color: 'white',
+        fontSize: 17,
+        borderBottom: '3px solid #797979'
       }
     };
 
@@ -134,7 +147,7 @@ export default class CommentingPanel extends React.Component {
                 <label htmlFor="piCheck" style={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
               </div>
               <div>
-                <KButton style={{marginTop: 25}} onClick={this.makeComment}>Submit</KButton>
+                <KButton style={styles.submitButton} onClick={this.makeComment}>Submit</KButton>
               </div>
             </span>
         </div>
@@ -144,7 +157,9 @@ export default class CommentingPanel extends React.Component {
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.heading}>
-          <span style={styles.close} onClick={this.done}>X CLOSE</span>
+          <span style={styles.close} onClick={this.done}>
+            <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
+          </span>
           <span style={styles.topic}>{this.props.topic}</span>
         </div>
 

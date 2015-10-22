@@ -6,14 +6,16 @@ export default class CommentBubble extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: this.props.isUser ? 'white' : '#AAA',
+        backgroundColor: this.props.isUser ? 'white' : '#D8E9EB',
         borderRadius: 10,
         width: '60%',
         display: 'inline-block',
         padding: '8px 15px 15px 15px',
         marginLeft: this.props.isUser ? '35%' : '5%',
         transform: this.props.new ? 'translateY(125%)' : 'translateY(0%)',
-        transition: 'transform .2s ease-out'
+        transition: 'transform .2s ease-out',
+        border: '1px solid #CCC',
+        boxShadow: '0 0 10px 0px #CCC'
       },
       date: {
         float: 'right',
