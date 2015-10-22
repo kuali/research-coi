@@ -141,11 +141,11 @@ class _DisclosureStore extends AutoBindingStore {
           this.entities = disclosure.body.entities;
           this.declarations = disclosure.body.declarations;
           this.files = disclosure.body.files;
-          createRequest().get('/api/coi/archived-config/' + disclosure.body.config_id)
+          createRequest().get('/api/coi/archived-config/' + disclosure.body.configId)
           .end(processResponse((error, config) => {
             if (!error) {
               window.config = config.body;
-              ConfigActions.loadConfig(disclosure.body.config_id);
+              ConfigActions.loadConfig(disclosure.body.configId);
               this.emitChange();
             }
           }));

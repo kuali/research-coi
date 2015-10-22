@@ -586,7 +586,6 @@ class _ConfigStore extends AutoBindingStore {
     .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
-        console.log(this.config.isLoaded);
         this.mapCodes();
 
         this.emitChange();

@@ -125,6 +125,39 @@ let extractTargetIDs = reviewItems => {
 };
 
 let getQuestions = (knex, disclosureId, questionIDs) => {
+  return knex('disclosure')
+    .select('config_id as configId')
+    .where('id', disclosureId)
+    .then(disclosure => {
+      return knex.select('*')
+      .from('questionnaire_answer as qa')
+      .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
+      .where('da.disclosure_id', disclosureId)
+      .then(answers => {
+        return knex('config')
+        .select('config')
+        .where('id', disclosure[0].configId)
+        .then(config => {
+          let parsedConfig = JSON.parse(config[0].config);
+          return parsedConfig.questions.screening.filter(question => {
+            return !question.parent && questionIDs.includes(question.id);
+          }).map(question => {
+            let questionAnwer = answers.find(answer => {
+              return answer.question_id === question.id;
+            });
+            let retVal = {};
+            retVal.id = question.id;
+            retVal.question = question.question;
+            retVal.answer = questionAnwer.answer;
+            return retVal;
+          });
+        });
+      });
+    });
+
+
+
+  /*
   return knex.select('qq.id', 'qq.question', 'qa.answer')
     .from('questionnaire_question as qq')
     .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
@@ -133,11 +166,46 @@ let getQuestions = (knex, disclosureId, questionIDs) => {
       'da.disclosure_id': disclosureId,
       'qq.parent': null
     })
-    .andWhere('qq.id', 'in', questionIDs);
+    .andWhere('qq.id', 'in', questionIDs);*/
 };
 
 let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
-  return knex.select('qq.id', 'qq.question', 'qa.answer', 'qq.parent')
+
+  return knex('disclosure')
+  .select('config_id as configId')
+  .where('id', disclosureId)
+  .then(disclosure => {
+    return knex.select('*')
+    .from('questionnaire_answer as qa')
+    .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
+    .where(function() {
+      this.where('da.disclosure_id', disclosureId)
+      .orWhereNull('da.disclosure_id');
+    })
+    .then(answers => {
+      return knex('config')
+      .select('config')
+      .where('id', disclosure[0].configId)
+      .then(config => {
+        let parsedConfig = JSON.parse(config[0].config);
+        return parsedConfig.questions.screening.filter(question => {
+          return potentialParentIDs.includes(question.parent);
+        }).map(question => {
+          let questionAnwer = answers.find(answer => {
+            return answer.question_id === question.id;
+          });
+          let retVal = {};
+          retVal.id = question.id;
+          retVal.question = question.question;
+          retVal.parent = question.parent;
+          retVal.answer = questionAnwer.answer;
+          return retVal;
+        });
+      });
+    });
+  });
+
+  /*return knex.select('qq.id', 'qq.question', 'qa.answer', 'qq.parent')
     .from('questionnaire_question as qq')
     .leftJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
     .leftJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
@@ -145,7 +213,7 @@ let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
       this.where('da.disclosure_id', disclosureId)
         .orWhereNull('da.disclosure_id');
     })
-    .andWhere('qq.parent', 'in', potentialParentIDs);
+    .andWhere('qq.parent', 'in', potentialParentIDs);*/
 };
 
 let getComments = (knex, disclosureId, topicIDs, section) => {
@@ -333,18 +401,8 @@ let getEntitiesAnswers = (knex, entityIDs) => {
 };
 
 let getRelationships = (knex, entityIDs) => {
-  return knex.select('r.id', 'r.comments as comments', 'c.description as relationship', 'p.description as person', 't.description as type', 'a.description as amount', 'r.fin_entity_id as finEntityId')
+  return knex.select('r.id', 'r.comments as comments', 'r.relationship_cd as relationshipCd', 'r.person_cd as personCd', 'r.type_cd as typeCd', 'r.amount_cd as amountCd', 'r.fin_entity_id as finEntityId')
     .from('relationship as r')
-    .innerJoin('relationship_category_type as c', 'c.type_cd', 'r.relationship_cd')
-    .innerJoin('relationship_person_type as p', 'p.type_cd', 'r.person_cd')
-    .innerJoin('relationship_type as t', function() {
-      this.on('r.relationship_cd', 't.relationship_cd')
-        .andOn('r.type_cd', 't.type_cd');
-    })
-    .innerJoin('relationship_amount_type as a', function() {
-      this.on('r.relationship_cd', 'a.relationship_cd')
-        .andOn('r.amount_cd', 'a.type_cd');
-    })
     .where('fin_entity_id', 'in', entityIDs);
 };
 
@@ -523,12 +581,14 @@ export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
               rows.filter(row => {
                 return row.targetType === COIConstants.DISCLOSURE_STEP.PROJECTS;
               })
-            )
-          ]).then(([questions, entities, declarations]) => {
+            ),
+            knex('disclosure').select('config_id as configId').where('id', disclosureId)
+          ]).then(([questions, entities, declarations, config]) => {
             return {
               questions: questions,
               entities: entities,
-              declarations: declarations
+              declarations: declarations,
+              configId: config[0].configId
             };
           });
         });
