@@ -26,7 +26,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
         color: 'white',
         fontSize: 15,
         width: 210,
-        backgroundColor: window.config.colors.three,
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '20px 17px'
       },
       button: {

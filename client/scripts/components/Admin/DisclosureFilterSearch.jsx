@@ -31,7 +31,7 @@ export class DisclosureFilterSearch extends React.Component {
     let styles = {
       container: {
         width: '100%',
-        backgroundColor: '#49899D',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '13px 10px',
         textAlign: 'center'
       },

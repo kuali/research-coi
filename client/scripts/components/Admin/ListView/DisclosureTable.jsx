@@ -48,7 +48,7 @@ export class DisclosureTable extends React.Component {
         width: '100%'
       },
       headings: {
-        color: window.config.colors.three,
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 14,
         backgroundColor: 'white',
         display: 'table-row',
