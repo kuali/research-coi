@@ -17,6 +17,9 @@ export let init = app => {
       });
   });
 
+  /**
+    @Role: any
+   */
   app.get('/api/coi/archived-config/:id', function(req, res, next) {
     ConfigDB.getArchivedConfig(req.dbInfo, req.params.id)
     .then((result) => {
@@ -27,7 +30,7 @@ export let init = app => {
       next(err);
     });
   });
-  
+
   /**
     @Role: admin
   */

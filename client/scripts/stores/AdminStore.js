@@ -41,20 +41,6 @@ class _AdminStore extends AutoBindingStore {
     };
 
     this.disclosureSummaries = [];
-    this.config = {
-      disclosureTypes: [],
-      questions: {
-        screening: [],
-        entities: []
-      },
-      relationshipCategoryTypes: [],
-      relationshipTypes: [],
-      relationshipPersonType: [],
-      relationshipAmountTypes: [],
-      declarationTypes: [],
-      notifications: [],
-      general: []
-    };
     this.refreshDisclosures();
   }
 

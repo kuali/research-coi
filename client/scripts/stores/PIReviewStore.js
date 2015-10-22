@@ -62,7 +62,6 @@ class _PIReviewStore extends AutoBindingStore {
                if (this.disclosure.questions) {
                  this.disclosure.questions.forEach(question => {
                    if (question.question) {
-                    // question.question = JSON.parse(question.question);
                      if (question.question.required_num_selections) {
                        question.question.requiredNumSelections = question.question.required_num_selections;
                        delete question.question.required_num_selections;
@@ -81,9 +80,13 @@ class _PIReviewStore extends AutoBindingStore {
                        let newSub = {
                          id: subQuestion.id,
                          parent: subQuestion.parent,
-                         answer: JSON.parse(subQuestion.answer),
+                         answer: {},
                          question: subQuestion.question
                        };
+
+                       if (subQuestion.answer) {
+                         newSub.answer = JSON.parse(subQuestion.answer);
+                       }
 
                        if (newSub.question.required_num_selections) {
                          newSub.question.requiredNumSelections = newSub.question.required_num_selections;

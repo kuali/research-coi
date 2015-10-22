@@ -154,23 +154,9 @@ let getQuestions = (knex, disclosureId, questionIDs) => {
         });
       });
     });
-
-
-
-  /*
-  return knex.select('qq.id', 'qq.question', 'qa.answer')
-    .from('questionnaire_question as qq')
-    .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
-    .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
-    .where({
-      'da.disclosure_id': disclosureId,
-      'qq.parent': null
-    })
-    .andWhere('qq.id', 'in', questionIDs);*/
 };
 
 let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
-
   return knex('disclosure')
   .select('config_id as configId')
   .where('id', disclosureId)
@@ -198,22 +184,12 @@ let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
           retVal.id = question.id;
           retVal.question = question.question;
           retVal.parent = question.parent;
-          retVal.answer = questionAnwer.answer;
+          retVal.answer = questionAnwer ? questionAnwer.answer : undefined;
           return retVal;
         });
       });
     });
   });
-
-  /*return knex.select('qq.id', 'qq.question', 'qa.answer', 'qq.parent')
-    .from('questionnaire_question as qq')
-    .leftJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
-    .leftJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
-    .where(function() {
-      this.where('da.disclosure_id', disclosureId)
-        .orWhereNull('da.disclosure_id');
-    })
-    .andWhere('qq.parent', 'in', potentialParentIDs);*/
 };
 
 let getComments = (knex, disclosureId, topicIDs, section) => {
