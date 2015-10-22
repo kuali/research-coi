@@ -13,6 +13,7 @@ import apiAuthentication from './middleware/apiAuthentication';
 import viewRenderer from './middleware/viewRenderer';
 import Log from './Log';
 import methodChecker from './middleware/methodChecker';
+import ErrorLogger from './middleware/ErrorLogger';
 
 export function run() {
   let app = express();
@@ -26,8 +27,8 @@ export function run() {
     Log.info('extensions not found');
   }
 
-  app.use(methodChecker);
   app.use('/coi', express.static('client'));
+  app.use(methodChecker);
   app.use(cookieParser());
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
@@ -41,6 +42,7 @@ export function run() {
   FileController.init(app);
   PIController.init(app);
   UserController.init(app);
+  app.use(ErrorLogger);
 
   let portNumber = config ? config.port : 8090;
   let server = app.listen(portNumber);
