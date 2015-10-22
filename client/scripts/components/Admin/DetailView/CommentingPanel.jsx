@@ -106,7 +106,7 @@ export default class CommentingPanel extends React.Component {
       },
       submitButton: {
         marginTop: 25,
-        backgroundColor: '#00BCD4',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#00BCD4',
         color: 'white',
         fontSize: 17,
         borderBottom: '3px solid #797979'

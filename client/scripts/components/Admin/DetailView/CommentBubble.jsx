@@ -6,7 +6,7 @@ export default class CommentBubble extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: this.props.isUser ? 'white' : '#D8E9EB',
+        backgroundColor: this.props.isUser ? 'white' : window.colorBlindModeOn ? 'black' : '#D8E9EB',
         borderRadius: 10,
         width: '60%',
         display: 'inline-block',
