@@ -78,7 +78,7 @@ export let init = app => {
     @Role: admin
   */
   app.get('/api/coi/disclosure-summaries', function(req, res, next) {
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }
@@ -124,7 +124,7 @@ export let init = app => {
     @Role: admin
   */
   app.get('/api/coi/disclosure-summaries/count', function(req, res, next) {
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }
@@ -263,7 +263,7 @@ export let init = app => {
     @Role: admin
   */
   app.put('/api/coi/disclosures/:id/approve', function(req, res, next) {
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }
@@ -282,7 +282,7 @@ export let init = app => {
     @Role: admin
   */
   app.put('/api/coi/disclosures/:id/reject', function(req, res, next) {
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }
@@ -301,7 +301,7 @@ export let init = app => {
     @Role: admin
   */
   app.post('/api/coi/disclosures/:id/comments', (req, res, next) => {
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }

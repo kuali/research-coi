@@ -19,7 +19,7 @@ export let getFile = (dbInfo, userInfo, id) => {
     'id': id
   };
 
-  if (userInfo.role !== COIConstants.ROLES.ADMIN) {
+  if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
     criteria.user_id = userInfo.schoolId;
   }
 
@@ -33,7 +33,7 @@ export let saveNewFiles = (dbInfo, body, files, userInfo) => {
 
   return isDisclosureUsers(dbInfo, body.refId, userInfo.schoolId)
     .then(isSubmitter => {
-      if (!isSubmitter && userInfo.role !== COIConstants.ROLES.ADMIN) {
+      if (!isSubmitter && userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
         throw Error('Attempt to upload a file for a disclosure that isnt theirs');
       }
 
@@ -71,7 +71,7 @@ export let deleteFiles = (dbInfo, userInfo, file, fileId) => {
     'id': fileId
   };
 
-  if (userInfo.role !== COIConstants.ROLES.ADMIN) {
+  if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
     criteria.user_id = userInfo.schoolId;
   }
 

@@ -455,7 +455,7 @@ let getDisclosure = (knex, userInfo, disclosureId) => {
     'id': disclosureId
   };
 
-  if (userInfo.role !== COIConstants.ROLES.ADMIN) {
+  if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
     criteria.user_id = userInfo.schoolId;
   }
 
@@ -508,7 +508,7 @@ export let get = (dbInfo, userInfo, disclosureId) => {
       managementPlans,
       isOwner
     ]) => {
-      if (userInfo.role !== COIConstants.ROLES.ADMIN) {
+      if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
         if (!isOwner) {
           throw Error('Attempt to load disclosure which is not users');
         }

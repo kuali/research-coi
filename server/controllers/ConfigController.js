@@ -35,7 +35,7 @@ export let init = app => {
     @Role: admin
   */
   app.post('/api/coi/config/', function(req, res, next){
-    if (req.userInfo.role !== COIConstants.ROLES.ADMIN) {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(403);
       return;
     }
