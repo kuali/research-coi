@@ -187,7 +187,7 @@ export class EntityFormRelationshipStep extends React.Component {
         borderBottom: '3px solid red'
       },
       invalidText: {
-        color: 'red'
+        color: window.colorBlindModeOn ? 'black' : 'red'
       }
     };
 

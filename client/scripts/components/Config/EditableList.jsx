@@ -90,7 +90,7 @@ class EditableItem extends React.Component {
         verticalAlign: 'middle'
       },
       done: {
-        color: '#32A03C',
+        color: window.colorBlindModeOn ? 'black' : '#32A03C',
         fontSize: 13,
         cursor: 'pointer',
         marginLeft: 10,
@@ -218,7 +218,7 @@ export default class EditableList extends React.Component {
       done: {
         cursor: 'pointer',
         fontSize: 13,
-        color: '#32A03C',
+        color: window.colorBlindModeOn ? 'black' : '#32A03C',
         paddingRight: 5
       },
       cancel: {

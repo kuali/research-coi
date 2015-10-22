@@ -105,7 +105,7 @@ export class ManualEventRelations extends ResponsiveComponent {
         marginLeft: 5
       },
       attention: {
-        color: 'red',
+        color: window.colorBlindModeOn ? 'black' : 'red',
         textTransform: 'capitalize',
         marginBottom: 28
       }

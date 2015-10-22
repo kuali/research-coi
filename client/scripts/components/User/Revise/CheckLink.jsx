@@ -9,11 +9,11 @@ export default class CheckLink extends React.Component {
         cursor: this.props.disabled ? 'default' : 'pointer'
       },
       link: {
-        borderBottom: this.props.disabled ? '#AAA' : this.props.checked ? '1px dashed #00D000' : '1px dashed #888',
-        color: this.props.disabled ? '#AAA' : this.props.checked ? '#00D000' : '#666'
+        borderBottom: this.props.disabled ? '#AAA' : this.props.checked ? window.colorBlindModeOn ? '1px dashed black' : '1px dashed #00D000' : '1px dashed #888',
+        color: this.props.disabled ? '#AAA' : this.props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : '#666'
       },
       checkmark: {
-        color: this.props.checked ? '#00D000' : 'transparent',
+        color: this.props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : 'transparent',
         marginRight: 3
       }
     };

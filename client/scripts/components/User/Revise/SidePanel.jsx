@@ -57,19 +57,19 @@ export default class SidePanel extends React.Component {
         fontSize: 18
       },
       submitIcon: {
-        color: submitEnabled ? '#F57C00' : '#CCC',
+        color: submitEnabled ? window.colorBlindModeOn ? 'black' : '#F57C00' : '#CCC',
         fontSize: 35,
         verticalAlign: 'middle',
         margin: '0 10px 5px 15px'
       },
       cancelIcon: {
-        color: '#F57C00',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         fontSize: 35,
         verticalAlign: 'middle',
         margin: '0 10px 0 15px'
       },
       certificationPane: {
-        backgroundColor: '#0095A0',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         color: 'white',
         padding: '25px 15px'
       },
