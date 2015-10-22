@@ -2,6 +2,7 @@ import React from 'react/addons';
 import {merge} from '../merge';
 import {formatDate} from '../formatDate';
 import numeral from 'numeral';
+import ConfigStore from '../stores/ConfigStore';
 
 export default class EntityRelationshipSummary extends React.Component {
   constructor() {
@@ -56,7 +57,6 @@ export default class EntityRelationshipSummary extends React.Component {
         <button onClick={this.remove} style={styles.removeButton}>X</button>
       );
     }
-
     if (this.props.relationship.relationship === 'Travel') {
       let dateRange = formatDate(this.props.relationship.travel.startDate) + ' - ' + formatDate(this.props.relationship.travel.endDate);
       return (
@@ -64,8 +64,8 @@ export default class EntityRelationshipSummary extends React.Component {
           <div style={styles.summary}>
             {removeButton}
             <span>
-              {this.props.relationship.person + ' • '}
-              {this.props.relationship.relationship + ' • '}
+              {ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd) + ' • '}
+              {ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd) + ' • '}
               {this.props.relationship.travel.amount ? numeral(this.props.relationship.travel.amount).format('$0,0.00') + ' • ' : ''}
               {this.props.relationship.travel.destination ? this.props.relationship.travel.destination + ' • ' : ''}
               {dateRange ? dateRange + ' • ' : ''}
@@ -81,10 +81,10 @@ export default class EntityRelationshipSummary extends React.Component {
           <div style={styles.summary}>
             {removeButton}
             <span>
-              {this.props.relationship.person + ' • '}
-              {this.props.relationship.relationship + ' • '}
-              {this.props.relationship.type ? this.props.relationship.type + ' • ' : ''}
-              {this.props.relationship.amount ? this.props.relationship.amount : ''}
+              {ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd) + ' • '}
+              {ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd) + ' • '}
+              {this.props.relationship.typeCd ? ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd) + ' • ' : ''}
+              {this.props.relationship.amountCd ? ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) : ''}
             </span>
           </div>
           {commentSection}

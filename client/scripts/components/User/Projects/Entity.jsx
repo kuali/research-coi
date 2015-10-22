@@ -5,6 +5,7 @@ import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {EntityRelationDialog} from './EntityRelationDialog';
 import {KButton} from '../../KButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class Entity extends ResponsiveComponent {
   constructor() {
@@ -137,7 +138,7 @@ export class Entity extends ResponsiveComponent {
     let relationships = [];
     this.props.entity.relationships.forEach((element) => {
       relationships.push(
-        <div key={element.id}>{element.person} - {element.relationship}</div>
+        <div key={element.id}>{ConfigStore.getRelationshipPersonTypeString(element.personCd)} - {ConfigStore.getRelationshipCategoryTypeString(element.relationshipCd)}</div>
       );
     });
 

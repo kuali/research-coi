@@ -248,7 +248,8 @@ function insertDisclosure(knex) {
     start_date: new Date(),
     expired_date: new Date(),
     status_cd: 1,
-    last_review_date: new Date()
+    last_review_date: new Date(),
+    config_id: 1
   }).then(function(disclosureId) {
     return Promise.all([
       insertEntity(knex, disclosureId, 'Apple', 'A company that makes trendy things'),
@@ -274,6 +275,84 @@ function insertDisclosure(knex) {
 function insertFakeProject(knex, userId) {
   return insertProject(knex, 'Longevity of car batteries').then(function(results) {
     return insertProjectPerson(knex, userId, 'PI', results[0]);
+  });
+}
+
+function insertInitialArchiveConfig(query) {
+  return Promise.all([
+    query.select('type_cd as typeCd', 'description', 'enabled', 'type_enabled as typeEnabled', 'amount_enabled as amountEnabled', 'destination_enabled as destinationEnabled', 'date_enabled as dateEnabled', 'reason_enabled as reasonEnabled').from('relationship_category_type'),
+    query.select('type_cd as typeCd', 'relationship_cd as relationshipCd', 'description', 'active').from('relationship_type').where('active', true),
+    query.select('type_cd as typeCd', 'relationship_cd as relationshipCd', 'description', 'active').from('relationship_amount_type').where('active', true),
+    query.select('type_cd as typeCd', 'description', 'active').from('relationship_person_type').where('active', true),
+    query.select('type_cd as typeCd', 'description', 'enabled', 'custom', 'active').from('declaration_type').where('active', true),
+    query.select('type_cd as typeCd', 'description', 'enabled').from('disclosure_type'),
+    query.select('id', 'reminder_text as reminderText', 'warning_value as warningValue', 'warning_period as warningPeriod', 'active').from('notification'),
+    query.select('id', 'type_cd as typeCd', 'version').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(function(result) {
+      if (result[0]) {
+        return query.select('id', 'active', 'questionnaire_id as questionnaireId', 'parent', 'question').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
+      }
+    }),
+    query.select('id', 'type_cd as typeCd', 'version').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc').then(function(result) {
+      if (result[0]) {
+        return query.select('id', 'active', 'questionnaire_id as questionnaireId', 'parent', 'question').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
+      }
+    }),
+    query.select('status_cd as statusCd', 'description').from('disclosure_status'),
+    query.select('type_cd as typeCd', 'description').from('project_type')
+  ])
+  .then(function(result) {
+    var config = {};
+    config.matrixTypes = result[0];
+    config.matrixTypes.map(function(type) {
+      type.typeOptions = result[1].filter(function(relationType) {
+        return relationType.relationshipCd === type.typeCd;
+      });
+      type.amountOptions = result[2].filter(function(amountType) {
+        return amountType.relationshipCd === type.typeCd;
+      });
+      return type;
+    });
+    config.relationshipPersonTypes = result[3];
+    config.declarationTypes = result[4];
+    config.disclosureTypes = result[5];
+    config.notifications = result[6];
+    config.questions = {};
+    config.questions.screening = result[7] ? result[7].map(function(question) {
+      question.question = JSON.parse(question.question);
+      return question;
+    }) : [];
+    config.questions.entities = result[8] ? result[8].map(function(question) {
+      question.question = JSON.parse(question.question);
+      return question;
+    }) : [];
+
+    config.disclosureStatus = result[9];
+    config.projectTypes = result[10];
+    config.colors = {
+      'one': '#348FF7',
+      'two': '#0E4BB6',
+      'three': '#048EAF',
+      'four': '#EDF2F2'
+    };
+    config.general = {
+      peopleEnabled: true,
+      sponsorLookup: true,
+
+      dueDate: new Date(2015, 1, 1),
+      isRollingDueDate: false,
+      instructions: {
+        'Questionnaire': 'Questionnaire Instructions',
+        'Financial Entities': 'Financial Entities Instructions',
+        'Project Declaration': 'Project Declaration Instructions',
+        'Certification': 'Certification Instructions'
+      },
+      certificationOptions: {
+        text: 'Certification Text',
+        required: true
+      }
+    };
+
+    return query('config').insert({config: JSON.stringify(config)});
   });
 }
 
@@ -432,34 +511,15 @@ exports.seed = function(knex, Promise) {
       ]);
     });
   }).then(function() {
+    console.log('Seed - config');
+    return insertInitialArchiveConfig(knex);
+  }).then(function() {
     console.log('Seed - disclosure');
     var disclosures = [];
     for (var i = 0; i < 500; i++) {
       disclosures.push(insertDisclosure(knex));
     }
     return Promise.all(disclosures);
-  }).then(function() {
-    console.log('Seed - config');
-    return knex('config').insert({
-      name: 'General Config',
-      config: JSON.stringify({
-        peopleEnabled: true,
-        sponsorLookup: true,
-
-        dueDate: new Date(2015, 1, 1),
-        isRollingDueDate: false,
-        instructions: {
-          'Questionnaire': 'Questionnaire Instructions',
-          'Financial Entities': 'Financial Entities Instructions',
-          'Project Declaration': 'Project Declaration Instructions',
-          'Certification': 'Certification Instructions'
-        },
-        certificationOptions: {
-          text: 'Certification Text',
-          required: true
-        }
-      })
-    });
   }).then(function() {
     console.log('Seed - travel_relationship');
     return Promise.all([

@@ -244,6 +244,8 @@ class _ConfigActions {
     });
   }
 
+  loadConfig(id) { this.dispatch(id); }
+
   saveAll() { this.dispatch(); }
 
   undoAll() { this.dispatch(); }

@@ -123,7 +123,7 @@ export let getConfig = (dbInfo, userId, optionalTrx) => {
         return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
       }
     }),
-    query('config').select('config').where('name', 'General Config'),
+    query('config').select('config').limit(1).orderBy('id', 'desc'),
     query.select('*').from('disclosure_status'),
     query.select('*').from('project_type')
   ])
@@ -156,8 +156,7 @@ export let getConfig = (dbInfo, userId, optionalTrx) => {
     config.projectTypes = result[11];
 
     config = camelizeJson(config);
-
-    config.general = JSON.parse(result[9][0].config);
+    config.general = JSON.parse(result[9][0].config).general;
     return config;
   });
 };
@@ -258,13 +257,18 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
         }
       })
   );
-
-  queries.push(
-    query('config').update({config: JSON.stringify(body.general)}).where('name', 'General Config')
-  );
-
   return Promise.all(queries)
     .then(() => {
       return camelizeJson(config);
     });
+};
+
+export let archiveConfig = (dbInfo, config) => {
+  let knex = getKnex(dbInfo);
+  return knex('config').insert({config: JSON.stringify(config)});
+};
+
+export let getArchivedConfig = (dbInfo, id) => {
+  let knex = getKnex(dbInfo);
+  return knex('config').select('config').where('id', id);
 };

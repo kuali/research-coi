@@ -2,6 +2,7 @@ import PIReviewActions from '../actions/PIReviewActions';
 import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
+import ConfigActions from '../actions/ConfigActions';
 
 class _PIReviewStore extends AutoBindingStore {
   constructor() {
@@ -58,11 +59,9 @@ class _PIReviewStore extends AutoBindingStore {
            .end(processResponse((err, disclosure) => {
              if (!err) {
                this.disclosure = disclosure.body;
-
                if (this.disclosure.questions) {
                  this.disclosure.questions.forEach(question => {
                    if (question.question) {
-                     question.question = JSON.parse(question.question);
                      if (question.question.required_num_selections) {
                        question.question.requiredNumSelections = question.question.required_num_selections;
                        delete question.question.required_num_selections;
@@ -81,9 +80,13 @@ class _PIReviewStore extends AutoBindingStore {
                        let newSub = {
                          id: subQuestion.id,
                          parent: subQuestion.parent,
-                         answer: JSON.parse(subQuestion.answer),
-                         question: JSON.parse(subQuestion.question)
+                         answer: {},
+                         question: subQuestion.question
                        };
+
+                       if (subQuestion.answer) {
+                         newSub.answer = JSON.parse(subQuestion.answer);
+                       }
 
                        if (newSub.question.required_num_selections) {
                          newSub.question.requiredNumSelections = newSub.question.required_num_selections;
@@ -114,9 +117,18 @@ class _PIReviewStore extends AutoBindingStore {
                  });
                }
 
+
+
                this.updateCanSubmit();
 
-               this.emitChange();
+               createRequest().get('/api/coi/archived-config/' + disclosure.body.configId)
+               .end(processResponse((error, config) => {
+                 if (!error) {
+                   window.config = config.body;
+                   ConfigActions.loadConfig(disclosure.body.configId);
+                   this.emitChange();
+                 }
+               }));
              }
            }));
   }

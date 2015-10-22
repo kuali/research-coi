@@ -7,6 +7,7 @@ import EntitySection from './EntitySection';
 import DeclarationSection from './DeclarationSection';
 import SidePanel from './SidePanel';
 import PIReviewActions from '../../../actions/PIReviewActions';
+import ConfigStore from '../../../stores/ConfigStore';
 
 export class Revise extends React.Component {
   constructor() {
@@ -24,10 +25,12 @@ export class Revise extends React.Component {
 
   componentDidMount() {
     PIReviewStore.listen(this.onChange);
+    ConfigStore.listen(this.onChange);
     PIReviewActions.loadDisclosure(this.props.params.id);
   }
 
   componentWillUnmount() {
+    ConfigStore.unlisten(this.onChange);
     PIReviewStore.unlisten(this.onChange);
   }
 

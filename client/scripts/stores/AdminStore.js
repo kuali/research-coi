@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import {COIConstants} from '../../../COIConstants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
+import ConfigActions from '../actions/ConfigActions';
 
 const PAGE_SIZE = 40;
 
@@ -40,7 +41,6 @@ class _AdminStore extends AutoBindingStore {
     };
 
     this.disclosureSummaries = [];
-
     this.refreshDisclosures();
   }
 
@@ -88,20 +88,21 @@ class _AdminStore extends AutoBindingStore {
 
   loadDisclosure(id) {
     createRequest().get('/api/coi/disclosures/' + id)
-      .end(processResponse((err, disclosure) => {
-        if (!err) {
-          this.applicationState.selectedDisclosure = disclosure.body;
-          this.emitChange();
-        }
-      }));
+           .end(processResponse((err, disclosure) => {
+             if (!err) {
+               this.applicationState.selectedDisclosure = disclosure.body;
+               ConfigActions.loadConfig(disclosure.body.configId);
+               this.emitChange();
+             }
+           }));
 
     createRequest().get(`/api/coi/disclosures/${id}/pi-responses`)
-      .end(processResponse((err, responses) => {
-        if (!err) {
-          this.applicationState.piResponses = responses.body;
-          this.emitChange();
-        }
-      }));
+    .end(processResponse((err, responses) => {
+      if (!err) {
+        this.applicationState.piResponses = responses.body;
+        this.emitChange();
+      }
+    }));
   }
 
   changeSort(newSortField) {
