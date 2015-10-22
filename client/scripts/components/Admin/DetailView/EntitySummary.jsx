@@ -76,7 +76,7 @@ export default class EntitySummary extends React.Component {
         borderBottom: '1px solid #999'
       },
       highlighted: {
-        borderLeft: '10px solid #F57C00',
+        borderLeft: window.colorBlindModeOn ? 'black' : '10px solid #F57C00',
         marginLeft: -20,
         paddingLeft: 10
       },
