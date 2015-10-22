@@ -62,11 +62,11 @@ export class DisclosureList extends React.Component {
         width: 320
       },
       filterGroup: {
-        backgroundColor: '#49899D'
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       heading: {
         color: 'white',
-        backgroundColor: '#2B5866',
+        backgroundColor: window.colorBlindModeOn ? '#333' : '#2B5866',
         textAlign: 'right',
         padding: '8px 70px 8px 0',
         fontWeight: 'bold',

@@ -36,7 +36,7 @@ export class AdminQuestionnaireSummary extends React.Component {
         overflow: 'hidden'
       },
       heading: {
-        backgroundColor: '#1481A3',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         borderBottom: '1px solid #999',
         fontSize: 25,
         color: 'white',

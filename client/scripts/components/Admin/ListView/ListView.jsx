@@ -85,7 +85,7 @@ export class ListView extends React.Component {
       content: {
         display: 'inline-block',
         padding: '15px 30px',
-        borderTop: '6px solid #1481A3',
+        borderTop: window.colorBlindModeOn ? '6px solid black' : '6px solid #0095A0',
         backgroundColor: '#eeeeee',
         overflowY: 'auto'
       },
@@ -96,11 +96,11 @@ export class ListView extends React.Component {
         boxShadow: '0 0 9px #bbb'
       },
       filterGroup: {
-        backgroundColor: '#49899D'
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       heading: {
         color: 'white',
-        backgroundColor: '#2B5866',
+        backgroundColor: window.colorBlindModeOn ? '#333' : '#2B5866',
         textAlign: 'right',
         padding: '8px 70px 8px 0',
         fontWeight: 'bold',

@@ -35,7 +35,7 @@ export class ActionButtons extends React.Component {
         width: 210
       },
       icon: {
-        backgroundColor: window.config.colors.three,
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         color: 'white',
         padding: 5,
         display: 'inline-block',

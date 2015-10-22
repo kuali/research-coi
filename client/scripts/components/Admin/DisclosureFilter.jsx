@@ -95,7 +95,7 @@ export default class DisclosureFilter extends React.Component {
       filter: {
         padding: '0 22px 0 42px',
         position: 'relative',
-        backgroundColor: this.props.active ? '#3B7182' : 'initial'
+        backgroundColor: this.props.active ? window.colorBlindModeOn ? '#444' : '#007F88' : 'initial'
       }
     };
 
