@@ -8,12 +8,15 @@ export default class Panel extends React.Component {
         borderRadius: 5,
         backgroundColor: 'white',
         boxShadow: '0 0 10px #BBB',
-        marginBottom: 22
+        marginBottom: 22,
+        overflow: 'hidden'
       },
       title: {
         borderBottom: '1px solid #AAA',
         padding: '10px 17px',
-        fontSize: 17
+        fontSize: 17,
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
+        color: 'white'
       },
       content: {
         padding: 10

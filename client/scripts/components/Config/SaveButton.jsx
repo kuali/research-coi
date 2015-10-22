@@ -20,7 +20,7 @@ export default class SaveButton extends React.Component {
       },
       saveIcon: {
         fontSize: 28,
-        color: '#EC6F41',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         verticalAlign: 'middle'
       },
       saveText: {

@@ -14,10 +14,24 @@ import {ArchiveDetail} from './Archive/ArchiveDetail';
 import {AppHeader} from '../AppHeader';
 import {SizeAwareComponent} from '../SizeAwareComponent';
 import {processResponse, createRequest} from '../../HttpUtils';
+import ColorStore from '../../stores/ColorStore';
 
 class App extends SizeAwareComponent {
   constructor() {
     super();
+    this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    ColorStore.listen(this.onChange);
+  }
+
+  componentWillUnmount() {
+    ColorStore.unlisten(this.onChange);
+  }
+
+  onChange() {
+    this.forceUpdate();
   }
 
   render() {
@@ -54,14 +68,17 @@ let routes = (
   </Route>
 );
 
+window.colorBlindModeOn = window.localStorage.getItem('colorBlindModeOn') === 'true';
+
 // Then load config and re-render
-createRequest().get('/api/coi/config')
-.end(processResponse((err, config) => {
-  if (!err) {
-    window.config = config.body;
-    Router.run(routes, (Handler, state) => {
-      React.render(<Handler state={state} />, document.body);
-    });
-  }
-}));
+createRequest()
+  .get('/api/coi/config')
+  .end(processResponse((err, config) => {
+    if (!err) {
+      window.config = config.body;
+      Router.run(routes, (Handler, state) => {
+        React.render(<Handler state={state} />, document.body);
+      });
+    }
+  }));
 

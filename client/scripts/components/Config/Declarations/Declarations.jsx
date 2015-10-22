@@ -77,7 +77,7 @@ export default class Declarations extends React.Component {
         width: 350
       },
       add: {
-        color: '#048EAF',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         margin: '0 0 0 20px',
         padding: 10,
         fontSize: 17,

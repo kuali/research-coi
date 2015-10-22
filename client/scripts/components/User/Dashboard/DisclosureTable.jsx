@@ -1,53 +1,21 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
 
-export class DisclosureTable extends ResponsiveComponent {
+export class DisclosureTable extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
   }
 
-  renderMobile() {
-    let mobileStyles = {
-      container: {
-        boxShadow: '0 0 10px #C0C0C0',
-        margin: 0
-      }
-    };
-    let styles = merge(this.commonStyles, mobileStyles);
-
-    let rows = this.props.disclosures.map((disclosure, index) => {
-      return (
-        <DisclosureTableRow
-          type={disclosure.type}
-          status={disclosure.status}
-          lastreviewed={disclosure.last_review_date}
-          title={disclosure.title}
-          expiresOn={disclosure.expired_date}
-          key={index}
-        />
-      );
-    });
-
-    return (
-      <div style={merge(styles.container, this.props.style)}>
-        {rows}
-      </div>
-    );
-  }
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         borderRadius: 5,
         boxShadow: '0 0 10px #C0C0C0',
         margin: '44px 50px'
       },
       heading: {
-        fontWeight: 300,
+        fontWeight: window.colorBlindModeOn ? 'normal' : 300,
         width: '25%',
         display: 'inline-block',
         padding: '20px 0',
@@ -69,7 +37,6 @@ export class DisclosureTable extends ResponsiveComponent {
         width: '25%'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let rows = this.props.disclosures ? this.props.disclosures.map((disclosure, index) => {
       return (

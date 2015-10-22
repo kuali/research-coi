@@ -110,7 +110,7 @@ export default class NewQuestion extends React.Component {
       option: {
         margin: '0 5px 5px 0',
         display: 'inline-block',
-        backgroundColor: '#2A9788',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 16
       },
       requiredSelectionsSection: {

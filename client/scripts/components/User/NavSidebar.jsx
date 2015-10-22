@@ -1,14 +1,12 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {ProgressIndicator} from './ProgressIndicator';
 import {COIConstants} from '../../../../COIConstants';
 import {DisclosureActions} from '../../actions/DisclosureActions';
 
-export class NavSidebar extends ResponsiveComponent {
+export class NavSidebar extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.submitDisclosure = this.submitDisclosure.bind(this);
   }
@@ -27,10 +25,8 @@ export class NavSidebar extends ResponsiveComponent {
     DisclosureActions.nextStep();
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         verticalAlign: 'top',
         width: '25%',
@@ -42,20 +38,20 @@ export class NavSidebar extends ResponsiveComponent {
         margin: '14px 0 14px 0',
         fontSize: 15,
         cursor: 'pointer',
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#555555',
         display: this.props.question <= 1 && this.props.step === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE ? 'none' : 'block'
       },
       icons: {
-        color: '#1481A3',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         fontSize: 33,
-        marginRight: 3,
+        marginRight: 6,
         verticalAlign: 'middle'
       },
       nextquestion: {
         margin: '14px 0 14px 0',
         fontSize: 15,
         cursor: 'pointer',
-        color: '#1481A3'
+        color: window.colorBlindModeOn ? 'black' : '#555555'
       },
       navigation: {
         verticalAlign: 'top',
@@ -76,7 +72,6 @@ export class NavSidebar extends ResponsiveComponent {
         cursor: 'default'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let nextStep;
     if (

@@ -105,7 +105,7 @@ export default class NotificationDetails extends React.Component {
         cursor: 'pointer'
       },
       buttons: {
-        color: '#048EAF',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         marginTop: 20,
         fontSize: 17,
         height: 21
@@ -122,13 +122,13 @@ export default class NotificationDetails extends React.Component {
       },
       cancel: {
         float: 'right',
-        color: '#F44336',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         paddingLeft: 5,
         marginLeft: 25,
         paddingTop: 7,
         paddingBottom: 2,
         fontSize: 8,
-        borderBottom: '1px dotted #F44336',
+        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #F57C00',
         cursor: 'pointer',
         verticalAlign: 'middle'
       },
@@ -137,7 +137,10 @@ export default class NotificationDetails extends React.Component {
         width: '100%',
         padding: 10,
         fontSize: 16,
-        marginTop: 10
+        marginTop: 10,
+        borderRadius: 5,
+        border: '1px solid #AAA',
+        resize: 'none'
       }
     };
 

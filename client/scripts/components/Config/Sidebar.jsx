@@ -33,7 +33,7 @@ export default class Sidebar extends React.Component {
       },
       active: {
         backgroundColor: 'white',
-        borderRight: '5px solid #1481A3'
+        borderRight: window.colorBlindModeOn ? '5px solid black' : '5px solid #0095A0'
       }
     };
 

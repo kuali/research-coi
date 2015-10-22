@@ -59,13 +59,13 @@ class EditableItem extends React.Component {
       editIcon: {
         width: 35,
         height: 18,
-        color: '#048EAF',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         verticalAlign: 'middle',
         padding: '0 10px',
         cursor: 'pointer'
       },
       deleteIcon: {
-        color: '#F44336',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         fontSize: 16,
         fontWeight: 'bold',
         verticalAlign: 'middle',
@@ -86,7 +86,7 @@ class EditableItem extends React.Component {
       checkmark: {
         width: 15,
         height: 18,
-        color: '#32A03C',
+        color: window.colorBlindModeOn ? 'black' : '#32A03C',
         verticalAlign: 'middle'
       },
       done: {
@@ -204,13 +204,13 @@ export default class EditableList extends React.Component {
       container: {
       },
       addAnother: {
-        color: '#048EAF',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '10px 0 2px 25px',
         fontSize: 13,
         cursor: 'pointer'
       },
       checkmark: {
-        color: '#32A03C',
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
         width: 15,
         height: 18,
         verticalAlign: 'middle'
@@ -226,7 +226,7 @@ export default class EditableList extends React.Component {
         fontSize: 13,
         paddingRight: 5,
         paddingLeft: 5,
-        color: '#F44336'
+        color: window.colorBlindModeOn ? 'black' : '#F57C00'
       },
       textbox: {
         padding: 5,
@@ -236,7 +236,7 @@ export default class EditableList extends React.Component {
         marginLeft: 5
       },
       plus: {
-        color: '#048EAF',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         width: 15,
         height: 15,
         verticalAlign: 'middle'

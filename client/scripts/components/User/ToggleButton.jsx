@@ -22,7 +22,7 @@ export default class ToggleButton extends React.Component {
         position: 'relative'
       },
       selected: {
-        backgroundColor: '#1481A3',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontWeight: 'bold',
         color: 'white',
         zIndex: 2
@@ -35,7 +35,7 @@ export default class ToggleButton extends React.Component {
         width: 0,
         height: 0,
         border: '7px solid transparent',
-        borderTopColor: window.config.colors.two,
+        borderTopColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         top: 31,
         right: '44%'
       }

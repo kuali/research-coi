@@ -108,7 +108,7 @@ class Question extends React.Component {
         height: '100%'
       },
       gripper: {
-        backgroundColor: this.props.isSubQuestion ? '#F2AA41' : '#048EAF',
+        backgroundColor: window.colorBlindModeOn ? '#666' : this.props.isSubQuestion ? '#F57C00' : '#0095A0',
         verticalAlign: 'top',
         display: 'inline-block',
         width: 25
@@ -117,7 +117,7 @@ class Question extends React.Component {
         marginLeft: 5,
         width: 15,
         height: 42,
-        color: '#03728C'
+        color: 'rgba(0, 0, 0, .4)'
       },
       top: {
         padding: 10
@@ -159,7 +159,7 @@ class Question extends React.Component {
         transition: 'all .2s ease-in-out'
       },
       warning: {
-        color: 'red',
+        color: window.colorBlindModeOn ? 'black' : 'red',
         fontSize: 14,
         whiteSpace: 'normal',
         paddingLeft: 10
