@@ -385,7 +385,7 @@ let retrieveComments = (dbInfo, userId, disclosureId) => {
     .where('disclosure_id', disclosureId)
     .then(comments => {
       comments.forEach(comment => {
-        comment.isCurrentUser = comment.userId === userId;
+        comment.isCurrentUser = comment.userId == userId; // eslint-disable-line eqeqeq
       });
       return comments;
     })
