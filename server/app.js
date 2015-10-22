@@ -12,6 +12,7 @@ import authentication from './middleware/authentication';
 import apiAuthentication from './middleware/apiAuthentication';
 import viewRenderer from './middleware/viewRenderer';
 import Log from './Log';
+import methodChecker from './middleware/methodChecker';
 
 export function run() {
   let app = express();
@@ -25,6 +26,7 @@ export function run() {
     Log.info('extensions not found');
   }
 
+  app.use(methodChecker);
   app.use('/coi', express.static('client'));
   app.use(cookieParser());
   app.use('/api', apiAuthentication);
