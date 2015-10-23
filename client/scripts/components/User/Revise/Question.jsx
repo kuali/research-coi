@@ -8,6 +8,7 @@ import {TextAreaControl} from '../TextAreaControl';
 import {CheckboxControl} from '../CheckboxControl';
 import {NumericControl} from '../NumericControl';
 import {DateControl} from '../DateControl';
+import {formatDate} from '../../../formatDate';
 
 export default class Question extends React.Component {
   constructor(props) {
@@ -299,6 +300,10 @@ export default class Question extends React.Component {
         answerArea = (
           <div>{this.props.answer.join(', ')}</div>
         );
+      } else if (this.props.type === COIConstants.QUESTION_TYPE.DATE) {
+        answerArea = (
+        <div>{formatDate(this.props.answer)}</div>
+        );
       }
       else {
         answerArea = (
@@ -317,6 +322,9 @@ export default class Question extends React.Component {
         let answerValue;
         if (subQuestion.answer !== null) {
           answerValue = subQuestion.answer.value;
+        }
+        if (subQuestion.question.type === COIConstants.QUESTION_TYPE.DATE) {
+          answerValue = formatDate(answerValue);
         }
         if (this.state.revising) {
           return (

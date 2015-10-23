@@ -46,7 +46,7 @@ export class DateControl extends React.Component {
           style={styles.datepicker}
           onChange={this.onChange}
           value={this.props.answer}
-          direction="Up"
+          direction={this.props.direction}
         />
       </div>
     );

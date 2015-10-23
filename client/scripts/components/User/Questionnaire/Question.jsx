@@ -202,6 +202,7 @@ export class Question extends React.Component {
             isParent={!isSubQuestion}
             questionId={question.id}
             onValidityChange={this.controlValidityChanged}
+            direction={isSubQuestion ? 'Up' : undefined}
           />
         );
     }
@@ -212,7 +213,6 @@ export class Question extends React.Component {
       container: {
         display: 'inline-block',
         padding: '0 1px',
-        overflowX: 'hidden'
       },
       counter: {
         textAlign: 'right',
@@ -249,7 +249,8 @@ export class Question extends React.Component {
       subQuestionPanel: {
         backgroundColor: 'white',
         border: '1px solid #CCC',
-        margin: '-5px 3px 0 3px'
+        margin: '-5px 3px 0 3px',
+        paddingBotton: '140px'
       },
       subQuestionContent: {
         padding: '25px 30px'

@@ -29,12 +29,12 @@ export class Questionnaire extends React.Component {
 
     let styles = {
       container: {
-        whiteSpace: 'nowrap',
-        overflow: 'hidden'
+        whiteSpace: 'nowrap'
       },
       questionArea: {
         margin: '46px 0 0 50px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        paddingBottom: '140px'
       },
       question: {
         width: '100%',
