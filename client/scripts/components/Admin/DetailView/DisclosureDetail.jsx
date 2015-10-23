@@ -160,6 +160,11 @@ export class DisclosureDetail extends React.Component {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.PROJECTS;
     });
 
+
+    let piComments = this.props.disclosure.comments.filter(comment => {
+      return comment.piVisible;
+    });
+
     return (
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
         <DisclosureDetailHeading disclosure={this.props.disclosure} />
@@ -189,7 +194,7 @@ export class DisclosureDetail extends React.Component {
           </span>
           <span>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
-            <RejectionConfirmation id={this.props.disclosure.id} canReject={this.props.disclosure.comments.length > 0 } style={styles.rejection} />
+            <RejectionConfirmation id={this.props.disclosure.id} canReject={piComments.length > 0 } style={styles.rejection} />
             <ActionButtons
               style={styles.actionButtons}
               showAttachments={this.props.disclosure.files.length > 0}

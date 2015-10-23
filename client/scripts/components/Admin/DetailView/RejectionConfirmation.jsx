@@ -70,7 +70,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
       rejectionSection = (
         <div style={merge(styles.container, this.props.style)} >
           <div style={styles.question}>
-            Please add one or more comments before sending back a disclosure.
+            Please add one or more comments visible to the PI before sending back a disclosure.
           </div>
 
           <KButton onClick={this.cancel} style={styles.button}>CLOSE</KButton>
