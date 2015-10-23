@@ -774,41 +774,67 @@ export let getExpirationDate = (approvedDate, isRolling, dueDate) => {
   }
 };
 
-export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
-  let knex = getKnex(dbInfo);
-  return knex('config').select('config').limit(1).orderBy('id', 'desc').then(config => {
-    let generalConfig = JSON.parse(config[0].config).general;
-    let approvedDate = new Date();
-    let expiredDate = getExpirationDate(approvedDate, generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
-    return knex('disclosure')
+let approveDisclosure = (knex, disclosureId, expiredDate) => {
+  return knex('disclosure')
     .update({
       expired_date: expiredDate,
       status_cd: COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
     })
-    .where('id', disclosureId)
-    .then(()=>{
-      disclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
-      return knex('disclosure_archive').insert({
-        disclosure_id: disclosureId,
-        approved_date: approvedDate,
-        approved_by: displayName,
-        disclosure: JSON.stringify(disclosure)
-      })
-      .then(()=> {
-        return knex('comment')
-        .del()
-        .where('disclosure_id', disclosureId)
-        .then(() => {
-          return Promise.all([
-            knex('disclosure_answer').select('questionnaire_answer_id').where('disclosure_id', disclosureId),
-            knex('disclosure_answer').del().where('disclosure_id', disclosureId)
-          ])
-          .then(result => {
-            return knex('questionnaire_answer').del().whereIn('id', result[0].map(disclosureAnswer => { return disclosureAnswer.questionnaire_answer_id; }));
-          });
-        });
-      });
+    .where('id', disclosureId);
+};
+
+let archiveDisclosure = (knex, disclosureId, approverName, disclosure) => {
+  return knex('disclosure_archive')
+    .insert({
+      disclosure_id: disclosureId,
+      approved_date: new Date(),
+      approved_by: approverName,
+      disclosure: JSON.stringify(disclosure)
     });
+};
+
+let deleteComments = (knex, disclosureId) => {
+  return knex('comment')
+    .del()
+    .where('disclosure_id', disclosureId);
+};
+
+let deleteAnswersForDisclosure = (knex, disclosureId) => {
+  return knex('disclosure_answer').select('questionnaire_answer_id').where('disclosure_id', disclosureId)
+    .then((result) => {
+      return knex('disclosure_answer').del().where('disclosure_id', disclosureId)
+        .then(() => {
+          let idsToDelete = result.map(disclosureAnswer => {
+            return disclosureAnswer.questionnaire_answer_id;
+          });
+          return knex('questionnaire_answer').del().whereIn('id', idsToDelete);
+        });
+    });
+};
+
+let deletePIReviewsForDisclsoure = (knex, disclosureId) => {
+  return knex('pi_review')
+    .del()
+    .where('disclosure_id', disclosureId);
+};
+
+export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
+  let knex = getKnex(dbInfo);
+
+  disclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+
+  return Promise.all([
+    knex('config').select('config').limit(1).orderBy('id', 'desc'),
+    archiveDisclosure(knex, disclosureId, displayName, disclosure),
+    deleteComments(knex, disclosureId),
+    deleteAnswersForDisclosure(knex, disclosureId),
+    deletePIReviewsForDisclsoure(knex, disclosureId)
+  ])
+  .then(([config]) => {
+    let generalConfig = JSON.parse(config[0].config).general;
+    let approvedDate = new Date();
+    let expiredDate = getExpirationDate(approvedDate, generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
+    return approveDisclosure(knex, disclosureId, expiredDate);
   });
 };
 
