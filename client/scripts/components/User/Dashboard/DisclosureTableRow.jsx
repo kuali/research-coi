@@ -68,9 +68,11 @@ export class DisclosureTableRow extends React.Component {
 
     let extraInfo;
     if (this.props.type === 2) {
-      extraInfo = (
-        <div style={styles.extra}>Expires On: {formatDate(this.props.expiresOn)}</div>
-      );
+      if (this.props.expiresOn) {
+        extraInfo = (
+          <div style={styles.extra}>Expires On: {formatDate(this.props.expiresOn)}</div>
+        );
+      }
     }
     else {
       extraInfo = (
