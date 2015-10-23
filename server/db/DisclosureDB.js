@@ -1,6 +1,7 @@
 /*eslint camelcase:0 */
 import {isDisclosureUsers} from './CommonDB';
 import * as FileService from '../services/fileService/FileService';
+import {camelizeJson} from './JsonUtils'
 import {COIConstants} from '../../COIConstants';
 
 const ONE_DAY = 1000 * 60 * 60 * 24;
@@ -600,7 +601,7 @@ export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
             newDisclosure.answers = [];
             newDisclosure.entities = [];
             newDisclosure.declarations = [];
-            return newDisclosure;
+            return camelizeJson(newDisclosure);
           });
         });
       }
