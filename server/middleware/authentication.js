@@ -8,6 +8,7 @@ export default function authentication(req, res, next) {
         let returnToValue = encodeURIComponent(req.originalUrl);
         res.redirect('/auth?return_to=' + returnToValue);
       } else {
+        req.userInfo = userInfo;
         next();
       }
     }).catch(err => {
