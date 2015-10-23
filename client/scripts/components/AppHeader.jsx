@@ -23,11 +23,12 @@ export class AppHeader extends React.Component {
   }
 
   componentWillMount() {
-    createRequest().get('/api/coi/username')
-    .end((err, username) => {
+    createRequest().get('/api/coi/userinfo')
+    .end((err, response) => {
       if (!err) {
+        let userInfo = response.body;
         this.setState({
-          usersName: username.text
+          usersName: `${userInfo.firstName} ${userInfo.lastName}`
         });
       }
     });
