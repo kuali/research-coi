@@ -37,11 +37,11 @@ export default class DeclarationSection extends React.Component {
     });
 
     return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
+      <div style={merge(styles.container, this.props.style)}>
         <div style={styles.title}>
           PROJECT DECLARATIONS
         </div>
-        <div className="fill" style={styles.body}>
+        <div style={styles.body}>
           {projectsJSX}
         </div>
       </div>

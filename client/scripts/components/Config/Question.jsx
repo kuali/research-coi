@@ -134,7 +134,8 @@ class Question extends React.Component {
         lineHeight: '1.5em',
         marginTop: 5,
         fontSize: 12,
-        verticalAlign: 'top'
+        verticalAlign: 'top',
+        display: 'inline-block'
       },
       bottom: {
         borderTop: '1px solid #AAA',

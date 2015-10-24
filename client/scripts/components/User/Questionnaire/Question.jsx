@@ -72,11 +72,11 @@ export class Question extends React.Component {
     return subQuestion !== undefined;
   }
 
-  answer(answer, questionId) {
+  answer(newAnswer, questionId) {
     DisclosureActions.answerQuestion({
       id: questionId,
       answer: {
-        value: answer
+        value: newAnswer
       }
     });
   }
@@ -212,7 +212,7 @@ export class Question extends React.Component {
     let styles = {
       container: {
         display: 'inline-block',
-        padding: '0 1px',
+        padding: '0 1px'
       },
       counter: {
         textAlign: 'right',

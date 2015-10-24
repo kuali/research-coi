@@ -53,6 +53,7 @@ export default class Declarations extends React.Component {
   render() {
     let styles = {
       container: {
+        minHeight: 100
       },
       content: {
         backgroundColor: '#eeeeee',
@@ -104,7 +105,7 @@ export default class Declarations extends React.Component {
         return (
           <DeclarationType
             type={type}
-            key={type.id}
+            key={type.typeCd}
             applicationState={this.state.applicationState}
             toggle={true}
           />
@@ -113,11 +114,11 @@ export default class Declarations extends React.Component {
 
       customTypes = this.state.declarationTypes.filter(type => {
         return type.custom;
-      }).map(type => {
+      }).map((type, index) => {
         return (
           <DeclarationType
             type={type}
-            key={type.id}
+            key={`custom${index}`}
             applicationState={this.state.applicationState}
             delete={true}
             toggle={false}
@@ -146,14 +147,14 @@ export default class Declarations extends React.Component {
     }
 
     return (
-      <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
+      <div className="fill flexbox row" style={merge(styles.container, this.props.style)}>
         <Sidebar active="declarations" />
         <span style={styles.content} className="inline-flexbox column fill">
           <div style={styles.stepTitle}>
             Customize Project Declarations
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
-            <span className="fill">
+            <span className="fill" style={{display: 'inline-block'}}>
               <InstructionEditor
                 step={COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS}
                 value={instructionText}
@@ -174,7 +175,7 @@ export default class Declarations extends React.Component {
             <ActionPanel visible={this.state.dirty} />
           </div>
         </span>
-      </span>
+      </div>
     );
   }
 }

@@ -50,7 +50,6 @@ export class DisclosureTable extends React.Component {
       headings: {
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 14,
-        backgroundColor: 'white',
         display: 'table-row',
         cursor: 'pointer',
         padding: 10

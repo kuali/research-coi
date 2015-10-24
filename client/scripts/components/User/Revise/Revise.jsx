@@ -49,7 +49,9 @@ export class Revise extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: '#F2F2F2'
+        backgroundColor: '#F2F2F2',
+        minHeight: 100,
+        overflowY: 'auto'
       },
       disclosure: {
         overflowY: 'auto'

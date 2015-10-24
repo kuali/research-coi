@@ -38,6 +38,7 @@ class EditableItem extends React.Component {
 
   keyPressed(evt) {
     if (evt.keyCode === COIConstants.RETURN_KEY) {
+      evt.preventDefault();
       this.done();
     }
   }
@@ -46,7 +47,6 @@ class EditableItem extends React.Component {
     this.setState({
       editing: false
     });
-
     let textbox = React.findDOMNode(this.refs.textbox);
     this.props.onEdit(this.props.id, this.props.typeCd, textbox.value);
   }
@@ -105,7 +105,13 @@ class EditableItem extends React.Component {
           <span onClick={this.done} style={styles.done}>
             <CheckmarkIcon style={styles.checkmark} /> Done
           </span>
-          <input type="text" defaultValue={this.props.children} ref="textbox" style={styles.textbox} onKeyUp={this.keyPressed} />
+          <input
+            type="text"
+            defaultValue={this.props.children}
+            ref="textbox"
+            style={styles.textbox}
+            onKeyDown={this.keyPressed}
+          />
         </div>
       );
     }
@@ -181,6 +187,7 @@ export default class EditableList extends React.Component {
 
   keyPressed(evt) {
     if (evt.keyCode === COIConstants.RETURN_KEY) {
+      evt.preventDefault();
       this.addItem();
     }
   }
@@ -269,7 +276,7 @@ export default class EditableList extends React.Component {
             <span style={{fontWeight: 'bold', marginRight: 4}}>X</span>
             Cancel
           </span>
-          <input type="text" ref="textbox" style={styles.textbox} onKeyUp={this.keyPressed} />
+          <input type="text" ref="textbox" style={styles.textbox} onKeyDown={this.keyPressed} />
         </div>
       );
     }

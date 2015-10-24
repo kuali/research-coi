@@ -98,7 +98,8 @@ export default class CommentingPanel extends React.Component {
       },
       comments: {
         overflowY: 'auto',
-        flexDirection: 'column-reverse'
+        flexDirection: 'column-reverse',
+        msFlexDirection: 'column-reverse'
       },
       comment: {
         marginTop: 10,
@@ -164,7 +165,7 @@ export default class CommentingPanel extends React.Component {
         </div>
 
         <div className="fill flexbox" style={styles.comments}>
-          <div>
+          <div style={{width: '100%'}}>
             {comments}
           </div>
         </div>

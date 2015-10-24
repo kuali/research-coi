@@ -50,6 +50,7 @@ export default class Certification extends React.Component {
   render() {
     let styles = {
       container: {
+        minHeight: 100
       },
       content: {
         backgroundColor: '#eeeeee',
@@ -120,7 +121,7 @@ export default class Certification extends React.Component {
             Customize Certification
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
-            <span className="fill">
+            <span className="fill" style={{display: 'inline-block'}}>
               <InstructionEditor
                 step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
                 value={instructionText}

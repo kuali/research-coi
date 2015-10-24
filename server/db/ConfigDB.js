@@ -21,7 +21,6 @@ let mockDB = {
 };
 
 let createDeleteQueries = (query, collection, tableProps) => {
-
   let sel = query(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where.key, tableProps.where.value);
@@ -112,7 +111,7 @@ export let getConfig = (dbInfo, userId, optionalTrx) => {
     query.select('*').from('relationship_person_type').where('active', true),
     query.select('*').from('declaration_type').where('active', true),
     query.select('*').from('disclosure_type'),
-    query.select('*').from('notification'),
+    query.select('*').from('notification').where('active', true),
     query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(result => {
       if (result[0]) {
         return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});

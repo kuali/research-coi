@@ -70,7 +70,7 @@ export default class Questionnaire extends React.Component {
     let configSection;
     if (this.state.applicationState) {
       configSection = (
-        <span className="fill">
+        <span className="fill" style={{display: 'inline-block'}}>
           <InstructionEditor
             step={COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE}
             value={instructionText}

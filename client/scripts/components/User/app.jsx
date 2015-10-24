@@ -41,7 +41,8 @@ class App extends SizeAwareComponent {
       },
       header: {
         boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 9
+        zIndex: 9,
+        position: 'relative'
       }
     };
 

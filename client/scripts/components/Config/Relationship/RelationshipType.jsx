@@ -123,7 +123,7 @@ export default class RelationshipType extends React.Component {
               <input id="typeCheckbox" type="checkbox" ref="typeEnabled" checked={this.props.typeEnabled === 1} onChange={this.typeEnabledChanged} />
               <label htmlFor="typeCheckbox" style={styles.checkboxLabel}>Type</label>
             </span>
-            <span className="fill">
+            <span className="fill" style={{display: 'inline-block'}}>
               <EditableList
                 items={this.props.typeOptions}
                 onChange={this.typeOptionsChanged}

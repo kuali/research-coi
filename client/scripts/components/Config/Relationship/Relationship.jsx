@@ -89,6 +89,7 @@ export default class Relationship extends React.Component {
   render() {
     let styles = {
       container: {
+        minHeight: 100
       },
       content: {
         backgroundColor: '#eeeeee',
@@ -112,8 +113,6 @@ export default class Relationship extends React.Component {
       peopleLeft: {
         paddingRight: 25
       },
-      peopleRight: {
-      },
       panelInstructions: {
         marginBottom: 35
       },
@@ -131,7 +130,7 @@ export default class Relationship extends React.Component {
         if (matrixType.description === 'Travel') {
           return (
             <TravelRelationshipType
-              key={matrixType.name}
+              key={matrixType.typeCd}
               typeCd={matrixType.typeCd}
               name={matrixType.description}
               enabled={matrixType.enabled}
@@ -149,7 +148,7 @@ export default class Relationship extends React.Component {
         } else {
           return (
             <RelationshipType
-              key={matrixType.name}
+              key={matrixType.typeCd}
               typeCd={matrixType.typeCd}
               name={matrixType.description}
               enabled={matrixType.enabled}
@@ -176,7 +175,7 @@ export default class Relationship extends React.Component {
             Relationship Matrix
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
-            <span className="fill">
+            <span className="fill" style={{display: 'inline-block'}}>
               <Panel title="Relationship Matrix People Configuration">
                 <div style={{padding: '7px 21px 15px 21px'}}>
                   <div style={styles.panelInstructions}>Configure the people types for your relationship matrix:</div>
@@ -185,7 +184,7 @@ export default class Relationship extends React.Component {
                       <input id="peopleCheckbox" type="checkbox" ref="peopleEnabled" checked={this.state.peopleEnabled} onChange={this.peopleEnabledChanged} />
                       <label htmlFor="peopleCheckbox" style={styles.peopleCheckboxLabel}>People</label>
                     </span>
-                    <span className="fill" style={styles.peopleRight}>
+                    <span className="fill">
                       <EditableList
                         items={this.state.list}
                         onChange={this.itemsChanged}

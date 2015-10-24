@@ -9,7 +9,8 @@ export default class QuestionnaireSection extends React.Component {
         margin: '25px 20px 25px 35px',
         backgroundColor: 'white',
         borderRadius: 5,
-        boxShadow: '0 0 10px 2px #DDD'
+        boxShadow: '0 0 10px 2px #DDD',
+        overflow: 'hidden'
       },
       title: {
         fontSize: 23,
@@ -34,11 +35,11 @@ export default class QuestionnaireSection extends React.Component {
     });
 
     return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
+      <div style={merge(styles.container, this.props.style)}>
         <div style={styles.title}>
           QUESTIONNAIRE
         </div>
-        <div className="fill" style={styles.body}>
+        <div style={styles.body}>
           {questions}
         </div>
       </div>

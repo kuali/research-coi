@@ -6,7 +6,7 @@ import DoneLink from '../DoneLink';
 import DeleteLink from '../DeleteLink';
 import {COIConstants} from '../../../../../COIConstants';
 
-export default class Declaration extends React.Component {
+export default class DeclarationType extends React.Component {
   constructor() {
     super();
 
@@ -94,7 +94,7 @@ export default class Declaration extends React.Component {
     if (this.typeIsBeingEdited(type)) {
       jsx = (
         <span>
-          <input ref="typeName" type="text" style={styles.textbox} value={this.getNewValue(type)} onKeyUp={this.lookForEnter} onChange={this.nameChanged} />
+          <input ref="typeName" type="text" style={styles.textbox} defaultValue={type.description} value={this.getNewValue(type)} onKeyUp={this.lookForEnter} onChange={this.nameChanged} />
           <DoneLink style={styles.editLink} onClick={this.doneEditing} />
         </span>
       );

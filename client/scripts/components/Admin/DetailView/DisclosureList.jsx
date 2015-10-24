@@ -139,7 +139,10 @@ export class DisclosureList extends React.Component {
             onSearch={this.doSearch}
           />
           <div style={styles.heading} onClick={this.toggleFilters}>
-            {this.props.count} Disclosures Shown
+            <span style={{paddingRight: 3}}>
+              {this.props.count}
+            </span>
+            Disclosures Shown
           </div>
           <SearchFilterGroup
             style={styles.filterGroup}

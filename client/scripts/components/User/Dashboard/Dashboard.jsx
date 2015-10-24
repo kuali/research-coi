@@ -59,7 +59,6 @@ export class Dashboard extends ResponsiveComponent {
         height: '0'
       },
       content: {
-        display: 'inline-block',
         verticalAlign: 'top',
         overflowY: 'auto',
         overflowX: 'hidden'
@@ -116,18 +115,18 @@ export class Dashboard extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         width: '100%',
-        backgroundColor: '#eeeeee'
+        backgroundColor: '#eeeeee',
+        minHeight: 100,
+        overflowY: 'auto'
       },
       sidebar: {
         minWidth: 300,
-        display: 'inline-block',
         backgroundColor: '#eeeeee',
         verticalAlign: 'top',
         paddingTop: 125,
         boxShadow: '1px 0px 6px #D1D1D1'
       },
       content: {
-        display: 'inline-block',
         verticalAlign: 'top'
       },
       header: {

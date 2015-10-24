@@ -51,8 +51,6 @@ export default class DisclosureType extends React.Component {
   render() {
     let styles = {
       container: {
-        width: '50%',
-        display: 'inline-block'
       },
       editLink: {
         marginLeft: 10

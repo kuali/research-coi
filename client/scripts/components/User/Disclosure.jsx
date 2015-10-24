@@ -121,23 +121,23 @@ export class Disclosure extends React.Component {
 
     let styles = {
       container: {
-        padding: '0'
+        padding: '0',
+        minHeight: 100
       },
       content: {
         verticalAlign: 'top',
         width: '80%',
-        display: 'inline-block',
         overflow: 'auto',
         backgroundColor: '#eeeeee'
       },
       middle: {
-        width: '75%',
-        display: 'inline-block'
+        width: '75%'
       },
       sidebar: {
         minWidth: 300,
         boxShadow: '2px 1px 8px #D5D5D5',
-        zIndex: 9
+        zIndex: 9,
+        position: 'relative'
       }
     };
 

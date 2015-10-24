@@ -53,7 +53,8 @@ export class DisclosureHeader extends ResponsiveComponent {
         padding: '17px 0 17px 50px',
         position: 'relative',
         borderBottom: '1px solid #e3e3e3',
-        boxShadow: '0 2px 8px #D5D5D5'
+        boxShadow: '0 2px 8px #D5D5D5',
+        zIndex: 2
       },
       instructionButton: {
         top: 0,
