@@ -34,12 +34,11 @@ export class RadioControl extends React.Component {
   render() {
     let styles = {
       option: {
-        display: 'inline-block',
-        marginRight: 30
+        margin: '5px 30px 0 0'
       },
       radio: {
         width: 22,
-        height: '4em',
+        height: 18,
         verticalAlign: 'middle'
       },
       label: {

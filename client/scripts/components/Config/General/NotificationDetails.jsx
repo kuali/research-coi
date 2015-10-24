@@ -52,6 +52,7 @@ export default class NotificationDetails extends React.Component {
   }
 
   textChanged() {
+    console.log('being called');
     let textarea = React.findDOMNode(this.refs.reminderText);
     this.setState({
       canBeAdded: textarea.value.length > 0
@@ -184,7 +185,7 @@ export default class NotificationDetails extends React.Component {
     }
 
     let newNotification;
-    if (this.state.adding) {
+    if (this.props.appState && this.state.adding) {
       newNotification = (
         <div>
           <div style={merge(styles.container, this.props.style)}>
@@ -204,7 +205,7 @@ export default class NotificationDetails extends React.Component {
               onChange={this.textChanged}
               style={styles.expirationMessage}
               placeholder="Enter the reminder text here"
-              value={this.props.appState ? this.props.appState.newNotification.reminderText : ''}>
+              value={this.props.appState.newNotification.reminderText}>
             </textarea>
           </div>
         </div>

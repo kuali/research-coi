@@ -62,14 +62,14 @@ export default class Question extends React.Component {
     }
   }
 
-  answer(answer, questionId) {
+  answer(newAnswer, questionId) {
     let isParentQuestion = this.props.question.id === questionId;
     if (isParentQuestion) {
-      this.deleteIrrelaventAnswers(questionId, answer);
-      this.changeAnswer(answer);
+      this.deleteIrrelaventAnswers(questionId, newAnswer);
+      this.changeAnswer(newAnswer);
     }
     else {
-      PIReviewActions.reviseSubQuestion(this.props.reviewId, questionId, answer);
+      PIReviewActions.reviseSubQuestion(this.props.reviewId, questionId, newAnswer);
     }
   }
 

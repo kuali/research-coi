@@ -13,10 +13,6 @@ export default class DisclosureTypes extends React.Component {
         padding: '20px 23px 10px 23px',
         fontSize: 15
       },
-      half: {
-        width: '50%',
-        display: 'inline-block'
-      },
       optionRow: {
         paddingBottom: 20
       },

@@ -69,7 +69,7 @@ export class Questionnaire extends React.Component {
         }
 
         return (
-          <span key={index}>
+          <span key={index} style={{verticalAlign: 'top', width: '100%'}}>
             <Question
               id={question.id}
               answer={answer}

@@ -121,7 +121,8 @@ export class DetailView extends React.Component {
       container: {
         position: 'relative',
         transform: this.state.applicationState.listShowing ? 'translateX(0px)' : 'translateX(-320px)',
-        transition: 'transform .3s ease-in-out'
+        transition: 'transform .3s ease-in-out',
+        minHeight: 100
       },
       list: {
         width: 320

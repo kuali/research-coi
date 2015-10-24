@@ -75,6 +75,7 @@ export class ListView extends React.Component {
   render() {
     let styles = {
       container: {
+        minHeight: 100
       },
       sidebar: {
         minWidth: 300,
@@ -160,7 +161,10 @@ export class ListView extends React.Component {
             onSearch={this.doSearch}
           />
           <div style={styles.heading} onClick={this.toggleFilters}>
-            {this.state.data.applicationState.summaryCount} Disclosures Shown
+            <span style={{paddingRight: 3}}>
+              {this.state.data.applicationState.summaryCount}
+            </span>
+            Disclosures Shown
           </div>
           <SearchFilterGroup
             style={styles.filterGroup}

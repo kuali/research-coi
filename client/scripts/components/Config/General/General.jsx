@@ -70,7 +70,7 @@ export default class General extends React.Component {
             General Configuration
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
-            <span className="fill">
+            <span className="fill" style={{display: 'inline-block'}}>
               <Panel title="Disclosure Types">
                 <DisclosureTypes
                   types={this.state.disclosureTypes}

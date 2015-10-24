@@ -89,7 +89,8 @@ export class DisclosureDetail extends React.Component {
       },
       detailsFromPI: {
         overflowY: 'auto',
-        paddingRight: 35
+        paddingRight: 35,
+        display: 'inline-block'
       }
     };
 
@@ -192,7 +193,7 @@ export class DisclosureDetail extends React.Component {
               piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.PROJECTS)}
             />
           </span>
-          <span>
+          <span style={{display: 'inline-block'}}>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
             <RejectionConfirmation id={this.props.disclosure.id} canReject={piComments.length > 0 } style={styles.rejection} />
             <ActionButtons

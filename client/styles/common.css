@@ -27,6 +27,10 @@ select, input, textarea {
   outline: 0;
 }
 
+span {
+  display: inline-block;
+}
+
 .hoverable:hover {
   background-color: #F9F9F9;
 }

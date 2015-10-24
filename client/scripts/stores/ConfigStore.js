@@ -29,7 +29,9 @@ class _ConfigStore extends AutoBindingStore {
       newNotification: {
         warningPeriod: 'Days',
         warningValue: 1,
-        active: true
+        active: true,
+        id: `new${new Date().getTime()}`,
+        reminderText: ''
       },
       newQuestion: {
         screening: undefined,
@@ -118,7 +120,8 @@ class _ConfigStore extends AutoBindingStore {
     this.config.declarationTypes.push({
       enabled: true,
       description: this.applicationState.newTypeText,
-      custom: true
+      custom: true,
+      typeCd: `new${new Date().getTime()}`
     });
     this.applicationState.enteringNewType = false;
     this.applicationState.newTypeText = '';
@@ -223,7 +226,8 @@ class _ConfigStore extends AutoBindingStore {
       reminderText: '',
       warningPeriod: 'Days',
       warningValue: 1,
-      active: true
+      active: true,
+      id: `new${new Date().getTime()}`
     };
     this.dirty = true;
   }
@@ -593,7 +597,23 @@ class _ConfigStore extends AutoBindingStore {
     }));
   }
 
+  clearTemporaryIds() {
+    this.config.declarationTypes.forEach(declarationType => {
+      if (typeof declarationType.typeCd === 'string' && declarationType.typeCd.indexOf('new') === 0) {
+        delete declarationType.typeCd;
+      }
+    });
+
+    this.config.notifications.forEach(notification => {
+      if (typeof notification.id === 'string' && notification.id.indexOf('new') === 0) {
+        delete notification.id;
+      }
+    });
+  }
+
   saveAll() {
+    this.clearTemporaryIds();
+
     createRequest().post('/api/coi/config')
     .send(this.config)
     .type('application/json')
