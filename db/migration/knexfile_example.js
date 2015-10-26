@@ -1,8 +1,8 @@
 module.exports = {
-  monsters: {
+  kc_coi: {
     client: 'mysql',
     connection: {
-      database: 'monsters',
+      database: 'coi',
       user: 'root',
       password: ''
     }
