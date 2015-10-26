@@ -2,6 +2,7 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
 import ReactRouter from 'react-router';
+import ConfigStore from '../../../stores/ConfigStore';
 let Link = ReactRouter.Link;
 
 export class DisclosureTableRow extends React.Component {
@@ -48,7 +49,7 @@ export class DisclosureTableRow extends React.Component {
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={merge(styles.value, styles.firstColumn)}>
-          <Link to={`/detailview/${this.props.id}`}>
+          <Link to={`/detailview/${this.props.id}/${this.props.statusCd}`}>
             {this.highlightSearchTerm(this.props.submittedBy)}
           </Link>
         </span>
@@ -56,7 +57,7 @@ export class DisclosureTableRow extends React.Component {
           {this.highlightSearchTerm(this.props.type)}
         </span>*/}
         <span role="gridcell" style={styles.value}>
-          {this.props.status}
+          {ConfigStore.getAdminDisclosureStatusString(this.props.statusCd)}
         </span>
         <span role="gridcell" style={merge(styles.value, styles.lastColumn)}>
           {formatDate(this.props.submittedDate)}
