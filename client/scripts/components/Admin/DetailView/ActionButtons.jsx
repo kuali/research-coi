@@ -35,12 +35,17 @@ export class ActionButtons extends React.Component {
         width: 210
       },
       icon: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#F57C00',
         color: 'white',
         padding: 5,
         display: 'inline-block',
         borderRadius: 60,
         marginRight: 7
+      },
+      sendBackIcon: {
+        fontSize: 16,
+        width: 25,
+        paddingLeft: 6
       },
       label: {
         display: 'inline-block',
@@ -76,7 +81,7 @@ export class ActionButtons extends React.Component {
 
       sendBackButton = (
         <div onClick={this.reject} style={styles.button}>
-          <i className="fa fa-rotate-left" style={styles.icon}></i>
+          <i className="fa fa-times" style={merge(styles.icon, styles.sendBackIcon)}></i>
           <span style={styles.label}>SEND BACK</span>
         </div>
       );
@@ -88,7 +93,7 @@ export class ActionButtons extends React.Component {
         {approveButton}
         {sendBackButton}
         <div onClick={this.showAdditionalReview} style={styles.button}>
-          <i className="fa fa-plus" style={styles.icon}></i>
+          <i className="fa fa-eye" style={styles.icon}></i>
           <span style={styles.label}>
             <div>ADDITIONAL REVIEW</div>
           </span>

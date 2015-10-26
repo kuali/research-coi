@@ -141,28 +141,31 @@ export default class CommentSummary extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: 'black',
+        backgroundColor: 'white',
         height: '100%',
-        color: 'white',
-        padding: '10px 25px',
-        overflowY: 'auto'
+        boxShadow: '0 0 10px 0 #AAA',
+        color: 'black',
+        padding: '10px 25px 0 25px'
       },
       heading: {
-        color: 'white',
-        padding: '10px 20px',
-        marginBottom: 20,
+        color: 'black',
+        padding: '10px 20px 10px 0',
+        height: 50,
         zIndex: 99,
         position: 'relative',
-        backgroundColor: 'black'
+        backgroundColor: 'white',
+        boxShadow: '0 5px 10px white'
       },
       close: {
-        float: 'right',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontWeight: 'bold',
         cursor: 'pointer',
-        right: 25,
-        position: 'fixed',
-        boxShadow: '0 0 21px 11px black',
-        backgroundColor: 'black'
+        float: 'right',
+        fontSize: 20
+      },
+      title: {
+        fontWeight: 300,
+        fontSize: 23
       }
     };
 
@@ -171,15 +174,20 @@ export default class CommentSummary extends React.Component {
     let declarationTopics = this.getDeclarationTopics();
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.heading}>
-          <span style={styles.close} onClick={this.done}>X CLOSE</span>
+          <span style={styles.title}>COMMENTS</span>
+          <span style={styles.close} onClick={this.done}>
+            <i className="fa fa-times" style={{fontSize: 23, marginRight: 3}}></i>
+            CLOSE
+          </span>
         </div>
 
-        {questionnaireTopics}
-        {entitiesTopics}
-        {declarationTopics}
-
+        <div className="fill" style={{overflowY: 'auto', paddingBottom: 15}}>
+          {questionnaireTopics}
+          {entitiesTopics}
+          {declarationTopics}
+        </div>
       </div>
     );
   }

@@ -13,7 +13,7 @@ export default class EntitySummary extends React.Component {
   }
 
   showComments() {
-    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.ENTITIES, this.props.entity.id, 'Entity: ' + this.props.entity.name);
+    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.ENTITIES, this.props.entity.id, 'ENTITY: ' + this.props.entity.name);
   }
 
   getQuestionAnswer(questionId, entity, type) {
@@ -128,6 +128,11 @@ export default class EntitySummary extends React.Component {
       bottomLeft: {
         width: '70%',
         display: 'inline-block'
+      },
+      commentLabel: {
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
+        paddingBottom: 3
       }
     };
 
@@ -188,7 +193,7 @@ export default class EntitySummary extends React.Component {
               {files}
             </div>
             <div style={styles.commentLink} onClick={this.showComments}>
-              <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS ({this.props.commentCount})</span>
+              <span style={styles.commentLabel}>COMMENT</span>
             </div>
           </div>
         </div>

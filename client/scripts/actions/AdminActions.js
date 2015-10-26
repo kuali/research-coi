@@ -23,7 +23,7 @@ class _AdminActions {
 
   changeReporterFilter(newFilter) { this.dispatch(newFilter); }
 
-  toggleMobileFilters() { this.dispatch(); }
+  toggleFilters() { this.dispatch(); }
 
   loadDisclosure(id) { this.dispatch(id); }
 

@@ -52,7 +52,7 @@ export class DisclosureTable extends React.Component {
         fontSize: 14,
         display: 'table-row',
         cursor: 'pointer',
-        padding: 10
+        fontWeight: 'bold'
       }
     };
 
@@ -73,10 +73,30 @@ export class DisclosureTable extends React.Component {
     return (
       <div role="grid" style={merge(styles.container, this.props.style)}>
         <div role="row" style={styles.headings}>
-          <TableHeading sort={this.sortBySubmittedBy} sortDirection={this.props.sortDirection} active={this.props.sort === 'SUBMITTED_BY'}>SUBMITTED BY</TableHeading>
+          <TableHeading
+            sort={this.sortBySubmittedBy}
+            sortDirection={this.props.sortDirection}
+            active={this.props.sort === 'SUBMITTED_BY'}
+            style={{padding: '10px 0 10px 50px'}}
+          >
+            SUBMITTED BY
+          </TableHeading>
           {/*<TableHeading sort={this.sortByType} sortDirection={this.props.sortDirection} active={this.props.sort === 'TYPE'}>TYPE</TableHeading>*/}
-          <TableHeading sort={this.sortByStatus} sortDirection={this.props.sortDirection} active={this.props.sort === 'STATUS'}>STATUS</TableHeading>
-          <TableHeading sort={this.sortBySubmittedDate} sortDirection={this.props.sortDirection} active={this.props.sort === 'SUBMITTED_DATE'}>DATE SUBMITTED</TableHeading>
+          <TableHeading
+            sort={this.sortByStatus}
+            sortDirection={this.props.sortDirection}
+            active={this.props.sort === 'STATUS'}
+          >
+            STATUS
+          </TableHeading>
+          <TableHeading
+            sort={this.sortBySubmittedDate}
+            sortDirection={this.props.sortDirection}
+            active={this.props.sort === 'SUBMITTED_DATE'}
+            style={{padding: '10px 50px 10px 0px'}}
+          >
+            DATE SUBMITTED
+          </TableHeading>
         </div>
         <div style={{display: 'table-row-group'}}>
           {disclosures}

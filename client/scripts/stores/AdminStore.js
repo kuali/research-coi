@@ -11,7 +11,6 @@ class _AdminStore extends AutoBindingStore {
   constructor() {
     super(AdminActions);
 
-    // initialize state here
     this.applicationState = {
       sort: 'SUBMITTED_DATE',
       sortDirection: 'ASCENDING',
@@ -26,7 +25,7 @@ class _AdminStore extends AutoBindingStore {
         search: ''
       },
       effectiveSearchValue: '',
-      showFiltersOnMobile: false,
+      showFilters: true,
       showingApproval: false,
       showingRejection: false,
       selectedDisclosure: undefined,
@@ -37,7 +36,8 @@ class _AdminStore extends AutoBindingStore {
       listShowing: true,
       commentingPanelShowing: false,
       additionalReviewShowing: false,
-      commentSummaryShowing: false
+      commentSummaryShowing: false,
+      loadingDisclosure: false
     };
 
     this.disclosureSummaries = [];
@@ -87,10 +87,13 @@ class _AdminStore extends AutoBindingStore {
   }
 
   loadDisclosure(id) {
+    delete this.applicationState.selectedDisclosure;
+    this.applicationState.loadingDisclosure = true;
     createRequest().get('/api/coi/disclosures/' + id)
            .end(processResponse((err, disclosure) => {
              if (!err) {
                this.applicationState.selectedDisclosure = disclosure.body;
+               this.applicationState.loadingDisclosure = false;
                ConfigActions.loadConfig(disclosure.body.configId);
                this.emitChange();
              }
@@ -177,8 +180,8 @@ class _AdminStore extends AutoBindingStore {
     this.applicationState.filters.reporterName = newFilter;
   }
 
-  toggleMobileFilters() {
-    this.applicationState.showFiltersOnMobile = !this.applicationState.showFiltersOnMobile;
+  toggleFilters() {
+    this.applicationState.showFilters = !this.applicationState.showFilters;
   }
 
   toggleApprovalConfirmation() {

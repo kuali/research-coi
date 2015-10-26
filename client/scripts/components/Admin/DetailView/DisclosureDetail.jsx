@@ -68,8 +68,9 @@ export class DisclosureDetail extends React.Component {
       },
       bottom: {
         position: 'relative',
-        padding: '25px 25px 25px 25px',
-        minHeight: 0
+        padding: '0 25px 0 25px',
+        minHeight: 0,
+        backgroundColor: '#EEEEEE'
       },
       confirmation: {
         display: this.props.showApproval ? 'block' : 'none',
@@ -82,14 +83,15 @@ export class DisclosureDetail extends React.Component {
         right: 20
       },
       questionnaire: {
-        marginBottom: 25
+        marginBottom: 25,
+        marginTop: 25
       },
       entities: {
         marginBottom: 25
       },
       detailsFromPI: {
         overflowY: 'auto',
-        paddingRight: 35,
+        padding: '0 35px 0 3px',
         display: 'inline-block'
       }
     };
@@ -191,9 +193,10 @@ export class DisclosureDetail extends React.Component {
               comments={declarationsComments}
               id={this.props.disclosure.id}
               piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.PROJECTS)}
+              style={{marginBottom: 25}}
             />
           </span>
-          <span style={{display: 'inline-block'}}>
+          <span style={{display: 'inline-block', marginTop: 25}}>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
             <RejectionConfirmation id={this.props.disclosure.id} canReject={piComments.length > 0 } style={styles.rejection} />
             <ActionButtons

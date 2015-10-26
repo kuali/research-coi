@@ -122,12 +122,13 @@ function insertProjectPerson(knex, userId, role, projectId) {
 }
 
 function insertRelationship(knex, entityId) {
+  var relationshipCd = randomNumberBetween(1, 5);
   return knex('relationship').insert({
     fin_entity_id: entityId,
-    relationship_cd: knex('relationship_category_type').max('type_cd'),
+    relationship_cd: relationshipCd,
     person_cd: knex('relationship_person_type').max('type_cd'),
-    type_cd: knex('relationship_type').max('type_cd'),
-    amount_cd: knex('relationship_amount_type').max('type_cd'),
+    type_cd: knex('relationship_type').max('type_cd').where('relationship_cd', relationshipCd),
+    amount_cd: knex('relationship_amount_type').max('type_cd').where('relationship_cd', relationshipCd),
     comments: 'Rel 1 Comments'
   });
 }

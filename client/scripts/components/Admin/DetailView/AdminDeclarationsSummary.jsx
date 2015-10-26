@@ -54,16 +54,15 @@ export class AdminDeclarationsSummary extends React.Component {
   render() {
     let styles = {
       container: {
-        border: '1px solid #999',
-        boxShadow: '0 0 10px #BBB',
-        borderRadius: 8,
+        backgroundColor: 'white',
+        boxShadow: '0 0 8px #AAA',
+        borderRadius: 5,
         overflow: 'hidden'
       },
       heading: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         borderBottom: '1px solid #999',
         fontSize: 25,
-        color: 'white',
+        color: 'black',
         padding: 10
       },
       body: {

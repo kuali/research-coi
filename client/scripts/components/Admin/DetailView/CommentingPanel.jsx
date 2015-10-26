@@ -62,7 +62,7 @@ export default class CommentingPanel extends React.Component {
         minWidth: '50%',
         borderBottom: '1px solid black',
         display: 'inline-block',
-        fontSize: 18,
+        fontSize: 15,
         paddingBottom: 6
       },
       controls: {
@@ -99,7 +99,8 @@ export default class CommentingPanel extends React.Component {
       comments: {
         overflowY: 'auto',
         flexDirection: 'column-reverse',
-        msFlexDirection: 'column-reverse'
+        msFlexDirection: 'column-reverse',
+        paddingLeft: 22
       },
       comment: {
         marginTop: 10,

@@ -1,6 +1,6 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {formatDate} from '../../../formatDate';
+import CommentBubble from './CommentBubble';
 
 export default class TopicCommentSummary extends React.Component {
   render() {
@@ -9,14 +9,8 @@ export default class TopicCommentSummary extends React.Component {
         paddingBottom: 25
       },
       topicName: {
-        borderBottom: '1px solid white',
         fontSize: 18,
-        paddingBottom: 15,
         marginBottom: 15
-      },
-      comments: {
-        paddingLeft: 25,
-        color: '#BBB'
       },
       date: {
         float: 'right',
@@ -30,6 +24,9 @@ export default class TopicCommentSummary extends React.Component {
         fontSize: 13,
         marginTop: 7,
         marginBottom: 25
+      },
+      comment: {
+        marginBottom: 15
       }
     };
 
@@ -37,15 +34,15 @@ export default class TopicCommentSummary extends React.Component {
     if (this.props.comments) {
       comments = this.props.comments.map(comment => {
         return (
-          <div key={comment.id}>
-            <div>
-              <span style={styles.date}>{formatDate(comment.date)}</span>
-              <span style={styles.author}>{comment.author}</span>
-            </div>
-            <div style={styles.text}>
-              {comment.text}
-            </div>
-          </div>
+          <CommentBubble
+            key={comment.id}
+            isUser={comment.isCurrentUser}
+            date={comment.date}
+            author={comment.author}
+            text={comment.text}
+            style={styles.comment}
+            new={false}
+          />
         );
       });
     }
@@ -53,7 +50,8 @@ export default class TopicCommentSummary extends React.Component {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.topicName}>{this.props.topicName}</div>
-        <div style={styles.comments}>
+        <div style={{width: '50%', borderBottom: '1px solid black', marginBottom: 15}}></div>
+        <div>
           {comments}
         </div>
       </div>

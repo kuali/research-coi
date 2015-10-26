@@ -12,7 +12,7 @@ export default class QuestionSummary extends React.Component {
   }
 
   showComments() {
-    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE, this.props.question.id, 'Question #' + this.props.question.numberToShow);
+    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE, this.props.question.id, 'QUESTION ' + this.props.question.numberToShow);
   }
 
   render() {
@@ -27,30 +27,43 @@ export default class QuestionSummary extends React.Component {
       },
       number: {
         width: 50,
-        fontSize: 20
+        fontSize: 31,
+        color: '#666'
       },
       subQuestionNumber: {
-        width: 100,
-        fontSize: 20,
-        paddingLeft: 50
+        width: 110,
+        fontSize: 31,
+        paddingLeft: 50,
+        color: '#666'
       },
       answer: {
         fontSize: 13,
-        marginTop: 4
+        marginLeft: 20,
+        fontWeight: 'bold'
       },
       commentLink: {
         display: 'inline-block',
-        width: 125,
+        width: 88,
         fontSize: 14,
         cursor: 'pointer',
-        marginTop: 7
+        marginTop: 7,
+        textAlign: 'right',
+        marginRight: 4
       },
       answerSection: {
         display: 'inline-block',
-        borderBottom: '1px solid #CCC',
         paddingBottom: 12,
-        margin: '7px 5px 7px 0',
+        margin: '7px 5px 15px 0',
         fontSize: 15
+      },
+      commentLabel: {
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
+        paddingBottom: 3
+      },
+      answerLabel: {
+        color: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        paddingBottom: 3
       }
     };
 
@@ -66,8 +79,8 @@ export default class QuestionSummary extends React.Component {
     else {
       commentLink = (
         <span style={styles.commentLink} onClick={this.showComments}>
-          <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>
-            COMMENTS ({this.props.commentCount})
+          <span style={styles.commentLabel}>
+            COMMENT
           </span>
         </span>
       );
@@ -87,7 +100,7 @@ export default class QuestionSummary extends React.Component {
           <div style={{paddingRight: 125, fontSize: 14}}>{this.props.question.text}</div>
           <div className="flexbox row">
             <span className="fill" style={styles.answerSection}>
-              <div>ANSWER</div>
+              <div style={styles.answerLabel}>ANSWER:</div>
               <div style={styles.answer}>
                 {this.props.question.type === COIConstants.QUESTION_TYPE.DATE ? formatDate(this.props.answer) : this.props.answer}
               </div>

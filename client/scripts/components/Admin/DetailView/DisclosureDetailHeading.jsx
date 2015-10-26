@@ -14,11 +14,13 @@ export class DisclosureDetailHeading extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: '#efefef',
+        backgroundColor: 'white',
         padding: '13px 8px 13px 25px',
         lineHeight: '20px',
         minHeight: 89,
-        boxShadow: '0 1px 1px #CCC'
+        boxShadow: '0 2px 9px #CCC',
+        zIndex: 1,
+        position: 'relative'
       },
       type: {
         fontWeight: 'bold'
@@ -46,8 +48,11 @@ export class DisclosureDetailHeading extends React.Component {
       },
       backButton: {
         float: 'right',
-        width: 155,
-        marginTop: 15
+        width: 165,
+        padding: '4px 7px 5px 7px',
+        margin: '15px 20px 0 0',
+        backgroundColor: '#DFDFDF',
+        borderBottom: '2px solid #717171'
       }
     };
 
@@ -75,7 +80,10 @@ export class DisclosureDetailHeading extends React.Component {
       <div style={merge(styles.container, this.props.style)} >
         <Link to={`/`}>
           <KButton style={styles.backButton}>
-            Back To List View
+            <span>
+              <i className="fa fa-list-ul" style={{marginRight: 5}}></i>
+              Back To List View
+            </span>
           </KButton>
         </Link>
         <span>
