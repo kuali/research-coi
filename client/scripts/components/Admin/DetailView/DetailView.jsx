@@ -29,8 +29,12 @@ export class DetailView extends React.Component {
 
   componentDidMount() {
     AdminStore.listen(this.onChange);
-    if (this.props.params !== undefined && this.props.params.id !== undefined) {
-      AdminActions.loadDisclosure(this.props.params.id);
+    if (this.props.params !== undefined && this.props.params.id !== undefined && this.props.params.statusCd !== undefined) {
+      if (this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString()) {
+        AdminActions.loadArchivedDisclosure(this.props.params.id);
+      } else {
+        AdminActions.loadDisclosure(this.props.params.id);
+      }
     }
     ConfigStore.listen(this.onChange);
   }
@@ -41,7 +45,11 @@ export class DetailView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    AdminActions.loadDisclosure(nextProps.params.id);
+    if (nextProps.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString()) {
+      AdminActions.loadArchivedDisclosure(nextProps.params.id);
+    } else {
+      AdminActions.loadDisclosure(nextProps.params.id);
+    }
   }
 
   onChange() {

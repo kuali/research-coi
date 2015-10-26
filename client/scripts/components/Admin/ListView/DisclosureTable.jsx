@@ -3,7 +3,7 @@ import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
 import {TableHeading} from './TableHeading';
 import {AdminActions} from '../../../actions/AdminActions';
-import ConfigStore from '../../../stores/ConfigStore';
+
 
 export class DisclosureTable extends React.Component {
   constructor() {
@@ -63,7 +63,7 @@ export class DisclosureTable extends React.Component {
           id={disclosure.id}
           submittedBy={disclosure.submitted_by}
           type={disclosure.type}
-          status={ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}
+          statusCd={disclosure.statusCd}
           submittedDate={disclosure.submitted_date}
           searchTerm={this.props.searchTerm}
         />

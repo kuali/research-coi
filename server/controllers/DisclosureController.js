@@ -15,6 +15,26 @@ catch (err) {
 
 
 export let init = app => {
+
+  /**
+   @Role: admin (can see any) or user (can only see their own)
+   */
+  app.get('/api/coi/archived-disclosures/:id/latest', function(req, res, next) {
+    DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id)
+    .then(results => {
+      let disclosure = JSON.parse(results[0].disclosure);
+      if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
+        res.sendStatus(403);
+        return;
+      }
+      res.send(disclosure);
+    })
+    .catch(err => {
+      Log.error(err);
+      next(err);
+    });
+  });
+
   /**
     @Role: user
     Can only see disclosures which they submitted

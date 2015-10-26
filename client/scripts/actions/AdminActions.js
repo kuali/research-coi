@@ -27,6 +27,8 @@ class _AdminActions {
 
   loadDisclosure(id) { this.dispatch(id); }
 
+  loadArchivedDisclosure(id) { this.dispatch(id); }
+
   toggleApprovalConfirmation() { this.dispatch(); }
 
   approveDisclosure() { this.dispatch(); }

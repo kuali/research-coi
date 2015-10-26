@@ -1,7 +1,7 @@
 /*eslint camelcase:0 */
 import {isDisclosureUsers} from './CommonDB';
 import * as FileService from '../services/fileService/FileService';
-import {camelizeJson} from './JsonUtils'
+import {camelizeJson} from './JsonUtils';
 import {COIConstants} from '../../COIConstants';
 
 const ONE_DAY = 1000 * 60 * 60 * 24;
@@ -854,6 +854,15 @@ export let getArchivedDisclosures = (dbInfo, userId) => {
     .from('disclosure as de')
     .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
     .where('de.user_id', userId);
+};
+
+export let getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {
+  let knex = getKnex(dbInfo);
+  return knex.select('disclosure')
+  .from('disclosure_archive')
+  .where('disclosure_id', disclosureId)
+  .limit(1)
+  .orderBy('approved_date', 'desc');
 };
 
 export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {

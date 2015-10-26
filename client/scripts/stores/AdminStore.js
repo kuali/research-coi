@@ -92,10 +92,7 @@ class _AdminStore extends AutoBindingStore {
     createRequest().get('/api/coi/disclosures/' + id)
            .end(processResponse((err, disclosure) => {
              if (!err) {
-               this.applicationState.selectedDisclosure = disclosure.body;
-               this.applicationState.loadingDisclosure = false;
-               ConfigActions.loadConfig(disclosure.body.configId);
-               this.emitChange();
+               this.loadDisclosureData(disclosure.body);
              }
            }));
 
@@ -106,6 +103,22 @@ class _AdminStore extends AutoBindingStore {
         this.emitChange();
       }
     }));
+  }
+
+  loadArchivedDisclosure(id) {
+    createRequest().get('/api/coi/archived-disclosures/' + id + '/latest')
+    .end(processResponse((err, disclosure) => {
+      if (!err) {
+        this.loadDisclosureData(disclosure.body);
+      }
+    }));
+  }
+
+  loadDisclosureData(disclosure) {
+    this.applicationState.selectedDisclosure = disclosure;
+    this.applicationState.loadingDisclosure = false;
+    ConfigActions.loadConfig(disclosure.configId);
+    this.emitChange();
   }
 
   changeSort(newSortField) {

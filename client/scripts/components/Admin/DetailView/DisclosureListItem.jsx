@@ -64,7 +64,7 @@ export class DisclosureListItem extends React.Component {
     }
 
     return (
-      <Link to={`/detailview/${this.props.disclosure.id}`}>
+      <Link to={`/detailview/${this.props.disclosure.id}/${disclosure.statusCd}`}>
         <li style={merge(styles.container, this.props.style)}>
           {/*<div style={styles.disclosureType}>
             {this.highlightSearchTerm(disclosure.type)}
