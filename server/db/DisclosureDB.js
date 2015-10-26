@@ -434,7 +434,7 @@ export let addComment = (dbInfo, userInfo, comment) => {
       topic_id: comment.topicId,
       text: comment.text,
       user_id: userInfo.schoolId,
-      author: userInfo.name,
+      author: `${userInfo.firstName} ${userInfo.lastName}`,
       date: new Date(),
       pi_visible: comment.visibleToPI,
       reviewer_visible: comment.visibleToReviewers

@@ -28,20 +28,26 @@ export class DisclosureTableRow extends React.Component {
     let styles = {
       container: {
         display: 'table-row',
-        height: 50
+        height: 43
       },
       value: {
-        padding: '11px 20px',
+        padding: '12px 0 0 0',
         display: 'table-cell',
         borderBottom: '1px solid #AAA',
         fontSize: 15,
         textOverflow: 'ellipsis'
+      },
+      firstColumn: {
+        padding: '12px 0 0 50px'
+      },
+      lastColumn: {
+        padding: '12px 50px 0 0'
       }
     };
 
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
-        <span role="gridcell" style={styles.value}>
+        <span role="gridcell" style={merge(styles.value, styles.firstColumn)}>
           <Link to={`/detailview/${this.props.id}`}>
             {this.highlightSearchTerm(this.props.submittedBy)}
           </Link>
@@ -52,7 +58,7 @@ export class DisclosureTableRow extends React.Component {
         <span role="gridcell" style={styles.value}>
           {this.props.status}
         </span>
-        <span role="gridcell" style={styles.value}>
+        <span role="gridcell" style={merge(styles.value, styles.lastColumn)}>
           {formatDate(this.props.submittedDate)}
         </span>
       </div>

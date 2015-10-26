@@ -6,28 +6,30 @@ export default class CommentBubble extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: this.props.isUser ? 'white' : window.colorBlindModeOn ? 'black' : '#D8E9EB',
+        backgroundColor: this.props.isUser ? 'white' : window.colorBlindModeOn ? 'white' : '#D0E3E5',
+        border: '1px solid #CCC',
         borderRadius: 10,
-        width: '60%',
+        boxShadow: '0 0 10px 0px #CCC',
+        color: 'black',
         display: 'inline-block',
-        padding: '8px 15px 15px 15px',
-        marginLeft: this.props.isUser ? '35%' : '5%',
+        marginLeft: this.props.isUser ? '35%' : '0',
+        padding: '8px 25px 15px 25px',
         transform: this.props.new ? 'translateY(125%)' : 'translateY(0%)',
         transition: 'transform .2s ease-out',
-        border: '1px solid #CCC',
-        boxShadow: '0 0 10px 0px #CCC'
+        width: '60%'
       },
       date: {
         float: 'right',
         color: '#666',
-        fontSize: 14
+        fontSize: 12,
+        fontWeight: 300
       },
       author: {
         fontWeight: 'bold',
         fontSize: 14
       },
       text: {
-        fontSize: 13,
+        fontSize: 12,
         marginTop: 7
       }
     };
@@ -39,7 +41,7 @@ export default class CommentBubble extends React.Component {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <span>
+        <span style={{width: '100%'}}>
           <div>
             <span style={styles.date}>{theDate}</span>
             <span style={styles.author}>{this.props.author}</span>

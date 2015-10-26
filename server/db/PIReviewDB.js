@@ -58,7 +58,7 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
           'topic_id': targetId,
           'text': comment,
           'user_id': userInfo.schoolId,
-          'author': userInfo.name,
+          'author': `${userInfo.firstName} ${userInfo.lastName}`,
           'date': new Date(),
           'pi_visible': true,
           'reviewer_visible': true

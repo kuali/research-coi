@@ -44,6 +44,11 @@ export default class DeclarationSummary extends React.Component {
         cursor: 'pointer',
         margin: '14px 0 34px 0',
         textAlign: 'right'
+      },
+      commentLabel: {
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
+        paddingBottom: 3
       }
     };
 
@@ -67,7 +72,7 @@ export default class DeclarationSummary extends React.Component {
           </span>
         </div>
         <div style={styles.commentLink} onClick={this.showComments}>
-          <span style={{borderBottom: '1px dotted black', paddingBottom: 3}}>COMMENTS ({this.props.commentCount})</span>
+          <span style={styles.commentLabel}>COMMENT</span>
         </div>
       </div>
     );

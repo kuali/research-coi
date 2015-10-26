@@ -167,7 +167,9 @@ export default class EntityToReview extends React.Component {
     let comments = this.props.entity.comments.map(comment => {
       return (
         <div style={styles.comment} key={comment.id}>
-          <div style={styles.commentTitle}>Comment from {comment.author}:</div>
+          <div style={styles.commentTitle}>Comment from
+            <span style={{marginLeft: 3}}>{comment.author}</span>:
+          </div>
           <div style={styles.commentText}>{comment.text}</div>
           <div style={styles.commentDate}>{formatDate(comment.date)}</div>
         </div>

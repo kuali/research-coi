@@ -72,6 +72,10 @@ export class ListView extends React.Component {
     AdminActions.changeSearch(newSearch);
   }
 
+  toggleFilters() {
+    AdminActions.toggleFilters();
+  }
+
   render() {
     let styles = {
       container: {
@@ -85,27 +89,43 @@ export class ListView extends React.Component {
       },
       content: {
         display: 'inline-block',
-        padding: '15px 30px',
-        borderTop: window.colorBlindModeOn ? '6px solid black' : '6px solid #0095A0',
         backgroundColor: '#eeeeee',
         overflowY: 'auto'
       },
       table: {
         backgroundColor: 'white',
-        borderRadius: 15,
+        borderRadius: 5,
         overflow: 'hidden',
         boxShadow: '0 0 9px #bbb'
       },
       filterGroup: {
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
+      header: {
+        backgroundColor: 'white',
+        padding: '17px 0 17px 50px',
+        position: 'relative',
+        borderBottom: '1px solid #e3e3e3',
+        boxShadow: '0 1px 6px #D1D1D1'
+      },
+      title: {
+        fontSize: '33px',
+        margin: '0 0 0 0',
+        textTransform: 'uppercase',
+        fontWeight: 300,
+        color: '#525252'
+      },
       heading: {
-        color: 'white',
-        backgroundColor: window.colorBlindModeOn ? '#333' : '#2B5866',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        backgroundColor: '#EEEEEE',
         textAlign: 'right',
         padding: '8px 70px 8px 0',
         fontWeight: 'bold',
-        fontSize: 17
+        fontSize: 17,
+        position: 'relative',
+        zIndex: 2,
+        borderRight: '1px solid #DDD',
+        cursor: 'pointer'
       },
       loadMoreButton: {
         textAlign: 'center',
@@ -115,6 +135,29 @@ export class ListView extends React.Component {
         textAlign: 'center',
         margin: '10px 0',
         color: '#777'
+      },
+      navigation: {
+        width: 220,
+        padding: '0 30px 0 40px',
+        whiteSpace: 'nowrap'
+      },
+      configIcon: {
+        color: window.colorBlindModeOn ? 'black' : '#F57C00',
+        verticalAlign: 'middle',
+        fontSize: 27,
+        paddingRight: 15
+      },
+      configLabel: {
+        whiteSpace: 'normal',
+        verticalAlign: 'middle',
+        fontSize: 15
+      },
+      filterArrow: {
+        fontSize: 6,
+        verticalAlign: 'top',
+        margin: '7px 0 0 7px',
+        transition: 'transform .1s linear',
+        transform: this.state.data.applicationState.showFilters ? 'rotateZ(0deg)' : 'rotateZ(180deg)'
       }
     };
 
@@ -165,6 +208,7 @@ export class ListView extends React.Component {
               {this.state.data.applicationState.summaryCount}
             </span>
             Disclosures Shown
+            <span style={styles.filterArrow}>&#9660;</span>
           </div>
           <SearchFilterGroup
             style={styles.filterGroup}
@@ -175,19 +219,33 @@ export class ListView extends React.Component {
             activeTypeFilters={this.state.data.applicationState.filters.type}
             activePIFilter={this.state.data.applicationState.filters.submittedBy}
             showDateSort={false}
+            visible={this.state.data.applicationState.showFilters}
           />
         </span>
         <span className="fill" style={styles.content} ref="rightPanel">
-          <DisclosureTable
-            sort={this.state.data.applicationState.sort}
-            sortDirection={this.state.data.applicationState.sortDirection}
-            page={this.state.data.applicationState.page}
-            style={styles.table}
-            disclosures={filtered}
-            searchTerm={this.state.data.applicationState.effectiveSearchValue}
-          />
-          {loadMoreButton}
-          {loadingIndicator}
+          <div style={styles.header}>
+            <h2 style={styles.title}>COI ADMIN DASHBOARD</h2>
+          </div>
+          <div className="flexbox row" style={{padding: '33px 38px'}}>
+            <span className="fill">
+              <DisclosureTable
+                sort={this.state.data.applicationState.sort}
+                sortDirection={this.state.data.applicationState.sortDirection}
+                page={this.state.data.applicationState.page}
+                style={styles.table}
+                disclosures={filtered}
+                searchTerm={this.state.data.applicationState.effectiveSearchValue}
+              />
+              {loadMoreButton}
+              {loadingIndicator}
+            </span>
+            <span style={styles.navigation}>
+              <a href="config">
+                <i className="fa fa-arrow-circle-right" style={styles.configIcon}></i>
+                <span style={styles.configLabel}>COI CONFIGURATION</span>
+              </a>
+            </span>
+          </div>
         </span>
       </div>
     );

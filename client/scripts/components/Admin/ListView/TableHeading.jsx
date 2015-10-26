@@ -26,7 +26,7 @@ export class TableHeading extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        padding: '15px 20px',
+        padding: '15px 0',
         display: 'table-cell',
         borderBottom: '1px solid #aaa',
         whiteSpace: 'nowrap'

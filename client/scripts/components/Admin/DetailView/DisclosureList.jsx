@@ -43,6 +43,10 @@ export class DisclosureList extends React.Component {
     AdminActions.changeSearch(newSearch);
   }
 
+  toggleFilters() {
+    AdminActions.toggleFilters();
+  }
+
   render() {
     let styles = {
       container: {
@@ -65,12 +69,16 @@ export class DisclosureList extends React.Component {
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       heading: {
-        color: 'white',
-        backgroundColor: window.colorBlindModeOn ? '#333' : '#2B5866',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        backgroundColor: '#EEEEEE',
         textAlign: 'right',
         padding: '8px 70px 8px 0',
         fontWeight: 'bold',
-        fontSize: 17
+        fontSize: 17,
+        position: 'relative',
+        zIndex: 2,
+        borderRight: '1px solid #DDD',
+        cursor: 'pointer'
       },
       loadMoreButton: {
         textAlign: 'center',
@@ -80,17 +88,28 @@ export class DisclosureList extends React.Component {
         textAlign: 'center',
         margin: '10px 0',
         color: '#777'
+      },
+      filterArrow: {
+        fontSize: 6,
+        verticalAlign: 'top',
+        margin: '7px 0 0 7px',
+        transition: 'transform .1s linear',
+        transform: this.props.showFilters ? 'rotateZ(0deg)' : 'rotateZ(180deg)'
       }
     };
 
     let disclosuresJsx;
     if (this.props.summaries) {
       disclosuresJsx = this.props.summaries.map(disclosure => {
+        let selectedId;
+        if (this.props.selected) {
+          selectedId = this.props.selected.id;
+        }
         return (
           <DisclosureListItem
             key={disclosure.id}
             disclosure={disclosure}
-            selected={disclosure.id === this.props.selected}
+            selected={disclosure.id === selectedId}
             searchTerm={this.props.searchTerm}
           />
         );
@@ -143,6 +162,7 @@ export class DisclosureList extends React.Component {
               {this.props.count}
             </span>
             Disclosures Shown
+            <span style={styles.filterArrow}>&#9660;</span>
           </div>
           <SearchFilterGroup
             style={styles.filterGroup}
@@ -153,6 +173,7 @@ export class DisclosureList extends React.Component {
             activeTypeFilters={this.props.filters.type}
             activePIFilter={this.props.filters.submittedBy}
             showDateSort={false}
+            visible={this.props.showFilters}
           />
         </div>
         <ul className="fill" style={styles.list} ref="theList">

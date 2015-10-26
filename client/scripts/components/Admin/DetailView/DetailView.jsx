@@ -134,7 +134,12 @@ export class DetailView extends React.Component {
         height: '100%',
         width: 570,
         transform: this.state.applicationState.listShowing ? 'translateX(0%)' : 'translateX(-250px)',
-        transition: 'transform .3s ease-in-out'
+        transition: 'transform .2s ease-in-out',
+        zIndex: 2
+      },
+      loadingDisclosure: {
+        margin: '200px auto',
+        color: '#AAA'
       }
     };
 
@@ -148,6 +153,11 @@ export class DetailView extends React.Component {
           showRejection={this.state.applicationState.showingRejection}
           config={this.state.config}
         />
+      );
+    }
+    else if (this.state.applicationState.loadingDisclosure) {
+      disclosureDetail = (
+        <div style={styles.loadingDisclosure}>Loading...</div>
       );
     }
 
@@ -165,6 +175,7 @@ export class DetailView extends React.Component {
           searchTerm={this.state.applicationState.effectiveSearchValue}
           loadingMore={this.state.applicationState.loadingMore}
           loadedAll={this.state.applicationState.loadedAll}
+          showFilters={this.state.applicationState.showFilters}
         />
         <div className="inline-flexbox fill">
           {disclosureDetail}

@@ -102,7 +102,9 @@ export default class DisclosureFilter extends React.Component {
     let clearButton;
     if (this.props.active) {
       clearButton = (
-        <span onClick={this.clear} style={styles.clear}>X</span>
+        <span onClick={this.clear} style={styles.clear}>
+          <i className="fa fa-times"></i>
+        </span>
       );
     }
     else {

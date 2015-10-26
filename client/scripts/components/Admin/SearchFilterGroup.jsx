@@ -1,17 +1,12 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
-import {SearchFilter} from './SearchFilter';
-import {AdminActions} from '../../actions/AdminActions';
 import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
 import {DisclosureFilterByDate} from './DisclosureFilterByDate';
 import {DisclosureFilterByPI} from './DisclosureFilterByPI';
 
-export class SearchFilterGroup extends ResponsiveComponent {
+export class SearchFilterGroup extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
 
     this.filters = [
       {
@@ -27,61 +22,15 @@ export class SearchFilterGroup extends ResponsiveComponent {
         label: 'SUBMITTED BY'
       }
     ];
-
-    this.hideMobileFilters = this.hideMobileFilters.bind(this);
   }
 
-  hideMobileFilters() {
-    AdminActions.toggleMobileFilters();
-  }
-
-  renderMobile() {
-    let mobileStyles = {
-      container: {
-      },
-      transparent: {
-        height: 34
-      },
-      filters: {
-        backgroundColor: '#3e3e3e',
-        overflow: 'auto'
-      },
-      doneButton: {
-        height: 75,
-        backgroundColor: 'white',
-        color: '#444',
-        textAlign: 'center',
-        fontWeight: 300,
-        fontSize: 23,
-        paddingTop: 20
-      }
-    };
-    let styles = merge(this.commonStyles, mobileStyles);
-
-    let searchFilters = this.filters.map((filter) => {
-      return (
-        <SearchFilter key={filter.label}>
-          {filter.label}
-        </SearchFilter>
-      );
-    });
-
-    return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <div style={styles.transparent} />
-        <div className="fill" style={styles.filters}>
-          {searchFilters}
-        </div>
-        <div style={styles.doneButton} onClick={this.hideMobileFilters}>DONE</div>
-      </div>
-    );
-  }
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         backgroundColor: '#eeeeee',
-        padding: '12px 0 12px 0'
+        padding: '12px 0 12px 0',
+        marginTop: this.props.visible ? 0 : -119,
+        transition: 'margin-top .1s ease-in-out'
       },
       filters: {
         backgroundColor: window.config.colors.three,
@@ -91,7 +40,6 @@ export class SearchFilterGroup extends ResponsiveComponent {
         position: 'relative'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
     return (
       <div style={merge(styles.container, this.props.style)}>
         <DisclosureFilterByDate

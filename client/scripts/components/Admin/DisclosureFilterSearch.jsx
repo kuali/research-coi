@@ -33,7 +33,9 @@ export class DisclosureFilterSearch extends React.Component {
         width: '100%',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '13px 10px',
-        textAlign: 'center'
+        textAlign: 'center',
+        position: 'relative',
+        zIndex: 2
       },
       input: {
         border: 0,
@@ -49,18 +51,19 @@ export class DisclosureFilterSearch extends React.Component {
       magnifyingGlass: {
         width: 25,
         height: 25,
-        color: 'white',
-        backgroundColor: '#414141',
-        padding: '6px 0 2px 0',
-        verticalAlign: 'middle',
-        borderRadius: '5px 0 0 5px'
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        backgroundColor: '#DFDFDF',
+        paddingTop: 8,
+        borderRadius: '0 5px 5px 0',
+        fontSize: 11,
+        transform: 'rotateY(180deg)'
       }
     };
 
     let currentValue = this.props.query || '';
     return (
       <div style={merge(styles.container, this.props.styles)}>
-        <SearchIcon style={styles.magnifyingGlass} onClick={this.search} />
+        <i className="fa fa-search" style={styles.magnifyingGlass} onClick={this.search}></i>
         <input placeholder="Search" style={styles.input} type="text" onChange={this.valueChanged} onKeyUp={this.keyUp} value={currentValue} />
       </div>
     );

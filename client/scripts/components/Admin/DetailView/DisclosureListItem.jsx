@@ -34,11 +34,12 @@ export class DisclosureListItem extends React.Component {
   render() {
     let styles = {
       container: {
-        borderBottom: '1px solid #6d6d6d',
+        borderBottom: '1px solid #8C8C8C',
+        borderRight: '2px solid #8C8C8C',
         padding: 6,
         paddingLeft: 40,
         fontSize: '.9em',
-        backgroundColor: this.props.selected ? '#c1c1c1' : 'transparent',
+        backgroundColor: this.props.selected ? (window.colorBlindModeOn ? 'white' : '#E1EEEF') : 'white',
         cursor: 'pointer'
       },
       disclosureType: {
@@ -70,7 +71,7 @@ export class DisclosureListItem extends React.Component {
           </div>*/}
           <div style={styles.submittedBy}>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
           {dateToShow}
-          <div>Status: {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</div>
+          <div>{ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</div>
         </li>
       </Link>
     );
