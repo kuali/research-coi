@@ -1,4 +1,4 @@
-/*global moment*/
+import moment from 'moment';
 
 if (window.navigator.language) {
   moment.locale(window.navigator.language);
