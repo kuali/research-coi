@@ -17,11 +17,6 @@ export class DisclosureDetail extends React.Component {
     this.getResponses = this.getResponses.bind(this);
   }
 
-  componentWillReceiveProps() {
-    let detailPanel = React.findDOMNode(this.refs.detailPanel);
-    detailPanel.scrollTop = 0;
-  }
-
   makeEntityMap() {
     let result = {};
     let entities = this.props.disclosure.entities;

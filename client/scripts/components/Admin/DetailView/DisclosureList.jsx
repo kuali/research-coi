@@ -50,9 +50,8 @@ export class DisclosureList extends React.Component {
   render() {
     let styles = {
       container: {
-        backgroundColor: '#e0e0e0',
+        backgroundColor: '#EEEEEE',
         borderLeft: '1px solid #6d6d6d',
-        borderRight: '1px solid #6d6d6d',
         verticalAlign: 'top',
         boxShadow: '3px 0px 6px #CCC',
         transition: 'width .3s ease-in-out',
