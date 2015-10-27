@@ -22,6 +22,8 @@ export class EntityForm extends React.Component {
     this.onAnswerQuestion = this.onAnswerQuestion.bind(this);
     this.onAddRelationship = this.onAddRelationship.bind(this);
     this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
+    this.addEntityAttachments = this.addEntityAttachments.bind(this);
+    this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
   }
 
   onRemoveRelationship(relationshipId, entityId) {
@@ -122,6 +124,14 @@ export class EntityForm extends React.Component {
     DisclosureActions.undoEntityChanges(this.props.snapshot);
   }
 
+  addEntityAttachments(files, entityId) {
+    DisclosureActions.addEntityAttachments(files, entityId);
+  }
+
+  deleteEntityAttachment(index, entityId) {
+    DisclosureActions.deleteEntityAttachment(index, entityId);
+  }
+
   render() {
     let styles = {
       container: {
@@ -180,6 +190,8 @@ export class EntityForm extends React.Component {
             answers={entity.answers}
             files={entity.files}
             validating={this.props.appState.validatingEntityInformationStep}
+            addEntityAttachments={this.addEntityAttachments}
+            deleteEntityAttachment={this.deleteEntityAttachment}
             onAnswerQuestion={this.onAnswerQuestion}
           />
           <EntityFormRelationshipStep
@@ -235,6 +247,8 @@ export class EntityForm extends React.Component {
               files={entity.files}
               validating={this.props.appState.validatingEntityInformationStep}
               onAnswerQuestion={this.onAnswerQuestion}
+              addEntityAttachments={this.addEntityAttachments}
+              deleteEntityAttachment={this.deleteEntityAttachment}
             />
           );
 

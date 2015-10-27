@@ -26,7 +26,8 @@ export default class EntityToReview extends React.Component {
     this.onAnswerQuestion = this.onAnswerQuestion.bind(this);
     this.onAddRelationship = this.onAddRelationship.bind(this);
     this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
-
+    this.addEntityAttachments = this.addEntityAttachments.bind(this);
+    this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
@@ -103,6 +104,14 @@ export default class EntityToReview extends React.Component {
     }
 
     this.setState(newState);
+  }
+
+  addEntityAttachments(files, entityId) {
+    PIReviewActions.addEntityAttachments(files, entityId);
+  }
+
+  deleteEntityAttachment(index, entityId) {
+    PIReviewActions.deleteEntityAttachment(index, entityId);
   }
 
   render() {
@@ -232,9 +241,11 @@ export default class EntityToReview extends React.Component {
               readonly={!this.state.revising}
               update={true}
               answers={this.props.entity.answers}
-              files={[]}
+              files={this.props.entity.files}
               validating={false}
               onAnswerQuestion={this.onAnswerQuestion}
+              addEntityAttachments={this.addEntityAttachments}
+              deleteEntityAttachment={this.deleteEntityAttachment}
             />
             <EntityFormRelationshipStep
               id={this.props.entity.id}

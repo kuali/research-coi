@@ -3,6 +3,7 @@ import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
 import ConfigActions from '../actions/ConfigActions';
+import {COIConstants} from '../../../COIConstants';
 
 class _PIReviewStore extends AutoBindingStore {
   constructor() {
@@ -340,6 +341,61 @@ class _PIReviewStore extends AutoBindingStore {
       .end(processResponse(() => {
         document.location = '/coi/';
       }));
+  }
+
+  addEntityAttachments(data) {
+    let entityToRevise = this.disclosure.entities.find(entity => {
+      return data.entityId === entity.id;
+    });
+
+    if(!entityToRevise.files) {
+      entityToRevise.files = [];
+    }
+
+    let formData = new FormData();
+    data.files.forEach(file => {
+      formData.append('attachments', file);
+    });
+
+    formData.append('data', JSON.stringify({
+      refId: entityToRevise.id,
+      type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+      disclosureId: entityToRevise.disclosureId
+    }));
+
+    createRequest().post('/api/coi/files')
+    .send(formData)
+    .end(processResponse((err, res) => {
+      if (!err) {
+        res.body.forEach(file => {
+          entityToRevise.files.push(file);
+        });
+        entityToRevise.reviewedOn = new Date();
+        entityToRevise.revised = 1;
+        this.updateCanSubmit();
+        this.emitChange();
+      }
+    }));
+  }
+
+  deleteEntityAttachment(data) {
+    let entityToRevise = this.disclosure.entities.find(entity => {
+      return data.entityId === entity.id;
+    });
+    let file = entityToRevise.files[data.index];
+
+    createRequest().del('/api/coi/files/' + file.id)
+    .send(file)
+    .type('application/json')
+    .end(processResponse((err) => {
+      if (!err) {
+        entityToRevise.files.splice(data.index, 1);
+        entityToRevise.reviewedOn = new Date();
+        entityToRevise.revised = 1;
+        this.updateCanSubmit();
+        this.emitChange();
+      }
+    }));
   }
 }
 

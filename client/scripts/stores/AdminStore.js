@@ -388,7 +388,8 @@ class _AdminStore extends AutoBindingStore {
 
     formData.append('data', JSON.stringify({
       refId: this.applicationState.selectedDisclosure.id,
-      type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN
+      type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN,
+      disclosureId: this.applicationState.selectedDisclosure.id
     }));
 
     createRequest().post('/api/coi/files')

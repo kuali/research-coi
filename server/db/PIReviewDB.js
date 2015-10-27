@@ -363,7 +363,7 @@ export let reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
 };
 
 let getEntityNames = (knex, entityIDs) => {
-  return knex.select('fe.id', 'fe.name')
+  return knex.select('fe.id', 'fe.name', 'fe.disclosure_id as disclosureId')
     .from('fin_entity as fe')
     .where('fe.id', 'in', entityIDs);
 };
@@ -380,6 +380,13 @@ let getRelationships = (knex, entityIDs) => {
   return knex.select('r.id', 'r.comments as comments', 'r.relationship_cd as relationshipCd', 'r.person_cd as personCd', 'r.type_cd as typeCd', 'r.amount_cd as amountCd', 'r.fin_entity_id as finEntityId')
     .from('relationship as r')
     .where('fin_entity_id', 'in', entityIDs);
+};
+
+let getFiles = (knex, entityIds) => {
+  return knex.select('id', 'name', 'key', 'ref_id as refId')
+    .from('file')
+    .whereIn('ref_id', entityIds)
+    .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY);
 };
 
 let setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
@@ -413,6 +420,21 @@ let setRelationshipsForEntities = (entities, relationships) => {
   });
 };
 
+let setFilesForEntities = (entities, files) => {
+  files.forEach(file => {
+    let entity = entities.find(entityToTest => {
+      return entityToTest.id === file.refId;
+    });
+
+    if (entity) {
+      if (entity.files === undefined) {
+        entity.files = [];
+      }
+      entity.files.push(file);
+    }
+  });
+};
+
 let getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
   let entityIDs = extractTargetIDs(reviewItems);
 
@@ -420,14 +442,16 @@ let getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
     getEntityNames(knex, entityIDs),
     getEntitiesAnswers(knex, entityIDs),
     getEntityComments(knex, disclosureId, entityIDs),
-    getRelationships(knex, entityIDs)
+    getRelationships(knex, entityIDs),
+    getFiles(knex, entityIDs)
   ])
-  .then(([entities, entityQuestionAnswers, comments, relationships]) => {
+  .then(([entities, entityQuestionAnswers, comments, relationships, files]) => {
     setQuestionAnswersForEntities(entities, entityQuestionAnswers);
     setPIResponseForTopics(entities, comments, userId);
     setRelationshipsForEntities(entities, relationships);
     setAdminCommentsForTopics(entities, comments, userId);
     setPIReviewDataForTopics(entities, reviewItems);
+    setFilesForEntities(entities, files);
     return entities;
   });
 };
