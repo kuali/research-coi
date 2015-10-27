@@ -1,0 +1,1084 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Research COI REST APIs</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"><style>@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200');.hljs-comment,.hljs-title{color:#8e908c}.hljs-variable,.hljs-attribute,.hljs-tag,.hljs-regexp,.ruby .hljs-constant,.xml .hljs-tag .hljs-title,.xml .hljs-pi,.xml .hljs-doctype,.html .hljs-doctype,.css .hljs-id,.css .hljs-class,.css .hljs-pseudo{color:#c82829}.hljs-number,.hljs-preprocessor,.hljs-pragma,.hljs-built_in,.hljs-literal,.hljs-params,.hljs-constant{color:#f5871f}.ruby .hljs-class .hljs-title,.css .hljs-rules .hljs-attribute{color:#eab700}.hljs-string,.hljs-value,.hljs-inheritance,.hljs-header,.ruby .hljs-symbol,.xml .hljs-cdata{color:#718c00}.css .hljs-hexcolor{color:#3e999f}.hljs-function,.python .hljs-decorator,.python .hljs-title,.ruby .hljs-function .hljs-title,.ruby .hljs-title .hljs-keyword,.perl .hljs-sub,.javascript .hljs-title,.coffeescript .hljs-title{color:#4271ae}.hljs-keyword,.javascript .hljs-function{color:#8959a8}.hljs{display:block;background:white;color:#4d4d4c;padding:.5em}.coffeescript .javascript,.javascript .xml,.tex .hljs-formula,.xml .javascript,.xml .vbscript,.xml .css,.xml .hljs-cdata{opacity:.5}body{color:black;background:white;font-family:'Roboto',Helvetica,sans-serif;font-size:14px;line-height:1.42}header{border-bottom:1px solid #f2f2f2;margin-bottom:12px}h1,h2,h3,h4,h5{color:black;margin:12px 0}h1 .permalink,h2 .permalink,h3 .permalink,h4 .permalink,h5 .permalink{margin-left:6px;opacity:0;transition:opacity .25s ease}h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink{opacity:1}h1{font-family:'Raleway',Helvetica,sans-serif;font-size:36px;font-weight:500}h2{font-family:'Raleway',Helvetica,sans-serif;font-size:30px;font-weight:500}h3{font-size:100%;text-transform:uppercase}h5{font-size:100%;font-weight:normal}p{margin:0 0 10px}p.choices{line-height:1.6}a{color:#428bca;text-decoration:none}li p{margin:0}dl dt{float:left;width:160px;clear:left;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}dl dd{margin-left:180px}blockquote{color:rgba(0,0,0,0.5);font-size:15.5px;padding:10px 20px;margin:12px 0;border-left:5px solid #e8e8e8}blockquote p:last-child{margin-bottom:0}pre{background-color:#f5f5f5;padding:12px;border:1px solid #cfcfcf;border-radius:6px;overflow:auto}pre code{background-color:transparent;padding:0;border:none}code{color:#444;background-color:#f5f5f5;font-family:'Inconsolata',monospace;padding:1px 4px;border:1px solid #cfcfcf;border-radius:3px}ul,ol{padding-left:2em}table{border-collapse:collapse;border-spacing:0;margin-bottom:12px}table tr:nth-child(2n){background-color:#fafafa}table th,table td{padding:6px 12px;border:1px solid #d9d9d9}.note,.warning{padding:.3em 1em;margin:1em 0;border-radius:2px;font-size:90%}.note h1,.warning h1,.note h2,.warning h2,.note h3,.warning h3,.note h4,.warning h4,.note h5,.warning h5,.note h6,.warning h6{font-family:'Raleway',Helvetica,sans-serif;font-size:135%;font-weight:500}.note p,.warning p{margin:.5em 0}.note{color:black;background-color:#f0f6fb;border-left:4px solid #428bca}.note h1,.note h2,.note h3,.note h4,.note h5,.note h6{color:#428bca}.warning{color:black;background-color:#fbf1f0;border-left:4px solid #c9302c}.warning h1,.warning h2,.warning h3,.warning h4,.warning h5,.warning h6{color:#c9302c}nav{position:fixed;top:24px;bottom:0;overflow-y:auto}nav .resource-group{padding:0}nav .resource-group .heading{position:relative}nav .resource-group .heading .chevron{position:absolute;top:12px;right:12px;opacity:.5}nav .resource-group .heading a{display:block;color:black;opacity:.7;border-left:2px solid transparent;margin:0}nav .resource-group .heading a:hover{border-left:2px solid black}nav ul{list-style-type:none;padding-left:0}nav ul a{display:block;font-size:13px;color:rgba(0,0,0,0.7);padding:8px 12px;border-top:1px solid #d9d9d9;border-left:2px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}nav ul a:hover{border-left:2px solid black}nav ul>li{margin:0}nav ul>li:first-child{margin-top:-12px}nav ul>li:last-child{margin-bottom:-12px}nav ul ul a{padding-left:24px}nav ul ul li{margin:0}nav ul ul li:first-child{margin-top:0}nav ul ul li:last-child{margin-bottom:0}nav>div>div>ul>li:first-child>a{border-top:none}.preload *{transition:none !important}.pull-left{float:left}.pull-right{float:right}.badge{display:inline-block;float:right;min-width:10px;min-height:14px;padding:3px 7px;font-size:12px;color:#000;background-color:#f2f2f2;border-radius:10px;margin-top:-2px;margin-bottom:-2px}.badge.get{color:#70bbe1;background-color:#d9edf7}.badge.head{color:#70bbe1;background-color:#d9edf7}.badge.options{color:#70bbe1;background-color:#d9edf7}.badge.put{color:#f0db70;background-color:#fcf8e3}.badge.patch{color:#f0db70;background-color:#fcf8e3}.badge.post{color:#93cd7c;background-color:#dff0d8}.badge.delete{color:#ce8383;background-color:#f2dede}.collapse-button{float:right}.collapse-button .close{display:none;color:#428bca;cursor:pointer}.collapse-button .open{color:#428bca;cursor:pointer}.collapse-button.show .close{display:inline}.collapse-button.show .open{display:none}.collapse-content{max-height:0;overflow:hidden;transition:max-height .3s ease-in-out}nav{width:220px}.container{max-width:940px;margin-left:auto;margin-right:auto}.container .row .content{margin-left:244px;width:696px}.container .row:after{content:'';display:block;clear:both}.container-fluid nav{width:22%}.container-fluid .row .content{margin-left:24%;width:76%}@media (max-width:1200px){nav{width:200px}.container{max-width:840px}.container .row .content{margin-left:224px;width:606px}}@media (max-width:992px){nav{width:170px}.container{max-width:720px}.container .row .content{margin-left:194px;width:526px}}@media (max-width:768px){nav{display:none}.container{width:95%;max-width:none}.container .row .content,.container-fluid .row .content{margin-left:auto;margin-right:auto;width:95%}}.back-to-top{position:fixed;z-index:1;bottom:0;right:24px;padding:4px 8px;color:rgba(0,0,0,0.5);background-color:#f2f2f2;text-decoration:none !important;border-top:1px solid #d9d9d9;border-left:1px solid #d9d9d9;border-right:1px solid #d9d9d9;border-top-left-radius:3px;border-top-right-radius:3px}.resource-group{padding:12px;margin-bottom:12px;background-color:white;border:1px solid #d9d9d9;border-radius:6px}.resource-group h2.group-heading,.resource-group .heading a{padding:12px;margin:-12px -12px 12px -12px;background-color:#f2f2f2;border-bottom:1px solid #d9d9d9;border-top-left-radius:6px;border-top-right-radius:6px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}nav .resource-group .heading a{margin-bottom:0}nav .resource-group .collapse-content{padding:0}.action{margin-bottom:12px;padding:12px 12px 0 12px;overflow:hidden;border:1px solid transparent;border-radius:6px}.action h4.action-heading{padding:12px;margin:-12px -12px 12px -12px;border-bottom:1px solid transparent;border-top-left-radius:6px;border-top-right-radius:6px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.action h4.action-heading .name{float:right;font-weight:normal}.action h4.action-heading .method{padding:6px 12px;margin-right:12px;border-radius:3px}.action h4.action-heading .method.get{color:#fff;background-color:#337ab7}.action h4.action-heading .method.head{color:#fff;background-color:#337ab7}.action h4.action-heading .method.options{color:#fff;background-color:#337ab7}.action h4.action-heading .method.put{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.patch{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.post{color:#fff;background-color:#5cb85c}.action h4.action-heading .method.delete{color:#fff;background-color:#d9534f}.action h4.action-heading code{color:#444;background-color:#f5f5f5;border-color:#cfcfcf;font-weight:normal}.action dl.inner{padding-bottom:2px}.action .title{border-bottom:1px solid white;margin:0 -12px -1px -12px;padding:12px}.action.get{border-color:#bce8f1}.action.get h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.head{border-color:#bce8f1}.action.head h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.options{border-color:#bce8f1}.action.options h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.post{border-color:#d6e9c6}.action.post h4.action-heading{color:#5cb85c;background:#dff0d8;border-bottom-color:#d6e9c6}.action.put{border-color:#faebcc}.action.put h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.patch{border-color:#faebcc}.action.patch h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.delete{border-color:#ebccd1}.action.delete h4.action-heading{color:#d9534f;background:#f2dede;border-bottom-color:#ebccd1}</style></head><body class="preload"><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container"><div class="row"><nav><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#disclosure-apis">Disclosure APIs</a></div><div class="collapse-content"><ul><li><a href="#disclosure-apis-disclosures-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Get Disclosure</a></li><li><a href="#disclosure-apis-annual-disclosures-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Get Annual Disclosure</a></li><li><a href="#disclosure-apis-financial-entity-post"><span class="badge post"><i class="fa fa-plus"></i></span>Create Financial Entity</a></li><li><a href="#disclosure-apis-financial-entity-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Update Financial Entity</a></li><li><a href="#disclosure-apis-declarations-post"><span class="badge post"><i class="fa fa-plus"></i></span>Create Declaration</a></li><li><a href="#disclosure-apis-declarations-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Update Declaration</a></li><li><a href="#disclosure-apis-question-answers">Question Answers</a><ul><li><a href="#disclosure-apis-question-answers-post"><span class="badge post"><i class="fa fa-plus"></i></span>Create Question Answer</a></li><li><a href="#disclosure-apis-question-answers-delete"><span class="badge delete"><i class="fa fa-times"></i></span>Delete Question Answer</a></li></ul></li><li><a href="#disclosure-apis-question-answers-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Update Question Answer</a></li><li><a href="#disclosure-apis-pi-review-items-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Get PI Review Items</a></li><li><a href="#disclosure-apis-disclosure-user-summaries-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Get User Disclosure Summaries</a></li><li><a href="#disclosure-apis-disclosure-summaries-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Get Disclosure Summaries</a></li><li><a href="#disclosure-apis-archived-disclosures-latest-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Get Archived Disclosure</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#config-apis">Config APIs</a></div><div class="collapse-content"><ul></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#project-apis">Project APIs</a></div><div class="collapse-content"><ul></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#file-apis">File APIs</a></div><div class="collapse-content"><ul></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#pi-apis">PI APIs</a></div><div class="collapse-content"><ul></ul></div></div></nav><div class="content"><header><h1 id="top">Research COI REST APIs</h1></header><p>Research COI is a research administration tools to assist in managing compliance of sponsored projects.</p>
+<p>This documentation lays out the REST APIs that are available to facilitate integrations with other University systems.</p>
+<section id="disclosure-apis" class="resource-group"><h2 class="group-heading">Disclosure APIs<a href="#disclosure-apis" class="permalink">&para;</a></h2><div id="disclosure-apis-disclosures" class="resource"><h3 class="resource-heading">Disclosures<a href="#disclosure-apis-disclosures" class="permalink">&para;</a></h3><div id="disclosure-apis-disclosures-get" class="action get"><h4 class="action-heading"><div class="name">Get Disclosure</div><a href="#disclosure-apis-disclosures-get" class="method get">GET</a><code class="uri">/api/coi/disclosures/:id</code></h4><p>Requires valid API key with role of admin or user.  Admins can access any disclosure. Users can only view disclosures that they have created</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The Id of the disclosure being retrieved.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+  "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">dispositionTypeCd</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">statusCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">submittedBy</span>": <span class="hljs-value"><span class="hljs-string">"Tester, Joe"</span></span>,
+  "<span class="hljs-attribute">submittedDate</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:17:59.000Z"</span></span>,
+  "<span class="hljs-attribute">revisedDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">startDate</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:16:04.000Z"</span></span>,
+  "<span class="hljs-attribute">expiredDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">lastReviewDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">configId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">entities</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+      "<span class="hljs-attribute">disclosureId</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+      "<span class="hljs-attribute">active</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Interstate Battery"</span></span>,
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">answers</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">6</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value">[
+              <span class="hljs-string">"Small Business"</span>
+            ]
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">7</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">9</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"They Make Batteries"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">8</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Yes"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>}
+      ]</span>,
+      "<span class="hljs-attribute">files</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+          "<span class="hljs-attribute">file_type</span>": <span class="hljs-value"><span class="hljs-string">"financialEntity"</span></span>,
+          "<span class="hljs-attribute">ref_id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"\"application/pdf\""</span></span>,
+          "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"26754681772fb166828db7a5df881c2b"</span></span>,
+          "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+          "<span class="hljs-attribute">user_id</span>": <span class="hljs-value"><span class="hljs-string">"10000000002"</span></span>,
+          "<span class="hljs-attribute">uploaded_by</span>": <span class="hljs-value"><span class="hljs-string">"Tester, Joe"</span></span>,
+          "<span class="hljs-attribute">upload_date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:17:46.000Z"</span>
+        </span>}
+      ]</span>,
+      "<span class="hljs-attribute">relationships</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">relationshipCd</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+          "<span class="hljs-attribute">personCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+          "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">8</span></span>,
+          "<span class="hljs-attribute">amountCd</span>": <span class="hljs-value"><span class="hljs-number">16</span></span>,
+          "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-string">"I made some batteries for them"</span></span>,
+          "<span class="hljs-attribute">travel</span>": <span class="hljs-value">{}
+        </span>},
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1502</span></span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">relationshipCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+          "<span class="hljs-attribute">personCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+          "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+          "<span class="hljs-attribute">amountCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+          "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-string">"My Wife Works There"</span></span>,
+          "<span class="hljs-attribute">travel</span>": <span class="hljs-value">{}
+        </span>}
+      ]
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">answers</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Yes"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Hawaii"</span>
+      </span>}
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">declarations</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3001</span></span>,
+      "<span class="hljs-attribute">projectId</span>": <span class="hljs-value"><span class="hljs-number">1005</span></span>,
+      "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+      "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">projectTitle</span>": <span class="hljs-value"><span class="hljs-string">"Longevity of car batteries"</span></span>,
+      "<span class="hljs-attribute">entityName</span>": <span class="hljs-value"><span class="hljs-string">"Interstate Battery"</span></span>,
+      "<span class="hljs-attribute">projectTypeCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">sponsorName</span>": <span class="hljs-value"><span class="hljs-string">"Air Force"</span></span>,
+      "<span class="hljs-attribute">roleCd</span>": <span class="hljs-value"><span class="hljs-string">"PI"</span></span>,
+      "<span class="hljs-attribute">finEntityActive</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">comments</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">disclosureId</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+      "<span class="hljs-attribute">topicSection</span>": <span class="hljs-value"><span class="hljs-string">"Questionnaire"</span></span>,
+      "<span class="hljs-attribute">topicId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">text</span>": <span class="hljs-value"><span class="hljs-string">"Is This True?"</span></span>,
+      "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">"COI Admin"</span></span>,
+      "<span class="hljs-attribute">userId</span>": <span class="hljs-value"><span class="hljs-string">"10000000121"</span></span>,
+      "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:21:05.000Z"</span></span>,
+      "<span class="hljs-attribute">piVisible</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">reviewerVisible</span>": <span class="hljs-value"><span class="hljs-number">0</span></span>,
+      "<span class="hljs-attribute">isCurrentUser</span>": <span class="hljs-value"><span class="hljs-literal">true</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">files</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+      "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"0d1623fc72faad2e5be26642485ab523"</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">managementPlan</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+      "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"8db71460d8169c9e169481a4603f0811"</span>
+    </span>}
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-annual-disclosures" class="resource"><h3 class="resource-heading">Annual Disclosures<a href="#disclosure-apis-annual-disclosures" class="permalink">&para;</a></h3><div id="disclosure-apis-annual-disclosures-get" class="action get"><h4 class="action-heading"><div class="name">Get Annual Disclosure</div><a href="#disclosure-apis-annual-disclosures-get" class="method get">GET</a><code class="uri">/api/coi/disclosures/annual</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only view their own annual disclosure</p>
+<div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+  "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">dispositionTypeCd</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">statusCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">submittedBy</span>": <span class="hljs-value"><span class="hljs-string">"Tester, Joe"</span></span>,
+  "<span class="hljs-attribute">submittedDate</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:17:59.000Z"</span></span>,
+  "<span class="hljs-attribute">revisedDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">startDate</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:16:04.000Z"</span></span>,
+  "<span class="hljs-attribute">expiredDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">lastReviewDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">configId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">entities</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+      "<span class="hljs-attribute">disclosureId</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+      "<span class="hljs-attribute">active</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Interstate Battery"</span></span>,
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">answers</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">6</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value">[
+              <span class="hljs-string">"Small Business"</span>
+            ]
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">7</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">9</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"They Make Batteries"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">8</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Yes"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>}
+      ]</span>,
+      "<span class="hljs-attribute">files</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+          "<span class="hljs-attribute">file_type</span>": <span class="hljs-value"><span class="hljs-string">"financialEntity"</span></span>,
+          "<span class="hljs-attribute">ref_id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"\"application/pdf\""</span></span>,
+          "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"26754681772fb166828db7a5df881c2b"</span></span>,
+          "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+          "<span class="hljs-attribute">user_id</span>": <span class="hljs-value"><span class="hljs-string">"10000000002"</span></span>,
+          "<span class="hljs-attribute">uploaded_by</span>": <span class="hljs-value"><span class="hljs-string">"Tester, Joe"</span></span>,
+          "<span class="hljs-attribute">upload_date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:17:46.000Z"</span>
+        </span>}
+      ]</span>,
+      "<span class="hljs-attribute">relationships</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">relationshipCd</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+          "<span class="hljs-attribute">personCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+          "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">8</span></span>,
+          "<span class="hljs-attribute">amountCd</span>": <span class="hljs-value"><span class="hljs-number">16</span></span>,
+          "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-string">"I made some batteries for them"</span></span>,
+          "<span class="hljs-attribute">travel</span>": <span class="hljs-value">{}
+        </span>},
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1502</span></span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">relationshipCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+          "<span class="hljs-attribute">personCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+          "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+          "<span class="hljs-attribute">amountCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+          "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-string">"My Wife Works There"</span></span>,
+          "<span class="hljs-attribute">travel</span>": <span class="hljs-value">{}
+        </span>}
+      ]
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">answers</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Yes"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Hawaii"</span>
+      </span>}
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">declarations</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3001</span></span>,
+      "<span class="hljs-attribute">projectId</span>": <span class="hljs-value"><span class="hljs-number">1005</span></span>,
+      "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+      "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">projectTitle</span>": <span class="hljs-value"><span class="hljs-string">"Longevity of car batteries"</span></span>,
+      "<span class="hljs-attribute">entityName</span>": <span class="hljs-value"><span class="hljs-string">"Interstate Battery"</span></span>,
+      "<span class="hljs-attribute">projectTypeCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">sponsorName</span>": <span class="hljs-value"><span class="hljs-string">"Air Force"</span></span>,
+      "<span class="hljs-attribute">roleCd</span>": <span class="hljs-value"><span class="hljs-string">"PI"</span></span>,
+      "<span class="hljs-attribute">finEntityActive</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">comments</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">disclosureId</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+      "<span class="hljs-attribute">topicSection</span>": <span class="hljs-value"><span class="hljs-string">"Questionnaire"</span></span>,
+      "<span class="hljs-attribute">topicId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">text</span>": <span class="hljs-value"><span class="hljs-string">"Is This True?"</span></span>,
+      "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">"COI Admin"</span></span>,
+      "<span class="hljs-attribute">userId</span>": <span class="hljs-value"><span class="hljs-string">"10000000121"</span></span>,
+      "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:21:05.000Z"</span></span>,
+      "<span class="hljs-attribute">piVisible</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">reviewerVisible</span>": <span class="hljs-value"><span class="hljs-number">0</span></span>,
+      "<span class="hljs-attribute">isCurrentUser</span>": <span class="hljs-value"><span class="hljs-literal">true</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">files</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+      "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"0d1623fc72faad2e5be26642485ab523"</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">managementPlan</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+      "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"8db71460d8169c9e169481a4603f0811"</span>
+    </span>}
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-financial-entity" class="resource"><h3 class="resource-heading">Financial Entity<a href="#disclosure-apis-financial-entity" class="permalink">&para;</a></h3><div id="disclosure-apis-financial-entity-post" class="action post"><h4 class="action-heading"><div class="name">Create Financial Entity</div><a href="#disclosure-apis-financial-entity-post" class="method post">POST</a><code class="uri">/api/coi/disclosures/:id/financial-entities</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only create financial entities for their own disclosures</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent disclosure.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+              "active":1,
+              "answers":[
+                {
+                  "questionId":6,
+                  "answer":{
+                    "value":[
+                      "Small Business"
+                    ]
+                  },
+                  "id":15
+                },
+                {
+                  "questionId":7,
+                  "answer":{
+                    "value":"Yes"
+                  },
+                  "id":16
+                },
+                {
+                  "questionId":8,
+                  "answer":{
+                    "value":"Yes"
+                  },
+                  "id":17
+                },
+                {
+                  "questionId":9,
+                  "answer":{
+                    "value":"Makes Batteries"
+                  },
+                  "id":18
+                }
+              ],
+              "name":"Interstate Battery",
+              "files":[
+                {
+                  "file_type":"financialEntity",
+                  "ref_id":1502,
+                  "type":"\"application/pdf\"",
+                  "key":"38fca76ec3c31f6a6d0b1a6037e9876b",
+                  "name":"test.pdf",
+                  "user_id":"10000000007",
+                  "uploaded_by":"Blood, Opal",
+                  "upload_date":"2015-10-27T19:45:58.389Z",
+                  "id":4
+                }
+              ],
+              "relationships":[
+                {
+                  "personCd":2,
+                  "relationshipCd":4,
+                  "typeCd":8,
+                  "amountCd":18,
+                  "comments":"I created some
+             batteries for them",
+                  "travel":{
+
+                  },
+                  "id":1503,
+                  "amount":"Over $10,000",
+                  "type":"Royalty Income",
+                  "relationship":"Intellectual Property",
+                  "person":"Self",
+                  "finEntityId":1502
+                }
+              ],
+              "id":1502
+            }</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-financial-entity-1" class="resource"><h3 class="resource-heading">Financial Entity<a href="#disclosure-apis-financial-entity-1" class="permalink">&para;</a></h3><div id="disclosure-apis-financial-entity-put" class="action put"><h4 class="action-heading"><div class="name">Update Financial Entity</div><a href="#disclosure-apis-financial-entity-put" class="method put">PUT</a><code class="uri">/api/coi/disclosures/:id/financial-entities/:entityId</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only update their own diclosure’s financial entities.</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent diclosure.</p>
+</dd><dt>entityId</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>54</span></span><p>The id of the financial entity being updated.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">count</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">totalFound</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">organizations</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">organizationName</span>": <span class="hljs-value"><span class="hljs-string">"University"</span></span>,
+      "<span class="hljs-attribute">address</span>": <span class="hljs-value"><span class="hljs-string">"1375 N Scottsdale Rd, Suite 480, Scottsdale, AZ 85257-3454"</span></span>,
+      "<span class="hljs-attribute">organizationId</span>": <span class="hljs-value"><span class="hljs-string">"000001"</span></span>,
+      "<span class="hljs-attribute">contact</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">middleName</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+        "<span class="hljs-attribute">county</span>": <span class="hljs-value"><span class="hljs-string">"Maricopa"</span></span>,
+        "<span class="hljs-attribute">emailAddress</span>": <span class="hljs-value"><span class="hljs-string">"sean.warren@rsmart.com"</span></span>,
+        "<span class="hljs-attribute">active</span>": <span class="hljs-value"><span class="hljs-literal">true</span></span>,
+        "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Scottsdale"</span></span>,
+        "<span class="hljs-attribute">suffix</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+        "<span class="hljs-attribute">postalCode</span>": <span class="hljs-value"><span class="hljs-string">"85257-3454"</span></span>,
+        "<span class="hljs-attribute">lastName</span>": <span class="hljs-value"><span class="hljs-string">"Warren"</span></span>,
+        "<span class="hljs-attribute">addressLine3</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+        "<span class="hljs-attribute">addressLine2</span>": <span class="hljs-value"><span class="hljs-string">"Suite 480"</span></span>,
+        "<span class="hljs-attribute">state</span>": <span class="hljs-value"><span class="hljs-string">"AZ"</span></span>,
+        "<span class="hljs-attribute">firstName</span>": <span class="hljs-value"><span class="hljs-string">"Sean"</span></span>,
+        "<span class="hljs-attribute">sponsor</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+        "<span class="hljs-attribute">prefix</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+        "<span class="hljs-attribute">rolodexId</span>": <span class="hljs-value"><span class="hljs-number">100013</span></span>,
+        "<span class="hljs-attribute">phoneNumber</span>": <span class="hljs-value"><span class="hljs-string">"480-414-0450"</span></span>,
+        "<span class="hljs-attribute">countryCode</span>": <span class="hljs-value"><span class="hljs-string">"USA"</span></span>,
+        "<span class="hljs-attribute">addressLine1</span>": <span class="hljs-value"><span class="hljs-string">"1375 N Scottsdale Rd, Scottsdale, AZ 85257-3454"</span></span>,
+        "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"OSP Approver"</span></span>,
+        "<span class="hljs-attribute">faxNumber</span>": <span class="hljs-value"><span class="hljs-string">"602-391-2172"</span>
+      </span>}
+    </span>}
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-declarations" class="resource"><h3 class="resource-heading">Declarations<a href="#disclosure-apis-declarations" class="permalink">&para;</a></h3><div id="disclosure-apis-declarations-post" class="action post"><h4 class="action-heading"><div class="name">Create Declaration</div><a href="#disclosure-apis-declarations-post" class="method post">POST</a><code class="uri">/api/coi/disclosures/:id/declarations</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only create declarations for their own disclosures</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent disclosure</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1502</span></span>,
+  "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">projectId</span>": <span class="hljs-value"><span class="hljs-number">1003</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1502</span></span>,
+  "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">projectId</span>": <span class="hljs-value"><span class="hljs-number">1003</span></span>,
+  "<span class="hljs-attribute">disclosure_id</span>": <span class="hljs-value"><span class="hljs-string">"503"</span></span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3002</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-declarations-1" class="resource"><h3 class="resource-heading">Declarations<a href="#disclosure-apis-declarations-1" class="permalink">&para;</a></h3><div id="disclosure-apis-declarations-put" class="action put"><h4 class="action-heading"><div class="name">Update Declaration</div><a href="#disclosure-apis-declarations-put" class="method put">PUT</a><code class="uri">/api/coi/disclosures/:id/declarations/:declarationId</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only update their own diclosure’s declarations.</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent disclosure.</p>
+</dd><dt>declarationId</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>23</span></span><p>The id of the declaration being updated.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1502</span></span>,
+  "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">projectId</span>": <span class="hljs-value"><span class="hljs-number">1003</span></span>,
+  "<span class="hljs-attribute">disclosure_id</span>": <span class="hljs-value"><span class="hljs-string">"503"</span></span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3002</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong></div></div></div><div id="disclosure-apis-question-answers" class="resource"><h3 class="resource-heading">Question Answers<a href="#disclosure-apis-question-answers" class="permalink">&para;</a></h3><div id="disclosure-apis-question-answers-post" class="action post"><h4 class="action-heading"><div class="name">Create Question Answer</div><a href="#disclosure-apis-question-answers-post" class="method post">POST</a><code class="uri">/api/coi/disclosures/:id/question-answers</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only create question answers for their own disclosures</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent disclosure.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">10</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div><div id="disclosure-apis-question-answers-delete" class="action delete"><h4 class="action-heading"><div class="name">Delete Question Answer</div><a href="#disclosure-apis-question-answers-delete" class="method delete">DELETE</a><code class="uri">/api/coi/disclosures/:id/question-answers</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only delete their own diclosure’s question answers.</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent disclosure.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  toDelete: [ 5 ]
+}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>204</code></strong></div></div></div><div id="disclosure-apis-question-answers-1" class="resource"><h3 class="resource-heading">Question Answers<a href="#disclosure-apis-question-answers-1" class="permalink">&para;</a></h3><div id="disclosure-apis-question-answers-put" class="action put"><h4 class="action-heading"><div class="name">Update Question Answer</div><a href="#disclosure-apis-question-answers-put" class="method put">PUT</a><code class="uri">/api/coi/disclosures/:id/question-answers/:questionId</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only update their own diclosure’s question answers.</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent disclosure.</p>
+</dd><dt>questionId</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>3</span></span><p>The id of the question being answered.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">11</span></span>,
+  "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">question</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">active</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">questionnaireId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">parent</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">question</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">text</span>": <span class="hljs-value"><span class="hljs-string">"From any privately held organization, do you have stock, stock options, or other equity interest of any value?"</span></span>,
+      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Yes/No"</span></span>,
+      "<span class="hljs-attribute">validations</span>": <span class="hljs-value">[
+        <span class="hljs-string">"required"</span>
+      ]</span>,
+      "<span class="hljs-attribute">numberToShow</span>": <span class="hljs-value"><span class="hljs-number">2</span>
+    </span>}
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">11</span></span>,
+  "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">question</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">active</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">questionnaireId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">parent</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">question</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">text</span>": <span class="hljs-value"><span class="hljs-string">"From any privately held organization, do you have stock, stock options, or other equity interest of any value?"</span></span>,
+      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Yes/No"</span></span>,
+      "<span class="hljs-attribute">validations</span>": <span class="hljs-value">[
+        <span class="hljs-string">"required"</span>
+      ]</span>,
+      "<span class="hljs-attribute">numberToShow</span>": <span class="hljs-value"><span class="hljs-number">2</span>
+    </span>}
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-pi-review-items" class="resource"><h3 class="resource-heading">PI Review Items<a href="#disclosure-apis-pi-review-items" class="permalink">&para;</a></h3><div id="disclosure-apis-pi-review-items-get" class="action get"><h4 class="action-heading"><div class="name">Get PI Review Items</div><a href="#disclosure-apis-pi-review-items-get" class="method get">GET</a><code class="uri">/api/coi/disclosures/:id/pi-review-items</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only get pi review items for their own disclosures.</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the parent disclosure.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "questions":[
+    {
+      "id":1,
+      "question":{
+        "order":2,
+        "text":"From any privately held organization, do you have
+ stock, stock options, or other equity interest of any value?",
+        "type":"Yes/No",
+        "validations":[
+          "required"
+        ],
+        "numberToShow":2
+      },
+      "answer":"{\"value\":\"No\"}",
+      "comments":[
+        {
+          "id":2,
+          "topicId":1,
+          "text":"Fix This",
+          "author":"COI Admin",
+          "date":"2015-10-27T20:08:20.000Z",
+          "userId":"10000000121"
+        }
+      ],
+      "reviewId":2,
+      "reviewedOn":null,
+      "revised":null,
+      "respondedTo":null
+    },
+    {
+      "id":2,
+      "question":{
+        "order":1,
+        "text":"From any for-profit organization
+, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director's
+ fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other
+ intellectual property; or other direct payments exceeding $5,000?",
+        "type":"Yes/No",
+        "validations":[
+          "required"
+        ],
+        "numberToShow":1
+      },
+      "answer":"{\"value\":\"Yes\"}",
+      "subQuestions":[
+        {
+          "id":5,
+          "question":{
+            "order":1,
+            "text":"If Yes, did the organization send you on vacation?",
+            "type":"Text area",
+            "displayCriteria":"Yes",
+            "numberToShow":"1-A"
+          },
+          "parent":2,
+          "answer":"{\"value\":\"Hawaii\"}"
+        }
+      ],
+      "comments":[
+        {
+          "id":1,
+          "topicId":2,
+          "text":"Is This
+ True?",
+          "author":"COI Admin",
+          "date":"2015-10-27T19:21:05.000Z",
+          "userId":"10000000121"
+        }
+      ],
+      "reviewId":1,
+      "reviewedOn":null,
+      "revised":null,
+      "respondedTo":null
+    }
+  ],
+  "entities":[
+    {
+      "id":1501,
+      "name":"Interstate Battery",
+      "disclosureId":502,
+      "answers":[
+        {
+          "questionId":6,
+          "answer":"{\"value\":[\"Small Business\"]}",
+          "finEntityId":1501
+        },
+        {
+          "questionId":7,
+          "answer":"{\"value\":\"No\"}",
+          "finEntityId":1501
+        },
+        {
+          "questionId":9,
+          "answer":"{
+\"value\":\"They Make Batteries\"}",
+          "finEntityId":1501
+        },
+        {
+          "questionId":8,
+          "answer":"{\"value\":\"Yes\"
+}",
+          "finEntityId":1501
+        }
+      ],
+      "relationships":[
+        {
+          "id":1501,
+          "comments":"I made some batteries for them",
+          "relationshipCd":4,
+          "personCd":2,
+          "typeCd":8,
+          "amountCd":16,
+          "finEntityId":1501
+        },
+        {
+          "id":1502,
+          "comments":"My Wife Works There",
+          "relationshipCd":2,
+          "personCd":1,
+          "typeCd":3,
+          "amountCd":3,
+          "finEntityId":1501
+        }
+      ],
+      "comments":[
+        {
+          "id":3,
+          "topicId":1501,
+          "text":"fix this",
+          "author":"COI Admin",
+          "date":"2015-10-27T20:10:48.000Z",
+          "userId":"10000000121"
+        }
+      ],
+      "reviewId":3,
+      "reviewedOn":null,
+      "revised":null,
+      "respondedTo":null,
+      "files":[
+        {
+          "id":1,
+          "name":"test.pdf",
+          "key":"26754681772fb166828db7a5df881c2b",
+          "refId":1501
+        }
+      ]
+    }
+  ],
+  "declarations":[
+    {
+      "title":"Longevity of car
+ batteries",
+      "id":1005,
+      "entities":[
+        {
+          "name":"Interstate Battery",
+          "id":1501,
+          "projectId":1005,
+          "comments":null,
+          "relationshipCd":3,
+          "adminComments":[
+            {
+              "id":4,
+              "topicId":3001,
+              "text":"fix this too",
+              "author":"COI
+ Admin",
+              "date":"2015-10-27T20:10:56.000Z",
+              "userId":"10000000121"
+            }
+          ],
+          "reviewId":4,
+          "reviewedOn":null,
+          "revised":null,
+          "respondedTo":null
+        }
+      ]
+    }
+  ],
+  "configId":1
+}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-disclosure-user-summaries" class="resource"><h3 class="resource-heading">Disclosure User Summaries<a href="#disclosure-apis-disclosure-user-summaries" class="permalink">&para;</a></h3><div id="disclosure-apis-disclosure-user-summaries-get" class="action get"><h4 class="action-heading"><div class="name">Get User Disclosure Summaries</div><a href="#disclosure-apis-disclosure-user-summaries-get" class="method get">GET</a><code class="uri">/api/coi/disclosure-user-summaries</code></h4><p>Requires valid API key with role of admin or user.  Admins and users can only retrieve their own disclosure user summaries</p>
+<div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[
+  {
+    "<span class="hljs-attribute">expired_date</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">last_review_date</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">503</span>
+  </span>}
+]</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-disclosure-summaries" class="resource"><h3 class="resource-heading">Disclosure Summaries<a href="#disclosure-apis-disclosure-summaries" class="permalink">&para;</a></h3><div id="disclosure-apis-disclosure-summaries-get" class="action get"><h4 class="action-heading"><div class="name">Get Disclosure Summaries</div><a href="#disclosure-apis-disclosure-summaries-get" class="method get">GET</a><code class="uri">/api/coi/disclosure-summaries</code></h4><p>Requires valid API key with role of admin.  Admins can view all disclosure summaries.</p>
+<div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[
+  {
+    "<span class="hljs-attribute">submitted_by</span>": <span class="hljs-value"><span class="hljs-string">"Tester, Joe"</span></span>,
+    "<span class="hljs-attribute">revised_date</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">statusCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+    "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Annual Disclosure"</span></span>,
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+    "<span class="hljs-attribute">submitted_date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:17:59.000Z"</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">submitted_by</span>": <span class="hljs-value"><span class="hljs-string">"Cate, Allyson"</span></span>,
+    "<span class="hljs-attribute">revised_date</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">statusCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+    "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Annual Disclosure"</span></span>,
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">504</span></span>,
+    "<span class="hljs-attribute">submitted_date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T20:25:54.000Z"</span>
+  </span>}
+]</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="disclosure-apis-archived-disclosures-latest" class="resource"><h3 class="resource-heading">Archived Disclosures Latest<a href="#disclosure-apis-archived-disclosures-latest" class="permalink">&para;</a></h3><div id="disclosure-apis-archived-disclosures-latest-get" class="action get"><h4 class="action-heading"><div class="name">Get Archived Disclosure</div><a href="#disclosure-apis-archived-disclosures-latest-get" class="method get">GET</a><code class="uri">/api/coi/archived-disclosures/:id/latest</code></h4><p>Requires valid API key with role of admin or user.  Admins can view any latest archived disclosure.  Users can view their own latest archived disclosures.</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>The id of the disclosure being retrieved.</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer {authToken}</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json;charset=UTF-8</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+  "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">dispositionTypeCd</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">statusCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">submittedBy</span>": <span class="hljs-value"><span class="hljs-string">"Tester, Joe"</span></span>,
+  "<span class="hljs-attribute">submittedDate</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:17:59.000Z"</span></span>,
+  "<span class="hljs-attribute">revisedDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">startDate</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:16:04.000Z"</span></span>,
+  "<span class="hljs-attribute">expiredDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">lastReviewDate</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">configId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">entities</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+      "<span class="hljs-attribute">disclosureId</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+      "<span class="hljs-attribute">active</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Interstate Battery"</span></span>,
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">answers</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">6</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value">[
+              <span class="hljs-string">"Small Business"</span>
+            ]
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">7</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">9</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"They Make Batteries"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>},
+        {
+          "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">8</span></span>,
+          "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Yes"</span>
+          </span>}</span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span>
+        </span>}
+      ]</span>,
+      "<span class="hljs-attribute">files</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+          "<span class="hljs-attribute">file_type</span>": <span class="hljs-value"><span class="hljs-string">"financialEntity"</span></span>,
+          "<span class="hljs-attribute">ref_id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"\"application/pdf\""</span></span>,
+          "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"26754681772fb166828db7a5df881c2b"</span></span>,
+          "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+          "<span class="hljs-attribute">user_id</span>": <span class="hljs-value"><span class="hljs-string">"10000000002"</span></span>,
+          "<span class="hljs-attribute">uploaded_by</span>": <span class="hljs-value"><span class="hljs-string">"Tester, Joe"</span></span>,
+          "<span class="hljs-attribute">upload_date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:17:46.000Z"</span>
+        </span>}
+      ]</span>,
+      "<span class="hljs-attribute">relationships</span>": <span class="hljs-value">[
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">relationshipCd</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+          "<span class="hljs-attribute">personCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+          "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">8</span></span>,
+          "<span class="hljs-attribute">amountCd</span>": <span class="hljs-value"><span class="hljs-number">16</span></span>,
+          "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-string">"I made some batteries for them"</span></span>,
+          "<span class="hljs-attribute">travel</span>": <span class="hljs-value">{}
+        </span>},
+        {
+          "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1502</span></span>,
+          "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+          "<span class="hljs-attribute">relationshipCd</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+          "<span class="hljs-attribute">personCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+          "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+          "<span class="hljs-attribute">amountCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+          "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-string">"My Wife Works There"</span></span>,
+          "<span class="hljs-attribute">travel</span>": <span class="hljs-value">{}
+        </span>}
+      ]
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">answers</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Yes"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">4</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"No"</span>
+      </span>}
+    </span>},
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+      "<span class="hljs-attribute">questionId</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+      "<span class="hljs-attribute">answer</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">value</span>": <span class="hljs-value"><span class="hljs-string">"Hawaii"</span>
+      </span>}
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">declarations</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3001</span></span>,
+      "<span class="hljs-attribute">projectId</span>": <span class="hljs-value"><span class="hljs-number">1005</span></span>,
+      "<span class="hljs-attribute">finEntityId</span>": <span class="hljs-value"><span class="hljs-number">1501</span></span>,
+      "<span class="hljs-attribute">typeCd</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">comments</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">projectTitle</span>": <span class="hljs-value"><span class="hljs-string">"Longevity of car batteries"</span></span>,
+      "<span class="hljs-attribute">entityName</span>": <span class="hljs-value"><span class="hljs-string">"Interstate Battery"</span></span>,
+      "<span class="hljs-attribute">projectTypeCd</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">sponsorName</span>": <span class="hljs-value"><span class="hljs-string">"Air Force"</span></span>,
+      "<span class="hljs-attribute">roleCd</span>": <span class="hljs-value"><span class="hljs-string">"PI"</span></span>,
+      "<span class="hljs-attribute">finEntityActive</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">comments</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">disclosureId</span>": <span class="hljs-value"><span class="hljs-number">502</span></span>,
+      "<span class="hljs-attribute">topicSection</span>": <span class="hljs-value"><span class="hljs-string">"Questionnaire"</span></span>,
+      "<span class="hljs-attribute">topicId</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">text</span>": <span class="hljs-value"><span class="hljs-string">"Is This True?"</span></span>,
+      "<span class="hljs-attribute">author</span>": <span class="hljs-value"><span class="hljs-string">"COI Admin"</span></span>,
+      "<span class="hljs-attribute">userId</span>": <span class="hljs-value"><span class="hljs-string">"10000000121"</span></span>,
+      "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2015-10-27T19:21:05.000Z"</span></span>,
+      "<span class="hljs-attribute">piVisible</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">reviewerVisible</span>": <span class="hljs-value"><span class="hljs-number">0</span></span>,
+      "<span class="hljs-attribute">isCurrentUser</span>": <span class="hljs-value"><span class="hljs-literal">true</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">files</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+      "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"0d1623fc72faad2e5be26642485ab523"</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">managementPlan</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"test.pdf"</span></span>,
+      "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"8db71460d8169c9e169481a4603f0811"</span>
+    </span>}
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section><section id="config-apis" class="resource-group"><h2 class="group-heading">Config APIs<a href="#config-apis" class="permalink">&para;</a></h2></section><section id="project-apis" class="resource-group"><h2 class="group-heading">Project APIs<a href="#project-apis" class="permalink">&para;</a></h2></section><section id="file-apis" class="resource-group"><h2 class="group-heading">File APIs<a href="#file-apis" class="permalink">&para;</a></h2></section><section id="pi-apis" class="resource-group"><h2 class="group-heading">PI APIs<a href="#pi-apis" class="permalink">&para;</a></h2></section></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 27 Oct 2015</p><script>/* eslint-env browser */
+/* eslint quotes: [2, "single"] */
+'use strict';
+
+/*
+  Determine if a string ends with another string.
+*/
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+/*
+  Get an array [width, height] of the window.
+*/
+function getWindowDimensions() {
+  var w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.body,
+      x = w.innerWidth || e.clientWidth || g.clientWidth,
+      y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+  return [x, y];
+}
+
+/*
+  Collapse or show a request/response example.
+*/
+function toggleCollapseButton(event) {
+    var button = event.target.parentNode;
+    var content = button.parentNode.nextSibling;
+    var inner = content.children[0];
+
+    if (button.className.indexOf('collapse-button') === -1) {
+      // Clicked without hitting the right element?
+      return;
+    }
+
+    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+        // Currently showing, so let's hide it
+        button.className = 'collapse-button';
+        content.style.maxHeight = '0px';
+    } else {
+        // Currently hidden, so let's show it
+        button.className = 'collapse-button show';
+        content.style.maxHeight = inner.offsetHeight + 12 + 'px';
+    }
+}
+
+/*
+  Collapse or show a navigation menu. It will not be hidden unless it
+  is currently selected or `force` has been passed.
+*/
+function toggleCollapseNav(event, force) {
+    var heading = event.target.parentNode;
+    var content = heading.nextSibling;
+    var inner = content.children[0];
+
+    if (heading.className.indexOf('heading') === -1) {
+      // Clicked without hitting the right element?
+      return;
+    }
+
+    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+      // Currently showing, so let's hide it, but only if this nav item
+      // is already selected. This prevents newly selected items from
+      // collapsing in an annoying fashion.
+      if (force || window.location.hash && endsWith(event.target.href, window.location.hash)) {
+        content.style.maxHeight = '0px';
+      }
+    } else {
+      // Currently hidden, so let's show it
+      content.style.maxHeight = inner.offsetHeight + 12 + 'px';
+    }
+}
+
+/*
+  Refresh the page after a live update from the server. This only
+  works in live preview mode (using the `--server` parameter).
+*/
+function refresh(body) {
+    document.querySelector('body').className = 'preload';
+    document.body.innerHTML = body;
+
+    // Re-initialize the page
+    init();
+    autoCollapse();
+
+    document.querySelector('body').className = '';
+}
+
+/*
+  Determine which navigation items should be auto-collapsed to show as many
+  as possible on the screen, based on the current window height. This also
+  collapses them.
+*/
+function autoCollapse() {
+  var windowHeight = getWindowDimensions()[1];
+  var itemsHeight = 64; /* Account for some padding */
+  var itemsArray = Array.prototype.slice.call(
+    document.querySelectorAll('nav .resource-group .heading'));
+
+  // Get the total height of the navigation items
+  itemsArray.forEach(function (item) {
+    itemsHeight += item.parentNode.offsetHeight;
+  });
+
+  // Should we auto-collapse any nav items? Try to find the smallest item
+  // that can be collapsed to show all items on the screen. If not possible,
+  // then collapse the largest item and do it again. First, sort the items
+  // by height from smallest to largest.
+  var sortedItems = itemsArray.sort(function (a, b) {
+    return a.parentNode.offsetHeight - b.parentNode.offsetHeight;
+  });
+
+  while (sortedItems.length && itemsHeight > windowHeight) {
+    for (var i = 0; i < sortedItems.length; i++) {
+      // Will collapsing this item help?
+      var itemHeight = sortedItems[i].nextSibling.offsetHeight;
+      if ((itemsHeight - itemHeight <= windowHeight) || i === sortedItems.length - 1) {
+        // It will, so let's collapse it, remove its content height from
+        // our total and then remove it from our list of candidates
+        // that can be collapsed.
+        itemsHeight -= itemHeight;
+        toggleCollapseNav({target: sortedItems[i].children[0]}, true);
+        sortedItems.splice(i, 1);
+        break;
+      }
+    }
+  }
+}
+
+/*
+  Initialize the interactive functionality of the page.
+*/
+function init() {
+    var i;
+
+    // Make collapse buttons clickable
+    var buttons = document.querySelectorAll('.collapse-button');
+    for (i = 0; i < buttons.length; i++) {
+        buttons[i].onclick = toggleCollapseButton;
+
+        // Show by default? Then toggle now.
+        if (buttons[i].className.indexOf('show') !== -1) {
+            toggleCollapseButton({target: buttons[i].children[0]});
+        }
+    }
+
+    // Make nav items clickable to collapse/expand their content.
+    var navItems = document.querySelectorAll('nav .resource-group .heading');
+    for (i = 0; i < navItems.length; i++) {
+        navItems[i].onclick = toggleCollapseNav;
+
+        // Show all by default
+        toggleCollapseNav({target: navItems[i].children[0]});
+    }
+}
+
+// Initial call to set up buttons
+init();
+
+window.onload = function () {
+    autoCollapse();
+    // Remove the `preload` class to enable animations
+    document.querySelector('body').className = '';
+};
+</script></body></html>
