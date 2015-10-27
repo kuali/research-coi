@@ -20,7 +20,7 @@ export default function authentication(req, res, next) {
     authToken = req.cookies.authToken;
   }
 
-  getUserInfo(req.hostname, authToken)
+  getUserInfo(req.dbInfo, req.hostname, authToken)
     .then(userInfo => {
       if (!userInfo) {
         res.sendStatus(401);

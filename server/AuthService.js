@@ -2,23 +2,26 @@ import https from 'https';
 import cache from './LruCache';
 import {COIConstants} from '../COIConstants';
 
-let authorizationHost;
-let adminRole;
+let getAuthorizationInfo;
 try {
   let extensions = require('research-extensions');
-  authorizationHost = extensions.config.authorizationHost || 'uit.kuali.dev';
-  adminRole = extensions.config.adminRole || 'KC-COIDISCLOSURE:COI%20Administrator';
+  getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
-  authorizationHost = process.env.AUTHZ_HOST || 'uit.kuali.dev';
-  adminRole = process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator';
+  getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
+    return {
+      host: process.env.AUTHZ_HOST || 'uit.kuali.dev',
+      adminRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator'
+    };
+  };
 }
 
-function getUserRoles(schoolId, authToken) {
+function getUserRoles(dbInfo, schoolId, authToken) {
   return new Promise((resolve) => {
+    let authInfo = getAuthorizationInfo(dbInfo);
     let options = {
       protocol: 'https:',
-      host: authorizationHost,
-      path: '/kc-dev/kc-sys-krad/v1/roles/' + adminRole + '/principals/' + schoolId + '?qualification=unitNumber:*',
+      host: authInfo.host,
+      path: '/kc-dev/kc-sys-krad/v1/roles/' + authInfo.adminRole + '/principals/' + schoolId + '?qualification=unitNumber:*',
       headers: {
         'Authorization': 'Bearer ' + authToken
       }
@@ -39,7 +42,7 @@ function getUserRoles(schoolId, authToken) {
   });
 }
 
-export function getUserInfo(hostname, authToken) {
+export function getUserInfo(dbInfo, hostname, authToken) {
   return new Promise((resolve, reject) => {
     let cachedUserInfo = authToken ? cache.get(authToken) : undefined;
     if (cachedUserInfo) {
@@ -65,7 +68,7 @@ export function getUserInfo(hostname, authToken) {
           });
           response.on('end', () => {
             let userInfo = JSON.parse(body);
-            getUserRoles(userInfo.schoolId, authToken, hostname).then(role => {
+            getUserRoles(dbInfo, userInfo.schoolId, authToken).then(role => {
               if (!role) {
                 userInfo.coiRole = COIConstants.ROLES.USER;
               } else {
