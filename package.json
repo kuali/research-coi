@@ -27,6 +27,7 @@
     "knex": "0.8.6",
     "lodash": "3.10.0",
     "lru-cache": "2.7.0",
+    "moment": "^2.10.6",
     "multer": "1.0.5",
     "mysql": "2.8.0",
     "numeral": "1.5.3",
