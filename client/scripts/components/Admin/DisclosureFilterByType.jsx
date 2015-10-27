@@ -42,8 +42,17 @@ export class DisclosureFilterByType extends DisclosureFilter {
         padding: 10
       },
       clearButton: {
-        backgroundColor: '#444',
-        color: 'white'
+        backgroundColor: '#DFDFDF',
+        color: 'black',
+        borderBottom: '3px solid #717171',
+        float: 'right',
+        padding: '4px 7px',
+        width: 135,
+        margin: '10px 0'
+      },
+      x: {
+        fontSize: 15,
+        paddingRight: 8
       }
     };
 
@@ -66,7 +75,10 @@ export class DisclosureFilterByType extends DisclosureFilter {
       <div style={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
         {options}
-        <KButton style={styles.clearButton} onClick={this.clear}>CLEAR FILTER</KButton>
+        <KButton style={styles.clearButton} onClick={this.clear}>
+          <i className="fa fa-times" style={styles.x}></i>
+          CLEAR FILTER
+        </KButton>
       </div>
     );
   }

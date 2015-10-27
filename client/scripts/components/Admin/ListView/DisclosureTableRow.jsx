@@ -12,11 +12,11 @@ export class DisclosureTableRow extends React.Component {
       let matchingValue = value.substr(start, this.props.searchTerm.length);
       return (
         <span>
-          {value.substr(0, start) + ''}
+          <span style={{display: 'inline'}}>{value.substr(0, start) + ''}</span>
           <span className="highlight">
             {matchingValue}
           </span>
-          {value.substr(start + this.props.searchTerm.length)}
+          <span style={{display: 'inline'}}>{value.substr(start + this.props.searchTerm.length)}</span>
         </span>
       );
     }

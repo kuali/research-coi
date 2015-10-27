@@ -31,13 +31,22 @@ export class DisclosureFilterByPI extends DisclosureFilter {
         width: 300
       },
       clearButton: {
-        backgroundColor: '#444',
-        color: 'white'
+        backgroundColor: '#DFDFDF',
+        color: 'black',
+        borderBottom: '3px solid #717171',
+        float: 'right',
+        padding: '4px 7px',
+        width: 135,
+        margin: '10px 0'
       },
       searchBoxDiv: {
         borderBottom: '1px solid #AAA',
         paddingBottom: 10,
         marginBottom: 10
+      },
+      x: {
+        fontSize: 15,
+        paddingRight: 8
       }
     };
 
@@ -51,7 +60,10 @@ export class DisclosureFilterByPI extends DisclosureFilter {
           <PISearchBox value={this.props.piName} onSelected={this.piSelected} />
         </div>
 
-        <KButton style={styles.clearButton} onClick={this.clear}>CLEAR FILTER</KButton>
+        <KButton style={styles.clearButton} onClick={this.clear}>
+          <i className="fa fa-times" style={styles.x}></i>
+          CLEAR FILTER
+        </KButton>
       </div>
     );
   }

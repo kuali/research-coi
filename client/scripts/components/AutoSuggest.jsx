@@ -24,11 +24,11 @@ class Suggestion extends React.Component {
       let matchingValue = value.substr(start, searchTerm.length);
       return (
         <span>
-          {value.substr(0, start) + ''}
+          <span style={{display: 'inline'}}>{value.substr(0, start) + ''}</span>
           <span className="highlight">
             {matchingValue}
           </span>
-          {value.substr(start + searchTerm.length)}
+          <span style={{display: 'inline'}}>{value.substr(start + searchTerm.length)}</span>
         </span>
       );
     }
@@ -154,7 +154,8 @@ export default class AutoSuggest extends React.Component {
   render() {
     let styles = {
       container: {
-        position: 'relative'
+        position: 'relative',
+        width: this.props.inline ? '100%' : 'initial'
       },
       textbox: {
         width: '100%',
@@ -165,6 +166,14 @@ export default class AutoSuggest extends React.Component {
         padding: 5,
         zIndex: 2,
         position: 'relative'
+      },
+      inlineSuggestions: {
+        width: '100%',
+        padding: '9px 0 12px 0',
+        listStyleType: 'none',
+        borderTop: '1px solid #AAA',
+        marginBottom: 0,
+        fontSize: 14
       },
       suggestions: {
         position: 'absolute',
@@ -195,7 +204,7 @@ export default class AutoSuggest extends React.Component {
       });
 
       suggestionList = (
-        <ul className="autosuggest-results" style={styles.suggestions} role="listbox">
+        <ul className="autosuggest-results" style={this.props.inline ? styles.inlineSuggestions : styles.suggestions} role="listbox">
           {suggestions}
         </ul>
       );

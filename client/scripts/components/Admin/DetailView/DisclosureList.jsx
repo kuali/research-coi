@@ -54,8 +54,9 @@ export class DisclosureList extends React.Component {
         borderLeft: '1px solid #6d6d6d',
         borderRight: '1px solid #6d6d6d',
         verticalAlign: 'top',
-        boxShadow: '2px 1px 6px #D1D1D1',
-        transition: 'width .3s ease-in-out'
+        boxShadow: '3px 0px 6px #CCC',
+        transition: 'width .3s ease-in-out',
+        zIndex: 2
       },
       list: {
         listStyleType: 'none',

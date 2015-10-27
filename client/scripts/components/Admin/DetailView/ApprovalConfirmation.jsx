@@ -23,17 +23,33 @@ export class ApprovalConfirmation extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        color: 'white',
+        color: 'black',
         fontSize: 15,
-        width: 210,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        padding: '20px 17px'
+        width: 235,
+        backgroundColor: 'white',
+        padding: '20px 24px',
+        boxShadow: '0 0 10px 2px #CCC'
       },
       button: {
         margin: '0 auto',
         display: 'block',
         marginBottom: 10,
-        padding: '5px 10px'
+        padding: '5px 10px',
+        borderBottom: '2px solid #717171',
+        width: 135,
+        backgroundColor: '#DFDFDF'
+      },
+      yesButton: {
+        margin: '0 auto',
+        display: 'block',
+        marginBottom: 10,
+        padding: '5px 10px',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        color: 'white',
+        borderBottom: '2px solid #717171',
+        width: 135,
+        fontWeight: 300,
+        textShadow: '1px 1px 6px #777'
       },
       question: {
         marginBottom: 30
@@ -47,7 +63,7 @@ export class ApprovalConfirmation extends ResponsiveComponent {
           Are you sure you want to approve this disclosure?
         </div>
 
-        <KButton onClick={this.approve} style={styles.button}>YES, CONFIRM</KButton>
+        <KButton onClick={this.approve} style={styles.yesButton}>YES, CONFIRM</KButton>
         <KButton onClick={this.cancel} style={styles.button}>NO, CANCEL</KButton>
       </div>
     );

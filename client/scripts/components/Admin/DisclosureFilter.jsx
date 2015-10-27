@@ -66,14 +66,14 @@ export default class DisclosureFilter extends React.Component {
       },
       popOut: {
         position: 'absolute',
-        top: 0,
+        top: -22,
         left: '100%',
-        backgroundColor: '#eeeeee',
+        backgroundColor: 'white',
         padding: 10,
         zIndex: 1,
         display: this.state.showing ? 'block' : 'none',
-        border: '1px solid #999',
-        boxShadow: '4px 2px 10px #eee'
+        boxShadow: '2px 3px 10px #AAA',
+        borderRadius: 5
       },
       arrows: {
         fontSize: 7,
@@ -96,6 +96,17 @@ export default class DisclosureFilter extends React.Component {
         padding: '0 22px 0 42px',
         position: 'relative',
         backgroundColor: this.props.active ? window.colorBlindModeOn ? '#444' : '#007F88' : 'initial'
+      },
+      arrow: {
+        width: 0,
+        height: 0,
+        position: 'absolute',
+        left: -35,
+        top: 28,
+        borderTop: '12px solid transparent',
+        borderRight: '19px solid white',
+        borderBottom: '12px solid transparent',
+        borderLeft: '17px solid transparent'
       }
     };
 
@@ -121,6 +132,7 @@ export default class DisclosureFilter extends React.Component {
           {clearButton}
         </div>
         <div ref="root" style={styles.popOut}>
+          <span style={styles.arrow}></span>
           {this.renderFilter()}
         </div>
       </div>

@@ -26,13 +26,18 @@ export default class AdditionalReviewPanel extends React.Component {
   render() {
     let styles = {
       container: {
-        padding: '25px 30px'
+        padding: '25px 30px',
+        backgroundColor: 'white',
+        height: '100%',
+        boxShadow: '0 0 10px 0 #AAA'
       },
-      done: {
+      close: {
         float: 'right',
-        fontSize: 14,
-        marginTop: 5,
-        cursor: 'pointer'
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        marginBottom: 8,
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontSize: 20
       },
       download: {
         float: 'right',
@@ -71,28 +76,29 @@ export default class AdditionalReviewPanel extends React.Component {
         fontWeight: 300
       },
       subLabel: {
-        fontSize: 14
+        fontSize: 15,
+        width: '50%',
+        borderBottom: '1px solid #777',
+        paddingBottom: 4
       }
     };
 
     let fileUploadStyles = {
-      deleteButton: {
-        width: 90,
-        fontSize: 12
-      },
       middle: {
-        width: '60%',
         display: 'inline-block',
         textAlign: 'center',
         verticalAlign: 'middle',
-        fontSize: 12
+        fontSize: 12,
+        width: '66%'
       }
     };
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <div style={{paddingBottom: 20, borderBottom: '1px solid #888'}}>
-          <span style={styles.done} onClick={this.done}>Done</span>
+        <div style={{paddingBottom: 20}}>
+          <span style={styles.close} onClick={this.done}>
+            <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
+          </span>
           <span style={styles.title}>ADDITIONAL REVIEW</span>
         </div>
         <div style={{paddingTop: 12}}>
@@ -106,10 +112,11 @@ export default class AdditionalReviewPanel extends React.Component {
           onDrop={this.addManagementPlan}
           delete={this.deleteManagementPlan}
           files={this.props.managementPlan}
-          multiple={false}
-          styles={fileUploadStyles}>
-          <p>Drag and Drop or Click to upload your attachments</p>
-          <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
+          multiple={true}
+          styles={fileUploadStyles}
+        >
+          <div>Drag and drop or upload your management plan</div>
+          <div style={{fontSize: 10, marginTop: 2}}>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
         </FileUpload>
       </div>
     );

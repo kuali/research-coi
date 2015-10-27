@@ -88,6 +88,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
               type: file.mimetype,
               key: file.filename,
               name: file.originalname,
+              user_id: userInfo.schoolId,
               uploaded_by: userInfo.displayName,
               upload_date: new Date()
             };
@@ -264,6 +265,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
               type: file.mimetype,
               key: file.filename,
               name: file.originalname,
+              user_id: userInfo.schoolId,
               uploaded_by: userInfo.displayName,
               upload_date: new Date()
             };

@@ -95,8 +95,8 @@ export class Certify extends React.Component {
               files={this.props.files}
               multiple={true}
             >
-              <p>Drag and Drop or Click to upload your attachments</p>
-              <p>Acceptable Formats: .pdf, .png, .doc, .jpeg</p>
+              <div>Drag and Drop or Click to upload your attachments</div>
+              <div>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
             </FileUpload>
             {agreement}
           </span>

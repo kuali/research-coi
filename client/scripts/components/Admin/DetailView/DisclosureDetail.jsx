@@ -62,13 +62,13 @@ export class DisclosureDetail extends React.Component {
         width: '100%'
       },
       actionButtons: {
-        top: 145,
-        right: 20,
-        display: this.props.showApproval || this.props.showRejection ? 'none' : 'block'
+        display: this.props.showApproval || this.props.showRejection ? 'none' : 'block',
+        marginTop: 25,
+        marginRight: 25
       },
       bottom: {
         position: 'relative',
-        padding: '0 25px 0 25px',
+        paddingLeft: 25,
         minHeight: 0,
         backgroundColor: '#EEEEEE'
       },
@@ -78,9 +78,7 @@ export class DisclosureDetail extends React.Component {
         right: 20
       },
       rejection: {
-        display: this.props.showRejection ? 'block' : 'none',
-        top: 186,
-        right: 20
+        display: this.props.showRejection ? 'block' : 'none'
       },
       questionnaire: {
         marginBottom: 25,
@@ -196,7 +194,7 @@ export class DisclosureDetail extends React.Component {
               style={{marginBottom: 25}}
             />
           </span>
-          <span style={{display: 'inline-block', marginTop: 25}}>
+          <span style={{display: 'inline-block'}}>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
             <RejectionConfirmation id={this.props.disclosure.id} canReject={piComments.length > 0 } style={styles.rejection} />
             <ActionButtons

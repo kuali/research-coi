@@ -18,6 +18,7 @@ export default class PISearchBox extends React.Component {
         endpoint='/api/coi/pi'
         value={this.props.value}
         onSuggestionSelected={this.onSuggestionSelected}
+        inline={true}
       />
     );
   }

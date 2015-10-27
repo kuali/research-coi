@@ -38,13 +38,11 @@ export class DisclosureFilterByDate extends DisclosureFilter {
         position: 'relative'
       },
       inputDivs: {
-        textAlign: 'left',
-        padding: 10,
-        flex: 1
       },
       label: {
         display: 'block',
-        fontSize: 13
+        fontSize: 13,
+        paddingBottom: 4
       },
       dropDown: {
         width: 176,
@@ -54,8 +52,22 @@ export class DisclosureFilterByDate extends DisclosureFilter {
         borderBottom: '1px solid #aaa'
       },
       clearButton: {
-        backgroundColor: '#444',
-        color: 'white'
+        backgroundColor: '#DFDFDF',
+        color: 'black',
+        borderBottom: '3px solid #717171',
+        float: 'right',
+        padding: '4px 7px',
+        width: 135,
+        margin: '10px 0 20px 0'
+      },
+      x: {
+        fontSize: 15,
+        paddingRight: 8
+      },
+      theDates: {
+        margin: '10px 10px 20px 10px',
+        paddingBottom: 30,
+        borderBottom: '1px solid #AAA'
       }
     };
 
@@ -75,19 +87,22 @@ export class DisclosureFilterByDate extends DisclosureFilter {
     return (
       <div style={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
-        <div className="flexbox row">
-          <div style={styles.inputDivs}>
-            <label htmlFor="fromDate" style={styles.label}>From Date:</label>
+        <div style={styles.theDates}>
+          <span style={{marginRight: 25}}>
+            <label htmlFor="fromDate" style={styles.label}>FROM DATE:</label>
             <DatePicker id="fromDate" onChange={this.setFromDate} value={this.props.startDate} />
-          </div>
-          <div style={styles.inputDivs}>
-            <label htmlFor="toDate" style={styles.label}>To Date:</label>
+          </span>
+          <span>
+            <label htmlFor="toDate" style={styles.label}>TO DATE:</label>
             <DatePicker id="toDate" onChange={this.setToDate} value={this.props.endDate} />
-          </div>
+          </span>
         </div>
         {sortFields}
         <div>
-          <KButton style={styles.clearButton} onClick={this.clear}>CLEAR FILTER</KButton>
+          <KButton style={styles.clearButton} onClick={this.clear}>
+            <i className="fa fa-times" style={styles.x}></i>
+            CLEAR FILTER
+          </KButton>
         </div>
       </div>
     );

@@ -72,7 +72,7 @@ export default class DeclarationSummary extends React.Component {
           </span>
         </div>
         <div style={styles.commentLink} onClick={this.showComments}>
-          <span style={styles.commentLabel}>COMMENT</span>
+          <span style={styles.commentLabel}>COMMENT ({this.props.commentCount})</span>
         </div>
       </div>
     );
