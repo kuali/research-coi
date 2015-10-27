@@ -1,6 +1,7 @@
 import React from 'react/addons';
 import Dropzone from 'react-dropzone';
 import {merge} from '../merge';
+import {KButton} from './KButton';
 
 export class FileUpload extends React.Component {
   constructor() {
@@ -21,47 +22,81 @@ export class FileUpload extends React.Component {
   render() {
     let defaultStyles = {
       dropZone: {
-        width: '100%',
-        display: 'inline-block',
         border: '3px dashed grey',
-        marginTop: 10
+        margin: 25,
+        borderRadius: 5,
+        padding: 20
       },
       dropZoneActive: {
-        width: '100%',
-        display: 'inline-block',
-        border: '3px dashed blue',
-        marginTop: 10
+        backgroundColor: '#00BCD4',
+        margin: 25,
+        borderRadius: 5,
+        padding: 23,
+        color: 'white',
+        border: 0
       },
       left: {
-        width: '20%',
+        width: '12%',
         display: 'inline-block'
       },
       middle: {
-        width: '60%',
+        width: '66%',
         display: 'inline-block',
         textAlign: 'center',
         verticalAlign: 'middle'
       },
       right: {
-        width: '20%',
+        width: '22%',
         display: 'inline-block'
       },
       file: {
-        width: '100%',
-        display: 'inline-block',
-        border: '3px solid grey',
-        marginTop: 10
+        backgroundColor: '#EEEEEE',
+        margin: '10px 28px 0 28px',
+        borderRadius: 5,
+        padding: '10px 19px 15px 19px'
+      },
+      icon: {
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontSize: 25
+      },
+      button: {
+        padding: 3,
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        color: 'white',
+        borderBottom: '2px solid #717171',
+        width: 90,
+        fontWeight: 300,
+        textShadow: '1px 1px 6px #777',
+        fontSize: 11
+      },
+      downloadButton: {
+        padding: 1,
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        color: 'white',
+        borderBottom: '2px solid #717171',
+        width: 90,
+        fontWeight: 300,
+        textShadow: '1px 1px 6px #777',
+        fontSize: 10,
+        marginRight: 7
       },
       deleteButton: {
-        backgroundColor: 'white',
-        color: '#666666',
-        border: '1px Solid #DEDEDE',
-        borderRadius: 7,
-        width: 124,
-        padding: 7,
-        fontSize: 14,
-        outline: 0,
-        cursor: 'pointer'
+        padding: 1,
+        backgroundColor: window.colorBlindModeOn ? 'white' : '#DFDFDF',
+        color: 'black',
+        borderBottom: '2px solid #717171',
+        width: 90,
+        fontWeight: 300,
+        fontSize: 10
+      },
+      link: {
+        color: '#0095A0',
+        borderBottom: '2px dashed #0095A0',
+        fontSize: 17
+      },
+      downloadButtonLink: {
+        color: '#0095A0',
+        fontSize: 17
       }
     };
 
@@ -70,38 +105,50 @@ export class FileUpload extends React.Component {
     let files;
     if (this.props.files) {
       files = this.props.files.map((file, index)=> {
-        let downloadLink;
+        let downloadLink, downloadButton;
 
         if (file.preview) {
           downloadLink = (
-            <a href={file.preview}>download</a>
+            <a style={styles.link} href={file.preview}>
+              {file.name}
+            </a>
+          );
+          downloadButton = (
+            <a style={styles.downloadButtonLink} href={file.preview}>
+              <span>
+                <KButton style={styles.downloadButton}>DOWNLOAD</KButton>
+              </span>
+            </a>
           );
         } else if(file.key) {
           downloadLink = (
-            <a href={'/api/coi/files/' + encodeURIComponent(file.id)}>download</a>
+            <a style={styles.link} href={'/api/coi/files/' + encodeURIComponent(file.id)}>
+              {file.name}
+            </a>
+          );
+          downloadButton = (
+            <a style={styles.downloadButtonLink} href={'/api/coi/files/' + encodeURIComponent(file.id)}>
+              <span>
+                <KButton style={styles.downloadButton}>DOWNLOAD</KButton>
+              </span>
+            </a>
           );
         }
 
         let deleteButton;
-
         if (!this.props.readonly) {
           deleteButton = (
-           <button onClick={this.onDelete} style={styles.deleteButton} value={index}>Delete File</button>
+            <KButton onClick={this.onDelete} style={styles.deleteButton} value={index}>Delete File</KButton>
           );
         }
 
         return (
           <div value={index} key={'file_' + index} style={styles.file}>
-            <div style={styles.left}>
-              {downloadLink}
-            </div>
-            <div style={styles.middle}>
-              <p>{this.props.fileType} Uploaded</p>
-              <p>File Name: {file.name}</p>
-            </div>
-            <div style={styles.right}>
+            {downloadLink}
+            <span style={{float: 'right'}}>
+              {downloadButton}
               {deleteButton}
-            </div>
+            </span>
           </div>
         );
       });
@@ -113,15 +160,27 @@ export class FileUpload extends React.Component {
     if (!readOnly) {
       dropzone = (
         <Dropzone
-        onDrop={this.onDrop}
-        style={styles.dropZone}
-        activeStyle={styles.dropZoneActive}
-        multiple={this.props.multiple}>
-          <div style={styles.left}>
-            {/*icon goes here*/}
+          onDrop={this.onDrop}
+          style={styles.dropZone}
+          className="fd"
+          activeClassName="file-drop"
+          activeStyle={styles.dropZoneActive}
+          multiple={this.props.multiple}
+        >
+          <div className="not-hovering">
+            <span style={styles.left}>
+              <i className="fa fa-upload" style={styles.icon}></i>
+            </span>
+            <span style={styles.middle}>
+              {this.props.children}
+            </span>
+            <span style={styles.right}>
+              <KButton style={styles.button}>UPLOAD</KButton>
+            </span>
           </div>
-          <div style={styles.middle}>
-            {this.props.children}
+          <div className="hovering" style={{textAlign: 'center', height: 31}}>
+            <i className="fa fa-file-text" style={{color: 'white', marginRight: 15, fontSize: 20}}></i>
+            <span style={{fontSize: 19}}>Drop Me Here!</span>
           </div>
         </Dropzone>
       );

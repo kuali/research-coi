@@ -39,6 +39,22 @@ span {
   background-color: #EEE;
 }
 
+.fd .not-hovering {
+  display: block;
+}
+
+.fd .hovering {
+  display: none;
+}
+
+.file-drop .not-hovering {
+  display: none;
+}
+
+.file-drop .hovering {
+  display: block;
+}
+
 /* These classes allow us to use vendor prefixes for flexbox (can't do with React inline styles) */
 .flexbox {
   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6 */

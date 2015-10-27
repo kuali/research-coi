@@ -193,7 +193,7 @@ export default class EntitySummary extends React.Component {
               {files}
             </div>
             <div style={styles.commentLink} onClick={this.showComments}>
-              <span style={styles.commentLabel}>COMMENT</span>
+              <span style={styles.commentLabel}>COMMENT ({this.props.commentCount})</span>
             </div>
           </div>
         </div>

@@ -104,10 +104,16 @@ export class DetailView extends React.Component {
       );
     }
     else if (this.state.applicationState.additionalReviewShowing) {
+      let managementPlan;
+      let readOnly = true;
+      if (this.state.applicationState.selectedDisclosure) {
+        managementPlan = this.state.applicationState.selectedDisclosure.managementPlan;
+        readOnly = this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+      }
       sidePanel = (
         <AdditionalReviewPanel
-          managementPlan={this.state.applicationState.selectedDisclosure.managementPlan}
-          readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}/>
+          managementPlan={managementPlan}
+          readonly={readOnly}/>
       );
     }
     else if (this.state.applicationState.commentSummaryShowing) {

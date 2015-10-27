@@ -18,11 +18,11 @@ export class DisclosureListItem extends React.Component {
       let matchingValue = value.substr(start, this.props.searchTerm.length);
       return (
         <span>
-          {value.substr(0, start) + ''}
+          <span style={{display: 'inline'}}>{value.substr(0, start) + ''}</span>
           <span className="highlight">
             {matchingValue}
           </span>
-          {value.substr(start + this.props.searchTerm.length)}
+          <span style={{display: 'inline'}}>{value.substr(start + this.props.searchTerm.length)}</span>
         </span>
       );
     }
@@ -35,7 +35,7 @@ export class DisclosureListItem extends React.Component {
     let styles = {
       container: {
         borderBottom: '1px solid #8C8C8C',
-        borderRight: '2px solid #8C8C8C',
+        borderRight: '1px solid #8C8C8C',
         padding: 6,
         paddingLeft: 40,
         fontSize: '.9em',

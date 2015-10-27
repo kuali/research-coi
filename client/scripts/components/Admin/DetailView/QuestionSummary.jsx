@@ -43,7 +43,7 @@ export default class QuestionSummary extends React.Component {
       },
       commentLink: {
         display: 'inline-block',
-        width: 88,
+        width: 102,
         fontSize: 14,
         cursor: 'pointer',
         marginTop: 7,
@@ -80,7 +80,7 @@ export default class QuestionSummary extends React.Component {
       commentLink = (
         <span style={styles.commentLink} onClick={this.showComments}>
           <span style={styles.commentLabel}>
-            COMMENT
+            COMMENT ({this.props.commentCount})
           </span>
         </span>
       );

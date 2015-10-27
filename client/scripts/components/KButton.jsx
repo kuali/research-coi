@@ -10,7 +10,7 @@ export class KButton extends ResponsiveComponent {
         backgroundColor: 'white',
         color: '#666666',
         border: '1px Solid #DEDEDE',
-        borderRadius: 7,
+        borderRadius: 5,
         width: 124,
         padding: 7,
         fontSize: 13,
