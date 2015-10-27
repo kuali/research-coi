@@ -47,7 +47,7 @@ export function run() {
   let portNumber = config ? config.port : 8090;
   let server = app.listen(portNumber);
 
-  Log.info(`Listening on port ${portNumber}`);
+  Log.info(`Listening on port ${portNumber} in ${app.get('env')} mode`);
 
   process.on('uncaughtException', function(err) {
     Log.error(`Uncaught exception: ${err}`);
