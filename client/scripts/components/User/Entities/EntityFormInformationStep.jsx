@@ -4,7 +4,6 @@ import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {Question} from './Question';
 import {COIConstants} from '../../../../../COIConstants';
 import {FileUpload} from '../../FileUpload';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class EntityFormInformationStep extends React.Component {
   constructor() {
@@ -32,11 +31,11 @@ export class EntityFormInformationStep extends React.Component {
   }
 
   addEntityAttachments(files) {
-    DisclosureActions.addEntityAttachments(files, this.props.id);
+    this.props.addEntityAttachments(files, this.props.id);
   }
 
   deleteEntityAttachment(index) {
-    DisclosureActions.deleteEntityAttachment(index, this.props.id);
+    this.props.deleteEntityAttachment(index, this.props.id);
   }
 
   render() {

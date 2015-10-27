@@ -27,11 +27,11 @@ export let getFile = (dbInfo, userInfo, id) => {
 };
 
 export let saveNewFiles = (dbInfo, body, files, userInfo) => {
-  if (body.type !== COIConstants.FILE_TYPE.DISCLOSURE && body.type !== COIConstants.FILE_TYPE.MANAGEMENT_PLAN) {
+  if (body.type !== COIConstants.FILE_TYPE.DISCLOSURE && body.type !== COIConstants.FILE_TYPE.MANAGEMENT_PLAN && body.type !== COIConstants.FILE_TYPE.FINANCIAL_ENTITY) {
     throw Error('Attempted an unknown file type upload');
   }
 
-  return isDisclosureUsers(dbInfo, body.refId, userInfo.schoolId)
+  return isDisclosureUsers(dbInfo, body.disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter && userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
         throw Error('Attempt to upload a file for a disclosure that isnt theirs');
