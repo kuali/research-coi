@@ -15,8 +15,8 @@ export default class Panel extends React.Component {
         borderBottom: '1px solid #AAA',
         padding: '10px 17px',
         fontSize: 17,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: 'white'
+        backgroundColor: 'white',
+        color: 'black'
       },
       content: {
         padding: 10

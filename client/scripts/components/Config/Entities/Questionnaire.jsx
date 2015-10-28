@@ -41,7 +41,7 @@ export default class Questionnaire extends React.Component {
         minHeight: 0
       },
       content: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#F2F2F2',
         boxShadow: '2px 8px 8px #ccc inset',
         minHeight: 0
       },

@@ -50,10 +50,10 @@ export default class InstructionEditor extends React.Component {
         padding: '10px 20px',
         position: 'relative',
         zIndex: 2,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
+        backgroundColor: 'white',
         cursor: 'pointer',
         fontSize: 18,
-        color: 'white',
+        color: 'black',
         borderRadius: '5px 5px 0 0'
       },
       bottom: {

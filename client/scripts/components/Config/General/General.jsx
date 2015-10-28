@@ -42,7 +42,7 @@ export default class General extends React.Component {
       container: {
       },
       content: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#F2F2F2',
         boxShadow: '2px 8px 8px #ccc inset'
       },
       stepTitle: {
