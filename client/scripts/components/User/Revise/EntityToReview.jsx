@@ -223,7 +223,7 @@ export default class EntityToReview extends React.Component {
       }
       responseText = (
         <div>
-          <textarea ref="responseText" style={styles.responseText} defaultValue={defaultText} />
+          <textarea aria-label="Response" ref="responseText" style={styles.responseText} defaultValue={defaultText} />
         </div>
       );
     }

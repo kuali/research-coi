@@ -46,10 +46,10 @@ export class EntityFormNameStep extends ResponsiveComponent {
         padding: '2px 8px',
         fontSize: 16,
         borderRadius: 5,
-        border: '1px solid #ccc',
+        border: '1px solid #AAA',
         height: 30,
         width: '100%',
-        borderBottom: this.props.validating && validationErrors.name ? '3px solid red' : '1px solid #ccc'
+        borderBottom: this.props.validating && validationErrors.name ? '3px solid red' : '1px solid #AAA'
       },
       invalidError: {
         fontSize: 10,
@@ -65,15 +65,16 @@ export class EntityFormNameStep extends ResponsiveComponent {
       );
     }
 
+    let htmlId = Math.floor(Math.random() * 1000000000);
     return (
       <span style={merge(styles.container, this.props.style)}>
         <div style={styles.title}>Add New Financial Entity</div>
 
         <div style={styles.top}>
           <span style={styles.entityName}>
-            <div style={{marginBottom: 5, fontWeight: '500'}}>Entity Name:</div>
+            <label htmlFor={htmlId} style={{marginBottom: 5, fontWeight: '500', display: 'inline-block'}}>Entity Name:</label>
             <div>
-              <input required onChange={this.updateName} value={this.props.entityName} ref="entityName" type="text" style={styles.name} />
+              <input id={htmlId} required onChange={this.updateName} value={this.props.entityName} ref="entityName" type="text" style={styles.name} />
             </div>
             {requiredFieldError}
           </span>

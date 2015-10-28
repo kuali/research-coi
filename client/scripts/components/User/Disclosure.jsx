@@ -16,7 +16,7 @@ import {NavSidebar} from './NavSidebar';
 export class Disclosure extends React.Component {
   constructor(props) {
     super(props);
-    
+
     // Set up steps for the sidebar
     this.steps = [
       {label: 'Questionnaire', value: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE},

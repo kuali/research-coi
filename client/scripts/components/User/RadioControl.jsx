@@ -71,7 +71,7 @@ export class RadioControl extends React.Component {
     });
 
     return (
-      <div>
+      <div id={`qn${this.props.questionId}`}>
         {options}
       </div>
     );

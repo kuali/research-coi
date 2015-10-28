@@ -50,7 +50,7 @@ export class NumericControl extends React.Component {
     return (
     <div>
       <div style={styles.container}>
-        <input style={styles.textbox} type="number" id="number" onChange={this.onChange} value={this.props.answer} />
+        <input style={styles.textbox} type="number" id={`eqa${this.props.questionId}`} onChange={this.onChange} value={this.props.answer} />
       </div>
       {requiredFieldError}
     </div>

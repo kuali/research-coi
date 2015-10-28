@@ -143,7 +143,7 @@ export class EntityForm extends React.Component {
       },
       content: {
         backgroundColor: 'white',
-        color: '#888',
+        color: window.colorBlindModeOn ? 'black' : '#888',
         padding: 25,
         fontSize: 14,
         borderBottom: '1px solid #DEDEDE'

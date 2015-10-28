@@ -88,7 +88,7 @@ export default class TravelRelationshipType extends RelationshipType {
           <button style={styles.closeButton} onClick={this.close}>
             Close
           </button>
-          <span style={styles.name}>{this.props.name}</span>
+          <label htmlFor={`rtcb${this.props.typeCd}`} style={styles.name}>{this.props.name}</label>
         </div>
         <div className="flexbox row" style={styles.amountSection}>
             <span style={styles.left}>
@@ -123,7 +123,7 @@ export default class TravelRelationshipType extends RelationshipType {
         <button style={styles.configureButton} onClick={this.configure}>
           Configure
         </button>
-        <span style={styles.name}>{this.props.name}</span>
+        <label htmlFor={`rtcb${this.props.typeCd}`} style={styles.name}>{this.props.name}</label>
       </div>
       );
     }
@@ -132,11 +132,12 @@ export default class TravelRelationshipType extends RelationshipType {
     <div className="flexbox row" style={merge(styles.container, this.props.style)}>
         <span style={{margin: '0 10px 0 20px'}}>
           <input
-          type="checkbox"
-          checked={this.props.enabled === 1}
-          onChange={this.enabledChanged}
-          ref="enabledCheckbox"
-          style={{verticalAlign: 'top'}}
+            type="checkbox"
+            id={`rtcb${this.props.typeCd}`}
+            checked={this.props.enabled === 1}
+            onChange={this.enabledChanged}
+            ref="enabledCheckbox"
+            style={{verticalAlign: 'top'}}
           />
         </span>
         <span className="fill">

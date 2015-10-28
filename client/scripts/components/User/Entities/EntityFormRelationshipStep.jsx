@@ -187,13 +187,17 @@ export class EntityFormRelationshipStep extends React.Component {
         borderBottom: '3px solid red'
       },
       invalidText: {
-        color: window.colorBlindModeOn ? 'black' : 'red'
+        color: window.colorBlindModeOn ? 'black' : 'red',
+        display: 'block',
+        paddingBottom: 3
       }
     };
 
     let typeSection;
     if (this.state.relation !== '' && this.state.matrixType.typeEnabled === 1) {
-      let labelStyle = {};
+      let labelStyle = {
+        paddingBottom: 3
+      };
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.type) {
         labelStyle = styles.invalidText;
@@ -219,7 +223,9 @@ export class EntityFormRelationshipStep extends React.Component {
 
     let amountSection;
     if (this.state.relation !== '' && this.state.matrixType.amountEnabled === 1) {
-      let labelStyle = {};
+      let labelStyle = {
+        paddingBottom: 3
+      };
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.amount) {
         labelStyle = styles.invalidText;
@@ -329,7 +335,9 @@ export class EntityFormRelationshipStep extends React.Component {
 
     let relationshipEditor;
     if (!this.props.readonly) {
-      let personLabelStyle = {};
+      let personLabelStyle = {
+        paddingBottom: 3
+      };
       let personDropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.person) {
         personLabelStyle = styles.invalidText;
@@ -342,7 +350,10 @@ export class EntityFormRelationshipStep extends React.Component {
         relationStyle = styles.invalidText;
       }
 
-      let commentStyle = {};
+      let commentStyle = {
+        display: 'block',
+        paddingBottom: 3
+      };
       let commentTextboxStyle = styles.textarea;
       if (this.props.validating && validationErrors.comment) {
         commentStyle = styles.invalidText;
@@ -353,6 +364,7 @@ export class EntityFormRelationshipStep extends React.Component {
         return <option key={option.typeCd} value={option.typeCd}>{option.description}</option>;
       });
 
+      let htmlId = Math.floor(Math.random() * 1000000000);
       relationshipEditor = (
         <div>
           <div style={styles.title}>{heading}</div>
@@ -402,9 +414,9 @@ export class EntityFormRelationshipStep extends React.Component {
               </div>
 
               <div style={styles.commentArea}>
-                <div style={commentStyle}>Comments</div>
+                <label htmlFor={htmlId} style={commentStyle}>Comments</label>
                 <div>
-                  <textarea onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={commentTextboxStyle} ref="commentTextArea" />
+                  <textarea id={htmlId} onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={commentTextboxStyle} ref="commentTextArea" />
                 </div>
               </div>
               <div style={styles.addButtonSection}>

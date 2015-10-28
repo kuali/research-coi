@@ -53,7 +53,7 @@ export class DateControl extends React.Component {
     return (
     <div>
       <DatePicker
-        id="questionDate"
+        id={`eqa${this.props.questionId}`}
         textFieldStyle={styles.textbox}
         style={styles.datepicker}
         onChange={this.onChange}

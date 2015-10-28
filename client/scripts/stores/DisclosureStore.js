@@ -614,7 +614,8 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityFormClosed(entity) {
     if (entity.id) {
-      if (this.applicationState.potentialRelationship.personCd.length > 0) {
+      let personCd = this.applicationState.potentialRelationship.personCd;
+      if (personCd && personCd > 0) {
         this.addEntityRelationship(entity.id);
       }
 
@@ -676,7 +677,8 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   saveInProgressEntity(entity) {
-    if (this.applicationState.potentialRelationship.personCd.length > 0) {
+    let personCd = this.applicationState.potentialRelationship.personCd;
+    if (personCd && personCd > 0) {
       this.addEntityRelationship();
     }
 

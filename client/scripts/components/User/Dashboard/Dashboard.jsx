@@ -39,6 +39,7 @@ export class Dashboard extends ResponsiveComponent {
 
   componentWillUnmount() {
     DisclosureStore.unlisten(this.onChange);
+    ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {

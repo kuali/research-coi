@@ -149,7 +149,7 @@ export default class NotificationDetails extends React.Component {
     if (this.props.isRollingDueDate === false) {
       dueDate = (
         <div>
-          <div>Due Date:</div>
+          <label htmlFor="dueDate">Due Date:</label>
           <div>
             <DatePicker id="dueDate" style={styles.datepicker} onChange={this.setDueDate} value={this.props.dueDate} />
           </div>
@@ -205,7 +205,9 @@ export default class NotificationDetails extends React.Component {
               onChange={this.textChanged}
               style={styles.expirationMessage}
               placeholder="Enter the reminder text here"
-              value={this.props.appState.newNotification.reminderText}>
+              value={this.props.appState.newNotification.reminderText}
+              aria-label="Notification text"
+            >
             </textarea>
           </div>
         </div>

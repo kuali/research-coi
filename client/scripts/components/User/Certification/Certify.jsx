@@ -68,13 +68,13 @@ export class Certify extends React.Component {
       agreement = (
       <div style={{marginTop: 20}}>
           <span style={{display: 'inline-block', width: '5%'}}>
-            <input type="checkbox" onChange={this.certify} checked={this.props.isCertified}/>
+            <input type="checkbox" id="certCheckbox" onChange={this.certify} checked={this.props.isCertified}/>
           </span>
-          <span style={{display: 'inline-block', width: '95%', verticalAlign: 'top', fontWeight: 'bold'}}>
+          <label htmlFor="certCheckbox" style={{display: 'inline-block', width: '95%', verticalAlign: 'top', fontWeight: 'bold'}}>
             I acknowledge that it is my responsibility to disclose any new SIGNIFICANT FINANCIAL
             INTERESTS obtained during the term of this disclosure. I certify that this is a complete
             disclosure of all my financial interests related to the projects therein.
-          </span>
+          </label>
       </div>
       );
     }

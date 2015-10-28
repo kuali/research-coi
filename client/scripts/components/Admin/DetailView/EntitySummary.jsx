@@ -76,7 +76,7 @@ export default class EntitySummary extends React.Component {
         borderBottom: '1px solid #999'
       },
       highlighted: {
-        borderLeft: window.colorBlindModeOn ? 'black' : '10px solid #F57C00',
+        borderLeft: window.colorBlindModeOn ? '10px solid black' : '10px solid #F57C00',
         marginLeft: -20,
         paddingLeft: 10
       },
@@ -160,7 +160,7 @@ export default class EntitySummary extends React.Component {
     let files = this.props.entity.files.map(file=>{
       return (
         <div key={file.id} style={{marginBottom: 5}}>
-          <a style={{color: window.config.colors.three, borderBottom: '1px dotted' + window.config.colors.three}} href={'/api/coi/files/' + encodeURIComponent(file.id)}>{file.name}</a>
+          <a style={{color: window.colorBlindModeOn ? 'black' : '#0095A0', borderBottom: '1px dotted ' + (window.colorBlindModeOn ? 'black' : '#0095A0')}} href={'/api/coi/files/' + encodeURIComponent(file.id)}>{file.name}</a>
         </div>
       );
     });

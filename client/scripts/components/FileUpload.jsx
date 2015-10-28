@@ -90,8 +90,8 @@ export class FileUpload extends React.Component {
         fontSize: 10
       },
       link: {
-        color: '#0095A0',
-        borderBottom: '2px dashed #0095A0',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        borderBottom: window.colorBlindModeOn ? '2px dashed black' : '2px dashed #0095A0',
         fontSize: 17
       },
       downloadButtonLink: {

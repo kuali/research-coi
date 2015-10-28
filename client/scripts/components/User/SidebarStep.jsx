@@ -43,7 +43,7 @@ export class SidebarStep extends React.Component {
         color: window.config.colors.one
       },
       incomplete: {
-        color: '#C1C1C1'
+        color: window.colorBlindModeOn ? 'black' : '#C1C1C1'
       },
       stepName: {
         verticalAlign: 'middle',

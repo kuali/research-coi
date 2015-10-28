@@ -64,7 +64,7 @@ export class DisclosureFilterSearch extends React.Component {
     return (
       <div style={merge(styles.container, this.props.styles)}>
         <i className="fa fa-search" style={styles.magnifyingGlass} onClick={this.search}></i>
-        <input placeholder="Search" style={styles.input} type="text" onChange={this.valueChanged} onKeyUp={this.keyUp} value={currentValue} />
+        <input aria-label="Search" placeholder="Search" style={styles.input} type="text" onChange={this.valueChanged} onKeyUp={this.keyUp} value={currentValue} />
       </div>
     );
   }

@@ -47,12 +47,12 @@ export class DisclosureDetailHeading extends React.Component {
         fontSize: 15
       },
       backButton: {
-        float: 'right',
         width: 165,
         padding: '4px 7px 5px 7px',
         margin: '15px 20px 0 0',
-        backgroundColor: '#DFDFDF',
-        borderBottom: '2px solid #717171'
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#DFDFDF',
+        borderBottom: '2px solid #717171',
+        color: window.colorBlindModeOn ? 'white' : '#666'
       }
     };
 
@@ -78,7 +78,7 @@ export class DisclosureDetailHeading extends React.Component {
 
     return (
       <div style={merge(styles.container, this.props.style)} >
-        <Link to={`/`}>
+        <Link to={`/`} style={{float: 'right'}}>
           <KButton style={styles.backButton}>
             <span>
               <i className="fa fa-list-ul" style={{marginRight: 5}}></i>

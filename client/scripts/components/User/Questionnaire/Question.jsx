@@ -285,9 +285,9 @@ export class Question extends React.Component {
             <div style={styles.numberToShow}>
               {subQuestion.question.numberToShow}
             </div>
-            <div style={styles.text}>
+            <label htmlFor={`qn${subQuestion.id}`} style={styles.text}>
               {subQuestion.question.text}
-            </div>
+            </label>
             <div style={styles.controls}>
               {this.getControl(subQuestion, subQuestion.answer)}
             </div>
@@ -319,9 +319,9 @@ export class Question extends React.Component {
       <span style={merge(styles.container, this.props.style)}>
         <div style={styles.panel}>
           <div style={styles.topPanel}>
-            <div style={styles.text}>
+            <label htmlFor={`qn${this.props.question.id}`} style={styles.text}>
               {this.props.question.question.text}
-            </div>
+            </label>
             <div style={styles.controls}>
               {this.getControl(this.props.question, this.props.answer)}
               <div style={styles.counter}>

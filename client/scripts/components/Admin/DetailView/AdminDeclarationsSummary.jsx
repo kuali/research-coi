@@ -75,7 +75,7 @@ export class AdminDeclarationsSummary extends React.Component {
       },
       titles: {
         borderBottom: '1px solid #ccc',
-        color: '#888',
+        color: window.colorBlindModeOn ? 'black' : '#888',
         fontSize: 12,
         marginBottom: 10
       },
