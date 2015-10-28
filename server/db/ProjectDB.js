@@ -43,9 +43,9 @@ let saveProjectPersons = (dbInfo, persons, projectId) => {
           if (personIdResult.find(pr => {
             return pr.person_id === person.personId && pr.source_person_type === person.sourcePersonType;
           })) {
-            return knex('project_person').update({'active': 1, 'role_cd': person.roleCode}).where({'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
+            return knex('project_person').update({'active': true, 'role_cd': person.roleCode}).where({'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
           } else {
-            return knex('project_person').insert({'active': 1, 'role_cd': person.roleCode, 'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
+            return knex('project_person').insert({'active': true, 'role_cd': person.roleCode, 'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
           }
         });
 
@@ -54,7 +54,7 @@ let saveProjectPersons = (dbInfo, persons, projectId) => {
             return person.personId === pr.person_id && person.sourcePersonType === pr.source_person_type;
           }) === undefined;
         }).map(result => {
-          return knex('project_person').update('active', 0).where({'person_id': result.person_id, 'source_person_type': result.source_person_type, 'project_id': projectId});
+          return knex('project_person').update('active', false).where({'person_id': result.person_id, 'source_person_type': result.source_person_type, 'project_id': projectId});
         });
 
         if (deactiveQueries.length > 0) {
@@ -105,7 +105,7 @@ let saveNewProjects = (dbInfo, projects) => {
       sponsor_name: projects.sponsorName,
       start_date: projects.startDate,
       end_date: projects.endDate
-    }).debug()
+    })
     .then(insertResult => {
       if (projects.persons) {
         let projectId = insertResult[0];
@@ -114,8 +114,9 @@ let saveNewProjects = (dbInfo, projects) => {
             project_id: projectId,
             person_id: person.personId,
             source_person_type: person.sourcePersonType,
-            role_cd: person.roleCode
-          }).debug();
+            role_cd: person.roleCode,
+            active: true
+          });
         });
         return Promise.all(inserts);
       }
