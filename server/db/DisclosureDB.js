@@ -89,7 +89,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
               key: file.filename,
               name: file.originalname,
               user_id: userInfo.schoolId,
-              uploaded_by: userInfo.displayName,
+              uploaded_by: userInfo.name,
               upload_date: new Date()
             };
             queries.push(
@@ -266,7 +266,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
               key: file.filename,
               name: file.originalname,
               user_id: userInfo.schoolId,
-              uploaded_by: userInfo.displayName,
+              uploaded_by: userInfo.name,
               upload_date: new Date()
             };
             queries.push(
@@ -755,7 +755,7 @@ export let submit = (dbInfo, userInfo, disclosureId) => {
       return knex('disclosure')
         .update({
           status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
-          submitted_by: userInfo.displayName,
+          submitted_by: userInfo.name,
           submitted_date: new Date()
         })
         .where('id', disclosureId);

@@ -1,6 +1,6 @@
 import https from 'https';
-import cache from './LruCache';
-import {COIConstants} from '../COIConstants';
+import cache from '../../LruCache';
+import {COIConstants} from '../../../COIConstants';
 
 let getAuthorizationInfo;
 try {
@@ -94,4 +94,8 @@ export function getUserInfo(dbInfo, hostname, authToken) {
       });
     }
   });
+}
+
+export function getAuthLink(req) {
+  return '/auth?return_to=' + encodeURIComponent(req.originalUrl);
 }

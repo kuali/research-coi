@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
 import apiAuthentication from './middleware/apiAuthentication';
 import viewRenderer from './middleware/viewRenderer';
+import {authView} from './services/authService/mockAuthClient';
 import Log from './Log';
 import methodChecker from './middleware/methodChecker';
 import ErrorLogger from './middleware/ErrorLogger';
@@ -30,6 +31,7 @@ export function run() {
   app.use('/coi', express.static('client'));
   app.use(methodChecker);
   app.use(cookieParser());
+  app.use('/coi/auth', authView);
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
   app.use('/coi', viewRenderer);
@@ -44,7 +46,7 @@ export function run() {
   UserController.init(app);
   app.use(ErrorLogger);
 
-  let portNumber = config ? config.port : 8090;
+  let portNumber = config ? config.port : process.env.COI_PORT || 8090;
   let server = app.listen(portNumber);
 
   Log.info(`Listening on port ${portNumber} in ${app.get('env')} mode`);

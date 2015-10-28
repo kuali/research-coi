@@ -703,8 +703,11 @@ class _ConfigStore extends AutoBindingStore {
       let option = typeRecord.typeOptions.find(typeOption => {
         return typeOption.typeCd === typeCode;
       });
-
-      return option.description;
+      if (option) {
+        return option.description;
+      } else {
+        return 'Undefined'
+      }
     }
     else {
       return 'Undefined';
@@ -717,8 +720,11 @@ class _ConfigStore extends AutoBindingStore {
       let option = typeRecord.amountOptions.find(amountOption => {
         return amountOption.typeCd === typeCode;
       });
-
-      return option.description;
+      if (option) {
+        return option.description;
+      } else {
+        return 'Undefined'
+      }
     }
     else {
       return 'Undefined';

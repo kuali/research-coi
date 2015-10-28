@@ -1,14 +1,6 @@
 INSTRUCTIONS
 ================
 
-###PREREQUISITES
-
-1. Have [KC Monolith](https://github.com/kuali/kc) up-to-date through at least the October 2015 code release
-2. Have core-auth service installed [Insructions Here](https://github.com/kuali/research-coi)
-
-----------
-###COI INSTALLION
-
 **Step 1**: download and install [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node)
 
 ----------
@@ -54,60 +46,14 @@ node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --knexfile <replace wit
 ```
 node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --knexfile <replace with knexfile.js path> seed:run --env kc_coi
 ```
+**Step 8**: Configuration Environment Variables:
 
-**Step 8**: Install and Configure NGINX:
-NGINX is a reverse proxy server that directs client requests to the appropriate back-end server.  In the case of COI it redirects authentication requests to the authentication service's server.
-Installation instructions for NGINX can be found [here](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/)
-
->**Note**: For mac os nginx can be install with homebrew
->```brew install nginx```
-
-Create NGINX config file in *nginxpath*/servers.  An example config file is below.  To use HTTPS an SSL cert and key will need to be provided.
-
-**Example Config**
-```
-http {
- server {
-       listen 443;
-
-       ssl on;
-       ssl_certificate <replace with file path to cert>;
-       ssl_certificate_key <replace with file path to key>;
-
-       location /coi/ {
-           proxy_pass http://<replace with coi host>/coi/;
-       }
-       location /api/coi/ {
-           proxy_pass http://<replace with coi host>/api/coi/;
-       }
-       location /users/ {
-           proxy_pass https://<replace with auth service host>/users/;
-       }
-       location /api/users/ {
-           proxy_pass https://<replace with auth service host>/api/users/;
-       }
-       location /auth/ {
-           proxy_pass https://<replace with auth service host>/auth/;
-       }
-       location /core-assets/ {
-           proxy_pass https://<replace with auth service host>/core-assets/;
-       }
-   }
-}
-```
-
-**Step 9**: Configuration Environment Variables:
 System configuration for COI is done with environment variables. Environment variables can either be set in the system or added on the command line when starting the application. Below is a list of configuration environment variables
 
-
 >####**Environment Configuration Variables**
->**AUTHZ_HOST**
->  : The host name for the authorization service end points.  This should be the host name of your KC monolith application.
->  *Default*: uit.kuali.co
-
->**AUTHZ_ADMIN_ROLE**
-> : The role name space and name separated by a colon.
-> *Default*:  KC-COIDISCLOSURE:COI%20Administrator
+>**COI_PORT**
+>: port for the coi app.
+>*Default*: localhost
 
 >**DB_HOST**
 >: The host name for the database.
@@ -122,7 +68,7 @@ System configuration for COI is done with environment variables. Environment var
 >*Default*: none
 >
 >**DB_NAME**
->:  the name of the database:
+>:  the name of the database.
 >*Default*: coi
 >
 >**CONNECTION_POOL_SIZE**
@@ -132,19 +78,40 @@ System configuration for COI is done with environment variables. Environment var
 >**LOCAL_FILE_DESTINATION**
 >:  file system location to store attachments
 >*Default*: uploads/
+
+-------
+
+>###**Auth Service**
+>
+>Out of the box our reference implementation of the Kuali Core Auth Service is turned off. Please contact Kuali Core Team to find out more about the Auth Service.
+>
+>A mock auth service has been provided out of the box.  Any username starting with an "a" will be given the admin role, any other name will be given the user role.  Users p1 through p500 have been populated with demo data.
+>
+>Configuration variables to enable the auth service are below.
+>
+>**AUTH_ENABLED**
+>: flag as true if you have an auth service instance you can work with, if not present or false app will use a mock auth service.
+>*Default*: 500
 >
 >**CACHE_MAX**
->: The maximum number of items in the cache.
+>: The maximum number of items in the cache. Used by the auth service.
 >*Default*: 500
 >
 >**CACHE_MAX_AGE**
->: The maximum age in milliseconds for an item to be valid in the cache.
+>: The maximum age in milliseconds for an item to be valid in the cache. Used by the auth service.
 >*Default*: 60000
+>
+>**AUTHZ_HOST**
+>  : The host name for the authorization service end points.  This should be the host name of your KC monolith application.
+>  *Default*: uit.kuali.co
 
+>**AUTHZ_ADMIN_ROLE**
+> : The role name space and name separated by a colon.
+> *Default*:  KC-COIDISCLOSURE:COI%20Administrator
 
-**Step 10**: Start Up Node
+**Step 9**: Start Up Node
 ```
 DB_NAME=coi npm start
 ```
 
-**Step 11**: Navigate to https://<replace with coi host name>/coi
+**Step 10**: Navigate to hostname:port/coi

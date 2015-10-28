@@ -1,12 +1,11 @@
-import {getUserInfo} from '../AuthService';
+import * as authService from '../services/authService/AuthService';
 import Log from '../Log';
 
 export default function authentication(req, res, next) {
-  getUserInfo(req.dbInfo, req.hostname, req.cookies.authToken)
+  authService.getUserInfo(req.dbInfo, req.hostname, req.cookies.authToken)
     .then(userInfo => {
       if (!userInfo) {
-        let returnToValue = encodeURIComponent(req.originalUrl);
-        res.redirect('/auth?return_to=' + returnToValue);
+        res.redirect(authService.getAuthLink(req));
       } else {
         req.userInfo = userInfo;
         next();
