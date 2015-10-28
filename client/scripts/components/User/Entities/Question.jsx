@@ -131,9 +131,9 @@ export class Question extends React.Component {
 
     return (
     <span style={styles.container}>
-        <div>
+        <label htmlFor={`eqa${this.props.question.id}`}>
           {this.props.question.question.text}
-        </div>
+        </label>
         <div style={styles.controls}>
           {this.getControl(this.props.question, this.props.answer)}
         </div>

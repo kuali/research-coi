@@ -42,16 +42,22 @@ export class ProjectRelation extends ResponsiveComponent {
 
     let declarationTypeOptions = this.props.declarationTypes.map(type =>{
       return (
-      <div>
+      <div key={type.typeCd}>
         <input
-        type="radio"
-        ref="none"
-        checked={this.props.typeCd === type.typeCd}
-        value={type.typeCd}
-        onChange={this.relationChosen}
-        name={this.props.project.id + 'relation' + this.props.finEntityId}
+          type="radio"
+          ref="none"
+          checked={this.props.typeCd === type.typeCd}
+          value={type.typeCd}
+          onChange={this.relationChosen}
+          name={this.props.project.id + 'relation' + this.props.finEntityId}
+          id={`${this.props.project.id}r${this.props.finEntityId}${type.typeCd}`}
         />
-        <span style={{fontSize: 14, marginLeft: 6}}>{type.description}</span>
+        <label
+          htmlFor={`${this.props.project.id}r${this.props.finEntityId}${type.typeCd}`}
+          style={{fontSize: 14, marginLeft: 6}}
+        >
+          {type.description}
+        </label>
       </div>
       );
     });
@@ -65,7 +71,14 @@ export class ProjectRelation extends ResponsiveComponent {
           {declarationTypeOptions}
         </span>
         <span style={{width: '45%', display: 'inline-block'}}>
-          <input type="text" ref="comment" value={this.props.comments} onChange={this.commentMade} style={styles.commentBox}/>
+          <input
+            type="text"
+            ref="comment"
+            value={this.props.comments}
+            onChange={this.commentMade}
+            style={styles.commentBox}
+            aria-label={`Report comments for ${this.props.project.name}`}
+          />
         </span>
       </div>
     );

@@ -40,13 +40,14 @@ export class TextAreaControl extends React.Component {
         fontSize: 16,
         marginTop: 2,
         borderRadius: 5,
-        border: '1px solid #AAA'
+        border: '1px solid #AAA',
+        resize: 'none'
       }
     };
 
     return (
       <div>
-        <textarea id="textarea" ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.onChange} />
+        <textarea id={`qn${this.props.questionId}`} ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.onChange} />
       </div>
     );
   }

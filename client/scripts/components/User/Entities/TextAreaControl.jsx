@@ -17,10 +17,12 @@ export class TextAreaControl extends React.Component {
         width: '100%',
         height: 90,
         maxWidth: '100%',
-        border: '1px solid #C7C7C7',
         fontSize: 16,
         padding: 5,
-        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa'
+        borderRadius: 5,
+        border: '1px solid #AAA',
+        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa',
+        resize: 'none'
       },
       value: {
         color: 'black',
@@ -49,7 +51,7 @@ export class TextAreaControl extends React.Component {
 
     return (
       <div>
-        <textarea id="textarea" ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.onChange} />
+        <textarea id={`eqa${this.props.questionId}`} ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.onChange} />
         {requiredFieldError}
       </div>
     );

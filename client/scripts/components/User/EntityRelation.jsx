@@ -50,8 +50,15 @@ export class EntityRelation extends ResponsiveComponent {
             value={type.typeCd}
             onChange={this.relationChosen}
             name={this.props.entity.id + 'relation' + this.props.projectId}
+            id={`${this.props.entity.id}r${this.props.projectId}${type.typeCd}`}
           />
-          <span style={{fontSize: 14, marginLeft: 6}}>{type.description}</span>
+
+          <label
+            style={{fontSize: 14, marginLeft: 6}}
+            htmlFor={`${this.props.entity.id}r${this.props.projectId}${type.typeCd}`}
+          >
+            {type.description}
+          </label>
         </div>
       );
     });
@@ -71,6 +78,7 @@ export class EntityRelation extends ResponsiveComponent {
             value={this.props.comments}
             onChange={this.commentMade}
             style={styles.commentBox}
+            aria-label={`Report comments for ${this.props.entity.name}`}
           />
         </span>
       </div>

@@ -7,7 +7,7 @@ export class KualiLogo extends React.Component {
 
   render() {
     return (
-      <img src="images/kuali.png" style={this.props.style} />
+      <img src="images/kuali.png" alt="Kuali Logo" style={this.props.style} />
     );
   }
 }

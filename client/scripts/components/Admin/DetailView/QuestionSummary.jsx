@@ -21,7 +21,7 @@ export default class QuestionSummary extends React.Component {
         marginBottom: 10
       },
       highlighted: {
-        borderLeft: window.colorBlindModeOn ? 'black' : '10px solid #F57C00',
+        borderLeft: window.colorBlindModeOn ? '10px solid black' : '10px solid #F57C00',
         marginLeft: -20,
         paddingLeft: 10
       },

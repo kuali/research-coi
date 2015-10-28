@@ -37,7 +37,7 @@ export class ApprovalConfirmation extends ResponsiveComponent {
         padding: '5px 10px',
         borderBottom: '2px solid #717171',
         width: 135,
-        backgroundColor: '#DFDFDF'
+        backgroundColor: window.colorBlindModeOn ? 'white' : '#DFDFDF'
       },
       yesButton: {
         margin: '0 auto',

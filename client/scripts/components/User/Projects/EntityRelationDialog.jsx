@@ -95,7 +95,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
         borderTop: '1px solid #C3C3C3'
       },
       spacer: {
-        display: 'inline-block',
+        display: this.props.entityCount > 1 ? 'inline-block' : 'none',
         width: 10,
         borderRight: '1px solid #666',
         height: 32,

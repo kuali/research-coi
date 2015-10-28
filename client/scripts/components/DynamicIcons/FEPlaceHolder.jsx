@@ -7,7 +7,7 @@ export class FEPlaceHolder extends React.Component {
 
   render() {
     return (
-      <svg {...this.props} style={this.props.style} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 350 350" enable-background="new 0 0 350 350">
+      <svg {...this.props} style={this.props.style} version="1.1" x="0px" y="0px" viewBox="0 0 350 350" enable-background="new 0 0 350 350">
         <g>
           <path fill={this.props.style.colorOne} d="M332.1,174.8c0,4-0.1,8-0.4,11.9c0,0.1,0,0.1,0,0.2c0,0,0,0.1,0,0.1c-6.2,81.3-74.1,145.2-157,145.2
             c-4.8,0-9.6-0.2-14.4-0.6c-2-0.2-4-0.4-6-0.7c-77.3-10-137-76.1-137-156.1c0-87,70.5-157.4,157.4-157.4c82.9,0,150.8,64,157,145.3

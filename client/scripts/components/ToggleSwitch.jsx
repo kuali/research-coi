@@ -32,7 +32,7 @@ export default class ToggleSwitch extends React.Component {
         display: 'inline-block'
       },
       base: {
-        backgroundColor: '#999999',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#999999',
         color: 'white',
         fontSize: 7,
         width: 42,
