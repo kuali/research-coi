@@ -6,6 +6,8 @@ Research COI is a research administration tools to assist in managing compliance
 
 This documentation lays out the REST APIs that are available to facilitate integrations with other University systems.
 
+<span style="color:red">Documenation and APIs are still under development and subject to change</span>
+
 # Group Disclosure APIs
 
 <!-- include(./disclosures.md) -->
