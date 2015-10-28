@@ -62,7 +62,7 @@ export class Entity extends React.Component {
       },
       entityForm: {
         display: this.props.step >= 0 ? 'block' : 'none',
-        transition: 'margin-top .3s ease-in-out'
+        transition: 'margin-top .2s ease-in-out'
       },
       buttonCell: {
         width: 268

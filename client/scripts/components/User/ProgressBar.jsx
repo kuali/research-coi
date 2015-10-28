@@ -12,7 +12,7 @@ export class ProgressBar extends React.Component {
         width: this.props.percentage + '%',
         backgroundColor: window.config.colors.two,
         height: '100%',
-        transition: 'width .3s ease-in-out'
+        transition: 'width .2s ease-in-out'
       }
     };
     return (

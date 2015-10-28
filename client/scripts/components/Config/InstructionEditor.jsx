@@ -44,7 +44,7 @@ export default class InstructionEditor extends React.Component {
         position: 'absolute',
         right: 22,
         transform: this.state.open ? 'rotateZ(-180deg)' : 'rotateZ(0deg) translateY(-3px)',
-        transition: 'transform .3s linear',
+        transition: 'transform .2s linear',
         fontSize: 25
       },
       top: {

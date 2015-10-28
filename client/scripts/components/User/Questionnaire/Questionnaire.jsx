@@ -42,7 +42,7 @@ export class Questionnaire extends React.Component {
         verticalAlign: 'top'
       },
       slider: {
-        transition: 'all .3s ease-in-out',
+        transition: 'all .2s ease-in-out',
         transform: 'translateX(' + percentToSlide + '%)'
       }
     };
