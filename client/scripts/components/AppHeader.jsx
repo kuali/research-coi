@@ -6,6 +6,7 @@ import {KualiLogo} from './DynamicIcons/KualiLogo';
 import {createRequest} from '../HttpUtils';
 import ToggleSwitch from './ToggleSwitch';
 import ColorActions from '../actions/ColorActions';
+import cookies from 'cookies-js';
 
 export class AppHeader extends React.Component {
   constructor() {
@@ -16,10 +17,16 @@ export class AppHeader extends React.Component {
     };
 
     this.onContrastChange = this.onContrastChange.bind(this);
+    this.logOut = this.logOut.bind(this);
   }
 
   onContrastChange(newValue) {
     ColorActions.setColorBlindMode(newValue === 'On' ? true : false);
+  }
+
+  logOut() {
+    cookies.expire('authToken');
+    window.location = '/coi';
   }
 
   componentWillMount() {
@@ -28,7 +35,8 @@ export class AppHeader extends React.Component {
       if (!err) {
         let userInfo = response.body;
         this.setState({
-          usersName: `${userInfo.firstName} ${userInfo.lastName}`
+          usersName: `${userInfo.firstName} ${userInfo.lastName}`,
+          mock: userInfo.mock
         });
       }
     });
@@ -105,6 +113,22 @@ export class AppHeader extends React.Component {
       }
     };
 
+    let signOut;
+    if (this.state.mock === true) {
+      signOut = (
+        <a style={styles.signOut} href="#" onClick={this.logOut}>
+          <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
+          SIGN OUT
+        </a>
+      );
+    } else {
+      signOut = (
+        <a style={styles.signOut} href="/auth/signout?return_to=/coi">
+          <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
+          SIGN OUT
+        </a>
+      );
+    }
     return (
       <header style={merge(styles.container, this.props.style)}>
         <span style={{margin: '6px 0', display: 'inline-block'}}>
@@ -127,10 +151,7 @@ export class AppHeader extends React.Component {
               label="CONTRAST MODE"
             />
           </span>
-          <a style={styles.signOut} href="/auth/signout?return_to=/coi">
-            <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
-            SIGN OUT
-          </a>
+          {signOut}
           <span style={styles.usersName}>Welcome, {this.state.usersName}</span>
         </span>
       </header>

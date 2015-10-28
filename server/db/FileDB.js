@@ -48,7 +48,7 @@ export let saveNewFiles = (dbInfo, body, files, userInfo) => {
             key: file.filename,
             name: file.originalname,
             user_id: userInfo.schoolId,
-            uploaded_by: userInfo.displayName,
+            uploaded_by: userInfo.name,
             upload_date: new Date()
           };
           return knex('file')

@@ -6,7 +6,8 @@ export let init = app => {
     res.send({
       firstName: req.userInfo.firstName,
       lastName: req.userInfo.lastName,
-      coiRole: req.userInfo.coiRole
+      coiRole: req.userInfo.coiRole,
+      mock: req.userInfo.mock
     });
   });
 };
