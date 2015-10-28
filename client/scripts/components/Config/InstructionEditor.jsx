@@ -37,7 +37,8 @@ export default class InstructionEditor extends React.Component {
         backgroundColor: 'white',
         marginBottom: 20,
         borderRadius: 5,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        boxShadow: '0 0 10px #BBB'
       },
       flipper: {
         position: 'absolute',
@@ -62,7 +63,7 @@ export default class InstructionEditor extends React.Component {
         zIndex: 1,
         position: 'relative',
         marginTop: this.state.open ? 0 : -146,
-        transition: 'margin-top .3s ease-out'
+        transition: 'margin-top .2s ease-out'
       },
       textarea: {
         width: '100%',
@@ -84,7 +85,8 @@ export default class InstructionEditor extends React.Component {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.top} onClick={this.toggle}>
-          {this.props.step} Instructions
+          {this.props.step}
+          <span style={{marginLeft: 3}}>Instructions</span>
           <span style={styles.flipper}>
             <i className="fa fa-caret-down"></i>
           </span>

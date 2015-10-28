@@ -21,6 +21,10 @@ export default class DisclosureTypes extends React.Component {
       },
       checkbox: {
         marginRight: 10
+      },
+      title: {
+        fontSize: 12,
+        marginBottom: 10
       }
     };
 
@@ -29,7 +33,7 @@ export default class DisclosureTypes extends React.Component {
       rows = (
         <span>
           <div style={styles.optionRow}>
-            <DisclosureType type={this.props.types[1]} />
+            <DisclosureType type={this.props.types[1]} canToggle={false} />
           </div>
           <div style={styles.optionRow}>
           </div>
@@ -39,6 +43,7 @@ export default class DisclosureTypes extends React.Component {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
+        <div style={styles.title}>DISCLOSURE TITLE</div>
         {rows}
       </div>
     );

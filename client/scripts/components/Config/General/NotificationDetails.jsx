@@ -1,9 +1,9 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {DatePicker} from '../../DatePicker';
 import ConfigActions from '../../../actions/ConfigActions';
 import DateOptions from './DateOptions';
 import Notification from './Notification';
+import DueDateDetails from './DueDateDetails';
 
 export default class NotificationDetails extends React.Component {
   constructor() {
@@ -14,9 +14,6 @@ export default class NotificationDetails extends React.Component {
       canBeAdded: false
     };
 
-    this.setDueDate = this.setDueDate.bind(this);
-    this.makeRolling = this.makeRolling.bind(this);
-    this.makeStatic = this.makeStatic.bind(this);
     this.textChanged = this.textChanged.bind(this);
     this.done = this.done.bind(this);
     this.add = this.add.bind(this);
@@ -60,41 +57,12 @@ export default class NotificationDetails extends React.Component {
     ConfigActions.setReminderTextOnNotification(undefined, textarea.value);
   }
 
-  setDueDate(newDate) {
-    ConfigActions.setDueDate(newDate);
-  }
-
-  makeRolling() {
-    let rollingRadio = React.findDOMNode(this.refs.rolling);
-    if (rollingRadio.checked) {
-      ConfigActions.setIsRollingDueDate(true);
-    }
-  }
-
-  makeStatic() {
-    let staticRadio = React.findDOMNode(this.refs.static);
-    if (staticRadio.checked) {
-      ConfigActions.setIsRollingDueDate(false);
-    }
-  }
-
   render() {
     let styles = {
       container: {
         padding: '10px 0',
         maxWidth: 646,
         margin: '0 auto'
-      },
-      checkbox: {
-        marginRight: 10
-      },
-      notificationQuestion: {
-        fontWeight: 'bold',
-        margin: '5px 0 17px 0',
-        textAlign: 'center'
-      },
-      dueDateOptions: {
-        paddingBottom: 15
       },
       dateDetailSection: {
         borderTop: '1px solid #aaa',
@@ -113,13 +81,6 @@ export default class NotificationDetails extends React.Component {
       },
       add: {
         cursor: 'pointer'
-      },
-      datepicker: {
-        marginTop: 4
-      },
-      dueDataType: {
-        flex: 1,
-        fontSize: 17
       },
       cancel: {
         float: 'right',
@@ -144,18 +105,6 @@ export default class NotificationDetails extends React.Component {
         resize: 'none'
       }
     };
-
-    let dueDate;
-    if (this.props.isRollingDueDate === false) {
-      dueDate = (
-        <div>
-          <label htmlFor="dueDate">Due Date:</label>
-          <div>
-            <DatePicker id="dueDate" style={styles.datepicker} onChange={this.setDueDate} value={this.props.dueDate} />
-          </div>
-        </div>
-      );
-    }
 
     let notifications;
     if (this.props.notifications && this.props.notifications.length > 0) {
@@ -216,35 +165,10 @@ export default class NotificationDetails extends React.Component {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.notificationQuestion}>How are your institution's due dates set up?</div>
-        <div className="flexbox row" style={styles.dueDateOptions}>
-          <span style={styles.dueDataType}>
-            <input
-              type="radio"
-              name="duedatetype"
-              id="static"
-              ref="static"
-              onChange={this.makeStatic}
-              style={styles.checkbox}
-              checked={this.props.isRollingDueDate === false}
-            />
-            <label htmlFor="static" style={{marginRight: 50}}>Static Annual Due Date</label>
-          </span>
-          <span style={styles.dueDataType}>
-            <input
-              type="radio"
-              name="duedatetype"
-              id="rolling"
-              ref="rolling"
-              onChange={this.makeRolling}
-              style={styles.checkbox}
-              checked={this.props.isRollingDueDate}
-            />
-            <label htmlFor="rolling">Rolling Annual Due Date</label>
-          </span>
-        </div>
-
-        {dueDate}
+        <DueDateDetails
+          isRollingDueDate={this.props.isRollingDueDate}
+          dueDate={this.props.dueDate}
+        />
 
         <div style={styles.dateDetailSection}>
           {notifications}

@@ -6,6 +6,7 @@ import ActionPanel from '../ActionPanel';
 import DisclosureTypes from './DisclosureTypes';
 import NotificationDetails from './NotificationDetails';
 import ConfigStore from '../../../stores/ConfigStore';
+import DueDateDetails from './DueDateDetails';
 
 export default class General extends React.Component {
   constructor() {
@@ -71,21 +72,30 @@ export default class General extends React.Component {
           </div>
           <div className="fill flexbox row" style={styles.configurationArea}>
             <span className="fill" style={{display: 'inline-block'}}>
-              <Panel title="Disclosure Types">
+              <Panel
+                title="General Disclosure Configuration"
+                style={{overflow: 'visible'}}
+              >
                 <DisclosureTypes
                   types={this.state.disclosureTypes}
                   appState={this.state.applicationState}
                 />
+
+                <DueDateDetails
+                  isRollingDueDate={this.state.isRollingDueDate}
+                  dueDate={this.state.dueDate}
+                  showTitleQuestion={false}
+                />
               </Panel>
 
-              <Panel title="Expiration Notifications">
+              {/*<Panel title="Expiration Notifications">
                 <NotificationDetails
                   dueDate={this.state.dueDate}
                   isRollingDueDate={this.state.isRollingDueDate}
                   notifications={this.state.notifications}
                   appState={this.state.applicationState}
                 />
-              </Panel>
+              </Panel>*/}
             </span>
             <ActionPanel visible={this.state.dirty} />
           </div>

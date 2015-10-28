@@ -93,8 +93,9 @@ export default class DisclosureType extends React.Component {
       );
     }
 
-    return (
-      <span style={merge(styles.container, this.props.style)}>
+    let checkbox;
+    if (this.props.canToggle) {
+      checkbox = (
         <input
           ref="checkbox"
           id={this.props.type.typeCd + 'disctype'}
@@ -103,6 +104,12 @@ export default class DisclosureType extends React.Component {
           checked={this.props.type.enabled === 1}
           onChange={this.toggle}
         />
+      );
+    }
+
+    return (
+      <span style={merge(styles.container, this.props.style)}>
+        {checkbox}
         {jsx}
       </span>
     );

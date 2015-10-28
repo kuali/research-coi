@@ -5,21 +5,23 @@ export default class Panel extends React.Component {
   render() {
     let styles = {
       container: {
-        borderRadius: 5,
         backgroundColor: 'white',
         boxShadow: '0 0 10px #BBB',
         marginBottom: 22,
-        overflow: 'hidden'
+        borderRadius: 5
       },
       title: {
         borderBottom: '1px solid #AAA',
         padding: '10px 17px',
         fontSize: 17,
         backgroundColor: 'white',
-        color: 'black'
+        color: 'black',
+        borderRadius: '5px 5px 0 0',
+        overflow: 'hidden'
       },
       content: {
-        padding: 10
+        padding: 10,
+        borderRadius: '0 0 5px 5px'
       }
     };
 
