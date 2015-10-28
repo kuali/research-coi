@@ -42,12 +42,12 @@ export class DisclosureTableRow extends React.Component {
       two: {
         width: '25%',
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 18
+        fontSize: 17
       },
       three: {
         width: '25%',
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 18
+        fontSize: 17
       },
       four: {
         width: '15%'
