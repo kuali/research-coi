@@ -49,7 +49,6 @@ export class Entity extends React.Component {
       dataitem: {
         margin: '10px 0',
         fontSize: 20,
-        width: '58%',
         display: 'inline-block'
       },
       button: {
@@ -66,8 +65,7 @@ export class Entity extends React.Component {
         transition: 'margin-top .3s ease-in-out'
       },
       buttonCell: {
-        width: '21%',
-        display: 'inline-block'
+        width: 268
       },
       relationshipLabel: {
         display: 'inline-block',
@@ -94,8 +92,8 @@ export class Entity extends React.Component {
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.content}>
           <div style={styles.name}>{this.props.entity.name}</div>
-          <div style={{margin: '10px 0 0 20px'}}>
-            <span style={styles.dataitem}>
+          <div style={{margin: '10px 0 0 20px'}} className="flexbox row">
+            <span className="fill" style={styles.dataitem}>
               <span style={styles.relationshipLabel}>Relationship:</span>
               <span style={styles.relationships}>
                 {relationships}
@@ -103,8 +101,6 @@ export class Entity extends React.Component {
             </span>
             <span style={styles.buttonCell}>
               <KButton style={styles.button} onClick={this.showForm}>View Summary</KButton>
-            </span>
-            <span style={styles.buttonCell}>
               {statusButton}
             </span>
           </div>
