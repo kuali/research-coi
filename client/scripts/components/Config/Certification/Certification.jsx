@@ -53,7 +53,7 @@ export default class Certification extends React.Component {
         minHeight: 100
       },
       content: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#F2F2F2',
         boxShadow: '2px 8px 8px #ccc inset'
       },
       stepTitle: {

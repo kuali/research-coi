@@ -81,10 +81,18 @@ export default class EntityRelationshipSummary extends React.Component {
           <div style={styles.summary}>
             {removeButton}
             <span>
-              {ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd) + ' • '}
-              {ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd) + ' • '}
-              {this.props.relationship.typeCd ? ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd) + ' • ' : ''}
-              {this.props.relationship.amountCd ? ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) : ''}
+              <span style={{display: 'inline'}}>
+                {ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd) + ' • '}
+              </span>
+              <span style={{display: 'inline'}}>
+                {ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd) + ' • '}
+              </span>
+              <span style={{display: 'inline'}}>
+                {this.props.relationship.typeCd ? ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd) + ' • ' : ''}
+              </span>
+              <span style={{display: 'inline'}}>
+                {this.props.relationship.amountCd ? ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) : ''}
+              </span>
             </span>
           </div>
           {commentSection}

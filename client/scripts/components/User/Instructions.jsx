@@ -52,7 +52,7 @@ export class Instructions extends ResponsiveComponent {
         whiteSpace: 'normal',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '47px 25px 31px 53px',
-        transition: 'transform .3s ease-out',
+        transition: 'transform .2s ease-out',
         transform: this.props.collapsed ? 'translateY(-100%)' : 'translateY(0%)'
       },
       buttons: {

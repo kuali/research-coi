@@ -8,7 +8,7 @@ export default class Sidebar extends React.Component {
     let styles = {
       container: {
         color: '#444',
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#F2F2F2',
         display: 'inline-block',
         minWidth: 300,
         paddingTop: 100
@@ -26,7 +26,8 @@ export default class Sidebar extends React.Component {
         display: 'block',
         borderRight: '1px solid #c0c0c0',
         borderBottom: '1px solid #c0c0c0',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        color: '#666666'
       },
       firstStep: {
         borderTop: '1px solid #c0c0c0'

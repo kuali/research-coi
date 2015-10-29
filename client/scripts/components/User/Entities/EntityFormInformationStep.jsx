@@ -68,7 +68,10 @@ export class EntityFormInformationStep extends React.Component {
     if (!this.props.update) {
       if (this.props.name) {
         heading = (
-          <div style={styles.title}>{this.props.name} Information</div>
+          <div style={styles.title}>
+            {this.props.name}
+            <span style={{marginLeft: 3}}>Information</span>
+          </div>
         );
       }
       else {
