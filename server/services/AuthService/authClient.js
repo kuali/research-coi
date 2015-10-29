@@ -17,11 +17,6 @@ try {
 
 function getUserRoles(dbInfo, schoolId, authToken) {
   return new Promise((resolve) => {
-    // temp fix
-    resolve(COIConstants.ROLES.ADMIN);
-    return;
-    // end temp fix
-
     let authInfo = getAuthorizationInfo(dbInfo);
     let options = {
       protocol: 'https:',
