@@ -1,4 +1,4 @@
-import {getUserInfo} from '../services/authService/AuthService';
+import {getUserInfo} from '../services/AuthService/AuthService';
 import Log from '../Log';
 
 function getAuthToken(header) {

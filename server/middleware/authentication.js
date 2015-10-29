@@ -1,4 +1,4 @@
-import * as authService from '../services/authService/AuthService';
+import * as authService from '../services/AuthService/AuthService';
 import Log from '../Log';
 
 export default function authentication(req, res, next) {
