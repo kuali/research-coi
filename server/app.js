@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
 import apiAuthentication from './middleware/apiAuthentication';
 import viewRenderer from './middleware/viewRenderer';
-import {authView} from './services/authService/mockAuthClient';
+import {authView} from './services/AuthService/mockAuthClient';
 import Log from './Log';
 import methodChecker from './middleware/methodChecker';
 import ErrorLogger from './middleware/ErrorLogger';
