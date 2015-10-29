@@ -28,11 +28,10 @@ export class Entity extends React.Component {
     let styles = {
       container: {
         display: 'block',
-        marginBottom: 25,
+        margin: '0 3px 25px 0',
         backgroundColor: 'white',
-        boxShadow: '0 0 15px #e6e6e6',
-        borderRadius: 5,
-        overflowY: 'hidden'
+        boxShadow: '0px 0px 3px 1px #CCC',
+        borderRadius: 5
       },
       content: {
         position: 'relative',
@@ -40,7 +39,8 @@ export class Entity extends React.Component {
         padding: '13px 16px',
         boxShadow: '0 0 15px #E6E6E6',
         fontSize: 17,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        borderRadius: 5
       },
       name: {
         fontSize: 24,

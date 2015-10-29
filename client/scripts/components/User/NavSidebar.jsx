@@ -129,7 +129,10 @@ export class NavSidebar extends React.Component {
     return (
       <span style={styles.navigation}>
         <div onClick={this.advance}>
-          <ProgressIndicator percent={this.props.percent}/>
+          <ProgressIndicator
+            percent={this.props.percent}
+            useColor={!window.colorBlindModeOn}
+          />
         </div>
 
         <div style={styles.stepButtons}>

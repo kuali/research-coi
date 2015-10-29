@@ -26,6 +26,9 @@ export class ProgressIndicator extends React.Component {
     if (this.props.percent !== nextProps.percent) {
       this.animateTo(nextProps.percent);
     }
+    if (this.props.useColor !== nextProps.useColor) {
+      this.paint();
+    }
   }
 
   shouldComponentUpdate() { return false; }
