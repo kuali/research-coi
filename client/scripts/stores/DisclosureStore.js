@@ -66,7 +66,8 @@ class _DisclosureStore extends AutoBindingStore {
       },
       validatingEntityNameStep: false,
       validatingEntityInformationStep: false,
-      validatingEntityRelationshipStep: false
+      validatingEntityRelationshipStep: false,
+      returnToSummaryOnAnswer: false
     };
 
     this.loadProjects();
@@ -257,7 +258,8 @@ class _DisclosureStore extends AutoBindingStore {
       return !question.parent;
     });
 
-    if (this.applicationState.currentDisclosureState.question >= parentQuestions.length) {
+    if (this.applicationState.returnToSummaryOnAnswer || this.applicationState.currentDisclosureState.question >= parentQuestions.length) {
+      this.applicationState.returnToSummaryOnAnswer = false;
       this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
     }
     else {
@@ -294,6 +296,7 @@ class _DisclosureStore extends AutoBindingStore {
   setCurrentQuestion(newQuestionId) {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = newQuestionId;
+    this.applicationState.returnToSummaryOnAnswer = true;
   }
 
   answerEntityQuestion(question) {
