@@ -695,19 +695,18 @@ class _DisclosureStore extends AutoBindingStore {
 
     formData.append('entity', JSON.stringify(entity));
 
+    this.applicationState.entityInProgress = {
+      active: 1,
+      answers: []
+    };
+
+    this.applicationState.newEntityFormStep = -1;
+
     createRequest().post('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities')
     .send(formData)
     .end(processResponse((err, res) => {
       if (!err) {
         this.entities.push(res.body);
-
-        this.applicationState.entityInProgress = {
-          active: 1,
-          answers: []
-        };
-
-        this.applicationState.newEntityFormStep = -1;
-
         this.emitChange();
       }
     }));
