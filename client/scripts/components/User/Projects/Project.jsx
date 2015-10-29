@@ -1,15 +1,13 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ProjectRelationDialog} from './ProjectRelationDialog';
 import {KButton} from '../../KButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
 
-export class Project extends ResponsiveComponent {
+export class Project extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.toggleDialog = this.toggleDialog.bind(this);
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
@@ -51,15 +49,12 @@ export class Project extends ResponsiveComponent {
     }
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         display: 'block',
-        overflow: 'hidden',
-        marginBottom: 25,
-        boxShadow: '0 0 15px #E6E6E6',
+        margin: '0 3px 25px 0',
+        boxShadow: '0px 0px 3px 1px #CCC',
         borderRadius: 5,
         backgroundColor: 'white'
       },
@@ -107,7 +102,6 @@ export class Project extends ResponsiveComponent {
         marginBottom: 28
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
     let relationshipDialog;
     if (this.props.open) {

@@ -47,7 +47,7 @@ export class Certify extends React.Component {
         backgroundColor: 'white',
         padding: '20px 30px',
         borderRadius: 5,
-        boxShadow: '0 0 3px 0px #CCC',
+        boxShadow: '0px 0px 3px 1px #CCC',
         marginRight: 3,
         marginBottom: 3,
         display: 'inline-block'

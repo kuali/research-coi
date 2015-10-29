@@ -1,13 +1,25 @@
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react/addons';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
+import {COIConstants} from '../../../../../COIConstants';
 
 export class DisclosureTable extends React.Component {
-  constructor() {
-    super();
+  atLeastOneRowHasButton(disclosures) {
+    if (!disclosures || !Array.isArray(disclosures)) {
+      return false;
+    }
+
+    return disclosures.some(disclosure => {
+      return (disclosure.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
+              disclosure.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
+              disclosure.status === COIConstants.DISCLOSURE_STATUS.EXPIRED ||
+              disclosure.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED);
+    });
   }
 
   render() {
+    let showButtonColumn = this.atLeastOneRowHasButton(this.props.disclosures);
+
     let styles = {
       container: {
         borderRadius: 5,
@@ -16,7 +28,6 @@ export class DisclosureTable extends React.Component {
       },
       heading: {
         fontWeight: window.colorBlindModeOn ? 'normal' : 300,
-        width: '25%',
         display: 'inline-block',
         padding: '20px 0',
         fontSize: 17
@@ -28,13 +39,13 @@ export class DisclosureTable extends React.Component {
         borderRadius: '5px 5px 0 0'
       },
       columnOne: {
-        width: '35%'
+        width: showButtonColumn ? '35%' : '33%'
       },
       columnTwo: {
-        width: '25%'
+        width: showButtonColumn ? '25%' : '33%'
       },
       columnThree: {
-        width: '25%'
+        width: showButtonColumn ? '25%' : '33%'
       }
     };
 
@@ -48,6 +59,7 @@ export class DisclosureTable extends React.Component {
           expiresOn={disclosure.expired_date}
           key={index}
           disclosureId={disclosure.id}
+          showButtonColumn={showButtonColumn}
         />
       );
     }) : null;
@@ -57,7 +69,7 @@ export class DisclosureTable extends React.Component {
         <div role="row" style={styles.headings}>
           <span role="columnheader" style={merge(styles.heading, styles.columnOne)}>DISCLOSURE TYPE</span>
           <span role="columnheader" style={merge(styles.heading, styles.columnTwo)}>STATUS</span>
-          <span role="columnheader" style={merge(styles.heading, styles.columnThree)}>LAST REVIEWED</span>
+          <span role="columnheader" style={merge(styles.heading, styles.columnThree)}>LAST REVIEW</span>
         </div>
         {rows}
       </div>

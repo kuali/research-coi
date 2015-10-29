@@ -27,7 +27,8 @@ export class QuestionnaireSummary extends React.Component {
         padding: '23px 29px',
         backgroundColor: 'white',
         margin: '35px 5px 3px 39px',
-        boxShadow: '0px 0px 3px 1px #CCC'
+        boxShadow: '0 0 8px #AAA',
+        borderRadius: 5
       },
       title: {
         fontWeight: 'bold',

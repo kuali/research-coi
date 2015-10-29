@@ -1,4 +1,4 @@
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react/addons';
 import {merge} from '../../../merge';
 import {KButton} from '../../KButton';
 import Router from 'react-router';
@@ -9,22 +9,6 @@ import {COIConstants} from '../../../../../COIConstants';
 let Link = Router.Link;
 
 export class DisclosureTableRow extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      expanded: false
-    };
-
-    this.touch = this.touch.bind(this);
-  }
-
-  touch() {
-    this.setState({
-      expanded: !this.state.expanded
-    });
-  }
-
   render() {
     let styles = {
       container: {
@@ -37,15 +21,15 @@ export class DisclosureTableRow extends React.Component {
         verticalAlign: 'middle'
       },
       one: {
-        width: '35%'
+        width: this.props.showButtonColumn ? '35%' : '33%'
       },
       two: {
-        width: '25%',
+        width: this.props.showButtonColumn ? '25%' : '33%',
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 17
       },
       three: {
-        width: '25%',
+        width: this.props.showButtonColumn ? '25%' : '33%',
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 17
       },
@@ -81,8 +65,10 @@ export class DisclosureTableRow extends React.Component {
     }
 
     let button;
-
-    if (this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS || this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+    if (this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
+        this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
+        this.props.status === COIConstants.DISCLOSURE_STATUS.EXPIRED
+       ) {
       button = (
         <Link to="disclosure" query={{type: this.props.type }}>
           <KButton style={styles.button}>Update &gt;</KButton>
@@ -94,9 +80,14 @@ export class DisclosureTableRow extends React.Component {
           <KButton style={styles.button}>Revise &gt;</KButton>
         </Link>
       );
-    } else {
-      button = (
-        <KButton style={styles.button}>View &gt;</KButton>
+    }
+
+    let buttonColumn;
+    if (this.props.showButtonColumn) {
+      buttonColumn = (
+        <span role="gridcell" style={merge(styles.cell, styles.four)}>
+          {button}
+        </span>
       );
     }
 
@@ -110,11 +101,9 @@ export class DisclosureTableRow extends React.Component {
           {ConfigStore.getDisclosureStatusString(this.props.status)}
         </span>
         <span role="gridcell" style={merge(styles.cell, styles.three)}>
-          {this.props.lastreviewed ? formatDate(this.props.lastreviewed) : ''}
+          {this.props.lastreviewed ? formatDate(this.props.lastreviewed) : 'None'}
         </span>
-        <span role="gridcell" style={merge(styles.cell, styles.four)}>
-          {button}
-        </span>
+        {buttonColumn}
       </div>
     );
   }

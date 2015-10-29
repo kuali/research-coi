@@ -9,12 +9,10 @@ export class ConfirmationMessage extends ResponsiveComponent {
     this.commonStyles = {
       close: {
         cursor: 'pointer',
-        position: 'absolute',
-        right: 8,
-        top: 8,
-        display: 'inline-block',
         fontWeight: 'normal',
-        fontSize: 18
+        fontSize: 18,
+        float: 'right',
+        marginTop: -5
       },
       x: {
         fontWeight: 'bold',
@@ -52,7 +50,6 @@ export class ConfirmationMessage extends ResponsiveComponent {
           <span style={styles.x}>X</span>
         </span>
         <div>Awesome, you have successfully submitted your disclosure!</div>
-        <div>Now go kick back and relax or click below to review.</div>
       </div>
     );
   }
@@ -77,10 +74,9 @@ export class ConfirmationMessage extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)}>
         <span style={styles.close} onClick={this.close}>
           CLOSE
-          <span style={styles.x}>X</span>
+          <i className="fa fa-times" style={styles.x}></i>
         </span>
         <div>Awesome, you have successfully submitted your disclosure!</div>
-        <div>Now go kick back and relax or click below to review.</div>
       </div>
     );
   }

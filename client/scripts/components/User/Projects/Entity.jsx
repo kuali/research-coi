@@ -58,9 +58,8 @@ export class Entity extends ResponsiveComponent {
     let desktopStyles = {
       container: {
         display: 'block',
-        overflow: 'hidden',
-        marginBottom: 25,
-        boxShadow: '0 0 15px #E6E6E6',
+        margin: '0 3px 25px 0',
+        boxShadow: '0px 0px 3px 1px #CCC',
         borderRadius: 5,
         backgroundColor: 'white'
       },
