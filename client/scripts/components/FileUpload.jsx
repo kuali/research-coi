@@ -109,12 +109,12 @@ export class FileUpload extends React.Component {
 
         if (file.preview) {
           downloadLink = (
-            <a style={styles.link} href={file.preview}>
+            <a target="_blank" style={styles.link} href={file.preview}>
               {file.name}
             </a>
           );
           downloadButton = (
-            <a style={styles.downloadButtonLink} href={file.preview}>
+            <a target="_blank" style={styles.downloadButtonLink} href={file.preview}>
               <span>
                 <KButton style={styles.downloadButton}>DOWNLOAD</KButton>
               </span>

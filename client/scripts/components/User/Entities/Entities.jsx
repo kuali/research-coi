@@ -37,8 +37,9 @@ export class Entities extends React.Component {
       },
       newentityform: {
         verticalAlign: 'top',
-        marginBottom: 30,
-        display: 'block'
+        margin: '0 3px 30px 0',
+        display: 'block',
+        boxShadow: '0px 0px 3px 1px #CCC'
       },
       viewToggle: {
         'float': 'right',
