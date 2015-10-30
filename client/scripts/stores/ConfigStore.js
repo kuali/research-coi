@@ -706,7 +706,7 @@ class _ConfigStore extends AutoBindingStore {
       if (option) {
         return option.description;
       } else {
-        return 'Undefined'
+        return 'Undefined';
       }
     }
     else {
@@ -723,7 +723,7 @@ class _ConfigStore extends AutoBindingStore {
       if (option) {
         return option.description;
       } else {
-        return 'Undefined'
+        return 'Undefined';
       }
     }
     else {

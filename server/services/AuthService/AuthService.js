@@ -4,7 +4,7 @@ import * as mockAuthClient from './mockAuthClient';
 let client;
 
 try {
-  let extensions = require('research-extensions');
+  let extensions = require('research-extensions'); // eslint-disable-line no-unused-vars
   client = authClient;
 } catch (e) {
   client = process.env.AUTH_ENABLED === true ? authClient : mockAuthClient;

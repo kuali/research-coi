@@ -1,6 +1,5 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../merge';
-import {SearchIcon} from '../DynamicIcons/SearchIcon';
 
 export class DisclosureFilterSearch extends React.Component {
   constructor() {
