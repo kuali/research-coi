@@ -1,27 +1,69 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
+import DeclarationSummary from './DeclarationSummary';
 
-export class DeclarationsSummary extends ResponsiveComponent {
-  constructor() {
-    super();
-    this.commonStyles = {};
+export default class extends React.Component {
+  getProjectTypeString(typeCd) {
+    let theProjectType = this.props.projectTypes.find(projectType => {
+      return projectType.typeCd === typeCd;
+    });
+
+    if (!theProjectType) {
+      return '';
+    }
+
+    return theProjectType.description;
   }
 
-  renderMobile() {}
+  getDeclarationTypeString(typeCd) {
+    let theDeclarationType = this.props.declarationTypes.find(declarationType => {
+      return declarationType.typeCd === typeCd;
+    });
 
-  renderDesktop() {
-    let desktopStyles = {
+    if (!theDeclarationType) {
+      return '';
+    }
+
+    return theDeclarationType.description;
+
+  }
+
+  getUniqueProjects(declarations) {
+    let projects = [];
+    let alreadyAdded = {};
+
+    declarations.forEach(declaration => {
+      if (!alreadyAdded[declaration.projectId]) {
+        projects.push({
+          id: declaration.projectId,
+          name: declaration.projectTitle,
+          type: this.getProjectTypeString(declaration.projectTypeCd),
+          role: declaration.roleCd,
+          sponsor: declaration.sponsorName
+        });
+        alreadyAdded[declaration.projectId] = true;
+      }
+    });
+
+    projects.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+
+    return projects;
+  }
+
+  render() {
+    let styles = {
       container: {
-        border: '1px solid #999',
-        boxShadow: '0 0 15px #E6E6E6',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        boxShadow: '0 0 8px #AAA',
+        borderRadius: 5,
+        overflow: 'hidden'
       },
       heading: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         borderBottom: '1px solid #999',
         fontSize: 25,
-        color: 'white',
+        color: 'black',
         padding: 10
       },
       body: {
@@ -34,7 +76,7 @@ export class DeclarationsSummary extends ResponsiveComponent {
       },
       titles: {
         borderBottom: '1px solid #ccc',
-        color: '#888',
+        color: window.colorBlindModeOn ? 'black' : '#888',
         fontSize: 12,
         marginBottom: 10
       },
@@ -56,50 +98,60 @@ export class DeclarationsSummary extends ResponsiveComponent {
         paddingBottom: 15,
         borderBottom: '2px solid #666'
       },
-      lastRelationship: {
+      lastrelationship: {
         paddingBottom: 15,
         borderBottom: 0
       },
-      declaration: {
-        fontSize: 12,
-        marginBottom: 10
+      label: {
+        paddingRight: 5
+      },
+      field: {
+        display: 'inline-block',
+        width: '100%',
+        padding: '0px 0px 10px 10px'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
-    let relationships = [];
-    let projects = this.props.projects;
-    if(projects !== undefined) {
-      projects.forEach((project, index) => {
-        let entities = [];
-        project.entities.forEach(entity => {
-          entities.push(
-            <div key={entity.id} style={styles.declaration}>
-              <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
-                {entity.name}
-              </span>
-              <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
-                {entity.conflict ? 'Conflict' : 'No Conflict'}
-              </span>
-              <span style={merge(styles.comments, {fontStyle: 'italic'})}>
-                {entity.comments}
-              </span>
-            </div>
+    let projects = [];
+    if(this.props.declarations !== undefined) {
+
+      let uniqueProjects = this.getUniqueProjects(this.props.declarations);
+
+      projects = uniqueProjects.map((project, index) => {
+        let declarations = this.props.declarations.filter(declaration => {
+          return declaration.projectId === project.id && declaration.finEntityActive === 1;
+        }).map(declaration => {
+          return (
+            <DeclarationSummary
+              key={declaration.id}
+              declaration={declaration}
+              disposition={this.getDeclarationTypeString(declaration.typeCd)}
+            />
           );
         });
 
-        let projectName = project.name;
-        let isLastRelationshipInList = index === (projects.length - 1);
-        let relationshipStyle = isLastRelationshipInList ? styles.lastRelationship : styles.relationship;
-        relationships.push(
-          <div key={projectName} style={relationshipStyle}>
-            <div style={styles.name}>{projectName}</div>
+        return (
+          <div key={'proj' + project.id}
+            style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}>
+            <div style={styles.name}>{project.name}</div>
+            <div style={styles.field}>
+              <label style={styles.label}>Project Type:</label>
+              <span style={{fontWeight: 'bold'}}>{project.type}</span>
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Project Role:</label>
+              <span style={{fontWeight: 'bold'}}>{project.role}</span>
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Sponsor:</label>
+              <span style={{fontWeight: 'bold'}}>{project.sponsor}</span>
+            </div>
             <div style={styles.titles}>
               <span style={styles.entityName}>FINANCIAL ENTITY</span>
               <span style={styles.conflict}>REPORTER RELATIONSHIP</span>
               <span style={styles.comments}>REPORTER COMMENTS</span>
             </div>
-            {entities}
+            {declarations}
           </div>
         );
       });
@@ -109,7 +161,7 @@ export class DeclarationsSummary extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)} >
         <div style={styles.heading}>PROJECT DECLARATIONS</div>
         <div style={styles.body}>
-          {relationships}
+          {projects}
         </div>
       </div>
     );

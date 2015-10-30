@@ -21,7 +21,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to associate an entity with a disclosure that isnt the users');
+        throw Error(`Attempt by ${userInfo.username} to associate an entity with disclosure ${disclosureId} that isnt the users`);
       }
 
       return knex('fin_entity')
@@ -131,7 +131,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
   return isEntityUsers(knex, entityId, userInfo.schoolId)
     .then(isOwner => {
       if (!isOwner) {
-        throw Error('Attempt to update an entity not owned by user');
+        throw Error(`Attempt by ${userInfo.username} to update entity ${entityId} not owned by user`);
       }
 
       return knex('fin_entity')
@@ -291,7 +291,7 @@ export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to create a declaration for a disclosure which isnt the users');
+        throw Error(`Attempt by user id ${userId} to create a declaration for disclosure ${disclosureId} which isnt the users`);
       }
 
       let knex = getKnex(dbInfo);
@@ -312,7 +312,7 @@ export let saveExistingDeclaration = (dbInfo, userId, disclosureId, declarationI
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to save a declaration on a disclosure that isnt theirs');
+        throw Error(`Attempt by userId ${userId} to save a declaration on disclosure ${disclosureId} which isnt theirs`);
       }
 
       let knex = getKnex(dbInfo);
@@ -333,7 +333,7 @@ export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to save a question answer on a disclosure that isnt theirs');
+        throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`);
       }
 
       let knex = getKnex(dbInfo);
@@ -360,7 +360,7 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questionI
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to save a question answer on a disclosure that isnt theirs');
+        throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`);
       }
 
       let knex = getKnex(dbInfo);
@@ -513,7 +513,7 @@ export let get = (dbInfo, userInfo, disclosureId) => {
     ]) => {
       if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
         if (!isOwner) {
-          throw Error('Attempt to load disclosure which is not users');
+          throw Error(`Attempt by ${userInfo.username} to load disclosure ${disclosureId} which is not theirs`);
         }
       }
 
@@ -748,7 +748,7 @@ export let submit = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to submit a disclosure that isnt theirs');
+        throw Error(`Attempt by ${userInfo.username} to submit disclosure ${disclosureId} which isnt theirs`);
       }
 
       let knex = getKnex(dbInfo);
@@ -781,7 +781,8 @@ let approveDisclosure = (knex, disclosureId, expiredDate) => {
   return knex('disclosure')
     .update({
       expired_date: expiredDate,
-      status_cd: COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
+      status_cd: COIConstants.DISCLOSURE_STATUS.UP_TO_DATE,
+      last_review_date: new Date()
     })
     .where('id', disclosureId);
 };
@@ -825,6 +826,7 @@ export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
   let knex = getKnex(dbInfo);
 
   disclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+  disclosure.lastReviewDate = new Date();
 
   return Promise.all([
     knex('config').select('config').limit(1).orderBy('id', 'desc'),
@@ -845,17 +847,37 @@ export let reject = (dbInfo, displayName, disclosureId) => {
   let knex = getKnex(dbInfo);
   return knex('disclosure')
   .update({
-    status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED
+    status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED,
+    last_review_date: new Date()
   })
   .where('id', disclosureId);
 };
 
 export let getArchivedDisclosures = (dbInfo, userId) => {
   let knex = getKnex(dbInfo);
-  return knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')
-    .from('disclosure as de')
-    .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
-    .where('de.user_id', userId);
+
+  return Promise.all([
+    knex.select('da.id', 'da.disclosure_id as disclosureId', 'da.approved_by as approvedBy', 'da.approved_date as approvedDate', 'da.disclosure as disclosure')
+      .from('disclosure_archive as da')
+      .innerJoin('disclosure as d', 'd.id', 'da.disclosure_id')
+      .where('d.user_id', userId)
+      .orderBy('da.id', 'desc'),
+    knex.select('id', 'config')
+      .from('config as c')
+  ]).then(([archives, configs]) => {
+    archives.forEach(archive => {
+      let archivesConfigId = JSON.parse(archive.disclosure).configId;
+      let theConfig = configs.find(config => {
+        return config.id === archivesConfigId;
+      });
+
+      if (theConfig) {
+        archive.config = theConfig.config;
+      }
+    });
+
+    return archives;
+  });
 };
 
 export let getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {
@@ -873,7 +895,7 @@ export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => 
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to delete answers from a disclosure that isnt theirs');
+        throw Error(`Attempt by ${userInfo.username} to delete answers from disclosure ${disclosureId} which isnt theirs`);
       }
 
       return knex.select('qa.id as questionnaireAnswerId', 'da.id as disclosureAnswerId')

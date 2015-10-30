@@ -17,7 +17,7 @@ function hashCode(toHash){
 }
 
 export function getUserInfo(dbInfo, hostname, token) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
     if (!token) {
       resolve();
     }

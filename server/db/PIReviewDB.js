@@ -553,7 +553,7 @@ export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
-        throw Error('Attempt to access pi-review-items for a disclosure that isnt the users');
+        throw Error(`Attempt by ${userInfo.username} to access pi-review-items for disclosure ${disclosureId} which isnt theirs`);
       }
 
       let knex = getKnex(dbInfo);

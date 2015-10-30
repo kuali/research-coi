@@ -4,7 +4,6 @@ import Sidebar from '../Sidebar';
 import Panel from '../Panel';
 import ActionPanel from '../ActionPanel';
 import DisclosureTypes from './DisclosureTypes';
-import NotificationDetails from './NotificationDetails';
 import ConfigStore from '../../../stores/ConfigStore';
 import DueDateDetails from './DueDateDetails';
 
