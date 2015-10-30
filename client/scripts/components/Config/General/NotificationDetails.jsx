@@ -49,7 +49,6 @@ export default class NotificationDetails extends React.Component {
   }
 
   textChanged() {
-    console.log('being called');
     let textarea = React.findDOMNode(this.refs.reminderText);
     this.setState({
       canBeAdded: textarea.value.length > 0

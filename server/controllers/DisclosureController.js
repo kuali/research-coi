@@ -40,7 +40,7 @@ export let init = app => {
     Can only see disclosures which they submitted
   */
   app.get('/api/coi/archived-disclosures', function(req, res, next) {
-    DisclosureDB.getArchivedDisclosures(req.dbInfo, req.userInfo.schoolid)
+    DisclosureDB.getArchivedDisclosures(req.dbInfo, req.userInfo.schoolId)
       .then(disclosures => {
         res.send(disclosures);
       })

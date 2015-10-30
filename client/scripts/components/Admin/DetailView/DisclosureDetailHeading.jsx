@@ -63,7 +63,11 @@ export class DisclosureDetailHeading extends React.Component {
       dateSection = (
         <div style={merge(styles.details)}>
           <span style={styles.label}>Revised On:</span>
-          <span style={styles.value}>{formatDate(disclosure.revisedDate)} • {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</span>
+          <span style={styles.value}>
+            <span style={{marginRight: 3}}>{formatDate(disclosure.revisedDate)}</span>
+            <span style={{marginRight: 3}}>•</span>
+            {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}
+          </span>
         </div>
       );
     }
@@ -71,7 +75,11 @@ export class DisclosureDetailHeading extends React.Component {
       dateSection = (
         <div style={merge(styles.details)}>
           <span style={styles.label}>Submitted On:</span>
-          <span style={styles.value}>{formatDate(disclosure.submittedDate)} • {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</span>
+          <span style={styles.value}>
+            <span style={{marginRight: 3}}>{formatDate(disclosure.submittedDate)}</span>
+            <span style={{marginRight: 3}}>•</span>
+            {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}
+          </span>
         </div>
       );
     }
@@ -88,7 +96,12 @@ export class DisclosureDetailHeading extends React.Component {
         </Link>
         <span>
           <div style={styles.heading}>
-            <span style={styles.disclosure}>{ConfigStore.getDisclosureTypeString(disclosure.typeCd)} •</span>
+            <span style={styles.disclosure}>
+              <span style={{marginRight: 3}}>
+                {ConfigStore.getDisclosureTypeString(disclosure.typeCd)}
+              </span>
+              •
+            </span>
             <span>ID</span>
             <span style={styles.id}>#{disclosure.id}</span>
           </div>

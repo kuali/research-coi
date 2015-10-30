@@ -781,7 +781,8 @@ let approveDisclosure = (knex, disclosureId, expiredDate) => {
   return knex('disclosure')
     .update({
       expired_date: expiredDate,
-      status_cd: COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
+      status_cd: COIConstants.DISCLOSURE_STATUS.UP_TO_DATE,
+      last_review_date: new Date()
     })
     .where('id', disclosureId);
 };
@@ -825,6 +826,7 @@ export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
   let knex = getKnex(dbInfo);
 
   disclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+  disclosure.lastReviewDate = new Date();
 
   return Promise.all([
     knex('config').select('config').limit(1).orderBy('id', 'desc'),
@@ -845,17 +847,37 @@ export let reject = (dbInfo, displayName, disclosureId) => {
   let knex = getKnex(dbInfo);
   return knex('disclosure')
   .update({
-    status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED
+    status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED,
+    last_review_date: new Date()
   })
   .where('id', disclosureId);
 };
 
 export let getArchivedDisclosures = (dbInfo, userId) => {
   let knex = getKnex(dbInfo);
-  return knex.select('de.id', 'de.type_cd as type', 'de.title', 'submitted_date as submitted_date', 'dn.description as disposition', 'de.start_date')
-    .from('disclosure as de')
-    .innerJoin('disposition_type as dn', 'de.disposition_type_cd', 'dn.type_cd')
-    .where('de.user_id', userId);
+
+  return Promise.all([
+    knex.select('da.id', 'da.disclosure_id as disclosureId', 'da.approved_by as approvedBy', 'da.approved_date as approvedDate', 'da.disclosure as disclosure')
+      .from('disclosure_archive as da')
+      .innerJoin('disclosure as d', 'd.id', 'da.disclosure_id')
+      .where('d.user_id', userId)
+      .orderBy('da.id', 'desc'),
+    knex.select('id', 'config')
+      .from('config as c')
+  ]).then(([archives, configs]) => {
+    archives.forEach(archive => {
+      let archivesConfigId = JSON.parse(archive.disclosure).configId;
+      let theConfig = configs.find(config => {
+        return config.id === archivesConfigId;
+      });
+
+      if (theConfig) {
+        archive.config = theConfig.config;
+      }
+    });
+
+    return archives;
+  });
 };
 
 export let getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {

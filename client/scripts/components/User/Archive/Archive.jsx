@@ -1,32 +1,23 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {FilterType} from './FilterType';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {DisclosureTable} from './DisclosureTable';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {SearchBox} from '../../SearchBox';
+import Router from 'react-router';
+let Link = Router.Link;
+import ArchiveDetail from './ArchiveDetail';
+import {formatDate} from '../../../formatDate';
 
-const DISCLOSURE_TYPE = {
-  PROJECT: '3',
-  ANNUAL: '2',
-  ALL: 'ALL'
-};
-
-export class Archive extends ResponsiveComponent {
+export class Archive extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
 
     let storeState = DisclosureStore.getState();
     this.state = {
-      applicationState: storeState.applicationState,
       archivedDisclosures: storeState.archivedDisclosures
     };
 
     this.onChange = this.onChange.bind(this);
-    this.changeQuery = this.changeQuery.bind(this);
+    this.changeArchive = this.changeArchive.bind(this);
   }
 
   componentDidMount() {
@@ -41,24 +32,54 @@ export class Archive extends ResponsiveComponent {
   onChange() {
     let storeState = DisclosureStore.getState();
     this.setState({
-      applicationState: storeState.applicationState,
       archivedDisclosures: storeState.archivedDisclosures
+    });
+
+    if (storeState.archivedDisclosures && storeState.archivedDisclosures.length > 0) {
+      this.displayArchive(storeState.archivedDisclosures[0]);
+    }
+  }
+
+  getSubmittedDate() {
+    if (!this.state.disclosure) {
+      return '';
+    }
+
+    return formatDate(this.state.disclosure.submittedDate);
+  }
+
+  getApprovedDate() {
+    if (!this.state.disclosure) {
+      return '';
+    }
+
+    return formatDate(this.state.disclosure.lastReviewDate);
+  }
+
+  displayArchive(archive) {
+    this.setState({
+      disclosure: JSON.parse(archive.disclosure),
+      config: JSON.parse(archive.config)
     });
   }
 
-  shouldComponentUpdate() { return true; }
+  changeArchive() {
+    let versionPicker = React.findDOMNode(this.refs.versionPicker);
 
-  changeQuery(newQuery) {
-    DisclosureActions.changeArchivedQuery(newQuery);
+    let theArchive = this.state.archivedDisclosures.find(archive => {
+      return archive.id === parseInt(versionPicker.value);
+    });
+
+    if (theArchive) {
+      this.displayArchive(theArchive);
+    }
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
-        width: '100%',
-        background: '#eeeeee'
+        background: '#eeeeee',
+        minHeight: 100
       },
       sidebar: {
         minWidth: 300,
@@ -68,81 +89,135 @@ export class Archive extends ResponsiveComponent {
         paddingTop: 125,
         boxShadow: '2px 1px 8px #D5D5D5'
       },
+      sidebarButton: {
+        borderBottom: window.colorBlindModeOn ? '1px solid black' : '1px solid #DDD',
+        padding: '20px 40px',
+        cursor: 'pointer',
+        color: window.colorBlindModeOn ? 'black' : '#666'
+      },
+      firstButton: {
+        borderTop: window.colorBlindModeOn ? '1px solid black' : '1px solid #DDD'
+      },
+      sidebarTopText: {
+        fontSize: 28,
+        fontWeight: 300
+      },
+      sidebarBottomText: {
+        fontSize: 22,
+        fontWeight: 'bold'
+      },
       content: {
-        display: 'inline-block',
         verticalAlign: 'top'
       },
       header: {
         backgroundColor: 'white',
-        padding: '17px 0 17px 50px',
+        padding: '12px 0 13px 33px',
         position: 'relative',
         borderBottom: '1px solid #e3e3e3',
-        boxShadow: '0 2px 8px #D5D5D5'
+        boxShadow: '0 2px 8px #CCC',
+        minHeight: 83
       },
       heading: {
-        fontSize: '33px',
-        margin: '0 0 0 0',
-        textTransform: 'uppercase',
-        fontWeight: 300,
-        color: '#444'
+        fontSize: 19,
+        fontWeight: 'bold'
       },
-      table: {
-        margin: '30px 30px'
+      dateRow: {
+        fontSize: 14
       },
-      searchbox: {
-        width: 300,
-        margin: '30px'
+      dateValue: {
+        fontWeight: 'bold',
+        marginLeft: 3
+      },
+      versionPicker: {
+        float: 'right',
+        marginRight: 55,
+        paddingTop: 8
+      },
+      versionLabel: {
+        fontSize: 12
+      },
+      versionDropDown: {
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
 
-    let query = this.state.applicationState.archiveQuery;
-    if (query) {
-      query = query.toLowerCase();
-    }
-    let disclosures = this.state.archivedDisclosures.filter(
-      disclosure => {
-        if (query) {
-          return disclosure.title.toLowerCase().indexOf(query) === 0;
-        }
-        else {
-          return true;
-        }
+    let detail;
+    let header;
+    if (this.state.archivedDisclosures && this.state.archivedDisclosures.length > 0) {
+      let versions = this.state.archivedDisclosures.map(archivedDisclosure => {
+        return (
+          <option key={archivedDisclosure.id} value={archivedDisclosure.id}>
+            Approved {formatDate(archivedDisclosure.approvedDate)}
+          </option>
+        );
+      });
+
+      header = (
+        <div>
+          <span style={styles.versionPicker}>
+            <label htmlFor="daVersionPicker" style={styles.versionLabel}>VERSION</label>
+            <div>
+              <select ref="versionPicker" id="daVersionPicker" style={styles.versionDropDown} onChange={this.changeArchive}>
+                {versions}
+              </select>
+            </div>
+          </span>
+
+          <div style={styles.heading}>Annual Disclosure</div>
+          <div style={styles.dateRow}>
+            Submited On:
+            <span style={styles.dateValue}>{this.getSubmittedDate()}</span>
+          </div>
+          <div style={styles.dateRow}>
+            Approved On:
+            <span style={styles.dateValue}>{this.getApprovedDate()}</span>
+          </div>
+        </div>
+      );
+
+      if (this.state.disclosure) {
+        detail = (
+          <ArchiveDetail
+            disclosure={this.state.disclosure}
+            config={this.state.config}
+          />
+        );
       }
-    );
-    if (this.state.applicationState.archiveFilter !== DISCLOSURE_TYPE.ALL) {
-      disclosures = disclosures.filter(
-        disclosure => {
-          return disclosure.type.toString() === this.state.applicationState.archiveFilter;
-        }
+    }
+    else {
+      header = (
+        <div style={{height: 57}}></div>
+      );
+
+      detail = (
+        <div style={{textAlign: 'center', marginTop: 100, fontSize: 18}}>No archives found</div>
       );
     }
 
     return (
-      <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
+      <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
-          <FilterType type={DISCLOSURE_TYPE.ANNUAL} active={this.state.applicationState.archiveFilter === DISCLOSURE_TYPE.ANNUAL}>
-            ANNUAL DISCLOSURES
-          </FilterType>
+          <Link to="dashboard">
+            <div style={merge(styles.sidebarButton, styles.firstButton)}>
+              <div style={styles.sidebarTopText}>Back To</div>
+              <div style={styles.sidebarBottomText}>Dashboard</div>
+            </div>
+          </Link>
+          <Link to="disclosure">
+            <div style={styles.sidebarButton}>
+              <div style={styles.sidebarTopText}>Update</div>
+              <div style={styles.sidebarBottomText}>Annual Disclosure</div>
+            </div>
+          </Link>
         </span>
-        <span className="fill" style={styles.content}>
+        <span className="inline-flexbox column fill" style={styles.content}>
           <div style={styles.header}>
-            <h2 style={styles.heading}>Disclosure Archive</h2>
+            {header}
           </div>
-
-          <div>
-            <SearchBox placeholder="Project Title" style={styles.searchbox} value={this.state.applicationState.archivedQuery} onChange={this.changeQuery} />
-          </div>
-
-          <div style={styles.table}>
-            <DisclosureTable
-              sortField={this.state.applicationState.archiveSortField}
-              sortDirection={this.state.applicationState.archiveSortDirection}
-              disclosures={disclosures}
-            />
+          <div className="fill" style={{overflowY: 'auto'}}>
+            {detail}
           </div>
         </span>
-      </span>
+      </div>
     );
   }
 }

@@ -1,136 +1,41 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
-import EntityRelationshipSummary from '../../EntityRelationshipSummary';
+import EntitySummary from './EntitySummary';
 
-export class EntitiesSummary extends React.Component {
-  constructor() {
-    super();
-  }
-
+export default class extends React.Component {
   render() {
     let styles = {
       container: {
-        border: '1px solid #999',
-        boxShadow: '0 0 15px #E6E6E6',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        boxShadow: '0 0 8px #AAA',
+        borderRadius: 5,
+        overflow: 'hidden'
       },
       heading: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         borderBottom: '1px solid #999',
         fontSize: 25,
-        color: 'white',
+        color: 'black',
         padding: 10
       },
       body: {
         padding: '0 20px'
-      },
-      button: {
-        padding: '3px 7px',
-        'float': 'right',
-        marginRight: 10,
-        fontSize: 12,
-        width: 'initial'
-      },
-      relations: {
-        display: 'inline-block',
-        width: '60%',
-        verticalAlign: 'top'
-      },
-      left: {
-        display: 'inline-block',
-        width: '40%',
-        verticalAlign: 'top',
-        fontSize: 13,
-        paddingRight: 4
-      },
-      fieldLabel: {
-        fontWeight: 'bold',
-        display: 'inline-block'
-      },
-      fieldValue: {
-        marginLeft: 4,
-        display: 'inline-block'
-      },
-      descriptionLabel: {
-        fontWeight: 'bold',
-        marginTop: 10,
-        marginBottom: 2
-      },
-      relationshipDescription: {
-        fontSize: 11,
-        fontStyle: 'italic'
-      },
-      relationshipsLabel: {
-        fontSize: 15,
-        marginBottom: 8
-      },
-      name: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 11
-      },
-      entity: {
-        borderBottom: '1px solid #999',
-        padding: '20px 0'
-      },
-      lastEntity: {
-        padding: '20px 0'
-      },
-      relationshipSummary: {
-        marginBottom: 10
       }
     };
 
-    let entities = [];
+    let entities;
     if(this.props.entities !== undefined) {
-      for (let i = 0; i < this.props.entities.length; i++) {
-        let relationships = [];
-        for (let j = 0; j < this.props.entities[i].relationships.length; j++) {
-          relationships.push(
-            <EntityRelationshipSummary
-              key={i + ':' + j}
-              style={styles.relationshipSummary}
-              relationship={this.props.entities[i].relationships[j]}
-              readonly={true}
-            />
-          );
-        }
-
-        entities.push(
-          <div
-            key={i}
-            style={(i === this.props.entities.length - 1) ? styles.lastEntity : styles.entity}
-          >
-            <div style={styles.name}>{this.props.entities[i].name}</div>
-            <div>
-              <span style={styles.left}>
-                <div>
-                  <span style={styles.fieldLabel}>Status:</span>
-                  <span style={styles.fieldValue}>{this.props.entities[i].status}</span>
-                </div>
-                <div>
-                  <span style={styles.fieldLabel}>Public/Private:</span>
-                  <span style={styles.fieldValue}>{this.props.entities[i].public === 1 ? 'Public' : 'Private'}</span>
-                </div>
-                <div>
-                  <span style={styles.fieldLabel}>Type:</span>
-                  <span style={styles.fieldValue}>{this.props.entities[i].type}</span>
-                </div>
-                <div>
-                  <span style={styles.fieldLabel}>Sponsor Research:</span>
-                  <span style={styles.fieldValue}>{this.props.entities[i].sponsorResearch ? 'YES' : 'NO'}</span>
-                </div>
-                <div style={styles.descriptionLabel}>Description of Relationship</div>
-                <div style={styles.relationshipDescription}>{this.props.entities[i].description}</div>
-              </span>
-              <span style={styles.relations}>
-                <div style={styles.relationshipsLabel}>Relationship(s):</div>
-                {relationships}
-              </span>
-            </div>
-          </div>
+      entities = this.props.entities.filter(entity => {
+        return entity.active;
+      }).map((entity, index, array) => {
+        return (
+          <EntitySummary
+            key={entity.id}
+            isLast={index === array.length - 1}
+            questions={this.props.questions}
+            entity={entity}
+          />
         );
-      }
+      });
     }
 
     return (

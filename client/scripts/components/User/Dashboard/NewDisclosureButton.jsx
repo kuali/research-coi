@@ -61,7 +61,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
         verticalAlign: 'top',
         padding: '20px 30px 20px 30px',
         cursor: 'pointer',
-        color: '#444',
+        color: window.colorBlindModeOn ? 'black' : '#666',
         fontWeight: '300',
         borderTop: '1px solid #c0c0c0'
       },
