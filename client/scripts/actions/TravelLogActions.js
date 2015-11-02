@@ -31,5 +31,9 @@ class _TravelLogActions {
   loadTravelLogEntries() {
     this.dispatch();
   }
+
+  sortColumnChanged(value) { this.dispatch(value); }
+
+  sortDirectionChanged(value) { this.dispatch(value); }
 }
 export let TravelLogActions = alt.createActions(_TravelLogActions);

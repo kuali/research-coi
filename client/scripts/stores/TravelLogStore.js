@@ -27,16 +27,36 @@ class _TravelLogStore extends AutoBindingStore {
 
     this.entries = [];
     this.potentialEntry = {};
+    this.sortColumn = 'name'
+    this.sortDirection = 'ASCENDING'
+  }
+
+
+
+  refreshTravelLogEntries() {
+    createRequest().get('/api/coi/travel-log-entries/')
+    .query({sortColumn: this.sortColumn})
+    .query({sortDirection: this.sortDirection})
+    .end(processResponse((err, travelLog) => {
+      if (!err) {
+        this.entries = travelLog.body;
+        this.emitChange();
+      }
+    }));
   }
 
   loadTravelLogEntries() {
-    createRequest().get('/api/coi/travel-log-entries/')
-      .end(processResponse((err, travelLog) => {
-        if (!err) {
-          this.entries = travelLog.body;
-          this.emitChange();
-        }
-      }));
+    this.refreshTravelLogEntries();
+  }
+
+  sortColumnChanged(value) {
+    this.sortColumn = value;
+    this.refreshTravelLogEntries();
+  }
+
+  sortDirectionChanged(value) {
+    this.sortDirection = value;
+    this.refreshTravelLogEntries();
   }
 
   updateTravelLog(data) {
@@ -55,6 +75,8 @@ class _TravelLogStore extends AutoBindingStore {
         }
       }));
   }
+
+
 }
 
 export let TravelLogStore = alt.createStore(_TravelLogStore, 'TravelLogStore');

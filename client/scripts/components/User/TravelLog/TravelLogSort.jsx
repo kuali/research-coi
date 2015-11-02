@@ -17,11 +17,22 @@
 */
 
 import React from 'react/addons';
+import {TravelLogActions} from '../../../actions/TravelLogActions';
 
 export class TravelLogSort extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
+
+    this.sortColumnChanged = this.sortColumnChanged.bind(this);
+    this.sortDirectionChanged = this.sortDirectionChanged.bind(this);
+  }
+
+  sortColumnChanged(evt) {
+    TravelLogActions.sortColumnChanged(evt.target.value);
+  }
+
+  sortDirectionChanged(evt) {
+    TravelLogActions.sortDirectionChanged(evt.target.value);
   }
 
   render() {
@@ -48,16 +59,16 @@ export class TravelLogSort extends React.Component {
       <div style={styles.container}>
         <div>
           <span style={styles.label}>Sort By:</span>
-          <select style={styles.select}>
-            <option value="Entity Name">Entity Name</option>
-            <option value="Date">Date</option>
-            <option value="Destination">Destination</option>
-            <option value="Amount">Amount</option>
+          <select style={styles.select} onChange={this.sortColumnChanged}>
+            <option value="name">Entity Name</option>
+            <option value="date">Date</option>
+            <option value="destination">Destination</option>
+            <option value="amount">Amount</option>
           </select>
           <span style={styles.label}></span>
-          <select style={styles.select}>
-            <option value="Ascending">Ascending</option>
-            <option value="Descending">Descending</option>
+          <select style={styles.select} onChange={this.sortDirectionChanged}>
+            <option value="ASCENDING">Ascending</option>
+            <option value="DESCENDING">Descending</option>
           </select>
           <div style={{float: 'right'}}>
             <span style={styles.label}>View By:</span>
