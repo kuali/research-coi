@@ -21,6 +21,7 @@ import {merge} from '../merge';
 import {formatDate} from '../formatDate';
 import numeral from 'numeral';
 import ConfigStore from '../stores/ConfigStore';
+import {COIConstants} from '../../../COIConstants'
 
 export default class EntityRelationshipSummary extends React.Component {
   constructor() {
@@ -75,7 +76,7 @@ export default class EntityRelationshipSummary extends React.Component {
         <button onClick={this.remove} style={styles.removeButton}>X</button>
       );
     }
-    if (this.props.relationship.relationship === 'Travel') {
+    if (this.props.relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
       let dateRange = formatDate(this.props.relationship.travel.startDate) + ' - ' + formatDate(this.props.relationship.travel.endDate);
       return (
         <div style={merge(styles.container, this.props.style)}>

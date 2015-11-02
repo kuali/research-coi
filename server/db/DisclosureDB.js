@@ -66,7 +66,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
               })
               .then(relationshipId=>{
                 relationship.id = relationshipId[0];
-                if (relationship.relationshipCd === 6) {
+                if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
                   return knex('travel_relationship')
                   .insert({
                     relationship_id: relationshipId[0],
@@ -202,7 +202,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
                 })
                 .then(relationshipId=>{
                   relationship.id = relationshipId[0];
-                  if (relationship.relationshipCd === 6) {
+                  if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
                     return knex('travel_relationship')
                     .insert({
                       relationship_id: relationshipId[0],

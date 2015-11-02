@@ -34,7 +34,8 @@ export class TravelLog extends React.Component {
 
     let storeState = TravelLogStore.getState();
     this.state = {
-      entries: storeState.entries
+      entries: storeState.entries,
+      potentialEntry: storeState.potentialEntry
     };
 
     this.onChange = this.onChange.bind(this);
@@ -52,7 +53,8 @@ export class TravelLog extends React.Component {
   onChange() {
     let storeState = TravelLogStore.getState();
     this.setState({
-      entries: storeState.entries
+      entries: storeState.entries,
+      potentialEntry: storeState.potentialEntry
     });
   }
 
@@ -102,7 +104,7 @@ export class TravelLog extends React.Component {
         </span>
         <span className="fill" style={styles.content}>
           <TravelLogHeader/>
-          <TravelLogForm/>
+          <TravelLogForm entry={this.state.potentialEntry}/>
           <div style={styles.entryList}>
             <TravelLogSort/>
             {travelLogs}

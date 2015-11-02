@@ -19,16 +19,15 @@
 import alt from '../alt';
 
 class _TravelLogActions {
-  addEntry(entityName, amount, startDate, endDate, reason, destination) {
+  addEntry() { this.dispatch(); }
+
+  updateTravelLog(field, value) {
     this.dispatch({
-      entityName: entityName,
-      amount: amount,
-      startDate: startDate,
-      endDate: endDate,
-      reason: reason,
-      destination: destination
+      field: field,
+      value: value
     });
   }
+
   loadTravelLogEntries() {
     this.dispatch();
   }

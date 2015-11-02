@@ -51,7 +51,8 @@ export default class DisclosureTypes extends React.Component {
       rows = (
         <span>
           <div style={styles.optionRow}>
-            <DisclosureType type={this.props.types[1]} canToggle={false} />
+            <DisclosureType type={this.props.types[1]} canToggle={true} />
+            <DisclosureType type={this.props.types[3]} canToggle={true} />
           </div>
           <div style={styles.optionRow}>
           </div>

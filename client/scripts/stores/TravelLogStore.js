@@ -26,10 +26,11 @@ class _TravelLogStore extends AutoBindingStore {
     super(TravelLogActions);
 
     this.entries = [];
+    this.potentialEntry = {};
   }
 
-  refreshTravelLogEntries() {
-    createRequest().get('/api/coi/travelLogEntries/')
+  loadTravelLogEntries() {
+    createRequest().get('/api/coi/travel-log-entries/')
       .end(processResponse((err, travelLog) => {
         if (!err) {
           this.entries = travelLog.body;
@@ -38,21 +39,22 @@ class _TravelLogStore extends AutoBindingStore {
       }));
   }
 
-  loadTravelLogEntries() {
-    this.refreshTravelLogEntries();
+  updateTravelLog(data) {
+    this.potentialEntry[data.field] = data.value;
   }
 
-  addEntry(params) {
-    this.entries.push({
-      entityName: params.entityName,
-      amount: params.amount,
-      startDate: params.startDate,
-      endDate: params.endDate,
-      reason: params.reason,
-      destination: params.destination
-    });
+  addEntry() {
+    createRequest().post('/api/coi/travel-log-entries')
+      .type('application/json')
+      .send(this.potentialEntry)
+      .end(processResponse((err, returnEntry) => {
+        if (!err) {
+          this.entries.push(returnEntry.body);
+          this.potentialEntry = {};
+          this.emitChange();
+        }
+      }));
   }
-
 }
 
 export let TravelLogStore = alt.createStore(_TravelLogStore, 'TravelLogStore');
