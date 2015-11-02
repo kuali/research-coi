@@ -62,11 +62,12 @@ export let COIConstants = {
     TYPE: 'TYPE'
   },
   ENTITY_RELATIONSHIP: {
-    OWNERSHIP: 'Ownership',
-    OFFICES_POSITIONS: 'Offices/Positions',
-    PAID_ACTIVITIES: 'Paid Activities',
-    INTELLECTUAL_PROPERTY: 'Intellectual Property',
-    OTHER: 'Other'
+    OWNERSHIP: 1,
+    OFFICES_POSITIONS: 2,
+    PAID_ACTIVITIES: 3,
+    INTELLECTUAL_PROPERTY: 4,
+    OTHER: 5,
+    TRAVEL: 6
   },
   QUESTION_TYPE: {
     YESNO: 'Yes/No',
