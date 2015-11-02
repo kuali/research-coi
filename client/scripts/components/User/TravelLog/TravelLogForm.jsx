@@ -36,10 +36,6 @@ export class TravelLogForm extends React.Component {
       TravelLogActions.addEntry();
     }
 
-    updateStartDate(newValue) {
-      TravelLogActions.updateTravelLog('startDate', newValue);
-    }
-
     updateField(evt) {
       TravelLogActions.updateTravelLog(evt.target.id, evt.target.value);
     }
