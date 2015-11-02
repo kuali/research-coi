@@ -28,23 +28,33 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let getTravelLogEntries = (dbInfo, userId, optionalTrx) => {
+export let getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection) => {
   let knex = getKnex(dbInfo);
 
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
+  let dbSortColumn;
+  let dbSortDirection = sortDirection === 'DESCENDING' ? 'desc' : undefined;
+  switch (sortColumn) {
+    case 'date':
+      dbSortColumn = 't.start_date';
+      break;
+    case 'destination':
+      dbSortColumn = 't.destination';
+      break;
+    case 'amount':
+      dbSortColumn = 't.amount';
+      break;
+    default:
+      dbSortColumn = 'fe.name';
+      break;
   }
-  else {
-    query = knex;
-  }
-  return query.select('fe.name as entityName', 't.amount', 't.start_date as startDate', 't.end_date as endDate', 't.destination', 't.reason')
+
+  return knex.select('fe.name as entityName', 't.amount', 't.start_date as startDate', 't.end_date as endDate', 't.destination', 't.reason')
     .from('travel_relationship as t')
     .innerJoin('relationship as r', 'r.id', 't.relationship_id' )
     .innerJoin('fin_entity as fe', 'fe.id', 'r.fin_entity_id')
     .innerJoin('disclosure as d', 'd.id', 'fe.disclosure_id')
     .where('d.user_id', userId)
-    .orderBy('fe.name', 'ASC');
+    .orderBy(dbSortColumn, dbSortDirection);
 };
 
 let createAnnualDisclosure = (knex, userInfo) => {

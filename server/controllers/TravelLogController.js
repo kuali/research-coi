@@ -25,7 +25,15 @@ export let init = app => {
     Can only see travel logs associated with their entities
   */
   app.get('/api/coi/travel-log-entries', function(req, res, next) {
-    TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId)
+    let sortColumn = 'name';
+    if (req.query.sortColumn) {
+      sortColumn = req.query.sortColumn;
+    }
+    let sortDirection = 'ASCENDING';
+    if (req.query.sortDirection) {
+      sortDirection = req.query.sortDirection;
+    }
+    TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId, sortColumn, sortDirection)
       .then(travelLog => {
         res.send(travelLog);
       })
@@ -36,6 +44,10 @@ export let init = app => {
 
   });
 
+  /**
+   @Role: user
+   Can only add travel logs associated with their entities
+   */
   app.post('/api/coi/travel-log-entries', function(req, res, next) {
     TravelLogDB.createTravelLogEntry(req.dbInfo, req.body, req.userInfo)
       .then(travelLog => {
