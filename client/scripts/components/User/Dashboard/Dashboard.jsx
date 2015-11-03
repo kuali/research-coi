@@ -204,9 +204,9 @@ export class Dashboard extends ResponsiveComponent {
       if (!annualDisclosure || annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
           annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
         annualDisclosureButton = (
-        <div>
-          <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.ANNUAL}/>
-        </div>
+          <div>
+            <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.ANNUAL}/>
+          </div>
         );
       }
     }

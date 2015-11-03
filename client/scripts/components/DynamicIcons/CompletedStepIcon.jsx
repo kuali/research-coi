@@ -25,7 +25,7 @@ export class CompletedStepIcon extends React.Component {
 
   render() {
     return (
-      <svg style={this.props.style} version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" role="img" aria-labelledby="title">
+      <svg style={this.props.style} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" role="img" aria-labelledby="title">
         <title id="title">Completed Step Icon</title>
         <g>
           <path fill={this.props.style.color} d="M153.3,102.4c0,1.9,0,3.8-0.5,5.2c-2.4,23.3-20.5,41.9-43.3,45.7c-2.4,0.5-5.2,0.5-8.1,0.5

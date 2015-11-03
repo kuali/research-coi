@@ -33,7 +33,7 @@ export default class NewQuestionButton extends React.Component {
         fontSize: 23,
         position: 'relative',
         cursor: 'pointer',
-        boxShadow: '0 0 15px #e6e6e6',
+        boxShadow: '0 0 10px #BBB',
         borderRadius: 6,
         marginBottom: 10
       },

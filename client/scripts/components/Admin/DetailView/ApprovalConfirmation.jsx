@@ -62,7 +62,7 @@ export class ApprovalConfirmation extends ResponsiveComponent {
         display: 'block',
         marginBottom: 10,
         padding: '5px 10px',
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         color: 'white',
         borderBottom: '2px solid #717171',
         width: 135,

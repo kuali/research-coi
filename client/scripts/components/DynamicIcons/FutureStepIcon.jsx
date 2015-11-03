@@ -25,10 +25,10 @@ export class FutureStepIcon extends React.Component {
 
   render() {
     return (
-      <svg style={this.props.style} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 42 42" enable-background="new 0 0 42 42" role="img" aria-labelledby="title">
+      <svg style={this.props.style} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" role="img" aria-labelledby="title">
         <title id="title">Future Step Icon</title>
         <g>
-          <circle fill={this.props.style.color} cx="21" cy="21" r="5.1"/>
+          <circle fill={this.props.style.color} cx="50" cy="50" r="13"/>
         </g>
       </svg>
     );

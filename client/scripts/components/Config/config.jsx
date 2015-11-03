@@ -57,7 +57,7 @@ class App extends React.Component {
       },
       header: {
         boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 9,
+        zIndex: 10,
         position: 'relative'
       }
     };

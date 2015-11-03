@@ -61,7 +61,7 @@ export class NavSidebar extends React.Component {
       },
       icons: {
         color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        fontSize: 33,
+        fontSize: 29,
         marginRight: 6,
         verticalAlign: 'middle'
       },

@@ -58,7 +58,8 @@ class _DisclosureStore extends AutoBindingStore {
         disclosure: {
           id: 222,
           answers: []
-        }
+        },
+        visitedSteps: {}
       },
       newEntityFormStep: -1,
       activeEntityView: 1,
@@ -200,6 +201,10 @@ class _DisclosureStore extends AutoBindingStore {
       this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
     }
 
+    if (question.advance) {
+      this.advanceQuestion();
+    }
+
     if (answer.id) {
       createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/question-answers/' + answer.questionId)
         .send(answer)
@@ -207,9 +212,6 @@ class _DisclosureStore extends AutoBindingStore {
         .end(processResponse((err, res) => {
           if (!err) {
             answer.id = res.body.id;
-            if (question.advance) {
-              this.advanceQuestion();
-            }
             this.emitChange();
           }
         }));
@@ -218,10 +220,8 @@ class _DisclosureStore extends AutoBindingStore {
         .send(answer)
         .type('application/json')
         .end(processResponse((err, res) => {
-          if(!err) {answer.id = res.body.id;
-            if (question.advance) {
-              this.advanceQuestion();
-            }
+          if(!err) {
+            answer.id = res.body.id;
             this.emitChange();
           }
         }));
@@ -279,6 +279,7 @@ class _DisclosureStore extends AutoBindingStore {
     if (this.applicationState.returnToSummaryOnAnswer || this.applicationState.currentDisclosureState.question >= parentQuestions.length) {
       this.applicationState.returnToSummaryOnAnswer = false;
       this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
+      this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY] = true;
     }
     else {
       this.applicationState.currentDisclosureState.question++;
@@ -306,7 +307,15 @@ class _DisclosureStore extends AutoBindingStore {
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
         break;
       case COIConstants.DISCLOSURE_STEP.CERTIFY:
-        this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.PROJECTS;
+        let activeEntitiesExists = this.entities.some(entity => {
+          return entity.active;
+        });
+        if (activeEntitiesExists && this.projects.length > 0) {
+          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.PROJECTS;
+        }
+        else {
+          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
+        }
         break;
     }
   }
@@ -385,12 +394,24 @@ class _DisclosureStore extends AutoBindingStore {
     switch (this.applicationState.currentDisclosureState.step) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
+        this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.ENTITIES] = true;
         break;
       case COIConstants.DISCLOSURE_STEP.ENTITIES:
-        this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.PROJECTS;
+        let activeEntitiesExists = this.entities.some(entity => {
+          return entity.active;
+        });
+        if (activeEntitiesExists && this.projects.length > 0) {
+          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.PROJECTS;
+          this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.PROJECTS] = true;
+        }
+        else {
+          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
+          this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.CERTIFY] = true;
+        }
         break;
       case COIConstants.DISCLOSURE_STEP.PROJECTS:
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
+        this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.CERTIFY] = true;
         break;
     }
   }
@@ -656,36 +677,29 @@ class _DisclosureStore extends AutoBindingStore {
 
       formData.append('entity', JSON.stringify(entity));
 
+      if (!this.applicationState.entityStates[entity.id]) {
+        this.applicationState.entityStates[entity.id] = {};
+      }
+
+      this.applicationState.entityStates[entity.id].formStep = -1;
+      this.applicationState.entityStates[entity.id].editing = false;
+
       if (this.applicationState.entityStates[entity.id].editing === true) {
         createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id )
-        .send(formData)
-        .end(processResponse((err, res) => {
-          if (!err) {
+          .send(formData)
+          .end(processResponse((err, res) => {
+            if (!err) {
+              let index = this.entities.findIndex(existingEntity => {
+                return existingEntity.id === res.body.id;
+              });
 
-            let index = this.entities.findIndex(existingEntity => {
-              return existingEntity.id === res.body.id;
-            });
+              if (index !== -1) {
+                this.entities[index] = res.body;
+              }
 
-            if (index !== -1) {
-              this.entities[index] = res.body;
+              this.emitChange();
             }
-
-            if (!this.applicationState.entityStates[entity.id]) {
-              this.applicationState.entityStates[entity.id] = {};
-            }
-
-            this.applicationState.entityStates[entity.id].formStep = -1;
-            this.applicationState.entityStates[entity.id].editing = false;
-            this.emitChange();
-          }
-        }));
-      } else {
-        if (!this.applicationState.entityStates[entity.id]) {
-          this.applicationState.entityStates[entity.id] = {};
-        }
-
-        this.applicationState.entityStates[entity.id].formStep = -1;
-        this.applicationState.entityStates[entity.id].editing = false;
+          }));
       }
     }
     else {
@@ -922,6 +936,7 @@ class _DisclosureStore extends AutoBindingStore {
 
   resetDisclosure() {
     this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+    this.applicationState.currentDisclosureState.visitedSteps = {};
     this.applicationState.currentDisclosureState.question = 1;
     this.applicationState.entityInProgress = {
       active: 1,
@@ -958,6 +973,7 @@ class _DisclosureStore extends AutoBindingStore {
 
   jumpToStep(step) {
     this.applicationState.currentDisclosureState.step = step;
+    this.applicationState.currentDisclosureState.visitedSteps[step] = true;
   }
 
   setArchiveSort(params) {

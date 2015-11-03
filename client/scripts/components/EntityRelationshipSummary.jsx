@@ -56,6 +56,11 @@ export default class EntityRelationshipSummary extends React.Component {
       },
       commentValue: {
         fontSize: 14
+      },
+      x: {
+        fontWeight: 'bold',
+        marginLeft: 6,
+        fontSize: 15
       }
     };
 
@@ -73,7 +78,9 @@ export default class EntityRelationshipSummary extends React.Component {
     let removeButton;
     if (!this.props.readonly) {
       removeButton = (
-        <button onClick={this.remove} style={styles.removeButton}>X</button>
+        <button onClick={this.remove} style={styles.removeButton}>
+          <i className="fa fa-times" style={styles.x}></i>
+        </button>
       );
     }
     if (this.props.relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {

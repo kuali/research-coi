@@ -87,7 +87,7 @@ export class ProgressIndicator extends React.Component {
 
     // Completed arc
     var radians = (2 * Math.PI * this.percent.value / 100) - (Math.PI / 2);
-    ctx.strokeStyle = window.colorBlindModeOn ? 'black' : '#00BCD4';
+    ctx.strokeStyle = window.colorBlindModeOn ? 'black' : '#0095A0';
     ctx.beginPath();
     ctx.arc(100, 100, 90, -Math.PI / 2, radians);
     ctx.stroke();

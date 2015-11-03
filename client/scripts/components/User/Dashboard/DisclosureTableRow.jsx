@@ -27,39 +27,52 @@ import {COIConstants} from '../../../../../COIConstants';
 let Link = Router.Link;
 
 export class DisclosureTableRow extends React.Component {
+  wrapWithUpdateLink(dom) {
+    return (
+      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to="disclosure" query={{type: this.props.type }}>
+        {dom}
+      </Link>
+    );
+  }
+
+  wrapWithReviseLink(dom) {
+    return (
+      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={`/revise/${this.props.disclosureId}`}>
+        {dom}
+      </Link>
+    );
+  }
+
   render() {
     let styles = {
       container: {
         padding: '20px 60px',
         borderBottom: '5px solid white',
-        backgroundColor: this.props.type === 'Annual' ? '#E9E9E9' : '#F7F7F7'
+        backgroundColor: this.props.type === 'Annual' ? '#E9E9E9' : '#F7F7F7',
+        color: window.colorBlindModeOn ? 'black' : '#333'
       },
       cell: {
         display: 'inline-block',
-        verticalAlign: 'middle'
+        verticalAlign: 'top'
       },
       one: {
         width: this.props.showButtonColumn ? '35%' : '33%'
       },
       two: {
         width: this.props.showButtonColumn ? '25%' : '33%',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 17
       },
       three: {
         width: this.props.showButtonColumn ? '25%' : '33%',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 17
       },
       four: {
         width: '15%'
       },
       type: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 17
       },
       extra: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         fontSize: 14
       },
       button: {
@@ -68,36 +81,73 @@ export class DisclosureTableRow extends React.Component {
       }
     };
 
+    let updateable = this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
+      this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
+      this.props.status === COIConstants.DISCLOSURE_STATUS.EXPIRED;
+
+    let revisable = this.props.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
+
     let extraInfo;
-    if (this.props.type === 2) {
-      if (this.props.expiresOn) {
-        extraInfo = (
-          <div style={styles.extra}>Expires On: {formatDate(this.props.expiresOn)}</div>
-        );
-      }
+    if (this.props.expiresOn) {
+      extraInfo = (
+        <span role="gridcell" style={merge(styles.cell, styles.one)}>
+          <div style={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
+          <div style={styles.extra}>
+            Expires On:
+            <span style={{marginLeft: 3}}>
+              {formatDate(this.props.expiresOn)}
+            </span>
+          </div>
+        </span>
+      );
     }
     else {
       extraInfo = (
-        <div style={styles.extra}>Event Title: {this.props.title}</div>
+        <span role="gridcell" style={merge(styles.cell, styles.one)}>
+          <div style={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
+        </span>
       );
+    }
+    if (updateable) {
+      extraInfo = this.wrapWithUpdateLink(extraInfo);
+    }
+    else if (revisable) {
+      extraInfo = this.wrapWithReviseLink(extraInfo);
+    }
+
+    let status = (
+      <span role="gridcell" style={merge(styles.cell, styles.two)}>
+        {ConfigStore.getDisclosureStatusString(this.props.status)}
+      </span>
+    );
+    if (updateable) {
+      status = this.wrapWithUpdateLink(status);
+    }
+    else if (revisable) {
+      status = this.wrapWithReviseLink(status);
+    }
+
+    let lastReviewed = (
+      <span role="gridcell" style={merge(styles.cell, styles.three)}>
+        {this.props.lastreviewed ? formatDate(this.props.lastreviewed) : 'None'}
+      </span>
+    );
+    if (updateable) {
+      lastReviewed = this.wrapWithUpdateLink(updateable);
+    }
+    else if (revisable) {
+      lastReviewed = this.wrapWithReviseLink(updateable);
     }
 
     let button;
-    if (this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
-        this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-        this.props.status === COIConstants.DISCLOSURE_STATUS.EXPIRED
-       ) {
-      button = (
-        <Link to="disclosure" query={{type: this.props.type }}>
-          <KButton style={styles.button}>Update &gt;</KButton>
-        </Link>
-      );
-    } else if (this.props.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED) {
-      button = (
-        <Link to={`/revise/${this.props.disclosureId}`}>
-          <KButton style={styles.button}>Revise &gt;</KButton>
-        </Link>
-      );
+    if (updateable) {
+      button = this.wrapWithUpdateLink((
+        <KButton style={styles.button}>Update &gt;</KButton>
+      ));
+    } else if (revisable) {
+      button = this.wrapWithReviseLink((
+        <KButton style={styles.button}>Revise &gt;</KButton>
+      ));
     }
 
     let buttonColumn;
@@ -111,16 +161,9 @@ export class DisclosureTableRow extends React.Component {
 
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
-        <span role="gridcell" style={merge(styles.cell, styles.one)}>
-          <div style={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
-          {extraInfo}
-        </span>
-        <span role="gridcell" style={merge(styles.cell, styles.two)}>
-          {ConfigStore.getDisclosureStatusString(this.props.status)}
-        </span>
-        <span role="gridcell" style={merge(styles.cell, styles.three)}>
-          {this.props.lastreviewed ? formatDate(this.props.lastreviewed) : 'None'}
-        </span>
+        {extraInfo}
+        {status}
+        {lastReviewed}
         {buttonColumn}
       </div>
     );

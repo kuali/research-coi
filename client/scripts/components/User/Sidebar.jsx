@@ -67,6 +67,7 @@ export class Sidebar extends React.Component {
           key={index}
           step={step.value}
           style={extraStyle}
+          visited={this.props.visitedSteps[step.value]}
         />
       );
     });

@@ -91,7 +91,6 @@ export class ConfirmationMessage extends ResponsiveComponent {
     return (
       <div style={merge(styles.container, this.props.style)}>
         <span style={styles.close} onClick={this.close}>
-          CLOSE
           <i className="fa fa-times" style={styles.x}></i>
         </span>
         <div>Awesome, you have successfully submitted your disclosure!</div>

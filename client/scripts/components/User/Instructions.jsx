@@ -90,7 +90,8 @@ export class Instructions extends ResponsiveComponent {
         border: '25px solid transparent',
         borderTopColor: 'white',
         top: 0,
-        right: 25
+        right: 25,
+        zIndex: 11
       }
     };
 
