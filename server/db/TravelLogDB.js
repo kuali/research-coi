@@ -72,19 +72,21 @@ let createAnnualDisclosure = (knex, userInfo) => {
   });
 };
 
-let createNewEntity = (knex, disclosureId, entry) => {
+let createNewEntity = (knex, disclosureId, entry, status) => {
   return knex('fin_entity').insert({
     disclosure_id: disclosureId,
     name: entry.entityName,
-    active: true
+    active: true,
+    status: status
   });
 };
 
-let createNewRelationship = (knex, entityId, entry) => {
+let createNewRelationship = (knex, entityId, entry, status) => {
   return knex('relationship').insert({
     fin_entity_id: entityId,
     relationship_cd: COIConstants.ENTITY_RELATIONSHIP.TRAVEL,
-    person_cd: 1
+    person_cd: 1,
+    status: status
   }).then(relationshipId => {
     return knex('travel_relationship').insert({
       relationship_id: relationshipId,
@@ -100,31 +102,51 @@ let createNewRelationship = (knex, entityId, entry) => {
   });
 };
 
+let isSubmitted = (status) => {
+  if (status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS || status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+let getExistingFinancialEntity = (trx, entityName, disclosureId) => {
+  return trx('fin_entity')
+  .select('id')
+  .where({name: entityName, disclosure_id: disclosureId});
+};
+
+let handleTravelLogEntry = (trx, disclosureId, entry, status) => {
+  return getExistingFinancialEntity(trx, entry.entityName, disclosureId)
+  .then(entity => {
+    if (entity[0]) {
+      return createNewRelationship(trx, entity[0].id, entry, status);
+    } else {
+      return createNewEntity(trx, disclosureId, entry, status)
+      .then(newEntityId => {
+        return createNewRelationship(trx, newEntityId, entry, status);
+      });
+    }
+  });
+};
+
 export let createTravelLogEntry = (dbInfo, entry, userInfo) => {
   let knex = getKnex(dbInfo);
   return knex.transaction(trx => {
-    return trx('disclosure').select('id').where({
+    return trx('disclosure').select('status_cd', 'id').where({
       user_id: userInfo.schoolId,
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL
     }).then(disclosure => {
       if (disclosure[0]) {
-        return trx('fin_entity')
-        .select('id')
-        .where({name: entry.entityName, disclosure_id: disclosure[0].id})
-        .then(entity => {
-          if (entity[0]) {
-            return createNewRelationship(trx, entity[0].id, entry);
-          } else {
-            return createNewEntity(trx, disclosure[0].id, entry)
-            .then(newEntityId => {
-              return createNewRelationship(trx, newEntityId, entry);
-            });
-          }
-        });
+        if (isSubmitted(disclosure[0].status_cd) === true) {
+          return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.PENDING);
+        } else {
+          return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
+        }
       } else {
         return createAnnualDisclosure(trx, userInfo).then(disclosureId => {
-          return createNewEntity(trx, disclosureId, entry).then(entityId => {
-            return createNewRelationship(trx, entityId, entry);
+          return createNewEntity(trx, disclosureId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(entityId => {
+            return createNewRelationship(trx, entityId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
           });
         });
       }

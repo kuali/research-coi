@@ -47,7 +47,8 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
           disclosure_id: disclosureId,
           active: financialEntity.active,
           name: financialEntity.name,
-          description: financialEntity.description
+          description: financialEntity.description,
+          status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
         })
         .then(id => {
           financialEntity.id = id[0];
@@ -62,7 +63,8 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
                 person_cd: relationship.personCd,
                 type_cd: !relationship.typeCd ? null : relationship.typeCd,
                 amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-                comments: relationship.comments
+                comments: relationship.comments,
+                status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
               })
               .then(relationshipId=>{
                 relationship.id = relationshipId[0];
@@ -493,7 +495,8 @@ export let get = (dbInfo, userInfo, disclosureId) => {
     getDisclosure(knex, userInfo, disclosureId),
     knex.select('e.id', 'e.disclosure_id as disclosureId', 'e.active', 'e.name', 'e.description')
       .from('fin_entity as e')
-      .where('disclosure_id', disclosureId),
+      .where('disclosure_id', disclosureId)
+      .andWhereNot('status', COIConstants.RELATIONSHIP_STATUS.PENDING),
     knex.select('qa.id as id', 'qa.question_id as questionId', 'qa.answer as answer')
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
@@ -550,6 +553,7 @@ export let get = (dbInfo, userInfo, disclosureId) => {
         knex.select('r.id', 'r.fin_entity_id as finEntityId', 'r.relationship_cd as relationshipCd', 'r.person_cd as personCd', 'r.type_cd as typeCd', 'r.amount_cd as amountCd', 'r.comments')
           .from('relationship as r')
           .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
+          .andWhereNot('status', COIConstants.RELATIONSHIP_STATUS.PENDING)
           .then(relationships => {
             return knex('travel_relationship')
               .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
@@ -762,6 +766,38 @@ export let getSummariesForUser = (dbInfo, userId) => {
     .where('d.user_id', userId);
 };
 
+let updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, newStatus) => {
+  return knex('fin_entity')
+  .update({status: newStatus})
+  .where('disclosure_id', disclosureId)
+  .andWhere('status', oldStatus)
+  .then(()=>{
+    return knex('fin_entity')
+    .select('id')
+    .where('disclosure_id', disclosureId)
+    .then(results => {
+      return Promise.all(
+      results.map(result => {
+        return knex('relationship')
+        .update({status: newStatus})
+        .where('fin_entity_id', result.id)
+        .andWhere('status', oldStatus);
+      })
+      );
+    });
+  });
+};
+
+let updateStatus = (knex, name, disclosureId) => {
+  return knex('disclosure')
+  .update({
+    status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+    submitted_by: name,
+    submitted_date: new Date()
+  })
+  .where('id', disclosureId);
+};
+
 export let submit = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
@@ -770,13 +806,10 @@ export let submit = (dbInfo, userInfo, disclosureId) => {
       }
 
       let knex = getKnex(dbInfo);
-      return knex('disclosure')
-        .update({
-          status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
-          submitted_by: userInfo.name,
-          submitted_date: new Date()
-        })
-        .where('id', disclosureId);
+      return Promise.all([
+        updateStatus(knex, userInfo.name, disclosureId),
+        updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED)
+      ]);
     });
 };
 
@@ -851,7 +884,8 @@ export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
     archiveDisclosure(knex, disclosureId, displayName, disclosure),
     deleteComments(knex, disclosureId),
     deleteAnswersForDisclosure(knex, disclosureId),
-    deletePIReviewsForDisclsoure(knex, disclosureId)
+    deletePIReviewsForDisclsoure(knex, disclosureId),
+    updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS)
   ])
   .then(([config]) => {
     let generalConfig = JSON.parse(config[0].config).general;
