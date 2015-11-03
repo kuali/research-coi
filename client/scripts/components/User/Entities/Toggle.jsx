@@ -51,11 +51,11 @@ export class Toggle extends ResponsiveComponent {
       },
       selected: {
         whiteSpace: 'nowrap',
-        padding: '5px 2px',
+        padding: '6px 3px',
         fontSize: 12,
         width: 135,
         color: 'white',
-        border: '1px solid #666666',
+        border: 0,
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         borderRadius: 5
       }

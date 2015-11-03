@@ -20,7 +20,6 @@ import React from 'react/addons';
 import {merge} from '../../merge';
 import PencilIcon from '../DynamicIcons/PencilIcon';
 import CheckmarkIcon from '../DynamicIcons/CheckmarkIcon';
-import {PlusIcon} from '../DynamicIcons/PlusIcon';
 import {COIConstants} from '../../../../COIConstants';
 
 class EditableItem extends React.Component {
@@ -262,9 +261,9 @@ export default class EditableList extends React.Component {
       },
       plus: {
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        width: 15,
-        height: 15,
-        verticalAlign: 'middle'
+        fontSize: 13,
+        verticalAlign: 'middle',
+        padding: '0 4px 2px 0'
       },
       items: {
         borderLeft: '1px solid black',
@@ -301,7 +300,7 @@ export default class EditableList extends React.Component {
     else {
       addAnother = (
         <div onClick={this.add} style={styles.addAnother}>
-          <PlusIcon style={styles.plus} /> Add Another
+          <i className="fa fa-plus" style={styles.plus}></i>Add Another
         </div>
       );
     }

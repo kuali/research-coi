@@ -67,7 +67,7 @@ export class NewEntityButton extends ResponsiveComponent {
       img: {
         height: 42,
         width: 42,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0'
+        color: window.colorBlindModeOn ? 'black' : '#00bcd4'
       },
       text: {
         verticalAlign: 'middle',

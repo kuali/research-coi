@@ -179,7 +179,8 @@ export class EntityFormRelationshipStep extends React.Component {
         padding: '3px 9px 4px 7px',
         marginTop: 10,
         cursor: this.props.validating && !isValid ? 'default' : 'pointer',
-        width: 'initial'
+        width: 'initial',
+        borderBottom: '2px solid #717171'
       },
       submittedrelations: {
         borderTop: '1px solid #DEDEDE',
@@ -214,7 +215,9 @@ export class EntityFormRelationshipStep extends React.Component {
     let typeSection;
     if (this.state.relation !== '' && this.state.matrixType.typeEnabled === 1) {
       let labelStyle = {
-        paddingBottom: 3
+        paddingBottom: 3,
+        color: window.colorBlindModeOn ? 'black' : '#888',
+        fontSize: 12
       };
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.type) {
@@ -230,7 +233,7 @@ export class EntityFormRelationshipStep extends React.Component {
 
       typeSection = (
         <div style={styles.typeSection}>
-          <div style={labelStyle}>Type</div>
+          <div style={labelStyle}>TYPE</div>
           <select onChange={this.typeSelected} ref="typeSelect" value={this.props.appState.potentialRelationship.typeCd} style={dropDownStyle}>
             <option value="">--SELECT--</option>
             {typeOptions}
@@ -242,7 +245,9 @@ export class EntityFormRelationshipStep extends React.Component {
     let amountSection;
     if (this.state.relation !== '' && this.state.matrixType.amountEnabled === 1) {
       let labelStyle = {
-        paddingBottom: 3
+        paddingBottom: 3,
+        color: window.colorBlindModeOn ? 'black' : '#888',
+        fontSize: 12
       };
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.amount) {
@@ -266,7 +271,7 @@ export class EntityFormRelationshipStep extends React.Component {
       } else {
         amountSection = (
           <div style={styles.amountSection}>
-            <div style={labelStyle}>Amount</div>
+            <div style={labelStyle}>AMOUNT</div>
             <select onChange={this.amountSelected} ref="amountSelect"
                     value={this.props.appState.potentialRelationship.amountCd} style={dropDownStyle}>
               <option value="">--SELECT--</option>
@@ -354,7 +359,9 @@ export class EntityFormRelationshipStep extends React.Component {
     let relationshipEditor;
     if (!this.props.readonly) {
       let personLabelStyle = {
-        paddingBottom: 3
+        paddingBottom: 3,
+        color: window.colorBlindModeOn ? 'black' : '#888',
+        fontSize: 12
       };
       let personDropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.person) {
@@ -363,14 +370,19 @@ export class EntityFormRelationshipStep extends React.Component {
       }
 
 
-      let relationStyle = {};
+      let relationStyle = {
+        color: window.colorBlindModeOn ? 'black' : '#888',
+        fontSize: 12
+      };
       if (this.props.validating && validationErrors.relation) {
         relationStyle = styles.invalidText;
       }
 
       let commentStyle = {
         display: 'block',
-        paddingBottom: 3
+        paddingBottom: 3,
+        color: window.colorBlindModeOn ? 'black' : '#888',
+        fontSize: 12
       };
       let commentTextboxStyle = styles.textarea;
       if (this.props.validating && validationErrors.comment) {
@@ -394,7 +406,7 @@ export class EntityFormRelationshipStep extends React.Component {
           <div style={styles.top}>
             <span style={styles.left}>
               <div style={styles.personSection}>
-                <div style={personLabelStyle}>Person</div>
+                <div style={personLabelStyle}>PERSON</div>
                 <div>
                   <select
                     onChange={this.personSelected}
@@ -415,7 +427,7 @@ export class EntityFormRelationshipStep extends React.Component {
               {reason}
             </span>
             <span style={styles.right}>
-              <div style={relationStyle}>Relationship</div>
+              <div style={relationStyle}>RELATIONSHIP</div>
               <div>
                 <ToggleSet
                   selected={this.props.appState.potentialRelationship.relationshipCd}
@@ -432,13 +444,19 @@ export class EntityFormRelationshipStep extends React.Component {
               </div>
 
               <div style={styles.commentArea}>
-                <label htmlFor={htmlId} style={commentStyle}>Comments</label>
+                <label htmlFor={htmlId} style={commentStyle}>COMMENTS</label>
                 <div>
                   <textarea id={htmlId} onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={commentTextboxStyle} ref="commentTextArea" />
                 </div>
               </div>
               <div style={styles.addButtonSection}>
-                <KButton onClick={this.addRelation} title={this.props.validating && !isValid ? 'Please correct the highlighted fields' : ''} style={styles.addButton}>+ Add Additional Relationship</KButton>
+                <KButton
+                  onClick={this.addRelation}
+                  title={this.props.validating && !isValid ? 'Please correct the highlighted fields' : ''}
+                  style={styles.addButton}
+                >
+                  + Add Additional Relationship
+                </KButton>
               </div>
             </span>
           </div>
@@ -451,7 +469,7 @@ export class EntityFormRelationshipStep extends React.Component {
         {relationshipEditor}
 
         <div style={!this.props.readonly ? styles.submittedrelations : {}}>
-          <div style={{color: this.props.update ? 'black' : '#555', marginBottom: 12}}>Relationships:</div>
+          <div style={{color: this.props.update || window.colorBlindModeOn ? 'black' : '#888', marginBottom: 12, fontSize: 12}}>RELATIONSHIPS:</div>
           {relationshipSummaries}
         </div>
       </div>

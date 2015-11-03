@@ -37,7 +37,7 @@ export class SidebarStep extends React.Component {
   render() {
     let styles = {
       container: {
-        padding: '20px 20px 20px 40px',
+        padding: '20px 20px 20px 10px',
         fontSize: 22,
         textTransform: 'uppercase',
         whiteSpace: 'nowrap',
@@ -66,6 +66,12 @@ export class SidebarStep extends React.Component {
       stepName: {
         verticalAlign: 'middle',
         paddingLeft: 5
+      },
+      icon: {
+        width: 30,
+        height: 30,
+        verticalAlign: 'middle',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0'
       }
     };
 
@@ -74,24 +80,37 @@ export class SidebarStep extends React.Component {
         return (
           <div style={merge(styles.clickable, this.props.style)} onClick={this.navigate}>
             <li style={styles.container}>
+              <CompletedStepIcon style={styles.icon} />
               <span style={styles.stepName}>{this.props.label}</span>
             </li>
           </div>
         );
       case 'active':
         return (
-          <div style={merge(styles.clickable, this.props.style)} onClick={this.navigate}>
+          <div style={this.props.style}>
             <li style={merge(styles.container, styles.selected)}>
+              <CurrentStepIcon style={styles.icon} />
               <span style={styles.stepName}>{this.props.label}</span>
             </li>
           </div>
         );
       case 'incomplete':
-        return (
-          <li style={merge(styles.container, styles.incomplete, this.props.style)}>
-            <span style={styles.stepName}>{this.props.label}</span>
-          </li>
-        );
+        if (this.props.visited) {
+          return (
+            <li style={merge(styles.container, styles.clickable, this.props.style)} onClick={this.navigate}>
+              <FutureStepIcon style={styles.icon} />
+              <span style={styles.stepName}>{this.props.label}</span>
+            </li>
+          );
+        }
+        else {
+          return (
+            <li style={merge(styles.container, styles.incomplete, this.props.style)}>
+              <FutureStepIcon style={styles.icon} />
+              <span style={styles.stepName}>{this.props.label}</span>
+            </li>
+          );
+        }
     }
   }
 }

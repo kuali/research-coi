@@ -64,8 +64,8 @@ export class Entities extends React.Component {
         marginTop: 111
       },
       placeholder: {
-        colorOne: window.config.colors.one,
-        colorTwo: window.config.colors.two,
+        colorOne: '#0097a7',
+        colorTwo: '#00bcd4',
         width: 300,
         height: 300,
         marginTop: -61
@@ -117,12 +117,28 @@ export class Entities extends React.Component {
         <NewEntityButton onClick={this.startNewEntity} style={styles.newentitybutton} />
       );
 
-      if (this.props.entities.length === 0) {
+      if (entities.length === 0) {
+        let text;
+        if (this.props.applicationState.activeEntityView) {
+          text = (
+            <div>
+              <div style={styles.placeholderText}>You currently have no active financial entities.</div>
+              <div style={styles.placeholderText}>Add new financial entities to view them here.</div>
+            </div>
+          );
+        }
+        else {
+          text = (
+            <div>
+              <div style={styles.placeholderText}>You currently have no inactive financial entities.</div>
+            </div>
+          );
+        }
+
         placeholder = (
           <div style={{textAlign: 'center'}}>
             <FEPlaceHolder style={styles.placeholder} />
-            <div style={styles.placeholderText}>You currently have no reported financial entities.</div>
-            <div style={styles.placeholderText}>Add new financial entities to view them here.</div>
+            {text}
           </div>
         );
       }

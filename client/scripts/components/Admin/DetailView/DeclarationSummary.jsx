@@ -67,6 +67,9 @@ export default class DeclarationSummary extends React.Component {
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
         borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
         paddingBottom: 3
+      },
+      noComment: {
+        color: window.colorBlindModeOn ? 'black' : '#CCC'
       }
     };
 
@@ -75,6 +78,18 @@ export default class DeclarationSummary extends React.Component {
       effectiveStyle = merge(effectiveStyle, styles.highlighted);
     }
     effectiveStyle = merge(effectiveStyle, this.props.style);
+
+    let comment;
+    if (this.props.declaration.comments) {
+      comment = (
+        <span>{this.props.declaration.comments}</span>
+      );
+    }
+    else {
+      comment = (
+        <span style={styles.noComment}>none</span>
+      );
+    }
 
     return (
       <div style={effectiveStyle}>
@@ -86,7 +101,7 @@ export default class DeclarationSummary extends React.Component {
             {ConfigStore.getDeclarationTypeString(this.props.declaration.typeCd)}
           </span>
           <span style={merge(styles.comments, {fontStyle: 'italic'})}>
-            {this.props.declaration.comments}
+            {comment}
           </span>
         </div>
         <div style={styles.commentLink} onClick={this.showComments}>

@@ -100,11 +100,11 @@ export class EntityRelationDialog extends ResponsiveComponent {
       heading: {
         display: 'inline-block',
         fontSize: 12,
-        fontWeight: 'bold'
+        color: window.colorBlindModeOn ? 'black' : '#888'
       },
       headings: {
         marginTop: 25,
-        paddingBottom: 10
+        paddingBottom: 5
       },
       buttons: {
         backgroundColor: 'white',
@@ -176,9 +176,9 @@ export class EntityRelationDialog extends ResponsiveComponent {
             </select>
           </div>
           <div style={styles.headings}>
-            <span style={merge(styles.heading, {width: '25%'})}>Project</span>
-            <span style={merge(styles.heading, {width: '30%'})}>Reporter Relationship</span>
-            <span style={merge(styles.heading, {width: '45%'})}>Reporter Comments</span>
+            <span style={merge(styles.heading, {width: '25%'})}>PROJECT</span>
+            <span style={merge(styles.heading, {width: '30%'})}>REPORTER RELATIONSHIP</span>
+            <span style={merge(styles.heading, {width: '45%'})}>REPORTER COMMENTS</span>
           </div>
           {projectRelations}
         </div>

@@ -46,7 +46,7 @@ export class FileUpload extends React.Component {
         padding: 20
       },
       dropZoneActive: {
-        backgroundColor: '#00BCD4',
+        backgroundColor: '#0095A0',
         margin: 25,
         borderRadius: 5,
         padding: 23,
@@ -79,7 +79,7 @@ export class FileUpload extends React.Component {
       },
       button: {
         padding: 3,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         color: 'white',
         borderBottom: '2px solid #717171',
         width: 90,
@@ -89,7 +89,7 @@ export class FileUpload extends React.Component {
       },
       downloadButton: {
         padding: 1,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         color: 'white',
         borderBottom: '2px solid #717171',
         width: 90,

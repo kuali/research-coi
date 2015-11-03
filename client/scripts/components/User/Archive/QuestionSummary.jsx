@@ -55,7 +55,7 @@ export default class extends React.Component {
         fontSize: 15
       },
       answerLabel: {
-        color: window.colorBlindModeOn ? 'black' : '#00BCD4',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         paddingBottom: 3
       }
     };

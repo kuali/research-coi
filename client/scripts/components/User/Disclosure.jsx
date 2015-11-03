@@ -37,7 +37,7 @@ export class Disclosure extends React.Component {
 
     // Set up steps for the sidebar
     this.steps = [
-      {label: 'Questionnaire', value: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE},
+      {label: 'Questionnaire', value: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY},
       {label: 'Financial Entities', value: COIConstants.DISCLOSURE_STEP.ENTITIES}
     ];
     if (props.disclosuretype && props.disclosuretype.toLowerCase() === 'manual') {
@@ -149,7 +149,10 @@ export class Disclosure extends React.Component {
         backgroundColor: '#eeeeee'
       },
       middle: {
-        width: '75%'
+        width: '75%',
+        zIndex: 10,
+        position: 'relative',
+        overflowY: 'hidden'
       },
       sidebar: {
         minWidth: 300,
@@ -272,7 +275,12 @@ export class Disclosure extends React.Component {
 
     return (
       <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
-        <Sidebar style={styles.sidebar} steps={this.steps} activestep={stepNumber} />
+        <Sidebar
+          style={styles.sidebar}
+          steps={this.steps}
+          activestep={stepNumber}
+          visitedSteps={this.state.applicationState.currentDisclosureState.visitedSteps}
+        />
 
         <span className="fill" style={styles.content}>
           <DisclosureHeader>{heading}</DisclosureHeader>
