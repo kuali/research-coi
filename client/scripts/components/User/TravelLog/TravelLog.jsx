@@ -35,7 +35,8 @@ export class TravelLog extends React.Component {
     let storeState = TravelLogStore.getState();
     this.state = {
       entries: storeState.entries,
-      potentialEntry: storeState.potentialEntry
+      potentialEntry: storeState.potentialEntry,
+      validating: storeState.validating
     };
 
     this.onChange = this.onChange.bind(this);
@@ -54,7 +55,8 @@ export class TravelLog extends React.Component {
     let storeState = TravelLogStore.getState();
     this.setState({
       entries: storeState.entries,
-      potentialEntry: storeState.potentialEntry
+      potentialEntry: storeState.potentialEntry,
+      validating: storeState.validating
     });
   }
 
@@ -104,7 +106,7 @@ export class TravelLog extends React.Component {
         </span>
         <span className="fill" style={styles.content}>
           <TravelLogHeader/>
-          <TravelLogForm entry={this.state.potentialEntry}/>
+          <TravelLogForm entry={this.state.potentialEntry} validating={this.state.validating}/>
           <div style={styles.entryList}>
             <TravelLogSort/>
             {travelLogs}
