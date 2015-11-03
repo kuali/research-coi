@@ -464,14 +464,22 @@ export class EntityFormRelationshipStep extends React.Component {
       );
     }
 
+    let relationshipSummariesSection;
+    if (relationshipSummaries.length > 0) {
+      relationshipSummariesSection = (
+        <div style={!this.props.readonly ? styles.submittedrelations : {}}>
+          <div style={{color: this.props.update || window.colorBlindModeOn ? 'black' : '#888', marginBottom: 12, fontSize: 12}}>
+            RELATIONSHIPS
+          </div>
+          {relationshipSummaries}
+        </div>
+      );
+    }
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         {relationshipEditor}
-
-        <div style={!this.props.readonly ? styles.submittedrelations : {}}>
-          <div style={{color: this.props.update || window.colorBlindModeOn ? 'black' : '#888', marginBottom: 12, fontSize: 12}}>RELATIONSHIPS:</div>
-          {relationshipSummaries}
-        </div>
+        {relationshipSummariesSection}
       </div>
     );
   }

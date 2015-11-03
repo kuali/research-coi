@@ -269,7 +269,6 @@ export default class Question extends React.Component {
         margin: '10px 0',
         fontSize: 16,
         padding: '6px 8px',
-        resize: 'none',
         backgroundColor: '#EEEEEE'
       }
     };

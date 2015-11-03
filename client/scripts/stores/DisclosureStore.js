@@ -681,10 +681,10 @@ class _DisclosureStore extends AutoBindingStore {
         this.applicationState.entityStates[entity.id] = {};
       }
 
-      this.applicationState.entityStates[entity.id].formStep = -1;
-      this.applicationState.entityStates[entity.id].editing = false;
-
       if (this.applicationState.entityStates[entity.id].editing === true) {
+        this.applicationState.entityStates[entity.id].formStep = -1;
+        this.applicationState.entityStates[entity.id].editing = false;
+
         createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id )
           .send(formData)
           .end(processResponse((err, res) => {

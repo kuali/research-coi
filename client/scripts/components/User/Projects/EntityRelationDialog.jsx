@@ -152,12 +152,18 @@ export class EntityRelationDialog extends ResponsiveComponent {
     if (this.props.entityCount > 0) {
       if (this.props.id > 0) {
         navButtons.push(
-        <ProminentButton key='previous' onClick={this.onPrevious} style={styles.button}>Previous Project ^</ProminentButton>
+          <ProminentButton key='previous' onClick={this.onPrevious} style={styles.button}>
+            Previous Project
+            <i className="fa fa-caret-up" style={{marginLeft: 5}}></i>
+          </ProminentButton>
         );
       }
       if (this.props.id < this.props.entityCount - 1) {
         navButtons.push(
-        <ProminentButton key='next' onClick={this.onNext} style={styles.button}>Next Project v</ProminentButton>
+          <ProminentButton key='next' onClick={this.onNext} style={styles.button}>
+            Next Project
+            <i className="fa fa-caret-down" style={{marginLeft: 5}}></i>
+          </ProminentButton>
         );
       }
     }

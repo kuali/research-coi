@@ -118,8 +118,7 @@ export default class NotificationDetails extends React.Component {
         fontSize: 16,
         marginTop: 10,
         borderRadius: 5,
-        border: '1px solid #AAA',
-        resize: 'none'
+        border: '1px solid #AAA'
       }
     };
 

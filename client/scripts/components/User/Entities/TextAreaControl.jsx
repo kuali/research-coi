@@ -39,8 +39,7 @@ export class TextAreaControl extends React.Component {
         padding: 5,
         borderRadius: 5,
         border: '1px solid #AAA',
-        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa',
-        resize: 'none'
+        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa'
       },
       value: {
         color: 'black',
