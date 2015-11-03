@@ -25,13 +25,17 @@ class _TravelLogStore extends AutoBindingStore {
   constructor() {
     super(TravelLogActions);
 
+    this.exportPublicMethods({
+      getErrors: this.getErrors,
+      validateEntry: this.validateEntry
+    });
+
     this.entries = [];
     this.potentialEntry = {};
-    this.sortColumn = 'name'
-    this.sortDirection = 'ASCENDING'
+    this.sortColumn = 'name';
+    this.sortDirection = 'ASCENDING';
+    this.validating = false;
   }
-
-
 
   refreshTravelLogEntries() {
     createRequest().get('/api/coi/travel-log-entries/')
@@ -71,11 +75,55 @@ class _TravelLogStore extends AutoBindingStore {
         if (!err) {
           this.entries.push(returnEntry.body);
           this.potentialEntry = {};
+          this.validating = false;
           this.emitChange();
         }
       }));
   }
 
+  turnOnValidations() {
+    this.validating = true;
+  }
+
+  getErrors() {
+    const storeState = this.getState();
+    return this.validateEntry(storeState.potentialEntry);
+  }
+
+  validateEntry(entry) {
+    let errors = {};
+
+    if (!entry.entityName) {
+      errors.entityName = 'Required Field';
+    }
+
+    if (!entry.amount) {
+      errors.amount = 'Required Field';
+    }
+
+    if (!entry.destination) {
+      errors.destination = 'Required Field';
+    }
+
+    if (!entry.startDate) {
+      errors.startDate = 'Required Field';
+    }
+
+    if (!entry.endDate) {
+      errors.endDate = 'Required Field';
+    }
+
+    if (entry.startDate && entry.endDate && entry.endDate < entry.startDate) {
+      errors.startDate = 'Invalid Date Range';
+      errors.endDate = 'Invalid Date Range';
+    }
+
+    if (!entry.reason) {
+      errors.reason = 'Required Field';
+    }
+
+    return errors;
+  }
 
 }
 

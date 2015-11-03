@@ -19,9 +19,10 @@
 import React from 'react/addons';
 import {ProminentButton} from '../../ProminentButton';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
-import {DatePicker} from '../../DatePicker';
+import {TravelLogStore} from '../../../stores/TravelLogStore';
 import TextField from '../TextField';
 import CurrencyField from '../CurrencyField';
+import DateRangeField from '../DateRangeField';
 
 export class TravelLogForm extends React.Component {
     constructor() {
@@ -33,7 +34,13 @@ export class TravelLogForm extends React.Component {
     }
 
     addEntry() {
-      TravelLogActions.addEntry();
+      let validationErrors = TravelLogStore.getErrors();
+      let isValid = Object.keys(validationErrors).length === 0;
+      if (isValid) {
+        TravelLogActions.addEntry();
+      } else {
+        TravelLogActions.turnOnValidations();
+      }
     }
 
     updateField(evt) {
@@ -56,7 +63,6 @@ export class TravelLogForm extends React.Component {
         textField: {
           container: {
             display: 'inline-block',
-            marginRight: 20,
             width: '27%'
           },
           input: {
@@ -65,22 +71,16 @@ export class TravelLogForm extends React.Component {
             borderRadius: 5,
             border: '1px solid #ccc',
             height: 30,
-            width: '90%'
+            width: '95%'
           },
           label: {
             marginBottom: 5,
             fontWeight: '500'
           }
-        },
-        date: {
-          width: '40%',
-          display: 'inline-block'
-        },
-        dateMiddle: {width: '20%',
-          display: 'inline-block',
-          textAlign: 'center'
         }
       };
+
+      let errors = TravelLogStore.getErrors();
 
       return (
         <div style={styles.container}>
@@ -91,6 +91,7 @@ export class TravelLogForm extends React.Component {
             name="Entity Name"
             styles={styles.textField}
             value={this.props.entry.entityName}
+            invalid={this.props.validating && errors.entityName ? true : false}
           />
           <CurrencyField
             id='amount'
@@ -99,6 +100,7 @@ export class TravelLogForm extends React.Component {
             name="Amount"
             styles={styles.textField}
             value={this.props.entry.amount}
+            invalid={this.props.validating && errors.amount ? true : false}
           />
           <TextField
             id='destination'
@@ -107,15 +109,19 @@ export class TravelLogForm extends React.Component {
             name="Destinantion"
             styles={styles.textField}
             value={this.props.entry.destination}
+            invalid={this.props.validating && errors.destination ? true : false}
           />
-          <div style={styles.textField.container}>
-            <label htmlFor='dateRange' style={styles.textField.label}>DATE RANGE</label>
-            <div id='dateRange' style={{width: '90%'}}>
-              <DatePicker id="startDate" onChange={this.updateStartDate} value={this.props.entry.startDate} style={styles.date} textFieldStyle={styles.textField.input}/>
-              <div style={styles.dateMiddle}>TO</div>
-              <DatePicker id="endDate" onChange={this.updateEndDate} value={this.props.entry.endDate} style={styles.date} textFieldStyle={styles.textField.input}/>
-            </div>
-          </div>
+          <DateRangeField
+            id='dateRange'
+            label='DATE RANGE'
+            onStartDateChange={this.updateStartDate}
+            onEndDateChange={this.updateEndDate}
+            styles={styles.textField}
+            startDate={this.props.entry.startDate}
+            endDate={this.props.entry.endDate}
+            startDateInvalid={this.props.validating && errors.startDate ? true : false}
+            endDateInvalid={this.props.validating && errors.endDate ? true : false}
+          />
           <TextField
             id='reason'
             label='REASON'
@@ -123,6 +129,7 @@ export class TravelLogForm extends React.Component {
             name="Reason"
             styles={styles.textField}
             value={this.props.entry.reason}
+            invalid={this.props.validating && errors.reason ? true : false}
           />
           <div style={styles.textField.container}>
             <ProminentButton onClick={this.addEntry}>+ ADD</ProminentButton>

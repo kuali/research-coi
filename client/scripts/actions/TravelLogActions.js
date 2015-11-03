@@ -35,5 +35,7 @@ class _TravelLogActions {
   sortColumnChanged(value) { this.dispatch(value); }
 
   sortDirectionChanged(value) { this.dispatch(value); }
+
+  turnOnValidations() { this.dispatch(); }
 }
 export let TravelLogActions = alt.createActions(_TravelLogActions);
