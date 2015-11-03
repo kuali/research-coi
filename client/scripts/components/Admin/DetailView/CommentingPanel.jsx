@@ -108,7 +108,6 @@ export default class CommentingPanel extends React.Component {
         borderRadius: 5,
         padding: 5,
         fontSize: 13,
-        resize: 'none',
         border: '1px solid #AAA'
       },
       checkLabel: {

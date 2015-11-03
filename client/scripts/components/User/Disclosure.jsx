@@ -237,10 +237,11 @@ export class Disclosure extends React.Component {
           );
         }
         else {
+          let activeEntities = this.state.entities.filter(entity => entity.active);
           currentStep = (
             <Relationships
               projects={this.state.projects}
-              entities={this.state.entities}
+              entities={activeEntities}
               declarations={this.state.declarations}
               declarationStates={this.state.applicationState.declarationStates}
               view={this.state.applicationState.declarationView}

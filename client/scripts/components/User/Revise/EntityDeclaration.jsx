@@ -140,7 +140,6 @@ export default class EntityDeclaration extends React.Component {
         margin: '10px 0',
         fontSize: 16,
         padding: '6px 8px',
-        resize: 'none',
         backgroundColor: '#EEEEEE'
       },
       entityName: {
@@ -169,8 +168,7 @@ export default class EntityDeclaration extends React.Component {
         fontSize: 14,
         border: '1px solid #999',
         height: 100,
-        borderRadius: 5,
-        resize: 'none'
+        borderRadius: 5
       },
       declarationTypeLabel: {
         paddingLeft: 5

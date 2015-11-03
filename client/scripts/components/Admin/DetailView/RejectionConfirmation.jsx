@@ -78,7 +78,6 @@ export class RejectionConfirmation extends ResponsiveComponent {
         width: '100%',
         height: 200,
         marginBottom: 30,
-        resize: 'none',
         borderRadius: 5,
         border: '1px solid #AAA',
         padding: 7,

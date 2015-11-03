@@ -241,9 +241,9 @@ class Question extends React.Component {
 
       buttons = (
         <div>
-          {displayCondition}
           <KButton style={styles.button} onClick={this.edit}>Edit</KButton>
           <KButton style={styles.button} onClick={this.deleteQuestion}>Delete</KButton>
+          {displayCondition}
         </div>
       );
     }

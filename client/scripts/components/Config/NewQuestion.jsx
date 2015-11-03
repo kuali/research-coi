@@ -89,7 +89,6 @@ export default class NewQuestion extends React.Component {
         height: 70,
         width: '100%',
         border: '1px solid #aaa',
-        resize: 'none',
         padding: 10,
         fontSize: 16
       },
