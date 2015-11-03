@@ -86,5 +86,11 @@ export let COIConstants = {
   ROLES: {
     ADMIN: 'admin',
     USER: 'user'
+  },
+  RELATIONSHIP_STATUS: {
+    PENDING: 'PENDING',
+    IN_PROGRESS: 'IN PROGRESS',
+    DISCLOSED: 'DISCLOSED'
   }
+
 };

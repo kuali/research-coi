@@ -67,6 +67,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.boolean('active');
     table.string('name', 200);
     table.string('description', 200);
+    table.string('status', 40).notNullable();
     table.engine('InnoDB');
   })
   .createTable('relationship_person_type', function(table) {
@@ -108,6 +109,8 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.integer('type_cd').unsigned().index().references('type_cd').inTable('relationship_type');
     table.integer('amount_cd').unsigned().index().references('type_cd').inTable('relationship_amount_type');
     table.string('comments', 4000);
+    table.boolean('active').notNullable().defaultTo(true);
+    table.string('status', 40).notNullable();
     table.engine('InnoDB');
   })
   .createTable('project_type', function(table) {

@@ -147,7 +147,8 @@ function insertRelationship(knex, entityId) {
     person_cd: knex('relationship_person_type').max('type_cd'),
     type_cd: knex('relationship_type').max('type_cd').where('relationship_cd', relationshipCd),
     amount_cd: knex('relationship_amount_type').max('type_cd').where('relationship_cd', relationshipCd),
-    comments: 'Rel 1 Comments'
+    comments: 'Rel 1 Comments',
+    status: 'IN PROGRESS'
   });
 }
 
@@ -156,7 +157,8 @@ function insertEntity(knex, disclosureId, name, description) {
     disclosure_id: disclosureId,
     active: true,
     name: name,
-    description: description
+    description: description,
+    status: 'IN PROGRESS'
   })
   .then(function(entityId){
     return insertRelationship(knex, entityId);
