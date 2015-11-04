@@ -34,6 +34,7 @@ class _TravelLogStore extends AutoBindingStore {
     this.potentialEntry = {};
     this.sortColumn = 'name';
     this.sortDirection = 'ASCENDING';
+    this.filter = 'all';
     this.validating = false;
   }
 
@@ -41,6 +42,7 @@ class _TravelLogStore extends AutoBindingStore {
     createRequest().get('/api/coi/travel-log-entries/')
     .query({sortColumn: this.sortColumn})
     .query({sortDirection: this.sortDirection})
+    .query({filter: this.filter})
     .end(processResponse((err, travelLog) => {
       if (!err) {
         this.entries = travelLog.body;
@@ -60,6 +62,11 @@ class _TravelLogStore extends AutoBindingStore {
 
   sortDirectionChanged(value) {
     this.sortDirection = value;
+    this.refreshTravelLogEntries();
+  }
+
+  filterChanged(value) {
+    this.filter = value;
     this.refreshTravelLogEntries();
   }
 
@@ -123,6 +130,31 @@ class _TravelLogStore extends AutoBindingStore {
     }
 
     return errors;
+  }
+
+  deleteEntry(relationshipId) {
+    createRequest().del('/api/coi/travel-log-entries/' + relationshipId)
+      .end(processResponse((err) => {
+        if (!err) {
+          this.entries = this.entries.filter(entry => {
+            return entry.relationshipId !== relationshipId;
+          });
+          this.emitChange();
+        }
+      }));
+  }
+
+  archiveEntry(relationshipId) {
+    createRequest().put('/api/coi/travel-log-entries/' + relationshipId)
+      .send({active: false})
+      .end(processResponse((err) => {
+        if (!err) {
+          this.entries = this.entries.filter(entry => {
+            return entry.relationshipId !== relationshipId;
+          });
+          this.emitChange();
+        }
+      }));
   }
 
 }

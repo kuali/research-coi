@@ -36,6 +36,12 @@ class _TravelLogActions {
 
   sortDirectionChanged(value) { this.dispatch(value); }
 
+  filterChanged(value) { this.dispatch(value); }
+
   turnOnValidations() { this.dispatch(); }
+
+  deleteEntry(relationshipId) { this.dispatch(relationshipId); }
+
+  archiveEntry(relationshipId) { this.dispatch(relationshipId); }
 }
 export let TravelLogActions = alt.createActions(_TravelLogActions);

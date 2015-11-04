@@ -18,6 +18,7 @@
 
 /*eslint camelcase:0 */
 import {COIConstants} from '../../COIConstants';
+import {verifyRelationshipIsUsers} from './CommonDB';
 
 let getKnex;
 try {
@@ -28,7 +29,7 @@ catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection) => {
+export let getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, filter) => {
   let knex = getKnex(dbInfo);
 
   let dbSortColumn;
@@ -48,13 +49,30 @@ export let getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection) => 
       break;
   }
 
-  return knex.select('fe.name as entityName', 't.amount', 't.start_date as startDate', 't.end_date as endDate', 't.destination', 't.reason')
+  let query = knex.select('fe.name as entityName', 't.amount', 't.start_date as startDate', 't.end_date as endDate', 't.destination', 't.reason', 'r.status as status', 'r.disclosed_date as disclosedDate', 'r.id as relationshipId', 'r.active as active')
     .from('travel_relationship as t')
     .innerJoin('relationship as r', 'r.id', 't.relationship_id' )
     .innerJoin('fin_entity as fe', 'fe.id', 'r.fin_entity_id')
     .innerJoin('disclosure as d', 'd.id', 'fe.disclosure_id')
     .where('d.user_id', userId)
     .orderBy(dbSortColumn, dbSortDirection);
+
+  switch (filter) {
+    case 'disclosed':
+      query.andWhere('r.active', true).andWhere('r.status', COIConstants.RELATIONSHIP_STATUS.DISCLOSED);
+      break;
+    case 'notYetDisclosed':
+      query.andWhere('r.active', true).andWhereIn('r.status', [COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.PENDING]);
+      break;
+    case 'archived':
+      query.andWhere('r.active', false);
+      break;
+    default:
+      query.andWhere('r.active', true);
+      break;
+  }
+
+  return query;
 };
 
 let createAnnualDisclosure = (knex, userInfo) => {
@@ -89,7 +107,7 @@ let createNewRelationship = (knex, entityId, entry, status) => {
     status: status
   }).then(relationshipId => {
     return knex('travel_relationship').insert({
-      relationship_id: relationshipId,
+      relationship_id: relationshipId[0],
       amount: entry.amount,
       destination: entry.destination,
       start_date: new Date(entry.startDate),
@@ -97,6 +115,7 @@ let createNewRelationship = (knex, entityId, entry, status) => {
       reason: entry.reason
     }).then(travelRelationshipId => {
       entry.id = travelRelationshipId[0];
+      entry.relationshipId = relationshipId[0];
       return entry;
     });
   });
@@ -153,3 +172,131 @@ export let createTravelLogEntry = (dbInfo, entry, userInfo) => {
     });
   });
 };
+
+let getRelationshipsEntity = (trx, id) => {
+  return trx('relationship')
+    .select('fin_entity_id')
+    .where('id', id)
+    .then(relationship => {
+      return relationship[0].fin_entity_id;
+    });
+};
+
+let deleteTravelRelationship = (trx, id) => {
+  return trx('travel_relationship')
+    .del()
+    .where('relationship_id', id);
+};
+
+let deleteRelationship = (trx, id) => {
+  return trx('relationship')
+  .del()
+  .where('id', id);
+};
+
+let deleteEntityIfAllRelationshipsAreDelete = (trx, entityId) => {
+  return trx('relationship')
+    .select('')
+    .where('fin_entity_id', entityId)
+    .then(rows => {
+      if (!rows.length) {
+        return trx('fin_entity').del().where('id', entityId);
+      }
+    });
+};
+
+export let deleteTravelLogEntry = (dbInfo, id, userInfo) => {
+  let knex = getKnex(dbInfo);
+  return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
+    .then(isAllowed => {
+      if(isAllowed) {
+        return knex.transaction(trx=>{
+          return getRelationshipsEntity(trx, id).then(entityId => {
+            return deleteTravelRelationship(trx, id).then(()=>{
+              return deleteRelationship(trx, id).then(() => {
+                return deleteEntityIfAllRelationshipsAreDelete(trx, entityId);
+              });
+            });
+          });
+        });
+      }
+      else {
+        throw new Error(userInfo.userName + ' is unauthorized to edit this record');
+      }
+    });
+};
+
+let createTravelRelationshipFromEntry = (entry) => {
+  let travelRelationship = {};
+  if (entry.amount) {
+    travelRelationship.amount = entry.amount;
+  }
+
+  if (entry.startDate) {
+    travelRelationship.start_date = new Date(entry.startDate);
+  }
+
+  if (entry.endDate) {
+    travelRelationship.end_date = new Date(entry.endDate);
+  }
+
+  if (entry.reason) {
+    travelRelationship.reason = entry.reason;
+  }
+
+  if (entry.destination) {
+    travelRelationship.destination = entry.destination;
+  }
+  return travelRelationship;
+};
+
+let createRelationshipFromEntry = (entry) => {
+  let relationship = {};
+  if (entry.active !== undefined) {
+    relationship.active = entry.active;
+  }
+  return relationship;
+};
+
+let updateTravelRelationship = (trx, entry, id) => {
+  let travelRelationship = createTravelRelationshipFromEntry(entry);
+  if (Object.keys(travelRelationship).length > 0) {
+    return trx('travel_relationship')
+    .update(travelRelationship)
+    .where('relationship_id', id);
+  } else {
+    return undefined;
+  }
+};
+
+let updateRelationship = (trx, entry, id) => {
+  let relationship = createRelationshipFromEntry(entry);
+  if (Object.keys(relationship).length > 0) {
+    return trx('relationship')
+    .update(relationship)
+    .where('id', id);
+  } else {
+    return undefined;
+  }
+};
+
+
+export let updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
+  let knex = getKnex(dbInfo);
+  return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
+  .then(isAllowed => {
+    if(isAllowed) {
+      return knex.transaction(trx=>{
+        return Promise.all([
+          updateTravelRelationship(trx, entry, id),
+          updateRelationship(trx, entry, id)
+        ]).then(() => {
+          return entry;
+        });
+      });
+    }
+    else {
+      throw new Error(userInfo.userName + ' is unauthorized to edit this record');
+    }
+  });
+}

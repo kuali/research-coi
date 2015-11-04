@@ -131,3 +131,19 @@ export let isDisclosureUsers = (dbInfo, disclosureId, userId) => {
       return result.length > 0;
     });
 };
+
+export let verifyRelationshipIsUsers = (dbInfo, userId, relationshipId) => {
+  let knex = getKnex(dbInfo);
+
+  return knex.select('')
+  .from('relationship as r')
+  .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
+  .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
+  .where({
+    'd.user_id': userId,
+    'r.id': relationshipId
+  })
+  .then(rows => {
+    return rows.length > 0;
+  });
+};

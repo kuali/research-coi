@@ -18,7 +18,7 @@
 
 /*eslint camelcase:0 */
 import {COIConstants} from '../../COIConstants';
-import {isDisclosureUsers} from './CommonDB';
+import {isDisclosureUsers, verifyRelationshipIsUsers} from './CommonDB';
 import * as DisclosureDB from './DisclosureDB';
 
 let getKnex;
@@ -649,24 +649,10 @@ export let addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => {
     });
 };
 
-let verifyRelationshipIsUsers = (knex, userId, relationshipId) => {
-  return knex.select('')
-    .from('relationship as r')
-    .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
-    .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
-    .where({
-      'd.user_id': userId,
-      'r.id': relationshipId
-    })
-    .then(rows => {
-      return rows.length > 0;
-    });
-};
-
 export let removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => {
   let knex = getKnex(dbInfo);
 
-  return verifyRelationshipIsUsers(knex, userInfo.schoolId, relationshipId)
+  return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, relationshipId)
     .then(isAllowed => {
       if (isAllowed) {
         return Promise.all([
