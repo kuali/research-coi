@@ -21,7 +21,7 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ManualPlaceholder} from '../../DynamicIcons/ManualPlaceholder';
-import {KButton} from '../../KButton';
+import {BlueButton} from '../../BlueButton';
 
 export class ManualEventEntry extends ResponsiveComponent {
   constructor() {
@@ -170,7 +170,7 @@ export class ManualEventEntry extends ResponsiveComponent {
               <input onChange={this.saveProject} value={disclosure.enddate} ref="enddate" type="date" style={styles.textfield} />
             </span>
             <span style={merge(styles.cell, {textAlign: 'right'})}>
-              <KButton onClick={this.nextScreen} style={styles.saveButton}>Done</KButton>
+              <BlueButton onClick={this.nextScreen} style={styles.saveButton}>Done</BlueButton>
             </span>
           </div>
         </div>

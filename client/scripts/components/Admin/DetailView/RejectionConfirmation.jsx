@@ -19,7 +19,8 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
+import {BlueButton} from '../../BlueButton';
 import {AdminActions} from '../../../actions/AdminActions';
 
 export class RejectionConfirmation extends ResponsiveComponent {
@@ -101,8 +102,8 @@ export class RejectionConfirmation extends ResponsiveComponent {
           <div style={styles.generalComments}>NOTIFICATION TO USER</div>
           <textarea ref="comments" style={styles.commentText} />
 
-          <KButton onClick={this.reject} style={styles.yesButton}>YES, SUBMIT</KButton>
-          <KButton onClick={this.cancel} style={styles.button}>NO, CANCEL</KButton>
+          <BlueButton onClick={this.reject} style={styles.yesButton}>YES, SUBMIT</BlueButton>
+          <GreyButton onClick={this.cancel} style={styles.button}>NO, CANCEL</GreyButton>
         </div>
       );
     } else {
@@ -112,7 +113,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
             Please add one or more comments visible to the PI before sending back a disclosure.
           </div>
 
-          <KButton onClick={this.cancel} style={styles.button}>CLOSE</KButton>
+          <GreyButton onClick={this.cancel} style={styles.button}>CLOSE</GreyButton>
         </div>
       );
     }

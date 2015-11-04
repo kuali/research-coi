@@ -18,7 +18,7 @@
 
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {DatePicker} from '../DatePicker';
-import {KButton} from '../KButton';
+import {GreyButton} from '../GreyButton';
 import {AdminActions} from '../../actions/AdminActions';
 import DisclosureFilter from './DisclosureFilter';
 import DoneWithFilterButton from './DoneWithFilterButton';
@@ -117,10 +117,10 @@ export class DisclosureFilterByDate extends DisclosureFilter {
         </div>
         {sortFields}
         <div>
-          <KButton style={styles.clearButton} onClick={this.clear}>
+          <GreyButton style={styles.clearButton} onClick={this.clear}>
             <i className="fa fa-times" style={styles.x}></i>
             CLEAR FILTER
-          </KButton>
+          </GreyButton>
         </div>
       </div>
     );

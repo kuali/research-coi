@@ -18,7 +18,7 @@
 
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {KButton} from '../../KButton';
+import {BlueButton} from '../../BlueButton';
 import Router from 'react-router';
 let Link = Router.Link;
 import PIReviewActions from '../../../actions/PIReviewActions';
@@ -76,33 +76,34 @@ export default class SidePanel extends React.Component {
       },
       submitIcon: {
         color: submitEnabled ? window.colorBlindModeOn ? 'black' : '#F57C00' : '#CCC',
-        fontSize: 35,
+        fontSize: 29,
         verticalAlign: 'middle',
         margin: '0 10px 5px 15px'
       },
       cancelIcon: {
         color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        fontSize: 35,
+        fontSize: 29,
         verticalAlign: 'middle',
         margin: '0 10px 0 15px'
       },
       certificationPane: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: 'white',
-        padding: '25px 15px'
+        backgroundColor: 'white',
+        color: 'black',
+        padding: '25px 15px',
+        boxShadow: '0 0 10px 2px #DDD'
       },
       certCheckbox: {
         paddingTop: 17,
-        textAlign: 'center',
-        fontSize: 19
+        textAlign: 'center'
       },
       agreedLabel: {
         paddingLeft: 5
       },
-      confirmButton: {
-        fontSize: 20,
-        color: this.state.agreed ? 'black' : '#AAA',
-        cursor: this.state.agreed ? 'pointer' : 'default'
+      disabledConfirmButton: {
+        cursor: 'default',
+        color: '#AAA',
+        backgroundColor: '#EEE',
+        borderBottom: '2px solid #AAA'
       },
       confirmSection: {
         textAlign: 'center',
@@ -112,6 +113,11 @@ export default class SidePanel extends React.Component {
 
     let content;
     if (this.props.showingCertification) {
+      let confirmButtonStyle = {};
+      if (!this.state.agreed) {
+        confirmButtonStyle = styles.disabledConfirmButton;
+      }
+
       content = (
         <div style={styles.certificationPane}>
           <div>{this.props.certificationText}</div>
@@ -120,7 +126,7 @@ export default class SidePanel extends React.Component {
             <label style={styles.agreedLabel} htmlFor="certCheck">Agreed</label>
           </div>
           <div style={styles.confirmSection}>
-            <KButton onClick={this.confirm} style={styles.confirmButton}>Confirm</KButton>
+            <BlueButton onClick={this.confirm} style={confirmButtonStyle}>Confirm</BlueButton>
           </div>
         </div>
       );

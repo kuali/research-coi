@@ -90,7 +90,8 @@ export default class DeclarationType extends React.Component {
       },
       editLink: {
         float: 'right',
-        paddingTop: 2
+        paddingTop: 2,
+        marginLeft: 3
       },
       deleteLink: {
         float: 'right',

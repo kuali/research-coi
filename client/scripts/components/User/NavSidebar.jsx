@@ -119,15 +119,15 @@ export class NavSidebar extends React.Component {
         </div>
       );
 
-      let submitStyle;
+      let submitLabelStyle = styles.nextquestion;
+      let submitIconStyle = styles.icons;
       if (this.props.submitDisabled) {
-        submitStyle = merge(styles.nextquestion, styles.disabled);
-      } else {
-        submitStyle = styles.nextquestion;
+        submitLabelStyle = merge(submitLabelStyle, styles.disabled);
+        submitIconStyle = merge(submitIconStyle, styles.disabled);
       }
       submit = (
-        <div onClick={this.submitDisclosure} style={submitStyle}>
-          <i className="fa fa-arrow-circle-right" style={styles.icons}></i>
+        <div onClick={this.submitDisclosure} style={submitLabelStyle}>
+          <i className="fa fa-arrow-circle-right" style={submitIconStyle}></i>
           <span style={styles.stepLabel}>
             SUBMIT
           </span>

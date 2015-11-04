@@ -17,7 +17,7 @@
 */
 
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {KButton} from '../KButton';
+import {GreyButton} from '../GreyButton';
 import {AdminActions} from '../../actions/AdminActions';
 import DisclosureFilter from './DisclosureFilter';
 import DoneWithFilterButton from './DoneWithFilterButton';
@@ -93,10 +93,10 @@ export class DisclosureFilterByType extends DisclosureFilter {
       <div style={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
         {options}
-        <KButton style={styles.clearButton} onClick={this.clear}>
+        <GreyButton style={styles.clearButton} onClick={this.clear}>
           <i className="fa fa-times" style={styles.x}></i>
           CLEAR FILTER
-        </KButton>
+        </GreyButton>
       </div>
     );
   }

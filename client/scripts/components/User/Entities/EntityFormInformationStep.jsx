@@ -79,6 +79,11 @@ export class EntityFormInformationStep extends React.Component {
         width: '66%',
         display: 'inline-block',
         verticalAlign: 'top'
+      },
+      attachmentLabel: {
+        color: window.colorBlindModeOn ? 'black' : '#888',
+        fontSize: 12,
+        margin: '25px 0 6px 0'
       }
     };
 
@@ -125,23 +130,37 @@ export class EntityFormInformationStep extends React.Component {
       );
     });
 
+    let attachmentSection;
+    if (!this.props.readonly || this.props.files && this.props.files.length > 0) {
+      attachmentSection = (
+        <div>
+          <div style={styles.attachmentLabel}>
+            ATTACHMENTS
+          </div>
+
+          <FileUpload
+            fileType='Attachment'
+            readonly={this.props.readonly}
+            onDrop={this.addEntityAttachments}
+            delete={this.deleteEntityAttachment}
+            files={this.props.files}
+            multiple={true}
+          >
+            <div>Drag and drop or click to upload your attachments</div>
+            <div>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
+          </FileUpload>
+        </div>
+      );
+    }
+
     return (
       <span style={merge(styles.container, this.props.style)}>
         {heading}
         <div>
           {questions}
         </div>
-        <FileUpload
-          fileType='Attachment'
-          readonly={this.props.readonly}
-          onDrop={this.addEntityAttachments}
-          delete={this.deleteEntityAttachment}
-          files={this.props.files}
-          multiple={true}
-        >
-          <div>Drag and drop or click to upload your attachments</div>
-          <div>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
-        </FileUpload>
+
+        {attachmentSection}
       </span>
     );
   }

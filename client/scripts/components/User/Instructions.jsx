@@ -20,7 +20,7 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
-import {KButton} from '../KButton';
+import {GreyButton} from '../GreyButton';
 
 export class Instructions extends ResponsiveComponent {
   constructor() {
@@ -78,7 +78,6 @@ export class Instructions extends ResponsiveComponent {
         padding: '14px 14px 0 0'
       },
       closeButton: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '3px 16px',
         fontSize: 15,
         marginRight: 23
@@ -102,7 +101,7 @@ export class Instructions extends ResponsiveComponent {
         <div style={styles.arrow}></div>
         <div>{this.props.text}</div>
         <div style={styles.buttons}>
-          <KButton style={styles.closeButton} onClick={this.close}>CLOSE</KButton>
+          <GreyButton style={styles.closeButton} onClick={this.close}>CLOSE</GreyButton>
         </div>
       </div>
     );

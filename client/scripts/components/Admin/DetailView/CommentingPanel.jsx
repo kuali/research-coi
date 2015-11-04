@@ -20,7 +20,7 @@ import React from 'react/addons';
 import {merge} from '../../../merge';
 import CommentBubble from './CommentBubble';
 import {AdminActions} from '../../../actions/AdminActions';
-import {KButton} from '../../KButton';
+import {BlueButton} from '../../BlueButton';
 
 export default class CommentingPanel extends React.Component {
   constructor() {
@@ -166,7 +166,7 @@ export default class CommentingPanel extends React.Component {
                 <label htmlFor="piCheck" style={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
               </div>
               <div>
-                <KButton style={styles.submitButton} onClick={this.makeComment}>Submit</KButton>
+                <BlueButton style={styles.submitButton} onClick={this.makeComment}>Submit</BlueButton>
               </div>
             </span>
         </div>

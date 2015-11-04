@@ -701,6 +701,9 @@ class _DisclosureStore extends AutoBindingStore {
             }
           }));
       }
+      else {
+        this.applicationState.entityStates[entity.id].formStep = -1;
+      }
     }
     else {
       this.applicationState.newEntityFormStep = -1;

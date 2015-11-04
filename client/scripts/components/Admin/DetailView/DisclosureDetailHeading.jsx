@@ -20,7 +20,7 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import ConfigStore from '../../../stores/ConfigStore';
 import {formatDate} from '../../../formatDate';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
 import ReactRouter from 'react-router';
 let Link = ReactRouter.Link;
 
@@ -65,12 +65,7 @@ export class DisclosureDetailHeading extends React.Component {
         fontSize: 15
       },
       backButton: {
-        width: 165,
-        padding: '4px 7px 5px 7px',
-        margin: '15px 20px 0 0',
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#DFDFDF',
-        borderBottom: '2px solid #717171',
-        color: window.colorBlindModeOn ? 'white' : '#666'
+        margin: '15px 20px 0 0'
       }
     };
 
@@ -105,12 +100,12 @@ export class DisclosureDetailHeading extends React.Component {
     return (
       <div style={merge(styles.container, this.props.style)} >
         <Link to={`/`} style={{float: 'right'}}>
-          <KButton style={styles.backButton}>
+          <GreyButton style={styles.backButton}>
             <span>
               <i className="fa fa-list-ul" style={{marginRight: 5}}></i>
               Back To List View
             </span>
-          </KButton>
+          </GreyButton>
         </Link>
         <span>
           <div style={styles.heading}>

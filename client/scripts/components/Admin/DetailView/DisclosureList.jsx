@@ -22,7 +22,7 @@ import {DisclosureListItem} from './DisclosureListItem';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
 import {SearchFilterGroup} from '../SearchFilterGroup';
 import {AdminActions} from '../../../actions/AdminActions';
-import {KButton} from '../../KButton';
+import {BlueButton} from '../../BlueButton';
 import ConfigStore from '../../../stores/ConfigStore';
 
 export class DisclosureList extends React.Component {
@@ -138,7 +138,7 @@ export class DisclosureList extends React.Component {
     if (!this.props.loadedAll && !this.props.loadingMore) {
       loadMoreButton = (
         <div style={styles.loadMoreButton}>
-          <KButton onClick={this.loadMore}>Load more</KButton>
+          <BlueButton onClick={this.loadMore}>Load more</BlueButton>
         </div>
       );
     }

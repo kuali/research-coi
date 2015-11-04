@@ -102,7 +102,7 @@ export class Certify extends React.Component {
 
         <div style={styles.content}>
           <span style={styles.cert}>
-            <div style={{whiteSpace: 'pre-wrap'}}>
+            <div style={{whiteSpace: 'pre-wrap', marginBottom: 25}}>
               {window.config.general.certificationOptions.text}
             </div>
             <FileUpload

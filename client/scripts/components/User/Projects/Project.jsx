@@ -20,7 +20,7 @@ import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ProjectRelationDialog} from './ProjectRelationDialog';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
 
 export class Project extends React.Component {
@@ -192,7 +192,7 @@ export class Project extends React.Component {
               {status}
 
               <div>
-                <KButton style={styles.button} onClick={this.toggleDialog}>Update</KButton>
+                <GreyButton style={styles.button} onClick={this.toggleDialog}>Update</GreyButton>
               </div>
             </span>
           </div>

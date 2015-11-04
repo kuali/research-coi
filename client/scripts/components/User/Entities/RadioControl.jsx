@@ -68,7 +68,9 @@ export class RadioControl extends React.Component {
                 onChange={this.onChange}
                 type="radio"
               />
-              {option}
+              <span style={{marginLeft: 3}}>
+                {option}
+              </span>
             </label>
           </div>
         </span>

@@ -71,6 +71,7 @@ export function run() {
 
   process.on('uncaughtException', function(err) {
     Log.error(`Uncaught exception: ${err}`);
+    Log.error(err);
     Log.error('waiting for pending connections to clear');
     server.close(() => {
       Log.error('shutting down');

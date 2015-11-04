@@ -22,7 +22,7 @@ import {ToggleSet} from './ToggleSet';
 import EntityRelationshipSummary from '../../EntityRelationshipSummary';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {KButton} from '../../KButton';
+import {BlueButton} from '../../BlueButton';
 import RelationshipTextField from './RelationshipTextField';
 import RelationshipDateField from './RelationshipDateField';
 
@@ -184,7 +184,6 @@ export class EntityFormRelationshipStep extends React.Component {
       },
       submittedrelations: {
         borderTop: '1px solid #DEDEDE',
-        marginRight: 14,
         paddingTop: 20
       },
       typeSection: {
@@ -450,13 +449,13 @@ export class EntityFormRelationshipStep extends React.Component {
                 </div>
               </div>
               <div style={styles.addButtonSection}>
-                <KButton
+                <BlueButton
                   onClick={this.addRelation}
                   title={this.props.validating && !isValid ? 'Please correct the highlighted fields' : ''}
                   style={styles.addButton}
                 >
                   + Add Additional Relationship
-                </KButton>
+                </BlueButton>
               </div>
             </span>
           </div>
@@ -468,7 +467,7 @@ export class EntityFormRelationshipStep extends React.Component {
     if (relationshipSummaries.length > 0) {
       relationshipSummariesSection = (
         <div style={!this.props.readonly ? styles.submittedrelations : {}}>
-          <div style={{color: this.props.update || window.colorBlindModeOn ? 'black' : '#888', marginBottom: 12, fontSize: 12}}>
+          <div style={{color: window.colorBlindModeOn ? 'black' : '#888', marginBottom: 10, fontSize: 12}}>
             RELATIONSHIPS
           </div>
           {relationshipSummaries}

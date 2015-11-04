@@ -128,12 +128,13 @@ export default class EntitySummary extends React.Component {
         cursor: 'pointer',
         textAlign: 'right',
         verticalAlign: 'bottom',
-        width: '30%',
+        width: this.props.entity.files.length > 0 ? '30%' : '100%',
         display: 'inline-block'
       },
       relationshipsLabel: {
-        fontSize: 15,
-        marginBottom: 8
+        marginBottom: 8,
+        color: window.colorBlindModeOn ? 'black' : '#888',
+        fontSize: 12
       },
       relationshipSummary: {
         marginBottom: 10
@@ -175,7 +176,7 @@ export default class EntitySummary extends React.Component {
     });
 
 
-    let files = this.props.entity.files.map(file=>{
+    let files = this.props.entity.files.map(file => {
       return (
         <div key={file.id} style={{marginBottom: 5}}>
           <a style={{color: window.colorBlindModeOn ? 'black' : '#0095A0', borderBottom: '1px dotted ' + (window.colorBlindModeOn ? 'black' : '#0095A0')}} href={'/api/coi/files/' + encodeURIComponent(file.id)}>{file.name}</a>
@@ -192,6 +193,16 @@ export default class EntitySummary extends React.Component {
     }
     effectiveStyle = merge(effectiveStyle, this.props.style);
 
+    let attachmentSection;
+    if (files.length > 0) {
+      attachmentSection = (
+        <div style={styles.bottomLeft}>
+          <div style={{color: window.colorBlindModeOn ? 'black' : '#888', fontSize: 12}}>ATTACHMENTS</div>
+          {files}
+        </div>
+      );
+    }
+
     return (
       <div
         style={effectiveStyle}
@@ -202,14 +213,11 @@ export default class EntitySummary extends React.Component {
             {fields}
           </span>
           <span style={styles.relations}>
-            <div style={styles.relationshipsLabel}>Relationship(s):</div>
+            <div style={styles.relationshipsLabel}>RELATIONSHIP(S)</div>
             {relationships}
           </span>
           <div style={styles.bottom}>
-            <div style={styles.bottomLeft}>
-              <div>Attachments</div>
-              {files}
-            </div>
+            {attachmentSection}
             <div style={styles.commentLink} onClick={this.showComments}>
               <span style={styles.commentLabel}>COMMENT ({this.props.commentCount})</span>
             </div>

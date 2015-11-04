@@ -42,7 +42,8 @@ export class DisclosureTable extends React.Component {
       container: {
         borderRadius: 5,
         boxShadow: '0 0 10px #C0C0C0',
-        margin: '44px 50px'
+        margin: '44px 50px',
+        overflow: 'hidden'
       },
       heading: {
         fontWeight: window.colorBlindModeOn ? 'normal' : 300,

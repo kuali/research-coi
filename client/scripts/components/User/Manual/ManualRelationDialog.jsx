@@ -21,7 +21,7 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {EntityRelation} from '../EntityRelation';
-import {KButton} from '../../KButton';
+import {BlueButton} from '../../BlueButton';
 import {ProminentButton} from '../../ProminentButton';
 
 export class ManualRelationDialog extends ResponsiveComponent {
@@ -136,7 +136,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
             Indicate how each Financial Entity is related to project #{this.props.projectId} - {this.props.title}:
           </div>
           <div>
-            <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
+            <BlueButton onClick={this.setAll} style={styles.setAllButton}>Set All:</BlueButton>
             to:
             <select ref="setAllSelect" defaultValue={'NONE'} style={{marginLeft: 10}}>
               <option value="NONE">No Conflict</option>

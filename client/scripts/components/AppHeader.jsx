@@ -170,7 +170,12 @@ export class AppHeader extends React.Component {
             />
           </span>
           {signOut}
-          <span style={styles.usersName}>Welcome, {this.state.usersName}</span>
+          <span style={styles.usersName}>
+            Welcome,
+            <span style={{marginLeft: 3}}>
+              {this.state.usersName}
+            </span>
+          </span>
         </span>
       </header>
     );

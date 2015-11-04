@@ -119,10 +119,9 @@ export default class AdditionalReviewPanel extends React.Component {
           </span>
           <span style={styles.title}>ADDITIONAL REVIEW</span>
         </div>
-        <div style={{paddingTop: 12}}>
+        <div style={{paddingTop: 12, marginBottom: 25}}>
           <span style={styles.subLabel}>MANAGEMENT PLAN</span>
         </div>
-
 
         <FileUpload
           fileType='Management Plan'

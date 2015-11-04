@@ -18,7 +18,7 @@
 
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
 import {EntityForm} from './EntityForm';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import ConfigStore from '../../../stores/ConfigStore';
@@ -70,7 +70,8 @@ export class Entity extends React.Component {
         display: 'inline-block'
       },
       button: {
-        margin: '7px 10px 7px 0'
+        margin: '7px 10px 7px 0',
+        minWidth: 110
       },
       relationships: {
         fontWeight: 'bold',
@@ -93,9 +94,9 @@ export class Entity extends React.Component {
 
     let statusButton;
     if (this.props.entity.active === 1) {
-      statusButton = (<KButton onClick={this.toggleStatus} style={styles.button}>Deactivate</KButton>);
+      statusButton = (<GreyButton onClick={this.toggleStatus} style={styles.button}>Deactivate</GreyButton>);
     } else {
-      statusButton = (<KButton onClick={this.toggleStatus} style={styles.button}>Reactivate</KButton>);
+      statusButton = (<GreyButton onClick={this.toggleStatus} style={styles.button}>Reactivate</GreyButton>);
     }
 
     let relationships = this.props.entity.relationships.map((relationship) => {
@@ -118,7 +119,7 @@ export class Entity extends React.Component {
               </span>
             </span>
             <span style={styles.buttonCell}>
-              <KButton style={styles.button} onClick={this.showForm}>View Summary</KButton>
+              <GreyButton style={styles.button} onClick={this.showForm}>View Summary</GreyButton>
               {statusButton}
             </span>
           </div>
