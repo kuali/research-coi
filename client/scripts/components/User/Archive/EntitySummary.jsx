@@ -186,7 +186,7 @@ export default class EntitySummary extends React.Component {
     if (files.length > 0) {
       attachmentSection = (
         <div style={styles.bottomLeft}>
-          <div>Attachments</div>
+          <div style={{color: window.colorBlindModeOn ? 'black' : '#888', fontSize: 12}}>ATTACHMENTS</div>
           {files}
         </div>
       );

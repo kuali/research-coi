@@ -21,8 +21,8 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ProjectRelation} from './ProjectRelation';
-import {KButton} from '../../KButton';
-import {ProminentButton} from '../../ProminentButton';
+import {BlueButton} from '../../BlueButton';
+import {GreyButton} from '../../GreyButton';
 
 export class EntityRelationDialog extends ResponsiveComponent {
   constructor() {
@@ -120,10 +120,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
         verticalAlign: 'middle'
       },
       button: {
-        margin: '0 10px 0 10px',
-        padding: 8,
-        minWidth: 90,
-        width: 'initial'
+        margin: '0 10px 0 10px'
       }
     };
     let styles = merge(this.commonStyles, desktopStyles);
@@ -152,18 +149,18 @@ export class EntityRelationDialog extends ResponsiveComponent {
     if (this.props.entityCount > 0) {
       if (this.props.id > 0) {
         navButtons.push(
-          <ProminentButton key='previous' onClick={this.onPrevious} style={styles.button}>
+          <GreyButton key='previous' onClick={this.onPrevious} style={styles.button}>
             Previous Project
             <i className="fa fa-caret-up" style={{marginLeft: 5}}></i>
-          </ProminentButton>
+          </GreyButton>
         );
       }
       if (this.props.id < this.props.entityCount - 1) {
         navButtons.push(
-          <ProminentButton key='next' onClick={this.onNext} style={styles.button}>
+          <GreyButton key='next' onClick={this.onNext} style={styles.button}>
             Next Project
             <i className="fa fa-caret-down" style={{marginLeft: 5}}></i>
-          </ProminentButton>
+          </GreyButton>
         );
       }
     }
@@ -172,10 +169,12 @@ export class EntityRelationDialog extends ResponsiveComponent {
       <div style={merge(styles.container, this.props.style)} >
         <div style={styles.content}>
           <div style={styles.instructions}>
-            Indicate how each project is related to this financial entity - {this.props.title}:
+            Indicate how each project is related to this financial entity -
+            <span style={{marginLeft: 3}}>{this.props.title}</span>
+            :
           </div>
           <div>
-            <KButton onClick={this.setAll} style={styles.setAllButton}>Set All:</KButton>
+            <BlueButton onClick={this.setAll} style={styles.setAllButton}>Set All:</BlueButton>
             to:
             <select ref="setAllSelect" style={{marginLeft: 10}}>
               {declarationTypeOptions}
@@ -192,7 +191,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
           <div>
             {navButtons}
             <span style={styles.spacer} />
-            <ProminentButton onClick={this.props.onSave} style={styles.button}>Done</ProminentButton>
+            <GreyButton onClick={this.props.onSave} style={styles.button}>Done</GreyButton>
           </div>
         </div>
       </div>

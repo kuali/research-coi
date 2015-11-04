@@ -21,7 +21,7 @@ import {merge} from '../merge';
 import {formatDate} from '../formatDate';
 import numeral from 'numeral';
 import ConfigStore from '../stores/ConfigStore';
-import {COIConstants} from '../../../COIConstants'
+import {COIConstants} from '../../../COIConstants';
 
 export default class EntityRelationshipSummary extends React.Component {
   constructor() {

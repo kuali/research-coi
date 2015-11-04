@@ -18,7 +18,7 @@
 
 import React from 'react/addons';
 import {merge} from '../../merge';
-import {KButton} from '../KButton';
+import {GreyButton} from '../GreyButton';
 
 export default class PanelWithButtons extends React.Component {
   render() {
@@ -39,7 +39,8 @@ export default class PanelWithButtons extends React.Component {
       },
       button: {
         marginLeft: 10,
-        float: 'right'
+        float: 'right',
+        width: 124
       },
       buttonRow: {
         padding: '10px 20px',
@@ -52,7 +53,7 @@ export default class PanelWithButtons extends React.Component {
     if (this.props.buttons) {
       buttons = this.props.buttons.map(button => {
         return (
-          <KButton key={button.label} style={styles.button} onClick={button.onClick}>{button.label}</KButton>
+          <GreyButton key={button.label} style={styles.button} onClick={button.onClick}>{button.label}</GreyButton>
         );
       });
     }

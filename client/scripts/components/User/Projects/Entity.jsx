@@ -21,7 +21,7 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {EntityRelationDialog} from './EntityRelationDialog';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
 import ConfigStore from '../../../stores/ConfigStore';
 
@@ -109,8 +109,7 @@ export class Entity extends ResponsiveComponent {
         marginTop: 9
       },
       button: {
-        margin: '7px 10px 7px 0',
-        width: 200
+        margin: '7px 10px 7px 0'
       },
       value: {
         fontWeight: 'bold',
@@ -197,7 +196,7 @@ export class Entity extends ResponsiveComponent {
               {status}
 
               <div>
-                <KButton style={styles.button} onClick={this.toggleDialog}>Update</KButton>
+                <GreyButton style={styles.button} onClick={this.toggleDialog}>Update</GreyButton>
               </div>
             </span>
           </div>

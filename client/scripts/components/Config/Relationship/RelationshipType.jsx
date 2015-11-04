@@ -19,6 +19,8 @@
 import React from 'react/addons';
 import {merge} from '../../../merge';
 import EditableList from '../EditableList';
+import {BlueButton} from '../../BlueButton';
+import {GreyButton} from '../../GreyButton';
 
 export default class RelationshipType extends React.Component {
   constructor() {
@@ -90,22 +92,11 @@ export default class RelationshipType extends React.Component {
       },
       configureButton: {
         float: 'right',
-        backgroundColor: '#E6E6E6',
-        border: 0,
-        borderBottom: '2px solid #A6A6A6',
-        borderRadius: 3,
-        fontSize: 9,
-        padding: '4px 13px'
+        fontSize: 9
       },
       closeButton: {
         float: 'right',
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        border: 0,
-        color: 'white',
-        borderBottom: '2px solid #A6A6A6',
-        borderRadius: 3,
-        fontSize: 9,
-        padding: '4px 24px'
+        fontSize: 9
       },
       name: {
         fontSize: 14
@@ -131,9 +122,9 @@ export default class RelationshipType extends React.Component {
       content = (
         <div>
           <div style={{marginBottom: 30}}>
-            <button style={styles.closeButton} onClick={this.close}>
+            <BlueButton style={styles.closeButton} onClick={this.close}>
               Close
-            </button>
+            </BlueButton>
             <label htmlFor={`rtcb${this.props.typeCd}`} style={styles.name}>{this.props.name}</label>
           </div>
           <div className="flexbox row" style={{paddingLeft: 27}}>
@@ -166,9 +157,9 @@ export default class RelationshipType extends React.Component {
     else {
       content = (
         <div style={styles.collapsedContent}>
-          <button style={styles.configureButton} onClick={this.configure}>
+          <GreyButton style={styles.configureButton} onClick={this.configure}>
             Configure
-          </button>
+          </GreyButton>
           <label htmlFor={`rtcb${this.props.typeCd}`} style={styles.name}>{this.props.name}</label>
         </div>
       );

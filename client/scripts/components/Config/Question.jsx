@@ -18,7 +18,8 @@
 
 import React from 'react/addons';
 import {merge} from '../../merge';
-import {KButton} from '../KButton';
+import {GreyButton} from '../GreyButton';
+import {BlueButton} from '../BlueButton';
 import Gripper from '../DynamicIcons/Gripper';
 import {DragSource, DropTarget} from 'react-dnd';
 import NewQuestion from './NewQuestion';
@@ -163,10 +164,14 @@ class Question extends React.Component {
       },
       button: {
         float: 'right',
-        marginLeft: 10
+        margin: '4px 0 3px 10px',
+        height: 27,
+        width: 124
       },
       nonFloatButton: {
-        marginLeft: 10
+        margin: '4px 0 3px 10px',
+        height: 27,
+        width: 124
       },
       dropdown: {
         marginLeft: 5
@@ -225,8 +230,8 @@ class Question extends React.Component {
             {subQuestionWarning}
           </div>
           <span>
-            <KButton style={styles.nonFloatButton} onClick={this.cancel}>Cancel</KButton>
-            <KButton style={styles.nonFloatButton} onClick={this.save}>Save</KButton>
+            <GreyButton style={styles.nonFloatButton} onClick={this.cancel}>Cancel</GreyButton>
+            <BlueButton style={styles.nonFloatButton} onClick={this.save}>Save</BlueButton>
           </span>
         </div>
       );
@@ -241,8 +246,8 @@ class Question extends React.Component {
 
       buttons = (
         <div>
-          <KButton style={styles.button} onClick={this.edit}>Edit</KButton>
-          <KButton style={styles.button} onClick={this.deleteQuestion}>Delete</KButton>
+          <GreyButton style={styles.button} onClick={this.edit}>Edit</GreyButton>
+          <GreyButton style={styles.button} onClick={this.deleteQuestion}>Delete</GreyButton>
           {displayCondition}
         </div>
       );

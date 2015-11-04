@@ -17,7 +17,7 @@
 */
 
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
-import {ProminentButton} from '../../ProminentButton';
+import {GreyButton} from '../../GreyButton';
 import {merge} from '../../../merge';
 import {EntityFormNameStep} from './EntityFormNameStep';
 import {EntityFormInformationStep} from './EntityFormInformationStep';
@@ -167,7 +167,8 @@ export class EntityForm extends React.Component {
         borderBottom: '1px solid #DEDEDE'
       },
       button: {
-        marginLeft: 20
+        marginLeft: 20,
+        minWidth: 100
       },
       disabled: {
         color: '#AAA',
@@ -185,12 +186,12 @@ export class EntityForm extends React.Component {
     let nextButton;
     if (this.isStepValidating() && !this.isCurrentStepValid()) {
       nextButton = (
-        <ProminentButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.next}>Next &gt;</ProminentButton>
+        <GreyButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.next}>Next &gt;</GreyButton>
       );
     }
     else {
       nextButton = (
-        <ProminentButton style={styles.button} onClick={this.next}>Next &gt;</ProminentButton>
+        <GreyButton style={styles.button} onClick={this.next}>Next &gt;</GreyButton>
       );
     }
 
@@ -232,16 +233,16 @@ export class EntityForm extends React.Component {
       if (this.props.editing) {
         buttons = (
           <span>
-            <ProminentButton style={styles.button} onClick={this.undo}>Undo</ProminentButton>
-            <ProminentButton style={doneButtonStyle} onClick={this.done}>Done</ProminentButton>
+            <GreyButton style={styles.button} onClick={this.undo}>Undo</GreyButton>
+            <GreyButton style={doneButtonStyle} onClick={this.done}>Done</GreyButton>
           </span>
         );
       }
       else {
         buttons = (
           <span>
-            <ProminentButton style={styles.button} onClick={this.edit}>Edit</ProminentButton>
-            <ProminentButton style={styles.button} onClick={this.done}>Done</ProminentButton>
+            <GreyButton style={styles.button} onClick={this.edit}>Edit</GreyButton>
+            <GreyButton style={styles.button} onClick={this.done}>Done</GreyButton>
           </span>
         );
       }
@@ -271,7 +272,7 @@ export class EntityForm extends React.Component {
           );
 
           backButton = (
-            <ProminentButton style={styles.button} onClick={this.back}>Back</ProminentButton>
+            <GreyButton style={styles.button} onClick={this.back}>Back</GreyButton>
           );
 
           break;
@@ -290,17 +291,17 @@ export class EntityForm extends React.Component {
 
           if (this.isStepValidating() && !this.isCurrentStepValid()) {
             submitButton = (
-              <ProminentButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.submit}>Submit</ProminentButton>
+              <GreyButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.submit}>Submit</GreyButton>
             );
           }
           else {
             submitButton = (
-              <ProminentButton style={styles.button} onClick={this.submit}>Submit</ProminentButton>
+              <GreyButton style={styles.button} onClick={this.submit}>Submit</GreyButton>
             );
           }
 
           backButton = (
-            <ProminentButton style={styles.button} onClick={this.back}>Back</ProminentButton>
+            <GreyButton style={styles.button} onClick={this.back}>Back</GreyButton>
           );
 
           nextButton = null;
@@ -310,7 +311,7 @@ export class EntityForm extends React.Component {
       buttons = (
         <span>
           {backButton}
-          <ProminentButton style={styles.button} onClick={this.cancel}>Cancel</ProminentButton>
+          <GreyButton style={styles.button} onClick={this.cancel}>Cancel</GreyButton>
           {nextButton}
           {submitButton}
         </span>

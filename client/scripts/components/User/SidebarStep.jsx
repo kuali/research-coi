@@ -37,8 +37,8 @@ export class SidebarStep extends React.Component {
   render() {
     let styles = {
       container: {
-        padding: '20px 20px 20px 10px',
-        fontSize: 22,
+        padding: '10px 20px 10px 10px',
+        fontSize: 18,
         textTransform: 'uppercase',
         whiteSpace: 'nowrap',
         borderBottom: '1px solid #c0c0c0'
@@ -54,12 +54,6 @@ export class SidebarStep extends React.Component {
       clickable: {
         cursor: 'pointer'
       },
-      image: {
-        width: 42,
-        height: 42,
-        verticalAlign: 'middle',
-        color: window.config.colors.one
-      },
       incomplete: {
         color: window.colorBlindModeOn ? 'black' : '#C1C1C1'
       },
@@ -68,8 +62,8 @@ export class SidebarStep extends React.Component {
         paddingLeft: 5
       },
       icon: {
-        width: 30,
-        height: 30,
+        width: 50,
+        height: 50,
         verticalAlign: 'middle',
         color: window.colorBlindModeOn ? 'black' : '#0095A0'
       }

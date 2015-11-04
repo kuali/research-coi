@@ -19,7 +19,8 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
+import {BlueButton} from '../../BlueButton';
 import {AdminActions} from '../../../actions/AdminActions';
 
 export class ApprovalConfirmation extends ResponsiveComponent {
@@ -81,8 +82,8 @@ export class ApprovalConfirmation extends ResponsiveComponent {
           Are you sure you want to approve this disclosure?
         </div>
 
-        <KButton onClick={this.approve} style={styles.yesButton}>YES, CONFIRM</KButton>
-        <KButton onClick={this.cancel} style={styles.button}>NO, CANCEL</KButton>
+        <BlueButton onClick={this.approve} style={styles.yesButton}>YES, CONFIRM</BlueButton>
+        <GreyButton onClick={this.cancel} style={styles.button}>NO, CANCEL</GreyButton>
       </div>
     );
   }

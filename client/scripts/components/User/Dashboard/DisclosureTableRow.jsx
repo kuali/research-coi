@@ -18,7 +18,7 @@
 
 import React from 'react/addons';
 import {merge} from '../../../merge';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
 import Router from 'react-router';
 import {formatDate} from '../../../formatDate';
 import ConfigStore from '../../../stores/ConfigStore';
@@ -74,10 +74,6 @@ export class DisclosureTableRow extends React.Component {
       },
       extra: {
         fontSize: 14
-      },
-      button: {
-        color: 'black',
-        fontSize: 12
       }
     };
 
@@ -133,20 +129,20 @@ export class DisclosureTableRow extends React.Component {
       </span>
     );
     if (updateable) {
-      lastReviewed = this.wrapWithUpdateLink(updateable);
+      lastReviewed = this.wrapWithUpdateLink(lastReviewed);
     }
     else if (revisable) {
-      lastReviewed = this.wrapWithReviseLink(updateable);
+      lastReviewed = this.wrapWithReviseLink(lastReviewed);
     }
 
     let button;
     if (updateable) {
       button = this.wrapWithUpdateLink((
-        <KButton style={styles.button}>Update &gt;</KButton>
+        <GreyButton>Update &gt;</GreyButton>
       ));
     } else if (revisable) {
       button = this.wrapWithReviseLink((
-        <KButton style={styles.button}>Revise &gt;</KButton>
+        <GreyButton>Revise &gt;</GreyButton>
       ));
     }
 

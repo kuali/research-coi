@@ -19,7 +19,8 @@
 import React from 'react/addons';
 import Dropzone from 'react-dropzone';
 import {merge} from '../merge';
-import {KButton} from './KButton';
+import {GreyButton} from './GreyButton';
+import {BlueButton} from './BlueButton';
 
 export class FileUpload extends React.Component {
   constructor() {
@@ -41,7 +42,7 @@ export class FileUpload extends React.Component {
     let defaultStyles = {
       dropZone: {
         border: '3px dashed grey',
-        margin: 25,
+        margin: '0 0 25px 0',
         borderRadius: 5,
         padding: 20
       },
@@ -55,7 +56,8 @@ export class FileUpload extends React.Component {
       },
       left: {
         width: '12%',
-        display: 'inline-block'
+        display: 'inline-block',
+        verticalAlign: 'middle'
       },
       middle: {
         width: '66%',
@@ -69,47 +71,37 @@ export class FileUpload extends React.Component {
       },
       file: {
         backgroundColor: '#EEEEEE',
-        margin: '10px 28px 0 28px',
+        marginTop: 10,
         borderRadius: 5,
         padding: '10px 19px 15px 19px'
       },
       icon: {
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 25
+        fontSize: 32,
+        paddingLeft: 14
       },
       button: {
         padding: 3,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: 'white',
-        borderBottom: '2px solid #717171',
         width: 90,
-        fontWeight: 300,
-        textShadow: '1px 1px 6px #777',
         fontSize: 11
       },
       downloadButton: {
         padding: 1,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: 'white',
-        borderBottom: '2px solid #717171',
         width: 90,
         fontWeight: 300,
-        textShadow: '1px 1px 6px #777',
         fontSize: 10,
         marginRight: 7
       },
       deleteButton: {
         padding: 1,
-        backgroundColor: window.colorBlindModeOn ? 'white' : '#DFDFDF',
-        color: 'black',
-        borderBottom: '2px solid #717171',
         width: 90,
         fontWeight: 300,
-        fontSize: 10
+        fontSize: 10,
+        boxShadow: '0 -1px 5px #D0D0D0'
       },
       link: {
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        borderBottom: window.colorBlindModeOn ? '2px dashed black' : '2px dashed #0095A0',
+        borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
         fontSize: 17
       },
       downloadButtonLink: {
@@ -134,7 +126,7 @@ export class FileUpload extends React.Component {
           downloadButton = (
             <a target="_blank" style={styles.downloadButtonLink} href={file.preview}>
               <span>
-                <KButton style={styles.downloadButton}>DOWNLOAD</KButton>
+                <BlueButton style={styles.downloadButton}>DOWNLOAD</BlueButton>
               </span>
             </a>
           );
@@ -147,7 +139,7 @@ export class FileUpload extends React.Component {
           downloadButton = (
             <a style={styles.downloadButtonLink} href={'/api/coi/files/' + encodeURIComponent(file.id)}>
               <span>
-                <KButton style={styles.downloadButton}>DOWNLOAD</KButton>
+                <BlueButton style={styles.downloadButton}>DOWNLOAD</BlueButton>
               </span>
             </a>
           );
@@ -156,7 +148,7 @@ export class FileUpload extends React.Component {
         let deleteButton;
         if (!this.props.readonly) {
           deleteButton = (
-            <KButton onClick={this.onDelete} style={styles.deleteButton} value={index}>Delete File</KButton>
+            <GreyButton onClick={this.onDelete} style={styles.deleteButton} value={index}>DELETE FILE</GreyButton>
           );
         }
 
@@ -193,7 +185,7 @@ export class FileUpload extends React.Component {
               {this.props.children}
             </span>
             <span style={styles.right}>
-              <KButton style={styles.button}>UPLOAD</KButton>
+              <BlueButton style={styles.button}>UPLOAD</BlueButton>
             </span>
           </div>
           <div className="hovering" style={{textAlign: 'center', height: 31}}>

@@ -21,7 +21,7 @@ import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {ManualRelationDialog} from './ManualRelationDialog';
-import {KButton} from '../../KButton';
+import {GreyButton} from '../../GreyButton';
 import {undefinedRelationExists} from '../undefinedRelationExists';
 
 export class ManualEventRelations extends ResponsiveComponent {
@@ -195,10 +195,10 @@ export class ManualEventRelations extends ResponsiveComponent {
               {status}
 
               <div>
-                <KButton style={styles.button} onClick={this.toggleDialog}>Edit Declarations</KButton>
-                <KButton style={merge(styles.button, {marginBottom: 0})} onClick={this.editProject}>
+                <GreyButton style={styles.button} onClick={this.toggleDialog}>Edit Declarations</GreyButton>
+                <GreyButton style={merge(styles.button, {marginBottom: 0})} onClick={this.editProject}>
                   Edit Project Details
-                </KButton>
+                </GreyButton>
               </div>
             </span>
           </div>

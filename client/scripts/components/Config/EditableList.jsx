@@ -104,7 +104,8 @@ class EditableItem extends React.Component {
         width: 15,
         height: 18,
         color: window.colorBlindModeOn ? 'black' : '#32A03C',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        marginRight: 3
       },
       done: {
         color: window.colorBlindModeOn ? 'black' : '#32A03C',
@@ -120,7 +121,8 @@ class EditableItem extends React.Component {
       content = (
         <div style={merge(styles.container, this.props.style)}>
           <span onClick={this.done} style={styles.done}>
-            <CheckmarkIcon style={styles.checkmark} /> Done
+            <CheckmarkIcon style={styles.checkmark} />
+            Done
           </span>
           <input
             type="text"
@@ -234,10 +236,11 @@ export default class EditableList extends React.Component {
         cursor: 'pointer'
       },
       checkmark: {
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
+        color: window.colorBlindModeOn ? 'black' : '#32A03C',
         width: 15,
         height: 18,
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        marginRight: 3
       },
       done: {
         cursor: 'pointer',
@@ -287,7 +290,8 @@ export default class EditableList extends React.Component {
       addAnother = (
         <div style={{margin: '0 0 0 25px'}}>
           <span onClick={this.done} style={styles.done}>
-            <CheckmarkIcon style={styles.checkmark} /> Done
+            <CheckmarkIcon style={styles.checkmark} />
+            Done
           </span>
           <span onClick={this.cancel} style={styles.cancel}>
             <span style={{fontWeight: 'bold', marginRight: 4}}>X</span>

@@ -23,7 +23,7 @@ import {AdminActions} from '../../../actions/AdminActions';
 import {SearchFilterGroup} from '../SearchFilterGroup';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
-import {KButton} from '../../KButton';
+import {BlueButton} from '../../BlueButton';
 import ConfigStore from '../../../stores/ConfigStore';
 
 export class ListView extends React.Component {
@@ -184,7 +184,7 @@ export class ListView extends React.Component {
     if (!this.state.data.applicationState.loadedAll && !this.state.data.applicationState.loadingMore) {
       loadMoreButton = (
         <div style={styles.loadMoreButton}>
-          <KButton onClick={this.loadMore}>Load more</KButton>
+          <BlueButton onClick={this.loadMore}>Load more</BlueButton>
         </div>
       );
     }
