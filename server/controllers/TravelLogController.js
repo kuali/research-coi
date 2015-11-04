@@ -33,7 +33,11 @@ export let init = app => {
     if (req.query.sortDirection) {
       sortDirection = req.query.sortDirection;
     }
-    TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId, sortColumn, sortDirection)
+    let filter = 'all';
+    if (req.query.filter) {
+      filter = req.query.filter;
+    }
+    TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId, sortColumn, sortDirection, filter)
       .then(travelLog => {
         res.send(travelLog);
       })
@@ -57,5 +61,35 @@ export let init = app => {
         Log.error(err);
         next(err);
       });
+  });
+
+  /**
+   @Role: user
+   Can only delete travel logs associated with their entities
+   */
+  app.delete('/api/coi/travel-log-entries/:id', function(req, res, next) {
+    TravelLogDB.deleteTravelLogEntry(req.dbInfo, req.params.id, req.userInfo)
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch(err => {
+        Log.error(err);
+        next(err);
+      });
+  });
+
+  /**
+   @Role: user
+   Can only update travel logs associated with their entities
+   */
+  app.put('/api/coi/travel-log-entries/:id', function(req, res, next) {
+    TravelLogDB.updateTravelLogEntry(req.dbInfo, req.body, req.params.id, req.userInfo)
+    .then(travelLog => {
+      res.send(travelLog);
+    })
+    .catch(err => {
+      Log.error(err);
+      next(err);
+    });
   });
 };

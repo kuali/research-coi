@@ -17,15 +17,25 @@
 */
 
 import React from 'react/addons';
-import {merge} from '../../../merge';
 import {ProminentButton} from '../../ProminentButton';
 import {formatDate} from '../../../formatDate';
+import {COIConstants} from '../../../../../COIConstants';
+import {TravelLogActions} from '../../../actions/TravelLogActions';
 
 export class Entry extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
+
+    this.deleteEntry = this.deleteEntry.bind(this);
+    this.archiveEntry = this.archiveEntry.bind(this);
+  }
+
+  deleteEntry() {
+    TravelLogActions.deleteEntry(this.props.travelLog.relationshipId);
+  }
+
+  archiveEntry() {
+    TravelLogActions.archiveEntry(this.props.travelLog.relationshipId);
   }
 
   render() {
@@ -43,7 +53,7 @@ export class Entry extends React.Component {
         display: 'inline-block'
       },
       left: {
-        width: '80%',
+        width: '70%',
         display: 'inline-block'
       },
       midDot: {
@@ -65,8 +75,9 @@ export class Entry extends React.Component {
         fontWeight: 550
       },
       buttons: {
-        width: '20%',
-        display: 'inline-block'
+        width: '30%',
+        display: 'inline-block',
+        verticalAlign: 'bottom'
       },
       button: {
         margin: '5'
@@ -83,7 +94,42 @@ export class Entry extends React.Component {
         marginTop: 10
       }
     };
-    styles = merge(this.commonStyles, styles);
+
+    let actionButtons;
+    let disclosedDate;
+
+    if (this.props.travelLog.disclosedDate) {
+      disclosedDate = (
+        <div style={{marginBottom: '25px'}}>
+          <span style={styles.label}>Disclosure Date:</span>
+          <span name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDate(this.props.travelLog.disclosedDate)}</span>
+        </div>
+      );
+    }
+
+    let archiveButton;
+
+    if (this.props.travelLog.active === 1) {
+      archiveButton = (
+        <ProminentButton name="Archive" data-for={this.props.travelLog.entityName} onClick={this.archiveEntry} style={styles.button}>Archive</ProminentButton>
+      );
+    }
+
+    if (this.props.travelLog.status === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
+      actionButtons = (
+        <div style={styles.buttons}>
+          {disclosedDate}
+          {archiveButton}
+        </div>
+      );
+    } else {
+      actionButtons = (
+        <div style={styles.buttons}>
+          <ProminentButton name="Edit" data-for={this.props.travelLog.entityName} style={styles.button}>Edit</ProminentButton>
+          <ProminentButton name="Delete" data-for={this.props.travelLog.entityName} onClick={this.deleteEntry} style={styles.button}>Delete</ProminentButton>
+        </div>
+      );
+    }
 
     return (
       <div style={styles.container}>
@@ -114,10 +160,7 @@ export class Entry extends React.Component {
               <span name="Reason" data-for={this.props.travelLog.entityName} style={styles.data}>{this.props.travelLog.reason}</span>
             </div>
           </div>
-          <div style={styles.buttons}>
-            <ProminentButton name="Edit" data-for={this.props.travelLog.entityName} style={styles.button}>Edit</ProminentButton>
-            <ProminentButton name="Delete" data-for={this.props.travelLog.entityName} style={styles.button}>Delete</ProminentButton>
-          </div>
+          {actionButtons}
         </div>
       </div>
     );

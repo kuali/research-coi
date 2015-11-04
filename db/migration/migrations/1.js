@@ -111,6 +111,7 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
     table.string('comments', 4000);
     table.boolean('active').notNullable().defaultTo(true);
     table.string('status', 40).notNullable();
+    table.dateTime('disclosed_date');
     table.engine('InnoDB');
   })
   .createTable('project_type', function(table) {

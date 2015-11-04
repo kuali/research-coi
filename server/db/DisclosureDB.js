@@ -778,8 +778,14 @@ let updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, new
     .then(results => {
       return Promise.all(
       results.map(result => {
+        let update = {};
+        update.status = newStatus;
+        if (newStatus === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
+          update.disclosed_date = new Date();
+        }
+
         return knex('relationship')
-        .update({status: newStatus})
+        .update(update)
         .where('fin_entity_id', result.id)
         .andWhere('status', oldStatus);
       })

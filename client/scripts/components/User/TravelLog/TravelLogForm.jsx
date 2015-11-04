@@ -63,7 +63,7 @@ export class TravelLogForm extends React.Component {
         textField: {
           container: {
             display: 'inline-block',
-            width: '27%'
+            width: '33%'
           },
           input: {
             padding: '2px 8px',

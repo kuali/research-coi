@@ -35,6 +35,10 @@ export class TravelLogSort extends React.Component {
     TravelLogActions.sortDirectionChanged(evt.target.value);
   }
 
+  filterChanged(evt) {
+    TravelLogActions.filterChanged(evt.target.value);
+  }
+
   render() {
     let styles = {
       container: {
@@ -72,9 +76,11 @@ export class TravelLogSort extends React.Component {
           </select>
           <div style={{float: 'right'}}>
             <span style={styles.label}>View By:</span>
-            <select style={styles.select}>
-              <option value="All">All</option>
-              <option value="Already Disclosed">Already Disclosed</option>
+            <select style={styles.select} onChange={this.filterChanged}>
+              <option value="all">All</option>
+              <option value="disclosed">Already Disclosed</option>
+              <option value="notYetdisclosed">Not Yet Disclosed</option>
+              <option value="archived">Archived</option>
             </select>
           </div>
         </div>
