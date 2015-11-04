@@ -103,7 +103,8 @@ export default class SidePanel extends React.Component {
         cursor: 'default',
         color: '#AAA',
         backgroundColor: '#EEE',
-        borderBottom: '2px solid #AAA'
+        borderBottom: '2px solid #AAA',
+        textShadow: 'inherit'
       },
       confirmSection: {
         textAlign: 'center',
