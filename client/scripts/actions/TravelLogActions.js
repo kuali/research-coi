@@ -40,6 +40,8 @@ class _TravelLogActions {
 
   turnOnValidations() { this.dispatch(); }
 
+  turnOnValidationsForEntry(relationshipId) { this.dispatch(relationshipId); }
+
   deleteEntry(relationshipId) { this.dispatch(relationshipId); }
 
   archiveEntry(relationshipId) { this.dispatch(relationshipId); }
