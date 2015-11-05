@@ -107,18 +107,8 @@ export class NavSidebar extends React.Component {
       );
     }
 
-    let cancel;
     let submit;
     if (this.props.step === COIConstants.DISCLOSURE_STEP.CERTIFY) {
-      cancel = (
-        <div onClick={this.closeDisclosure} style={styles.nextquestion}>
-          <i className="fa fa-times-circle" style={styles.icons}></i>
-          <span style={styles.stepLabel}>
-            CANCEL
-          </span>
-        </div>
-      );
-
       let submitLabelStyle = styles.nextquestion;
       let submitIconStyle = styles.icons;
       if (this.props.submitDisabled) {
@@ -161,7 +151,6 @@ export class NavSidebar extends React.Component {
 
           {submit}
           {nextStep}
-          {cancel}
         </div>
       </span>
     );
