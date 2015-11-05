@@ -24,6 +24,7 @@ import Router from 'react-router';
 let Link = Router.Link;
 import ArchiveDetail from './ArchiveDetail';
 import {formatDate} from '../../../formatDate';
+import {COIConstants} from '../../../../../COIConstants';
 
 export class Archive extends React.Component {
   constructor() {
@@ -50,7 +51,8 @@ export class Archive extends React.Component {
   onChange() {
     let storeState = DisclosureStore.getState();
     this.setState({
-      archivedDisclosures: storeState.archivedDisclosures
+      archivedDisclosures: storeState.archivedDisclosures,
+      currentAnnualDisclosureStatus: storeState.currentAnnualDisclosureStatus
     });
 
     if (storeState.archivedDisclosures && storeState.archivedDisclosures.length > 0) {
@@ -211,19 +213,35 @@ export class Archive extends React.Component {
       );
     }
 
+    let isEditable = false;
+    if (this.state.currentAnnualDisclosureStatus && (
+          this.state.currentAnnualDisclosureStatus === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
+          this.state.currentAnnualDisclosureStatus === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
+          this.state.currentAnnualDisclosureStatus === COIConstants.DISCLOSURE_STATUS.EXPIRED
+       )) {
+      isEditable = true;
+    }
+
+    let updateDisclosureLink;
+    if (isEditable) {
+      updateDisclosureLink = (
+        <Link to="disclosure">
+          <div style={merge(styles.sidebarButton, styles.firstButton)}>
+            <div style={styles.sidebarTopText}>Update</div>
+            <div style={styles.sidebarBottomText}>Annual Disclosure</div>
+          </div>
+        </Link>
+      );
+    }
+
     return (
       <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
+          {updateDisclosureLink}
           <Link to="dashboard">
-            <div style={merge(styles.sidebarButton, styles.firstButton)}>
+            <div style={merge(styles.sidebarButton, !updateDisclosureLink ? styles.firstButton : {})}>
               <div style={styles.sidebarTopText}>Back To</div>
               <div style={styles.sidebarBottomText}>Dashboard</div>
-            </div>
-          </Link>
-          <Link to="disclosure">
-            <div style={styles.sidebarButton}>
-              <div style={styles.sidebarTopText}>Update</div>
-              <div style={styles.sidebarBottomText}>Annual Disclosure</div>
             </div>
           </Link>
         </span>

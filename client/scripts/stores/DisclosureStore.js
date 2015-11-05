@@ -108,14 +108,27 @@ class _DisclosureStore extends AutoBindingStore {
            }));
   }
 
+  loadStatusOfDisclosure(id) {
+    createRequest().get(`/api/coi/disclosures/${id}`)
+      .end(processResponse((err, disclosure) => {
+        if (!err) {
+          this.currentAnnualDisclosureStatus = disclosure.body.statusCd;
+          this.emitChange();
+        }
+      }));
+  }
+
   refreshArchivedDisclosures() {
     createRequest().get('/api/coi/archived-disclosures')
-           .end(processResponse((err, disclosures) => {
-             if (!err) {
-               this.archivedDisclosures = disclosures.body;
-               this.emitChange();
-             }
-           }));
+      .end(processResponse((err, disclosures) => {
+        if (!err) {
+          this.archivedDisclosures = disclosures.body;
+          if (this.archivedDisclosures.length > 0) {
+            this.loadStatusOfDisclosure(this.archivedDisclosures[0].disclosureId);
+          }
+          this.emitChange();
+        }
+      }));
   }
 
   loadArchivedDisclosures() {

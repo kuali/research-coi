@@ -64,8 +64,8 @@ export class Entities extends React.Component {
         marginTop: 111
       },
       placeholder: {
-        colorOne: '#0097a7',
-        colorTwo: '#00bcd4',
+        colorOne: window.colorBlindModeOn ? '#555' : '#0097a7',
+        colorTwo: window.colorBlindModeOn ? 'black' : '#00bcd4',
         width: 300,
         height: 300,
         marginTop: -61

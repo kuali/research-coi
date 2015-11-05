@@ -138,8 +138,6 @@ export class NavSidebar extends React.Component {
     let previousLabel;
     if (this.props.step === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE) {
       previousLabel = 'PREVIOUS QUESTION';
-    } else if (this.props.step === COIConstants.DISCLOSURE_STEP.CERTIFY) {
-      previousLabel = 'BACK';
     } else {
       previousLabel = 'PREVIOUS STEP';
     }
