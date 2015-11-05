@@ -17,13 +17,15 @@
 */
 
 import React from 'react/addons';
-import {ProminentButton} from '../../ProminentButton';
-import {formatDate} from '../../../formatDate';
+import {GreyButton} from '../../GreyButton';
+import {BlueButton} from '../../BlueButton';
+import {formatDateWithFormat,formatDate} from '../../../formatDate';
 import {COIConstants} from '../../../../../COIConstants';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
 import TextField from '../TextField';
 import CurrencyField from '../CurrencyField';
 import DateRangeField from '../DateRangeField';
+import numeral from 'numeral';
 
 export class Entry extends React.Component {
   constructor() {
@@ -80,56 +82,31 @@ export class Entry extends React.Component {
         borderRadius: 5
       },
       entityName: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        width: '35%',
-        display: 'inline-block'
+        display: 'inline-block',
+        width: '95%',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
       },
-      left: {
-        width: '70%',
-        display: 'inline-block'
+      actionButtonContainer: {
+        display: 'inline-block',
+        width: '33%',
+        textAlign: 'right'
       },
-      midDot: {
-        float: 'right',
-        marginRight: '10px'
-      },
-      dates: {
-        width: '55%',
-        display: 'inline-block'
-      },
-      label: {
-        fontSize: 14,
-        marginRight: '5px'
-      },
-      reason: {
-        marginTop: 10
+      editingActionButtons: {
+        textAlign: 'right',
+        borderTop: '1px solid grey',
+        padding: 5
       },
       data: {
-        fontWeight: 550
-      },
-      buttons: {
-        width: '30%',
-        display: 'inline-block',
-        verticalAlign: 'bottom'
-      },
-      button: {
-        margin: '5'
-      },
-      amount: {
-        width: '55%',
-        display: 'inline-block'
-      },
-      destination: {
-        width: '35%',
-        display: 'inline-block'
-      },
-      middle: {
-        marginTop: 10
+        fontWeight: 'bold',
+        marginLeft: 5
       },
       textField: {
         container: {
           display: 'inline-block',
-          width: '33%'
+          width: '50%',
+          marginBottom: 10
         },
         input: {
           padding: '2px 8px',
@@ -140,8 +117,7 @@ export class Entry extends React.Component {
           width: '95%'
         },
         label: {
-          marginBottom: 5,
-          fontWeight: '500'
+          marginBottom: 5
         }
       }
     };
@@ -151,9 +127,9 @@ export class Entry extends React.Component {
 
     if (this.props.travelLog.disclosedDate) {
       disclosedDate = (
-        <div style={{marginBottom: '25px'}}>
+        <div>
           <span style={styles.label}>Disclosure Date:</span>
-          <span name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDate(this.props.travelLog.disclosedDate)}</span>
+          <span name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDateWithFormat(this.props.travelLog.disclosedDate, 'M/D/YY')}</span>
         </div>
       );
     }
@@ -162,29 +138,28 @@ export class Entry extends React.Component {
 
     if (this.props.travelLog.active === 1) {
       archiveButton = (
-        <ProminentButton name="Archive" data-for={this.props.travelLog.entityName} onClick={this.archiveEntry} style={styles.button}>Archive</ProminentButton>
+        <GreyButton name="Archive" data-for={this.props.travelLog.entityName} onClick={this.archiveEntry} style={styles.button}>Archive</GreyButton>
       );
     }
 
     if (this.props.editing === true) {
       actionButtons = (
-        <div style={styles.buttons}>
-          <ProminentButton name="Save" data-for={this.props.travelLog.entityName} onClick={this.saveEntry} style={styles.button}>Save</ProminentButton>
-          <ProminentButton name="Cancel" data-for={this.props.travelLog.entityName} onClick={this.cancelEntry} style={styles.button}>Cancel</ProminentButton>
+        <div style={styles.editingActionButtons}>
+          <BlueButton name="Done" data-for={this.props.travelLog.entityName} onClick={this.saveEntry} style={{marginLeft: 5, width: 90, fontWeight: 300, fontSize: 10}}>Save</BlueButton>
+          <GreyButton name="Cancel" data-for={this.props.travelLog.entityName} onClick={this.cancelEntry} style={{marginLeft: 5, width: 90, fontWeight: 300, fontSize: 10}}>Cancel</GreyButton>
         </div>
       );
     } else if (this.props.travelLog.status === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
       actionButtons = (
         <div style={styles.buttons}>
-          {disclosedDate}
           {archiveButton}
         </div>
       );
     } else {
       actionButtons = (
-        <div style={styles.buttons}>
-          <ProminentButton name="Edit" data-for={this.props.travelLog.entityName} onClick={this.editEntry} style={styles.button}>Edit</ProminentButton>
-          <ProminentButton name="Delete" data-for={this.props.travelLog.entityName} onClick={this.deleteEntry} style={styles.button}>Delete</ProminentButton>
+        <div style={{display: 'inline-block', width: '75%', textAlign: 'right'}}>
+          <GreyButton name="Edit" data-for={this.props.travelLog.entityName} onClick={this.editEntry} style={{marginBottom: 5, width: 90, fontWeight: 300, fontSize: 10}}>EDIT</GreyButton>
+          <GreyButton name="Delete" data-for={this.props.travelLog.entityName} onClick={this.deleteEntry} style={{marginBottom: 5, width: 90, fontWeight: 300, fontSize: 10}} >DELETE</GreyButton>
         </div>
       );
     }
@@ -201,6 +176,7 @@ export class Entry extends React.Component {
           styles={styles.textField}
           value={this.props.travelLog.entityName}
           />
+          <div style={styles.textField.container}/>
           <CurrencyField
           id='amount'
           label='AMOUNT'
@@ -240,33 +216,36 @@ export class Entry extends React.Component {
     } else {
       jsx = (
         <div>
-          <div style={styles.left}>
-            <div>
-              <div name="Name" style={styles.entityName}>
-                {this.props.travelLog.entityName}
-                <span style={styles.midDot}>&middot;</span>
-              </div>
-              <div style={styles.dates}>
-                <span style={styles.label}>Dates:</span>
-                <span name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDate(this.props.travelLog.startDate)} - {formatDate(this.props.travelLog.endDate)}</span>
-              </div>
+          <div style={{display: 'inline-block', width: '100%', marginBottom: 10}}>
+            <div style={{display: 'inline-block', width: '33%', fontSize: 20, fontWeight: 'bold'}}>
+              <div style={styles.entityName}>{this.props.travelLog.entityName}</div>
+              <div style={{display: 'inline-block', width: '3%', textAlign: 'center', fontSize: 20, fontWeight: 'bold'}}>&middot;</div>
             </div>
-            <div style={styles.middle}>
-              <div style={styles.destination}>
-                <span style={styles.label}>Destination:</span>
-                <span name="Destination" data-for={this.props.travelLog.entityName} style={styles.data}>{this.props.travelLog.destination}</span>
-              </div>
-              <div style={styles.amount}>
-                <span style={styles.label}>Amount:</span>
-                <span name="Amount" data-for={this.props.travelLog.entityName} style={styles.data}>${this.props.travelLog.amount}</span>
-              </div>
+            <div style={{display: 'inline-block', width: '33%'}}>
+              <span style={styles.label}>Dates:</span>
+              <span name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDateWithFormat(this.props.travelLog.startDate, 'M/D/YY') + ' - ' + formatDateWithFormat(this.props.travelLog.endDate, 'M/D/YY')}</span>
             </div>
-            <div style={styles.reason}>
+            <div style={{display: 'inline-block', width: '33%'}}>
+              {disclosedDate}
+            </div>
+          </div>
+          <div style={{display: 'inline-block', width: '66%'}}>
+            <div style={{display: 'inline-block', width: '50%'}}>
+              <span style={styles.label}>Destination:</span>
+              <span name="Destination" data-for={this.props.travelLog.entityName} style={styles.data}>{this.props.travelLog.destination}</span>
+            </div>
+            <div style={{display: 'inline-block', width: '50%'}}>
+              <span style={styles.label}>Amount:</span>
+              <span name="Amount" data-for={this.props.travelLog.entityName} style={styles.data}>{numeral(this.props.travelLog.amount).format('$0,0.00')}</span>
+            </div>
+            <div style={{display: 'inline-block', width: '100%', marginTop: 10}}>
               <span style={styles.label}>Reason:</span>
               <span name="Reason" data-for={this.props.travelLog.entityName} style={styles.data}>{this.props.travelLog.reason}</span>
             </div>
           </div>
-          {actionButtons}
+          <div style={styles.actionButtonContainer}>
+            {actionButtons}
+          </div>
         </div>
       );
     }
