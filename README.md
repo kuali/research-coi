@@ -32,6 +32,10 @@ module.exports = {
       user: 'root',
       password: ''
     }
+  },
+  pool: {
+    min: 2,
+    max: 20
   }
 };
 ```
@@ -39,12 +43,12 @@ module.exports = {
 
 **Step 6**: Apply Migrations:
 ```
-node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
+node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
 ```
 ----------
 **Step 7**: Apply Seed Data:
 ```
-node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --knexfile <replace with knexfile.js path> seed:run --env kc_coi
+node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi
 ```
 **Step 8**: Configuration Environment Variables:
 

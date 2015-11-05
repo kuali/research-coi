@@ -174,13 +174,13 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   .createTable('questionnaire_question', function(table) {
     table.increments('id').notNullable();
     table.boolean('active').notNullable();
-    table.integer('questionnaire_id').unsigned().notNullable().index().references('id').inTable('questionnaire').onDelete('NO ACTION').onUpdate('NO ACTION');
-    table.integer('parent').unsigned().index().references('id').inTable('questionnaire_question').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('questionnaire_id').unsigned().notNullable().index().references('id').inTable('questionnaire');
+    table.integer('parent').unsigned().index().references('id').inTable('questionnaire_question');
     table.text('question'); // -- json object containing question
   })
   .createTable('questionnaire_answer', function(table) {
     table.increments('id').notNullable();
-    table.integer('question_id').unsigned().notNullable().index().references('id').inTable('questionnaire_question').onDelete('NO ACTION').onUpdate('NO ACTION');
+    table.integer('question_id').unsigned().notNullable().index().references('id').inTable('questionnaire_question');
     table.text('answer'); // -- json object containing answer
   })
   .createTable('disclosure_answer', function(table) {
