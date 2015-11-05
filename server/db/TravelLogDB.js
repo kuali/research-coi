@@ -413,7 +413,7 @@ let updateRelationshipEntityId = (trx, id, entityId) => {
 let updateEntity = (trx, entry, id, schoolId) => {
   return getRelationship(trx, id).then(relationship => {
     return getEntityNameFromId(trx, relationship[0].fin_entity_id).then(entityName => {
-      if (entry.entityName === entityName) {
+      if (entry.entityName === entityName || !entry.entityName) {
         return undefined;
       } else {
         return getAnnualDisclosureForUser(trx, schoolId).then(disclosure => {
