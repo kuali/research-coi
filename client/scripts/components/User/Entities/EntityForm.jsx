@@ -120,6 +120,12 @@ export class EntityForm extends React.Component {
   }
 
   edit() {
+    if (!DisclosureStore.entityInformationStepComplete(this.props.entity.id)) {
+      DisclosureActions.turnOnValidation(1);
+    }
+    if (!DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id)) {
+      DisclosureActions.turnOnValidation(2);
+    }
     DisclosureActions.editEntity(this.props.entity.id);
   }
 

@@ -110,6 +110,23 @@ export class Disclosure extends React.Component {
     return undefinedFound;
   }
 
+  incompleteEntityExists(entities) {
+    if (!entities) {
+      return false;
+    }
+
+    let incompleteEntity = false;
+    entities.filter(entity=> {
+      return entity.active === 1
+    })
+    .forEach(entity => {
+      if (!DisclosureStore.entityInformationStepComplete(entity.id)
+      || !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)) {
+        incompleteEntity = true;
+      }
+    });
+    return incompleteEntity;
+  }
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
     let disclosureType = this.context.router.getCurrentQuery().type;
@@ -166,7 +183,7 @@ export class Disclosure extends React.Component {
     let percent = 0;
     let heading;
     let currentStep;
-    let projectNextDisabled;
+    let nextDisabled;
     const QUESTIONNAIRE_PERCENTAGE = 25;
     switch (currentDisclosureStep) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE:
@@ -209,6 +226,7 @@ export class Disclosure extends React.Component {
             instructionsShowing={this.state.applicationState.instructionsShowing}
           />
         );
+        nextDisabled = this.incompleteEntityExists(this.state.entities);
         heading = 'Financial Entities';
         break;
       case COIConstants.DISCLOSURE_STEP.PROJECTS:
@@ -230,7 +248,7 @@ export class Disclosure extends React.Component {
             />
           );
           heading = 'Manual Event';
-          projectNextDisabled = this.undefinedManualRelationExists(
+          nextDisabled = this.undefinedManualRelationExists(
             this.state.entities,
             disclosure,
             this.state.declarations
@@ -250,7 +268,7 @@ export class Disclosure extends React.Component {
             />
           );
           heading = 'Project Declarations';
-          projectNextDisabled = this.undefinedProjectRelationExists(
+          nextDisabled = this.undefinedProjectRelationExists(
             this.state.entities,
             this.state.projects,
             this.state.declarations
@@ -295,7 +313,7 @@ export class Disclosure extends React.Component {
             step={currentDisclosureStep}
             question={currentQuestion}
             submitDisabled={submitDisabled}
-            nextDisabled={projectNextDisabled}
+            nextDisabled={nextDisabled}
           />
         </span>
       </div>

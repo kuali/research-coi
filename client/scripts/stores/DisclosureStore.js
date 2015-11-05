@@ -784,6 +784,7 @@ class _DisclosureStore extends AutoBindingStore {
     if (!this.applicationState.entityStates[id]) {
       this.applicationState.entityStates[id] = {};
     }
+
     this.applicationState.entityStates[id].editing = true;
     this.applicationState.entityStates[id].snapshot = cloneObject(this.getEntity(id));
   }

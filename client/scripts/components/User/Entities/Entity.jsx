@@ -21,6 +21,7 @@ import {merge} from '../../../merge';
 import {GreyButton} from '../../GreyButton';
 import {EntityForm} from './EntityForm';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
 import ConfigStore from '../../../stores/ConfigStore';
 
 export class Entity extends React.Component {
@@ -61,6 +62,7 @@ export class Entity extends React.Component {
         borderRadius: 5
       },
       name: {
+        display: 'inline-block',
         fontSize: 24,
         fontWeight: 'bold'
       },
@@ -89,6 +91,11 @@ export class Entity extends React.Component {
       relationshipLabel: {
         display: 'inline-block',
         verticalAlign: 'top'
+      },
+      attention: {
+        float: 'right',
+        color: window.colorBlindModeOn ? 'black' : '#D3121C',
+        marginRight: 20
       }
     };
 
@@ -107,10 +114,20 @@ export class Entity extends React.Component {
       );
     });
 
+    let warning;
+
+    if (!DisclosureStore.entityInformationStepComplete(this.props.entity.id) ||
+      !DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id)) {
+      warning = (
+        <div style={styles.attention}>- Needs Attention -</div>
+      );
+    }
+
     return (
       <div style={merge(styles.container, this.props.style)}>
         <div style={styles.content}>
           <div style={styles.name}>{this.props.entity.name}</div>
+          {warning}
           <div style={{margin: '10px 0 0 20px'}} className="flexbox row">
             <span className="fill" style={styles.dataitem}>
               <span style={styles.relationshipLabel}>Relationship:</span>
