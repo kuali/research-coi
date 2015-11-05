@@ -44,10 +44,11 @@ export class TravelLogSort extends React.Component {
       container: {
       },
       select: {
-        width: 175,
+        width: 150,
         height: 27,
         fontSize: 14,
-        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa'
+        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa',
+        marginRight: 8
       },
       value: {
         color: 'black',
