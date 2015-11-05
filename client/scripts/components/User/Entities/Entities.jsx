@@ -26,6 +26,7 @@ import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {Instructions} from '../Instructions';
 import {COIConstants} from '../../../../../COIConstants';
 import {Toggle} from '../Toggle';
+import {BlueButton} from '../../BlueButton';
 
 export class Entities extends React.Component {
   constructor() {
@@ -40,6 +41,10 @@ export class Entities extends React.Component {
 
   viewChanged(newView) {
     DisclosureActions.changeActiveEntityView(newView);
+  }
+
+  onClickNoEntities() {
+    DisclosureActions.nextStep();
   }
 
   render() {
@@ -122,15 +127,18 @@ export class Entities extends React.Component {
         if (this.props.applicationState.activeEntityView) {
           text = (
             <div>
-              <div style={styles.placeholderText}>You currently have no active financial entities.</div>
-              <div style={styles.placeholderText}>Add new financial entities to view them here.</div>
+              <div>You currently have no active financial entities.</div>
+              <div>Add new financial entities to view them here.</div>
+              <div style={{marginTop: 20}}>
+                <BlueButton onClick={this.onClickNoEntities}>I have no entities to disclose</BlueButton>
+              </div>
             </div>
           );
         }
         else {
           text = (
             <div>
-              <div style={styles.placeholderText}>You currently have no inactive financial entities.</div>
+              <div>You currently have no inactive financial entities.</div>
             </div>
           );
         }
