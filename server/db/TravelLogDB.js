@@ -19,6 +19,7 @@
 /*eslint camelcase:0 */
 import {COIConstants} from '../../COIConstants';
 import {verifyRelationshipIsUsers} from './CommonDB';
+import * as FileService from '../services/fileService/FileService';
 
 let getKnex;
 try {
@@ -149,13 +150,18 @@ let handleTravelLogEntry = (trx, disclosureId, entry, status) => {
   });
 };
 
+let getAnnualDisclosureForUser = (trx, schoolId) => {
+  return trx('disclosure').select('status_cd', 'id').where({
+    user_id: schoolId,
+    type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL
+  });
+};
+
 export let createTravelLogEntry = (dbInfo, entry, userInfo) => {
   let knex = getKnex(dbInfo);
   return knex.transaction(trx => {
-    return trx('disclosure').select('status_cd', 'id').where({
-      user_id: userInfo.schoolId,
-      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL
-    }).then(disclosure => {
+    return getAnnualDisclosureForUser(trx, userInfo.schoolId)
+    .then(disclosure => {
       if (disclosure[0]) {
         if (isSubmitted(disclosure[0].status_cd) === true) {
           return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.PENDING);
@@ -194,13 +200,96 @@ let deleteRelationship = (trx, id) => {
   .where('id', id);
 };
 
+let getQuestionnaireAnswerIds = (trx, id) => {
+  return trx('fin_entity_answer')
+  .select('questionnaire_answer_id')
+  .where('fin_entity_id', id)
+  .then(answers => {
+    return answers.map(answer => {
+      return answer.questionnaire_answer_id;
+    });
+  });
+};
+
+let deleteFinEntityAnswers = (trx, id) => {
+  return trx('fin_entity_answer')
+  .del()
+  .where('fin_entity_id', id);
+};
+
+let deleteQuestionnaireAnswers = (trx, answerIds) => {
+  return trx('questionnaire_answer')
+  .del()
+  .whereIn('id', answerIds);
+};
+
+let deleteEntityAnswers = (trx, id) => {
+  return getQuestionnaireAnswerIds(trx, id).then(answerIds => {
+    return deleteFinEntityAnswers(trx, id).then(() => {
+      return deleteQuestionnaireAnswers(trx, answerIds);
+    });
+  });
+};
+
+let getEntityFiles = (trx, id) => {
+  return trx('file')
+  .select('id', 'key')
+  .where({
+    ref_id: id,
+    file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
+  });
+};
+
+let deleteDbFiles = (trx, id) => {
+  return trx('file')
+  .del()
+  .where({
+    ref_id: id,
+    file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
+  });
+};
+
+let deleteFileData = (files) =>{
+  return Promise.all(
+    files.map(file => {
+      return new Promise((resolve, reject) => {
+        FileService.deleteFile(file.key, err => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+    })
+  );
+};
+
+let deleteEntityFiles = (trx, id) => {
+  return getEntityFiles(trx, id).then(files=> {
+    return deleteDbFiles(trx, id).then(() => {
+      return deleteFileData(files);
+    });
+  });
+};
+
+let deleteEntity = (trx, id) => {
+  return trx('fin_entity')
+  .del()
+  .where('id', id);
+};
+
 let deleteEntityIfAllRelationshipsAreDelete = (trx, entityId) => {
   return trx('relationship')
-    .select('')
+    .select('id')
     .where('fin_entity_id', entityId)
     .then(rows => {
       if (!rows.length) {
-        return trx('fin_entity').del().where('id', entityId);
+        return deleteEntityAnswers(trx, entityId).then(() => {
+          return deleteEntityFiles(trx, entityId).then(() => {
+            return deleteEntity(trx, entityId);
+          });
+        });
       }
     });
 };
@@ -280,6 +369,72 @@ let updateRelationship = (trx, entry, id) => {
   }
 };
 
+let handleOldEntity = (trx, entityId) => {
+  return deleteEntityIfAllRelationshipsAreDelete(trx, entityId);
+};
+
+let getEntityNameFromId = (trx, id) => {
+  return trx('fin_entity')
+  .select('name')
+  .where('id', id)
+  .then(entity => {
+    return entity[0].name;
+  });
+};
+
+let getEntityIdFromName = (trx, name, disclosureId) => {
+  return trx('fin_entity')
+  .select('id')
+  .where({
+    name: name,
+    disclosure_id: disclosureId
+  })
+  .then(entity => {
+    if (entity[0]) {
+      return entity[0].id;
+    } else {
+      return undefined;
+    }
+  });
+};
+
+let getRelationship = (trx, id) => {
+  return trx('relationship')
+  .select('fin_entity_id')
+  .where('id', id);
+};
+
+let updateRelationshipEntityId = (trx, id, entityId) => {
+  return trx('relationship')
+  .update({fin_entity_id: entityId})
+  .where('id', id);
+};
+
+let updateEntity = (trx, entry, id, schoolId) => {
+  return getRelationship(trx, id).then(relationship => {
+    return getEntityNameFromId(trx, relationship[0].fin_entity_id).then(entityName => {
+      if (entry.entityName === entityName) {
+        return undefined;
+      } else {
+        return getAnnualDisclosureForUser(trx, schoolId).then(disclosure => {
+          return getEntityIdFromName(trx, entry.entityName, disclosure[0].id).then(entityId => {
+            if (entityId) {
+              return updateRelationshipEntityId(trx, id, entityId).then(()=> {
+                return handleOldEntity(trx, relationship[0].fin_entity_id);
+              });
+            } else {
+              return createNewEntity(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(newEntityId => {
+                return updateRelationshipEntityId(trx, id, newEntityId).then(()=> {
+                  return handleOldEntity(trx, relationship[0].fin_entity_id);
+                });
+              });
+            }
+          });
+        });
+      }
+    });
+  });
+};
 
 export let updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
   let knex = getKnex(dbInfo);
@@ -289,7 +444,8 @@ export let updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
       return knex.transaction(trx=>{
         return Promise.all([
           updateTravelRelationship(trx, entry, id),
-          updateRelationship(trx, entry, id)
+          updateRelationship(trx, entry, id),
+          updateEntity(trx, entry, id, userInfo.schoolId)
         ]).then(() => {
           return entry;
         });

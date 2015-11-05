@@ -43,5 +43,13 @@ class _TravelLogActions {
   deleteEntry(relationshipId) { this.dispatch(relationshipId); }
 
   archiveEntry(relationshipId) { this.dispatch(relationshipId); }
+
+  editEntry(relationshipId) { this.dispatch(relationshipId); }
+
+  saveEntry(relationshipId) { this.dispatch(relationshipId); }
+
+  cancelEntry(relationshipId) { this.dispatch(relationshipId); }
+
+  updateEntry(field, value, relationshipId) { this.dispatch({field: field, value: value, relationshipId: relationshipId}); }
 }
 export let TravelLogActions = alt.createActions(_TravelLogActions);

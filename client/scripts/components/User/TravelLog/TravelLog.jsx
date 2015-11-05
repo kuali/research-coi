@@ -36,7 +36,8 @@ export class TravelLog extends React.Component {
     this.state = {
       entries: storeState.entries,
       potentialEntry: storeState.potentialEntry,
-      validating: storeState.validating
+      validating: storeState.validating,
+      entryStates: storeState.entryStates
     };
 
     this.onChange = this.onChange.bind(this);
@@ -56,7 +57,8 @@ export class TravelLog extends React.Component {
     this.setState({
       entries: storeState.entries,
       potentialEntry: storeState.potentialEntry,
-      validating: storeState.validating
+      validating: storeState.validating,
+      entryStates: storeState.entryStates
     });
   }
 
@@ -94,7 +96,10 @@ export class TravelLog extends React.Component {
     if (this.state.entries.length > 0) {
       travelLogs = this.state.entries.map(travelLog => {
         return (
-          <Entry travelLog={travelLog}/>
+          <Entry
+            travelLog={travelLog}
+            editing={this.state.entryStates[travelLog.relationshipId] ? this.state.entryStates[travelLog.relationshipId].editing : false}
+          />
         );
       });
     }
