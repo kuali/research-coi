@@ -31,6 +31,7 @@ class _TravelLogStore extends AutoBindingStore {
 
     this.exportPublicMethods({
       getErrors: this.getErrors,
+      getErrorsForId: this.getErrorsForId,
       validateEntry: this.validateEntry
     });
 
@@ -105,6 +106,7 @@ class _TravelLogStore extends AutoBindingStore {
     }
     this.entryStates[relationshipId].editing = true;
     this.entryStates[relationshipId].snapshot = cloneObject(this.getEntry(relationshipId));
+    this.entryStates[relationshipId].validating = false;
   }
 
   saveEntry(relationshipId) {
@@ -114,6 +116,7 @@ class _TravelLogStore extends AutoBindingStore {
 
     this.entryStates[relationshipId].editing = false;
     this.entryStates[relationshipId].snapshot = undefined;
+    this.entryStates[relationshipId].validating = false;
 
     createRequest().put('/api/coi/travel-log-entries/' + relationshipId)
     .send(entryToSave)
@@ -131,6 +134,7 @@ class _TravelLogStore extends AutoBindingStore {
 
     this.entryStates[relationshipId].editing = false;
     this.entryStates[relationshipId].snapshot = undefined;
+    this.entryStates[relationshipId].validating = false;
   }
 
   updateEntry(data) {
@@ -145,9 +149,21 @@ class _TravelLogStore extends AutoBindingStore {
     this.validating = true;
   }
 
+  turnOnValidationsForEntry(relationshipId) {
+    this.entryStates[relationshipId].validating = true;
+  }
+
   getErrors() {
     const storeState = this.getState();
     return this.validateEntry(storeState.potentialEntry);
+  }
+
+  getErrorsForId(relationshipId) {
+    const storeState = this.getState();
+    let entry = storeState.entries.find(ent => {
+      return ent.relationshipId === relationshipId;
+    });
+    return this.validateEntry(entry);
   }
 
   validateEntry(entry) {

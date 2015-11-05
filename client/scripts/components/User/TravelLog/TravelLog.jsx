@@ -99,6 +99,7 @@ export class TravelLog extends React.Component {
           <Entry
             travelLog={travelLog}
             editing={this.state.entryStates[travelLog.relationshipId] ? this.state.entryStates[travelLog.relationshipId].editing : false}
+            validating={this.state.entryStates[travelLog.relationshipId] ? this.state.entryStates[travelLog.relationshipId].validating : false}
           />
         );
       });
