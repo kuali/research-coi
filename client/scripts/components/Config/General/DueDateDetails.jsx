@@ -51,8 +51,7 @@ export default class DueDateDetails extends React.Component {
   render() {
     let styles = {
       container: {
-        marginLeft: this.props.showTitleQuestion ? 0 : 20,
-        marginBottom: 15
+        margin: '0 23px 15px 23px'
       },
       notificationQuestion: {
         fontWeight: 'bold',
