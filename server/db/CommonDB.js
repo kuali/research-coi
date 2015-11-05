@@ -43,7 +43,7 @@ export let saveSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
   else {
     query = knex;
   }
-  return query.insert(snakeizeJson(record))
+  return query.insert(snakeizeJson(record), tableProps.pk)
     .into(tableProps.table)
     .then(result => {
       let updatedRecord = _.clone(record);

@@ -49,7 +49,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
           name: financialEntity.name,
           description: financialEntity.description,
           status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
-        })
+        }, 'id')
         .then(id => {
           financialEntity.id = id[0];
           let queries = [];
@@ -57,46 +57,47 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
             relationship.finEntityId = id[0];
             queries.push(
               knex('relationship')
-              .insert({
-                fin_entity_id: id[0],
-                relationship_cd: relationship.relationshipCd,
-                person_cd: relationship.personCd,
-                type_cd: !relationship.typeCd ? null : relationship.typeCd,
-                amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-                comments: relationship.comments,
-                status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
-              })
-              .then(relationshipId=>{
-                relationship.id = relationshipId[0];
-                if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
-                  return knex('travel_relationship')
-                  .insert({
-                    relationship_id: relationshipId[0],
-                    amount: relationship.travel.amount,
-                    destination: relationship.travel.destination,
-                    start_date: new Date(relationship.travel.startDate),
-                    end_date: new Date(relationship.travel.endDate),
-                    reason: relationship.travel.reason
-                  });
-                }
-              })
+                .insert({
+                  fin_entity_id: id[0],
+                  relationship_cd: relationship.relationshipCd,
+                  person_cd: relationship.personCd,
+                  type_cd: !relationship.typeCd ? null : relationship.typeCd,
+                  amount_cd: !relationship.amountCd ? null : relationship.amountCd,
+                  comments: relationship.comments,
+                  status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
+                }, 'id')
+                .then(relationshipId=>{
+                  relationship.id = relationshipId[0];
+                  if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
+                    return knex('travel_relationship')
+                      .insert({
+                        relationship_id: relationshipId[0],
+                        amount: relationship.travel.amount,
+                        destination: relationship.travel.destination,
+                        start_date: new Date(relationship.travel.startDate),
+                        end_date: new Date(relationship.travel.endDate),
+                        reason: relationship.travel.reason
+                      }, 'id');
+                  }
+                })
             );
           });
 
           financialEntity.answers.forEach(answer=>{
             queries.push(
-              knex('questionnaire_answer').insert({
-                question_id: answer.questionId,
-                answer: JSON.stringify(answer.answer)
-              })
-              .then(result =>{
-                answer.id = result[0];
-                return knex('fin_entity_answer')
-                  .insert({
-                    fin_entity_id: id[0],
-                    questionnaire_answer_id: result[0]
-                  });
-              })
+              knex('questionnaire_answer')
+                .insert({
+                  question_id: answer.questionId,
+                  answer: JSON.stringify(answer.answer)
+                }, 'id')
+                .then(result => {
+                  answer.id = result[0];
+                  return knex('fin_entity_answer')
+                    .insert({
+                      fin_entity_id: id[0],
+                      questionnaire_answer_id: result[0]
+                    }, 'id');
+                })
             );
           });
 
@@ -113,12 +114,12 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
               upload_date: new Date()
             };
             queries.push(
-            knex('file')
-            .insert(fileData)
-            .then(fileId=>{
-              fileData.id = fileId[0];
-              financialEntity.files.push(fileData);
-            })
+              knex('file')
+                .insert(fileData, 'id')
+                .then(fileId => {
+                  fileData.id = fileId[0];
+                  financialEntity.files.push(fileData);
+                })
             );
           });
 
@@ -194,28 +195,28 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
               relationship.finEntityId = entityId;
               queries.push(
                 knex('relationship')
-                .insert({
-                  fin_entity_id: entityId,
-                  relationship_cd: relationship.relationshipCd,
-                  person_cd: relationship.personCd,
-                  type_cd: !relationship.typeCd ? null : relationship.typeCd,
-                  amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-                  comments: relationship.comments
-                })
-                .then(relationshipId=>{
-                  relationship.id = relationshipId[0];
-                  if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
-                    return knex('travel_relationship')
-                    .insert({
-                      relationship_id: relationshipId[0],
-                      amount: relationship.travel.amount,
-                      destination: relationship.travel.destination,
-                      start_date: new Date(relationship.travel.startDate),
-                      end_date: new Date(relationship.travel.endDate),
-                      reason: relationship.travel.reason
-                    });
-                  }
-                })
+                  .insert({
+                    fin_entity_id: entityId,
+                    relationship_cd: relationship.relationshipCd,
+                    person_cd: relationship.personCd,
+                    type_cd: !relationship.typeCd ? null : relationship.typeCd,
+                    amount_cd: !relationship.amountCd ? null : relationship.amountCd,
+                    comments: relationship.comments
+                  }, 'id')
+                  .then(relationshipId=>{
+                    relationship.id = relationshipId[0];
+                    if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
+                      return knex('travel_relationship')
+                        .insert({
+                          relationship_id: relationshipId[0],
+                          amount: relationship.travel.amount,
+                          destination: relationship.travel.destination,
+                          start_date: new Date(relationship.travel.startDate),
+                          end_date: new Date(relationship.travel.endDate),
+                          reason: relationship.travel.reason
+                        }, 'id');
+                    }
+                  })
               );
             }
           });
@@ -234,11 +235,12 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
                 knex('questionnaire_answer').insert({
                   question_id: answer.questionId,
                   answer: JSON.stringify(answer.answer)
-                }).then(result =>{
+                }, 'id').then(result =>{
                   answer.id = result[0];
                   return knex('fin_entity_answer').insert({
                     fin_entity_id: entityId,
-                    questionnaire_answer_id: result[0]});
+                    questionnaire_answer_id: result[0]
+                  }, 'id');
                 })
               );
             }
@@ -291,7 +293,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
             };
             queries.push(
               knex('file')
-                .insert(fileData)
+                .insert(fileData, 'id')
                 .then(id => {
                   fileData.id = id[0];
                   financialEntity.files.push(fileData);
@@ -315,16 +317,17 @@ export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
       }
 
       let knex = getKnex(dbInfo);
-      return knex('declaration').insert({
-        project_id: record.projectId,
-        disclosure_id: disclosureId,
-        fin_entity_id: record.finEntityId,
-        type_cd: record.typeCd,
-        comments: record.comments
-      }).then(id => {
-        record.id = id[0];
-        return record;
-      });
+      return knex('declaration')
+        .insert({
+          project_id: record.projectId,
+          disclosure_id: disclosureId,
+          fin_entity_id: record.finEntityId,
+          type_cd: record.typeCd,
+          comments: record.comments
+        }, 'id').then(id => {
+          record.id = id[0];
+          return record;
+        });
     });
 };
 
@@ -362,13 +365,14 @@ export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
         .insert({
           question_id: body.questionId,
           answer: JSON.stringify(body.answer)
-        })
+        }, 'id')
         .then(result => {
           answer.id = result[0];
           return knex('disclosure_answer')
             .insert({
               disclosure_id: disclosureId,
-              questionnaire_answer_id: result[0]})
+              questionnaire_answer_id: result[0]
+            }, 'id')
             .then(() => {
               return body;
             });
@@ -441,7 +445,7 @@ let flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
           'disclosure_id': disclosureId,
           'target_type': section,
           'target_id': id
-        });
+        }, 'id');
       }
     });
 };
@@ -460,7 +464,7 @@ export let addComment = (dbInfo, userInfo, comment) => {
       date: new Date(),
       pi_visible: comment.visibleToPI,
       reviewer_visible: comment.visibleToReviewers
-    }).then(() => {
+    }, 'id').then(() => {
       let statements = [
         retrieveComments(dbInfo, userInfo.schoolId, comment.disclosureId)
       ];
@@ -619,14 +623,14 @@ export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
             config_id: config[0].id
           };
           return knex('disclosure')
-          .insert(newDisclosure)
-          .then(id => {
-            newDisclosure.id = id[0];
-            newDisclosure.answers = [];
-            newDisclosure.entities = [];
-            newDisclosure.declarations = [];
-            return camelizeJson(newDisclosure);
-          });
+            .insert(newDisclosure, 'id')
+            .then(id => {
+              newDisclosure.id = id[0];
+              newDisclosure.answers = [];
+              newDisclosure.entities = [];
+              newDisclosure.declarations = [];
+              return camelizeJson(newDisclosure);
+            });
         });
       }
       else {
@@ -851,7 +855,7 @@ let archiveDisclosure = (knex, disclosureId, approverName, disclosure) => {
       approved_date: new Date(),
       approved_by: approverName,
       disclosure: JSON.stringify(disclosure)
-    });
+    }, 'id');
 };
 
 let deleteComments = (knex, disclosureId) => {

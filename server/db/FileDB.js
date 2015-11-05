@@ -70,7 +70,7 @@ export let saveNewFiles = (dbInfo, body, files, userInfo) => {
             upload_date: new Date()
           };
           return knex('file')
-            .insert(fileDatum)
+            .insert(fileDatum, 'id')
             .then(fileId => {
               fileDatum.id = fileId[0];
               fileData.push(fileDatum);

@@ -14,6 +14,8 @@ git clone https://github.com/kuali/research-coi research-coi
 ```
 cd ~/workspace/research-coi
 npm install
+
+Go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
 ```
 ----------
 **Step 4**: Create Database
@@ -32,6 +34,10 @@ module.exports = {
       user: 'root',
       password: ''
     }
+  },
+  pool: {
+    min: 2,
+    max: 20
   }
 };
 ```
@@ -39,12 +45,12 @@ module.exports = {
 
 **Step 6**: Apply Migrations:
 ```
-node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
+node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
 ```
 ----------
 **Step 7**: Apply Seed Data:
 ```
-node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --knexfile <replace with knexfile.js path> seed:run --env kc_coi
+node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi
 ```
 **Step 8**: Configuration Environment Variables:
 
@@ -55,9 +61,17 @@ System configuration for COI is done with environment variables. Environment var
 >: port for the coi app.
 >*Default*: localhost
 
+>**DB_PACKAGE**
+>: The node db package to use
+>*Default*: strong-oracle
+
 >**DB_HOST**
 >: The host name for the database.
 >*Default*: localhost
+
+>**DB_PORT**
+>: The port for the database.
+>*Default*: none
 
 >**DB_USER**
 >: The db user name.
@@ -111,7 +125,7 @@ System configuration for COI is done with environment variables. Environment var
 
 **Step 9**: Start Up Node
 ```
-DB_NAME=coi npm start
+DB_NAME=coi node server/bootstrap
 ```
 
-**Step 10**: Navigate to hostname:port/coi
+**Step 10**: Navigate to hostname:port/coi/

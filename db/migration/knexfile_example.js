@@ -15,14 +15,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
+/* eslint-disable */
 
 module.exports = {
   kc_coi: {
-    client: 'mysql',
+    client: 'strong-oracle',
     connection: {
+      hostname: 'localhost',
       database: 'coi',
       user: 'root',
-      password: ''
+      password: '',
+      port: 9999
+    },
+    pool: {
+      min: 2,
+      max: 20
     }
   }
 };

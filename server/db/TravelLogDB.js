@@ -79,14 +79,14 @@ let createAnnualDisclosure = (knex, userInfo) => {
   return knex('config').max('id as id')
   .then(config => {
     return knex('disclosure')
-    .insert({
-      type_cd: 2,
-      status_cd: 1,
-      start_date: new Date(),
-      user_id: userInfo.schoolId,
-      submitted_by: userInfo.name,
-      config_id: config[0].id
-    });
+      .insert({
+        type_cd: 2,
+        status_cd: 1,
+        start_date: new Date(),
+        user_id: userInfo.schoolId,
+        submitted_by: userInfo.name,
+        config_id: config[0].id
+      }, 'id');
   });
 };
 
@@ -96,7 +96,7 @@ let createNewEntity = (knex, disclosureId, entry, status) => {
     name: entry.entityName,
     active: true,
     status: status
-  });
+  }, 'id');
 };
 
 let createNewRelationship = (knex, entityId, entry, status) => {
@@ -105,7 +105,7 @@ let createNewRelationship = (knex, entityId, entry, status) => {
     relationship_cd: COIConstants.ENTITY_RELATIONSHIP.TRAVEL,
     person_cd: 1,
     status: status
-  }).then(relationshipId => {
+  }, 'id').then(relationshipId => {
     return knex('travel_relationship').insert({
       relationship_id: relationshipId[0],
       amount: entry.amount,
@@ -113,7 +113,7 @@ let createNewRelationship = (knex, entityId, entry, status) => {
       start_date: new Date(entry.startDate),
       end_date: new Date(entry.endDate),
       reason: entry.reason
-    }).then(travelRelationshipId => {
+    }, 'id').then(travelRelationshipId => {
       entry.id = travelRelationshipId[0];
       entry.relationshipId = relationshipId[0];
       return entry;
