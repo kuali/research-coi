@@ -14,6 +14,8 @@ git clone https://github.com/kuali/research-coi research-coi
 ```
 cd ~/workspace/research-coi
 npm install
+
+Go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
 ```
 ----------
 **Step 4**: Create Database
@@ -59,9 +61,17 @@ System configuration for COI is done with environment variables. Environment var
 >: port for the coi app.
 >*Default*: localhost
 
+>**DB_PACKAGE**
+>: The node db package to use
+>*Default*: strong-oracle
+
 >**DB_HOST**
 >: The host name for the database.
 >*Default*: localhost
+
+>**DB_PORT**
+>: The port for the database.
+>*Default*: none
 
 >**DB_USER**
 >: The db user name.
@@ -115,7 +125,7 @@ System configuration for COI is done with environment variables. Environment var
 
 **Step 9**: Start Up Node
 ```
-DB_NAME=coi npm start
+DB_NAME=coi node server/bootstrap
 ```
 
-**Step 10**: Navigate to hostname:port/coi
+**Step 10**: Navigate to hostname:port/coi/

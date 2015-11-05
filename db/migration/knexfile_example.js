@@ -19,11 +19,13 @@
 
 module.exports = {
   kc_coi: {
-    client: 'mysql',
+    client: 'strong-oracle',
     connection: {
+      hostname: 'localhost',
       database: 'coi',
       user: 'root',
-      password: ''
+      password: '',
+      port: 9999
     },
     pool: {
       min: 2,

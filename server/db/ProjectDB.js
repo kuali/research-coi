@@ -63,7 +63,7 @@ let saveProjectPersons = (dbInfo, persons, projectId) => {
           })) {
             return knex('project_person').update({'active': true, 'role_cd': person.roleCode}).where({'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
           } else {
-            return knex('project_person').insert({'active': true, 'role_cd': person.roleCode, 'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
+            return knex('project_person').insert({'active': true, 'role_cd': person.roleCode, 'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId}, 'id');
           }
         });
 
@@ -123,7 +123,7 @@ let saveNewProjects = (dbInfo, projects) => {
       sponsor_name: projects.sponsorName,
       start_date: projects.startDate,
       end_date: projects.endDate
-    })
+    }, 'id')
     .then(insertResult => {
       if (projects.persons) {
         let projectId = insertResult[0];
@@ -134,7 +134,7 @@ let saveNewProjects = (dbInfo, projects) => {
             source_person_type: person.sourcePersonType,
             role_cd: person.roleCode,
             active: true
-          });
+          }, 'id');
         });
         return Promise.all(inserts);
       }

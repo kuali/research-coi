@@ -80,7 +80,7 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
           'date': new Date(),
           'pi_visible': true,
           'reviewer_visible': true
-        });
+        }, 'id');
       }
     });
 };
@@ -636,7 +636,7 @@ export let addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => {
           type_cd: newRelationship.typeCd,
           amount_cd: newRelationship.amountCd,
           comments: newRelationship.comments
-        })
+        }, 'id')
         .then(() => {
           return Promise.all([
             getRelationships(knex, [reviewTarget.targetId]),

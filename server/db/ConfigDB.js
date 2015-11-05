@@ -68,7 +68,7 @@ let createInsertQueries = (query, collection, tableProps) => {
         line[tableProps.parent.key] = tableProps.parent.value;
       }
       return query(tableProps.table)
-      .insert(line, tableProps.pk);
+        .insert(line, tableProps.pk);
     })
   );
 };
@@ -77,8 +77,8 @@ let createUpdateQueries = (query, collection, tableProps) => {
   return Promise.all(
     collection.map(line => {
       return query(tableProps.table)
-      .update(line)
-      .where(tableProps.pk, line[tableProps.pk]);
+        .update(line)
+        .where(tableProps.pk, line[tableProps.pk]);
     })
   );
 };
@@ -240,7 +240,7 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
             parent: {key: 'questionnaire_id', value: result[0].id}
           });
         } else {
-          return query('questionnaire').insert({version: 1, type_cd: 1}).then(id => {
+          return query('questionnaire').insert({version: 1, type_cd: 1}, 'id').then(id => {
             return createCollectionQueries(query, convertQuestionFormat(config.questions.screening), {
               pk: 'id',
               table: 'questionnaire_question',
@@ -263,7 +263,7 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
             parent: {key: 'questionnaire_id', value: result[0].id}
           });
         } else {
-          return query('questionnaire').insert({version: 1, type_cd: 2}).then(id => {
+          return query('questionnaire').insert({version: 1, type_cd: 2}, 'id').then(id => {
             return createCollectionQueries(query, convertQuestionFormat(config.questions.entities), {
               pk: 'id',
               table: 'questionnaire_question',
@@ -282,7 +282,7 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
 
 export let archiveConfig = (dbInfo, config) => {
   let knex = getKnex(dbInfo);
-  return knex('config').insert({config: JSON.stringify(config)});
+  return knex('config').insert({config: JSON.stringify(config)}, 'id');
 };
 
 export let getArchivedConfig = (dbInfo, id) => {

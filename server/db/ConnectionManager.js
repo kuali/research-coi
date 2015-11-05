@@ -18,17 +18,33 @@
 
 import knex from 'knex';
 
-let knexInstance = knex({
-  client: 'mysql',
-  connection: {
+let connectionOptions;
+if (process.env.DB_PACKAGE === 'mysql') {
+  connectionOptions = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'coi',
     charset: 'utf8'
-  },
+  };
+}
+else {
+  connectionOptions = {
+    hostname: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'coi'
+  };
+  if (process.env.DB_PORT) {
+    connectionOptions.port = process.env.DB_PORT;
+  }
+}
+
+let knexInstance = knex({
+  client: process.env.DB_PACKAGE || 'strong-oracle',
+  connection: connectionOptions,
   pool: {
-    min: 0,
+    min: 2,
     max: process.env.CONNECTION_POOL_SIZE || 70
   }
 });
