@@ -21,6 +21,10 @@ import {TravelLogActions} from '../actions/TravelLogActions.js';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
 
+let cloneObject = original => {
+  return JSON.parse(JSON.stringify(original));
+};
+
 class _TravelLogStore extends AutoBindingStore {
   constructor() {
     super(TravelLogActions);
@@ -36,6 +40,7 @@ class _TravelLogStore extends AutoBindingStore {
     this.sortDirection = 'ASCENDING';
     this.filter = 'all';
     this.validating = false;
+    this.entryStates = {};
   }
 
   refreshTravelLogEntries() {
@@ -86,6 +91,54 @@ class _TravelLogStore extends AutoBindingStore {
           this.emitChange();
         }
       }));
+  }
+
+  getEntry(relationshipId) {
+    return this.entries.find(entry => {
+      return entry.relationshipId === relationshipId;
+    });
+  }
+
+  editEntry(relationshipId) {
+    if (!this.entryStates[relationshipId]) {
+      this.entryStates[relationshipId] = {};
+    }
+    this.entryStates[relationshipId].editing = true;
+    this.entryStates[relationshipId].snapshot = cloneObject(this.getEntry(relationshipId));
+  }
+
+  saveEntry(relationshipId) {
+    let entryToSave = this.entries.find(entry => {
+      return entry.relationshipId === relationshipId;
+    });
+
+    this.entryStates[relationshipId].editing = false;
+    this.entryStates[relationshipId].snapshot = undefined;
+
+    createRequest().put('/api/coi/travel-log-entries/' + relationshipId)
+    .send(entryToSave)
+    .end(processResponse(() => {}));
+  }
+
+  cancelEntry(relationshipId) {
+    let index = this.entries.findIndex(entry => {
+      return entry.relationshipId === relationshipId;
+    });
+
+    if (index >= 0) {
+      this.entries[index] = this.entryStates[relationshipId].snapshot;
+    }
+
+    this.entryStates[relationshipId].editing = false;
+    this.entryStates[relationshipId].snapshot = undefined;
+  }
+
+  updateEntry(data) {
+    let entryToSave = this.entries.find(entry => {
+      return entry.relationshipId === data.relationshipId;
+    });
+
+    entryToSave[data.field] = data.value;
   }
 
   turnOnValidations() {

@@ -21,6 +21,9 @@ import {ProminentButton} from '../../ProminentButton';
 import {formatDate} from '../../../formatDate';
 import {COIConstants} from '../../../../../COIConstants';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
+import TextField from '../TextField';
+import CurrencyField from '../CurrencyField';
+import DateRangeField from '../DateRangeField';
 
 export class Entry extends React.Component {
   constructor() {
@@ -28,6 +31,12 @@ export class Entry extends React.Component {
 
     this.deleteEntry = this.deleteEntry.bind(this);
     this.archiveEntry = this.archiveEntry.bind(this);
+    this.editEntry = this.editEntry.bind(this);
+    this.saveEntry = this.saveEntry.bind(this);
+    this.cancelEntry = this.cancelEntry.bind(this);
+    this.updateField = this.updateField.bind(this);
+    this.updateStartDate = this.updateStartDate.bind(this);
+    this.updateEndDate = this.updateEndDate.bind(this);
   }
 
   deleteEntry() {
@@ -36,6 +45,30 @@ export class Entry extends React.Component {
 
   archiveEntry() {
     TravelLogActions.archiveEntry(this.props.travelLog.relationshipId);
+  }
+
+  editEntry() {
+    TravelLogActions.editEntry(this.props.travelLog.relationshipId);
+  }
+
+  saveEntry() {
+    TravelLogActions.saveEntry(this.props.travelLog.relationshipId);
+  }
+
+  cancelEntry() {
+    TravelLogActions.cancelEntry(this.props.travelLog.relationshipId);
+  }
+
+  updateField(evt) {
+    TravelLogActions.updateEntry(evt.target.id, evt.target.value, this.props.travelLog.relationshipId);
+  }
+
+  updateStartDate(newValue) {
+    TravelLogActions.updateEntry('startDate', newValue, this.props.travelLog.relationshipId);
+  }
+
+  updateEndDate(newValue) {
+    TravelLogActions.updateEntry('endDate', newValue, this.props.travelLog.relationshipId);
   }
 
   render() {
@@ -92,6 +125,24 @@ export class Entry extends React.Component {
       },
       middle: {
         marginTop: 10
+      },
+      textField: {
+        container: {
+          display: 'inline-block',
+          width: '33%'
+        },
+        input: {
+          padding: '2px 8px',
+          fontSize: 16,
+          borderRadius: 5,
+          border: '1px solid #ccc',
+          height: 30,
+          width: '95%'
+        },
+        label: {
+          marginBottom: 5,
+          fontWeight: '500'
+        }
       }
     };
 
@@ -115,7 +166,14 @@ export class Entry extends React.Component {
       );
     }
 
-    if (this.props.travelLog.status === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
+    if (this.props.editing === true) {
+      actionButtons = (
+        <div style={styles.buttons}>
+          <ProminentButton name="Save" data-for={this.props.travelLog.entityName} onClick={this.saveEntry} style={styles.button}>Save</ProminentButton>
+          <ProminentButton name="Cancel" data-for={this.props.travelLog.entityName} onClick={this.cancelEntry} style={styles.button}>Cancel</ProminentButton>
+        </div>
+      );
+    } else if (this.props.travelLog.status === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
       actionButtons = (
         <div style={styles.buttons}>
           {disclosedDate}
@@ -125,14 +183,62 @@ export class Entry extends React.Component {
     } else {
       actionButtons = (
         <div style={styles.buttons}>
-          <ProminentButton name="Edit" data-for={this.props.travelLog.entityName} style={styles.button}>Edit</ProminentButton>
+          <ProminentButton name="Edit" data-for={this.props.travelLog.entityName} onClick={this.editEntry} style={styles.button}>Edit</ProminentButton>
           <ProminentButton name="Delete" data-for={this.props.travelLog.entityName} onClick={this.deleteEntry} style={styles.button}>Delete</ProminentButton>
         </div>
       );
     }
 
-    return (
-      <div style={styles.container}>
+    let jsx;
+    if (this.props.editing) {
+      jsx = (
+        <div>
+          <TextField
+          id='entityName'
+          label='ENTITY NAME'
+          onChange={this.updateField}
+          name="Entity Name"
+          styles={styles.textField}
+          value={this.props.travelLog.entityName}
+          />
+          <CurrencyField
+          id='amount'
+          label='AMOUNT'
+          onChange={this.updateField}
+          name="Amount"
+          styles={styles.textField}
+          value={this.props.travelLog.amount}
+          />
+          <TextField
+          id='destination'
+          label='DESTINATION'
+          onChange={this.updateField}
+          name="Destinantion"
+          styles={styles.textField}
+          value={this.props.travelLog.destination}
+          />
+          <DateRangeField
+          id='dateRange'
+          label='DATE RANGE'
+          onStartDateChange={this.updateStartDate}
+          onEndDateChange={this.updateEndDate}
+          styles={styles.textField}
+          startDate={this.props.travelLog.startDate}
+          endDate={this.props.travelLog.endDate}
+          />
+          <TextField
+          id='reason'
+          label='REASON'
+          onChange={this.updateField}
+          name="Reason"
+          styles={styles.textField}
+          value={this.props.travelLog.reason}
+          />
+          {actionButtons}
+        </div>
+      );
+    } else {
+      jsx = (
         <div>
           <div style={styles.left}>
             <div>
@@ -162,6 +268,12 @@ export class Entry extends React.Component {
           </div>
           {actionButtons}
         </div>
+      );
+    }
+
+    return (
+      <div style={styles.container}>
+        {jsx}
       </div>
     );
   }
