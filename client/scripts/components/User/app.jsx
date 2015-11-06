@@ -67,7 +67,7 @@ class App extends SizeAwareComponent {
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <AppHeader style={styles.header} homelink="dashboard" />
+        <AppHeader style={styles.header} />
         <RouteHandler />
       </div>
     );
