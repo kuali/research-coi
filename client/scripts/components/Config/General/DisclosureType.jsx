@@ -126,7 +126,7 @@ export default class DisclosureType extends React.Component {
     }
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
+      <span className="fill" style={merge(styles.container, this.props.style)}>
         {checkbox}
         {jsx}
       </span>

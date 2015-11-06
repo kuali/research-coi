@@ -17,7 +17,7 @@
 */
 
 import React from 'react/addons';
-import {ProminentButton} from '../../ProminentButton';
+import {BlueButton} from '../../BlueButton';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
 import {TravelLogStore} from '../../../stores/TravelLogStore';
 import TextField from '../TextField';
@@ -58,12 +58,14 @@ export class TravelLogForm extends React.Component {
     render() {
       let styles = {
         container: {
-          margin: '44px 50px'
+          margin: '44px 50px',
+          maxWidth: 1000
         },
         textField: {
           container: {
             display: 'inline-block',
-            width: '33%'
+            width: '33%',
+            paddingRight: 15
           },
           input: {
             padding: '2px 8px',
@@ -75,8 +77,12 @@ export class TravelLogForm extends React.Component {
           },
           label: {
             marginBottom: 5,
-            fontWeight: '500'
+            fontSize: 12,
+            display: 'inline-block'
           }
+        },
+        row: {
+          marginBottom: 25
         }
       };
 
@@ -84,57 +90,61 @@ export class TravelLogForm extends React.Component {
 
       return (
         <div style={styles.container}>
-          <TextField
-            id='entityName'
-            label='ENTITY NAME'
-            onChange={this.updateField}
-            name="Entity Name"
-            styles={styles.textField}
-            value={this.props.entry.entityName}
-            invalid={this.props.validating && errors.entityName ? true : false}
-          />
-          <CurrencyField
-            id='amount'
-            label='AMOUNT'
-            onChange={this.updateField}
-            name="Amount"
-            styles={styles.textField}
-            value={this.props.entry.amount}
-            invalid={this.props.validating && errors.amount ? true : false}
-          />
-          <TextField
-            id='destination'
-            label='DESTINATION'
-            onChange={this.updateField}
-            name="Destinantion"
-            styles={styles.textField}
-            value={this.props.entry.destination}
-            invalid={this.props.validating && errors.destination ? true : false}
-          />
-          <DateRangeField
-            id='dateRange'
-            label='DATE RANGE'
-            onStartDateChange={this.updateStartDate}
-            onEndDateChange={this.updateEndDate}
-            styles={styles.textField}
-            startDate={this.props.entry.startDate}
-            endDate={this.props.entry.endDate}
-            startDateInvalid={this.props.validating && errors.startDate ? true : false}
-            endDateInvalid={this.props.validating && errors.endDate ? true : false}
-          />
-          <TextField
-            id='reason'
-            label='REASON'
-            onChange={this.updateField}
-            name="Reason"
-            styles={styles.textField}
-            value={this.props.entry.reason}
-            invalid={this.props.validating && errors.reason ? true : false}
-          />
-          <div style={styles.textField.container}>
-            <ProminentButton onClick={this.addEntry}>+ ADD</ProminentButton>
+          <div style={styles.row}>
+            <TextField
+              id='entityName'
+              label='ENTITY NAME'
+              onChange={this.updateField}
+              name="Entity Name"
+              styles={styles.textField}
+              value={this.props.entry.entityName}
+              invalid={this.props.validating && errors.entityName ? true : false}
+            />
+            <CurrencyField
+              id='amount'
+              label='AMOUNT'
+              onChange={this.updateField}
+              name="Amount"
+              styles={styles.textField}
+              value={this.props.entry.amount}
+              invalid={this.props.validating && errors.amount ? true : false}
+            />
+            <TextField
+              id='destination'
+              label='DESTINATION'
+              onChange={this.updateField}
+              name="Destinantion"
+              styles={styles.textField}
+              value={this.props.entry.destination}
+              invalid={this.props.validating && errors.destination ? true : false}
+            />
           </div>
+          <div style={styles.row}>
+            <DateRangeField
+              id='dateRange'
+              label='DATE RANGE'
+              onStartDateChange={this.updateStartDate}
+              onEndDateChange={this.updateEndDate}
+              styles={styles.textField}
+              startDate={this.props.entry.startDate}
+              endDate={this.props.entry.endDate}
+              startDateInvalid={this.props.validating && errors.startDate ? true : false}
+              endDateInvalid={this.props.validating && errors.endDate ? true : false}
+            />
+            <TextField
+              id='reason'
+              label='REASON'
+              onChange={this.updateField}
+              name="Reason"
+              styles={styles.textField}
+              value={this.props.entry.reason}
+              invalid={this.props.validating && errors.reason ? true : false}
+            />
+            <div style={styles.textField.container}>
+              <BlueButton onClick={this.addEntry}>+ ADD</BlueButton>
+            </div>
           </div>
+        </div>
       );
     }
 }

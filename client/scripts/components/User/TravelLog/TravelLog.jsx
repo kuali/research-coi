@@ -84,9 +84,9 @@ export class TravelLog extends React.Component {
         backgroundColor: '#eeeeee'
       },
       entryList: {
-        width: '65%',
+        maxWidth: 900,
         margin: '44px 50px',
-        borderTop: '1px solid grey',
+        borderTop: '1px solid #CCC',
         paddingTop: '44px'
       }
     };
@@ -97,6 +97,7 @@ export class TravelLog extends React.Component {
       travelLogs = this.state.entries.map(travelLog => {
         return (
           <Entry
+            key={travelLog.relationshipId}
             travelLog={travelLog}
             editing={this.state.entryStates[travelLog.relationshipId] ? this.state.entryStates[travelLog.relationshipId].editing : false}
             validating={this.state.entryStates[travelLog.relationshipId] ? this.state.entryStates[travelLog.relationshipId].validating : false}

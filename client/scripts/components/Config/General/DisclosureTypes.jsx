@@ -49,14 +49,14 @@ export default class DisclosureTypes extends React.Component {
     let rows;
     if (this.props.types && this.props.types.length > 0) {
       rows = (
-        <span>
-          <div style={styles.optionRow}>
+        <div>
+          <div style={styles.optionRow} className="flexbox row">
             <DisclosureType type={this.props.types[1]} canToggle={true} />
             <DisclosureType type={this.props.types[3]} canToggle={true} />
           </div>
           <div style={styles.optionRow}>
           </div>
-        </span>
+        </div>
       );
     }
 
