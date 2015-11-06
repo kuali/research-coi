@@ -24,6 +24,7 @@ import {SearchFilterGroup} from '../SearchFilterGroup';
 import {AdminActions} from '../../../actions/AdminActions';
 import {BlueButton} from '../../BlueButton';
 import ConfigStore from '../../../stores/ConfigStore';
+import AdminMenu from '../../AdminMenu';
 
 export class DisclosureList extends React.Component {
   constructor() {
@@ -169,6 +170,7 @@ export class DisclosureList extends React.Component {
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
+        <AdminMenu style={{padding: '32px 0px'}} />
         <div style={{width: 320}}>
           <DisclosureFilterSearch
             query={this.props.filters.search}

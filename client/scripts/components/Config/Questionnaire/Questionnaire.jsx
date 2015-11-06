@@ -71,7 +71,7 @@ export default class Questionnaire extends React.Component {
         color: '#525252',
         fontWeight: 300,
         backgroundColor: 'white',
-        minHeight: 68
+        minHeight: 70
       },
       configurationArea: {
         padding: 35,

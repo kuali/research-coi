@@ -25,6 +25,7 @@ import {DisclosureTable} from './DisclosureTable';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
 import {BlueButton} from '../../BlueButton';
 import ConfigStore from '../../../stores/ConfigStore';
+import AdminMenu from '../../AdminMenu';
 
 export class ListView extends React.Component {
   constructor() {
@@ -154,22 +155,6 @@ export class ListView extends React.Component {
         margin: '10px 0',
         color: '#777'
       },
-      navigation: {
-        width: 220,
-        padding: '0 30px 0 40px',
-        whiteSpace: 'nowrap'
-      },
-      configIcon: {
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle',
-        fontSize: 27,
-        paddingRight: 15
-      },
-      configLabel: {
-        whiteSpace: 'normal',
-        verticalAlign: 'middle',
-        fontSize: 15
-      },
       filterArrow: {
         fontSize: 6,
         verticalAlign: 'top',
@@ -216,6 +201,7 @@ export class ListView extends React.Component {
     return (
       <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
+          <AdminMenu />
           <DisclosureFilterSearch
             query={this.state.data.applicationState.filters.search}
             onChange={this.changeSearch}
@@ -244,25 +230,17 @@ export class ListView extends React.Component {
           <div style={styles.header}>
             <h2 style={styles.title}>COI ADMIN DASHBOARD</h2>
           </div>
-          <div className="flexbox row" style={{padding: '33px 38px'}}>
-            <span className="fill">
-              <DisclosureTable
-                sort={this.state.data.applicationState.sort}
-                sortDirection={this.state.data.applicationState.sortDirection}
-                page={this.state.data.applicationState.page}
-                style={styles.table}
-                disclosures={filtered}
-                searchTerm={this.state.data.applicationState.effectiveSearchValue}
-              />
-              {loadMoreButton}
-              {loadingIndicator}
-            </span>
-            <span style={styles.navigation}>
-              <a href="config">
-                <i className="fa fa-arrow-circle-right" style={styles.configIcon}></i>
-                <span style={styles.configLabel}>COI CONFIGURATION</span>
-              </a>
-            </span>
+          <div style={{padding: '33px 38px'}}>
+            <DisclosureTable
+              sort={this.state.data.applicationState.sort}
+              sortDirection={this.state.data.applicationState.sortDirection}
+              page={this.state.data.applicationState.page}
+              style={styles.table}
+              disclosures={filtered}
+              searchTerm={this.state.data.applicationState.effectiveSearchValue}
+            />
+            {loadMoreButton}
+            {loadingIndicator}
           </div>
         </span>
       </div>

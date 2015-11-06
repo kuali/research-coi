@@ -18,24 +18,38 @@
 
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../merge';
-import ReactRouter from 'react-router';
-let Link = ReactRouter.Link;
 import {KualiLogo} from './DynamicIcons/KualiLogo';
-import {createRequest} from '../HttpUtils';
 import ToggleSwitch from './ToggleSwitch';
 import ColorActions from '../actions/ColorActions';
 import cookies from 'cookies-js';
+import UserInfoStore from '../stores/UserInfoStore';
 
 export class AppHeader extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      usersName: ''
+      userInfo: UserInfoStore.getState().userInfo
     };
 
     this.onContrastChange = this.onContrastChange.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    UserInfoStore.listen(this.onChange);
+  }
+
+  componentWillUnmount() {
+    UserInfoStore.unlisten(this.onChange);
+  }
+
+  onChange() {
+    let userInfoState = UserInfoStore.getState();
+    this.setState({
+      userInfo: userInfoState.userInfo
+    });
   }
 
   onContrastChange(newValue) {
@@ -45,19 +59,6 @@ export class AppHeader extends React.Component {
   logOut() {
     cookies.expire('authToken');
     window.location = '/coi';
-  }
-
-  componentWillMount() {
-    createRequest().get('/api/coi/userinfo')
-    .end((err, response) => {
-      if (!err) {
-        let userInfo = response.body;
-        this.setState({
-          usersName: `${userInfo.firstName} ${userInfo.lastName}`,
-          mock: userInfo.mock
-        });
-      }
-    });
   }
 
   render() {
@@ -132,7 +133,7 @@ export class AppHeader extends React.Component {
     };
 
     let signOut;
-    if (this.state.mock === true) {
+    if (this.state.userInfo && this.state.userInfo.mock === true) {
       signOut = (
         <a style={styles.signOut} href="#" onClick={this.logOut}>
           <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
@@ -147,16 +148,22 @@ export class AppHeader extends React.Component {
         </a>
       );
     }
+
+    let usersName;
+    if (this.state.userInfo && this.state.userInfo.firstName !== undefined && this.state.userInfo.lastName !== undefined) {
+      usersName = `${this.state.userInfo.firstName} ${this.state.userInfo.lastName}`;
+    }
+
     return (
       <header style={merge(styles.container, this.props.style)}>
         <span style={{margin: '6px 0', display: 'inline-block'}}>
-          <Link to={this.props.homelink}>
+          <a href="/kc-dev">
             <KualiLogo style={styles.logo} />
             <span style={styles.product}>
               Kuali
               <span style={{fontWeight: 'bold'}}>Research</span>
             </span>
-          </Link>
+          </a>
           <span style={styles.kuali}>
             <div style={styles.modulename}>Conflict Of Interest</div>
           </span>
@@ -173,7 +180,7 @@ export class AppHeader extends React.Component {
           <span style={styles.usersName}>
             Welcome,
             <span style={{marginLeft: 3}}>
-              {this.state.usersName}
+              {usersName}
             </span>
           </span>
         </span>

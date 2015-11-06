@@ -29,6 +29,8 @@ import {TravelLogButton} from './TravelLogButton';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
 import {COIConstants} from '../../../../../COIConstants';
 import ConfigStore from '../../../stores/ConfigStore';
+import UserInfoStore from '../../../stores/UserInfoStore';
+import AdminMenu from '../../AdminMenu';
 
 export class Dashboard extends ResponsiveComponent {
   constructor() {
@@ -41,7 +43,8 @@ export class Dashboard extends ResponsiveComponent {
     this.state = {
       applicationState: storeState.applicationState,
       disclosureSummaries: storeState.disclosureSummariesForUser,
-      configLoaded: configState.isLoaded
+      configLoaded: configState.isLoaded,
+      userInfo: UserInfoStore.getState().userInfo
     };
 
     this.onChange = this.onChange.bind(this);
@@ -66,7 +69,8 @@ export class Dashboard extends ResponsiveComponent {
     this.setState({
       applicationState: storeState.applicationState,
       disclosureSummaries: storeState.disclosureSummariesForUser,
-      configLoaded: configState.isLoaded
+      configLoaded: configState.isLoaded,
+      userInfo: UserInfoStore.getState().userInfo
     });
   }
 
@@ -131,6 +135,8 @@ export class Dashboard extends ResponsiveComponent {
   }
 
   renderDesktop() {
+    let isAdmin = this.state.userInfo && this.state.userInfo.coiRole === COIConstants.ROLES.ADMIN;
+
     let desktopStyles = {
       container: {
         width: '100%',
@@ -142,7 +148,7 @@ export class Dashboard extends ResponsiveComponent {
         minWidth: 300,
         backgroundColor: '#eeeeee',
         verticalAlign: 'top',
-        paddingTop: 125,
+        paddingTop: isAdmin ? 0 : 122,
         boxShadow: '1px 0px 6px #D1D1D1'
       },
       content: {
@@ -230,10 +236,17 @@ export class Dashboard extends ResponsiveComponent {
       return (<div/>);
     }
 
+    let adminMenu;
+    if (isAdmin) {
+      adminMenu = (
+        <AdminMenu style={{marginBottom: 45}} />
+      );
+    }
 
     return (
       <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
         <span style={styles.sidebar}>
+          {adminMenu}
           {annualDisclosureButton}
           {travelLogButton}
           {manualDisclosureButton}

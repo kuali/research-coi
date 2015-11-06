@@ -61,7 +61,8 @@ export default class General extends React.Component {
       },
       content: {
         backgroundColor: '#F2F2F2',
-        boxShadow: '2px 8px 8px #ccc inset'
+        boxShadow: '2px 8px 8px #ccc inset',
+        minHeight: 0
       },
       stepTitle: {
         boxShadow: '0 2px 8px #D5D5D5',
@@ -71,7 +72,7 @@ export default class General extends React.Component {
         color: '#525252',
         fontWeight: 300,
         backgroundColor: 'white',
-        minHeight: 68
+        minHeight: 70
       },
       configurationArea: {
         padding: 35,
