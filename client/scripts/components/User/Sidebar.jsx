@@ -19,7 +19,7 @@
 import React from 'react/addons'; //eslint-disable-line no-unused-vars
 import {merge} from '../../merge';
 import {SidebarStep} from './SidebarStep';
-import BackToDashBoard from './BackToDashBoard';
+import BackToDashboard from './BackToDashboard';
 
 export class Sidebar extends React.Component {
   constructor(props) {
@@ -124,7 +124,7 @@ export class Sidebar extends React.Component {
     return (
       <span style={merge(styles.container, this.props.style)}>
         <div className="fill">
-          <BackToDashBoard />
+          <BackToDashboard />
           <ul style={styles.ul}>
             {steps}
           </ul>
