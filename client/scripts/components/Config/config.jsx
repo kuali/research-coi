@@ -64,7 +64,7 @@ class App extends React.Component {
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <AppHeader style={styles.header} homelink="general" />
+        <AppHeader style={styles.header} />
         <RouteHandler />
       </div>
     );
