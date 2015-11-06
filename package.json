@@ -38,7 +38,6 @@
     "react-dropzone": "2.2.1",
     "react-router": "0.13.3",
     "rewire": "2.3.4",
-    "strong-oracle": "1.7.0",
     "superagent": "1.2.0",
     "superagent-defaults": "0.1.13"
   },
