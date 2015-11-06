@@ -63,9 +63,6 @@ export class DisclosureDetailHeading extends React.Component {
       },
       details: {
         fontSize: 15
-      },
-      backButton: {
-        margin: '15px 20px 0 0'
       }
     };
 
@@ -99,14 +96,6 @@ export class DisclosureDetailHeading extends React.Component {
 
     return (
       <div style={merge(styles.container, this.props.style)} >
-        <Link to={`/`} style={{float: 'right'}}>
-          <GreyButton style={styles.backButton}>
-            <span>
-              <i className="fa fa-list-ul" style={{marginRight: 5}}></i>
-              Back To List View
-            </span>
-          </GreyButton>
-        </Link>
         <span>
           <div style={styles.heading}>
             <span style={styles.disclosure}>

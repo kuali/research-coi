@@ -20,6 +20,7 @@ import React from 'react/addons';
 import {merge} from '../../merge';
 import ReactRouter from 'react-router';
 let Link = ReactRouter.Link;
+import AdminMenu from '../AdminMenu';
 
 export default class Sidebar extends React.Component {
   render() {
@@ -28,8 +29,7 @@ export default class Sidebar extends React.Component {
         color: '#444',
         backgroundColor: '#F2F2F2',
         display: 'inline-block',
-        minWidth: 300,
-        paddingTop: 100
+        minWidth: 300
       },
       firstWord: {
         fontSize: 28,
@@ -106,6 +106,7 @@ export default class Sidebar extends React.Component {
 
     return (
       <span style={merge(styles.container, this.props.style)}>
+        <AdminMenu style={{marginBottom: 34, padding: '23px 0px'}} />
         {stepsJsx}
       </span>
     );
