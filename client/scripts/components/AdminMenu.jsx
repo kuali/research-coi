@@ -53,13 +53,15 @@ export default class AdminMenu extends React.Component {
         textAlign: 'left',
         borderTop: '1px solid #CCC',
         padding: '15px 20px 0 20px',
-        margin: this.state.expanded ? '10px 28px 0 28px' : '-85px 28px 0 28px',
+        margin: this.state.expanded ? '10px 28px 0 28px' : '-140px 28px 0 28px',
         transition: 'margin .1s ease-in-out'
       },
       menuItem: {
         display: 'block',
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 18
+        fontSize: 16,
+        lineHeight: '38px',
+        paddingLeft: 24
       },
       arrowIcon: {
         fontSize: 15,
