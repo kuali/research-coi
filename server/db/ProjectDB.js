@@ -114,16 +114,16 @@ let disableAllPersonsForProject = (dbInfo, projectId) => {
 let saveNewProjects = (dbInfo, projects) => {
   let knex = getKnex(dbInfo);
   return knex('project').insert({
-      title: projects.title,
-      type_cd: projects.typeCode,
-      source_system: projects.sourceSystem,
-      source_identifier: projects.sourceIdentifier,
-      source_status: projects.sourceStatus,
-      sponsor_cd: projects.sponsorCode,
-      sponsor_name: projects.sponsorName,
-      start_date: projects.startDate,
-      end_date: projects.endDate
-    }, 'id')
+    title: projects.title,
+    type_cd: projects.typeCode,
+    source_system: projects.sourceSystem,
+    source_identifier: projects.sourceIdentifier,
+    source_status: projects.sourceStatus,
+    sponsor_cd: projects.sponsorCode,
+    sponsor_name: projects.sponsorName,
+    start_date: projects.startDate,
+    end_date: projects.endDate
+  }, 'id')
     .then(insertResult => {
       if (projects.persons) {
         let projectId = insertResult[0];

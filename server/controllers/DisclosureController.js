@@ -357,13 +357,13 @@ export let init = app => {
     }
     else {
       DisclosureDB.addComment(req.dbInfo, req.userInfo, {
-          topicSection: comment.topicSection,
-          topicId: comment.topicId,
-          visibleToPI: comment.visibleToPI,
-          visibleToReviewers: comment.visibleToReviewers,
-          text: comment.text,
-          disclosureId: req.params.id
-        })
+        topicSection: comment.topicSection,
+        topicId: comment.topicId,
+        visibleToPI: comment.visibleToPI,
+        visibleToReviewers: comment.visibleToReviewers,
+        text: comment.text,
+        disclosureId: req.params.id
+      })
         .then(result => {
           res.send(result[0]);
         })

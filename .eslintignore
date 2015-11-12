@@ -3,3 +3,4 @@ client/scripts/lib
 npm-debug.log
 **/*.mwb
 **/*.png
+node_modules

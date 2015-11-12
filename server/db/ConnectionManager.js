@@ -49,6 +49,6 @@ let knexInstance = knex({
   }
 });
 
-export default dbInfo => {
+export default () => {
   return knexInstance;
 };
