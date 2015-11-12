@@ -44,7 +44,7 @@ export let init = app => {
       res.send(JSON.parse(result[0].config));
     })
     .catch(err => {
-      console.error(err);
+      Log.error(err);
       next(err);
     });
   });
@@ -68,7 +68,7 @@ export let init = app => {
                 res.send(config);
               })
               .catch(err => {
-                console.error(err);
+                Log.error(err);
                 next(err);
               });
           });

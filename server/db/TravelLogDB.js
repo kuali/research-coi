@@ -455,4 +455,4 @@ export let updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
       throw new Error(userInfo.userName + ' is unauthorized to edit this record');
     }
   });
-}
+};

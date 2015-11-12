@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint-disable camelcase */
+/*eslint-disable camelcase, no-console */
 
 function randomNumberBetween(lowest, highest) {
   return Math.floor(Math.random() * (highest - lowest + 1)) + lowest;

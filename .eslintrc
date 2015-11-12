@@ -3,7 +3,7 @@
         "indent": [
             2,
             2,
-            {"indentSwitchCase": true}
+            {"SwitchCase": 1}
         ],
         "quotes": [
             2,
@@ -23,8 +23,10 @@
         "node": true,
         "browser": true
     },
+    "extends": "eslint:recommended",
     "ecmaFeatures": {
         "jsx": true,
+        "experimentalObjectRestSpread": true,
         "modules": true
     },
     "plugins": [

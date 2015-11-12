@@ -5,7 +5,8 @@
   "main": "server/app.js",
   "scripts": {
     "test": "mocha --recursive --compilers js:babel/register",
-    "start": "node server/bootstrap.js"
+    "start": "node server/bootstrap.js",
+    "eslint": "eslint client db server test"
   },
   "repository": {
     "type": "git",
@@ -44,8 +45,8 @@
   "devDependencies": {
     "babel-core": "5.2.6",
     "babel-loader": "5.0.0",
-    "eslint": "0.24.1",
-    "eslint-plugin-react": "3.0.0",
+    "eslint": "1.9.0",
+    "eslint-plugin-react": "3.8.0",
     "mocha": "2.2.4",
     "webpack": "1.8.11"
   }
