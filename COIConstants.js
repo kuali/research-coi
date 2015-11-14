@@ -91,6 +91,10 @@ export let COIConstants = {
     PENDING: 'PENDING',
     IN_PROGRESS: 'IN PROGRESS',
     DISCLOSED: 'DISCLOSED'
+  },
+  LOG_LEVEL: {
+    INFO: 0,
+    WARN: 1,
+    ERROR: 2
   }
-
 };
