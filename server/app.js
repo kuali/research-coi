@@ -37,6 +37,9 @@ import ErrorLogger from './middleware/ErrorLogger';
 export function run() {
   let app = express();
   app.disable('x-powered-by');
+  app.set('view engine', 'jade');
+  app.set('views', './views');
+
   let config;
   try {
     let extensions = require('research-extensions');
@@ -53,7 +56,6 @@ export function run() {
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
   app.use('/coi', viewRenderer);
-  app.use('/coi/', viewRenderer);
   app.use(bodyParser.json());
   ConfigController.init(app);
   DisclosureController.init(app);
@@ -67,7 +69,7 @@ export function run() {
   let portNumber = config ? config.port : process.env.COI_PORT || 8090;
   let server = app.listen(portNumber);
 
-  Log.info(`Listening on port ${portNumber} in ${app.get('env')} mode`);
+  console.log(`Listening on port ${portNumber} in ${app.get('env')} mode`); // eslint-disable-line no-console
 
   process.on('uncaughtException', function(err) {
     Log.error(`Uncaught exception: ${err}`);

@@ -16,71 +16,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import fs from 'fs';
-import path from 'path';
+import Log from '../Log';
 
-export default function viewRenderer(req, res, next) {
-  try {
-    let view = req.path;
-    if (view === '' || view === '/') {
-      view = 'index';
-    }
-    else if (view.endsWith('/')) {
-      res.redirect(req.originalUrl.substring(0, req.originalUrl.length - 1));
-      return;
-    }
+export default function viewRenderer(req, res) {
+  let view = req.path;
+  Log.info(view);
 
-    // Prevent path traversal
-    view = view.replace(/\//g, '');
-    if (view.search(/[%.]/) >= 0) {
-      sendUnauthorized(res);
-      return;
-    }
+  if (view === '' || view === '/') {
+    view = 'index';
+  }
+  else if (view.endsWith('/')) {
+    res.redirect(req.originalUrl.substring(0, req.originalUrl.length - 1));
+    return;
+  }
 
-    fs.stat(path.join('views', view + '.html'), err => {
-      try {
+  // Prevent path traversal
+  view = view.replace(/[\/%.]/g, '');
+
+  res.render(view, (err, html) => {
+    if (err) {
+      if (req.userInfo.coiRole !== 'admin') {
+        Log.error(`Attempt load page that doesn't exist or no access to it`);
+        res.render('unauthorized');
+        return;          
+      }
+
+      res.render(`admin/${view}`, (err, html) => {
         if (err) {
-          if (req.userInfo.coiRole === 'admin') {
-            fs.stat(path.join('views', 'admin', view + '.html'), adminErr => {
-              try {
-                if (adminErr) {
-                  sendUnauthorized(res);
-                  return;
-                }
-                else {
-                  res.sendFile(path.join('admin', view + '.html'), {
-                    root: 'views'
-                  });
-                }
-              }
-              catch (e) {
-                next(e);
-              }
-            });
-          }
-          else {
-            sendUnauthorized(res);
-            return;
-          }
+          Log.error(`Attempt load page that doesn't exist`);
+          res.render('unauthorized');
+          return;          
         }
-        else {
-          res.sendFile(view + '.html', {
-            root: 'views'
-          });
-        }
-      }
-      catch (e) {
-        next(e);
-      }
-    });
-  }
-  catch(e) {
-    next(e);
-  }
-}
 
-let sendUnauthorized = (res) => {
-  res.status(403).sendFile('unauthorized.html', {
-    root: 'views'
+        res.send(html);
+      });
+    }
+
+    res.send(html);
   });
-};
+}
