@@ -92,6 +92,10 @@ System configuration for COI is done with environment variables. Environment var
 >**LOCAL_FILE_DESTINATION**
 >:  file system location to store attachments
 >*Default*: uploads/
+>
+>**LOG_LEVEL**
+>:  the log level to use.  0 (Info), 1 (Warn), 2 (Error)
+>*Default*: 2
 
 -------
 
