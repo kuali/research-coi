@@ -20,7 +20,6 @@ import Log from '../Log';
 
 export default function viewRenderer(req, res) {
   let view = req.path;
-  Log.info(view);
 
   if (view === '' || view === '/') {
     view = 'index';

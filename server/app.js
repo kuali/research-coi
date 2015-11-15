@@ -33,6 +33,7 @@ import {authView} from './services/AuthService/mockAuthClient';
 import Log from './Log';
 import methodChecker from './middleware/methodChecker';
 import ErrorLogger from './middleware/ErrorLogger';
+import {COIConstants} from '../COIConstants';
 
 export function run() {
   let app = express();
@@ -48,6 +49,8 @@ export function run() {
   } catch (e) {
     Log.info('extensions not found');
   }
+
+  conditionallyLogRequests(app);
 
   app.use('/coi', express.static('client'));
   app.use(methodChecker);
@@ -82,3 +85,13 @@ export function run() {
   });
 }
 
+function conditionallyLogRequests(app) {
+  if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
+    app.use((req, res, next) => {
+      let startTime = new Date();
+      next();
+      let elapsedTime = new Date().getTime() - startTime.getTime();
+      Log.info(`${req.originalUrl} - ${elapsedTime}ms`);
+    });    
+  }
+}
