@@ -96,7 +96,7 @@ System configuration for COI is done with environment variables. Environment var
 >**LOG_LEVEL**
 >:  the log level to use.  0 (Info), 1 (Warn), 2 (Error)
 >*Default*: 2
--
+
 -------
 
 >###**Auth Service**
