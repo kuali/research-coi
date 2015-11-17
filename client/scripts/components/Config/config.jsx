@@ -27,7 +27,6 @@ import RelationshipCustomization from './Relationship/Relationship';
 import DeclarationsCustomization from './Declarations/Declarations';
 import CertificationCustomization from './Certification/Certification';
 import ColorStore from '../../stores/ColorStore';
-//import createBrowserHistory from 'history/lib/createBrowserHistory';
 
 class App extends React.Component {
   constructor() {
