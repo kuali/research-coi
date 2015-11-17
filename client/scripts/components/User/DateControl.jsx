@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {DatePicker} from '../DatePicker';
 
 export class DateControl extends React.Component {
@@ -27,9 +27,13 @@ export class DateControl extends React.Component {
     this.state = {
       valid: validity
     };
-    props.onValidityChange(props.questionId, validity);
 
     this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    let validity = this.isValid(this.props.answer);
+    this.props.onValidityChange(this.props.questionId, validity);
   }
 
   componentWillReceiveProps(nextProps) {

@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
+import {AppHeader} from '../../AppHeader';
 import {PIReviewStore} from '../../../stores/PIReviewStore';
 import RevisionHeader from './RevisionHeader';
 import QuestionnaireSection from './QuestionnaireSection';
@@ -73,6 +74,11 @@ export class Revise extends React.Component {
       },
       disclosure: {
         overflowY: 'auto'
+      },
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
       }
     };
 
@@ -104,25 +110,28 @@ export class Revise extends React.Component {
     }
 
     return (
-      <div className="fill flexbox column" style={merge(styles.container, this.props.style)}>
-        <RevisionHeader
-          disclosureType={2}
-          submittedDate={new Date()}
-          returnedDate={new Date()}
-        />
-        <div className="flexbox row fill">
-          <span className="fill" style={styles.disclosure}>
-            {questionnaire}
-            {entities}
-            {declarations}
-          </span>
-
-          <SidePanel
-            certificationText={window.config.general.certificationOptions.text}
-            showingCertification={this.state.applicationState.showingCertification}
-            submitEnabled={this.state.applicationState.canSubmit}
-            onConfirm={this.onConfirm}
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <div className="fill flexbox column" style={merge(styles.container, this.props.style)}>
+          <RevisionHeader
+            disclosureType={2}
+            submittedDate={new Date()}
+            returnedDate={new Date()}
           />
+          <div className="flexbox row fill">
+            <span className="fill" style={styles.disclosure}>
+              {questionnaire}
+              {entities}
+              {declarations}
+            </span>
+
+            <SidePanel
+              certificationText={window.config.general.certificationOptions.text}
+              showingCertification={this.state.applicationState.showingCertification}
+              submitEnabled={this.state.applicationState.canSubmit}
+              onConfirm={this.onConfirm}
+            />
+          </div>
         </div>
       </div>
     );

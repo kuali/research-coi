@@ -16,12 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
-import ReactRouter from 'react-router';
 import ConfigStore from '../../../stores/ConfigStore';
-let Link = ReactRouter.Link;
+import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
   highlightSearchTerm(value) {

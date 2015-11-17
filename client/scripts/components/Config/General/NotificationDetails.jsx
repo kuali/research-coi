@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import ConfigActions from '../../../actions/ConfigActions';
 import DateOptions from './DateOptions';
@@ -67,7 +67,7 @@ export default class NotificationDetails extends React.Component {
   }
 
   textChanged() {
-    let textarea = React.findDOMNode(this.refs.reminderText);
+    let textarea = this.refs.reminderText;
     this.setState({
       canBeAdded: textarea.value.length > 0
     });

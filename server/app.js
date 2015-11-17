@@ -58,7 +58,9 @@ export function run() {
   app.use('/coi/auth', authView);
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
+
   app.use('/coi', viewRenderer);
+
   app.use(bodyParser.json());
   ConfigController.init(app);
   DisclosureController.init(app);

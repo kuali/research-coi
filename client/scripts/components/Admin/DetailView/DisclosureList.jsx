@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {DisclosureListItem} from './DisclosureListItem';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
@@ -32,7 +32,7 @@ export class DisclosureList extends React.Component {
   }
 
   componentDidMount() {
-    let theList = React.findDOMNode(this.refs.theList);
+    let theList = this.refs.theList;
     let enabled = true;
     theList.addEventListener('scroll', () => {
       if (enabled) {

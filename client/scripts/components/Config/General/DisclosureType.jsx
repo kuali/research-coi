@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import EditLink from '../EditLink';
 import DoneLink from '../DoneLink';
@@ -37,7 +37,7 @@ export default class DisclosureType extends React.Component {
   }
 
   toggle() {
-    let checkbox = React.findDOMNode(this.refs.checkbox);
+    let checkbox = this.refs.checkbox;
     if (checkbox.checked) {
       ConfigActions.enableDisclosureType(this.props.type.typeCd);
     }
@@ -59,7 +59,7 @@ export default class DisclosureType extends React.Component {
   }
 
   doneEditing() {
-    let textbox = React.findDOMNode(this.refs.label);
+    let textbox = this.refs.label;
     ConfigActions.updateDisclosureType(this.props.type.typeCd, textbox.value);
     this.setState({
       editing: false

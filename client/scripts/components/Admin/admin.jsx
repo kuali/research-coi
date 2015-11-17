@@ -16,14 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
-import Router from 'react-router';
-let Route = Router.Route;
-let DefaultRoute = Router.DefaultRoute;
-let RouteHandler = Router.RouteHandler;
-import {merge} from '../../merge';
+import React from 'react'; // eslint-disable-line no-unused-vars
+import ReactDOM from 'react-dom';
+import {Router, Route} from 'react-router';
 import {processResponse, createRequest} from '../../HttpUtils';
-import {AppHeader} from '../AppHeader';
 import {DetailView} from './DetailView/DetailView';
 import {ListView} from './ListView/ListView';
 import {SizeAwareComponent} from '../SizeAwareComponent';
@@ -48,46 +44,26 @@ class App extends SizeAwareComponent {
   }
 
   render() {
-    let styles = {
-      container: {
-        height: '100%',
-        overflowX: 'hidden'
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 19,
-        position: 'relative'
-      }
-    };
-
     return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <AppHeader style={styles.header} />
-        <RouteHandler />
-      </div>
+      <Router>
+        <Route path="/detailview" component={DetailView}>
+          <Route path="/detailview/:id/:statusCd" component={DetailView}/>
+        </Route>
+        <Route path="/listview" component={ListView} />
+        <Route path="*" component={ListView} />
+      </Router>
     );
   }
 }
 
-let routes = (
-  <Route name="app" path="/" handler={App}>
-    <Route name="detailview" path="/detailview" handler={DetailView}>
-      <Route name="detailidview" path="/detailview/:id/:statusCd" handler={DetailView}/>
-    </Route>
-    <Route name="listview" path="/listview" handler={ListView} />
-    <DefaultRoute handler={ListView} />
-  </Route>
-);
-
 window.colorBlindModeOn = window.localStorage.getItem('colorBlindModeOn') === 'true';
 
 // Then load config and re-render
-createRequest().get('/api/coi/config')
-.end(processResponse((err, config) => {
-  if (!err) {
-    window.config = config.body;
-    Router.run(routes, (Handler, state) => {
-      React.render(<Handler state={state} />, document.body);
-    });
-  }
-}));
+createRequest()
+  .get('/api/coi/config')
+  .end(processResponse((err, config) => {
+    if (!err) {
+      window.config = config.body;
+      ReactDOM.render(<App />, document.querySelector('#theApp'));
+    }
+  }));

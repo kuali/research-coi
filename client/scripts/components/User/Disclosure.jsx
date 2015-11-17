@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
+import {AppHeader} from '../AppHeader';
 import {Sidebar} from './Sidebar';
 import {DisclosureHeader} from './DisclosureHeader';
 import {DisclosureStore} from '../../stores/DisclosureStore';
@@ -117,7 +118,7 @@ export class Disclosure extends React.Component {
 
     let incompleteEntity = false;
     entities.filter(entity=> {
-      return entity.active === 1
+      return entity.active === 1;
     })
     .forEach(entity => {
       if (!DisclosureStore.entityInformationStepComplete(entity.id)
@@ -129,7 +130,7 @@ export class Disclosure extends React.Component {
   }
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
-    let disclosureType = this.context.router.getCurrentQuery().type;
+    let disclosureType = this.props.location.query.type;
     DisclosureActions.loadDisclosureData(disclosureType);
   }
 
@@ -158,6 +159,11 @@ export class Disclosure extends React.Component {
       container: {
         padding: '0',
         minHeight: 100
+      },
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
       },
       content: {
         verticalAlign: 'top',
@@ -233,7 +239,7 @@ export class Disclosure extends React.Component {
         stepNumber = 2;
         const PROJECTS_PERCENTAGE = 75;
         percent = PROJECTS_PERCENTAGE;
-        let disclosureType = this.context.router.getCurrentQuery().type;
+        let disclosureType = this.props.location.query.type;
         if (disclosureType === COIConstants.DISCLOSURE_TYPE.MANUAL) {
           let disclosure = this.state.applicationState.currentDisclosureState.disclosure;
           currentStep = (
@@ -293,34 +299,33 @@ export class Disclosure extends React.Component {
     let submitDisabled = window.config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
 
     return (
-      <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
-        <Sidebar
-          style={styles.sidebar}
-          steps={this.steps}
-          activestep={stepNumber}
-          visitedSteps={this.state.applicationState.currentDisclosureState.visitedSteps}
-        />
-
-        <span className="fill" style={styles.content}>
-          <DisclosureHeader>{heading}</DisclosureHeader>
-
-          <span style={styles.middle}>
-            {currentStep}
-          </span>
-
-          <NavSidebar
-            percent={percent}
-            step={currentDisclosureStep}
-            question={currentQuestion}
-            submitDisabled={submitDisabled}
-            nextDisabled={nextDisabled}
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
+          <Sidebar
+            style={styles.sidebar}
+            steps={this.steps}
+            activestep={stepNumber}
+            visitedSteps={this.state.applicationState.currentDisclosureState.visitedSteps}
           />
-        </span>
+
+          <span className="fill" style={styles.content}>
+            <DisclosureHeader>{heading}</DisclosureHeader>
+
+            <span style={styles.middle}>
+              {currentStep}
+            </span>
+
+            <NavSidebar
+              percent={percent}
+              step={currentDisclosureStep}
+              question={currentQuestion}
+              submitDisabled={submitDisabled}
+              nextDisabled={nextDisabled}
+            />
+          </span>
+        </div>
       </div>
     );
   }
 }
-
-Disclosure.contextTypes = {
-  router: React.PropTypes.func
-};

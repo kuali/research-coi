@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import RelationshipType from './RelationshipType';
 import {BlueButton} from '../../BlueButton';
@@ -32,22 +32,22 @@ export default class TravelRelationshipType extends RelationshipType {
   }
 
   enabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.enabledCheckbox);
+    let checkbox = this.refs.enabledCheckbox;
     this.props.enabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   destinationEnabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.destinationEnabled);
+    let checkbox = this.refs.destinationEnabled;
     this.props.destinationEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   dateEnabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.dateEnabled);
+    let checkbox = this.refs.dateEnabled;
     this.props.dateEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   reasonEnabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.reasonEnabled);
+    let checkbox = this.refs.reasonEnabled;
     this.props.reasonEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 

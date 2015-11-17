@@ -16,10 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
-import Router from 'react-router';
-let Link = Router.Link;
+import {Link} from 'react-router';
 
 export class BackToDashBoardButton extends React.Component {
   constructor() {
@@ -52,7 +51,7 @@ export class BackToDashBoardButton extends React.Component {
     styles = merge(this.commonStyles, styles);
 
     return (
-      <Link to="dashboard" style={merge(styles.container, this.props.style)}>
+      <Link to={`/`} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
             <div style={styles.primary}>Back</div>

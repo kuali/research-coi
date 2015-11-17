@@ -16,10 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
-import Router from 'react-router';
-let Link = Router.Link;
+import {Link} from 'react-router';
 
 export default class BackToDashboard extends React.Component {
   render() {
@@ -38,7 +37,7 @@ export default class BackToDashboard extends React.Component {
     };
 
     return (
-      <Link to="dashboard">
+      <Link to={"/dashboard"}>
         <div style={merge(styles.container, this.props.style)}>
           <div>
             <i className="fa fa-arrow-left"></i>

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
@@ -32,7 +32,8 @@ export class Instructions extends ResponsiveComponent {
 
   componentWillMount() {
     this.setState({
-      visible: !this.props.collapsed
+      takingUpSpace: !this.props.collapsed,
+      slidUp: this.props.collapsed
     });
   }
 
@@ -44,20 +45,22 @@ export class Instructions extends ResponsiveComponent {
     if (nextProps.collapsed && !this.props.collapsed) {
       setTimeout(() => {
         this.setState({
-          visible: false
+          takingUpSpace: false
         });
-      }, 300);
+      }, 150);
+      this.setState({
+        slidUp: true
+      });
     }
     else if (!nextProps.collapsed && this.props.collapsed) {
       this.setState({
-        visible: true
+        takingUpSpace: true
       });
 
-      nextProps.collapsed = true;
-
       setTimeout(() => {
-        this.props.collapsed = false;
-        this.forceUpdate();
+        this.setState({
+          slidUp: false
+        });
       }, 20);
     }
   }
@@ -65,13 +68,13 @@ export class Instructions extends ResponsiveComponent {
   renderDesktop() {
     let desktopStyles = {
       container: {
-        display: this.state.visible ? 'block' : 'none',
+        display: this.state.takingUpSpace ? 'block' : 'none',
         color: 'white',
         whiteSpace: 'normal',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '47px 25px 31px 53px',
-        transition: 'transform .2s ease-out',
-        transform: this.props.collapsed ? 'translateY(-100%)' : 'translateY(0%)'
+        transition: 'transform .1s ease-out',
+        transform: this.state.slidUp ? 'translateY(-100%)' : 'translateY(0%)'
       },
       buttons: {
         textAlign: 'right',

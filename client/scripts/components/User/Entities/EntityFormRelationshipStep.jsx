@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';  //eslint-disable-line no-unused-vars
+import React from 'react';  //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {ToggleSet} from './ToggleSet';
 import EntityRelationshipSummary from '../../EntityRelationshipSummary';
@@ -75,15 +75,15 @@ export class EntityFormRelationshipStep extends React.Component {
   }
 
   typeSelected() {
-    DisclosureActions.setEntityRelationshipType(parseInt(this.refs.typeSelect.getDOMNode().value));
+    DisclosureActions.setEntityRelationshipType(parseInt(this.refs.typeSelect.value));
   }
 
   amountSelected() {
-    DisclosureActions.setEntityRelationshipAmount(parseInt(this.refs.amountSelect.getDOMNode().value));
+    DisclosureActions.setEntityRelationshipAmount(parseInt(this.refs.amountSelect.value));
   }
 
   personSelected() {
-    DisclosureActions.setEntityRelationshipPerson(parseInt(this.refs.personSelect.getDOMNode().value));
+    DisclosureActions.setEntityRelationshipPerson(parseInt(this.refs.personSelect.value));
   }
 
   amountChanged(value) {
@@ -106,7 +106,7 @@ export class EntityFormRelationshipStep extends React.Component {
     DisclosureActions.setEntityRelationshipTravelReason(value);
   }
   commentChanged() {
-    DisclosureActions.setEntityRelationshipComment(this.refs.commentTextArea.getDOMNode().value);
+    DisclosureActions.setEntityRelationshipComment(this.refs.commentTextArea.value);
   }
 
   relationChosen(relation) {

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {AdminStore} from '../../../stores/AdminStore';
 import ConfigStore from '../../../stores/ConfigStore';
@@ -28,6 +28,7 @@ import AdditionalReviewPanel from './AdditionalReviewPanel';
 import CommentSummary from './CommentSummary';
 import GeneralAttachmentsPanel from './GeneralAttachmentsPanel';
 import {COIConstants} from '../../../../../COIConstants';
+import {AppHeader} from '../../AppHeader';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -156,6 +157,11 @@ export class DetailView extends React.Component {
         transition: 'transform .2s ease-in-out',
         minHeight: 100
       },
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 19,
+        position: 'relative'
+      },
       list: {
         width: 320
       },
@@ -194,27 +200,30 @@ export class DetailView extends React.Component {
     }
 
     return (
-      <div className="flexbox row fill" style={merge(styles.container, this.props.style)} >
-        <DisclosureList
-          className="inline-flexbox column"
-          summaries={this.filterDisclosures()}
-          style={styles.list}
-          selected={this.state.applicationState.selectedDisclosure}
-          query={this.state.applicationState.query}
-          filters={this.state.applicationState.filters}
-          sortDirection={this.state.applicationState.sortDirection}
-          count={this.state.applicationState.summaryCount}
-          searchTerm={this.state.applicationState.effectiveSearchValue}
-          loadingMore={this.state.applicationState.loadingMore}
-          loadedAll={this.state.applicationState.loadedAll}
-          showFilters={this.state.applicationState.showFilters}
-        />
-        <div className="inline-flexbox fill">
-          {disclosureDetail}
+      <div className="flexbox column" style={{height: '100%', overflowX: 'hidden'}}>
+        <AppHeader style={styles.header} />
+        <div className="flexbox row fill" style={merge(styles.container, this.props.style)} >
+          <DisclosureList
+            className="inline-flexbox column"
+            summaries={this.filterDisclosures()}
+            style={styles.list}
+            selected={this.state.applicationState.selectedDisclosure}
+            query={this.state.applicationState.query}
+            filters={this.state.applicationState.filters}
+            sortDirection={this.state.applicationState.sortDirection}
+            count={this.state.applicationState.summaryCount}
+            searchTerm={this.state.applicationState.effectiveSearchValue}
+            loadingMore={this.state.applicationState.loadingMore}
+            loadedAll={this.state.applicationState.loadedAll}
+            showFilters={this.state.applicationState.showFilters}
+          />
+          <div className="inline-flexbox fill">
+            {disclosureDetail}
+          </div>
+          <span style={styles.sidePanel}>
+            {sidePanel}
+          </span>
         </div>
-        <span style={styles.sidePanel}>
-          {sidePanel}
-        </span>
       </div>
     );
   }

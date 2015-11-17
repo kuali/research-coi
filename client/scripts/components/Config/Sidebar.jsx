@@ -16,10 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
-import ReactRouter from 'react-router';
-let Link = ReactRouter.Link;
+import {Link} from 'react-router';
 import AdminMenu from '../AdminMenu';
 
 export default class Sidebar extends React.Component {
@@ -59,28 +58,28 @@ export default class Sidebar extends React.Component {
     let steps = [
       {
         label: 'General Configuration',
-        link: 'general',
+        link: '/coi/config/general',
         active: true
       },
       {
         label: 'Screening Questionnaire',
-        link: 'questionnaire'
+        link: '/coi/config/questionnaire'
       },
       {
         label: 'Financial Entities Questionnaire',
-        link: 'entities'
+        link: '/coi/config/entities'
       },
       {
         label: 'Relationship Matrix',
-        link: 'relationship'
+        link: '/coi/config/relationship'
       },
       {
         label: 'Project Declarations',
-        link: 'declarations'
+        link: '/coi/config/declarations'
       },
       {
         label: 'Customize Certification',
-        link: 'certification'
+        link: '/coi/config/certification'
       }
     ];
 

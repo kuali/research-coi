@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
 import PencilIcon from '../DynamicIcons/PencilIcon';
 import CheckmarkIcon from '../DynamicIcons/CheckmarkIcon';
@@ -42,7 +42,7 @@ class EditableItem extends React.Component {
     });
 
     requestAnimationFrame(() => {
-      let textbox = React.findDOMNode(this.refs.textbox);
+      let textbox = this.refs.textbox;
       if (textbox) {
         textbox.focus();
       }
@@ -64,7 +64,7 @@ class EditableItem extends React.Component {
     this.setState({
       editing: false
     });
-    let textbox = React.findDOMNode(this.refs.textbox);
+    let textbox = this.refs.textbox;
     this.props.onEdit(this.props.id, this.props.typeCd, textbox.value);
   }
 
@@ -168,7 +168,7 @@ export default class EditableList extends React.Component {
     });
 
     requestAnimationFrame(() => {
-      let textbox = React.findDOMNode(this.refs.textbox);
+      let textbox = this.refs.textbox;
       if (textbox) {
         textbox.focus();
       }
@@ -212,7 +212,7 @@ export default class EditableList extends React.Component {
   }
 
   addItem() {
-    let textbox = React.findDOMNode(this.refs.textbox);
+    let textbox = this.refs.textbox;
     if (textbox.value.length > 0) {
       let newItems = Array.from(this.props.items);
 

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
 import Badge from './Badge';
 import ConfigActions from '../../actions/ConfigActions';
@@ -34,18 +34,18 @@ export default class NewQuestion extends React.Component {
   }
 
   typeChosen() {
-    let dropdown = React.findDOMNode(this.refs.typeDropdown);
+    let dropdown = this.refs.typeDropdown;
     ConfigActions.questionTypeChosen(this.props.questionnaireCategory, this.props.id, dropdown.value);
   }
 
   textChanged() {
-    let textarea = React.findDOMNode(this.refs.questionText);
+    let textarea = this.refs.questionText;
     ConfigActions.questionTextChanged(this.props.questionnaireCategory, this.props.id, textarea.value);
   }
 
   optionTextChanged(evt) {
     if (evt.keyCode === COIConstants.RETURN_KEY) {
-      let textbox = React.findDOMNode(this.refs.optionText);
+      let textbox = this.refs.optionText;
       ConfigActions.multiSelectOptionAdded(this.props.questionnaireCategory, this.props.id, textbox.value);
       textbox.value = '';
     }
@@ -56,7 +56,7 @@ export default class NewQuestion extends React.Component {
   }
 
   requiredSelectionsChanged() {
-    let textbox = React.findDOMNode(this.refs.requiredNumSelections);
+    let textbox = this.refs.requiredNumSelections;
     ConfigActions.requiredNumSelectionsChanged(this.props.questionnaireCategory, this.props.id, textbox.value);
   }
 

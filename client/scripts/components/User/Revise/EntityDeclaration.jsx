@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
 import CheckLink from './CheckLink';
@@ -76,12 +76,12 @@ export default class EntityDeclaration extends React.Component {
           break;
         }
       }
-      let declarationComment = React.findDOMNode(this.refs.declarationComment);
+      let declarationComment = this.refs.declarationComment;
       PIReviewActions.reviseDeclaration(this.props.entity.reviewId, selectedRadio.value, declarationComment.value);
     }
     else if (this.state.responding) {
       newState.responded = true;
-      let textarea = React.findDOMNode(this.refs.responseText);
+      let textarea = this.refs.responseText;
       PIReviewActions.respond(this.props.entity.reviewId, textarea.value);
     }
 

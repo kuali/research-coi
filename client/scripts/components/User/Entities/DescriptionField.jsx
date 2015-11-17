@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 
@@ -29,7 +29,7 @@ export class DescriptionField extends ResponsiveComponent {
   }
 
   setDescription() {
-    this.props.onChange(this.refs.description.getDOMNode().value);
+    this.props.onChange(this.refs.description.value);
   }
 
   renderMobile() {}

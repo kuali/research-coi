@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
@@ -25,6 +25,7 @@ import InstructionEditor from '../InstructionEditor';
 import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
 import {COIConstants} from '../../../../../COIConstants';
+import {AppHeader} from '../../AppHeader';
 
 export default class Certification extends React.Component {
   constructor() {
@@ -56,12 +57,12 @@ export default class Certification extends React.Component {
   }
 
   textChanged() {
-    let textarea = React.findDOMNode(this.refs.textarea);
+    let textarea = this.refs.textarea;
     ConfigActions.setCertificationText(textarea.value);
   }
 
   requiredChanged() {
-    let checkbox = React.findDOMNode(this.refs.checkbox);
+    let checkbox = this.refs.checkbox;
     ConfigActions.setCertificationRequired(checkbox.checked);
   }
 
@@ -69,6 +70,11 @@ export default class Certification extends React.Component {
     let styles = {
       container: {
         minHeight: 100
+      },
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
       },
       content: {
         backgroundColor: '#F2F2F2',
@@ -132,28 +138,31 @@ export default class Certification extends React.Component {
     }
 
     return (
-      <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
-        <Sidebar active="certification" />
-        <span style={styles.content} className="inline-flexbox column fill">
-          <div style={styles.stepTitle}>
-            Customize Certification
-          </div>
-          <div className="fill flexbox row" style={styles.configurationArea}>
-            <span className="fill" style={{display: 'inline-block'}}>
-              <InstructionEditor
-                step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
-                value={instructionText}
-              />
-              <Panel title="Certification">
-                <div style={styles.details}>
-                  {details}
-                </div>
-              </Panel>
-            </span>
-            <ActionPanel visible={this.state.dirty} />
-          </div>
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
+          <Sidebar active="certification" />
+          <span style={styles.content} className="inline-flexbox column fill">
+            <div style={styles.stepTitle}>
+              Customize Certification
+            </div>
+            <div className="fill flexbox row" style={styles.configurationArea}>
+              <span className="fill" style={{display: 'inline-block'}}>
+                <InstructionEditor
+                  step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
+                  value={instructionText}
+                />
+                <Panel title="Certification">
+                  <div style={styles.details}>
+                    {details}
+                  </div>
+                </Panel>
+              </span>
+              <ActionPanel visible={this.state.dirty} />
+            </div>
+          </span>
         </span>
-      </span>
+      </div>
     );
   }
 }

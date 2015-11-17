@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
 import {GreyButton} from '../GreyButton';
 import {BlueButton} from '../BlueButton';
@@ -106,7 +106,7 @@ class Question extends React.Component {
   }
 
   criteriaChanged() {
-    let dropdown = React.findDOMNode(this.refs.displayCriteria);
+    let dropdown = this.refs.displayCriteria;
     ConfigActions.criteriaChanged(this.props.questionnaireCategory, this.props.id, dropdown.value);
   }
 

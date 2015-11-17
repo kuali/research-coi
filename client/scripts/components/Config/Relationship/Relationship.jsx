@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
@@ -26,6 +26,7 @@ import ConfigActions from '../../../actions/ConfigActions';
 import ConfigStore from '../../../stores/ConfigStore';
 import RelationshipType from './RelationshipType';
 import TravelRelationshipType from './TravelRelationshipType';
+import {AppHeader} from '../../AppHeader';
 
 export default class Relationship extends React.Component {
   constructor() {
@@ -68,7 +69,7 @@ export default class Relationship extends React.Component {
   }
 
   peopleEnabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.peopleEnabled);
+    let checkbox = this.refs.peopleEnabled;
     ConfigActions.relationshipPeopleEnabled(checkbox.checked);
   }
 
@@ -108,6 +109,11 @@ export default class Relationship extends React.Component {
     let styles = {
       container: {
         minHeight: 100
+      },
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
       },
       content: {
         backgroundColor: '#F2F2F2',
@@ -186,42 +192,45 @@ export default class Relationship extends React.Component {
     }
 
     return (
-      <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
-        <Sidebar active="relationship" />
-        <span style={styles.content} className="inline-flexbox column fill">
-          <div style={styles.stepTitle}>
-            Relationship Matrix
-          </div>
-          <div className="fill flexbox row" style={styles.configurationArea}>
-            <span className="fill" style={{display: 'inline-block'}}>
-              <Panel title="Relationship Matrix People Configuration">
-                <div style={{padding: '7px 21px 15px 21px'}}>
-                  <div style={styles.panelInstructions}>Configure the people types for your relationship matrix:</div>
-                  <div className="flexbox row" style={{paddingLeft: 27}}>
-                    <span style={styles.peopleLeft}>
-                      <input id="peopleCheckbox" type="checkbox" ref="peopleEnabled" checked={this.state.peopleEnabled} onChange={this.peopleEnabledChanged} />
-                      <label htmlFor="peopleCheckbox" style={styles.peopleCheckboxLabel}>People</label>
-                    </span>
-                    <span className="fill">
-                      <EditableList
-                        items={this.state.list}
-                        onChange={this.itemsChanged}
-                      />
-                    </span>
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
+          <Sidebar active="relationship" />
+          <span style={styles.content} className="inline-flexbox column fill">
+            <div style={styles.stepTitle}>
+              Relationship Matrix
+            </div>
+            <div className="fill flexbox row" style={styles.configurationArea}>
+              <span className="fill" style={{display: 'inline-block'}}>
+                <Panel title="Relationship Matrix People Configuration">
+                  <div style={{padding: '7px 21px 15px 21px'}}>
+                    <div style={styles.panelInstructions}>Configure the people types for your relationship matrix:</div>
+                    <div className="flexbox row" style={{paddingLeft: 27}}>
+                      <span style={styles.peopleLeft}>
+                        <input id="peopleCheckbox" type="checkbox" ref="peopleEnabled" checked={this.state.peopleEnabled} onChange={this.peopleEnabledChanged} />
+                        <label htmlFor="peopleCheckbox" style={styles.peopleCheckboxLabel}>People</label>
+                      </span>
+                      <span className="fill">
+                        <EditableList
+                          items={this.state.list}
+                          onChange={this.itemsChanged}
+                        />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Panel>
-              <Panel title="Relationship Matrix Configuration">
-                <div style={{padding: '7px 21px 15px 21px'}}>
-                  <div style={styles.panelInstructions}>Configure the relationship types for your relationship matrix:</div>
-                  {matrixTypes}
-                </div>
-              </Panel>
-            </span>
-            <ActionPanel visible={this.state.dirty} />
-          </div>
+                </Panel>
+                <Panel title="Relationship Matrix Configuration">
+                  <div style={{padding: '7px 21px 15px 21px'}}>
+                    <div style={styles.panelInstructions}>Configure the relationship types for your relationship matrix:</div>
+                    {matrixTypes}
+                  </div>
+                </Panel>
+              </span>
+              <ActionPanel visible={this.state.dirty} />
+            </div>
+          </span>
         </span>
-      </span>
+      </div>
     );
   }
 }
