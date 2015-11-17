@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
 import {DragDropContext} from 'react-dnd';
-import HTML5Backend from 'react-dnd/modules/backends/HTML5';
+import HTML5Backend from 'react-dnd-html5-backend';
 import NewQuestion from './NewQuestion';
 import Question from './Question';
 import NewQuestionButton from './NewQuestionButton';

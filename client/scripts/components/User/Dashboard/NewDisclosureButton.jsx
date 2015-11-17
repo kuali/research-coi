@@ -16,11 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import Router from 'react-router';
-let Link = Router.Link;
+import {Link} from 'react-router';
 import {PlusIcon} from '../../DynamicIcons/PlusIcon';
 import ConfigStore from '../../../stores/ConfigStore';
 import {COIConstants} from '../../../../../COIConstants';
@@ -57,7 +56,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, mobileStyles);
 
     return (
-      <Link to="disclosure" query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
+      <Link to={"/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <PlusIcon style={styles.icon} />
           <div>
@@ -95,7 +94,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <Link to="disclosure" query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
+      <Link to={"/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
             <div style={styles.primary}>{this.props.type === COIConstants.DISCLOSURE_TYPE.ANNUAL ? 'Update' : 'New'}</div>

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import ConfigActions from '../../../actions/ConfigActions';
 import DateOptions from './DateOptions';
@@ -29,7 +29,7 @@ export default class NewNotifications extends React.Component {
   }
 
   setReminderText() {
-    let reminderTextbox = React.findDOMNode(this.refs.reminderText);
+    let reminderTextbox = this.refs.reminderText;
     ConfigActions.setReminderTextOnNotification(undefined, reminderTextbox.value);
   }
 

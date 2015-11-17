@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
@@ -38,21 +38,21 @@ export class ManualEventEntry extends ResponsiveComponent {
   typeSelected() {
     DisclosureActions.manualTypeSelected(
       this.props.disclosure.id,
-      this.refs.manualType.getDOMNode().value
+      this.refs.manualType.value
     );
   }
 
   saveProject() {
     DisclosureActions.saveManualEvent(
       this.props.disclosure.id,
-      this.refs.id.getDOMNode().value,
-      this.refs.title.getDOMNode().value,
-      this.refs.sponsor.getDOMNode().value,
-      this.refs.role.getDOMNode().value,
-      this.refs.amount.getDOMNode().value,
-      this.refs.projectType.getDOMNode().value,
-      this.refs.startdate.getDOMNode().value,
-      this.refs.enddate.getDOMNode().value
+      this.refs.id.value,
+      this.refs.title.value,
+      this.refs.sponsor.value,
+      this.refs.role.value,
+      this.refs.amount.value,
+      this.refs.projectType.value,
+      this.refs.startdate.value,
+      this.refs.enddate.value
     );
   }
 

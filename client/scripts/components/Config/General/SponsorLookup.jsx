@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import ConfigActions from '../../../actions/ConfigActions';
 
@@ -28,7 +28,7 @@ export default class SponsorLookup extends React.Component {
   }
 
   toggle() {
-    let checkbox = React.findDOMNode(this.refs.checkbox);
+    let checkbox = this.refs.checkbox;
     if (checkbox.checked) {
       ConfigActions.enableSponsorLookup();
     } else {

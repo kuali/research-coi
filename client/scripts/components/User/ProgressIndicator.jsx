@@ -17,7 +17,7 @@
 */
 
 /*global TWEEN*/
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
 
 export class ProgressIndicator extends React.Component {
@@ -31,7 +31,7 @@ export class ProgressIndicator extends React.Component {
   }
 
   componentDidMount() {
-    var cnvsElement = this.refs.theCanvas.getDOMNode();
+    var cnvsElement = this.refs.theCanvas;
     var context = cnvsElement.getContext('2d');
     context.font = '65px Arial';
 

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../merge';
 import {FutureStepIcon} from '../DynamicIcons/FutureStepIcon';
 import {CurrentStepIcon} from '../DynamicIcons/CurrentStepIcon';
@@ -26,7 +26,6 @@ import {DisclosureActions} from '../../actions/DisclosureActions';
 export class SidebarStep extends React.Component {
   constructor() {
     super();
-
     this.navigate = this.navigate.bind(this);
   }
 

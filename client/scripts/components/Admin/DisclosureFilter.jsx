@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../merge';
 
 export default class DisclosureFilter extends React.Component {
@@ -46,7 +46,7 @@ export default class DisclosureFilter extends React.Component {
   }
 
   componentDidMount() {
-    let localNode = React.findDOMNode(this.refs.root);
+    let localNode = this.refs.root;
     let eventHandler = this.handleClickOutside;
     var fn = evt => {
       var source = evt.target;

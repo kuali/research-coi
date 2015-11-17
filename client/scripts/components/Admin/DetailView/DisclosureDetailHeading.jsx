@@ -16,13 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import ConfigStore from '../../../stores/ConfigStore';
 import {formatDate} from '../../../formatDate';
-import {GreyButton} from '../../GreyButton';
-import ReactRouter from 'react-router';
-let Link = ReactRouter.Link;
 
 export class DisclosureDetailHeading extends React.Component {
   constructor() {

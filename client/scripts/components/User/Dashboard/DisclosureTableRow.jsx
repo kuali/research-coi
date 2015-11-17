@@ -16,20 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import {GreyButton} from '../../GreyButton';
-import Router from 'react-router';
 import {formatDate} from '../../../formatDate';
 import ConfigStore from '../../../stores/ConfigStore';
 import {COIConstants} from '../../../../../COIConstants';
-
-let Link = Router.Link;
+import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
   wrapWithUpdateLink(dom) {
     return (
-      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to="disclosure" query={{type: this.props.type }}>
+      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={"/disclosure"} query={{type: this.props.type }}>
         {dom}
       </Link>
     );

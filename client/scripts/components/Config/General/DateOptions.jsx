@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import ConfigActions from '../../../actions/ConfigActions';
 
@@ -29,12 +29,12 @@ export default class DateOptions extends React.Component {
   }
 
   setWarningValue() {
-    let warningValueSelect = React.findDOMNode(this.refs.warningValue);
+    let warningValueSelect = this.refs.warningValue;
     ConfigActions.setWarningValueOnNotification(this.props.id, warningValueSelect.value);
   }
 
   setWarningPeriod() {
-    let warningPeriodSelect = React.findDOMNode(this.refs.warningPeriod);
+    let warningPeriodSelect = this.refs.warningPeriod;
     ConfigActions.setWarningPeriodOnNotification(this.props.id, warningPeriodSelect.value);
   }
 

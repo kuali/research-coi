@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
+import {AppHeader} from '../../AppHeader';
 import {TravelLogHeader} from './TravelLogHeader';
 import {TravelLogForm} from './TravelLogForm';
 import {TravelLogSort} from './TravelLogSort.jsx';
@@ -64,6 +65,11 @@ export class TravelLog extends React.Component {
 
   render() {
     let styles = {
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
+      },
       top: {
         marginTop: 20
       },
@@ -107,20 +113,22 @@ export class TravelLog extends React.Component {
     }
 
     return (
-      <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
-        <span style={styles.sidebar}>
-          <BackToDashBoardButton/>
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
+          <span style={styles.sidebar}>
+            <BackToDashBoardButton/>
+          </span>
+          <span className="fill" style={styles.content}>
+            <TravelLogHeader/>
+            <TravelLogForm entry={this.state.potentialEntry} validating={this.state.validating}/>
+            <div style={styles.entryList}>
+              <TravelLogSort/>
+              {travelLogs}
+            </div>
+          </span>
         </span>
-        <span className="fill" style={styles.content}>
-          <TravelLogHeader/>
-          <TravelLogForm entry={this.state.potentialEntry} validating={this.state.validating}/>
-          <div style={styles.entryList}>
-            <TravelLogSort/>
-            {travelLogs}
-          </div>
-        </span>
-
-      </span>
+      </div>
     );
   }
 }

@@ -16,16 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
-import Router from 'react-router';
 import ConfigStore from '../../../stores/ConfigStore';
 import {COIConstants} from '../../../../../COIConstants';
-
-let Link = Router.Link;
+import {Link} from 'react-router';
 
 export class TravelLogButton extends React.Component {
-   constructor() {
+  constructor() {
     super();
     this.commonStyles = {
     };
@@ -55,7 +53,7 @@ export class TravelLogButton extends React.Component {
     styles = merge(this.commonStyles, styles);
 
     return (
-      <Link to="travelLog" style={merge(styles.container, this.props.style)}>
+      <Link to={`/travelLog`} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
             <div style={styles.primary}>Update</div>

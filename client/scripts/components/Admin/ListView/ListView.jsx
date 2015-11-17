@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {AdminStore} from '../../../stores/AdminStore';
 import {AdminActions} from '../../../actions/AdminActions';
@@ -26,6 +26,7 @@ import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
 import {BlueButton} from '../../BlueButton';
 import ConfigStore from '../../../stores/ConfigStore';
 import AdminMenu from '../../AdminMenu';
+import {AppHeader} from '../../AppHeader';
 
 export class ListView extends React.Component {
   constructor() {
@@ -45,7 +46,7 @@ export class ListView extends React.Component {
     AdminStore.listen(this.onChange);
     ConfigStore.listen(this.onChange);
 
-    let rightPanel = React.findDOMNode(this.refs.rightPanel);
+    let rightPanel = this.refs.rightPanel;
     let enabled = true;
     rightPanel.addEventListener('scroll', () => {
       if (enabled) {
@@ -121,6 +122,11 @@ export class ListView extends React.Component {
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0'
       },
       header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 19,
+        position: 'relative'
+      },
+      header2: {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
         position: 'relative',
@@ -199,50 +205,53 @@ export class ListView extends React.Component {
     }
 
     return (
-      <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
-        <span style={styles.sidebar}>
-          <AdminMenu />
-          <DisclosureFilterSearch
-            query={this.state.data.applicationState.filters.search}
-            onChange={this.changeSearch}
-            onSearch={this.doSearch}
-          />
-          <div style={styles.heading} onClick={this.toggleFilters}>
-            <span style={{paddingRight: 3}}>
-              {this.state.data.applicationState.summaryCount}
-            </span>
-            Disclosures Shown
-            <span style={styles.filterArrow}>&#9660;</span>
-          </div>
-          <SearchFilterGroup
-            style={styles.filterGroup}
-            filters={this.state.data.applicationState.filters}
-            possibleStatuses={possibleStatuses}
-            possibleTypes={possibleTypes}
-            activeStatusFilters={this.state.data.applicationState.filters.status}
-            activeTypeFilters={this.state.data.applicationState.filters.type}
-            activePIFilter={this.state.data.applicationState.filters.submittedBy}
-            showDateSort={false}
-            visible={this.state.data.applicationState.showFilters}
-          />
-        </span>
-        <span className="fill" style={styles.content} ref="rightPanel">
-          <div style={styles.header}>
-            <h2 style={styles.title}>COI ADMIN DASHBOARD</h2>
-          </div>
-          <div style={{padding: '33px 38px'}}>
-            <DisclosureTable
-              sort={this.state.data.applicationState.sort}
-              sortDirection={this.state.data.applicationState.sortDirection}
-              page={this.state.data.applicationState.page}
-              style={styles.table}
-              disclosures={filtered}
-              searchTerm={this.state.data.applicationState.effectiveSearchValue}
+      <div className="flexbox column" style={{height: '100%', overflowX: 'hidden'}}>
+        <AppHeader style={styles.header} />
+        <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
+          <span style={styles.sidebar}>
+            <AdminMenu />
+            <DisclosureFilterSearch
+              query={this.state.data.applicationState.filters.search}
+              onChange={this.changeSearch}
+              onSearch={this.doSearch}
             />
-            {loadMoreButton}
-            {loadingIndicator}
-          </div>
-        </span>
+            <div style={styles.heading} onClick={this.toggleFilters}>
+              <span style={{paddingRight: 3}}>
+                {this.state.data.applicationState.summaryCount}
+              </span>
+              Disclosures Shown
+              <span style={styles.filterArrow}>&#9660;</span>
+            </div>
+            <SearchFilterGroup
+              style={styles.filterGroup}
+              filters={this.state.data.applicationState.filters}
+              possibleStatuses={possibleStatuses}
+              possibleTypes={possibleTypes}
+              activeStatusFilters={this.state.data.applicationState.filters.status}
+              activeTypeFilters={this.state.data.applicationState.filters.type}
+              activePIFilter={this.state.data.applicationState.filters.submittedBy}
+              showDateSort={false}
+              visible={this.state.data.applicationState.showFilters}
+            />
+          </span>
+          <span className="fill" style={styles.content} ref="rightPanel">
+            <div style={styles.header2}>
+              <h2 style={styles.title}>COI ADMIN DASHBOARD</h2>
+            </div>
+            <div style={{padding: '33px 38px'}}>
+              <DisclosureTable
+                sort={this.state.data.applicationState.sort}
+                sortDirection={this.state.data.applicationState.sortDirection}
+                page={this.state.data.applicationState.page}
+                style={styles.table}
+                disclosures={filtered}
+                searchTerm={this.state.data.applicationState.effectiveSearchValue}
+              />
+              {loadMoreButton}
+              {loadingIndicator}
+            </div>
+          </span>
+        </div>
       </div>
     );
   }

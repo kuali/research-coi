@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import EditableList from '../EditableList';
 import {BlueButton} from '../../BlueButton';
@@ -40,7 +40,7 @@ export default class RelationshipType extends React.Component {
   }
 
   enabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.enabledCheckbox);
+    let checkbox = this.refs.enabledCheckbox;
     this.props.enabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
@@ -57,7 +57,7 @@ export default class RelationshipType extends React.Component {
   }
 
   typeEnabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.typeEnabled);
+    let checkbox = this.refs.typeEnabled;
     this.props.typeEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
@@ -69,7 +69,7 @@ export default class RelationshipType extends React.Component {
   }
 
   amountEnabledChanged() {
-    let checkbox = React.findDOMNode(this.refs.amountEnabled);
+    let checkbox = this.refs.amountEnabled;
     this.props.amountEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 

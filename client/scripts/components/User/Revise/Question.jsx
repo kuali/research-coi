@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import CheckLink from './CheckLink';
 import PIReviewActions from '../../../actions/PIReviewActions';
@@ -237,7 +237,7 @@ export default class Question extends React.Component {
     }
     else if (this.state.responding) {
       newState.responded = true;
-      let textarea = React.findDOMNode(this.refs.responseText);
+      let textarea = this.refs.responseText;
       PIReviewActions.respond(this.props.reviewId, textarea.value);
     }
 

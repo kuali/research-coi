@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import Sidebar from '../Sidebar';
 import Panel from '../Panel';
@@ -24,6 +24,7 @@ import ActionPanel from '../ActionPanel';
 import DisclosureTypes from './DisclosureTypes';
 import ConfigStore from '../../../stores/ConfigStore';
 import DueDateDetails from './DueDateDetails';
+import {AppHeader} from '../../AppHeader';
 
 export default class General extends React.Component {
   constructor() {
@@ -59,6 +60,11 @@ export default class General extends React.Component {
     let styles = {
       container: {
       },
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
+      },
       content: {
         backgroundColor: '#F2F2F2',
         boxShadow: '2px 8px 8px #ccc inset',
@@ -82,43 +88,46 @@ export default class General extends React.Component {
     };
 
     return (
-      <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
-        <Sidebar active="general" />
-        <span style={styles.content} className="inline-flexbox column fill">
-          <div style={styles.stepTitle}>
-            General Configuration
-          </div>
-          <div className="fill flexbox row" style={styles.configurationArea}>
-            <span className="fill" style={{display: 'inline-block'}}>
-              <Panel
-                title="General Disclosure Configuration"
-                style={{overflow: 'visible'}}
-              >
-                <DisclosureTypes
-                  types={this.state.disclosureTypes}
-                  appState={this.state.applicationState}
-                />
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
+          <Sidebar active="general" />
+          <span style={styles.content} className="inline-flexbox column fill">
+            <div style={styles.stepTitle}>
+              General Configuration
+            </div>
+            <div className="fill flexbox row" style={styles.configurationArea}>
+              <span className="fill" style={{display: 'inline-block'}}>
+                <Panel
+                  title="General Disclosure Configuration"
+                  style={{overflow: 'visible'}}
+                >
+                  <DisclosureTypes
+                    types={this.state.disclosureTypes}
+                    appState={this.state.applicationState}
+                  />
 
-                <DueDateDetails
-                  isRollingDueDate={this.state.isRollingDueDate}
-                  dueDate={this.state.dueDate}
-                  showTitleQuestion={false}
-                />
-              </Panel>
+                  <DueDateDetails
+                    isRollingDueDate={this.state.isRollingDueDate}
+                    dueDate={this.state.dueDate}
+                    showTitleQuestion={false}
+                  />
+                </Panel>
 
-              {/*<Panel title="Expiration Notifications">
-                <NotificationDetails
-                  dueDate={this.state.dueDate}
-                  isRollingDueDate={this.state.isRollingDueDate}
-                  notifications={this.state.notifications}
-                  appState={this.state.applicationState}
-                />
-              </Panel>*/}
-            </span>
-            <ActionPanel visible={this.state.dirty} />
-          </div>
+                {/*<Panel title="Expiration Notifications">
+                  <NotificationDetails
+                    dueDate={this.state.dueDate}
+                    isRollingDueDate={this.state.isRollingDueDate}
+                    notifications={this.state.notifications}
+                    appState={this.state.applicationState}
+                  />
+                </Panel>*/}
+              </span>
+              <ActionPanel visible={this.state.dirty} />
+            </div>
+          </span>
         </span>
-      </span>
+      </div>
     );
   }
 }

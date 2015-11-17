@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
@@ -35,7 +35,7 @@ export class EntityRelation extends ResponsiveComponent {
   }
 
   commentMade() {
-    DisclosureActions.declarationCommentedOn(this.props.relationType, this.props.entity.id, this.props.projectId, this.refs.comment.getDOMNode().value);
+    DisclosureActions.declarationCommentedOn(this.props.relationType, this.props.entity.id, this.props.projectId, this.refs.comment.value);
   }
 
   renderMobile() {}

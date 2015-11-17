@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
+import {AppHeader} from '../../AppHeader';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {NewDisclosureButton} from './NewDisclosureButton';
 import {DisclosureArchiveButton} from './DisclosureArchiveButton';
@@ -155,6 +156,11 @@ export class Dashboard extends ResponsiveComponent {
         verticalAlign: 'top'
       },
       header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
+      },
+      header2: {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
         position: 'relative',
@@ -244,25 +250,28 @@ export class Dashboard extends ResponsiveComponent {
     }
 
     return (
-      <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
-        <span style={styles.sidebar}>
-          {adminMenu}
-          {annualDisclosureButton}
-          {travelLogButton}
-          {manualDisclosureButton}
-          <div>
-            <DisclosureArchiveButton style={styles.borderBottom} />
-          </div>
-        </span>
-        <span className="fill" style={styles.content}>
-          <div style={styles.header}>
-            <h2 style={styles.heading}>MY COI DASHBOARD</h2>
-          </div>
-          {confirmationMessage}
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
+          <span style={styles.sidebar}>
+            {adminMenu}
+            {annualDisclosureButton}
+            {travelLogButton}
+            {manualDisclosureButton}
+            <div>
+              <DisclosureArchiveButton style={styles.borderBottom} />
+            </div>
+          </span>
+          <span className="fill" style={styles.content}>
+            <div style={styles.header2}>
+              <h2 style={styles.heading}>MY COI DASHBOARD</h2>
+            </div>
+            {confirmationMessage}
 
-          <DisclosureTable disclosures={this.state.disclosureSummaries} />
+            <DisclosureTable disclosures={this.state.disclosureSummaries} />
+          </span>
         </span>
-      </span>
+      </div>
     );
   }
 }

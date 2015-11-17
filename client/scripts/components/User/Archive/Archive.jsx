@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons'; //eslint-disable-line no-unused-vars
+import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
+import {AppHeader} from '../../AppHeader';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
 import {DisclosureActions} from '../../../actions/DisclosureActions';
-import Router from 'react-router';
-let Link = Router.Link;
+import {Link} from 'react-router';
 import ArchiveDetail from './ArchiveDetail';
 import {formatDate} from '../../../formatDate';
 import {COIConstants} from '../../../../../COIConstants';
@@ -84,7 +84,7 @@ export class Archive extends React.Component {
   }
 
   changeArchive() {
-    let versionPicker = React.findDOMNode(this.refs.versionPicker);
+    let versionPicker = this.refs.versionPicker;
 
     let theArchive = this.state.archivedDisclosures.find(archive => {
       return archive.id === parseInt(versionPicker.value);
@@ -100,6 +100,11 @@ export class Archive extends React.Component {
       container: {
         background: '#eeeeee',
         minHeight: 100
+      },
+      header: {
+        boxShadow: '0 1px 6px #D1D1D1',
+        zIndex: 10,
+        position: 'relative'
       },
       sidebar: {
         minWidth: 300,
@@ -129,7 +134,7 @@ export class Archive extends React.Component {
       content: {
         verticalAlign: 'top'
       },
-      header: {
+      header2: {
         backgroundColor: 'white',
         padding: '12px 0 13px 33px',
         position: 'relative',
@@ -225,7 +230,7 @@ export class Archive extends React.Component {
     let updateDisclosureLink;
     if (isEditable) {
       updateDisclosureLink = (
-        <Link to="disclosure">
+        <Link to={"/disclosure"}>
           <div style={merge(styles.sidebarButton, styles.firstButton)}>
             <div style={styles.sidebarTopText}>Update</div>
             <div style={styles.sidebarBottomText}>Annual Disclosure</div>
@@ -235,24 +240,27 @@ export class Archive extends React.Component {
     }
 
     return (
-      <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
-        <span style={styles.sidebar}>
-          {updateDisclosureLink}
-          <Link to="dashboard">
-            <div style={merge(styles.sidebarButton, !updateDisclosureLink ? styles.firstButton : {})}>
-              <div style={styles.sidebarTopText}>Back To</div>
-              <div style={styles.sidebarBottomText}>Dashboard</div>
+      <div className="flexbox column" style={{height: '100%'}}>
+        <AppHeader style={styles.header} />
+        <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
+          <span style={styles.sidebar}>
+            {updateDisclosureLink}
+            <Link to={"/dashboard"}>
+              <div style={merge(styles.sidebarButton, !updateDisclosureLink ? styles.firstButton : {})}>
+                <div style={styles.sidebarTopText}>Back To</div>
+                <div style={styles.sidebarBottomText}>Dashboard</div>
+              </div>
+            </Link>
+          </span>
+          <span className="inline-flexbox column fill" style={styles.content}>
+            <div style={styles.header2}>
+              {header}
             </div>
-          </Link>
-        </span>
-        <span className="inline-flexbox column fill" style={styles.content}>
-          <div style={styles.header}>
-            {header}
-          </div>
-          <div className="fill" style={{overflowY: 'auto'}}>
-            {detail}
-          </div>
-        </span>
+            <div className="fill" style={{overflowY: 'auto'}}>
+              {detail}
+            </div>
+          </span>
+        </div>
       </div>
     );
   }

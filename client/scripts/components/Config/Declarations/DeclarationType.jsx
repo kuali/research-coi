@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import ConfigActions from '../../../actions/ConfigActions';
 import EditLink from '../EditLink';
@@ -50,7 +50,7 @@ export default class DeclarationType extends React.Component {
   }
 
   nameChanged() {
-    let newValue = React.findDOMNode(this.refs.typeName).value;
+    let newValue = this.refs.typeName.value;
     ConfigActions.updateDeclarationType(this.props.type.typeCd, newValue);
   }
 

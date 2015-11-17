@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react/addons';
+import React from 'react';
 import {merge} from '../../../merge';
 import CommentBubble from './CommentBubble';
 import {AdminActions} from '../../../actions/AdminActions';
@@ -34,10 +34,10 @@ export default class CommentingPanel extends React.Component {
   }
 
   makeComment() {
-    let piCheck = React.findDOMNode(this.refs.piCheck);
+    let piCheck = this.refs.piCheck;
     let visibleToPI = piCheck.checked;
     piCheck.checked = false;
-    let textarea = React.findDOMNode(this.refs.commentText);
+    let textarea = this.refs.commentText;
     let commentText = textarea.value;
     textarea.value = '';
 
