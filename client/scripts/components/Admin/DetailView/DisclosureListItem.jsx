@@ -19,7 +19,6 @@
 import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
-import ReactRouter from 'react-router';
 import ConfigStore from '../../../stores/ConfigStore';
 import {Link} from 'react-router';
 

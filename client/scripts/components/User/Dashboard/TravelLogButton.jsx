@@ -23,7 +23,7 @@ import {COIConstants} from '../../../../../COIConstants';
 import {Link} from 'react-router';
 
 export class TravelLogButton extends React.Component {
-   constructor() {
+  constructor() {
     super();
     this.commonStyles = {
     };
