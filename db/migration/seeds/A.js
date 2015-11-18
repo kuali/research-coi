@@ -179,7 +179,7 @@ function insertQuestionnaireSubquestion(knex, questionnaireId, parentId, numberT
     active: true,
     question: JSON.stringify({
       order: 1,
-      text: 'If Yes, did the organization send you on vacation?',
+      text: 'Please explain.',
       type: 'Text area',
       displayCriteria: 'Yes',
       numberToShow: numberToShow + '-A'
@@ -341,13 +341,13 @@ function insertInitialArchiveConfig(query) {
       dueDate: new Date(2015, 1, 1),
       isRollingDueDate: false,
       instructions: {
-        'Questionnaire': 'Questionnaire Instructions',
-        'Financial Entities': 'Financial Entities Instructions',
-        'Project Declaration': 'Project Declaration Instructions',
-        'Certification': 'Certification Instructions'
+        'Questionnaire': 'Please answer each question thoughtfully. You will have an opportunity to review and edit your answers after completing the questionnaire.',
+        'Financial Entities': 'Please enter all your financial entities and the associated data, which are required. Then indicate the nature of each your relationships with each financial entity.',
+        'Project Declaration': 'Select the appropriate project declaration for each of your financial entity-project relationships. You can use the "Set All" function to apply a declaration to all relationships at once.',
+        'Certification': 'You may add any overall attachments for your annual disclosure.  Then please certify and submit your disclosure for review.'
       },
       certificationOptions: {
-        text: 'Certification Text',
+        text: 'In accordance with the University\'s policy on Disclosure of Financial Interests and Management of Conflict of Interest Related to Sponsored Projects, the Principal Investigator and all other Investigators who share responsibility for the design, conduct, or reporting of sponsored projects must disclose their personal SIGNIFICANT FINANCIAL INTERESTS in any non-profit foundation or for-profit company that might benefit from the predictable results of those proposed projects.  In addition, when the work to be performed under the proposed research project and the results of the proposed research project would reasonably appear to affect the Investigator\'s SIGNIFICANT FINANCIAL INTEREST, the interest is regarded as being related to the proposed research project and must be reported.',
         required: true
       }
     };
