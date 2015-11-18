@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -45,7 +46,7 @@ export class ActionButtons extends React.Component {
     AdminActions.showGeneralAttachmentsPanel();
   }
 
-  render() {
+  render(): React.Element {
     let styles = {
       container: {
         color: '#6d6d6d',

@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -33,7 +34,7 @@ export default class AdditionalReviewPanel extends React.Component {
     AdminActions.hideAdditionalReviewPanel();
   }
 
-  addManagementPlan(files) {
+  addManagementPlan(files: Array<Object>) {
     AdminActions.addManagementPlan(files);
   }
 
@@ -41,7 +42,7 @@ export default class AdditionalReviewPanel extends React.Component {
     AdminActions.deleteManagementPlan();
   }
 
-  render() {
+  render(): React.Element {
     let styles = {
       container: {
         padding: '25px 30px',
