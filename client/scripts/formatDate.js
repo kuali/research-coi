@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -25,6 +26,6 @@ else {
   moment.locale('en');
 }
 
-export function formatDate(date) {
+export function formatDate(date: number) {
   return moment(date).format('ll');
 }
