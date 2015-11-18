@@ -156,7 +156,7 @@ export class EntityFormInformationStep extends React.Component {
     return (
       <span style={merge(styles.container, this.props.style)}>
         {heading}
-        <div>
+        <div style={{color: '#333'}}>
           {questions}
         </div>
 
