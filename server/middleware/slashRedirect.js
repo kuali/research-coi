@@ -19,7 +19,7 @@
 export default function (req, res, next) {
   if (req.path.endsWith('/')) {
     res.redirect(req.originalUrl.substring(0, req.originalUrl.length - 1));
-    return;      
+    return;
   }
   next();
 }

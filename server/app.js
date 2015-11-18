@@ -107,6 +107,6 @@ function conditionallyLogRequests(app) {
       next();
       let elapsedTime = new Date().getTime() - startTime.getTime();
       Log.info(`${req.originalUrl} - ${elapsedTime}ms`);
-    });    
+    });
   }
 }

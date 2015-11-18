@@ -22,7 +22,7 @@ class Log {
   info(message) {
     if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
       let date = new Date().toISOString();
-      console.info(`${date} INFO  ${message}`);      
+      console.info(`${date} INFO  ${message}`);
     }
   }
 
