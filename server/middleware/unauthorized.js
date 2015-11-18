@@ -16,22 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react';
+import Log from '../Log';
 
-export class KualiLogo extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <img src="/coi/images/kuali.png" alt="Kuali Logo" style={this.props.style} />
-    );
-  }
+export default function unauthorized(req, res) {
+  Log.error(`Unauthorized page request by ${req.userInfo.username}`);
+  res.render('unauthorized');
 }
-
-KualiLogo.defaultProps = {
-  style: {
-    color: 'white'
-  }
-};

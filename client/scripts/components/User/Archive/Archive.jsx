@@ -230,7 +230,7 @@ export class Archive extends React.Component {
     let updateDisclosureLink;
     if (isEditable) {
       updateDisclosureLink = (
-        <Link to={"/disclosure"}>
+        <Link to={"/coi/disclosure"}>
           <div style={merge(styles.sidebarButton, styles.firstButton)}>
             <div style={styles.sidebarTopText}>Update</div>
             <div style={styles.sidebarBottomText}>Annual Disclosure</div>
@@ -245,7 +245,7 @@ export class Archive extends React.Component {
         <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
           <span style={styles.sidebar}>
             {updateDisclosureLink}
-            <Link to={"/dashboard"}>
+            <Link to={"/coi/dashboard"}>
               <div style={merge(styles.sidebarButton, !updateDisclosureLink ? styles.firstButton : {})}>
                 <div style={styles.sidebarTopText}>Back To</div>
                 <div style={styles.sidebarBottomText}>Dashboard</div>

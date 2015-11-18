@@ -16,22 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react';
-
-export class KualiLogo extends React.Component {
-  constructor(props) {
-    super(props);
+export default function(req, res, next) {
+  if (req.userInfo.coiRole !== 'admin') {
+    res.render('unauthorized');
+    return;
   }
-
-  render() {
-    return (
-      <img src="/coi/images/kuali.png" alt="Kuali Logo" style={this.props.style} />
-    );
-  }
+  next();
 }
-
-KualiLogo.defaultProps = {
-  style: {
-    color: 'white'
-  }
-};

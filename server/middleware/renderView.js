@@ -16,22 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react';
+export default function renderView(viewName) {
+  return (req, res, next) => {
+    res.render(viewName, (err, html) => {
+      if (err) {
+        next(err);
+      }
 
-export class KualiLogo extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <img src="/coi/images/kuali.png" alt="Kuali Logo" style={this.props.style} />
-    );
-  }
+      res.send(html);
+    });
+  };
 }
-
-KualiLogo.defaultProps = {
-  style: {
-    color: 'white'
-  }
-};

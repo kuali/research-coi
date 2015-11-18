@@ -28,12 +28,13 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
 import apiAuthentication from './middleware/apiAuthentication';
-import viewRenderer from './middleware/viewRenderer';
-import {authView} from './services/AuthService/mockAuthClient';
+import renderView from './middleware/renderView';
 import Log from './Log';
 import methodChecker from './middleware/methodChecker';
 import ErrorLogger from './middleware/ErrorLogger';
 import {COIConstants} from '../COIConstants';
+import adminRoleCheck from './middleware/adminRoleCheck';
+import unauthorized from './middleware/unauthorized';
 
 export function run() {
   let app = express();
@@ -53,13 +54,25 @@ export function run() {
   conditionallyLogRequests(app);
 
   app.use('/coi', express.static('client'));
+  app.use('/coi/build', (req, res) => { res.sendStatus(404); }); // Static files that weren't found
+
   app.use(methodChecker);
   app.use(cookieParser());
-  app.use('/coi/auth', authView);
+
+  app.use('/coi/auth', renderView('auth'));
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
+  app.use('/coi$', renderView('index'));
+  app.use('/coi/$', renderView('index'));
+  app.use('/coi/archiveview', renderView('index'));
+  app.use('/coi/dashboard', renderView('index'));
+  app.use('/coi/disclosure', renderView('index'));
+  app.use('/coi/travelLog', renderView('index'));
+  app.use('/coi/revise', renderView('index'));
 
-  app.use('/coi', viewRenderer);
+  app.use('/coi/admin', adminRoleCheck, renderView('admin/admin'));
+  app.use('/coi/config', adminRoleCheck, renderView('admin/config'));
+  app.use('/coi', unauthorized);
 
   app.use(bodyParser.json());
   ConfigController.init(app);

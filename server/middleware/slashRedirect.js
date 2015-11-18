@@ -16,41 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from '../Log';
-
-export default function viewRenderer(req, res) {
-  let view = req.path;
-
-  if (view === '' || view === '/') {
-    view = 'index';
-  }
-  else if (view.endsWith('/')) {
+export default function (req, res, next) {
+  if (req.path.endsWith('/')) {
     res.redirect(req.originalUrl.substring(0, req.originalUrl.length - 1));
-    return;
+    return;      
   }
-
-  // Prevent path traversal
-  view = view.replace(/[\/%.]/g, '');
-
-  res.render(view, (err, html) => {
-    if (err) {
-      if (req.userInfo.coiRole !== 'admin') {
-        Log.error(`Attempt load page that doesn't exist or no access to it`);
-        res.render('unauthorized');
-        return;          
-      }
-
-      res.render(`admin/${view}`, (err, html) => {
-        if (err) {
-          Log.error(`Attempt load page that doesn't exist`);
-          res.render('unauthorized');
-          return;          
-        }
-
-        res.send(html);
-      });
-    }
-
-    res.send(html);
-  });
+  next();
 }

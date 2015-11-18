@@ -56,7 +56,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, mobileStyles);
 
     return (
-      <Link to={"/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
+      <Link to={"/coi/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <PlusIcon style={styles.icon} />
           <div>
@@ -94,7 +94,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
     let styles = merge(this.commonStyles, desktopStyles);
 
     return (
-      <Link to={"/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
+      <Link to={"/coi/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
             <div style={styles.primary}>{this.props.type === COIConstants.DISCLOSURE_TYPE.ANNUAL ? 'Update' : 'New'}</div>

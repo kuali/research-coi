@@ -53,7 +53,7 @@ export class TravelLogButton extends React.Component {
     styles = merge(this.commonStyles, styles);
 
     return (
-      <Link to={`/travelLog`} style={merge(styles.container, this.props.style)}>
+      <Link to={`/coi/travelLog`} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
             <div style={styles.primary}>Update</div>
