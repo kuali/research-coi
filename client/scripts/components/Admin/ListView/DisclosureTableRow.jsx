@@ -66,7 +66,7 @@ export class DisclosureTableRow extends React.Component {
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={merge(styles.value, styles.firstColumn)}>
-          <Link to={`/detailview/${this.props.id}/${this.props.statusCd}`}>
+          <Link to={`/coi/admin/detailview/${this.props.id}/${this.props.statusCd}`}>
             {this.highlightSearchTerm(this.props.submittedBy)}
           </Link>
         </span>

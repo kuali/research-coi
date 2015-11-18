@@ -16,6 +16,10 @@
         "semi": [
             2,
             "always"
+        ],
+        "no-trailing-spaces": [
+            2, 
+            { "skipBlankLines": true }
         ]
     },
     "env": {

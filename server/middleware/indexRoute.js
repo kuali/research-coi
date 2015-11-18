@@ -15,28 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-/* eslint-disable no-console */
-import {COIConstants} from '../COIConstants';
 
-class Log {
-  info(message) {
-    if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
-      let date = new Date().toISOString();
-      console.info(`${date} INFO  ${message}`);
-    }
+export default function (req, res, next) {
+  if (req.path === '' || req.path === '/') {
+    req.path = 'index';
   }
-
-  warn(message) {
-    if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.WARN) {
-      let date = new Date().toISOString();
-      console.warn(`${date} WARN  ${message}`);
-    }
-  }
-
-  error(message) {
-    let date = new Date().toISOString();
-    console.error(`${date} ERROR ${message}`);
-  }
+  next();
 }
-
-export default new Log();

@@ -37,7 +37,7 @@ export default class BackToDashboard extends React.Component {
     };
 
     return (
-      <Link to={"/dashboard"}>
+      <Link to={"/coi/dashboard"}>
         <div style={merge(styles.container, this.props.style)}>
           <div>
             <i className="fa fa-arrow-left"></i>

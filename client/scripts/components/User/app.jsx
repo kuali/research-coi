@@ -27,10 +27,16 @@ import {Revise} from './Revise/Revise';
 import {SizeAwareComponent} from '../SizeAwareComponent';
 import {processResponse, createRequest} from '../../HttpUtils';
 import ColorStore from '../../stores/ColorStore';
+import createBrowserHistory from 'history/lib/createBrowserHistory';
 
 class App extends SizeAwareComponent {
   constructor() {
     super();
+
+    this.state = {
+      browserHistory: createBrowserHistory()
+    };
+
     this.onChange = this.onChange.bind(this);
   }
 
@@ -48,13 +54,13 @@ class App extends SizeAwareComponent {
 
   render() {
     return (
-      <Router>
-        <Route path="/archiveview" component={Archive} />
-        <Route path="/dashboard" component={Dashboard} />
-        <Route path="/disclosure" component={Disclosure} />
-        <Route path="/travelLog" component={TravelLog} />
-        <Route path="/revise/:id" component={Revise} />
-        <Route path="*" component={Dashboard} />
+      <Router history={this.state.browserHistory}>
+        <Route path="/coi/archiveview" component={Archive} />
+        <Route path="/coi/dashboard" component={Dashboard} />
+        <Route path="/coi/disclosure" component={Disclosure} />
+        <Route path="/coi/travelLog" component={TravelLog} />
+        <Route path="/coi/revise/:id" component={Revise} />
+        <Route path="/coi/*" component={Dashboard} />
       </Router>
     );
   }

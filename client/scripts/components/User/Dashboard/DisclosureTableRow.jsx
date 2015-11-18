@@ -27,7 +27,7 @@ import {Link} from 'react-router';
 export class DisclosureTableRow extends React.Component {
   wrapWithUpdateLink(dom) {
     return (
-      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={"/disclosure"} query={{type: this.props.type }}>
+      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={"/coi/disclosure"} query={{type: this.props.type }}>
         {dom}
       </Link>
     );
@@ -35,7 +35,7 @@ export class DisclosureTableRow extends React.Component {
 
   wrapWithReviseLink(dom) {
     return (
-      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={`/revise/${this.props.disclosureId}`}>
+      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={`/coi/revise/${this.props.disclosureId}`}>
         {dom}
       </Link>
     );

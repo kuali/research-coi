@@ -51,7 +51,7 @@ export class BackToDashBoardButton extends React.Component {
     styles = merge(this.commonStyles, styles);
 
     return (
-      <Link to={`/`} style={merge(styles.container, this.props.style)}>
+      <Link to={`/coi/dashboard`} style={merge(styles.container, this.props.style)}>
         <div>
           <span>
             <div style={styles.primary}>Back</div>

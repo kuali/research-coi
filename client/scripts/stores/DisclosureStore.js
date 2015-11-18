@@ -1271,7 +1271,7 @@ class _DisclosureStore extends AutoBindingStore {
     .end(processResponse(err => {
       if (!err) {
         this.resetDisclosure();
-        window.location = '#/dashboard';
+        window.location = '/coi/dashboard';
         this.toggleConfirmationMessage();
       }
     }));

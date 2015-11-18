@@ -24,10 +24,16 @@ import {DetailView} from './DetailView/DetailView';
 import {ListView} from './ListView/ListView';
 import {SizeAwareComponent} from '../SizeAwareComponent';
 import ColorStore from '../../stores/ColorStore';
+import createBrowserHistory from 'history/lib/createBrowserHistory';
 
 class App extends SizeAwareComponent {
   constructor() {
     super();
+
+    this.state = {
+      browserHistory: createBrowserHistory()
+    };
+
     this.onChange = this.onChange.bind(this);
   }
 
@@ -45,12 +51,12 @@ class App extends SizeAwareComponent {
 
   render() {
     return (
-      <Router>
-        <Route path="/detailview" component={DetailView}>
-          <Route path="/detailview/:id/:statusCd" component={DetailView}/>
+      <Router history={this.state.browserHistory}>
+        <Route path="/coi/admin/detailview" component={DetailView}>
+          <Route path="/coi/admin/detailview/:id/:statusCd" component={DetailView}/>
         </Route>
-        <Route path="/listview" component={ListView} />
-        <Route path="*" component={ListView} />
+        <Route path="/coi/admin/listview" component={ListView} />
+        <Route path="/coi/admin*" component={ListView} />
       </Router>
     );
   }
