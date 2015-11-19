@@ -27,15 +27,11 @@ import RelationshipCustomization from './Relationship/Relationship';
 import DeclarationsCustomization from './Declarations/Declarations';
 import CertificationCustomization from './Certification/Certification';
 import ColorStore from '../../stores/ColorStore';
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+import history from '../../history';
 
 class App extends React.Component {
   constructor() {
     super();
-
-    this.state = {
-      browserHistory: createBrowserHistory()
-    };
 
     this.onChange = this.onChange.bind(this);
   }
@@ -54,7 +50,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <Router history={this.state.browserHistory}>
+      <Router history={history}>
         <Route path="/coi/config/general" component={GeneralConfiguration} />
         <Route path="/coi/config/questionnaire" component={QuestionnaireCustomization} />
         <Route path="/coi/config/entities" component={EntitiesQuestionnaire} />

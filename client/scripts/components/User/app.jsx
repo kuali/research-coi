@@ -27,15 +27,11 @@ import {Revise} from './Revise/Revise';
 import {SizeAwareComponent} from '../SizeAwareComponent';
 import {processResponse, createRequest} from '../../HttpUtils';
 import ColorStore from '../../stores/ColorStore';
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+import history from '../../history';
 
 class App extends SizeAwareComponent {
   constructor() {
     super();
-
-    this.state = {
-      browserHistory: createBrowserHistory()
-    };
 
     this.onChange = this.onChange.bind(this);
   }
@@ -54,7 +50,7 @@ class App extends SizeAwareComponent {
 
   render() {
     return (
-      <Router history={this.state.browserHistory}>
+      <Router history={history}>
         <Route path="/coi/archiveview" component={Archive} />
         <Route path="/coi/dashboard" component={Dashboard} />
         <Route path="/coi/disclosure" component={Disclosure} />
