@@ -22,13 +22,13 @@ import {BlueButton} from '../../BlueButton';
 import {formatDate} from '../../../formatDate';
 import {COIConstants} from '../../../../../COIConstants';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
-import {TravelLogStore} from '../../../stores/TravelLogStore.js';
+import {TravelLogStore} from '../../../stores/TravelLogStore';
 import TextField from '../TextField';
 import CurrencyField from '../CurrencyField';
 import DateRangeField from '../DateRangeField';
 import numeral from 'numeral';
 
-export class Entry extends React.Component {
+export default class Entry extends React.Component {
   constructor() {
     super();
 
@@ -149,7 +149,7 @@ export class Entry extends React.Component {
       disclosedDate = (
         <div style={{marginTop: 3}}>
           <div style={styles.label}>Disclosure Date:</div>
-          <div name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDate(this.props.travelLog.disclosedDate)}</div>
+          <div name="Disclosure Date" data-for={this.props.travelLog.entityName} style={styles.data}>{formatDate(this.props.travelLog.disclosedDate)}</div>
         </div>
       );
     }

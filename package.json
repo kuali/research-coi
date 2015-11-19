@@ -4,7 +4,7 @@
   "description": "KualiCo Research Conflict of Interest",
   "main": "server/app.js",
   "scripts": {
-    "test": "mocha --recursive --compilers js:babel/register",
+    "test": "mocha --recursive --compilers js:babel/register --require test/setup.js",
     "start": "node server/bootstrap.js",
     "eslint": "eslint client db server test"
   },
@@ -49,12 +49,15 @@
     "superagent-defaults": "0.1.13"
   },
   "devDependencies": {
-    "babel-core": "5.2.6",
+    "babel-core": "5.8.34",
     "babel-eslint": "4.1.3",
     "babel-loader": "5.0.0",
+    "babel-plugin-rewire": "0.1.22",
     "eslint": "1.9.0",
     "eslint-plugin-react": "3.8.0",
+    "jsdom": "7.0.2",
     "mocha": "2.2.4",
+    "react-addons-test-utils": "0.14.2",
     "webpack": "1.8.11"
   }
 }

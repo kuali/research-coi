@@ -25,7 +25,7 @@ import {TravelLogSort} from './TravelLogSort.jsx';
 import {BackToDashBoardButton} from './BackToDashBoardButton';
 import {TravelLogStore} from '../../../stores/TravelLogStore';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
-import {Entry} from './Entry';
+import Entry from './Entry';
 
 export class TravelLog extends React.Component {
   constructor() {
