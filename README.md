@@ -52,6 +52,12 @@ node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --kn
 ```
 node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi
 ```
+
+Alternately you can add some demonstration data to play with:
+```
+node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo
+```
+
 **Step 8**: Configuration Environment Variables:
 
 System configuration for COI is done with environment variables. Environment variables can either be set in the system or added on the command line when starting the application. Below is a list of configuration environment variables

@@ -18,6 +18,8 @@
 
 /*eslint-disable camelcase, no-console */
 
+var includeDemoData = process.argv[8] === 'demo';
+
 function randomNumberBetween(lowest, highest) {
   return Math.floor(Math.random() * (highest - lowest + 1)) + lowest;
 }
@@ -101,7 +103,7 @@ function getRandomFirstName() {
 }
 
 function insertDeclaration(knex, disclosureId, entityId, projectId) {
-  console.log('Inserting declaration for disclosure ' + disclosureId);
+  console.log('Demo data - Inserting declaration for disclosure ' + disclosureId);
   return Promise.all([
     knex('declaration').insert({
       disclosure_id: disclosureId,
@@ -114,7 +116,7 @@ function insertDeclaration(knex, disclosureId, entityId, projectId) {
 }
 
 function insertProject(knex, title) {
-  console.log('Inserting project ' + title);
+  console.log('Demo data - Inserting project ' + title);
   var startDate = new Date(new Date().getTime() - randomNumberBetween(1, 7606400000));
   var endDate = new Date(startDate.getTime() + 1000000000);
 
@@ -132,7 +134,7 @@ function insertProject(knex, title) {
 }
 
 function insertProjectPerson(knex, userId, role, projectId) {
-  console.log('Inserting project person for user ' + userId);
+  console.log('Demo data - Inserting project person for user ' + userId);
   return knex('project_person').insert({
     project_id: projectId,
     person_id: userId,
@@ -143,7 +145,7 @@ function insertProjectPerson(knex, userId, role, projectId) {
 }
 
 function insertRelationship(knex, entityId) {
-  console.log('Inserting relationship for entity ' + entityId);
+  console.log('Demo data - Inserting relationship for entity ' + entityId);
   var relationshipCd = randomNumberBetween(1, 5);
   return knex('relationship')
     .insert({
@@ -158,7 +160,7 @@ function insertRelationship(knex, entityId) {
 }
 
 function insertEntity(knex, disclosureId, name, description) {
-  console.log('Inserting entity for disclosure ' + disclosureId);
+  console.log('Demo data - Inserting entity for disclosure ' + disclosureId);
   return knex('fin_entity')
     .insert({
       disclosure_id: disclosureId,
@@ -235,7 +237,7 @@ function insertDisclosure(knex) {
     revisedDate = new Date(submittedDate.getTime() + 259200000);
   }
   var userId = getNextUserId();
-  console.log('Inserting disclosure for user ' + userId);
+  console.log('Demo data - Inserting disclosure for user ' + userId);
 
   return knex('disclosure').insert({
     user_id: userId,
@@ -516,48 +518,51 @@ exports.seed = function(knex, Promise) {
     console.log('Seed - config');
     return insertInitialArchiveConfig(knex);
   }).then(function() {
-    console.log('Seed - disclosure');
+    if (!includeDemoData) {
+      return;
+    }
+    console.log('Demo data - disclosure');
     var disclosures = [];
     for (var i = 0; i < 10; i++) {
       disclosures.push(insertDisclosure(knex));
     }
-    return Promise.all(disclosures);
-  }).then(function() {
-    console.log('Seed - travel_relationship');
-    return Promise.all([
-      knex('travel_relationship').insert({
-        relationship_id: knex('relationship').min('id'),
-        amount: 1000.00,
-        destination: 'Hilo, HI',
-        start_date: new Date(2015, 4, 2),
-        end_date: new Date(2015, 4, 5),
-        reason: 'To give a talk on dark matter'
-      }),
-      knex('travel_relationship').insert({
-        relationship_id: knex('relationship').max('id'),
-        amount: 2000.00,
-        destination: 'Atlanta, GA',
-        start_date: new Date(2015, 4, 13),
-        end_date: new Date(2015, 4, 16),
-        reason: 'To give a talk on quasars'
-      }),
-      knex('travel_relationship').insert({
-        relationship_id: knex('relationship').max('id'),
-        amount: 3000.00,
-        destination: 'Atlanta, GA',
-        start_date: new Date(2015, 7, 1),
-        end_date: new Date(2015, 7, 3),
-        reason: 'To give a talk on string theory'
-      })
-    ]);
-  }).then(function() {
-    console.log('Seed - Lots of fake projects');
-    return Promise.all([
-      insertFakeProject(knex, 100000000008),
-      insertFakeProject(knex, 10000000005),
-      insertFakeProject(knex, 10000000007),
-      insertFakeProject(knex, 10000000030),
-      insertFakeProject(knex, 10000000002)
-    ]);
+    return Promise.all(disclosures).then(function() {
+      console.log('Demo data - travel_relationship');
+      return Promise.all([
+        knex('travel_relationship').insert({
+          relationship_id: knex('relationship').min('id'),
+          amount: 1000.00,
+          destination: 'Hilo, HI',
+          start_date: new Date(2015, 4, 2),
+          end_date: new Date(2015, 4, 5),
+          reason: 'To give a talk on dark matter'
+        }),
+        knex('travel_relationship').insert({
+          relationship_id: knex('relationship').max('id'),
+          amount: 2000.00,
+          destination: 'Atlanta, GA',
+          start_date: new Date(2015, 4, 13),
+          end_date: new Date(2015, 4, 16),
+          reason: 'To give a talk on quasars'
+        }),
+        knex('travel_relationship').insert({
+          relationship_id: knex('relationship').max('id'),
+          amount: 3000.00,
+          destination: 'Atlanta, GA',
+          start_date: new Date(2015, 7, 1),
+          end_date: new Date(2015, 7, 3),
+          reason: 'To give a talk on string theory'
+        })
+      ]).then(function() {
+        console.log('Demo data - Lots of fake projects');
+        return Promise.all([
+          insertFakeProject(knex, 100000000008),
+          insertFakeProject(knex, 10000000005),
+          insertFakeProject(knex, 10000000007),
+          insertFakeProject(knex, 10000000030),
+          insertFakeProject(knex, 10000000002)
+        ]);
+      });
+    });
   });
 };
