@@ -88,7 +88,4 @@ describe('TravelLogForm', () => {
     const storeState = MockTravelLogStore.getState();
     assert.equal(true, storeState.validating);
   });
-
-
-
 });

@@ -21,7 +21,7 @@ import {merge} from '../../../merge';
 import {AppHeader} from '../../AppHeader';
 import {TravelLogHeader} from './TravelLogHeader';
 import TravelLogForm from './TravelLogForm';
-import {TravelLogSort} from './TravelLogSort.jsx';
+import TravelLogSort from './TravelLogSort';
 import {BackToDashBoardButton} from './BackToDashBoardButton';
 import {TravelLogStore} from '../../../stores/TravelLogStore';
 import {TravelLogActions} from '../../../actions/TravelLogActions';

@@ -40,6 +40,9 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.entryAdded = false;
     this.validating = false;
     this.errors = false;
+    this.sortColumn = '';
+    this.sortDirection = '';
+    this.filter = '';
   }
 
   editEntry(relationshipId) {
@@ -116,6 +119,18 @@ class _MockTravelLogStore extends AutoBindingStore {
 
   turnOnValidations() {
     this.validating = true;
+  }
+
+  sortColumnChanged(value) {
+    this.sortColumn = value;
+  }
+
+  sortDirectionChanged(value) {
+    this.sortDirection = value;
+  }
+
+  filterChanged(value) {
+    this.filter = value;
   }
 
 }

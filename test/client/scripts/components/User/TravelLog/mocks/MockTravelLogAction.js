@@ -45,6 +45,18 @@ class _MockTravelLogActions {
   turnOnValidations() { this.dispatch(); }
 
   turnOnErrors(value) { this.dispatch(value); }
+
+  sortColumnChanged(value) {
+    this.dispatch(value);
+  }
+
+  sortDirectionChanged(value) {
+    this.dispatch(value);
+  }
+
+  filterChanged(value) {
+    this.dispatch(value);
+  }
 }
 
 export let MockTravelLogActions = alt.createActions(_MockTravelLogActions);
