@@ -17,7 +17,6 @@
 */
 
 import React from 'react';
-import {merge} from '../../../merge';
 import {AppHeader} from '../../AppHeader';
 import {TravelLogHeader} from './TravelLogHeader';
 import TravelLogForm from './TravelLogForm';
@@ -27,12 +26,9 @@ import {TravelLogStore} from '../../../stores/TravelLogStore';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
 import Entry from './Entry';
 
-export class TravelLog extends React.Component {
+export default class TravelLog extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
-
     let storeState = TravelLogStore.getState();
     this.state = {
       entries: storeState.entries,
@@ -40,6 +36,7 @@ export class TravelLog extends React.Component {
       validating: storeState.validating,
       entryStates: storeState.entryStates
     };
+
 
     this.onChange = this.onChange.bind(this);
   }
@@ -96,7 +93,7 @@ export class TravelLog extends React.Component {
         paddingTop: '44px'
       }
     };
-    styles = merge(this.commonStyles, styles);
+
 
     let travelLogs;
     if (this.state.entries.length > 0) {
@@ -113,9 +110,9 @@ export class TravelLog extends React.Component {
     }
 
     return (
-      <div className="flexbox column" style={{height: '100%'}}>
+      <div className="flexbox column" style={{height: '100%'}} name='Travel Log'>
         <AppHeader style={styles.header} />
-        <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
+        <span className="flexbox row fill" style={styles.container}>
           <span style={styles.sidebar}>
             <BackToDashBoardButton/>
           </span>

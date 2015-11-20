@@ -21,7 +21,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import {Router, Route} from 'react-router';
 import {Dashboard} from './Dashboard/Dashboard';
 import {Disclosure} from './Disclosure';
-import {TravelLog} from './TravelLog/TravelLog';
+import TravelLog from './TravelLog/TravelLog';
 import {Archive} from './Archive/Archive';
 import {Revise} from './Revise/Revise';
 import {SizeAwareComponent} from '../SizeAwareComponent';

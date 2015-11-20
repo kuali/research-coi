@@ -57,6 +57,14 @@ class _MockTravelLogActions {
   filterChanged(value) {
     this.dispatch(value);
   }
+
+  updateEntryState(relationshipId) {
+    this.dispatch(relationshipId);
+  }
+
+  loadTravelLogEntries() {
+    this.dispatch();
+  }
 }
 
 export let MockTravelLogActions = alt.createActions(_MockTravelLogActions);
