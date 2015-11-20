@@ -58,6 +58,7 @@
     "jsdom": "7.0.2",
     "mocha": "2.2.4",
     "react-addons-test-utils": "0.14.2",
+    "skin-deep": "0.13.0",
     "webpack": "1.8.11"
   }
 }
