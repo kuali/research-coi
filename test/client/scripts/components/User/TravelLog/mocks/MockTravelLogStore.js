@@ -29,6 +29,19 @@ class _MockTravelLogStore extends AutoBindingStore {
       getErrorsForId: this.getErrorsForId
     });
 
+    this.entries = [{
+      entityName: 'Dragon Cats',
+      amount: 999,
+      startDate: new Date(2015, 1, 1),
+      endDate: new Date(2016, 1, 1),
+      destination: 'fdssdf',
+      reason: 'fdsffsdf',
+      status: 'IN PROGRESS',
+      disclosedDate: null,
+      relationshipId: 1,
+      active: 1
+    }];
+    this.entryStates = {};
     this.cancelId = 0;
     this.editId = 0;
     this.deleteId = 0;
@@ -43,6 +56,21 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.sortColumn = '';
     this.sortDirection = '';
     this.filter = '';
+  }
+
+  loadTravelLogEntries() {
+    this.entries.push({
+      entityName: 'Panda Dogs',
+      amount: 999,
+      startDate: new Date(2015, 1, 1),
+      endDate: new Date(2016, 1, 1),
+      destination: 'fdssdf',
+      reason: 'fdsffsdf',
+      status: 'IN PROGRESS',
+      disclosedDate: null,
+      relationshipId: 2,
+      active: 1
+    });
   }
 
   editEntry(relationshipId) {
@@ -133,6 +161,11 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.filter = value;
   }
 
+  updateEntryState(relationshipId) {
+    this.entryStates[relationshipId] = {};
+    this.entryStates[relationshipId].editing = true;
+    this.entryStates[relationshipId].validating = true;
+  }
 }
 
 export let MockTravelLogStore = alt.createStore(_MockTravelLogStore, 'MockTravelLogStore');
