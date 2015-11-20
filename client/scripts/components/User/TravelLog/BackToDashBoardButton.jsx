@@ -17,14 +17,11 @@
 */
 
 import React from 'react';
-import {merge} from '../../../merge';
 import {Link} from 'react-router';
 
 export class BackToDashBoardButton extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {
-    };
   }
 
   render() {
@@ -48,10 +45,9 @@ export class BackToDashBoardButton extends React.Component {
         fontWeight: 'bold'
       }
     };
-    styles = merge(this.commonStyles, styles);
 
     return (
-      <Link to={`/coi/dashboard`} style={merge(styles.container, this.props.style)}>
+      <Link to={`/coi/dashboard`} style={styles.container} name='Back Button'>
         <div>
           <span>
             <div style={styles.primary}>Back</div>
