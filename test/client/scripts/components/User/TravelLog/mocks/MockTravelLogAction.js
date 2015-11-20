@@ -32,6 +32,19 @@ class _MockTravelLogActions {
   cancelEntry(relationshipId) { this.dispatch(relationshipId); }
 
   updateEntry(field, value, relationshipId) { this.dispatch({field: field, value: value, relationshipId: relationshipId}); }
+
+  updateTravelLog(field, value) {
+    this.dispatch({
+      field: field,
+      value: value
+    });
+  }
+
+  addEntry() { this.dispatch(); }
+
+  turnOnValidations() { this.dispatch(); }
+
+  turnOnErrors(value) { this.dispatch(value); }
 }
 
 export let MockTravelLogActions = alt.createActions(_MockTravelLogActions);
