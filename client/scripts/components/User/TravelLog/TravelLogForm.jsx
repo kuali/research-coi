@@ -24,7 +24,7 @@ import TextField from '../TextField';
 import CurrencyField from '../CurrencyField';
 import DateRangeField from '../DateRangeField';
 
-export class TravelLogForm extends React.Component {
+export default class TravelLogForm extends React.Component {
     constructor() {
       super();
 
@@ -87,9 +87,8 @@ export class TravelLogForm extends React.Component {
       };
 
       let errors = TravelLogStore.getErrors();
-
       return (
-        <div style={styles.container}>
+        <div style={styles.container} name='Travel Log Form'>
           <div style={styles.row}>
             <TextField
               id='entityName'

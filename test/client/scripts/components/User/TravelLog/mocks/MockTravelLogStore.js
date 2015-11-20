@@ -25,6 +25,7 @@ class _MockTravelLogStore extends AutoBindingStore {
     super(MockTravelLogActions);
 
     this.exportPublicMethods({
+      getErrors: this.getErrors,
       getErrorsForId: this.getErrorsForId
     });
 
@@ -35,6 +36,10 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.saveId = 0;
     this.archiveId = 0;
     this.validatingId = 0;
+    this.updateLogValue = '';
+    this.entryAdded = false;
+    this.validating = false;
+    this.errors = false;
   }
 
   editEntry(relationshipId) {
@@ -57,6 +62,23 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.validatingId = relationshipId;
   }
 
+  getErrors() {
+    const storeState = this.getState();
+    if (storeState.errors === true) {
+      return {
+        entityName: 'required',
+        amount: 'required',
+        destination: 'required',
+        startDate: 'required',
+        endDate: 'required',
+        reason: 'required'
+      };
+    } else {
+      return {};
+    }
+
+  }
+
   getErrorsForId(relationshipId) {
     if (relationshipId === 1) {
       return {};
@@ -72,6 +94,10 @@ class _MockTravelLogStore extends AutoBindingStore {
     }
   }
 
+  turnOnErrors(value) {
+    this.errors = value;
+  }
+
   deleteEntry(relationshipId) {
     this.deleteId = relationshipId;
   }
@@ -79,6 +105,19 @@ class _MockTravelLogStore extends AutoBindingStore {
   archiveEntry(relationshipId) {
     this.archiveId = relationshipId;
   }
+
+  updateTravelLog(data) {
+    this.updateLogValue = data.value;
+  }
+
+  addEntry() {
+    this.entryAdded = true;
+  }
+
+  turnOnValidations() {
+    this.validating = true;
+  }
+
 }
 
 export let MockTravelLogStore = alt.createStore(_MockTravelLogStore, 'MockTravelLogStore');
