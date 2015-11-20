@@ -194,7 +194,7 @@ export default class Entry extends React.Component {
     if (this.props.editing) {
       let errors = TravelLogStore.getErrorsForId(this.props.travelLog.relationshipId);
       jsx = (
-        <div>
+        <div name='Entry Editor'>
           <div style={{marginBottom: 9}}>
             <TextField
               id='entityName'
@@ -253,7 +253,7 @@ export default class Entry extends React.Component {
       );
     } else {
       jsx = (
-        <div className="flexbox row">
+        <div className="flexbox row" name='Entry Viewer'>
           <span className="fill">
             <div style={{marginBottom: 10}}>
               <span style={{width: '50%', fontSize: 20, fontWeight: 'bold', verticalAlign: 'middle'}}>

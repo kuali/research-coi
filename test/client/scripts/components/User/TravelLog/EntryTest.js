@@ -16,15 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import React from 'react';
-import TestUtils from 'react-addons-test-utils'
+import React from 'react'; //eslint-disable-line no-unused-vars
 import assert from 'assert';
-import rewire from 'rewire';
+import sd from 'skin-deep';
 import {MockTravelLogActions} from './mocks/MockTravelLogAction';
 import {MockTravelLogStore} from './mocks/MockTravelLogStore';
 import {COIConstants} from '../../../../../../COIConstants';
 import Entry from '../../../../../../client/scripts/components/User/TravelLog/Entry';
-
 Entry.__Rewire__('TravelLogActions', MockTravelLogActions); //eslint-disable-line no-underscore-dangle
 Entry.__Rewire__('TravelLogStore', MockTravelLogStore); //eslint-disable-line no-underscore-dangle
 
@@ -46,196 +44,127 @@ let getTravelLog = () => {
   };
 };
 
-class MockParent extends React.Component {
-  constructor() {
-    super();
+const tree = sd.shallowRender(
+  <Entry
+    key={1}
+    travelLog={getTravelLog()}
+    editing={true}
+    validating={false}
+  />
+);
 
-    this.state = {
-      cancelId: 0,
-      editId: 0,
-      deleteId: 0,
-      saveId: 0,
-      updateId: 0,
-      archiveId: 0,
-      validatingId: 0
-    };
-
-    this.onChange = this.onChange.bind(this);
-  }
-
-  componentDidMount() {
-    MockTravelLogStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    MockTravelLogStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    let storeState = MockTravelLogStore.getState();
-    this.setState({
-      cancelId: storeState.cancelId,
-      editId: storeState.editId,
-      deleteId: storeState.deleteId,
-      saveId: storeState.saveId,
-      archiveId: storeState.archiveId,
-      validatingId: storeState.validatingId
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        <Entry
-          key={1}
-          travelLog={this.props.travelLog}
-          editing={this.props.editing}
-          validating={this.props.validating}
-        />
-      </div>
-    );
-  }
-}
-
-let getTagByName = (component, tag, name) => {
-  let elements = TestUtils.scryRenderedDOMComponentsWithTag(component, tag);
-  return elements.find(element => {
-    return element.getAttribute('name') === name;
-  });
-};
-
-let getTagById = (component, tag, id) => {
-  let elements = TestUtils.scryRenderedDOMComponentsWithTag(component, tag);
-  return elements.find(element => {
-    return element.getAttribute('id') === id;
-  });
-};
+const instance = tree.getMountedInstance();
+const vdom = tree.getRenderOutput();
 
 describe('Entry', () => {
-  it('if not editing no inputs should be rendered', () => {
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={getTravelLog()} editing={false} validating={false}/>
+  it('render entry viewer', () => {
+    const entry = sd.shallowRender(
+      <Entry
+        key={1}
+        travelLog={getTravelLog()}
+        editing={false}
+        validating={false}
+      />
     );
 
-    let inputs = TestUtils.scryRenderedDOMComponentsWithTag(component, 'input');
-    assert.equal(0, inputs.length);
+    const entryDom = entry.getRenderOutput();
+    assert.equal('Entry Viewer', entryDom.props.children.props.name);
   });
 
-  it('if editing inputs should be rendered', () => {
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={getTravelLog()} editing={true} validating={false}/>
-    );
-
-    let inputs = TestUtils.scryRenderedDOMComponentsWithTag(component, 'input');
-    assert.notEqual(0, inputs.length);
-  });
-
-  it('if archive button is clicked then store gets updated', () => {
+  it('render disclosed entry viewer', function() {
     let travelLog = getTravelLog();
-    travelLog.disclosedDate = new Date();
     travelLog.status = COIConstants.RELATIONSHIP_STATUS.DISCLOSED;
-
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={travelLog} editing={false} validating={false}/>
+    travelLog.disclosedDate = new Date();
+    const entry = sd.shallowRender(
+      <Entry
+        key={1}
+        travelLog={travelLog}
+        editing={false}
+        validating={false}
+      />
     );
 
-    let archive = getTagByName(component, 'button', 'Archive');
-    TestUtils.Simulate.click(archive);
-    assert.equal(1, component.state.archiveId);
+    const entryDom = entry.getRenderOutput();
+    assert.equal('Entry Viewer', entryDom.props.children.props.name);
   });
 
-  it('if edit button is clicked then store gets updated', function() {
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={getTravelLog()} editing={false} validating={false}/>
-    );
-
-    let edit = getTagByName(component, 'button', 'Edit');
-    TestUtils.Simulate.click(edit);
-    assert.equal(1, component.state.editId);
+  it('render entry editor', () => {
+    assert.equal('Entry Editor', vdom.props.children.props.name);
   });
 
-  it('if cancel button is clicked then store gets updated', function() {
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={getTravelLog()} editing={true} validating={false}/>
-    );
-
-    let cancel = getTagByName(component, 'button', 'Cancel');
-    TestUtils.Simulate.click(cancel);
-    assert.equal(1, component.state.cancelId);
-  });
-
-  it('if delete button is clicked then store gets updated', function() {
-    let component = TestUtils.renderIntoDocument(
-    <MockParent travelLog={getTravelLog()} editing={false} validating={false}/>
-    );
-
-    let del = getTagByName(component, 'button', 'Delete');
-    TestUtils.Simulate.click(del);
-    assert.equal(1, component.state.deleteId);
-  });
-
-  it('if done button is clicked then store gets updated', function() {
-    let component = TestUtils.renderIntoDocument(
-    <MockParent travelLog={getTravelLog()} editing={true} validating={false}/>
-    );
-
-    let done = getTagByName(component, 'button', 'Done');
-    TestUtils.Simulate.click(done);
-    assert.equal(1, component.state.saveId);
-  });
-
-  it('if done button is clicked and errors are present then store gets updated', function() {
+  it('saveEntry with errors', function() {
     let travelLog = getTravelLog();
     travelLog.relationshipId = 2;
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={travelLog} editing={true} validating={false}/>
+    const entry = sd.shallowRender(
+      <Entry
+        key={1}
+        travelLog={travelLog}
+        editing={true}
+        validating={true}
+      />
     );
 
-    let done = getTagByName(component, 'button', 'Done');
-    TestUtils.Simulate.click(done);
-    assert.equal(2, component.state.validatingId);
+    const entryInstance = entry.getMountedInstance();
+    entryInstance.saveEntry();
+
+    let storeState = MockTravelLogStore.getState();
+    assert.equal(2, storeState.validatingId);
   });
 
-  it('if field is updated store gets updated', function() {
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={getTravelLog()} editing={true} validating={false}/>
-    );
+  it('saveEntry without errors', function() {
+    instance.saveEntry();
 
-    let entityName = getTagByName(component, 'input', 'Entity Name');
-    TestUtils.Simulate.change(entityName, {target: {id: 'entityName', value: 'Panda Dogs'}});
-    assert.equal(1, component.state.editId);
+    let storeState = MockTravelLogStore.getState();
+    assert.equal(1, storeState.saveId);
   });
 
-  it('if start date is updated store gets updated', function() {
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={getTravelLog()} editing={true} validating={false}/>
-    );
+  it('archiveEntry method', () => {
+    instance.archiveEntry();
 
-    let startDate = getTagById(component, 'input', 'startDate');
-    TestUtils.Simulate.click(startDate);
-
-    let days = TestUtils.scryRenderedDOMComponentsWithClass(component, 'DayPicker-Day');
-    let dayClick = days.filter(day=> {
-      return day.innerHTML === '15';
-    });
-    TestUtils.Simulate.click(dayClick[0]);
-    assert.equal(1, component.state.editId);
+    let storeState = MockTravelLogStore.getState();
+    assert.equal(1, storeState.archiveId);
   });
 
-  it('if end date is updated store gets updated', function() {
-    let component = TestUtils.renderIntoDocument(
-      <MockParent travelLog={getTravelLog()} editing={true} validating={false}/>
-    );
+  it('editEntry method', function() {
+    instance.editEntry();
 
-    let endDate = getTagById(component, 'input', 'endDate');
-    TestUtils.Simulate.click(endDate);
+    let storeState = MockTravelLogStore.getState();
+    assert.equal(1, storeState.editId);
+  });
 
-    let days = TestUtils.scryRenderedDOMComponentsWithClass(component, 'DayPicker-Day');
-    let dayClick = days.filter(day=> {
-      return day.innerHTML === '15';
-    });
-    TestUtils.Simulate.click(dayClick[1]);
-    assert.equal(1, component.state.editId);
+  it('cancelEntry method', function() {
+    instance.cancelEntry();
+
+    let storeState = MockTravelLogStore.getState();
+    assert.equal(1, storeState.cancelId);
+  });
+
+  it('deleteEntry method', function() {
+    instance.deleteEntry();
+
+    let storeState = MockTravelLogStore.getState();
+    assert.equal(1, storeState.deleteId);
+  });
+
+  it('updateField method', function() {
+    instance.updateField({target: {value: 'entityName', id: 'test'}});
+
+    let storeState = MockTravelLogStore.getState();
+    assert.equal('entityName', storeState.updateValue);
+  });
+
+  it('updateStartDate method', function() {
+    instance.updateStartDate('startDate');
+
+    let storeState = MockTravelLogStore.getState();
+    assert.equal('startDate', storeState.updateValue);
+  });
+
+  it('updateEndDate method', function() {
+    instance.updateEndDate('endDate');
+
+    let storeState = MockTravelLogStore.getState();
+    assert.equal('endDate', storeState.updateValue);
   });
 
 });

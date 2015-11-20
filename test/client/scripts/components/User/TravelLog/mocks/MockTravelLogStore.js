@@ -31,6 +31,7 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.cancelId = 0;
     this.editId = 0;
     this.deleteId = 0;
+    this.updateValue = '';
     this.saveId = 0;
     this.archiveId = 0;
     this.validatingId = 0;
@@ -49,7 +50,7 @@ class _MockTravelLogStore extends AutoBindingStore {
   }
 
   updateEntry(data) {
-    this.editId = data.relationshipId;
+    this.updateValue = data.value;
   }
 
   turnOnValidationsForEntry(relationshipId) {
@@ -60,7 +61,14 @@ class _MockTravelLogStore extends AutoBindingStore {
     if (relationshipId === 1) {
       return {};
     } else {
-      return {error: 'required'};
+      return {
+        entityName: 'required',
+        amount: 'required',
+        destination: 'required',
+        startDate: 'required',
+        endDate: 'required',
+        reason: 'required'
+      };
     }
   }
 
