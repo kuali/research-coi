@@ -19,7 +19,7 @@
 import React from 'react';
 import {TravelLogActions} from '../../../actions/TravelLogActions';
 
-export class TravelLogSort extends React.Component {
+export default class TravelLogSort extends React.Component {
   constructor() {
     super();
 
@@ -47,7 +47,7 @@ export class TravelLogSort extends React.Component {
         width: 150,
         height: 27,
         fontSize: 14,
-        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa',
+        borderBottom: '1px solid #aaa',
         marginRight: 8
       },
       value: {
@@ -61,7 +61,7 @@ export class TravelLogSort extends React.Component {
     };
 
     return (
-      <div style={styles.container}>
+      <div style={styles.container} name='Travel Log Sort'>
         <div>
           <span style={styles.label}>Sort By:</span>
           <select style={styles.select} onChange={this.sortColumnChanged}>
