@@ -21,39 +21,9 @@ import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
 import {GreyButton} from '../GreyButton';
+import VerticalSlider from '../VerticalSlider';
 
 export class Instructions extends ResponsiveComponent {
-  constructor() {
-    super();
-
-    this.close = this.close.bind(this);
-  }
-
-  componentWillMount() {
-    this.setState({
-      slidUp: this.props.collapsed
-    });
-  }
-
-  componentDidMount() {
-    this.setState({
-      height: this.refs.instructionsBox.clientHeight
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.collapsed && !this.props.collapsed) {
-      this.setState({
-        slidUp: true
-      });
-    }
-    else if (!nextProps.collapsed && this.props.collapsed) {
-      this.setState({
-        slidUp: false
-      });
-    }
-  }
-
   close() {
     DisclosureActions.toggleInstructions();
   }
@@ -64,11 +34,7 @@ export class Instructions extends ResponsiveComponent {
         color: 'white',
         whiteSpace: 'normal',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        padding: '47px 25px 31px 53px',
-        transition: 'transform .1s ease-out',
-        transform: this.state.slidUp ? 'translateY(-100%)' : 'translateY(0%)',
-        position: 'absolute',
-        top: 0
+        padding: '47px 25px 31px 53px'
       },
       buttons: {
         textAlign: 'right',
@@ -88,15 +54,11 @@ export class Instructions extends ResponsiveComponent {
         top: 0,
         right: 25,
         zIndex: 11
-      },
-      spacer: {
-        height: this.state.slidUp ? 0 : this.state.height,
-        transition: 'height .1s ease-out'
       }
     };
 
     return (
-      <div>
+      <VerticalSlider collapsed={this.props.collapsed}>
         <div ref="instructionsBox" style={merge(styles.container, this.props.style)}>
           <div style={styles.arrow}></div>
           <div>{this.props.text}</div>
@@ -104,8 +66,7 @@ export class Instructions extends ResponsiveComponent {
             <GreyButton style={styles.closeButton} onClick={this.close}>CLOSE</GreyButton>
           </div>
         </div>
-        <div style={styles.spacer}></div>
-      </div>
+      </VerticalSlider>
     );
   }
 }
