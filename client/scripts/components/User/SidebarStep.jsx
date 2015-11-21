@@ -18,7 +18,6 @@
 
 import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../merge';
-import {FutureStepIcon} from '../DynamicIcons/FutureStepIcon';
 import {CurrentStepIcon} from '../DynamicIcons/CurrentStepIcon';
 import {CompletedStepIcon} from '../DynamicIcons/CompletedStepIcon';
 import {DisclosureActions} from '../../actions/DisclosureActions';
@@ -54,7 +53,8 @@ export class SidebarStep extends React.Component {
         cursor: 'pointer'
       },
       incomplete: {
-        color: window.colorBlindModeOn ? 'black' : '#C1C1C1'
+        color: window.colorBlindModeOn ? 'black' : '#C1C1C1',
+        fontWeight: 300
       },
       stepName: {
         verticalAlign: 'middle',
@@ -65,6 +65,14 @@ export class SidebarStep extends React.Component {
         height: 50,
         verticalAlign: 'middle',
         color: window.colorBlindModeOn ? 'black' : '#0095A0'
+      },
+      futureIcon: {
+        verticalAlign: 'middle',
+        color: window.colorBlindModeOn ? 'black' : '#0095A0',
+        fontSize: 16,
+        width: 50,
+        margin: '17px 0 17px 0px',
+        textAlign: 'center'
       }
     };
 
@@ -91,7 +99,7 @@ export class SidebarStep extends React.Component {
         if (this.props.visited) {
           return (
             <li style={merge(styles.container, styles.clickable, this.props.style)} onClick={this.navigate}>
-              <FutureStepIcon style={styles.icon} />
+              <i className="fa fa-circle" style={styles.futureIcon}></i>
               <span style={styles.stepName}>{this.props.label}</span>
             </li>
           );
@@ -99,7 +107,7 @@ export class SidebarStep extends React.Component {
         else {
           return (
             <li style={merge(styles.container, styles.incomplete, this.props.style)}>
-              <FutureStepIcon style={styles.icon} />
+              <i className="fa fa-circle" style={merge(styles.futureIcon, styles.incomplete)} />
               <span style={styles.stepName}>{this.props.label}</span>
             </li>
           );

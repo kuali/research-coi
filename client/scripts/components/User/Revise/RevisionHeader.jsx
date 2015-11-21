@@ -51,8 +51,18 @@ export default class RevisionHeader extends React.Component {
           {ConfigStore.getDisclosureTypeString(this.props.disclosureType).toUpperCase()}
         </span>
         <span style={styles.dates}>
-          <div>Submitted on {formatDate(this.props.submittedDate)}</div>
-          <div>Returned for Revisions on {formatDate(this.props.returnedDate)}</div>
+          <div>
+            Submitted on
+            <span style={{marginLeft: 3}}>
+              {formatDate(this.props.submittedDate)}
+            </span>
+          </div>
+          <div>
+            Returned for Revisions on
+            <span style={{marginLeft: 3}}>
+              {formatDate(this.props.returnedDate)}
+            </span>
+          </div>
         </span>
       </div>
     );

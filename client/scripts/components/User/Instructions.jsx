@@ -21,60 +21,20 @@ import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
 import {GreyButton} from '../GreyButton';
+import VerticalSlider from '../VerticalSlider';
 
 export class Instructions extends ResponsiveComponent {
-  constructor() {
-    super();
-    this.commonStyles = {};
-
-    this.close = this.close.bind(this);
-  }
-
-  componentWillMount() {
-    this.setState({
-      takingUpSpace: !this.props.collapsed,
-      slidUp: this.props.collapsed
-    });
-  }
-
   close() {
     DisclosureActions.toggleInstructions();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.collapsed && !this.props.collapsed) {
-      setTimeout(() => {
-        this.setState({
-          takingUpSpace: false
-        });
-      }, 150);
-      this.setState({
-        slidUp: true
-      });
-    }
-    else if (!nextProps.collapsed && this.props.collapsed) {
-      this.setState({
-        takingUpSpace: true
-      });
-
-      setTimeout(() => {
-        this.setState({
-          slidUp: false
-        });
-      }, 20);
-    }
-  }
-
   renderDesktop() {
-    let desktopStyles = {
+    let styles = {
       container: {
-        display: this.state.takingUpSpace ? 'block' : 'none',
         color: 'white',
         whiteSpace: 'normal',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        padding: '47px 25px 31px 53px',
-        transition: 'transform .1s ease-out',
-        transform: this.state.slidUp ? 'translateY(-100%)' : 'translateY(0%)'
+        padding: '47px 25px 31px 53px'
       },
       buttons: {
         textAlign: 'right',
@@ -97,16 +57,16 @@ export class Instructions extends ResponsiveComponent {
       }
     };
 
-    let styles = merge(this.commonStyles, desktopStyles);
-
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.arrow}></div>
-        <div>{this.props.text}</div>
-        <div style={styles.buttons}>
-          <GreyButton style={styles.closeButton} onClick={this.close}>CLOSE</GreyButton>
+      <VerticalSlider collapsed={this.props.collapsed}>
+        <div ref="instructionsBox" style={merge(styles.container, this.props.style)}>
+          <div style={styles.arrow}></div>
+          <div>{this.props.text}</div>
+          <div style={styles.buttons}>
+            <GreyButton style={styles.closeButton} onClick={this.close}>CLOSE</GreyButton>
+          </div>
         </div>
-      </div>
+      </VerticalSlider>
     );
   }
 }
