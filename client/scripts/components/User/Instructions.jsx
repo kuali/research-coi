@@ -25,56 +25,50 @@ import {GreyButton} from '../GreyButton';
 export class Instructions extends ResponsiveComponent {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.close = this.close.bind(this);
   }
 
   componentWillMount() {
     this.setState({
-      takingUpSpace: !this.props.collapsed,
       slidUp: this.props.collapsed
     });
   }
 
-  close() {
-    DisclosureActions.toggleInstructions();
+  componentDidMount() {
+    this.setState({
+      height: this.refs.instructionsBox.clientHeight
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.collapsed && !this.props.collapsed) {
-      setTimeout(() => {
-        this.setState({
-          takingUpSpace: false
-        });
-      }, 150);
       this.setState({
         slidUp: true
       });
     }
     else if (!nextProps.collapsed && this.props.collapsed) {
       this.setState({
-        takingUpSpace: true
+        slidUp: false
       });
-
-      setTimeout(() => {
-        this.setState({
-          slidUp: false
-        });
-      }, 20);
     }
   }
 
+  close() {
+    DisclosureActions.toggleInstructions();
+  }
+
   renderDesktop() {
-    let desktopStyles = {
+    let styles = {
       container: {
-        display: this.state.takingUpSpace ? 'block' : 'none',
         color: 'white',
         whiteSpace: 'normal',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
         padding: '47px 25px 31px 53px',
         transition: 'transform .1s ease-out',
-        transform: this.state.slidUp ? 'translateY(-100%)' : 'translateY(0%)'
+        transform: this.state.slidUp ? 'translateY(-100%)' : 'translateY(0%)',
+        position: 'absolute',
+        top: 0
       },
       buttons: {
         textAlign: 'right',
@@ -94,18 +88,23 @@ export class Instructions extends ResponsiveComponent {
         top: 0,
         right: 25,
         zIndex: 11
+      },
+      spacer: {
+        height: this.state.slidUp ? 0 : this.state.height,
+        transition: 'height .1s ease-out'
       }
     };
 
-    let styles = merge(this.commonStyles, desktopStyles);
-
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.arrow}></div>
-        <div>{this.props.text}</div>
-        <div style={styles.buttons}>
-          <GreyButton style={styles.closeButton} onClick={this.close}>CLOSE</GreyButton>
+      <div>
+        <div ref="instructionsBox" style={merge(styles.container, this.props.style)}>
+          <div style={styles.arrow}></div>
+          <div>{this.props.text}</div>
+          <div style={styles.buttons}>
+            <GreyButton style={styles.closeButton} onClick={this.close}>CLOSE</GreyButton>
+          </div>
         </div>
+        <div style={styles.spacer}></div>
       </div>
     );
   }

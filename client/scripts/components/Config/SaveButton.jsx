@@ -53,7 +53,7 @@ export default class SaveButton extends React.Component {
     return (
       <div className="flexbox row" onClick={this.save} style={merge(styles.container, this.props.style)}>
         <span>
-          <i className="fa fa-check" style={styles.saveIcon}></i>
+          <i className="fa fa-check-circle" style={styles.saveIcon}></i>
         </span>
         <span className="fill" style={styles.saveText}>SAVE CHANGES</span>
       </div>

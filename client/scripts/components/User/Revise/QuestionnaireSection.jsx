@@ -33,9 +33,9 @@ export default class QuestionnaireSection extends React.Component {
       title: {
         fontSize: 23,
         padding: '10px 18px',
-        borderBottom: '1px solid #DDD',
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: 'white'
+        borderBottom: '1px solid #AAA',
+        backgroundColor: 'white',
+        color: 'black'
       },
       body: {
         padding: 23
