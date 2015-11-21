@@ -18,7 +18,6 @@
 
 import React from 'react';
 import {merge} from '../../merge';
-import PencilIcon from '../DynamicIcons/PencilIcon';
 import CheckmarkIcon from '../DynamicIcons/CheckmarkIcon';
 import {COIConstants} from '../../../../COIConstants';
 
@@ -74,8 +73,7 @@ class EditableItem extends React.Component {
         marginBottom: 8
       },
       editIcon: {
-        width: 35,
-        height: 18,
+        fontSize: 14,
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
         verticalAlign: 'middle',
         padding: '0 10px',
@@ -137,7 +135,7 @@ class EditableItem extends React.Component {
     else {
       content = (
         <div style={merge(styles.container, this.props.style)}>
-          <PencilIcon style={styles.editIcon} onClick={this.edit} />
+          <i className="fa fa-pencil" style={styles.editIcon} onClick={this.edit}></i>
           <span style={styles.deleteIcon} onClick={this.delete}>X</span>
           <span style={styles.text}>{this.props.children}</span>
         </div>

@@ -91,12 +91,6 @@ export class AppHeader extends React.Component {
         paddingLeft: 5,
         paddingTop: 7
       },
-      searchIcon: {
-        width: '28px',
-        verticalAlign: 'middle',
-        padding: '0 10px',
-        cursor: 'pointer'
-      },
       controls: {
         'float': 'right',
         display: 'inline-block',

@@ -19,8 +19,6 @@
 import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../ResponsiveComponent';
 import {merge} from '../../merge';
-import {RightArrowIcon} from '../DynamicIcons/RightArrowIcon';
-import {InstructionIcon} from '../DynamicIcons/InstructionIcon';
 import {DisclosureActions} from '../../actions/DisclosureActions';
 
 export class DisclosureHeader extends ResponsiveComponent {
@@ -57,9 +55,8 @@ export class DisclosureHeader extends ResponsiveComponent {
 
     return (
       <header style={merge(styles.container, this.props.style)}>
-        <RightArrowIcon style={merge(styles.headerIcon, {left: 10})} />
         <span style={styles.stepName}>{this.props.children}</span>
-        <InstructionIcon onClick={this.showInstructions} style={merge(styles.headerIcon, {right: 10})} />
+        <i className="fa fa-info-circle" style={{marginRight: 5, fontSize: 20}}></i>
       </header>
     );
   }

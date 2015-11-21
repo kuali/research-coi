@@ -18,7 +18,6 @@
 
 import React from 'react';
 import {merge} from '../../merge';
-import PencilIcon from '../DynamicIcons/PencilIcon';
 
 export default class EditLink extends React.Component {
   constructor() {
@@ -44,8 +43,7 @@ export default class EditLink extends React.Component {
         fontSize: 8
       },
       icon: {
-        width: 15,
-        height: 15,
+        fontSize: 12,
         color: window.colorBlindModeOn ? 'black' : '#0095A0',
         verticalAlign: 'middle'
       }
@@ -53,7 +51,7 @@ export default class EditLink extends React.Component {
 
     return (
       <span onClick={this.onClick} style={merge(styles.container, this.props.style)}>
-        <PencilIcon style={styles.icon} />
+        <i className="fa fa-pencil" style={styles.icon}></i>
         <span style={styles.linkText}>EDIT</span>
       </span>
     );
