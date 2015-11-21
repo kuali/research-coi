@@ -18,7 +18,6 @@
 
 import React from 'react';
 import {merge} from '../../merge';
-import {CloseIcon} from '../DynamicIcons/CloseIcon';
 
 export default class DeleteLink extends React.Component {
   constructor() {
@@ -44,16 +43,15 @@ export default class DeleteLink extends React.Component {
         fontSize: 8
       },
       icon: {
-        width: 15,
-        height: 15,
         color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        fontSize: 14
       }
     };
 
     return (
       <span onClick={this.props.onClick} style={merge(styles.container, this.props.style)}>
-        <CloseIcon style={styles.icon} />
+        <i className="fa fa-times-circle" style={styles.icon}></i>
         <span style={styles.linkText}>Delete</span>
       </span>
     );

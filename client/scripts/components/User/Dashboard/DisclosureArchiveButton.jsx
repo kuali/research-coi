@@ -20,7 +20,6 @@ import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {Link} from 'react-router';
-import {RefreshIcon} from '../../DynamicIcons/RefreshIcon';
 
 export class DisclosureArchiveButton extends ResponsiveComponent {
   constructor() {
@@ -55,7 +54,6 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
     return (
       <Link to={"/coi/archiveview"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
         <div>
-          <RefreshIcon style={styles.icon} />
           <div>Disclosure</div>
           <div>Archive</div>
         </div>

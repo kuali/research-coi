@@ -22,7 +22,6 @@ import {AppHeader} from '../../AppHeader';
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {NewDisclosureButton} from './NewDisclosureButton';
 import {DisclosureArchiveButton} from './DisclosureArchiveButton';
-import {FinancialEntitiesButton} from './FinancialEntitiesButton';
 import {ConfirmationMessage} from './ConfirmationMessage';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureStore} from '../../../stores/DisclosureStore';
@@ -128,7 +127,6 @@ export class Dashboard extends ResponsiveComponent {
           <NewDisclosureButton type="Annual" />
           <TravelLogButton />
           <NewDisclosureButton type="Manual" />
-          <FinancialEntitiesButton />
           <DisclosureArchiveButton />
         </div>
       </span>
