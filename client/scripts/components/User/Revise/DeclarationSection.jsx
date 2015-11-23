@@ -55,7 +55,7 @@ export default function DeclarationSection(props: Object): React.Element {
   });
 
   return (
-    <div style={merge(styles.container, props.style)}>
+    <div style={merge(styles.container, props.style)} name='Declaration Section'>
       <div style={styles.title}>
         PROJECT DECLARATIONS
       </div>
