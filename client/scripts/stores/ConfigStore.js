@@ -135,15 +135,18 @@ class _ConfigStore extends AutoBindingStore {
 
   saveNewDeclarationType() {
     // Eventually get id from server
-    this.config.declarationTypes.push({
-      enabled: true,
-      description: this.applicationState.newTypeText,
-      custom: true,
-      typeCd: `new${new Date().getTime()}`
-    });
+    if (this.applicationState.newTypeText) {
+      this.config.declarationTypes.push({
+        enabled: true,
+        description: this.applicationState.newTypeText,
+        custom: true,
+        typeCd: `new${new Date().getTime()}`
+      });
+    }
     this.applicationState.enteringNewType = false;
     this.applicationState.newTypeText = '';
     this.dirty = true;
+
   }
 
   setNewDeclarationTypeText(newValue) {
