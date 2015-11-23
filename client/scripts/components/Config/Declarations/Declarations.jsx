@@ -25,6 +25,7 @@ import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
 import DeclarationType from './DeclarationType';
 import DeleteLink from '../DeleteLink';
+import DoneLink from '../DoneLink';
 import ConfigActions from '../../../actions/ConfigActions';
 import {COIConstants} from '../../../../../COIConstants';
 import {AppHeader} from '../../AppHeader';
@@ -114,9 +115,9 @@ export default class Declarations extends React.Component {
         padding: 3,
         fontSize: 16
       },
-      deleteLink: {
-        float: 'right',
-        paddingTop: 2
+      editLink: {
+        paddingTop: 2,
+        marginLeft: 3
       }
     };
 
@@ -156,7 +157,7 @@ export default class Declarations extends React.Component {
       newType = (
         <div style={{margin: '0 20px 0 10px'}}>
           <input type="text" ref="newType" value={this.state.applicationState.newTypeText} style={styles.textbox} onKeyUp={this.lookForEnter} onChange={this.updateNewValue} />
-          <DeleteLink style={styles.deleteLink} onClick={ConfigActions.deleteInProgressCustomDeclarationType} />
+          <DoneLink style={styles.editLink} onClick={ConfigActions.saveNewDeclarationType} />
         </div>
       );
 
