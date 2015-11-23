@@ -38,12 +38,6 @@ export class ConfirmationMessage extends ResponsiveComponent {
         marginRight: 12
       }
     };
-
-    this.close = this.close.bind(this);
-  }
-
-  close() {
-    DisclosureActions.toggleConfirmationMessage();
   }
 
   renderMobile() {
@@ -63,7 +57,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <span style={styles.close} onClick={this.close}>
+        <span style={styles.close} onClick={DisclosureActions.toggleConfirmationMessage}>
           CLOSE
           <span style={styles.x}>X</span>
         </span>
@@ -90,7 +84,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
 
     return (
       <div style={merge(styles.container, this.props.style)}>
-        <span style={styles.close} onClick={this.close}>
+        <span style={styles.close} onClick={DisclosureActions.toggleConfirmationMessage}>
           <i className="fa fa-times" style={styles.x}></i>
         </span>
         <div>Awesome, you have successfully submitted your disclosure!</div>

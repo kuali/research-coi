@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -20,31 +21,29 @@ import React from 'react';
 import {merge} from '../../merge';
 import {Link} from 'react-router';
 
-export default class BackToDashboard extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        backgroundColor: 'white',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        padding: '25px 0px',
-        fontSize: 20,
-        textAlign: 'center',
-        cursor: 'pointer',
-        zIndex: 9,
-        position: 'relative',
-        boxShadow: '0 0 10px #CCC'
-      }
-    };
+export default function BackToDashboard(props: Object): React.Element {
+  let styles = {
+    container: {
+      backgroundColor: 'white',
+      color: window.colorBlindModeOn ? 'black' : '#0095A0',
+      padding: '25px 0px',
+      fontSize: 20,
+      textAlign: 'center',
+      cursor: 'pointer',
+      zIndex: 9,
+      position: 'relative',
+      boxShadow: '0 0 10px #CCC'
+    }
+  };
 
-    return (
-      <Link to={"/coi/dashboard"}>
-        <div style={merge(styles.container, this.props.style)}>
-          <div>
-            <i className="fa fa-arrow-left"></i>
-            <span style={{marginLeft: 15}}>BACK TO DASHBOARD</span>
-          </div>
+  return (
+    <Link to={"/coi/dashboard"}>
+      <div style={merge(styles.container, props.style)}>
+        <div>
+          <i className="fa fa-arrow-left"></i>
+          <span style={{marginLeft: 15}}>BACK TO DASHBOARD</span>
         </div>
-      </Link>
-    );
-  }
+      </div>
+    </Link>
+  );
 }

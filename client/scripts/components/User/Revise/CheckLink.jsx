@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -19,34 +20,32 @@
 import React from 'react';
 import {merge} from '../../../merge';
 
-export default class CheckLink extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        marginRight: 20,
-        cursor: this.props.disabled ? 'default' : 'pointer'
-      },
-      link: {
-        borderBottom: this.props.disabled ? '#AAA' : this.props.checked ? window.colorBlindModeOn ? '1px dashed black' : '1px dashed #00D000' : '1px dashed #888',
-        color: this.props.disabled ? '#AAA' : this.props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : '#666'
-      },
-      checkmark: {
-        color: this.props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : 'transparent',
-        marginRight: 3
-      }
-    };
+export default function CheckLink(props: Object): React.Element {
+  let styles = {
+    container: {
+      marginRight: 20,
+      cursor: props.disabled ? 'default' : 'pointer'
+    },
+    link: {
+      borderBottom: props.disabled ? '#AAA' : props.checked ? window.colorBlindModeOn ? '1px dashed black' : '1px dashed #00D000' : '1px dashed #888',
+      color: props.disabled ? '#AAA' : props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : '#666'
+    },
+    checkmark: {
+      color: props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : 'transparent',
+      marginRight: 3
+    }
+  };
 
-    let check = (
-      <i className="fa fa-check" style={styles.checkmark}></i>
-    );
+  let check = (
+    <i className="fa fa-check" style={styles.checkmark}></i>
+  );
 
-    return (
-      <span style={merge(styles.container, this.props.style)} onClick={this.props.onClick}>
-        {check}
-        <span style={styles.link}>
-          {this.props.children}
-        </span>
+  return (
+    <span style={merge(styles.container, props.style)} onClick={props.onClick}>
+      {check}
+      <span style={styles.link}>
+        {props.children}
       </span>
-    );
-  }
+    </span>
+  );
 }

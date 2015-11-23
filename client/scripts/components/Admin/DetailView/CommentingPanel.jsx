@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -29,10 +30,6 @@ export default class CommentingPanel extends React.Component {
     this.makeComment = this.makeComment.bind(this);
   }
 
-  done() {
-    AdminActions.hideCommentingPanel();
-  }
-
   makeComment() {
     let piCheck = this.refs.piCheck;
     let visibleToPI = piCheck.checked;
@@ -52,7 +49,7 @@ export default class CommentingPanel extends React.Component {
 
   }
 
-  render() {
+  render(): React.Element {
     let styles = {
       container: {
         backgroundColor: 'white',
@@ -176,7 +173,7 @@ export default class CommentingPanel extends React.Component {
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.heading}>
-          <span style={styles.close} onClick={this.done}>
+          <span style={styles.close} onClick={AdminActions.hideCommentingPanel}>
             <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
           </span>
           <span style={styles.topic}>{this.props.topic}</span>

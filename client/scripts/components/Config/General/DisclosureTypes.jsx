@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -20,51 +21,45 @@ import React from 'react';
 import {merge} from '../../../merge';
 import DisclosureType from './DisclosureType';
 
-export default class DisclosureTypes extends React.Component {
-  constructor() {
-    super();
-  }
-
-  render() {
-    let styles = {
-      container: {
-        padding: '20px 23px 10px 23px',
-        fontSize: 15
-      },
-      optionRow: {
-        paddingBottom: 20
-      },
-      editLink: {
-        marginLeft: 10
-      },
-      checkbox: {
-        marginRight: 10
-      },
-      title: {
-        fontSize: 12,
-        marginBottom: 10
-      }
-    };
-
-    let rows;
-    if (this.props.types && this.props.types.length > 0) {
-      rows = (
-        <div>
-          <div style={styles.optionRow} className="flexbox row">
-            <DisclosureType type={this.props.types[1]} canToggle={true} />
-            <DisclosureType type={this.props.types[3]} canToggle={true} />
-          </div>
-          <div style={styles.optionRow}>
-          </div>
-        </div>
-      );
+export default function DisclosureTypes(props: Object): React.Element {
+  let styles = {
+    container: {
+      padding: '20px 23px 10px 23px',
+      fontSize: 15
+    },
+    optionRow: {
+      paddingBottom: 20
+    },
+    editLink: {
+      marginLeft: 10
+    },
+    checkbox: {
+      marginRight: 10
+    },
+    title: {
+      fontSize: 12,
+      marginBottom: 10
     }
+  };
 
-    return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.title}>DISCLOSURE TITLE</div>
-        {rows}
+  let rows;
+  if (props.types && props.types.length > 0) {
+    rows = (
+      <div>
+        <div style={styles.optionRow} className="flexbox row">
+          <DisclosureType type={props.types[1]} canToggle={true} />
+          <DisclosureType type={props.types[3]} canToggle={true} />
+        </div>
+        <div style={styles.optionRow}>
+        </div>
       </div>
     );
   }
+
+  return (
+    <div style={merge(styles.container, props.style)}>
+      <div style={styles.title}>DISCLOSURE TITLE</div>
+      {rows}
+    </div>
+  );
 }

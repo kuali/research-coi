@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import React from 'react';
 import {merge} from '../../../merge';
 import {DisclosureDetailHeading} from './DisclosureDetailHeading';
-import {ActionButtons} from './ActionButtons';
+import ActionButtons from './ActionButtons';
 import {AdminQuestionnaireSummary} from './AdminQuestionnaireSummary';
 import {AdminEntitiesSummary} from './AdminEntitiesSummary';
 import {AdminDeclarationsSummary} from './AdminDeclarationsSummary';
-import {ApprovalConfirmation} from './ApprovalConfirmation';
-import {RejectionConfirmation} from './RejectionConfirmation';
+import ApprovalConfirmation from './ApprovalConfirmation';
+import RejectionConfirmation from './RejectionConfirmation';
 import {COIConstants} from '../../../../../COIConstants';
 
 export class DisclosureDetail extends React.Component {
@@ -183,7 +183,7 @@ export class DisclosureDetail extends React.Component {
       <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
         <DisclosureDetailHeading disclosure={this.props.disclosure} />
         <div className="fill flexbox row" style={styles.bottom}>
-          <span className="fill" style={styles.detailsFromPI} ref="detailPanel">
+          <span className="fill" style={styles.detailsFromPI}>
             <AdminQuestionnaireSummary
               questions={screeningQuestions}
               answers={screeningAnswers}

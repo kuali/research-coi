@@ -16,31 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
+import React from 'react';
 import {merge} from '../../../merge';
 import {GreyButton} from '../../GreyButton';
 import {BlueButton} from '../../BlueButton';
 import {AdminActions} from '../../../actions/AdminActions';
 
-export class RejectionConfirmation extends ResponsiveComponent {
+export default class RejectionConfirmation extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
+    this.reject = this.reject.bind(this);
   }
 
   reject() {
     AdminActions.rejectDisclosure();
   }
 
-  cancel() {
-    AdminActions.toggleRejectionConfirmation();
-  }
-
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
+  render() {
+    let styles = {
       container: {
         color: 'black',
         fontSize: 15,
@@ -90,7 +83,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
         marginBottom: 17
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+
     let rejectionSection;
     if (this.props.canReject) {
       rejectionSection = (
@@ -103,7 +96,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
           <textarea ref="comments" style={styles.commentText} />
 
           <BlueButton onClick={this.reject} style={styles.yesButton}>YES, SUBMIT</BlueButton>
-          <GreyButton onClick={this.cancel} style={styles.button}>NO, CANCEL</GreyButton>
+          <GreyButton onClick={AdminActions.toggleRejectionConfirmation} style={styles.button}>NO, CANCEL</GreyButton>
         </div>
       );
     } else {
@@ -113,7 +106,7 @@ export class RejectionConfirmation extends ResponsiveComponent {
             Please add one or more comments visible to the PI before sending back a disclosure.
           </div>
 
-          <GreyButton onClick={this.cancel} style={styles.button}>CLOSE</GreyButton>
+          <GreyButton onClick={AdminActions.toggleRejectionConfirmation} style={styles.button}>CLOSE</GreyButton>
         </div>
       );
     }

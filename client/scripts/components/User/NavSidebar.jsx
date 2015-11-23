@@ -35,14 +35,6 @@ export class NavSidebar extends React.Component {
     }
   }
 
-  goBack() {
-    DisclosureActions.previousQuestion();
-  }
-
-  nextStep() {
-    DisclosureActions.nextStep();
-  }
-
   render() {
     let styles = {
       container: {
@@ -98,7 +90,7 @@ export class NavSidebar extends React.Component {
       !this.props.nextDisabled
     ) {
       nextStep = (
-        <div onClick={this.nextStep} style={styles.nextquestion}>
+        <div onClick={DisclosureActions.nextStep} style={styles.nextquestion}>
           <i className="fa fa-arrow-circle-right" style={styles.icons}></i>
           <span style={styles.stepLabel}>
             NEXT STEP
@@ -142,7 +134,7 @@ export class NavSidebar extends React.Component {
         </div>
 
         <div style={styles.stepButtons}>
-          <div onClick={this.goBack} style={styles.prevquestion}>
+          <div onClick={DisclosureActions.previousQuestion} style={styles.prevquestion}>
             <i className="fa fa-arrow-circle-left" style={styles.icons}></i>
             <span style={styles.stepLabel}>
               {previousLabel}

@@ -16,31 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react';
+import React from 'react'; // eslint-disable-line no-unused-vars
 import {merge} from '../merge';
 
-export class GreyButton extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        backgroundColor: '#E6E6E6',
-        border: 0,
-        borderBottom: '2px solid #A6A6A6',
-        borderRadius: 3,
-        fontSize: 12,
-        padding: '4px 13px',
-        cursor: 'pointer',
-        minWidth: 100
-      }
-    };
-
-    return (
-      <button
-        {...this.props}
-        style={merge(styles.container, this.props.style)}
-      >
-        {this.props.children}
-      </button>
-    );
+let styles = {
+  container: {
+    backgroundColor: '#E6E6E6',
+    border: 0,
+    borderBottom: '2px solid #A6A6A6',
+    borderRadius: 3,
+    fontSize: 12,
+    padding: '4px 13px',
+    cursor: 'pointer',
+    minWidth: 100
   }
-}
+};
+
+export let GreyButton = props => (
+  <button
+    {...props}
+    style={merge(styles.container, props.style)}
+  >
+    {props.children}
+  </button>
+);

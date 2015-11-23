@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -18,16 +19,10 @@
 
 import React from 'react';
 
-export class KualiLogo extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <img src="/coi/images/kuali.png" alt="Kuali Logo" style={this.props.style} />
-    );
-  }
+export function KualiLogo(props: Object): React.Element {
+  return (
+    <img src="/coi/images/kuali.png" alt="Kuali Logo" style={props.style} />
+  );
 }
 
 KualiLogo.defaultProps = {

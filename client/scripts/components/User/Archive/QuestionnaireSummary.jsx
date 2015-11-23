@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -16,55 +17,53 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import React from 'react';
 import {merge} from '../../../merge';
 import QuestionSummary from './QuestionSummary';
 
-export default class extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        backgroundColor: 'white',
-        boxShadow: '0 0 8px #AAA',
-        borderRadius: 5,
-        overflow: 'hidden'
-      },
-      heading: {
-        borderBottom: '1px solid #999',
-        fontSize: 25,
-        color: 'black',
-        padding: 10
-      },
-      body: {
-        padding: '13px 20px'
-      }
-    };
-
-    let questions;
-    if(this.props.questions !== undefined) {
-      questions = this.props.questions.filter(question => {
-        return this.props.answers[question.id] !== undefined;
-      }).sort((a, b) => {
-        return String(a.question.numberToShow).localeCompare(String(b.question.numberToShow));
-      });
-      questions = questions.map(question => {
-        return (
-          <QuestionSummary
-            key={question.id}
-            question={question}
-            answer={this.props.answers[question.id].answer.value}
-          />
-        );
-      });
+export default function QuestionnaireSummary(props: Object): React.Element {
+  let styles = {
+    container: {
+      backgroundColor: 'white',
+      boxShadow: '0 0 8px #AAA',
+      borderRadius: 5,
+      overflow: 'hidden'
+    },
+    heading: {
+      borderBottom: '1px solid #999',
+      fontSize: 25,
+      color: 'black',
+      padding: 10
+    },
+    body: {
+      padding: '13px 20px'
     }
+  };
 
-    return (
-      <div style={merge(styles.container, this.props.style)} >
-        <div style={styles.heading}>QUESTIONNAIRE</div>
-        <div style={styles.body}>
-          {questions}
-        </div>
-      </div>
-    );
+  let questions;
+  if(props.questions !== undefined) {
+    questions = props.questions.filter(question => {
+      return props.answers[question.id] !== undefined;
+    }).sort((a, b) => {
+      return String(a.question.numberToShow).localeCompare(String(b.question.numberToShow));
+    });
+    questions = questions.map(question => {
+      return (
+        <QuestionSummary
+          key={question.id}
+          question={question}
+          answer={props.answers[question.id].answer.value}
+        />
+      );
+    });
   }
+
+  return (
+    <div style={merge(styles.container, props.style)} >
+      <div style={styles.heading}>QUESTIONNAIRE</div>
+      <div style={styles.body}>
+        {questions}
+      </div>
+    </div>
+  );
 }

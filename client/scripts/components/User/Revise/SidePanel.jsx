@@ -46,10 +46,6 @@ export default class SidePanel extends React.Component {
     }
   }
 
-  submit() {
-    PIReviewActions.submit();
-  }
-
   render() {
     let submitEnabled = this.props.submitEnabled;
 
@@ -142,7 +138,7 @@ export default class SidePanel extends React.Component {
       content = (
         <div>
           <div style={styles.message}>{message}</div>
-          <div style={styles.submit} onClick={this.submit}>
+          <div style={styles.submit} onClick={PIReviewActions.submit}>
             <i className="fa fa-arrow-circle-right" style={styles.submitIcon}></i>
             SUBMIT
           </div>

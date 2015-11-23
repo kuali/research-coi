@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -20,49 +21,47 @@ import React from 'react';
 import {merge} from '../../../merge';
 import EntityToReview from './EntityToReview';
 
-export default class EntitySection extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        margin: '25px 20px 25px 35px',
-        backgroundColor: 'white',
-        borderRadius: 5,
-        boxShadow: '0 0 10px 2px #DDD',
-        overflow: 'hidden'
-      },
-      title: {
-        fontSize: 23,
-        padding: '10px 18px',
-        borderBottom: '1px solid #AAA',
-        backgroundColor: 'white',
-        color: 'black'
-      },
-      body: {
-        padding: 23
-      }
-    };
+export default function EntitySection(props: Object): React.Element {
+  let styles = {
+    container: {
+      margin: '25px 20px 25px 35px',
+      backgroundColor: 'white',
+      borderRadius: 5,
+      boxShadow: '0 0 10px 2px #DDD',
+      overflow: 'hidden'
+    },
+    title: {
+      fontSize: 23,
+      padding: '10px 18px',
+      borderBottom: '1px solid #AAA',
+      backgroundColor: 'white',
+      color: 'black'
+    },
+    body: {
+      padding: 23
+    }
+  };
 
-    let entities = this.props.entitiesToReview.map((entitytoReview, index) => {
-      return (
-        <EntityToReview
-          key={entitytoReview.id}
-          entity={entitytoReview}
-          respondedTo={entitytoReview.respondedTo}
-          revised={entitytoReview.revised}
-          style={{marginBottom: index === this.props.entitiesToReview.length - 1 ? 0 : 50}}
-        />
-      );
-    });
-
+  let entities = props.entitiesToReview.map((entitytoReview, index) => {
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.title}>
-          FINANCIAL ENTITIES
-        </div>
-        <div style={styles.body}>
-          {entities}
-        </div>
-      </div>
+      <EntityToReview
+        key={entitytoReview.id}
+        entity={entitytoReview}
+        respondedTo={entitytoReview.respondedTo}
+        revised={entitytoReview.revised}
+        style={{marginBottom: index === props.entitiesToReview.length - 1 ? 0 : 50}}
+      />
     );
-  }
+  });
+
+  return (
+    <div style={merge(styles.container, props.style)}>
+      <div style={styles.title}>
+        FINANCIAL ENTITIES
+      </div>
+      <div style={styles.body}>
+        {entities}
+      </div>
+    </div>
+  );
 }
