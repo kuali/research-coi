@@ -823,17 +823,17 @@ export let submit = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
-export let getExpirationDate = (approvedDate, isRolling, dueDate) => {
+export let getExpirationDate = (date, isRolling, dueDate) => {
   if (isRolling === true) {
-    return new Date(approvedDate.setFullYear(approvedDate.getFullYear() + 1));
+    return new Date(date.setFullYear(date.getFullYear() + 1));
   } else {
     let dueMonthDay = dueDate.getMonth() + dueDate.getDay();
-    let approveMonthDay = approvedDate.getMonth() + approvedDate.getDay();
+    let approveMonthDay = date.getMonth() + date.getDay();
 
     if (approveMonthDay < dueMonthDay) {
-      return new Date(dueDate.setFullYear(approvedDate.getFullYear()));
+      return new Date(dueDate.setFullYear(date.getFullYear()));
     } else {
-      return new Date(dueDate.setFullYear(approvedDate.getFullYear() + 1));
+      return new Date(dueDate.setFullYear(date.getFullYear() + 1));
     }
   }
 };
@@ -899,8 +899,7 @@ export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
   ])
   .then(([config]) => {
     let generalConfig = JSON.parse(config[0].config).general;
-    let approvedDate = new Date();
-    let expiredDate = getExpirationDate(approvedDate, generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
+    let expiredDate = getExpirationDate(new Date(disclosure.submittedDate), generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
     return approveDisclosure(knex, disclosureId, expiredDate);
   });
 };
