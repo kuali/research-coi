@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -20,56 +21,54 @@ import React from 'react';
 import {merge} from '../../merge';
 import {GreyButton} from '../GreyButton';
 
-export default class PanelWithButtons extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        borderRadius: 5,
-        backgroundColor: 'white',
-        boxShadow: '0 0 10px #BBB',
-        marginBottom: 22
-      },
-      title: {
-        borderBottom: '1px solid #AAA',
-        padding: '10px 17px',
-        fontSize: 17
-      },
-      content: {
-        padding: 10
-      },
-      button: {
-        marginLeft: 10,
-        float: 'right',
-        width: 124
-      },
-      buttonRow: {
-        padding: '10px 20px',
-        height: 53,
-        borderTop: '1px solid #AAA'
-      }
-    };
-
-    let buttons;
-    if (this.props.buttons) {
-      buttons = this.props.buttons.map(button => {
-        return (
-          <GreyButton key={button.label} style={styles.button} onClick={button.onClick}>{button.label}</GreyButton>
-        );
-      });
+export default function PanelWithButtons(props: Object): React.Element {
+  let styles = {
+    container: {
+      borderRadius: 5,
+      backgroundColor: 'white',
+      boxShadow: '0 0 10px #BBB',
+      marginBottom: 22
+    },
+    title: {
+      borderBottom: '1px solid #AAA',
+      padding: '10px 17px',
+      fontSize: 17
+    },
+    content: {
+      padding: 10
+    },
+    button: {
+      marginLeft: 10,
+      float: 'right',
+      width: 124
+    },
+    buttonRow: {
+      padding: '10px 20px',
+      height: 53,
+      borderTop: '1px solid #AAA'
     }
+  };
 
-    return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.title}>
-          {this.props.title}
-        </div>
-        <div style={styles.content}>
-          {this.props.children}
-        </div>
-        <div style={styles.buttonRow}>
-          {buttons}
-        </div>
-      </div>
-    );
+  let buttons;
+  if (props.buttons) {
+    buttons = props.buttons.map(button => {
+      return (
+        <GreyButton key={button.label} style={styles.button} onClick={button.onClick}>{button.label}</GreyButton>
+      );
+    });
   }
+
+  return (
+    <div style={merge(styles.container, props.style)}>
+      <div style={styles.title}>
+        {props.title}
+      </div>
+      <div style={styles.content}>
+        {props.children}
+      </div>
+      <div style={styles.buttonRow}>
+        {buttons}
+      </div>
+    </div>
+  );
 }

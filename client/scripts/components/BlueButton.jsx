@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -16,33 +17,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react';
+import React from 'react'; // eslint-disable-line no-unused-vars
 import {merge} from '../merge';
 
-export class BlueButton extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        color: 'white',
-        textShadow: '1px 1px 6px #777',
-        backgroundColor: window.colorBlindModeOn ? '#333' : '#0095A0',
-        border: 0,
-        borderBottom: window.colorBlindModeOn ? '2px solid black' : '2px solid #00464B',
-        borderRadius: 3,
-        fontSize: 12,
-        padding: '4px 13px',
-        cursor: 'pointer',
-        minWidth: 100
-      }
-    };
+export function BlueButton (props: Object): React.Element {
+  let styles = {
+    container: {
+      color: 'white',
+      textShadow: '1px 1px 6px #777',
+      backgroundColor: window.colorBlindModeOn ? '#333' : '#0095A0',
+      border: 0,
+      borderBottom: window.colorBlindModeOn ? '2px solid black' : '2px solid #00464B',
+      borderRadius: 3,
+      fontSize: 12,
+      padding: '4px 13px',
+      cursor: 'pointer',
+      minWidth: 100
+    }
+  };
 
-    return (
-      <button
-        {...this.props}
-        style={merge(styles.container, this.props.style)}
-      >
-        {this.props.children}
-      </button>
-    );
-  }
+  return (
+    <button
+      {...props}
+      style={merge(styles.container, props.style)}
+    >
+      {props.children}
+    </button>
+  );
 }

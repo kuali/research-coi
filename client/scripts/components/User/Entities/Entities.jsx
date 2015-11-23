@@ -29,22 +29,10 @@ import {Toggle} from '../Toggle';
 import {BlueButton} from '../../BlueButton';
 
 export class Entities extends React.Component {
-  constructor() {
-    super();
-  }
-
   shouldComponentUpdate() { return true; }
-
-  startNewEntity() {
-    DisclosureActions.newEntityInitiated();
-  }
 
   viewChanged(newView) {
     DisclosureActions.changeActiveEntityView(newView);
-  }
-
-  onClickNoEntities() {
-    DisclosureActions.nextStep();
   }
 
   render() {
@@ -119,7 +107,7 @@ export class Entities extends React.Component {
     let placeholder;
     if (this.props.applicationState.newEntityFormStep < 0) {
       newEntityButton = (
-        <NewEntityButton onClick={this.startNewEntity} style={styles.newentitybutton} />
+        <NewEntityButton onClick={DisclosureActions.newEntityInitiated} style={styles.newentitybutton} />
       );
 
       if (entities.length === 0) {
@@ -130,7 +118,7 @@ export class Entities extends React.Component {
               <div>You currently have no active financial entities.</div>
               <div>Add new financial entities to view them here.</div>
               <div style={{marginTop: 20}}>
-                <BlueButton onClick={this.onClickNoEntities}>I have no entities to disclose</BlueButton>
+                <BlueButton onClick={DisclosureActions.nextStep}>I have no entities to disclose</BlueButton>
               </div>
             </div>
           );

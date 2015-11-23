@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -22,66 +23,45 @@ import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
 import {DisclosureFilterByDate} from './DisclosureFilterByDate';
 import {DisclosureFilterByPI} from './DisclosureFilterByPI';
 
-export class SearchFilterGroup extends React.Component {
-  constructor() {
-    super();
-
-    this.filters = [
-      {
-        label: 'DATE/DATE RANGE'
-      },
-      {
-        label: 'TYPE'
-      },
-      {
-        label: 'STATUS'
-      },
-      {
-        label: 'SUBMITTED BY'
-      }
-    ];
-  }
-
-  render() {
-    let styles = {
-      container: {
-        backgroundColor: '#eeeeee',
-        padding: '12px 0 12px 0',
-        marginTop: this.props.visible ? 0 : -119,
-        transition: 'margin-top .1s ease-in-out'
-      },
-      filters: {
-        backgroundColor: window.config.colors.three,
-        textAlign: 'right',
-        color: 'white',
-        width: '100%',
-        position: 'relative'
-      }
-    };
-    return (
-      <div style={merge(styles.container, this.props.style)}>
-        <DisclosureFilterByDate
-          active={this.props.filters.date.start || this.props.filters.date.end}
-          startDate={this.props.filters.date.start}
-          endDate={this.props.filters.date.end}
-          sortDirection={this.props.sortDirection}
-          showSort={this.props.showDateSort}
-        />
-        {/*<DisclosureFilterByType
-          active={this.props.activeTypeFilters && this.props.activeTypeFilters.length > 0}
-          activeFilters={this.props.activeTypeFilters}
-          possibleTypes={this.props.possibleTypes}
-        />*/}
-        <DisclosureFilterByStatus
-          active={this.props.activeStatusFilters && this.props.activeStatusFilters.length > 0}
-          activeFilters={this.props.activeStatusFilters}
-          possibleStatuses={this.props.possibleStatuses}
-        />
-        <DisclosureFilterByPI
-          active={this.props.activePIFilter}
-          piName={this.props.activePIFilter}
-        />
-      </div>
-    );
-  }
+export default function SearchFilterGroup(props: Object): React.Element {
+  let styles = {
+    container: {
+      backgroundColor: '#eeeeee',
+      padding: '12px 0 12px 0',
+      marginTop: props.visible ? 0 : -119,
+      transition: 'margin-top .1s ease-in-out'
+    },
+    filters: {
+      backgroundColor: window.config.colors.three,
+      textAlign: 'right',
+      color: 'white',
+      width: '100%',
+      position: 'relative'
+    }
+  };
+  return (
+    <div style={merge(styles.container, props.style)}>
+      <DisclosureFilterByDate
+        active={props.filters.date.start || props.filters.date.end}
+        startDate={props.filters.date.start}
+        endDate={props.filters.date.end}
+        sortDirection={props.sortDirection}
+        showSort={props.showDateSort}
+      />
+      {/*<DisclosureFilterByType
+        active={props.activeTypeFilters && props.activeTypeFilters.length > 0}
+        activeFilters={props.activeTypeFilters}
+        possibleTypes={props.possibleTypes}
+      />*/}
+      <DisclosureFilterByStatus
+        active={props.activeStatusFilters && props.activeStatusFilters.length > 0}
+        activeFilters={props.activeStatusFilters}
+        possibleStatuses={props.possibleStatuses}
+      />
+      <DisclosureFilterByPI
+        active={props.activePIFilter}
+        piName={props.activePIFilter}
+      />
+    </div>
+  );
 }

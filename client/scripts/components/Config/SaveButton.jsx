@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -20,43 +21,31 @@ import React from 'react';
 import {merge} from '../../merge';
 import ConfigActions from '../../actions/ConfigActions';
 
-export default class SaveButton extends React.Component {
-  constructor() {
-    super();
+export default function SaveButton(props: Object): React.Element {
+  let styles = {
+    container: {
+      cursor: 'pointer'
+    },
+    saveIcon: {
+      fontSize: 28,
+      color: window.colorBlindModeOn ? 'black' : '#F57C00',
+      verticalAlign: 'middle'
+    },
+    saveText: {
+      verticalAlign: 'middle',
+      paddingLeft: 10,
+      fontSize: 17,
+      color: '#525252',
+      paddingTop: 3
+    }
+  };
 
-    this.save = this.save.bind(this);
-  }
-
-  save() {
-    ConfigActions.saveAll();
-  }
-
-  render() {
-    let styles = {
-      container: {
-        cursor: 'pointer'
-      },
-      saveIcon: {
-        fontSize: 28,
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle'
-      },
-      saveText: {
-        verticalAlign: 'middle',
-        paddingLeft: 10,
-        fontSize: 17,
-        color: '#525252',
-        paddingTop: 3
-      }
-    };
-
-    return (
-      <div className="flexbox row" onClick={this.save} style={merge(styles.container, this.props.style)}>
-        <span>
-          <i className="fa fa-check-circle" style={styles.saveIcon}></i>
-        </span>
-        <span className="fill" style={styles.saveText}>SAVE CHANGES</span>
-      </div>
-    );
-  }
+  return (
+    <div className="flexbox row" onClick={ConfigActions.saveAll} style={merge(styles.container, props.style)}>
+      <span>
+        <i className="fa fa-check-circle" style={styles.saveIcon}></i>
+      </span>
+      <span className="fill" style={styles.saveText}>SAVE CHANGES</span>
+    </div>
+  );
 }

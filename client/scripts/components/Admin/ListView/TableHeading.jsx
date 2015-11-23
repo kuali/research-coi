@@ -19,7 +19,7 @@
 import React from 'react'; //eslint-disable-line no-unused-vars
 import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
-import {SortArrow} from './SortArrow';
+import SortArrow from './SortArrow';
 
 export class TableHeading extends ResponsiveComponent {
   constructor() {

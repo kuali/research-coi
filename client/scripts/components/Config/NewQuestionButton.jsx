@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -20,60 +21,58 @@ import React from 'react';
 import {merge} from '../../merge';
 import {PlusIcon} from '../DynamicIcons/PlusIcon';
 
-export default class NewQuestionButton extends React.Component {
-  render() {
-    let styles = {
-      container: {
-        display: 'inline-block',
-        width: 145,
-        height: 145,
-        backgroundColor: 'white',
-        color: 'white',
-        padding: '10px',
-        fontSize: 23,
-        position: 'relative',
-        cursor: 'pointer',
-        boxShadow: '0 0 10px #BBB',
-        borderRadius: 6,
-        marginBottom: 10
-      },
-      plus: {
-        position: 'absolute',
-        display: 'block',
-        fontSize: 32,
-        top: 10,
-        right: 12,
-        color: 'black'
-      },
-      newText: {
-        color: window.colorBlindModeOn ? 'black' : '#535353',
-        fontWeight: 400
-      },
-      questionText: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontWeight: 'bold'
-      },
-      img: {
-        height: 42,
-        width: 42,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      text: {
-        verticalAlign: 'middle',
-        marginTop: 67
-      }
-    };
+export default function NewQuestionButton(props: Object): React.Element {
+  let styles = {
+    container: {
+      display: 'inline-block',
+      width: 145,
+      height: 145,
+      backgroundColor: 'white',
+      color: 'white',
+      padding: '10px',
+      fontSize: 23,
+      position: 'relative',
+      cursor: 'pointer',
+      boxShadow: '0 0 10px #BBB',
+      borderRadius: 6,
+      marginBottom: 10
+    },
+    plus: {
+      position: 'absolute',
+      display: 'block',
+      fontSize: 32,
+      top: 10,
+      right: 12,
+      color: 'black'
+    },
+    newText: {
+      color: window.colorBlindModeOn ? 'black' : '#535353',
+      fontWeight: 400
+    },
+    questionText: {
+      color: window.colorBlindModeOn ? 'black' : '#0095A0',
+      fontWeight: 'bold'
+    },
+    img: {
+      height: 42,
+      width: 42,
+      color: window.colorBlindModeOn ? 'black' : '#0095A0'
+    },
+    text: {
+      verticalAlign: 'middle',
+      marginTop: 67
+    }
+  };
 
-    return (
-      <span onClick={this.props.onClick} style={merge(styles.container, this.props.style)}>
-        <div style={styles.text}>
-          <div style={styles.newText}>New</div>
-          <div style={styles.questionText}>Question</div>
-        </div>
-        <span style={styles.plus}>
-          <PlusIcon style={styles.img} />
-        </span>
+  return (
+    <span onClick={props.onClick} style={merge(styles.container, props.style)}>
+      <div style={styles.text}>
+        <div style={styles.newText}>New</div>
+        <div style={styles.questionText}>Question</div>
+      </div>
+      <span style={styles.plus}>
+        <PlusIcon style={styles.img} />
       </span>
-    );
-  }
+    </span>
+  );
 }

@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,76 +18,65 @@
 */
 
 import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
 import {merge} from '../../../merge';
 import {PlusIcon} from '../../DynamicIcons/PlusIcon';
 
-export class NewEntityButton extends ResponsiveComponent {
-  constructor() {
-    super();
-    this.commonStyles = {};
-  }
+export function NewEntityButton(props: Object): React.Element {
+  let styles = {
+    container: {
+      display: 'inline-block',
+      width: 145,
+      height: 145,
+      backgroundColor: 'white',
+      color: 'white',
+      padding: '10px',
+      fontSize: 23,
+      position: 'relative',
+      cursor: 'pointer',
+      boxShadow: '0 0 8px #C0C0C0',
+      borderRadius: 6
+    },
+    plus: {
+      position: 'absolute',
+      display: 'block',
+      fontSize: 32,
+      top: 10,
+      right: 12,
+      color: 'black'
+    },
+    newText: {
+      color: '#535353',
+      fontWeight: 400
+    },
+    financialText: {
+      color: window.colorBlindModeOn ? 'black' : '#0095A0',
+      fontWeight: 'bold'
+    },
+    entityText: {
+      color: window.colorBlindModeOn ? 'black' : '#0095A0',
+      fontWeight: 'bold'
+    },
+    img: {
+      height: 42,
+      width: 42,
+      color: window.colorBlindModeOn ? 'black' : '#00bcd4'
+    },
+    text: {
+      verticalAlign: 'middle',
+      marginTop: 43
+    }
+  };
 
-  renderMobile() {}
-
-  renderDesktop() {
-    let desktopStyles = {
-      container: {
-        display: 'inline-block',
-        width: 145,
-        height: 145,
-        backgroundColor: 'white',
-        color: 'white',
-        padding: '10px',
-        fontSize: 23,
-        position: 'relative',
-        cursor: 'pointer',
-        boxShadow: '0 0 8px #C0C0C0',
-        borderRadius: 6
-      },
-      plus: {
-        position: 'absolute',
-        display: 'block',
-        fontSize: 32,
-        top: 10,
-        right: 12,
-        color: 'black'
-      },
-      newText: {
-        color: '#535353',
-        fontWeight: 400
-      },
-      financialText: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontWeight: 'bold'
-      },
-      entityText: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontWeight: 'bold'
-      },
-      img: {
-        height: 42,
-        width: 42,
-        color: window.colorBlindModeOn ? 'black' : '#00bcd4'
-      },
-      text: {
-        verticalAlign: 'middle',
-        marginTop: 43
-      }
-    };
-    let styles = merge(this.commonStyles, desktopStyles);
-
-    return (
-      <span onClick={this.props.onClick} style={merge(styles.container, this.props.style)}>
-        <div style={styles.text}>
-          <div style={styles.newText}>New</div>
-          <div style={styles.financialText}>Financial</div>
-          <div style={styles.entityText}>Entity</div>
-        </div>
-        <span style={styles.plus}>
-          <PlusIcon style={styles.img} />
-        </span>
+  return (
+    <span onClick={props.onClick} style={merge(styles.container, props.style)}>
+      <div style={styles.text}>
+        <div style={styles.newText}>New</div>
+        <div style={styles.financialText}>Financial</div>
+        <div style={styles.entityText}>Entity</div>
+      </div>
+      <span style={styles.plus}>
+        <PlusIcon style={styles.img} />
       </span>
-    );
-  }
+    </span>
+  );
 }

@@ -24,10 +24,6 @@ import ConfigStore from '../../../stores/ConfigStore';
 import {COIConstants} from '../../../../../COIConstants';
 
 export default class CommentSummary extends React.Component {
-  done() {
-    AdminActions.hideCommentSummary();
-  }
-
   getUniqueTopics(comments) {
     let topics = [];
     let lastValue;
@@ -195,7 +191,7 @@ export default class CommentSummary extends React.Component {
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>
         <div style={styles.heading}>
           <span style={styles.title}>COMMENTS</span>
-          <span style={styles.close} onClick={this.done}>
+          <span style={styles.close} onClick={AdminActions.hideCommentSummary}>
             <i className="fa fa-times" style={{fontSize: 23, marginRight: 3}}></i>
             CLOSE
           </span>

@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -20,41 +21,29 @@ import React from 'react';
 import {merge} from '../../merge';
 import ConfigActions from '../../actions/ConfigActions';
 
-export default class UndoButton extends React.Component {
-  constructor() {
-    super();
+export default function UndoButton(props: Object): React.Element {
+  let styles = {
+    container: {
+      cursor: 'pointer'
+    },
+    undoIcon: {
+      fontSize: 28,
+      color: window.colorBlindModeOn ? 'black' : '#F57C00',
+      verticalAlign: 'middle',
+      marginTop: 3
+    },
+    undoText: {
+      verticalAlign: 'middle',
+      paddingLeft: 10,
+      fontSize: 17,
+      color: '#525252'
+    }
+  };
 
-    this.undo = this.undo.bind(this);
-  }
-
-  undo() {
-    ConfigActions.undoAll();
-  }
-
-  render() {
-    let styles = {
-      container: {
-        cursor: 'pointer'
-      },
-      undoIcon: {
-        fontSize: 28,
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle',
-        marginTop: 3
-      },
-      undoText: {
-        verticalAlign: 'middle',
-        paddingLeft: 10,
-        fontSize: 17,
-        color: '#525252'
-      }
-    };
-
-    return (
-      <div className="flexbox row" onClick={this.undo} style={merge(styles.container, this.props.style)}>
-        <i className="fa fa-times-circle" style={styles.undoIcon}></i>
-        <span className="fill" style={styles.undoText}>CANCEL AND UNDO CHANGES</span>
-      </div>
-    );
-  }
+  return (
+    <div className="flexbox row" onClick={ConfigActions.undoAll} style={merge(styles.container, props.style)}>
+      <i className="fa fa-times-circle" style={styles.undoIcon}></i>
+      <span className="fill" style={styles.undoText}>CANCEL AND UNDO CHANGES</span>
+    </div>
+  );
 }

@@ -1,3 +1,4 @@
+/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -19,36 +20,30 @@
 import React from 'react';
 import {merge} from '../../../merge';
 
-export class SortArrow extends React.Component {
-  constructor() {
-    super();
+export default function SortArrow(props: Object): React.Element {
+  let styles = {
+    container: {
+      fontSize: 9,
+      marginLeft: 5,
+      verticalAlign: 'middle'
+    }
+  };
+
+  let arrow;
+  if (props.direction === 'DESCENDING') {
+    arrow = (
+      <span style={merge(styles.container, props.style)}>
+        &#9660;
+      </span>
+    );
+  }
+  else {
+    arrow = (
+      <span style={merge(styles.container, props.style)}>
+        &#9650;
+      </span>
+    );
   }
 
-  render() {
-    let styles = {
-      container: {
-        fontSize: 9,
-        marginLeft: 5,
-        verticalAlign: 'middle'
-      }
-    };
-
-    let arrow;
-    if (this.props.direction === 'DESCENDING') {
-      arrow = (
-        <span style={merge(styles.container, this.props.style)}>
-          &#9660;
-        </span>
-      );
-    }
-    else {
-      arrow = (
-        <span style={merge(styles.container, this.props.style)}>
-          &#9650;
-        </span>
-      );
-    }
-
-    return arrow;
-  }
+  return arrow;
 }

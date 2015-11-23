@@ -20,7 +20,7 @@ import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../../merge';
 import {AdminStore} from '../../../stores/AdminStore';
 import {AdminActions} from '../../../actions/AdminActions';
-import {SearchFilterGroup} from '../SearchFilterGroup';
+import SearchFilterGroup from '../SearchFilterGroup';
 import {DisclosureTable} from './DisclosureTable';
 import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
 import {BlueButton} from '../../BlueButton';
