@@ -78,7 +78,7 @@ export function getUserInfo(dbInfo, hostname, token) {
 }
 
 export function getAuthLink(req) {
-  let returnToValue = encodeURIComponent(req.protocol + '://' + req.get('host') + req.originalUrl);
+  let returnToValue = encodeURIComponent(req.protocol + '://' + req.hostname + req.originalUrl);
   return '/coi/auth?return_to=' + returnToValue;
 }
 

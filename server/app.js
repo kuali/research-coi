@@ -41,6 +41,7 @@ export function run() {
   app.disable('x-powered-by');
   app.set('view engine', 'jade');
   app.set('views', './views');
+  configureProxy(app);
 
   let config;
   try {
@@ -108,5 +109,22 @@ function conditionallyLogRequests(app) {
       let elapsedTime = new Date().getTime() - startTime.getTime();
       Log.info(`${req.originalUrl} - ${elapsedTime}ms`);
     });
+  }
+}
+
+function configureProxy(app) {
+  const TRUST_PROXY = process.env.TRUST_PROXY;
+  if (TRUST_PROXY) {
+    Log.info(`Using TRUST_PROXY value of ${TRUST_PROXY}`);
+
+    if (TRUST_PROXY.toLowerCase() === 'true') {
+      app.set('trust proxy', true);
+    }
+    else if (TRUST_PROXY.toLowerCase() === 'false') {
+      app.set('trust proxy', false);
+    }
+    else {
+      app.set('trust proxy', TRUST_PROXY);
+    }
   }
 }

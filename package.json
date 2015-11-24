@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha --recursive --compilers js:babel/register --require test/setup.js",
     "start": "node server/bootstrap.js",
-    "eslint": "eslint client db server test"
+    "eslint": "eslint client db server test",
+    "webpack": "webpack -p"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,7 @@
     "flow-bin": "0.18.1",
     "history": "1.12.0",
     "jade": "1.11.0",
-    "knex": "0.8.6",
+    "knex": "0.9.0",
     "lodash": "3.10.0",
     "lru-cache": "2.7.0",
     "moment": "2.10.6",

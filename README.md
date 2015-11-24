@@ -1,7 +1,7 @@
 INSTRUCTIONS
 ================
 
-**Step 1**: download and install [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node)
+**Step 1**: download and install [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node) version 0.12.7 or newer.
 
 ----------
 **Step 2**: clone [research-coi project](https://github.com/kuali/research-coi)
@@ -102,6 +102,10 @@ System configuration for COI is done with environment variables. Environment var
 >**LOG_LEVEL**
 >:  the log level to use.  0 (Info), 1 (Warn), 2 (Error)
 >*Default*: 2
+>
+>**TRUST_PROXY**
+>: The value to pass to app.set('trust_proxy', <YOUR STRING HERE>)
+>*Default*:  None
 
 -------
 
@@ -133,9 +137,16 @@ System configuration for COI is done with environment variables. Environment var
 > : The role name space and name separated by a colon.
 > *Default*:  KC-COIDISCLOSURE:COI%20Administrator
 
-**Step 9**: Start Up Node
+
+**Step 9**: Run Webpack
+```
+npm run webpack
+```
+This may take a few minutes. There will likely be some warnings, but there should no errors.
+
+**Step 10**: Start Up Node
 ```
 DB_NAME=coi node server/bootstrap
 ```
 
-**Step 10**: Navigate to hostname:port/coi/
+**Step 11**: Navigate to hostname:port/coi/
