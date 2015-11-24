@@ -2,7 +2,11 @@ INSTRUCTIONS
 ================
 
 **Step 1**: download and install [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node)
-
+```
+Current version in use: 0.12.4
+You may want to install nvm (Node Version Manager) to make it
+easy to switch versions.
+```
 ----------
 **Step 2**: clone [research-coi project](https://github.com/kuali/research-coi)
 ```
@@ -13,18 +17,34 @@ git clone https://github.com/kuali/research-coi research-coi
 **Step 3**: install dependecies
 ```
 cd ~/workspace/research-coi
+```
+edit package.json and remove either mysql or strong-oracle from dependencies
+<br><br>
+if using strong-oracle go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
+```
 npm install
 
-Go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
 ```
 ----------
 **Step 4**: Create Database
+mysql
 ```
 create database coi;
+```
+or oracle
+```
+CREATE USER coi IDENTIFIED BY "&pw";
+grant create session to coidemo;
+grant create procedure to coidemo;
+grant create table to coidemo;
+grant create sequence to coidemo;
+create tablespace coi ....
+alter user coi default tablespace coi;
 ```
 
 ----------
 **Step 5**: Create knexfile.js
+mysql
 ```
 module.exports = {
   kc_coi: {
@@ -40,6 +60,22 @@ module.exports = {
     max: 20
   }
 };
+```
+OR oracle
+```
+module.exports = {
+  kc_coi: {
+    client: 'strong-oracle',
+    connection: {
+      database: '<sid>',
+      host: '<host name or ip>',
+      port: '1521',
+      user: 'COI',
+      password: `<password>'
+    }
+  }
+};
+
 ```
 ----------
 
@@ -57,9 +93,10 @@ node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --kn
 System configuration for COI is done with environment variables. Environment variables can either be set in the system or added on the command line when starting the application. Below is a list of configuration environment variables
 
 >####**Environment Configuration Variables**
+
 >**COI_PORT**
 >: port for the coi app.
->*Default*: localhost
+>*Default*: 8090
 
 >**DB_PACKAGE**
 >: The node db package to use
@@ -105,7 +142,7 @@ System configuration for COI is done with environment variables. Environment var
 >
 >**AUTH_ENABLED**
 >: flag as true if you have an auth service instance you can work with, if not present or false app will use a mock auth service.
->*Default*: 500
+>*Default*: false
 >
 >**CACHE_MAX**
 >: The maximum number of items in the cache. Used by the auth service.
@@ -123,9 +160,14 @@ System configuration for COI is done with environment variables. Environment var
 > : The role name space and name separated by a colon.
 > *Default*:  KC-COIDISCLOSURE:COI%20Administrator
 
-**Step 9**: Start Up Node
+**Step 9**: Run Webpack
+```
+./node_modules/.bin/webpack
+```
+
+**Step 10**: Start Up Node
 ```
 DB_NAME=coi node server/bootstrap
 ```
 
-**Step 10**: Navigate to hostname:port/coi/
+**Step 11**: Navigate to hostname:port/coi/
