@@ -104,10 +104,12 @@ export function run() {
 function conditionallyLogRequests(app) {
   if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
     app.use((req, res, next) => {
-      let startTime = new Date();
+      let startTime = new Date().getTime();
+      res.on('finish', function() {
+        let elapsedTime = new Date().getTime() - startTime;
+        Log.info(`${req.originalUrl} - ${elapsedTime}ms`);
+      });
       next();
-      let elapsedTime = new Date().getTime() - startTime.getTime();
-      Log.info(`${req.originalUrl} - ${elapsedTime}ms`);
     });
   }
 }
