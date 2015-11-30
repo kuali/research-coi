@@ -25,7 +25,7 @@ try {
   let extensions = require('research-extensions'); // eslint-disable-line no-unused-vars
   client = authClient;
 } catch (e) {
-  client = process.env.AUTH_ENABLED === true ? authClient : mockAuthClient;
+  client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? authClient : mockAuthClient;
 }
 
 
