@@ -18,7 +18,6 @@ npm install
 If using Oracle:
   npm uninstall mysql
   npm install strong-oracle --save
-
   Go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
 ```
 ----------
@@ -26,6 +25,15 @@ If using Oracle:
 ```
 For MySQL:
   create database coi;
+
+For Oracle:
+  CREATE USER coi IDENTIFIED BY "&pw";
+  grant create session to coidemo;
+  grant create procedure to coidemo;
+  grant create table to coidemo;
+  grant create sequence to coidemo;
+  create tablespace coi ....
+  alter user coi default tablespace coi;
 ```
 
 ----------
