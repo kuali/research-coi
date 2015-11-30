@@ -7,7 +7,8 @@
     "test": "mocha --recursive --compilers js:babel/register --require test/setup.js",
     "start": "node server/bootstrap.js",
     "eslint": "eslint client db server test",
-    "webpack": "webpack -p"
+    "webpack": "webpack -p",
+    "load": "node loadtest"
   },
   "repository": {
     "type": "git",
@@ -56,6 +57,7 @@
     "babel-plugin-rewire": "0.1.22",
     "eslint": "1.9.0",
     "eslint-plugin-react": "3.8.0",
+    "file": "0.2.2",
     "jsdom": "7.0.2",
     "mocha": "2.2.4",
     "react-addons-test-utils": "0.14.2",

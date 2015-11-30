@@ -17,21 +17,12 @@
 */
 
 import {COIConstants} from '../../../COIConstants';
+import hashCode from '../../../hash';
+
 export function authView(req, res) {
   res.sendFile('auth.html', {
     root: 'views'
   });
-}
-
-function hashCode(toHash){
-  var hash = 0;
-  if (toHash.length === 0) { return hash; }
-  for (let i = 0; i < toHash.length; i++) {
-    let char = toHash.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return hash;
 }
 
 export function getUserInfo(dbInfo, hostname, token) {
