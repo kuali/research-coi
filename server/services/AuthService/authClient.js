@@ -16,9 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import https from 'https';
 import cache from '../../LruCache';
 import {COIConstants} from '../../../COIConstants';
+
+const useSSL = process.env.AUTH_OVER_SSL !== 'false';
+let http = useSSL ? require('https') : require('http');
 
 let getAuthorizationInfo;
 try {
@@ -37,7 +39,6 @@ function getUserRoles(dbInfo, schoolId, authToken) {
   return new Promise((resolve) => {
     let authInfo = getAuthorizationInfo(dbInfo);
     let options = {
-      protocol: 'https:',
       host: authInfo.host,
       path: '/kc-dev/kc-sys-krad/v1/roles/' + authInfo.adminRole + '/principals/' + schoolId + '?qualification=unitNumber:*',
       headers: {
@@ -45,7 +46,7 @@ function getUserRoles(dbInfo, schoolId, authToken) {
       }
     };
 
-    https.get(options, response => {
+    http.get(options, response => {
       if (response.statusCode === 200) {
         resolve(COIConstants.ROLES.ADMIN);
       } else {
@@ -67,7 +68,6 @@ export function getUserInfo(dbInfo, hostname, authToken) {
       resolve(cachedUserInfo);
     } else {
       let options = {
-        protocol: 'https:',
         host: hostname,
         path: '/api/users/current',
         headers: {
@@ -76,7 +76,7 @@ export function getUserInfo(dbInfo, hostname, authToken) {
         }
       };
 
-      https.get(options, response => {
+      http.get(options, response => {
         if (response.statusCode !== 200) {
           resolve();
         } else {

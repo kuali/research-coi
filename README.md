@@ -15,17 +15,32 @@ git clone https://github.com/kuali/research-coi research-coi
 cd ~/workspace/research-coi
 npm install
 
-Go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
+If using Oracle:
+  npm uninstall mysql
+  npm install strong-oracle --save
+  Go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
 ```
 ----------
 **Step 4**: Create Database
 ```
-create database coi;
+For MySQL:
+  create database coi;
+
+For Oracle:
+  CREATE USER coi IDENTIFIED BY "&pw";
+  grant create session to coidemo;
+  grant create procedure to coidemo;
+  grant create table to coidemo;
+  grant create sequence to coidemo;
+  create tablespace coi ....
+  alter user coi default tablespace coi;
 ```
 
 ----------
 **Step 5**: Create knexfile.js
 ```
+For MySQL:
+
 module.exports = {
   kc_coi: {
     client: 'mysql',
@@ -40,6 +55,22 @@ module.exports = {
     max: 20
   }
 };
+
+For Oracle:
+
+module.exports = {
+  kc_coi: {
+    client: 'strong-oracle',
+    connection: {
+      database: '<sid>',
+      host: '<host name or ip>',
+      port: '1521',
+      user: 'COI',
+      password: `<password>'
+    }
+  }
+};
+
 ```
 ----------
 
@@ -65,7 +96,7 @@ System configuration for COI is done with environment variables. Environment var
 >####**Environment Configuration Variables**
 >**COI_PORT**
 >: port for the coi app.
->*Default*: localhost
+>*Default*: 8090
 
 >**DB_PACKAGE**
 >: The node db package to use
@@ -118,8 +149,8 @@ System configuration for COI is done with environment variables. Environment var
 >Configuration variables to enable the auth service are below.
 >
 >**AUTH_ENABLED**
->: flag as true if you have an auth service instance you can work with, if not present or false app will use a mock auth service.
->*Default*: 500
+>: Flag as true if you have an auth service instance you can work with, if not present or false app will use a mock auth service.
+>*Default*: false
 >
 >**CACHE_MAX**
 >: The maximum number of items in the cache. Used by the auth service.
@@ -136,6 +167,10 @@ System configuration for COI is done with environment variables. Environment var
 >**AUTHZ_ADMIN_ROLE**
 > : The role name space and name separated by a colon.
 > *Default*:  KC-COIDISCLOSURE:COI%20Administrator
+
+>**AUTH_OVER_SSL**
+> : If your are sure you want to use the auth service over http set this to false.
+> *Default*:  true
 
 
 **Step 9**: Run Webpack
