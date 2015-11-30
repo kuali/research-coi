@@ -18,6 +18,8 @@
 
 /*eslint-disable camelcase, no-console */
 
+var hashCode = require('../../../hash');
+
 var includeDemoData = process.argv[8] === 'demo';
 
 function randomNumberBetween(lowest, highest) {
@@ -211,17 +213,6 @@ function insertQuestionnaireQuestion(knex, questionnaireId, text, numberToShow, 
       return insertQuestionnaireSubquestion(knex, questionnaireId, parentId[0], numberToShow);
     }
   });
-}
-
-function hashCode(toHash){
-  var hash = 0;
-  if (toHash.length === 0) { return hash; }
-  for (var i = 0; i < toHash.length; i++) {
-    var char = toHash.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return hash;
 }
 
 var userNumber = 0;
@@ -562,6 +553,28 @@ exports.seed = function(knex, Promise) {
           insertFakeProject(knex, 10000000030),
           insertFakeProject(knex, 10000000002)
         ]);
+      }).then(function() {
+        console.log('Demo data - Archived config 1');
+        return insertInitialArchiveConfig(knex);
+      }).then(function() {
+        console.log('Demo data - Archived config 2');
+        return insertInitialArchiveConfig(knex);
+      }).then(function() {
+        console.log('Demo data - Archived disclosure 1');
+        return knex('disclosure_archive').insert({
+          disclosure_id: 1,
+          approved_by: 'Test Admin',
+          approved_date: new Date(),
+          disclosure: '{"id":11,"typeCd":2,"title":null,"dispositionTypeCd":null,"statusCd":3,"submittedBy":"User p999","submittedDate":"2015-11-27T05:05:29.000Z","revisedDate":null,"startDate":"2015-11-27T05:04:59.000Z","expiredDate":null,"lastReviewDate":"2015-11-27T05:05:58.950Z","configId":804,"entities":[{"id":31,"disclosureId":11,"active":1,"name":"hjkhjk","description":null,"answers":[{"questionId":7,"answer":{"value":"No"},"finEntityId":31},{"questionId":6,"answer":{"value":["County Government"]},"finEntityId":31},{"questionId":8,"answer":{"value":"Yes"},"finEntityId":31},{"questionId":9,"answer":{"value":"bnmb"},"finEntityId":31}],"files":[],"relationships":[{"id":31,"finEntityId":31,"relationshipCd":1,"personCd":2,"typeCd":5,"amountCd":11,"comments":"bnmbmn","travel":{}}]}],"answers":[{"id":1,"questionId":3,"answer":{"value":"No"}},{"id":2,"questionId":4,"answer":{"value":"No"}},{"id":3,"questionId":1,"answer":{"value":"No"}},{"id":4,"questionId":2,"answer":{"value":"No"}}],"declarations":[],"comments":[],"files":[],"managementPlan":[]}'
+        });
+      }).then(function() {
+        console.log('Demo data - Archived disclosure 2');
+        return knex('disclosure_archive').insert({
+          disclosure_id: 2,
+          approved_by: 'Test Admin',
+          approved_date: new Date(),
+          disclosure: '{"id":11,"typeCd":2,"title":null,"dispositionTypeCd":null,"statusCd":3,"submittedBy":"User p999","submittedDate":"2015-11-27T05:05:29.000Z","revisedDate":null,"startDate":"2015-11-27T05:04:59.000Z","expiredDate":null,"lastReviewDate":"2015-11-27T05:05:58.950Z","configId":804,"entities":[{"id":31,"disclosureId":11,"active":1,"name":"hjkhjk","description":null,"answers":[{"questionId":7,"answer":{"value":"No"},"finEntityId":31},{"questionId":6,"answer":{"value":["County Government"]},"finEntityId":31},{"questionId":8,"answer":{"value":"Yes"},"finEntityId":31},{"questionId":9,"answer":{"value":"bnmb"},"finEntityId":31}],"files":[],"relationships":[{"id":31,"finEntityId":31,"relationshipCd":1,"personCd":2,"typeCd":5,"amountCd":11,"comments":"bnmbmn","travel":{}}]}],"answers":[{"id":1,"questionId":3,"answer":{"value":"No"}},{"id":2,"questionId":4,"answer":{"value":"No"}},{"id":3,"questionId":1,"answer":{"value":"No"}},{"id":4,"questionId":2,"answer":{"value":"No"}}],"declarations":[],"comments":[],"files":[],"managementPlan":[]}'
+        });
       });
     });
   });
