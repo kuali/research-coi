@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
+exports.up = function(knex) {
   return knex.schema.createTable('disclosure_type', function(table) {
     table.integer('type_cd').notNullable().primary();
     table.string('description', 50).notNullable();
@@ -245,5 +245,5 @@ exports.up = function(knex, Promise) { //eslint-disable-line no-unused-vars
   });
 };
 
-exports.down = function(knex, Promise) { //eslint-disable-line no-unused-vars
+exports.down = function() {
 };

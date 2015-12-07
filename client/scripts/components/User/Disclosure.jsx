@@ -31,6 +31,7 @@ import {Relationships} from './Projects/Relationships';
 import {Entities} from './Entities/Entities';
 import {Certify} from './Certification/Certify';
 import {NavSidebar} from './NavSidebar';
+const STEP = COIConstants.DISCLOSURE_STEP;
 
 export class Disclosure extends React.Component {
   constructor(props) {
@@ -38,16 +39,16 @@ export class Disclosure extends React.Component {
 
     // Set up steps for the sidebar
     this.steps = [
-      {label: 'Questionnaire', value: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY},
-      {label: 'Financial Entities', value: COIConstants.DISCLOSURE_STEP.ENTITIES}
+      {label: 'Questionnaire', value: STEP.QUESTIONNAIRE_SUMMARY},
+      {label: 'Financial Entities', value: STEP.ENTITIES}
     ];
     if (props.disclosuretype && props.disclosuretype.toLowerCase() === 'manual') {
-      this.steps.push({label: 'Manual Event', value: COIConstants.DISCLOSURE_STEP.MANUAL});
+      this.steps.push({label: 'Manual Event', value: STEP.MANUAL});
     }
     else {
-      this.steps.push({label: 'Project Declarations', value: COIConstants.DISCLOSURE_STEP.PROJECTS});
+      this.steps.push({label: 'Project Declarations', value: STEP.PROJECTS});
     }
-    this.steps.push({label: 'Certification', value: COIConstants.DISCLOSURE_STEP.CERTIFY});
+    this.steps.push({label: 'Certification', value: STEP.CERTIFY});
 
     let storeState = DisclosureStore.getState();
     this.state = {
@@ -191,8 +192,16 @@ export class Disclosure extends React.Component {
     let currentStep;
     let nextDisabled;
     const QUESTIONNAIRE_PERCENTAGE = 25;
+    let previousLinkLabel = 'PREVIOUS STEP';
+    let showPreviousLink = true;
+    let showNextLink = (
+      currentDisclosureStep !== STEP.QUESTIONNAIRE &&
+      currentDisclosureStep !== STEP.CERTIFY &&
+      !nextDisabled
+    );
+
     switch (currentDisclosureStep) {
-      case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE:
+      case STEP.QUESTIONNAIRE:
         if (window.config.questions.screening) {
           percent = Math.floor(((currentQuestion - 1) / window.config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
         }
@@ -208,8 +217,11 @@ export class Disclosure extends React.Component {
           />
         );
         heading = 'Questionnaire';
+        previousLinkLabel = 'PREVIOUS QUESTION';
+        showPreviousLink = currentQuestion > 1;
+
         break;
-      case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
+      case STEP.QUESTIONNAIRE_SUMMARY:
         percent = QUESTIONNAIRE_PERCENTAGE;
         currentStep = (
           <QuestionnaireSummary
@@ -220,7 +232,7 @@ export class Disclosure extends React.Component {
         );
         heading = 'Questionnaire';
         break;
-      case COIConstants.DISCLOSURE_STEP.ENTITIES:
+      case STEP.ENTITIES:
         stepNumber = 1;
         const ENTITIES_PERCENTAGE = 50;
         percent = ENTITIES_PERCENTAGE;
@@ -235,7 +247,7 @@ export class Disclosure extends React.Component {
         nextDisabled = this.incompleteEntityExists(this.state.entities);
         heading = 'Financial Entities';
         break;
-      case COIConstants.DISCLOSURE_STEP.PROJECTS:
+      case STEP.PROJECTS:
         stepNumber = 2;
         const PROJECTS_PERCENTAGE = 75;
         percent = PROJECTS_PERCENTAGE;
@@ -281,7 +293,7 @@ export class Disclosure extends React.Component {
           );
         }
         break;
-      case COIConstants.DISCLOSURE_STEP.CERTIFY:
+      case STEP.CERTIFY:
         stepNumber = 3;
         const CERTIFY_PERCENTAGE = 99;
         percent = CERTIFY_PERCENTAGE;
@@ -317,11 +329,13 @@ export class Disclosure extends React.Component {
             </span>
 
             <NavSidebar
-              percent={percent}
-              step={currentDisclosureStep}
-              question={currentQuestion}
+              percentComplete={percent}
+              previousLabel={previousLinkLabel}
               submitDisabled={submitDisabled}
               nextDisabled={nextDisabled}
+              showNextLink={showNextLink}
+              showPreviousLink={showPreviousLink}
+              showSubmitLink={currentDisclosureStep === STEP.CERTIFY}
             />
           </span>
         </div>
