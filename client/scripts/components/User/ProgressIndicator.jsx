@@ -20,7 +20,7 @@
 import React from 'react';
 import {merge} from '../../merge';
 
-export class ProgressIndicator extends React.Component {
+export default class ProgressIndicator extends React.Component {
   constructor(props) {
     super();
     this.percent = {value: isNaN(props.percent) ? 0 : props.percent};
