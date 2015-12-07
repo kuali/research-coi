@@ -96,5 +96,8 @@ export let COIConstants = {
     INFO: 0,
     WARN: 1,
     ERROR: 2
+  },
+  STATE_TYPE: {
+    ANNUAL_DISCLOSURE_STATE: 'annual_disclosure_state'
   }
 };

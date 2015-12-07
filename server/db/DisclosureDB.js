@@ -984,3 +984,59 @@ export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => 
         });
     });
 };
+
+export let getCurrentState = (dbInfo, userInfo, disclosureId) => {
+  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error(`Attempt by user id ${userInfo.schoolId} to retrieve state of disclosure ${disclosureId} which isnt theirs`);
+      }
+
+      let knex = getKnex(dbInfo);
+      return knex
+        .select('state')
+        .from('state')
+        .where({
+          key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+          user_id: userInfo.schoolId
+        })
+        .then(stateFound => {
+          if (stateFound.length === 0) {
+            return '';
+          }
+          return JSON.parse(stateFound[0].state);
+        });
+    });
+};
+
+export let saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
+  return getCurrentState(dbInfo, userInfo, disclosureId)
+    .then(currentState => {
+      let knex = getKnex(dbInfo);
+
+      if (currentState !== '') {
+        return knex('state')
+          .update({
+            state: JSON.stringify(state)
+          })
+          .where({
+            key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+            user_id: userInfo.schoolId
+          }).then(() => {
+            return;
+          });
+      }
+      else {
+        return knex('state')
+          .insert({
+            key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+            user_id: userInfo.schoolId,
+            state: JSON.stringify(state)
+          }, 'id').then(() => {
+            return;
+          });
+      }
+    });
+};
+
+

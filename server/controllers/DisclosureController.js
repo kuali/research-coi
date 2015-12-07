@@ -419,4 +419,35 @@ export let init = app => {
       res.status(400).end();
     }
   });
+
+  /**
+    @Role: user
+    Can only retrieve state of their disclosure
+  */
+  app.get('/api/coi/disclosures/:id/state', (req, res, next) => {
+    DisclosureDB.getCurrentState(req.dbInfo, req.userInfo, req.params.id)
+      .then(result => {
+        res.send(result);
+      })
+      .catch(err => {
+        Log.error(err);
+        next(err);
+      });
+  });
+
+  /**
+    @Role: user
+    Can only save the state of their disclosure
+  */
+  app.post('/api/coi/disclosures/:id/state', (req, res, next) => {
+    res.status(202).end();
+
+    DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body)
+      .then(() => {
+      })
+      .catch(err => {
+        Log.error(err);
+        next(err);
+      });
+  });
 };

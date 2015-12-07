@@ -1,3 +1,9 @@
+V1.0.3
+* Progress through a disclosure is now tracked.
+  If a user gets halfway through and stops, when they return
+  they will be brought back to where they were. The data has always been
+  saved. This will simply return them to that place in the process.
+
 V1.0.2
 
 * Updated documentation

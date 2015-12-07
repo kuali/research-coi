@@ -171,25 +171,70 @@ class _DisclosureStore extends AutoBindingStore {
     this.refreshDisclosureSummaries();
   }
 
+  loadDisclosureState(disclosureId) {
+    return new Promise((resolve, reject) => {
+      createRequest()
+        .get(`/api/coi/disclosures/${disclosureId}/state`)
+        .end(processResponse((err, state) => {
+          if (err) {
+            reject();
+          }
+
+          if (state.body) {
+            this.applicationState.currentDisclosureState.step = state.body.step;
+            this.applicationState.currentDisclosureState.question = state.body.question;
+          }
+
+          resolve();
+        }));
+    });
+  }
+
+  updateDisclosureState(disclosureId) {
+    createRequest()
+      .post(`/api/coi/disclosures/${disclosureId}/state`)
+      .send({
+        step: this.applicationState.currentDisclosureState.step,
+        question: this.applicationState.currentDisclosureState.question
+      })
+      .type('application/json')
+      .end();
+  }
+
+  loadArchivedConfig(configId) {
+    return new Promise((resolve, reject) => {
+      createRequest()
+        .get(`/api/coi/archived-config/${configId}`)
+        .end(processResponse((err, config) => {
+          if (err) {
+            reject();
+          }
+
+          resolve(config);
+        }));
+    });
+  }
+
   loadDisclosureData(disclosureType) {
     if (disclosureType === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
       createRequest()
         .get('/api/coi/disclosures/annual')
         .end(processResponse((err, disclosure) => {
           if (!err) {
-            this.applicationState.currentDisclosureState.disclosure = disclosure.body;
-            this.entities = disclosure.body.entities;
-            this.declarations = disclosure.body.declarations;
-            this.files = disclosure.body.files;
-            createRequest()
-              .get(`/api/coi/archived-config/${disclosure.body.configId}`)
-              .end(processResponse((error, config) => {
-                if (!error) {
-                  window.config = config.body;
-                  ConfigActions.loadConfig(disclosure.body.configId);
-                  this.emitChange();
-                }
-              }));
+            Promise.all([
+              this.loadDisclosureState(disclosure.body.id),
+              this.loadArchivedConfig(disclosure.body.configId)
+            ])
+            .then(([, config]) => {
+              this.applicationState.currentDisclosureState.disclosure = disclosure.body;
+              this.entities = disclosure.body.entities;
+              this.declarations = disclosure.body.declarations;
+              this.files = disclosure.body.files;
+
+              window.config = config.body;
+              ConfigActions.loadConfig(disclosure.body.configId);
+              this.emitChange();
+            });
           }
         }));
     }
@@ -307,6 +352,8 @@ class _DisclosureStore extends AutoBindingStore {
     else {
       this.applicationState.currentDisclosureState.question++;
     }
+
+    this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
   }
 
   previousQuestion() {
@@ -341,6 +388,8 @@ class _DisclosureStore extends AutoBindingStore {
         }
         break;
     }
+
+    this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
   }
 
   setCurrentQuestion(newQuestionId) {
@@ -437,6 +486,7 @@ class _DisclosureStore extends AutoBindingStore {
         this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.CERTIFY] = true;
         break;
     }
+    this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
   }
 
   newEntityInitiated() {
