@@ -1026,6 +1026,7 @@ class _DisclosureStore extends AutoBindingStore {
       answers: []
     };
     this.applicationState.entityStates = {};
+    this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
   }
 
   toggleConfirmationMessage() {
