@@ -22,10 +22,7 @@ class _ConfigActions {
   startEditingDeclarationType(id) { this.dispatch(id); }
 
   updateDeclarationType(id, newValue) {
-    this.dispatch({
-      id: id,
-      newValue: newValue
-    });
+    this.dispatch({id, newValue});
   }
 
   stopEditingDeclarationType(id) { this.dispatch(id); }
@@ -47,10 +44,7 @@ class _ConfigActions {
   disableDisclosureType(typeCd) { this.dispatch(typeCd); }
 
   updateDisclosureType(typeCd, newValue) {
-    this.dispatch({
-      typeCd: typeCd,
-      newValue: newValue
-    });
+    this.dispatch({typeCd, newValue});
   }
 
   enableSponsorLookup() { this.dispatch(); }
@@ -62,24 +56,15 @@ class _ConfigActions {
   setIsRollingDueDate(value) { this.dispatch(value); }
 
   setWarningValueOnNotification(id, newValue) {
-    this.dispatch({
-      id: id,
-      newValue: newValue
-    });
+    this.dispatch({id, newValue});
   }
 
   setWarningPeriodOnNotification(id, newValue) {
-    this.dispatch({
-      id: id,
-      newValue: newValue
-    });
+    this.dispatch({id, newValue});
   }
 
   setReminderTextOnNotification(id, newValue) {
-    this.dispatch({
-      id: id,
-      newValue: newValue
-    });
+    this.dispatch({id, newValue});
   }
 
   saveNewNotification() { this.dispatch(); }
@@ -88,102 +73,71 @@ class _ConfigActions {
 
   questionTypeChosen(category, questionId, type) {
     this.dispatch({
-      questionId: questionId,
-      type: type,
-      category: category
+      questionId,
+      type,
+      category
     });
   }
 
   questionTextChanged(category, questionId, text) {
-    this.dispatch({
-      questionId: questionId,
-      text: text,
-      category: category
-    });
+    this.dispatch({questionId, text, category});
   }
 
   updateQuestions(category, questions) {
-    this.dispatch({
-      questions: questions,
-      category: category
-    });
+    this.dispatch({questions, category});
   }
 
-  cancelNewQuestion(category) {
-    this.dispatch({
-      category: category
-    });
-  }
+  cancelNewQuestion(category) { this.dispatch({category}); }
 
-  saveNewQuestion(category) {
-    this.dispatch({
-      category: category
-    });
-  }
+  saveNewQuestion(category) { this.dispatch({category}); }
 
-  startNewQuestion(category) {
-    this.dispatch({
-      category: category
-    });
-  }
+  startNewQuestion(category) { this.dispatch({category}); }
 
   deleteQuestion(category, questionId) {
-    this.dispatch({
-      questionId: questionId,
-      category: category
-    });
+    this.dispatch({questionId, category});
   }
 
   saveQuestionEdit(category, questionId) {
-    this.dispatch({
-      questionId: questionId,
-      category: category
-    });
+    this.dispatch({questionId, category});
   }
 
   startEditingQuestion(category, questionId) {
-    this.dispatch({
-      questionId: questionId,
-      category: category
-    });
+    this.dispatch({questionId, category});
   }
 
   cancelQuestionEdit(category, questionId) {
-    this.dispatch({
-      questionId: questionId,
-      category: category
-    });
+    this.dispatch({questionId, category});
   }
 
   criteriaChanged(category, questionId, newValue) {
     this.dispatch({
-      questionId: questionId,
-      newValue: newValue,
-      category: category
+      questionId,
+      newValue,
+      category
     });
   }
 
   multiSelectOptionAdded(category, questionId, newValue) {
     this.dispatch({
-      questionId: questionId,
-      newValue: newValue,
-      category: category
+      questionId,
+      newValue,
+      category
     });
   }
 
   multiSelectOptionDeleted(category, questionId, optionId) {
     this.dispatch({
-      questionId: questionId,
-      optionId: optionId,
-      category: category
+      questionId,
+      optionId,
+      category
     });
   }
 
   requiredNumSelectionsChanged(category, questionId, newValue) {
     this.dispatch({
-      questionId: questionId,
-      newValue: newValue,
-      category: category
+      questionId,
+      newValue,
+      category
     });
   }
 
@@ -196,59 +150,35 @@ class _ConfigActions {
   }
 
   enabledChanged(typeCd, newValue) {
-    this.dispatch({
-      typeCd: typeCd,
-      newValue: newValue
-    });
+    this.dispatch({typeCd, newValue});
   }
 
   typeEnabledChanged(typeCd, newValue) {
-    this.dispatch({
-      typeCd: typeCd,
-      newValue: newValue
-    });
+    this.dispatch({typeCd, newValue});
   }
 
   amountEnabledChanged(typeCd, newValue) {
-    this.dispatch({
-      typeCd: typeCd,
-      newValue: newValue
-    });
+    this.dispatch({typeCd, newValue});
   }
 
   typeOptionsChanged(typeCd, newList) {
-    this.dispatch({
-      typeCd: typeCd,
-      newList: newList
-    });
+    this.dispatch({typeCd, newList});
   }
 
   amountOptionsChanged(typeCd, newList) {
-    this.dispatch({
-      typeCd: typeCd,
-      newList: newList
-    });
+    this.dispatch({typeCd, newList});
   }
 
   destinationEnabledChanged(typeCd, newValue) {
-    this.dispatch({
-      typeCd: typeCd,
-      newValue: newValue
-    });
+    this.dispatch({typeCd, newValue});
   }
 
   dateEnabledChanged(typeCd, newValue) {
-    this.dispatch({
-      typeCd: typeCd,
-      newValue: newValue
-    });
+    this.dispatch({typeCd, newValue});
   }
 
   reasonEnabledChanged(typeCd, newValue) {
-    this.dispatch({
-      typeCd: typeCd,
-      newValue: newValue
-    });
+    this.dispatch({typeCd, newValue});
   }
 
   setCertificationText(newText) { this.dispatch(newText); }
@@ -256,10 +186,7 @@ class _ConfigActions {
   setCertificationRequired(newValue) { this.dispatch(newValue); }
 
   setInstructions(step, newValue) {
-    this.dispatch({
-      step: step,
-      newValue: newValue
-    });
+    this.dispatch({step, newValue});
   }
 
   loadConfig(id) { this.dispatch(id); }

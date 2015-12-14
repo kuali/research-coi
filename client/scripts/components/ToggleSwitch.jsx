@@ -31,7 +31,7 @@ export default class ToggleSwitch extends React.Component {
   }
 
   onClick() {
-    let newValue = !this.state.on;
+    const newValue = !this.state.on;
     this.setState({
       on: newValue
     });
@@ -42,7 +42,7 @@ export default class ToggleSwitch extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         cursor: 'pointer',
         verticalAlign: 'middle',

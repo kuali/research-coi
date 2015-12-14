@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable prefer-arrow-callback */
+
 import _ from 'lodash';
 
 function izeJson(attrs, caseFunc) {

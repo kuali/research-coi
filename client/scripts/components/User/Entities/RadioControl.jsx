@@ -30,7 +30,7 @@ export class RadioControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       option: {
         display: 'inline-block',
         marginRight: 30,
@@ -56,13 +56,13 @@ export class RadioControl extends React.Component {
       );
     }
 
-    let options = this.props.options.map((option, index) => {
+    const options = this.props.options.map((option, index) => {
       return (
-        <span style={styles.option} key={this.props.questionId + '_' + index}>
+        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
           <div>
-            <label htmlFor={'multi_' + option + '_' + this.props.questionId} style={styles.label}>
+            <label htmlFor={`multi_${option}_${this.props.questionId}`} style={styles.label}>
               <input
-                id={'multi_' + option + '_' + this.props.questionId}
+                id={`multi_${option}_${this.props.questionId}`}
                 value={option}
                 checked={this.props.answer === option}
                 onChange={this.onChange}

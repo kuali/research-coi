@@ -33,7 +33,7 @@ export default class RejectionConfirmation extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         color: 'black',
         fontSize: 15,

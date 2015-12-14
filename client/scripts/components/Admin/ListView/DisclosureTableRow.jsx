@@ -24,9 +24,9 @@ import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
   highlightSearchTerm(value) {
-    let start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
+    const start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
     if (start >= 0) {
-      let matchingValue = value.substr(start, this.props.searchTerm.length);
+      const matchingValue = value.substr(start, this.props.searchTerm.length);
       return (
         <span>
           <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
@@ -42,7 +42,7 @@ export class DisclosureTableRow extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'table-row',
         height: 43

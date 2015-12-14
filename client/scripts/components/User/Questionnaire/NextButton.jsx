@@ -41,7 +41,7 @@ export class NextButton extends React.Component {
       iconColor = 'black';
     }
 
-    let styles = {
+    const styles = {
       icon: {
         color: iconColor,
         marginRight: 3,

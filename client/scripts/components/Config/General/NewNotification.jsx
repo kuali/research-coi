@@ -29,12 +29,12 @@ export default class NewNotifications extends React.Component {
   }
 
   setReminderText() {
-    let reminderTextbox = this.refs.reminderText;
+    const reminderTextbox = this.refs.reminderText;
     ConfigActions.setReminderTextOnNotification(undefined, reminderTextbox.value);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       edit: {

@@ -24,7 +24,7 @@ import {DisclosureFilterByDate} from './DisclosureFilterByDate';
 import {DisclosureFilterByPI} from './DisclosureFilterByPI';
 
 export default function SearchFilterGroup(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: '#eeeeee',
       padding: '12px 0 12px 0',

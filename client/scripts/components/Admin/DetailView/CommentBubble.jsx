@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import {formatDate} from '../../../formatDate';
 
 export default function CommentBubble(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: props.isUser ? 'white' : window.colorBlindModeOn ? 'white' : '#D0E3E5',
       border: '1px solid #CCC',

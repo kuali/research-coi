@@ -37,9 +37,9 @@ class Suggestion extends React.Component {
       return value;
     }
 
-    let start = value.toLowerCase().indexOf(searchTerm.toLowerCase());
+    const start = value.toLowerCase().indexOf(searchTerm.toLowerCase());
     if (start >= 0) {
-      let matchingValue = value.substr(start, searchTerm.length);
+      const matchingValue = value.substr(start, searchTerm.length);
       return (
         <span>
           <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
@@ -55,7 +55,7 @@ class Suggestion extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       suggestion: {
         padding: '4px 10px',
         cursor: 'pointer'
@@ -169,7 +169,7 @@ export default class AutoSuggest extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         position: 'relative',
         width: this.props.inline ? '100%' : 'initial'
@@ -208,7 +208,7 @@ export default class AutoSuggest extends React.Component {
 
     let suggestionList;
     if (this.state.suggestions && this.state.suggestions.length > 0) {
-      let suggestions = this.state.suggestions.map((suggestion, index) => {
+      const suggestions = this.state.suggestions.map((suggestion, index) => {
         return (
           <Suggestion
             key={index}

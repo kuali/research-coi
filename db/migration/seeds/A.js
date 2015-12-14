@@ -16,7 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint-disable camelcase, no-console, no-magic-numbers */
+/*  eslint-disable
+      camelcase,
+      no-console,
+      no-magic-numbers,
+      no-var,
+      object-shorthand,
+      prefer-template,
+      prefer-arrow-callback
+*/
 
 var hashCode = require('../../../hash');
 

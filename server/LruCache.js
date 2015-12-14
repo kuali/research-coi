@@ -22,11 +22,11 @@ const ONE_MINUTE = 60000;
 const MAX_ENTRIES_IN_CACHE = 500;
 
 let config;
-let options = {
-  length: function(n) { return n.length; }
+const options = {
+  length(n) { return n.length; }
 };
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   config = extensions.config;
   options.max = config.cacheMax || MAX_ENTRIES_IN_CACHE;
   options.maxAge = config.cacheMaxAge || ONE_MINUTE;
@@ -36,6 +36,6 @@ catch (err) {
   options.maxAge = process.env.CACHE_MAX_AGE || ONE_MINUTE;
 }
 
-let cache = LRU(options); // eslint-disable-line new-cap
+const cache = LRU(options); // eslint-disable-line new-cap
 
 export default cache;

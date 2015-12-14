@@ -60,7 +60,7 @@ export class DisclosureTable extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'table',
         width: '100%'
@@ -74,7 +74,7 @@ export class DisclosureTable extends React.Component {
       }
     };
 
-    let disclosures = this.props.disclosures.map((disclosure) => {
+    const disclosures = this.props.disclosures.map((disclosure) => {
       return (
         <DisclosureTableRow
           key={disclosure.id}

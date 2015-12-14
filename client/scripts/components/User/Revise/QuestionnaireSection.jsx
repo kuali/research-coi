@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import QuestionToReview from './QuestionToReview';
 
 export default function QuestionnaireSection(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       margin: '25px 20px 25px 35px',
       backgroundColor: 'white',
@@ -42,7 +42,7 @@ export default function QuestionnaireSection(props: Object): React.Element {
     }
   };
 
-  let questions = props.questions.map((question, index) => {
+  const questions = props.questions.map((question, index) => {
     return (
       <QuestionToReview
         key={question.id}

@@ -39,12 +39,12 @@ export class Entity extends React.Component {
   }
 
   toggleStatus() {
-    let active = this.props.entity.active === 1 ? 0 : 1;
+    const active = this.props.entity.active === 1 ? 0 : 1;
     DisclosureActions.setEntityActiveStatus(active, this.props.id);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'block',
         margin: '0 3px 25px 0',
@@ -106,7 +106,7 @@ export class Entity extends React.Component {
       statusButton = (<GreyButton onClick={this.toggleStatus} style={styles.button}>Reactivate</GreyButton>);
     }
 
-    let relationships = this.props.entity.relationships.map((relationship) => {
+    const relationships = this.props.entity.relationships.map((relationship) => {
       return (
         <div key={relationship.id}>
           {ConfigStore.getRelationshipPersonTypeString(relationship.personCd)} - {ConfigStore.getRelationshipCategoryTypeString(relationship.relationshipCd)}

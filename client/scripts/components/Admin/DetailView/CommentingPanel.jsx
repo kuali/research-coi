@@ -31,11 +31,11 @@ export default class CommentingPanel extends React.Component {
   }
 
   makeComment() {
-    let piCheck = this.refs.piCheck;
-    let visibleToPI = piCheck.checked;
+    const piCheck = this.refs.piCheck;
+    const visibleToPI = piCheck.checked;
     piCheck.checked = false;
-    let textarea = this.refs.commentText;
-    let commentText = textarea.value;
+    const textarea = this.refs.commentText;
+    const commentText = textarea.value;
     textarea.value = '';
 
     AdminActions.makeComment(
@@ -50,7 +50,7 @@ export default class CommentingPanel extends React.Component {
   }
 
   render(): React.Element {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         height: '100%',

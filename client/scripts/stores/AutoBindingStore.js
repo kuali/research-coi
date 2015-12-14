@@ -18,13 +18,13 @@
 
 export class AutoBindingStore {
   constructor(Actions) {
-    let bindings = {};
-    let replacementFunction = (s, group1) => {
+    const bindings = {};
+    const replacementFunction = (s, group1) => {
       return group1.toUpperCase();
     };
-    for (let propName in Actions) {
+    for (const propName in Actions) {
       if (propName.charCodeAt(0) < 91) {
-        let fixedName = propName.toLowerCase().replace(/_([a-z])/gi, replacementFunction);
+        const fixedName = propName.toLowerCase().replace(/_([a-z])/gi, replacementFunction);
         bindings[fixedName] = Actions[propName];
       }
     }

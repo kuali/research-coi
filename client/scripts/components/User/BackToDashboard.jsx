@@ -22,7 +22,7 @@ import {merge} from '../../merge';
 import {Link} from 'react-router';
 
 export default function BackToDashboard(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: 'white',
       color: window.colorBlindModeOn ? 'black' : '#0095A0',

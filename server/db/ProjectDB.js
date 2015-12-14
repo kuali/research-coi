@@ -19,15 +19,15 @@
 /*eslint camelcase:0 */
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let getProjects = (dbInfo, userId) => {
-  let knex = getKnex(dbInfo);
+export const getProjects = (dbInfo, userId) => {
+  const knex = getKnex(dbInfo);
   return knex.select('p.id as id', 'p.title as name', 'p.type_cd as typeCd', 'person.role_cd as roleCd', 'p.sponsor_name as sponsorName')
     .from('project as p')
     .innerJoin('project_person as person', 'p.id', 'person.project_id')
@@ -37,8 +37,8 @@ export let getProjects = (dbInfo, userId) => {
     });
 };
 
-let saveNewProjects = (dbInfo, projects) => {
-  let knex = getKnex(dbInfo);
+const saveNewProjects = (dbInfo, projects) => {
+  const knex = getKnex(dbInfo);
   return knex('project').insert({
     title: projects.title,
     type_cd: projects.typeCode,
@@ -52,8 +52,8 @@ let saveNewProjects = (dbInfo, projects) => {
   }, 'id')
     .then(insertResult => {
       if (projects.persons) {
-        let projectId = insertResult[0];
-        let inserts = projects.persons.map(person => {
+        const projectId = insertResult[0];
+        const inserts = projects.persons.map(person => {
           return knex('project_person').insert({
             project_id: projectId,
             person_id: person.personId,
@@ -67,13 +67,13 @@ let saveNewProjects = (dbInfo, projects) => {
     });
 };
 
-let disableAllPersonsForProject = (dbInfo, projectId) => {
-  let knex = getKnex(dbInfo);
+const disableAllPersonsForProject = (dbInfo, projectId) => {
+  const knex = getKnex(dbInfo);
   return knex('project_person').update('active', false).where('project_id', projectId);
 };
 
-let saveProjectPersons = (dbInfo, persons, projectId) => {
-  let knex = getKnex(dbInfo);
+const saveProjectPersons = (dbInfo, persons, projectId) => {
+  const knex = getKnex(dbInfo);
   return knex.select('person_id', 'source_person_type').from('project_person').where('project_id', projectId)
     .then(personIdResult => {
       if (persons && persons.length > 0) {
@@ -87,7 +87,7 @@ let saveProjectPersons = (dbInfo, persons, projectId) => {
           return knex('project_person').insert({'active': true, 'role_cd': person.roleCode, 'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId}, 'id');
         });
 
-        let deactiveQueries = personIdResult.filter(pr => {
+        const deactiveQueries = personIdResult.filter(pr => {
           return persons.find(person => {
             return person.personId === pr.person_id && person.sourcePersonType === pr.source_person_type;
           }) === undefined;
@@ -108,8 +108,8 @@ let saveProjectPersons = (dbInfo, persons, projectId) => {
     });
 };
 
-let saveExistingProjects = (dbInfo, projects, projectId) => {
-  let knex = getKnex(dbInfo);
+const saveExistingProjects = (dbInfo, projects, projectId) => {
+  const knex = getKnex(dbInfo);
   return knex('project').update({
     title: projects.title,
     type_cd: projects.typeCode,
@@ -124,14 +124,14 @@ let saveExistingProjects = (dbInfo, projects, projectId) => {
     });
 };
 
-export let saveProjects = (dbInfo, projects) => {
-  let knex = getKnex(dbInfo);
+export const saveProjects = (dbInfo, projects) => {
+  const knex = getKnex(dbInfo);
   return knex.select('id').from('project').where({
     source_system: projects.sourceSystem,
     source_identifier: projects.sourceIdentifier
   }).then(projectIdResult => {
     if (projectIdResult.length > 0) {
-      let projectId = projectIdResult[0].id;
+      const projectId = projectIdResult[0].id;
       return saveExistingProjects(dbInfo, projects, projectId);
     }
 

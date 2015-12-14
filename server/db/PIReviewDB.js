@@ -23,15 +23,15 @@ import * as DisclosureDB from './DisclosureDB';
 
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
-  let knex = getKnex(dbInfo);
+export const verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
+  const knex = getKnex(dbInfo);
 
   return knex.count('d.user_id as theCount')
     .from('pi_review as p')
@@ -45,8 +45,8 @@ export let verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
     });
 };
 
-let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targetId, comment) => {
-  let knex = getKnex(dbInfo);
+const updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targetId, comment) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('c.id')
     .from('comment as c')
@@ -84,8 +84,8 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
     });
 };
 
-let updateReviewRecord = (knex, reviewId, values) => {
-  let newValues = {
+const updateReviewRecord = (knex, reviewId, values) => {
+  const newValues = {
     reviewed_on: new Date()
   };
   if (values.revised !== undefined) {
@@ -101,8 +101,8 @@ let updateReviewRecord = (knex, reviewId, values) => {
     });
 };
 
-export let recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
-  let knex = getKnex(dbInfo);
+export const recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('disclosure_id as disclosureId', 'target_type as targetType', 'target_id as targetId')
     .from('pi_review')
@@ -133,14 +133,14 @@ export let recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
     });
 };
 
-let extractTargetIDs = reviewItems => {
+const extractTargetIDs = reviewItems => {
   return reviewItems.reduce((previous, current) => {
     previous.push(current.targetId);
     return previous;
   }, []);
 };
 
-let getQuestions = (knex, disclosureId, questionIDs) => {
+const getQuestions = (knex, disclosureId, questionIDs) => {
   return knex('disclosure')
     .select('config_id as configId')
     .where('id', disclosureId)
@@ -154,14 +154,14 @@ let getQuestions = (knex, disclosureId, questionIDs) => {
         .select('config')
         .where('id', disclosure[0].configId)
         .then(config => {
-          let parsedConfig = JSON.parse(config[0].config);
+          const parsedConfig = JSON.parse(config[0].config);
           return parsedConfig.questions.screening.filter(question => {
             return !question.parent && questionIDs.includes(question.id);
           }).map(question => {
-            let questionAnwer = answers.find(answer => {
+            const questionAnwer = answers.find(answer => {
               return answer.question_id === question.id;
             });
-            let retVal = {};
+            const retVal = {};
             retVal.id = question.id;
             retVal.question = question.question;
             retVal.answer = questionAnwer.answer;
@@ -172,7 +172,7 @@ let getQuestions = (knex, disclosureId, questionIDs) => {
     });
 };
 
-let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
+const getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
   return knex('disclosure')
   .select('config_id as configId')
   .where('id', disclosureId)
@@ -189,14 +189,14 @@ let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
       .select('config')
       .where('id', disclosure[0].configId)
       .then(config => {
-        let parsedConfig = JSON.parse(config[0].config);
+        const parsedConfig = JSON.parse(config[0].config);
         return parsedConfig.questions.screening.filter(question => {
           return potentialParentIDs.includes(question.parent);
         }).map(question => {
-          let questionAnwer = answers.find(answer => {
+          const questionAnwer = answers.find(answer => {
             return answer.question_id === question.id;
           });
-          let retVal = {};
+          const retVal = {};
           retVal.id = question.id;
           retVal.question = question.question;
           retVal.parent = question.parent;
@@ -208,7 +208,7 @@ let getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
   });
 };
 
-let getComments = (knex, disclosureId, topicIDs, section) => {
+const getComments = (knex, disclosureId, topicIDs, section) => {
   return knex.select('id', 'topic_id as topicId', 'text', 'author', 'date', 'user_id as userId')
     .from('comment as c')
     .where({
@@ -219,23 +219,23 @@ let getComments = (knex, disclosureId, topicIDs, section) => {
     .andWhere('topic_id', 'in', topicIDs);
 };
 
-let getQuestionnaireComments = (knex, disclosureId, topicIDs) => {
+const getQuestionnaireComments = (knex, disclosureId, topicIDs) => {
   return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE);
 };
 
-let getEntityComments = (knex, disclosureId, topicIDs) => {
+const getEntityComments = (knex, disclosureId, topicIDs) => {
   return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.ENTITIES);
 };
 
-let getDeclarationComments = (knex, disclosureId, topicIDs) => {
+const getDeclarationComments = (knex, disclosureId, topicIDs) => {
   return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.PROJECTS);
 };
 
-let setAdminCommentsForTopics = (topics, comments, currentUserId) => {
+const setAdminCommentsForTopics = (topics, comments, currentUserId) => {
   comments.filter(comment => {
     return comment.userId !== currentUserId;
   }).forEach(comment => {
-    let topic = topics.find(topicToTest => {
+    const topic = topics.find(topicToTest => {
       return topicToTest.id === comment.topicId;
     });
 
@@ -248,11 +248,11 @@ let setAdminCommentsForTopics = (topics, comments, currentUserId) => {
   });
 };
 
-let setPIResponseForTopics = (topics, comments, currentUserId) => {
+const setPIResponseForTopics = (topics, comments, currentUserId) => {
   comments.filter(comment => {
     return comment.userId === currentUserId;
   }).forEach(comment => {
-    let topic = topics.find(topicToTest => {
+    const topic = topics.find(topicToTest => {
       return topicToTest.id === comment.topicId;
     });
 
@@ -262,9 +262,9 @@ let setPIResponseForTopics = (topics, comments, currentUserId) => {
   });
 };
 
-let setPIReviewDataForTopics = (topics, reviewItems) => {
+const setPIReviewDataForTopics = (topics, reviewItems) => {
   topics.forEach(topic => {
-    let piReviewRecord = reviewItems.find(item => {
+    const piReviewRecord = reviewItems.find(item => {
       return item.targetId === topic.id;
     });
 
@@ -277,9 +277,9 @@ let setPIReviewDataForTopics = (topics, reviewItems) => {
   });
 };
 
-let associateSubQuestions = (questions, subQuestions) => {
+const associateSubQuestions = (questions, subQuestions) => {
   subQuestions.forEach(subQuestion => {
-    let parent = questions.find(question => {
+    const parent = questions.find(question => {
       return question.id === subQuestion.parent;
     });
 
@@ -292,8 +292,8 @@ let associateSubQuestions = (questions, subQuestions) => {
   });
 };
 
-let getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
-  let questionIDs = extractTargetIDs(reviewItems);
+const getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
+  const questionIDs = extractTargetIDs(reviewItems);
 
   return Promise.all([
     getQuestions(knex, disclosureId, questionIDs),
@@ -309,8 +309,8 @@ let getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
   });
 };
 
-export let reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, newAnswer) => {
-  let knex = getKnex(dbInfo);
+export const reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, newAnswer) => {
+  const knex = getKnex(dbInfo);
 
   return Promise.all([
     knex.select('qa.id')
@@ -324,7 +324,7 @@ export let reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, newAn
       })
       .then(rows => {
         if (rows.length > 0) {
-          let answerToStore = {
+          const answerToStore = {
             value: newAnswer
           };
           return knex('questionnaire_answer')
@@ -341,8 +341,8 @@ export let reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, newAn
   ]);
 };
 
-export let reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
-  let knex = getKnex(dbInfo);
+export const reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
+  const knex = getKnex(dbInfo);
 
   return Promise.all([
     knex.select('qa.id')
@@ -359,7 +359,7 @@ export let reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
       })
       .then(rows => {
         if (rows.length > 0) {
-          let answerToStore = {
+          const answerToStore = {
             value: answer
           };
           return knex('questionnaire_answer')
@@ -376,13 +376,13 @@ export let reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
   ]);
 };
 
-let getEntityNames = (knex, entityIDs) => {
+const getEntityNames = (knex, entityIDs) => {
   return knex.select('fe.id', 'fe.name', 'fe.disclosure_id as disclosureId')
     .from('fin_entity as fe')
     .where('fe.id', 'in', entityIDs);
 };
 
-let getEntitiesAnswers = (knex, entityIDs) => {
+const getEntitiesAnswers = (knex, entityIDs) => {
   return knex.select('qq.id as questionId', 'qa.answer', 'fa.fin_entity_id as finEntityId')
     .from('questionnaire_question as qq')
     .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
@@ -390,7 +390,7 @@ let getEntitiesAnswers = (knex, entityIDs) => {
     .where('fa.fin_entity_id', 'in', entityIDs);
 };
 
-let getRelationships = (knex, entityIDs) => {
+const getRelationships = (knex, entityIDs) => {
   return knex.select('r.id', 'r.comments as comments', 'r.relationship_cd as relationshipCd', 'r.person_cd as personCd', 'r.type_cd as typeCd', 'r.amount_cd as amountCd', 'r.fin_entity_id as finEntityId')
     .from('relationship as r')
     .where('fin_entity_id', 'in', entityIDs)
@@ -399,9 +399,9 @@ let getRelationships = (knex, entityIDs) => {
       return knex('travel_relationship')
       .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
       .whereIn('relationship_id', relationships.map(relationship => { return relationship.id; }))
-      .then(travels=> {
-        relationships.forEach(relationship=> {
-          let travel = travels.find(item => {
+      .then(travels => {
+        relationships.forEach(relationship => {
+          const travel = travels.find(item => {
             return item.relationshipId === relationship.id;
           });
           relationship.travel = travel ? travel : {};
@@ -411,16 +411,16 @@ let getRelationships = (knex, entityIDs) => {
     });
 };
 
-let getFiles = (knex, entityIds) => {
+const getFiles = (knex, entityIds) => {
   return knex.select('id', 'name', 'key', 'ref_id as refId')
     .from('file')
     .whereIn('ref_id', entityIds)
     .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY);
 };
 
-let setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
+const setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
   entityQuestionAnswers.forEach(answer => {
-    let targetEntity = entities.find(entity => {
+    const targetEntity = entities.find(entity => {
       return entity.id === answer.finEntityId;
     });
 
@@ -434,9 +434,9 @@ let setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
   });
 };
 
-let setRelationshipsForEntities = (entities, relationships) => {
+const setRelationshipsForEntities = (entities, relationships) => {
   relationships.forEach(relationship => {
-    let entity = entities.find(entityToTest => {
+    const entity = entities.find(entityToTest => {
       return entityToTest.id === relationship.finEntityId;
     });
 
@@ -449,9 +449,9 @@ let setRelationshipsForEntities = (entities, relationships) => {
   });
 };
 
-let setFilesForEntities = (entities, files) => {
+const setFilesForEntities = (entities, files) => {
   files.forEach(file => {
-    let entity = entities.find(entityToTest => {
+    const entity = entities.find(entityToTest => {
       return entityToTest.id === file.refId;
     });
 
@@ -464,8 +464,8 @@ let setFilesForEntities = (entities, files) => {
   });
 };
 
-let getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
-  let entityIDs = extractTargetIDs(reviewItems);
+const getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
+  const entityIDs = extractTargetIDs(reviewItems);
 
   return Promise.all([
     getEntityNames(knex, entityIDs),
@@ -485,7 +485,7 @@ let getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
   });
 };
 
-let getProjects = (knex, declarationIDs, disclosureId) => {
+const getProjects = (knex, declarationIDs, disclosureId) => {
   return knex.distinct('p.title', 'p.id')
     .from('declaration as d')
     .innerJoin('project as p', 'p.id', 'd.project_id')
@@ -495,7 +495,7 @@ let getProjects = (knex, declarationIDs, disclosureId) => {
     });
 };
 
-let getEntitesWithTheseDeclarations = (knex, declarationIDs, disclosureId) => {
+const getEntitesWithTheseDeclarations = (knex, declarationIDs, disclosureId) => {
   return knex.distinct('fe.name', 'fe.id', 'd.project_id as projectId')
     .from('declaration as d')
     .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
@@ -505,7 +505,7 @@ let getEntitesWithTheseDeclarations = (knex, declarationIDs, disclosureId) => {
     });
 };
 
-let getDeclarations = (knex, declarationIDs, disclosureId) => {
+const getDeclarations = (knex, declarationIDs, disclosureId) => {
   return knex.select('d.id', 'd.fin_entity_id as finEntityId', 'd.project_id as projectId', 'd.type_cd as typeCd', 'd.comments')
     .from('declaration as d')
     .whereIn('d.id', declarationIDs)
@@ -514,8 +514,8 @@ let getDeclarations = (knex, declarationIDs, disclosureId) => {
     });
 };
 
-let setPIReviewDataForDeclaration = (target, declaration, reviewItems) => {
-  let piReviewRecord = reviewItems.find(item => {
+const setPIReviewDataForDeclaration = (target, declaration, reviewItems) => {
+  const piReviewRecord = reviewItems.find(item => {
     return item.targetId === declaration.id;
   });
 
@@ -527,8 +527,8 @@ let setPIReviewDataForDeclaration = (target, declaration, reviewItems) => {
   }
 };
 
-let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
-  let declarationIDs = extractTargetIDs(reviewItems);
+const getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
+  const declarationIDs = extractTargetIDs(reviewItems);
 
   return Promise.all([
     getProjects(knex, declarationIDs, disclosureId),
@@ -537,7 +537,7 @@ let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
     getDeclarations(knex, declarationIDs, disclosureId)
   ]).then(([projects, entities, comments, declarations]) => {
     entities.forEach(entity => {
-      let declaration = declarations.find(declarationToTest => {
+      const declaration = declarations.find(declarationToTest => {
         return declarationToTest.finEntityId === entity.id && declarationToTest.projectId === entity.projectId;
       });
 
@@ -551,7 +551,7 @@ let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
           return a.date - b.date;
         });
 
-        let piResponse = comments.find(comment => {
+        const piResponse = comments.find(comment => {
           return comment.topicId === declaration.id && comment.userId === userId;
         });
 
@@ -562,7 +562,7 @@ let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
         setPIReviewDataForDeclaration(entity, declaration, reviewItems);
       }
 
-      let project = projects.find(projectToCheck => {
+      const project = projects.find(projectToCheck => {
         return projectToCheck.id === entity.projectId;
       });
 
@@ -578,14 +578,14 @@ let getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
   });
 };
 
-export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
+export const getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
         throw Error(`Attempt by ${userInfo.username} to access pi-review-items for disclosure ${disclosureId} which isnt theirs`);
       }
 
-      let knex = getKnex(dbInfo);
+      const knex = getKnex(dbInfo);
 
       return knex.select('p.id', 'p.target_type as targetType', 'p.target_id as targetId', 'p.reviewed_on as reviewedOn', 'p.revised', 'p.responded_to as respondedTo')
         .from('pi_review as p')
@@ -614,9 +614,9 @@ export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
             knex('disclosure').select('config_id as configId').where('id', disclosureId)
           ]).then(([questions, entities, declarations, config]) => {
             return {
-              questions: questions,
-              entities: entities,
-              declarations: declarations,
+              questions,
+              entities,
+              declarations,
               configId: config[0].configId
             };
           });
@@ -624,7 +624,7 @@ export let getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
-let getReviewTarget = (knex, reviewId) => {
+const getReviewTarget = (knex, reviewId) => {
   return knex.select('target_type as targetType', 'target_id as targetId')
     .from('pi_review as p')
     .where({
@@ -634,8 +634,8 @@ let getReviewTarget = (knex, reviewId) => {
     });
 };
 
-export let addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => {
-  let knex = getKnex(dbInfo);
+export const addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => {
+  const knex = getKnex(dbInfo);
 
   return getReviewTarget(knex, reviewId)
     .then(reviewTarget => {
@@ -660,8 +660,8 @@ export let addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => {
     });
 };
 
-export let removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => {
-  let knex = getKnex(dbInfo);
+export const removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => {
+  const knex = getKnex(dbInfo);
 
   return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, relationshipId)
     .then(isAllowed => {
@@ -678,8 +678,8 @@ export let removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => 
     });
 };
 
-export let reviseDeclaration = (dbInfo, userInfo, reviewId, declaration) => {
-  let knex = getKnex(dbInfo);
+export const reviseDeclaration = (dbInfo, userInfo, reviewId, declaration) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('target_id as targetId')
     .from('pi_review')
@@ -699,8 +699,8 @@ export let reviseDeclaration = (dbInfo, userInfo, reviewId, declaration) => {
     });
 };
 
-export let reviseSubQuestion = (dbInfo, userInfo, reviewId, subQuestionId, answer) => {
-  let knex = getKnex(dbInfo);
+export const reviseSubQuestion = (dbInfo, userInfo, reviewId, subQuestionId, answer) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('disclosure_id as disclosureId', 'target_id as targetId')
     .from('pi_review as p')
@@ -717,14 +717,14 @@ export let reviseSubQuestion = (dbInfo, userInfo, reviewId, subQuestionId, answe
 
         return DisclosureDB.saveNewQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, {
           questionId: subQuestionId,
-          answer: answer
+          answer
         });
       });
     });
 };
 
-export let deleteAnswers = (dbInfo, userInfo, reviewId, toDelete) => {
-  let knex = getKnex(dbInfo);
+export const deleteAnswers = (dbInfo, userInfo, reviewId, toDelete) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('p.disclosure_id as disclosureId')
     .from('pi_review as p')
@@ -734,8 +734,8 @@ export let deleteAnswers = (dbInfo, userInfo, reviewId, toDelete) => {
     });
 };
 
-export let reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
-  let knex = getKnex(dbInfo);
+export const reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
+  const knex = getKnex(dbInfo);
 
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
@@ -753,8 +753,8 @@ export let reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
-export let getPIResponseInfo = (dbInfo, disclosureId) => {
-  let knex = getKnex(dbInfo);
+export const getPIResponseInfo = (dbInfo, disclosureId) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('target_id as targetId', 'target_type as targetType', 'reviewed_on as reviewedOn')
     .from('pi_review')

@@ -21,13 +21,13 @@ import React from 'react';
 import {merge} from '../../merge';
 
 export function ProgressBar(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       width: '100%',
       height: 15
     },
     bar: {
-      width: props.percentage + '%',
+      width: `${props.percentage}%`,
       backgroundColor: window.config.colors.two,
       height: '100%',
       transition: 'width .2s ease-in-out'

@@ -130,7 +130,7 @@ export class Question extends React.Component {
 
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'inline-block',
         width: '90%',

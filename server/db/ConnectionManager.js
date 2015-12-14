@@ -42,7 +42,7 @@ else {
   }
 }
 
-let knexInstance = knex({
+const knexInstance = knex({
   client: process.env.DB_PACKAGE || 'strong-oracle',
   connection: connectionOptions,
   pool: {

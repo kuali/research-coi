@@ -35,7 +35,7 @@ export default class extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         padding: 20
       },
@@ -47,7 +47,7 @@ export default class extends React.Component {
       }
     };
 
-    let disclosure = this.props.disclosure;
+    const disclosure = this.props.disclosure;
     let detail;
     if (disclosure) {
       detail = (

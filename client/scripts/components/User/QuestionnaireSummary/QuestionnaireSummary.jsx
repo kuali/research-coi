@@ -36,7 +36,7 @@ export class QuestionnaireSummary extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'block',
         overflow: 'hidden'
@@ -54,15 +54,15 @@ export class QuestionnaireSummary extends React.Component {
       }
     };
 
-    let summaries = [];
+    const summaries = [];
     if (this.props.answers) {
-      let questionAnswer = this.props.answers.map(a=>{
+      const questionAnswer = this.props.answers.map(a => {
         a.question = this.getQuestion(a.questionId);
         return a;
       });
 
-      let parents = [];
-      let subs = [];
+      const parents = [];
+      const subs = [];
 
       questionAnswer.forEach(answer => {
         if (answer.question && !answer.question.parent) {
@@ -80,7 +80,7 @@ export class QuestionnaireSummary extends React.Component {
             answer={answer.answer.value}
             question={answer.question}
             index={index}
-            key={'a' + answer.questionId}
+            key={`a${answer.questionId}`}
           />
         );
         subs.filter(subAnswer => {
@@ -93,15 +93,15 @@ export class QuestionnaireSummary extends React.Component {
               answer={subAnswer.answer.value}
               question={subAnswer.question}
               index={index}
-              key={'sa' + subAnswer.questionId}
+              key={`sa${subAnswer.questionId}`}
             />
           );
         });
       });
     }
 
-    let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
-    let instructions = (
+    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
+    const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}

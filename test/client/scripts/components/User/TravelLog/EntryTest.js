@@ -30,8 +30,8 @@ Entry.__Rewire__('TravelLogStore', MockTravelLogStore); //eslint-disable-line no
 
 /*global describe, it */
 
-let relationshipId = 1;
-let getTravelLog = () => {
+const relationshipId = 1;
+const getTravelLog = () => {
   return {
     entityName: 'Dragon Cats',
     amount: 999,
@@ -41,7 +41,7 @@ let getTravelLog = () => {
     reason: 'fdsffsdf',
     status: 'IN PROGRESS',
     disclosedDate: null,
-    relationshipId: relationshipId,
+    relationshipId,
     active: 1
   };
 };
@@ -73,8 +73,8 @@ describe('Entry', () => {
     assert.equal('Entry Viewer', entryDom.props.children.props.name);
   });
 
-  it('render disclosed entry viewer', function() {
-    let travelLog = getTravelLog();
+  it('render disclosed entry viewer', () => {
+    const travelLog = getTravelLog();
     travelLog.status = COIConstants.RELATIONSHIP_STATUS.DISCLOSED;
     travelLog.disclosedDate = new Date();
     const entry = sd.shallowRender(
@@ -94,8 +94,8 @@ describe('Entry', () => {
     assert.equal('Entry Editor', vdom.props.children.props.name);
   });
 
-  it('saveEntry with errors', function() {
-    let travelLog = getTravelLog();
+  it('saveEntry with errors', () => {
+    const travelLog = getTravelLog();
     travelLog.relationshipId = 2;
     const entry = sd.shallowRender(
       <Entry
@@ -109,63 +109,63 @@ describe('Entry', () => {
     const entryInstance = entry.getMountedInstance();
     entryInstance.saveEntry();
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal(2, storeState.validatingId);
   });
 
-  it('saveEntry without errors', function() {
+  it('saveEntry without errors', () => {
     instance.saveEntry();
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal(1, storeState.saveId);
   });
 
   it('archiveEntry method', () => {
     instance.archiveEntry();
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal(1, storeState.archiveId);
   });
 
-  it('editEntry method', function() {
+  it('editEntry method', () => {
     instance.editEntry();
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal(1, storeState.editId);
   });
 
-  it('cancelEntry method', function() {
+  it('cancelEntry method', () => {
     instance.cancelEntry();
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal(1, storeState.cancelId);
   });
 
-  it('deleteEntry method', function() {
+  it('deleteEntry method', () => {
     instance.deleteEntry();
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal(1, storeState.deleteId);
   });
 
-  it('updateField method', function() {
+  it('updateField method', () => {
     instance.updateField({target: {value: 'entityName', id: 'test'}});
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal('entityName', storeState.updateValue);
   });
 
-  it('updateStartDate method', function() {
+  it('updateStartDate method', () => {
     instance.updateStartDate('startDate');
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal('startDate', storeState.updateValue);
   });
 
-  it('updateEndDate method', function() {
+  it('updateEndDate method', () => {
     instance.updateEndDate('endDate');
 
-    let storeState = MockTravelLogStore.getState();
+    const storeState = MockTravelLogStore.getState();
     assert.equal('endDate', storeState.updateValue);
   });
 

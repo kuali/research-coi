@@ -41,7 +41,7 @@ export class EntityRelation extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         padding: '10px 0 3px 0',
         borderTop: '1px solid #C3C3C3',
@@ -56,9 +56,9 @@ export class EntityRelation extends ResponsiveComponent {
         width: '90%'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
-    let declarationTypeOptions = this.props.declarationTypes.map(type =>{
+    const declarationTypeOptions = this.props.declarationTypes.map(type => {
       return (
         <div key={type.typeCd}>
           <input
@@ -67,7 +67,7 @@ export class EntityRelation extends ResponsiveComponent {
             checked={this.props.typeCd === type.typeCd}
             value={type.typeCd}
             onChange={this.relationChosen}
-            name={this.props.entity.id + 'relation' + this.props.projectId}
+            name={`${this.props.entity.id}relation${this.props.projectId}`}
             id={`${this.props.entity.id}r${this.props.projectId}${type.typeCd}`}
           />
 

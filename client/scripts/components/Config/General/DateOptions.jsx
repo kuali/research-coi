@@ -29,17 +29,17 @@ export default class DateOptions extends React.Component {
   }
 
   setWarningValue() {
-    let warningValueSelect = this.refs.warningValue;
+    const warningValueSelect = this.refs.warningValue;
     ConfigActions.setWarningValueOnNotification(this.props.id, warningValueSelect.value);
   }
 
   setWarningPeriod() {
-    let warningPeriodSelect = this.refs.warningPeriod;
+    const warningPeriodSelect = this.refs.warningPeriod;
     ConfigActions.setWarningPeriodOnNotification(this.props.id, warningPeriodSelect.value);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       warningValue: {
@@ -62,7 +62,7 @@ export default class DateOptions extends React.Component {
       }
     };
 
-    let warningValue = [];
+    const warningValue = [];
     let i = 1;
     while (i <= 31) {
       warningValue.push(

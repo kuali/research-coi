@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import ProjectToReview from './ProjectToReview';
 
 export default function DeclarationSection(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       margin: '25px 20px 25px 35px',
       backgroundColor: 'white',
@@ -42,9 +42,9 @@ export default function DeclarationSection(props: Object): React.Element {
     }
   };
 
-  let projects = props.declarationsToReview;
+  const projects = props.declarationsToReview;
 
-  let projectsJSX = projects.map((project, index) => {
+  const projectsJSX = projects.map((project, index) => {
     return (
       <ProjectToReview
         key={project.id}

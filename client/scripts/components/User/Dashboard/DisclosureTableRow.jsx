@@ -42,7 +42,7 @@ export class DisclosureTableRow extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         padding: '20px 60px',
         borderBottom: '5px solid white',
@@ -75,11 +75,11 @@ export class DisclosureTableRow extends React.Component {
       }
     };
 
-    let updateable = this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
+    const updateable = this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
       this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
       this.props.status === COIConstants.DISCLOSURE_STATUS.EXPIRED;
 
-    let revisable = this.props.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
+    const revisable = this.props.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
 
     let extraInfo;
     if (this.props.expiresOn) {

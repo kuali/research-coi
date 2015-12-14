@@ -48,7 +48,7 @@ export default class Notification extends React.Component {
   }
 
   done() {
-    let textarea = this.refs.reminderText;
+    const textarea = this.refs.reminderText;
     ConfigActions.setReminderTextOnNotification(this.props.id, textarea.value);
     this.setState({
       editing: false
@@ -56,7 +56,7 @@ export default class Notification extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginBottom: 40
       },
@@ -85,7 +85,7 @@ export default class Notification extends React.Component {
       }
     };
 
-    let warningValue = [];
+    const warningValue = [];
     let i = 1;
     while (i <= 31) {
       warningValue.push(

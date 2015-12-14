@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import EntityDeclaration from './EntityDeclaration';
 
 export default function ProjectToReview(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       paddingBottom: 10
     },

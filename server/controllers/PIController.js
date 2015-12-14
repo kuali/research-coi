@@ -22,11 +22,11 @@ import Log from '../Log';
 import {COIConstants} from '../../COIConstants';
 import {FORBIDDEN, NO_CONTENT} from '../../HTTPStatusCodes';
 
-export let init = app => {
+export const init = app => {
   /**
     @Role: admin
   */
-  app.get('/api/coi/pi', function(req, res, next) {
+  app.get('/api/coi/pi', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(FORBIDDEN);
       return;
@@ -240,7 +240,7 @@ export let init = app => {
   /**
     @Role: admin
   */
-  app.get('/api/coi/disclosures/:id/pi-responses', function(req, res, next) {
+  app.get('/api/coi/disclosures/:id/pi-responses', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(FORBIDDEN);
       return;

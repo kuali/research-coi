@@ -31,7 +31,7 @@ export default class ToggleButton extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       button: {
         backgroundColor: 'white',
         border: '1px solid #bbb',

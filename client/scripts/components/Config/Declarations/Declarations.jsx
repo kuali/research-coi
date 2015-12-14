@@ -49,7 +49,7 @@ export default class Declarations extends React.Component {
   }
 
   onChange() {
-    let storeState = ConfigStore.getState();
+    const storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
       declarationTypes: storeState.config.declarationTypes,
@@ -65,12 +65,12 @@ export default class Declarations extends React.Component {
   }
 
   updateNewValue() {
-    let textbox = this.refs.newType;
+    const textbox = this.refs.newType;
     ConfigActions.setNewDeclarationTypeText(textbox.value);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         minHeight: 100
       },

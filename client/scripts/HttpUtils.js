@@ -31,7 +31,7 @@ export function processResponse(callback) {
 }
 
 export function createRequest() {
-  let request = defaults();
-  request.set('Authorization', 'Bearer ' + cookies.get('authToken'));
+  const request = defaults();
+  request.set('Authorization', `Bearer ${cookies.get('authToken')}`);
   return request;
 }

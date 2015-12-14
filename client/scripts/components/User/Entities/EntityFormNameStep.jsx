@@ -31,16 +31,16 @@ export class EntityFormNameStep extends ResponsiveComponent {
   }
 
   updateName() {
-    let newNameValue = this.refs.entityName.value;
+    const newNameValue = this.refs.entityName.value;
     DisclosureActions.setInProgressEntityName(newNameValue);
   }
 
   renderMobile() {}
 
   renderDesktop() {
-    let validationErrors = DisclosureStore.entityNameStepErrors();
+    const validationErrors = DisclosureStore.entityNameStepErrors();
 
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
       },
       title: {
@@ -81,7 +81,7 @@ export class EntityFormNameStep extends ResponsiveComponent {
         fontSize: 12
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let requiredFieldError;
     if (this.props.validating && validationErrors.name) {
@@ -90,7 +90,7 @@ export class EntityFormNameStep extends ResponsiveComponent {
       );
     }
 
-    let htmlId = Math.floor(Math.random() * 1000000000);
+    const htmlId = Math.floor(Math.random() * 1000000000);
     return (
       <span style={merge(styles.container, this.props.style)}>
         <div style={styles.title}>Add New Financial Entity</div>

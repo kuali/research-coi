@@ -22,7 +22,7 @@ import {UNAUTHORIZED} from '../../HTTPStatusCodes';
 
 function getAuthToken(header) {
   try {
-    let parsedHeader = header.split(' ');
+    const parsedHeader = header.split(' ');
     if (parsedHeader[0] === 'Bearer') {
       return parsedHeader[1];
     }

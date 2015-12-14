@@ -38,7 +38,7 @@ export class NavSidebar extends React.Component {
   }
 
   render(): React.Element {
-    let styles = {
+    const styles = {
       navigation: {
         verticalAlign: 'top',
         width: '25%',

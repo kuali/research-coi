@@ -27,9 +27,9 @@ import ConfigActions from '../../actions/ConfigActions';
 
 const questionTarget = {
   hover(props, monitor) {
-    let itemBeingDragged = monitor.getItem();
+    const itemBeingDragged = monitor.getItem();
     const draggedId = itemBeingDragged.id;
-    let xOffset = monitor.getDifferenceFromInitialOffset().x;
+    const xOffset = monitor.getDifferenceFromInitialOffset().x;
 
     if (itemBeingDragged.isSubQuestion && xOffset < -50) {
       props.makeMainQuestion(draggedId);
@@ -106,12 +106,12 @@ class Question extends React.Component {
   }
 
   criteriaChanged() {
-    let dropdown = this.refs.displayCriteria;
+    const dropdown = this.refs.displayCriteria;
     ConfigActions.criteriaChanged(this.props.questionnaireCategory, this.props.id, dropdown.value);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         borderRadius: 5,
         backgroundColor: 'white',

@@ -22,7 +22,7 @@ import LoadTest from '../../../../../LoadTest';
 
 export class Test extends LoadTest {
   getPath() {
-    let disclosureId = Math.ceil(Math.random() * 10);
+    const disclosureId = Math.ceil(Math.random() * 10);
     return `/api/coi/disclosures/${disclosureId}`;
   }
 }

@@ -30,11 +30,15 @@ export default class QuestionSummary extends React.Component {
   }
 
   showComments() {
-    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE, this.props.question.id, 'QUESTION ' + this.props.question.numberToShow);
+    AdminActions.showCommentingPanel(
+      COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+      this.props.question.id,
+      `QUESTION ${this.props.question.numberToShow}`
+    );
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginBottom: 10
       },

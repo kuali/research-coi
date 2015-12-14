@@ -26,7 +26,7 @@ EntityDeclaration.__Rewire__('PIReviewActions', MockPIReviewActions); //eslint-d
 
 /*global describe, it, before, after */
 
-let entityWithComments = {
+const entityWithComments = {
   reviewId: 1,
   comments: [{id: 1, author: 'Kuali Joe', text: 'comment', date: new Date()}],
   adminComments: [{id: 1, author: 'Kuali Joe', text: 'admin comment', date: new Date()}],
@@ -34,14 +34,14 @@ let entityWithComments = {
   reviewedOn: new Date()
 };
 
-let entityWithOutComments = {
+const entityWithOutComments = {
   reviewId: 1,
   comments: [],
   adminComments: [],
   reviewedOn: null
 };
 
-let renderEntityDelcaration = (entity, revising, responding) => {
+const renderEntityDelcaration = (entity, revising, responding) => {
   return sd.shallowRender(
     <EntityDeclaration
       key={1}

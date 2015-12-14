@@ -45,7 +45,7 @@ export class Relationships extends ResponsiveComponent {
 
   openNext(currentIndex, type) {
     if (type === 'PROJECT') {
-      let currentId = this.props.projects[currentIndex].id;
+      const currentId = this.props.projects[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let nextId;
       if (this.props.projects[currentIndex + 1]) {
@@ -54,7 +54,7 @@ export class Relationships extends ResponsiveComponent {
       }
     }
     else {
-      let currentId = this.props.entities[currentIndex].id;
+      const currentId = this.props.entities[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let nextId;
       if (this.props.entities[currentIndex + 1]) {
@@ -66,7 +66,7 @@ export class Relationships extends ResponsiveComponent {
 
   openPrevious(currentIndex, type) {
     if (type === 'PROJECT') {
-      let currentId = this.props.projects[currentIndex].id;
+      const currentId = this.props.projects[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let previousId;
       if (this.props.projects[currentIndex - 1]) {
@@ -75,7 +75,7 @@ export class Relationships extends ResponsiveComponent {
       }
     }
     else {
-      let currentId = this.props.entities[currentIndex].id;
+      const currentId = this.props.entities[currentIndex].id;
       DisclosureActions.toggleDeclaration(currentId, type);
       let previousId;
       if (this.props.entities[currentIndex - 1]) {
@@ -107,7 +107,7 @@ export class Relationships extends ResponsiveComponent {
 
   isProjectDeclarationOpen(id) {
     if (this.props.declarationStates && this.props.declarationStates.projects) {
-      let state = this.props.declarationStates.projects[id];
+      const state = this.props.declarationStates.projects[id];
       return (state && state.open);
     }
 
@@ -116,7 +116,7 @@ export class Relationships extends ResponsiveComponent {
 
   isEntityDeclarationOpen(id) {
     if (this.props.declarationStates && this.props.declarationStates.entities) {
-      let state = this.props.declarationStates.entities[id];
+      const state = this.props.declarationStates.entities[id];
       return (state && state.open);
     }
 
@@ -130,7 +130,7 @@ export class Relationships extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         overflow: 'hidden'
       },
@@ -138,10 +138,10 @@ export class Relationships extends ResponsiveComponent {
         padding: '46px 0 0 50px'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
-    let projectView = this.props.view === 0;
-    let relationshipNodes = [];
+    const projectView = this.props.view === 0;
+    const relationshipNodes = [];
     let declarations;
     if (projectView) {
       for (let i = 0; i < this.props.projects.length; i++) {
@@ -170,7 +170,7 @@ export class Relationships extends ResponsiveComponent {
     else {
       this.props.entities.filter(entity => {
         return entity.active === 1;
-      }).forEach((entity, index) =>{
+      }).forEach((entity, index) => {
         declarations = this.getEntityDeclarations(entity.id);
 
         relationshipNodes.push(
@@ -191,8 +191,8 @@ export class Relationships extends ResponsiveComponent {
       });
     }
 
-    let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
-    let instructions = (
+    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
+    const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}

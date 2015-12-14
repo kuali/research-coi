@@ -23,7 +23,7 @@ import {formatDate} from '../../../formatDate';
 import {COIConstants} from '../../../../../COIConstants';
 
 export default function QuestionSummary(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       marginBottom: 10
     },

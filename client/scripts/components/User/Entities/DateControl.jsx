@@ -32,7 +32,7 @@ export class DateControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       datepicker: {
         marginTop: 4
       },

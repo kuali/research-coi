@@ -39,7 +39,7 @@ export class FileUpload extends React.Component {
   }
 
   render() {
-    let defaultStyles = {
+    const defaultStyles = {
       dropZone: {
         border: '3px dashed grey',
         margin: '0 0 25px 0',
@@ -110,11 +110,11 @@ export class FileUpload extends React.Component {
       }
     };
 
-    let styles = merge(defaultStyles, this.props.styles);
+    const styles = merge(defaultStyles, this.props.styles);
 
     let files;
     if (this.props.files) {
-      files = this.props.files.map((file, index)=> {
+      files = this.props.files.map((file, index) => {
         let downloadLink, downloadButton;
 
         if (file.preview) {
@@ -132,12 +132,12 @@ export class FileUpload extends React.Component {
           );
         } else if(file.key) {
           downloadLink = (
-            <a style={styles.link} href={'/api/coi/files/' + encodeURIComponent(file.id)}>
+            <a style={styles.link} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
               {file.name}
             </a>
           );
           downloadButton = (
-            <a style={styles.downloadButtonLink} href={'/api/coi/files/' + encodeURIComponent(file.id)}>
+            <a style={styles.downloadButtonLink} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
               <span>
                 <BlueButton style={styles.downloadButton}>DOWNLOAD</BlueButton>
               </span>
@@ -153,7 +153,7 @@ export class FileUpload extends React.Component {
         }
 
         return (
-          <div value={index} key={'file_' + index} style={styles.file}>
+          <div value={index} key={`file_${index}`} style={styles.file}>
             {downloadLink}
             <span style={{float: 'right'}}>
               {downloadButton}
@@ -166,7 +166,7 @@ export class FileUpload extends React.Component {
 
     let dropzone;
 
-    let readOnly = (this.props.multiple === false && this.props.files.length > 0) || this.props.readonly;
+    const readOnly = (this.props.multiple === false && this.props.files.length > 0) || this.props.readonly;
     if (!readOnly) {
       dropzone = (
         <Dropzone

@@ -22,10 +22,7 @@ class _TravelLogActions {
   addEntry() { this.dispatch(); }
 
   updateTravelLog(field, value) {
-    this.dispatch({
-      field: field,
-      value: value
-    });
+    this.dispatch({field, value});
   }
 
   loadTravelLogEntries() {
@@ -52,6 +49,6 @@ class _TravelLogActions {
 
   cancelEntry(relationshipId) { this.dispatch(relationshipId); }
 
-  updateEntry(field, value, relationshipId) { this.dispatch({field: field, value: value, relationshipId: relationshipId}); }
+  updateEntry(field, value, relationshipId) { this.dispatch({field, value, relationshipId}); }
 }
-export let TravelLogActions = alt.createActions(_TravelLogActions);
+export const TravelLogActions = alt.createActions(_TravelLogActions);

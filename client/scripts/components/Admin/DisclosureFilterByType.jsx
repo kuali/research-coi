@@ -38,7 +38,7 @@ export class DisclosureFilterByType extends DisclosureFilter {
   }
 
   toggleFilter(evt) {
-    let index = Number(evt.target.id.replace('typeFilt', ''));
+    const index = Number(evt.target.id.replace('typeFilt', ''));
     AdminActions.toggleTypeFilter(this.props.possibleTypes[index]);
   }
 
@@ -50,7 +50,7 @@ export class DisclosureFilterByType extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    let styles = {
+    const styles = {
       container: {
         whiteSpace: 'nowrap',
         color: 'black'
@@ -74,8 +74,8 @@ export class DisclosureFilterByType extends DisclosureFilter {
       }
     };
 
-    let options = this.props.possibleTypes.map((type, index) => {
-      let id = 'typeFilt' + index;
+    const options = this.props.possibleTypes.map((type, index) => {
+      const id = `typeFilt${index}`;
       return (
         <div style={styles.checkbox} key={type}>
           <input

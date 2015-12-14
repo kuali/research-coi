@@ -51,7 +51,7 @@ export default class LoadTest {
 
   getAverageTime(times) {
     if (times && Array.isArray(times) && times.length > 0) {
-      let sumOfTimes = times.reduce((previousValue, currentValue) => {
+      const sumOfTimes = times.reduce((previousValue, currentValue) => {
         return previousValue + currentValue;
       }, 0);
 
@@ -93,7 +93,7 @@ export default class LoadTest {
   }
 
   printProgress() {
-    let percent = (this.completedRequests / this.TOTAL_REQUESTS) * 100;
+    const percent = (this.completedRequests / this.TOTAL_REQUESTS) * 100;
     process.stdout.write(`\r${Math.trunc(percent)}%`);
   }
 
@@ -136,7 +136,7 @@ export default class LoadTest {
   }
 
   hitEndpoint(callback) {
-    let options = {
+    const options = {
       hostname: 'localhost',
       port: this.portToUse,
       path: this.getPath(),
@@ -144,18 +144,18 @@ export default class LoadTest {
       headers: this.getHeaders()
     };
 
-    let startTime = new Date().getTime();
+    const startTime = new Date().getTime();
 
-    let req = http.request(options, res => {
+    const req = http.request(options, res => {
       let response = '';
-      let statusCode = res.statusCode;
+      const statusCode = res.statusCode;
 
       res.setEncoding('utf8');
       res.on('data', chunk => {
         response += chunk;
       });
       res.on('end', () => {
-        let timeElapsed = new Date().getTime() - startTime;
+        const timeElapsed = new Date().getTime() - startTime;
         callback(undefined, {
           statusCode,
           response,

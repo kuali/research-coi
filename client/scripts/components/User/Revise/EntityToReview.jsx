@@ -59,7 +59,7 @@ export default class EntityToReview extends React.Component {
   }
 
   onChange() {
-    let storeState = DisclosureStore.getState();
+    const storeState = DisclosureStore.getState();
     this.setState({
       appState: storeState.applicationState
     });
@@ -107,7 +107,7 @@ export default class EntityToReview extends React.Component {
       return;
     }
 
-    let newState = {
+    const newState = {
       revising: false,
       responding: false
     };
@@ -117,7 +117,7 @@ export default class EntityToReview extends React.Component {
     }
     else if (this.state.responding) {
       newState.responded = true;
-      let textarea = this.refs.responseText;
+      const textarea = this.refs.responseText;
       PIReviewActions.respond(this.props.entity.reviewId, textarea.value);
     }
 
@@ -133,7 +133,7 @@ export default class EntityToReview extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       statusIcon: {
@@ -190,7 +190,7 @@ export default class EntityToReview extends React.Component {
       }
     };
 
-    let comments = this.props.entity.comments.map(comment => {
+    const comments = this.props.entity.comments.map(comment => {
       return (
         <div style={styles.comment} key={comment.id}>
           <div style={styles.commentTitle}>Comment from

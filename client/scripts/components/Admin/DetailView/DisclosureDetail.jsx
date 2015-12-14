@@ -36,8 +36,8 @@ export class DisclosureDetail extends React.Component {
   }
 
   makeEntityMap() {
-    let result = {};
-    let entities = this.props.disclosure.entities;
+    const result = {};
+    const entities = this.props.disclosure.entities;
     if (entities !== undefined) {
       entities.forEach(entity => {
         result[entity.id] = entity.name;
@@ -68,9 +68,9 @@ export class DisclosureDetail extends React.Component {
   }
 
   render() {
-    let entityNameMap = this.makeEntityMap();
+    const entityNameMap = this.makeEntityMap();
 
-    let styles = {
+    const styles = {
       container: {
         width: '100%'
       },
@@ -107,7 +107,7 @@ export class DisclosureDetail extends React.Component {
       }
     };
 
-    let screeningQuestions = this.props.config.questions.screening.filter(question => {
+    const screeningQuestions = this.props.config.questions.screening.filter(question => {
       return question.active !== 0;
     }).sort((a, b) => {
       let aParent, bParent;
@@ -144,7 +144,7 @@ export class DisclosureDetail extends React.Component {
       };
     });
 
-    let entityQuestions = this.props.config.questions.entities.filter(question => {
+    const entityQuestions = this.props.config.questions.entities.filter(question => {
       return question.active !== 0;
     }).sort((a, b) => {
       return a.question.order - b.question.order;
@@ -155,25 +155,25 @@ export class DisclosureDetail extends React.Component {
         type: question.question.type
       };
     });
-    let screeningAnswers = {};
+    const screeningAnswers = {};
     this.props.disclosure.answers.forEach(answer => {
       screeningAnswers[answer.questionId] = answer.answer.value;
     });
 
-    let questionnaireComments = this.props.disclosure.comments.filter(comment => {
+    const questionnaireComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     });
 
-    let entitiesComments = this.props.disclosure.comments.filter(comment => {
+    const entitiesComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.ENTITIES;
     });
 
-    let declarationsComments = this.props.disclosure.comments.filter(comment => {
+    const declarationsComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.PROJECTS;
     });
 
 
-    let piComments = this.props.disclosure.comments.filter(comment => {
+    const piComments = this.props.disclosure.comments.filter(comment => {
       return comment.piVisible;
     });
 

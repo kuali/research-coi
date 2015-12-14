@@ -61,9 +61,9 @@ function startNextTest() {
     return;
   }
 
-  let test = testsToRun[currentTestIndex];
-  let TestClass = require(test.replace('loadtest/', './')).Test;
-  let theTest = new TestClass;
+  const test = testsToRun[currentTestIndex];
+  const TestClass = require(test.replace('loadtest/', './')).Test;
+  const theTest = new TestClass;
   console.log(test);
   theTest.run(port, results => {
     printResults(test, results);
@@ -77,7 +77,7 @@ export default function() {
   port = process.env.COI_PORT || DEFAULT_PORT;
 
   if (process.argv.length > 2) {
-    let fsStats = fs.statSync(process.argv[2]);
+    const fsStats = fs.statSync(process.argv[2]);
     if (fsStats.isDirectory()) {
       testsToRun = searchDirectoryForTests(process.argv[2]);
     }

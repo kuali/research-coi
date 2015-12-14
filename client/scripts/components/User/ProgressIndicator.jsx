@@ -31,8 +31,8 @@ export default class ProgressIndicator extends React.Component {
   }
 
   componentDidMount() {
-    var cnvsElement = this.refs.theCanvas;
-    var context = cnvsElement.getContext('2d');
+    const cnvsElement = this.refs.theCanvas;
+    const context = cnvsElement.getContext('2d');
     context.font = '65px Arial';
 
     this.canvasContext = context;
@@ -75,7 +75,7 @@ export default class ProgressIndicator extends React.Component {
   }
 
   paint() {
-    let ctx = this.canvasContext;
+    const ctx = this.canvasContext;
     ctx.clearRect(0, 0, 200, 200);
 
     // unfinished arc
@@ -86,7 +86,7 @@ export default class ProgressIndicator extends React.Component {
     ctx.stroke();
 
     // Completed arc
-    var radians = (2 * Math.PI * this.percent.value / 100) - (Math.PI / 2);
+    const radians = (2 * Math.PI * this.percent.value / 100) - (Math.PI / 2);
     ctx.strokeStyle = window.colorBlindModeOn ? 'black' : '#0095A0';
     ctx.beginPath();
     ctx.arc(100, 100, 90, -Math.PI / 2, radians);
@@ -95,14 +95,14 @@ export default class ProgressIndicator extends React.Component {
     // the percent text
     ctx.fillStyle = window.colorBlindModeOn ? 'black' : '#666666';
     ctx.lineWidth = 1;
-    ctx.fillText(Math.floor(this.percent.value) + '%',
+    ctx.fillText(`${Math.floor(this.percent.value)}%`,
       this.percent.value < 10 ? 60 : 40,
       120
     );
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         position: 'relative',
         textAlign: 'center',

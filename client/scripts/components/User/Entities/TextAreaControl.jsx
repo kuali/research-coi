@@ -30,7 +30,7 @@ export class TextAreaControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       textarea: {
         width: '100%',
         height: 90,

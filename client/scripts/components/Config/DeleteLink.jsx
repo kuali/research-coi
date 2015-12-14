@@ -31,7 +31,7 @@ export default class DeleteLink extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #F57C00',
         cursor: 'pointer'

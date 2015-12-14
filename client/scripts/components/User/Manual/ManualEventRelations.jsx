@@ -58,7 +58,7 @@ export class ManualEventRelations extends ResponsiveComponent {
   }
 
   getDeclarationDescription(typeCd) {
-    let declarationType = window.config.declarationTypes.find(type=>{
+    const declarationType = window.config.declarationTypes.find(type => {
       return type.typeCd === typeCd;
     });
 
@@ -76,7 +76,7 @@ export class ManualEventRelations extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         display: 'block',
         overflow: 'hidden',
@@ -127,7 +127,7 @@ export class ManualEventRelations extends ResponsiveComponent {
         marginBottom: 28
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let relationshipDialog;
     if (this.props.open) {

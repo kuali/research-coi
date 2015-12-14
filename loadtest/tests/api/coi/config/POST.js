@@ -26,7 +26,7 @@ export class Test extends LoadTest {
     this.method = 'POST';
     this.path = '/api/coi/config';
 
-    let dataObject = {
+    const dataObject = {
       matrixTypes: [
         {
           typeCd: 1,

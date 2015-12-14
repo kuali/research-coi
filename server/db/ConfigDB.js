@@ -21,13 +21,13 @@ import {camelizeJson, snakeizeJson} from './JsonUtils';
 
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
-let mockDB = {
+const mockDB = {
   'UIT': {
     colors: {
       'one': '#348FF7',
@@ -38,7 +38,7 @@ let mockDB = {
   }
 };
 
-let createDeleteQueries = (query, collection, tableProps) => {
+const createDeleteQueries = (query, collection, tableProps) => {
   let sel = query(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where.key, tableProps.where.value);
@@ -47,7 +47,7 @@ let createDeleteQueries = (query, collection, tableProps) => {
   return sel.then(results => {
     Promise.all(
       results.filter(result => {
-        let match = collection.find(item => {
+        const match = collection.find(item => {
           return item[tableProps.pk] && (item[tableProps.pk] === result[tableProps.pk]);
         });
         return !match;
@@ -60,7 +60,7 @@ let createDeleteQueries = (query, collection, tableProps) => {
   });
 };
 
-let createInsertQueries = (query, collection, tableProps) => {
+const createInsertQueries = (query, collection, tableProps) => {
   return Promise.all(
     collection.map(line => {
       line.active = true;
@@ -73,7 +73,7 @@ let createInsertQueries = (query, collection, tableProps) => {
   );
 };
 
-let createUpdateQueries = (query, collection, tableProps) => {
+const createUpdateQueries = (query, collection, tableProps) => {
   return Promise.all(
     collection.map(line => {
       return query(tableProps.table)
@@ -83,9 +83,9 @@ let createUpdateQueries = (query, collection, tableProps) => {
   );
 };
 
-let createCollectionQueries = (query, collection, tableProps) => {
-  let updates = [];
-  let inserts = [];
+const createCollectionQueries = (query, collection, tableProps) => {
+  const updates = [];
+  const inserts = [];
   collection.forEach(line => {
     if (line[tableProps.pk] === undefined) {
       inserts.push(line);
@@ -101,8 +101,8 @@ let createCollectionQueries = (query, collection, tableProps) => {
   ]);
 };
 
-let convertQuestionFormat = (questions) =>{
-  return questions.map(question=>{
+const convertQuestionFormat = (questions) => {
+  return questions.map(question => {
     question.question = JSON.stringify(question.question);
     if (isNaN(question.id)) {
       delete question.id;
@@ -111,9 +111,9 @@ let convertQuestionFormat = (questions) =>{
   });
 };
 
-export let getConfig = (dbInfo, userId, optionalTrx) => {
-  var config = mockDB.UIT;
-  let knex = getKnex(dbInfo);
+export const getConfig = (dbInfo, userId, optionalTrx) => {
+  let config = mockDB.UIT;
+  const knex = getKnex(dbInfo);
 
   let query;
   if (optionalTrx) {
@@ -147,10 +147,10 @@ export let getConfig = (dbInfo, userId, optionalTrx) => {
   .then(result => {
     config.matrixTypes = result[0];
     config.matrixTypes.map(type => {
-      type.typeOptions = result[1].filter(relationType =>{
+      type.typeOptions = result[1].filter(relationType => {
         return relationType.relationship_cd === type.type_cd;
       });
-      type.amountOptions = result[2].filter(amountType =>{
+      type.amountOptions = result[2].filter(amountType => {
         return amountType.relationship_cd === type.type_cd;
       });
       return type;
@@ -160,11 +160,11 @@ export let getConfig = (dbInfo, userId, optionalTrx) => {
     config.disclosureTypes = result[5];
     config.notifications = result[6];
     config.questions = {};
-    config.questions.screening = result[7] ? result[7].map(question=>{
+    config.questions.screening = result[7] ? result[7].map(question => {
       question.question = JSON.parse(question.question);
       return question;
     }) : [];
-    config.questions.entities = result[8] ? result[8].map(question=>{
+    config.questions.entities = result[8] ? result[8].map(question => {
       question.question = JSON.parse(question.question);
       return question;
     }) : [];
@@ -178,9 +178,9 @@ export let getConfig = (dbInfo, userId, optionalTrx) => {
   });
 };
 
-export let setConfig = (dbInfo, userId, body, optionalTrx) => {
-  let config = snakeizeJson(body);
-  let knex = getKnex(dbInfo);
+export const setConfig = (dbInfo, userId, body, optionalTrx) => {
+  const config = snakeizeJson(body);
+  const knex = getKnex(dbInfo);
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -189,7 +189,7 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
     query = knex;
   }
 
-  let queries = [];
+  const queries = [];
 
   config.matrix_types.forEach(type => {
     queries.push(
@@ -279,12 +279,12 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
     });
 };
 
-export let archiveConfig = (dbInfo, config) => {
-  let knex = getKnex(dbInfo);
+export const archiveConfig = (dbInfo, config) => {
+  const knex = getKnex(dbInfo);
   return knex('config').insert({config: JSON.stringify(config)}, 'id');
 };
 
-export let getArchivedConfig = (dbInfo, id) => {
-  let knex = getKnex(dbInfo);
+export const getArchivedConfig = (dbInfo, id) => {
+  const knex = getKnex(dbInfo);
   return knex('config').select('config').where('id', id);
 };

@@ -50,7 +50,7 @@ export default class DeclarationType extends React.Component {
   }
 
   nameChanged() {
-    let newValue = this.refs.typeName.value;
+    const newValue = this.refs.typeName.value;
     ConfigActions.updateDeclarationType(this.props.type.typeCd, newValue);
   }
 
@@ -73,7 +73,7 @@ export default class DeclarationType extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         fontSize: 17,
         margin: 20
@@ -100,7 +100,7 @@ export default class DeclarationType extends React.Component {
       }
     };
 
-    let type = this.props.type;
+    const type = this.props.type;
 
     let deleteLink;
     if (this.props.delete) {
@@ -121,7 +121,9 @@ export default class DeclarationType extends React.Component {
     else {
       jsx = (
         <span>
-          <label style={styles.typeLabel} htmlFor={'type_' + type.typeCd}>{type.description}</label>
+          <label style={styles.typeLabel} htmlFor={`type_${type.typeCd}`}>
+            {type.description}
+          </label>
           {deleteLink}
           <EditLink style={styles.editLink} onClick={this.startEditing} />
         </span>
@@ -131,7 +133,12 @@ export default class DeclarationType extends React.Component {
     let checkbox;
     if (this.props.toggle) {
       checkbox = (
-        <input type="checkbox" checked={type.enabled === 1} id={'type_' + type.typeCd} onChange={this.typeToggled} />
+        <input
+          type="checkbox"
+          checked={type.enabled === 1}
+          id={`type_${type.typeCd}`}
+          onChange={this.typeToggled}
+        />
       );
     }
 

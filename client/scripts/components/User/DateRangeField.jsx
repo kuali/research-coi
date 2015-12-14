@@ -47,7 +47,7 @@ export default class TextField extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       date: {
         width: 120,
         display: 'inline-block'
@@ -57,7 +57,7 @@ export default class TextField extends React.Component {
       }
     };
 
-    let invalid = this.props.startDateInvalid || this.props.endDateInvalid;
+    const invalid = this.props.startDateInvalid || this.props.endDateInvalid;
 
     return (
       <div style={this.props.styles.container}>

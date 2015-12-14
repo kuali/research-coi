@@ -21,7 +21,7 @@ import React from 'react';
 import {merge} from '../../merge';
 
 export default function SubmitLink(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       fontSize: 15,
       cursor: props.disabled ? 'default' : 'pointer',

@@ -30,15 +30,15 @@ const ONE_DAY = MILLIS * SECONDS * MINUTES * HOURS;
 
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEntity, files) => {
-  let knex = getKnex(dbInfo);
+export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEntity, files) => {
+  const knex = getKnex(dbInfo);
 
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
@@ -56,7 +56,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
         }, 'id')
         .then(id => {
           financialEntity.id = id[0];
-          let queries = [];
+          const queries = [];
           financialEntity.relationships.forEach(relationship => {
             relationship.finEntityId = id[0];
             queries.push(
@@ -70,7 +70,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
                   comments: relationship.comments,
                   status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
                 }, 'id')
-                .then(relationshipId=>{
+                .then(relationshipId => {
                   relationship.id = relationshipId[0];
                   if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
                     return knex('travel_relationship')
@@ -87,7 +87,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
             );
           });
 
-          financialEntity.answers.forEach(answer=>{
+          financialEntity.answers.forEach(answer => {
             queries.push(
               knex('questionnaire_answer')
                 .insert({
@@ -106,8 +106,8 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
           });
 
           financialEntity.files = [];
-          files.forEach(file=>{
-            let fileData = {
+          files.forEach(file => {
+            const fileData = {
               file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
               ref_id: financialEntity.id,
               type: file.mimetype,
@@ -135,7 +135,7 @@ export let saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEn
     });
 };
 
-let isEntityUsers = (knex, entityId, userId) => {
+const isEntityUsers = (knex, entityId, userId) => {
   return knex.select('e.id')
     .from('fin_entity as e')
     .innerJoin('disclosure as d', 'd.id', 'e.disclosure_id')
@@ -148,10 +148,10 @@ let isEntityUsers = (knex, entityId, userId) => {
     });
 };
 
-export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, files) => {
-  let knex = getKnex(dbInfo);
+export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, files) => {
+  const knex = getKnex(dbInfo);
 
-  let financialEntity = body;
+  const financialEntity = body;
 
   return isEntityUsers(knex, entityId, userInfo.schoolId)
     .then(isOwner => {
@@ -167,7 +167,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
           description: financialEntity.description
         })
         .then(() => {
-          let queries = [];
+          const queries = [];
 
           queries.push(
             knex('relationship')
@@ -176,7 +176,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
               .then(dbRelationships => {
                 return Promise.all(
                   dbRelationships.filter(dbRelationship => {
-                    let match = financialEntity.relationships.find(relationship => {
+                    const match = financialEntity.relationships.find(relationship => {
                       return relationship.id === dbRelationship.id;
                     });
                     return !match;
@@ -207,7 +207,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
                     amount_cd: !relationship.amountCd ? null : relationship.amountCd,
                     comments: relationship.comments
                   }, 'id')
-                  .then(relationshipId=>{
+                  .then(relationshipId => {
                     relationship.id = relationshipId[0];
                     if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
                       return knex('travel_relationship')
@@ -239,7 +239,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
                 knex('questionnaire_answer').insert({
                   question_id: answer.questionId,
                   answer: JSON.stringify(answer.answer)
-                }, 'id').then(result =>{
+                }, 'id').then(result => {
                   answer.id = result[0];
                   return knex('fin_entity_answer').insert({
                     fin_entity_id: entityId,
@@ -260,7 +260,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
               .then(results => {
                 if (results) {
                   results.forEach(result => {
-                    let match = financialEntity.files.find(file => {
+                    const match = financialEntity.files.find(file => {
                       return result.id === file.id;
                     });
                     if (!match) {
@@ -285,7 +285,7 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
           );
 
           files.forEach(file => {
-            let fileData = {
+            const fileData = {
               file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
               ref_id: entityId,
               type: file.mimetype,
@@ -313,14 +313,14 @@ export let saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, file
     });
 };
 
-export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
+export const saveDeclaration = (dbInfo, userId, disclosureId, record) => {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
         throw Error(`Attempt by user id ${userId} to create a declaration for disclosure ${disclosureId} which isnt the users`);
       }
 
-      let knex = getKnex(dbInfo);
+      const knex = getKnex(dbInfo);
       return knex('declaration')
         .insert({
           project_id: record.projectId,
@@ -335,14 +335,14 @@ export let saveDeclaration = (dbInfo, userId, disclosureId, record) => {
     });
 };
 
-export let saveExistingDeclaration = (dbInfo, userId, disclosureId, declarationId, record) => {
+export const saveExistingDeclaration = (dbInfo, userId, disclosureId, declarationId, record) => {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
         throw Error(`Attempt by userId ${userId} to save a declaration on disclosure ${disclosureId} which isnt theirs`);
       }
 
-      let knex = getKnex(dbInfo);
+      const knex = getKnex(dbInfo);
 
       return knex('declaration')
         .update({
@@ -356,15 +356,15 @@ export let saveExistingDeclaration = (dbInfo, userId, disclosureId, declarationI
     });
 };
 
-export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
+export const saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
         throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`);
       }
 
-      let knex = getKnex(dbInfo);
-      let answer = body;
+      const knex = getKnex(dbInfo);
+      const answer = body;
       return knex('questionnaire_answer')
         .insert({
           question_id: body.questionId,
@@ -384,14 +384,14 @@ export let saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
     });
 };
 
-export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questionId, body) => {
+export const saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questionId, body) => {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
         throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`);
       }
 
-      let knex = getKnex(dbInfo);
+      const knex = getKnex(dbInfo);
       return knex.select('qa.id')
         .from('disclosure_answer as da')
         .innerJoin('questionnaire_answer as qa', 'da.questionnaire_answer_id', 'qa.id')
@@ -408,8 +408,8 @@ export let saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questionI
     });
 };
 
-let retrieveComments = (dbInfo, userId, disclosureId) => {
-  let knex = getKnex(dbInfo);
+const retrieveComments = (dbInfo, userId, disclosureId) => {
+  const knex = getKnex(dbInfo);
 
   return knex('comment')
     .select('id', 'disclosure_id as disclosureId', 'topic_section as topicSection', 'topic_id as topicId', 'text', 'author', 'user_id as userId', 'date', 'pi_visible as piVisible', 'reviewer_visible as reviewerVisible')
@@ -425,8 +425,8 @@ let retrieveComments = (dbInfo, userId, disclosureId) => {
     });
 };
 
-let flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
-  let knex = getKnex(dbInfo);
+const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('*')
     .from('pi_review')
@@ -452,8 +452,8 @@ let flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
     });
 };
 
-export let addComment = (dbInfo, userInfo, comment) => {
-  let knex = getKnex(dbInfo);
+export const addComment = (dbInfo, userInfo, comment) => {
+  const knex = getKnex(dbInfo);
 
   return knex('comment')
     .insert({
@@ -467,7 +467,7 @@ export let addComment = (dbInfo, userInfo, comment) => {
       pi_visible: comment.visibleToPI,
       reviewer_visible: comment.visibleToReviewers
     }, 'id').then(() => {
-      let statements = [
+      const statements = [
         retrieveComments(dbInfo, userInfo.schoolId, comment.disclosureId)
       ];
       if (comment.visibleToPI) {
@@ -479,8 +479,8 @@ export let addComment = (dbInfo, userInfo, comment) => {
     });
 };
 
-let getDisclosure = (knex, userInfo, disclosureId) => {
-  let criteria = {
+const getDisclosure = (knex, userInfo, disclosureId) => {
+  const criteria = {
     'id': disclosureId
   };
 
@@ -493,9 +493,9 @@ let getDisclosure = (knex, userInfo, disclosureId) => {
     .where(criteria);
 };
 
-export let get = (dbInfo, userInfo, disclosureId) => {
-  var disclosure;
-  let knex = getKnex(dbInfo);
+export const get = (dbInfo, userInfo, disclosureId) => {
+  let disclosure;
+  const knex = getKnex(dbInfo);
 
   return Promise.all([
     getDisclosure(knex, userInfo, disclosureId),
@@ -551,7 +551,7 @@ export let get = (dbInfo, userInfo, disclosureId) => {
     disclosure.comments = commentRecords;
     disclosure.files = fileRecords;
     disclosure.managementPlan = managementPlans;
-    disclosure.answers.forEach(answer =>{
+    disclosure.answers.forEach(answer => {
       answer.answer = JSON.parse(answer.answer);
     });
 
@@ -564,12 +564,12 @@ export let get = (dbInfo, userInfo, disclosureId) => {
           return knex('travel_relationship')
             .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
             .whereIn('relationship_id', relationships.map(relationship => { return relationship.id; }))
-            .then(travels=> {
+            .then(travels => {
               disclosure.entities.forEach(entity => {
                 entity.relationships = relationships.filter(relationship => {
                   return relationship.finEntityId === entity.id;
-                }).map(relationship=> {
-                  let travel = travels.find(item => {
+                }).map(relationship => {
+                  const travel = travels.find(item => {
                     return item.relationshipId === relationship.id;
                   });
                   relationship.travel = travel ? travel : {};
@@ -582,11 +582,11 @@ export let get = (dbInfo, userInfo, disclosureId) => {
         .from('questionnaire_answer as qa' )
         .innerJoin('fin_entity_answer as fea', 'fea.questionnaire_answer_id', 'qa.id')
         .whereIn('fea.fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
-        .then(answers=>{
+        .then(answers => {
           disclosure.entities.forEach(entity => {
             entity.answers = answers.filter(answer => {
               return answer.finEntityId === entity.id;
-            }).map(answer=>{
+            }).map(answer => {
               answer.answer = JSON.parse(answer.answer);
               return answer;
             });
@@ -596,27 +596,27 @@ export let get = (dbInfo, userInfo, disclosureId) => {
         .from('file')
         .whereIn('ref_id', disclosure.entities.map(entity => { return entity.id; }))
         .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY)
-        .then(files=>{
+        .then(files => {
           disclosure.entities.forEach(entity => {
             entity.files = files.filter(file => {
               return file.ref_id === entity.id;
             });
           });
         })
-    ]).then(()=>{
+    ]).then(() => {
       return disclosure;
     });
   });
 };
 
-export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
-  let knex = getKnex(dbInfo);
+export const getAnnualDisclosure = (dbInfo, userInfo, piName) => {
+  const knex = getKnex(dbInfo);
   return knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userInfo.schoolId)
     .then(result => {
       if (result.length < 1) {
         return knex('config').max('id as id')
         .then(config => {
-          let newDisclosure = {
+          const newDisclosure = {
             type_cd: 2,
             status_cd: 1,
             start_date: new Date(),
@@ -640,8 +640,8 @@ export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
     });
 };
 
-export let getSummariesForReviewCount = (dbInfo, filters) => {
-  let knex = getKnex(dbInfo);
+export const getSummariesForReviewCount = (dbInfo, filters) => {
+  const knex = getKnex(dbInfo);
 
   let query = knex('disclosure').count('id as rowcount')
     .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd');
@@ -684,7 +684,7 @@ export let getSummariesForReviewCount = (dbInfo, filters) => {
   }
   if (filters.search) {
     query = query.where(function() {
-      this.where('submitted_by', 'like', '%' + filters.search + '%');
+      this.where('submitted_by', 'like', `%${filters.search}%`);
          // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
     });
   }
@@ -693,10 +693,10 @@ export let getSummariesForReviewCount = (dbInfo, filters) => {
 };
 
 const SUMMARY_PAGE_SIZE = 40;
-export let getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters) => {
-  let knex = getKnex(dbInfo);
+export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters) => {
+  const knex = getKnex(dbInfo);
 
-  let query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure.status_cd as statusCd', 'disclosure_type.description as type', 'id', 'submitted_date')
+  const query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure.status_cd as statusCd', 'disclosure_type.description as type', 'id', 'submitted_date')
     .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd');
 
   if (filters.date) {
@@ -737,13 +737,13 @@ export let getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, fi
   }
   if (filters.search) {
     query.where(function() {
-      this.where('submitted_by', 'like', '%' + filters.search + '%');
+      this.where('submitted_by', 'like', `%${filters.search}%`);
          // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
     });
   }
 
   let dbSortColumn;
-  let dbSortDirection = sortDirection === 'DESCENDING' ? 'desc' : undefined;
+  const dbSortDirection = sortDirection === 'DESCENDING' ? 'desc' : undefined;
   switch (sortColumn) {
     case 'SUBMITTED_DATE':
       dbSortColumn = 'submitted_date';
@@ -764,26 +764,26 @@ export let getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, fi
   return query.limit(SUMMARY_PAGE_SIZE).offset(Number(start));
 };
 
-export let getSummariesForUser = (dbInfo, userId) => {
-  let knex = getKnex(dbInfo);
+export const getSummariesForUser = (dbInfo, userId) => {
+  const knex = getKnex(dbInfo);
   return knex.select('expired_date', 'type_cd as type', 'title', 'status_cd as status', 'last_review_date', 'id')
     .from('disclosure as d')
     .where('d.user_id', userId);
 };
 
-let updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, newStatus) => {
+const updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, newStatus) => {
   return knex('fin_entity')
   .update({status: newStatus})
   .where('disclosure_id', disclosureId)
   .andWhere('status', oldStatus)
-  .then(()=>{
+  .then(() => {
     return knex('fin_entity')
     .select('id')
     .where('disclosure_id', disclosureId)
     .then(results => {
       return Promise.all(
       results.map(result => {
-        let update = {};
+        const update = {};
         update.status = newStatus;
         if (newStatus === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
           update.disclosed_date = new Date();
@@ -799,7 +799,7 @@ let updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, new
   });
 };
 
-let updateStatus = (knex, name, disclosureId) => {
+const updateStatus = (knex, name, disclosureId) => {
   return knex('disclosure')
   .update({
     status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
@@ -809,14 +809,14 @@ let updateStatus = (knex, name, disclosureId) => {
   .where('id', disclosureId);
 };
 
-export let submit = (dbInfo, userInfo, disclosureId) => {
+export const submit = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
         throw Error(`Attempt by ${userInfo.username} to submit disclosure ${disclosureId} which isnt theirs`);
       }
 
-      let knex = getKnex(dbInfo);
+      const knex = getKnex(dbInfo);
       return Promise.all([
         updateStatus(knex, userInfo.name, disclosureId),
         updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED)
@@ -824,13 +824,13 @@ export let submit = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
-export let getExpirationDate = (date, isRolling, dueDate) => {
+export const getExpirationDate = (date, isRolling, dueDate) => {
   if (isRolling === true) {
     return new Date(date.setFullYear(date.getFullYear() + 1));
   }
 
-  let dueMonthDay = dueDate.getMonth() + dueDate.getDay();
-  let approveMonthDay = date.getMonth() + date.getDay();
+  const dueMonthDay = dueDate.getMonth() + dueDate.getDay();
+  const approveMonthDay = date.getMonth() + date.getDay();
 
   if (approveMonthDay < dueMonthDay) {
     return new Date(dueDate.setFullYear(date.getFullYear()));
@@ -839,7 +839,7 @@ export let getExpirationDate = (date, isRolling, dueDate) => {
   return new Date(dueDate.setFullYear(date.getFullYear() + 1));
 };
 
-let approveDisclosure = (knex, disclosureId, expiredDate) => {
+const approveDisclosure = (knex, disclosureId, expiredDate) => {
   return knex('disclosure')
     .update({
       expired_date: expiredDate,
@@ -849,7 +849,7 @@ let approveDisclosure = (knex, disclosureId, expiredDate) => {
     .where('id', disclosureId);
 };
 
-let archiveDisclosure = (knex, disclosureId, approverName, disclosure) => {
+const archiveDisclosure = (knex, disclosureId, approverName, disclosure) => {
   return knex('disclosure_archive')
     .insert({
       disclosure_id: disclosureId,
@@ -859,18 +859,18 @@ let archiveDisclosure = (knex, disclosureId, approverName, disclosure) => {
     }, 'id');
 };
 
-let deleteComments = (knex, disclosureId) => {
+const deleteComments = (knex, disclosureId) => {
   return knex('comment')
     .del()
     .where('disclosure_id', disclosureId);
 };
 
-let deleteAnswersForDisclosure = (knex, disclosureId) => {
+const deleteAnswersForDisclosure = (knex, disclosureId) => {
   return knex('disclosure_answer').select('questionnaire_answer_id').where('disclosure_id', disclosureId)
     .then((result) => {
       return knex('disclosure_answer').del().where('disclosure_id', disclosureId)
         .then(() => {
-          let idsToDelete = result.map(disclosureAnswer => {
+          const idsToDelete = result.map(disclosureAnswer => {
             return disclosureAnswer.questionnaire_answer_id;
           });
           return knex('questionnaire_answer').del().whereIn('id', idsToDelete);
@@ -878,14 +878,14 @@ let deleteAnswersForDisclosure = (knex, disclosureId) => {
     });
 };
 
-let deletePIReviewsForDisclsoure = (knex, disclosureId) => {
+const deletePIReviewsForDisclsoure = (knex, disclosureId) => {
   return knex('pi_review')
     .del()
     .where('disclosure_id', disclosureId);
 };
 
-export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
-  let knex = getKnex(dbInfo);
+export const approve = (dbInfo, disclosure, displayName, disclosureId) => {
+  const knex = getKnex(dbInfo);
 
   disclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
   disclosure.lastReviewDate = new Date();
@@ -899,14 +899,14 @@ export let approve = (dbInfo, disclosure, displayName, disclosureId) => {
     updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS)
   ])
   .then(([config]) => {
-    let generalConfig = JSON.parse(config[0].config).general;
-    let expiredDate = getExpirationDate(new Date(disclosure.submittedDate), generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
+    const generalConfig = JSON.parse(config[0].config).general;
+    const expiredDate = getExpirationDate(new Date(disclosure.submittedDate), generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
     return approveDisclosure(knex, disclosureId, expiredDate);
   });
 };
 
-export let reject = (dbInfo, displayName, disclosureId) => {
-  let knex = getKnex(dbInfo);
+export const reject = (dbInfo, displayName, disclosureId) => {
+  const knex = getKnex(dbInfo);
   return knex('disclosure')
   .update({
     status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED,
@@ -915,8 +915,8 @@ export let reject = (dbInfo, displayName, disclosureId) => {
   .where('id', disclosureId);
 };
 
-export let getArchivedDisclosures = (dbInfo, userId) => {
-  let knex = getKnex(dbInfo);
+export const getArchivedDisclosures = (dbInfo, userId) => {
+  const knex = getKnex(dbInfo);
 
   return Promise.all([
     knex.select('da.id', 'da.disclosure_id as disclosureId', 'da.approved_by as approvedBy', 'da.approved_date as approvedDate', 'da.disclosure as disclosure')
@@ -928,8 +928,8 @@ export let getArchivedDisclosures = (dbInfo, userId) => {
       .from('config as c')
   ]).then(([archives, configs]) => {
     archives.forEach(archive => {
-      let archivesConfigId = JSON.parse(archive.disclosure).configId;
-      let theConfig = configs.find(config => {
+      const archivesConfigId = JSON.parse(archive.disclosure).configId;
+      const theConfig = configs.find(config => {
         return config.id === archivesConfigId;
       });
 
@@ -942,8 +942,8 @@ export let getArchivedDisclosures = (dbInfo, userId) => {
   });
 };
 
-export let getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {
-  let knex = getKnex(dbInfo);
+export const getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {
+  const knex = getKnex(dbInfo);
   return knex.select('disclosure')
   .from('disclosure_archive')
   .where('disclosure_id', disclosureId)
@@ -951,8 +951,8 @@ export let getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {
   .orderBy('approved_date', 'desc');
 };
 
-export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {
-  let knex = getKnex(dbInfo);
+export const deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {
+  const knex = getKnex(dbInfo);
 
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
@@ -966,10 +966,10 @@ export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => 
         .whereIn('qa.question_id', answersToDelete)
         .andWhere('da.disclosure_id', disclosureId)
         .then(results => {
-          let questionnaireAnswerIds = results.map(row => {
+          const questionnaireAnswerIds = results.map(row => {
             return row.questionnaireAnswerId;
           });
-          let disclosureAnswerIds = results.map(row => {
+          const disclosureAnswerIds = results.map(row => {
             return row.disclosureAnswerId;
           });
 
@@ -986,14 +986,14 @@ export let deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => 
     });
 };
 
-export let getCurrentState = (dbInfo, userInfo, disclosureId) => {
+export const getCurrentState = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
         throw Error(`Attempt by user id ${userInfo.schoolId} to retrieve state of disclosure ${disclosureId} which isnt theirs`);
       }
 
-      let knex = getKnex(dbInfo);
+      const knex = getKnex(dbInfo);
       return knex
         .select('state')
         .from('state')
@@ -1010,10 +1010,10 @@ export let getCurrentState = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
-export let saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
+export const saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
   return getCurrentState(dbInfo, userInfo, disclosureId)
     .then(currentState => {
-      let knex = getKnex(dbInfo);
+      const knex = getKnex(dbInfo);
 
       if (currentState !== '') {
         return knex('state')

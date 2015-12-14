@@ -21,7 +21,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import {merge} from '../merge';
 
 export function BlueButton (props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       color: 'white',
       textShadow: '1px 1px 6px #777',

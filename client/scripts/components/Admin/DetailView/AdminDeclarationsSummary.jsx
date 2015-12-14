@@ -45,8 +45,8 @@ export class AdminDeclarationsSummary extends React.Component {
   }
 
   getUniqueProjects(declarations) {
-    let projects = [];
-    let alreadyAdded = {};
+    const projects = [];
+    const alreadyAdded = {};
 
     declarations.forEach(declaration => {
       if (!alreadyAdded[declaration.projectId]) {
@@ -69,7 +69,7 @@ export class AdminDeclarationsSummary extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         boxShadow: '0 0 8px #AAA',
@@ -131,15 +131,15 @@ export class AdminDeclarationsSummary extends React.Component {
     let projects = [];
     if(this.props.declarations !== undefined) {
 
-      let uniqueProjects = this.getUniqueProjects(this.props.declarations);
+      const uniqueProjects = this.getUniqueProjects(this.props.declarations);
 
       projects = uniqueProjects.map((project, index) => {
-        let declarations = this.props.declarations.filter(declaration => {
+        const declarations = this.props.declarations.filter(declaration => {
           return declaration.projectId === project.id && declaration.finEntityActive === 1;
         }).map(declaration => {
           return (
             <DeclarationSummary
-              key={'decl' + declaration.id}
+              key={`decl${declaration.id}`}
               declaration={declaration}
               commentCount={this.getCommentCount(declaration.id)}
               changedByPI={this.wasRespondedTo(declaration.id)}
@@ -148,7 +148,7 @@ export class AdminDeclarationsSummary extends React.Component {
         });
 
         return (
-          <div key={'proj' + project.id}
+          <div key={`proj${project.id}`}
             style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}>
             <div style={styles.name}>{project.name}</div>
             <div style={styles.field}>

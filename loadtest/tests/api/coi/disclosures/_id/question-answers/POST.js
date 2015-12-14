@@ -40,7 +40,7 @@ export class Test extends LoadTest {
   }
 
   setup(done) {
-    let connection = getDBConnection();
+    const connection = getDBConnection();
     connection.query(`
         SELECT user_id, id as disclosure_id
         FROM disclosure
@@ -71,17 +71,17 @@ export class Test extends LoadTest {
   }
 
   getDisclosureID() {
-    let userId = this.getUserID();
+    const userId = this.getUserID();
     return this.disclosureMap[hashCode(`p${userId}`)];
   }
 
   getPath() {
-    let disclosureId = this.getDisclosureID();
+    const disclosureId = this.getDisclosureID();
     return `/api/coi/disclosures/${disclosureId}/question-answers`;
   }
 
   getHeaders() {
-    let id = this.getUserID();
+    const id = this.getUserID();
     return {
       'Authorization': `Bearer p${id}`,
       'Content-Length': this.postData.length,

@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-export let init = app => {
+export const init = app => {
   /**
     @Role: any
   */
-  app.get('/api/coi/userinfo', function(req, res) {
+  app.get('/api/coi/userinfo', (req, res) => {
     res.send({
       firstName: req.userInfo.firstName,
       lastName: req.userInfo.lastName,

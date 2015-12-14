@@ -58,7 +58,7 @@ export class Entity extends ResponsiveComponent {
   }
 
   getDeclarationDescription(typeCd) {
-    let declarationType = window.config.declarationTypes.find(type=>{
+    const declarationType = window.config.declarationTypes.find(type => {
       return type.typeCd === typeCd;
     });
 
@@ -72,7 +72,7 @@ export class Entity extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         display: 'block',
         margin: '0 3px 25px 0',
@@ -126,7 +126,7 @@ export class Entity extends ResponsiveComponent {
         textTransform: 'capitalize'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let relationshipDialog;
     if (this.props.open) {
@@ -150,7 +150,7 @@ export class Entity extends ResponsiveComponent {
       );
     }
 
-    let relationships = [];
+    const relationships = [];
     this.props.entity.relationships.forEach((element) => {
       relationships.push(
         <div key={element.id}>{ConfigStore.getRelationshipPersonTypeString(element.personCd)} - {ConfigStore.getRelationshipCategoryTypeString(element.relationshipCd)}</div>

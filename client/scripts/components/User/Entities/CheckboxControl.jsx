@@ -30,7 +30,7 @@ export class CheckboxControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       option: {
         display: 'inline-block',
         marginRight: 30
@@ -58,7 +58,7 @@ export class CheckboxControl extends React.Component {
       );
     }
 
-    let options = this.props.options.map((option, index) => {
+    const options = this.props.options.map((option, index) => {
       let checked = {};
       if (this.props.answer instanceof Array) {
         checked = this.props.answer.includes(option);
@@ -67,11 +67,11 @@ export class CheckboxControl extends React.Component {
       }
 
       return (
-        <span style={styles.option} key={this.props.questionId + '_' + index}>
+        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
           <span>
             <input
               key={option}
-              id={'multi_' + option}
+              id={`multi_${option}`}
               value={option}
               checked={checked}
               onChange={this.onChange}
@@ -79,7 +79,7 @@ export class CheckboxControl extends React.Component {
               style={styles.radio}
             />
           </span>
-          <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
+          <label htmlFor={`multi_${option}`} style={styles.label}>{option}</label>
         </span>
       );
     });

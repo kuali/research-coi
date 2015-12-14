@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import {AdminActions} from '../../../actions/AdminActions';
 
 export default function AdditionalReviewPanel(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: 'white',
       height: '100%',
@@ -43,7 +43,7 @@ export default function AdditionalReviewPanel(props: Object): React.Element {
     },
     fileLink: {
       color: window.colorBlindModeOn ? 'black' : '#0095A0',
-      borderBottom: '1px dotted ' + (window.colorBlindModeOn ? 'black' : '#0095A0')
+      borderBottom: `1px dotted ${(window.colorBlindModeOn ? 'black' : '#0095A0')}`
     },
     heading: {
       color: 'black',
@@ -55,10 +55,10 @@ export default function AdditionalReviewPanel(props: Object): React.Element {
     }
   };
 
-  let files = props.files.map(file=>{
+  const files = props.files.map(file => {
     return (
       <div key={file.id} style={{marginBottom: 5}}>
-        <a style={styles.fileLink} href={'/api/coi/files/' + encodeURIComponent(file.id)}>{file.name}</a>
+        <a style={styles.fileLink} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>{file.name}</a>
       </div>
     );
   });

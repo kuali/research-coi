@@ -21,7 +21,7 @@ import React from 'react';
 import {merge} from '../../../merge';
 
 export default function CheckLink(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       marginRight: 20,
       cursor: props.disabled ? 'default' : 'pointer'
@@ -36,7 +36,7 @@ export default function CheckLink(props: Object): React.Element {
     }
   };
 
-  let check = (
+  const check = (
     <i className="fa fa-check" style={styles.checkmark}></i>
   );
 

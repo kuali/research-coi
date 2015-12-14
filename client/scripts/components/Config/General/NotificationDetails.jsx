@@ -67,7 +67,7 @@ export default class NotificationDetails extends React.Component {
   }
 
   textChanged() {
-    let textarea = this.refs.reminderText;
+    const textarea = this.refs.reminderText;
     this.setState({
       canBeAdded: textarea.value.length > 0
     });
@@ -75,7 +75,7 @@ export default class NotificationDetails extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         padding: '10px 0',
         maxWidth: 646,

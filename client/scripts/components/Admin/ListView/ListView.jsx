@@ -46,7 +46,7 @@ export class ListView extends React.Component {
     AdminStore.listen(this.onChange);
     ConfigStore.listen(this.onChange);
 
-    let rightPanel = this.refs.rightPanel;
+    const rightPanel = this.refs.rightPanel;
     let enabled = true;
     rightPanel.addEventListener('scroll', () => {
       if (enabled) {
@@ -97,7 +97,7 @@ export class ListView extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         minHeight: 100
       },
@@ -170,7 +170,7 @@ export class ListView extends React.Component {
       }
     };
 
-    let filtered = this.state.data.disclosureSummaries;
+    const filtered = this.state.data.disclosureSummaries;
     let loadMoreButton;
     if (!this.state.data.applicationState.loadedAll && !this.state.data.applicationState.loadingMore) {
       loadMoreButton = (
@@ -189,7 +189,7 @@ export class ListView extends React.Component {
       );
     }
 
-    let possibleStatuses = [
+    const possibleStatuses = [
       {code: 2, label: ConfigStore.getAdminDisclosureStatusString(2)},
       {code: 3, label: ConfigStore.getAdminDisclosureStatusString(3)},
       {code: 4, label: ConfigStore.getAdminDisclosureStatusString(4)},
@@ -197,7 +197,7 @@ export class ListView extends React.Component {
       {code: 6, label: ConfigStore.getAdminDisclosureStatusString(6)}
     ];
 
-    let possibleTypes = [];
+    const possibleTypes = [];
     if (this.state.config.disclosureTypes) {
       this.state.config.disclosureTypes.map(type => {
         return type.description;

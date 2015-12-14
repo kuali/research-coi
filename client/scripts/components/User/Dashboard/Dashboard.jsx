@@ -37,8 +37,8 @@ export class Dashboard extends ResponsiveComponent {
     super();
     this.commonStyles = {};
 
-    let storeState = DisclosureStore.getState();
-    let configState = ConfigStore.getState();
+    const storeState = DisclosureStore.getState();
+    const configState = ConfigStore.getState();
 
     this.state = {
       applicationState: storeState.applicationState,
@@ -64,8 +64,8 @@ export class Dashboard extends ResponsiveComponent {
   }
 
   onChange() {
-    let storeState = DisclosureStore.getState();
-    let configState = ConfigStore.getState();
+    const storeState = DisclosureStore.getState();
+    const configState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
       disclosureSummaries: storeState.disclosureSummariesForUser,
@@ -75,7 +75,7 @@ export class Dashboard extends ResponsiveComponent {
   }
 
   renderMobile() {
-    let mobileStyles = {
+    const mobileStyles = {
       container: {
         width: '100%',
         background: '#DDD',
@@ -105,7 +105,7 @@ export class Dashboard extends ResponsiveComponent {
         width: '100%'
       }
     };
-    let styles = merge(this.commonStyles, mobileStyles);
+    const styles = merge(this.commonStyles, mobileStyles);
 
     let confirmationMessage;
     if (this.state && this.state.confirmationShowing) {
@@ -134,9 +134,9 @@ export class Dashboard extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let isAdmin = this.state.userInfo && this.state.userInfo.coiRole === COIConstants.ROLES.ADMIN;
+    const isAdmin = this.state.userInfo && this.state.userInfo.coiRole === COIConstants.ROLES.ADMIN;
 
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         width: '100%',
         backgroundColor: '#eeeeee',
@@ -176,7 +176,7 @@ export class Dashboard extends ResponsiveComponent {
         borderBottom: '1px solid #c0c0c0'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let confirmationMessage;
     if (this.state && this.state.applicationState && this.state.applicationState.confirmationShowing) {
@@ -208,7 +208,7 @@ export class Dashboard extends ResponsiveComponent {
     });
 
     if (annualDisclosureEnabled) {
-      let annualDisclosure = this.state.disclosureSummaries.find(summary=> {
+      const annualDisclosure = this.state.disclosureSummaries.find(summary => {
         return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL;
       });
       if (!annualDisclosure || annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||

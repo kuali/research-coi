@@ -30,13 +30,13 @@ export function getUserInfo(dbInfo, hostname, token) {
     if (!token) {
       resolve();
     }
-    let lowercaseToken = token.toLowerCase();
+    const lowercaseToken = token.toLowerCase();
     if (lowercaseToken.startsWith('a')) {
       resolve({
         id: hashCode(token),
-        name: 'Admin ' + token,
+        name: `Admin ${token}`,
         username: token,
-        email: token + '@email.com',
+        email: `${token}@email.com`,
         createdAt: 1259218800,
         updatedAt: 1259218800,
         role: 'admin',
@@ -51,9 +51,9 @@ export function getUserInfo(dbInfo, hostname, token) {
     else {
       resolve({
         id: hashCode(token),
-        name: 'User ' + token,
+        name: `User ${token}`,
         username: token,
-        email: token + '@email.com',
+        email: `${token}@email.com`,
         createdAt: 1259218800,
         updatedAt: 1259218800,
         role: 'user',
@@ -69,7 +69,7 @@ export function getUserInfo(dbInfo, hostname, token) {
 }
 
 export function getAuthLink(req) {
-  let returnToValue = encodeURIComponent(req.protocol + '://' + req.hostname + req.originalUrl);
-  return '/coi/auth?return_to=' + returnToValue;
+  const returnToValue = encodeURIComponent(`${req.protocol}://${req.hostname}${req.originalUrl}`);
+  return `/coi/auth?return_to=${returnToValue}`;
 }
 

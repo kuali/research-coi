@@ -22,32 +22,32 @@ const MAX_ROWS = 10;
 
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-let queryUsingIndex = (knex, term) => {
+const queryUsingIndex = (knex, term) => {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
-    .andWhere('submitted_by', 'LIKE', term + '%')
+    .andWhere('submitted_by', 'LIKE', `${term}%`)
     .limit(MAX_ROWS);
 };
 
-let queryWithoutIndex = (knex, term) => {
+const queryWithoutIndex = (knex, term) => {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
-    .andWhere('submitted_by', 'LIKE', '%' + term + '%')
+    .andWhere('submitted_by', 'LIKE', `%${term}%`)
     .limit(MAX_ROWS);
 };
 
-export let getSuggestions = (dbInfo, term) => {
-  let knex = getKnex(dbInfo);
+export const getSuggestions = (dbInfo, term) => {
+  const knex = getKnex(dbInfo);
 
   return queryUsingIndex(knex, term)
-    .then(result =>{
+    .then(result => {
       if (result.length < MAX_ROWS) {
         return queryWithoutIndex(knex, term);
       }

@@ -21,7 +21,7 @@ import React from 'react';
 import {merge} from '../../../merge';
 
 export default function DeclarationSummary(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       fontSize: 12,
       marginBottom: 10

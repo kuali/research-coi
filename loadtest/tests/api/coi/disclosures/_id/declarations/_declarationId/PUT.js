@@ -48,7 +48,7 @@ export class Test extends LoadTest {
   }
 
   setup(done) {
-    let connection = getDBConnection();
+    const connection = getDBConnection();
     connection.query(`
         SELECT de.id as declaration_id, di.id as disclosure_id, di.user_id
         FROM declaration de, disclosure di
@@ -82,14 +82,14 @@ export class Test extends LoadTest {
   }
 
   getPath() {
-    let userId = this.getID();
-    let record = this.disclosureMap[hashCode(`p${userId}`)];
+    const userId = this.getID();
+    const record = this.disclosureMap[hashCode(`p${userId}`)];
 
     return `/api/coi/disclosures/${record.disclosure_id}/declarations/${record.declaration_id}`;
   }
 
   getHeaders() {
-    let id = this.getID();
+    const id = this.getID();
     return {
       'Authorization': `Bearer p${id}`,
       'Content-Length': this.postData.length,

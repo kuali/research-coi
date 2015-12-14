@@ -61,14 +61,14 @@ export default class EntityDeclaration extends React.Component {
   }
 
   done() {
-    let newState = {
+    const newState = {
       revising: false,
       responding: false
     };
 
     if (this.state.revising) {
       newState.revised = true;
-      let radios = document.querySelectorAll(`[name="decType${this.props.entity.id}:${this.props.entity.projectId}"]`);
+      const radios = document.querySelectorAll(`[name="decType${this.props.entity.id}:${this.props.entity.projectId}"]`);
       let selectedRadio = {};
       for (let i = 0; i < radios.length; i++) {
         if (radios[i].checked) {
@@ -76,12 +76,12 @@ export default class EntityDeclaration extends React.Component {
           break;
         }
       }
-      let declarationComment = this.refs.declarationComment ? this.refs.declarationComment : {};
+      const declarationComment = this.refs.declarationComment ? this.refs.declarationComment : {};
       PIReviewActions.reviseDeclaration(this.props.entity.reviewId, selectedRadio.value, declarationComment.value);
     }
     else if (this.state.responding) {
       newState.responded = true;
-      let textarea = this.refs.responseText ? this.refs.responseText : {};
+      const textarea = this.refs.responseText ? this.refs.responseText : {};
       PIReviewActions.respond(this.props.entity.reviewId, textarea.value);
     }
 
@@ -89,7 +89,7 @@ export default class EntityDeclaration extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         margin: '17px 17px 17px 0'
       },
@@ -178,7 +178,7 @@ export default class EntityDeclaration extends React.Component {
       }
     };
 
-    let comments = this.props.entity.adminComments.map(comment => {
+    const comments = this.props.entity.adminComments.map(comment => {
       return (
         <div style={styles.comment} key={comment.id}>
           <div style={styles.commentTitle}>Comment from
@@ -260,7 +260,7 @@ export default class EntityDeclaration extends React.Component {
 
     let relationship;
     if (this.state.revising) {
-      let declarationTypes = window.config.declarationTypes.filter(declarationType => {
+      const declarationTypes = window.config.declarationTypes.filter(declarationType => {
         return Boolean(declarationType.enabled) && Boolean(declarationType.active);
       }).map(declarationType => {
         return (

@@ -54,7 +54,7 @@ export default class Relationship extends React.Component {
   }
 
   onChange() {
-    let storeState = ConfigStore.getState();
+    const storeState = ConfigStore.getState();
     this.setState({
       list: storeState.config.relationshipPersonTypes,
       peopleEnabled: storeState.config.general.peopleEnabled,
@@ -69,7 +69,7 @@ export default class Relationship extends React.Component {
   }
 
   peopleEnabledChanged() {
-    let checkbox = this.refs.peopleEnabled;
+    const checkbox = this.refs.peopleEnabled;
     ConfigActions.relationshipPeopleEnabled(checkbox.checked);
   }
 
@@ -106,7 +106,7 @@ export default class Relationship extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         minHeight: 100
       },

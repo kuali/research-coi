@@ -46,10 +46,10 @@ export default class DisclosureFilter extends React.Component {
   }
 
   componentDidMount() {
-    let localNode = this.refs.root;
-    let eventHandler = this.handleClickOutside;
-    var fn = evt => {
-      var source = evt.target;
+    const localNode = this.refs.root;
+    const eventHandler = this.handleClickOutside;
+    const fn = evt => {
+      let source = evt.target;
 
       while(source.parentNode) {
         if (source === localNode) {
@@ -74,7 +74,7 @@ export default class DisclosureFilter extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         cursor: 'pointer',
         padding: 7,

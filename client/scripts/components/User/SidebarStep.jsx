@@ -33,7 +33,7 @@ export class SidebarStep extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         padding: '10px 20px 10px 10px',
         fontSize: 18,

@@ -35,7 +35,7 @@ export class DescriptionField extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         color: this.props.invalid ? 'red' : 'inherit'
       },
@@ -56,7 +56,7 @@ export class DescriptionField extends ResponsiveComponent {
         marginTop: 2
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let requiredFieldError;
     if (this.props.invalid) {

@@ -24,7 +24,7 @@ import {processResponse, createRequest} from '../HttpUtils';
 import ConfigActions from '../actions/ConfigActions';
 import history from '../history';
 
-let cloneObject = original => {
+const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
 };
 
@@ -300,14 +300,14 @@ class _DisclosureStore extends AutoBindingStore {
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
-    let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
+    const existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
       return answer.questionId === question.id;
     });
     if (existingAnswer) {
       existingAnswer.answer.value = question.answer.value;
     }
     else {
-      let newAnswer = {questionId: question.id, answer: question.answer};
+      const newAnswer = {questionId: question.id, answer: question.answer};
       this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
     }
   }
@@ -316,7 +316,7 @@ class _DisclosureStore extends AutoBindingStore {
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
-    let existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
+    const existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
       return answer.questionId === question.id;
     });
     if (existingAnswer) {
@@ -325,22 +325,22 @@ class _DisclosureStore extends AutoBindingStore {
           existingAnswer.answer.value.push(question.answer.value);
         }
       } else {
-        let index = existingAnswer.answer.value.indexOf(question.answer.value);
+        const index = existingAnswer.answer.value.indexOf(question.answer.value);
         if (index > -1) {
           existingAnswer.answer.value.splice(index, 1);
         }
       }
     }
     else {
-      let answers = [];
+      const answers = [];
       answers.push(question.answer.value);
-      let newAnswer = {questionId: question.id, answer: {value: answers}};
+      const newAnswer = {questionId: question.id, answer: {value: answers}};
       this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
     }
   }
 
   advanceQuestion() {
-    let parentQuestions = window.config.questions.screening.filter(question => {
+    const parentQuestions = window.config.questions.screening.filter(question => {
       return !question.parent;
     });
 
@@ -357,7 +357,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   previousQuestion() {
-    let parentQuestions = window.config.questions.screening.filter(question=>{
+    const parentQuestions = window.config.questions.screening.filter(question => {
       return !question.parent;
     });
     switch (this.applicationState.currentDisclosureState.step) {
@@ -377,7 +377,7 @@ class _DisclosureStore extends AutoBindingStore {
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
         break;
       case COIConstants.DISCLOSURE_STEP.CERTIFY:
-        let activeEntitiesExists = this.entities.some(entity => {
+        const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
         if (activeEntitiesExists && this.projects.length > 0) {
@@ -399,13 +399,13 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   answerEntityQuestion(question) {
-    let entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
+    const entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
 
     if (!entity.answers) {
       entity.answers = [];
     }
 
-    let existingAnswer = entity.answers.find(answer => {
+    const existingAnswer = entity.answers.find(answer => {
       return answer.questionId === question.id;
     });
 
@@ -413,17 +413,17 @@ class _DisclosureStore extends AutoBindingStore {
       existingAnswer.answer.value = question.answer.value;
     }
     else {
-      let newAnswer = {questionId: question.id, answer: question.answer};
+      const newAnswer = {questionId: question.id, answer: question.answer};
       entity.answers.push(newAnswer);
     }
   }
 
   answerEntityMultiple(question) {
-    let entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
+    const entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
     if (!entity.answers) {
       entity.answers = [];
     }
-    let existingAnswer = entity.answers.find(answer => {
+    const existingAnswer = entity.answers.find(answer => {
       return answer.questionId === question.id;
     });
     if (existingAnswer) {
@@ -432,33 +432,33 @@ class _DisclosureStore extends AutoBindingStore {
           existingAnswer.answer.value.push(question.answer.value);
         }
       } else {
-        let index = existingAnswer.answer.value.indexOf(question.answer.value);
+        const index = existingAnswer.answer.value.indexOf(question.answer.value);
         if (index > -1) {
           existingAnswer.answer.value.splice(index, 1);
         }
       }
     }
     else {
-      let answers = [];
+      const answers = [];
       answers.push(question.answer.value);
-      let newAnswer = {questionId: question.id, answer: {value: answers}};
+      const newAnswer = {questionId: question.id, answer: {value: answers}};
       entity.answers.push(newAnswer);
     }
   }
 
   addEntityAttachments(data) {
-    let entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
+    const entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
     if(!entity.files) {
       entity.files = [];
     }
 
-    data.files.forEach(file=>{
+    data.files.forEach(file => {
       entity.files.push(file);
     });
   }
 
   deleteEntityAttachment(data) {
-    let entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
+    const entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
     entity.files.splice(data.index, 1);
   }
 
@@ -469,7 +469,7 @@ class _DisclosureStore extends AutoBindingStore {
         this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.ENTITIES] = true;
         break;
       case COIConstants.DISCLOSURE_STEP.ENTITIES:
-        let activeEntitiesExists = this.entities.some(entity => {
+        const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
         if (activeEntitiesExists && this.projects.length > 0) {
@@ -532,33 +532,33 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   setEntityActiveStatus(params) {
-    let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
+    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
     entity.active = params.active;
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('entity', JSON.stringify(entity));
-    createRequest().put('/api/coi/disclosures/' + this.applicationState.currentDisclosureState.disclosure.id + '/financial-entities/' + entity.id)
+    createRequest().put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/financial-entities/${entity.id}`)
     .send(formData)
     .end(processResponse(() => {}));
   }
 
   setEntityType(params) {
-    let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
+    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
     entity.type = params.type;
   }
 
   setEntityPublic(params) {
-    let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
+    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
     entity.isPublic = params.isPublic;
   }
 
   setEntityIsSponsor(params) {
-    let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
+    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
     entity.isSponsor = params.isSponsor;
   }
 
   setEntityDescription(params) {
-    let entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
+    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
     entity.description = params.description;
   }
 
@@ -665,16 +665,16 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   addEntityRelationship(entityId) {
-    let entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
+    const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
 
     if (!entity.relationships) {
       entity.relationships = [];
     }
 
-    let relation = this.applicationState.potentialRelationship;
+    const relation = this.applicationState.potentialRelationship;
 
     relation.id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
-    let matrixType = window.config.matrixTypes.find(matrix => {
+    const matrixType = window.config.matrixTypes.find(matrix => {
       return matrix.typeCd === relation.relationshipCd;
     });
 
@@ -699,7 +699,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   getDescriptionFromCode(typeCd, collection) {
-    let desc = collection.find(type =>{
+    const desc = collection.find(type => {
       return type.typeCd === typeCd;
     });
 
@@ -709,7 +709,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   getCodeFromDescription(description, collection) {
-    let code = collection.find(type =>{
+    const code = collection.find(type => {
       return type.description === description;
     });
 
@@ -719,8 +719,8 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   removeEntityRelationship(params) {
-    let relationId = params.relationId;
-    let entity = params.entityId ? this.getEntity(params.entityId) : this.applicationState.entityInProgress;
+    const relationId = params.relationId;
+    const entity = params.entityId ? this.getEntity(params.entityId) : this.applicationState.entityInProgress;
 
     entity.relationships = entity.relationships.filter((relationship) => {
       return relationship.id !== relationId;
@@ -729,15 +729,15 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityFormClosed(entity) {
     if (entity.id) {
-      let personCd = this.applicationState.potentialRelationship.personCd;
+      const personCd = this.applicationState.potentialRelationship.personCd;
       if (personCd && personCd > 0) {
         this.addEntityRelationship(entity.id);
       }
 
-      let formData = new FormData();
-      let existingFiles = [];
+      const formData = new FormData();
+      const existingFiles = [];
       if (entity.files && entity.files.length > 0) {
-        entity.files.forEach(file=> {
+        entity.files.forEach(file => {
           if (file.preview) {
             formData.append('attachments', file);
           } else {
@@ -763,7 +763,7 @@ class _DisclosureStore extends AutoBindingStore {
           .send(formData)
           .end(processResponse((err, res) => {
             if (!err) {
-              let index = this.entities.findIndex(existingEntity => {
+              const index = this.entities.findIndex(existingEntity => {
                 return existingEntity.id === res.body.id;
               });
 
@@ -789,7 +789,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   saveInProgressEntity(entity) {
-    let personCd = this.applicationState.potentialRelationship.personCd;
+    const personCd = this.applicationState.potentialRelationship.personCd;
     if (personCd && personCd > 0) {
       this.addEntityRelationship();
     }
@@ -798,9 +798,9 @@ class _DisclosureStore extends AutoBindingStore {
       this.entities = [];
     }
 
-    let formData = new FormData();
+    const formData = new FormData();
     if (entity.files && entity.files.length > 0) {
-      entity.files.forEach(file=> {
+      entity.files.forEach(file => {
         formData.append('attachments', file);
       });
     }
@@ -852,7 +852,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   undoEntityChanges(snapshot) {
-    let targetIndex = this.entities.findIndex(entity => {
+    const targetIndex = this.entities.findIndex(entity => {
       return entity.id === snapshot.id;
     });
 
@@ -916,7 +916,7 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
     // Look for existing relation
-    let existing = this.declarations.find(declaration => {
+    const existing = this.declarations.find(declaration => {
       return declaration.finEntityId === params.finEntityId && declaration[field] === params.projectId;
     });
 
@@ -929,7 +929,7 @@ class _DisclosureStore extends AutoBindingStore {
         .end(processResponse(() => {}));
     }
     else {
-      let newRelation = {
+      const newRelation = {
         finEntityId: params.finEntityId,
         typeCd: params.typeCd
       };
@@ -963,7 +963,7 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
     // Look for existing relation
-    let existing = this.declarations.find(declaration => {
+    const existing = this.declarations.find(declaration => {
       return declaration.finEntityId === params.finEntityId && declaration[field] === params.projectId;
     });
 
@@ -976,7 +976,7 @@ class _DisclosureStore extends AutoBindingStore {
         .end(processResponse(() => {}));
     }
     else {
-      let newRelation = {
+      const newRelation = {
         finEntityId: params.finEntityId,
         comments: params.comments
       };
@@ -1037,7 +1037,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   saveManualEvent(params) {
-    let disclosure = this.applicationState.currentDisclosureState.disclosure;
+    const disclosure = this.applicationState.currentDisclosureState.disclosure;
     if (disclosure) {
       disclosure.amount = params.amount;
       disclosure.enddate = params.endDate;
@@ -1066,7 +1066,7 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityNameStepErrors() {
     const storeState = this.getState();
-    let errors = {};
+    const errors = {};
 
     if (storeState.applicationState.entityInProgress.name === undefined ||
         storeState.applicationState.entityInProgress.name.length === 0) {
@@ -1077,7 +1077,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   entityNameStepComplete() {
-    let errors = this.entityNameStepErrors();
+    const errors = this.entityNameStepErrors();
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -1087,7 +1087,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   entityInformationStepErrors(entityId) {
-    let errors = [];
+    const errors = [];
 
     const storeState = this.getState();
     let entity;
@@ -1101,9 +1101,9 @@ class _DisclosureStore extends AutoBindingStore {
     }
 
 
-    window.config.questions.entities.forEach(question=>{
+    window.config.questions.entities.forEach(question => {
 
-      let answer = entity.answers.find(a => {
+      const answer = entity.answers.find(a => {
         return a.questionId === question.id;
       });
 
@@ -1129,7 +1129,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   entityInformationStepComplete(entityId) {
-    let errors = this.entityInformationStepErrors(entityId);
+    const errors = this.entityInformationStepErrors(entityId);
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -1140,9 +1140,9 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityRelationshipStepErrors() {
     const storeState = this.getState();
-    let errors = {};
+    const errors = {};
 
-    let potentialRelationship = storeState.applicationState.potentialRelationship;
+    const potentialRelationship = storeState.applicationState.potentialRelationship;
     if (potentialRelationship.personCd === undefined || potentialRelationship.personCd.length === 0) {
       errors.person = 'Required Field';
     }
@@ -1151,7 +1151,7 @@ class _DisclosureStore extends AutoBindingStore {
       errors.comment = 'Required Field';
     }
 
-    let matrixType = window.config.matrixTypes.find(type=>{
+    const matrixType = window.config.matrixTypes.find(type => {
       return type.typeCd === potentialRelationship.relationshipCd;
     });
 
@@ -1211,7 +1211,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   entityRelationshipStepComplete() {
-    let errors = this.entityRelationshipStepErrors();
+    const errors = this.entityRelationshipStepErrors();
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -1232,12 +1232,12 @@ class _DisclosureStore extends AutoBindingStore {
       entity = storeState.applicationState.entityInProgress;
     }
 
-    let atLeastOneRelationshipAdded = () => {
+    const atLeastOneRelationshipAdded = () => {
       return entity.relationships && entity.relationships.length > 0;
     };
 
-    let unSubmittedRelationshipStarted = () => {
-      let potentialRelationship = storeState.applicationState.potentialRelationship;
+    const unSubmittedRelationshipStarted = () => {
+      const potentialRelationship = storeState.applicationState.potentialRelationship;
       return (potentialRelationship.personCd && potentialRelationship.personCd.length > 0) ||
           (potentialRelationship.comments && potentialRelationship.comments.length > 0) ||
           (potentialRelationship.relationshipCd && potentialRelationship.relationshipCd.length > 0);
@@ -1288,7 +1288,7 @@ class _DisclosureStore extends AutoBindingStore {
       this.files = [];
     }
 
-    let formData = new FormData();
+    const formData = new FormData();
     files.forEach(file => {
       formData.append('attachments', file);
     });
@@ -1312,7 +1312,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   deleteDisclosureAttachment(index) {
-    let file = this.files[index];
+    const file = this.files[index];
 
     createRequest().del(`/api/coi/files/${file.id}`)
       .send(file)
@@ -1344,7 +1344,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   deleteAnswersTo(toDelete) {
-    let answerObject = this.applicationState.currentDisclosureState.disclosure.answers;
+    const answerObject = this.applicationState.currentDisclosureState.disclosure.answers;
     if (answerObject) {
       this.applicationState.currentDisclosureState.disclosure.answers = answerObject.filter(answer => {
         return !toDelete.includes(answer.questionId);
@@ -1355,7 +1355,7 @@ class _DisclosureStore extends AutoBindingStore {
       createRequest()
         .del(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers`)
         .send({
-          toDelete: toDelete
+          toDelete
         })
         .type('application/json')
         .end(processResponse(() => {}));
@@ -1363,4 +1363,4 @@ class _DisclosureStore extends AutoBindingStore {
   }
 }
 
-export let DisclosureStore = alt.createStore(_DisclosureStore, 'DisclosureStore');
+export const DisclosureStore = alt.createStore(_DisclosureStore, 'DisclosureStore');

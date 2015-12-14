@@ -49,7 +49,7 @@ export class Question extends React.Component {
   }
 
   questionIsValid() {
-    for (var key in this.state.controlValid) {
+    for (const key in this.state.controlValid) {
       if (this.state.controlValid[key] !== true) {
         return false;
       }
@@ -59,7 +59,7 @@ export class Question extends React.Component {
   }
 
   deleteIrrelaventAnswers(questionId, newAnswer) {
-    let toDelete = this.props.allQuestions.filter(question => {
+    const toDelete = this.props.allQuestions.filter(question => {
       return question.parent === questionId;
     }).filter(question => {
       return question.question.displayCriteria !== newAnswer;
@@ -72,18 +72,18 @@ export class Question extends React.Component {
 
   answerAndSubmit(answer, questionId, isParent) {
     this.deleteIrrelaventAnswers(questionId, answer);
-    let advance = isParent && !this.anySubQuestionsTriggeredBy(answer);
+    const advance = isParent && !this.anySubQuestionsTriggeredBy(answer);
     DisclosureActions.submitQuestion({
       id: questionId,
       answer: {
         value: answer
       },
-      advance: advance
+      advance
     });
   }
 
   anySubQuestionsTriggeredBy(value) {
-    let subQuestion = this.props.subQuestions.find(question => {
+    const subQuestion = this.props.subQuestions.find(question => {
       return question.question.displayCriteria === value;
     });
 
@@ -103,9 +103,9 @@ export class Question extends React.Component {
     DisclosureActions.answerMultiple({
       id: questionId,
       answer: {
-        value: value
+        value
       },
-      checked: checked
+      checked
     });
   }
 
@@ -147,7 +147,7 @@ export class Question extends React.Component {
   }
 
   controlValidityChanged(questionId, isValid) {
-    let newControlValid = this.state.controlValid;
+    const newControlValid = this.state.controlValid;
     newControlValid[questionId] = isValid;
     this.setState({
       controlValid: newControlValid
@@ -155,7 +155,7 @@ export class Question extends React.Component {
   }
 
   getControl(question, answer) {
-    let isSubQuestion = question.parent !== null;
+    const isSubQuestion = question.parent !== null;
 
     switch (question.question.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
@@ -227,7 +227,7 @@ export class Question extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'inline-block',
         padding: '0 1px'
@@ -282,10 +282,10 @@ export class Question extends React.Component {
     };
 
     let isValid = this.questionIsValid();
-    let subQuestions = [];
+    const subQuestions = [];
     this.props.subQuestions.filter(subQuestion => {
       return subQuestion.question.displayCriteria === this.props.answer;
-    }).sort((a, b)=>{
+    }).sort((a, b) => {
       return a.question.order - b.question.order;
     }).forEach((subQuestion, index, array) => {
       let nextDiv;

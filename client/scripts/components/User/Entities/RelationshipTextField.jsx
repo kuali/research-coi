@@ -41,7 +41,7 @@ export default class RelationshipTextField extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginBottom: 16,
         textAlign: 'left',

@@ -22,7 +22,7 @@ export class RadioControl extends React.Component {
   constructor(props) {
     super();
 
-    let validity = this.isValid(props.answer);
+    const validity = this.isValid(props.answer);
     this.state = {
       valid: validity
     };
@@ -31,12 +31,12 @@ export class RadioControl extends React.Component {
   }
 
   componentDidMount() {
-    let validity = this.isValid(this.props.answer);
+    const validity = this.isValid(this.props.answer);
     this.props.onValidityChange(this.props.questionId, validity);
   }
 
   componentWillReceiveProps(nextProps) {
-    let validity = this.isValid(nextProps.answer);
+    const validity = this.isValid(nextProps.answer);
     if (validity !== this.state.valid) {
       this.setState({
         valid: validity
@@ -54,7 +54,7 @@ export class RadioControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       option: {
         margin: '5px 30px 0 0'
       },
@@ -73,20 +73,20 @@ export class RadioControl extends React.Component {
       }
     };
 
-    let options = this.props.options.map((option, index) => {
+    const options = this.props.options.map((option, index) => {
       return (
-        <span style={styles.option} key={this.props.questionId + '_' + index}>
+        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
           <div>
             <input
-              id={'multi_' + option + '_' + this.props.questionId}
+              id={`multi_${option}_${this.props.questionId}`}
               value={option}
               checked={this.props.answer === option}
               onChange={this.onChange}
               type="radio"
               style={styles.radio}
-              name={'radioControl:' + this.props.questionId}
+              name={`radioControl:${this.props.questionId}`}
             />
-            <label htmlFor={'multi_' + option + '_' + this.props.questionId} style={styles.label}>{option}</label>
+            <label htmlFor={`multi_${option}_${this.props.questionId}`} style={styles.label}>{option}</label>
           </div>
         </span>
       );

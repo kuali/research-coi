@@ -34,8 +34,8 @@ export default class TravelLogForm extends React.Component {
     }
 
     addEntry() {
-      let validationErrors = TravelLogStore.getErrors();
-      let isValid = Object.keys(validationErrors).length === 0;
+      const validationErrors = TravelLogStore.getErrors();
+      const isValid = Object.keys(validationErrors).length === 0;
       if (isValid) {
         TravelLogActions.addEntry();
       } else {
@@ -56,7 +56,7 @@ export default class TravelLogForm extends React.Component {
     }
 
     render() {
-      let styles = {
+      const styles = {
         container: {
           margin: '44px 50px',
           maxWidth: 1000
@@ -86,7 +86,7 @@ export default class TravelLogForm extends React.Component {
         }
       };
 
-      let errors = TravelLogStore.getErrors();
+      const errors = TravelLogStore.getErrors();
       return (
         <div style={styles.container} name='Travel Log Form'>
           <div style={styles.row}>

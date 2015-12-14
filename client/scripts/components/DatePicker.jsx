@@ -52,7 +52,7 @@ export class DatePicker extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         position: 'relative'
       },
@@ -72,7 +72,7 @@ export class DatePicker extends ResponsiveComponent {
         zIndex: 99
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     if (this.props.direction === 'Up') {
       styles.calendar.bottom = 30;

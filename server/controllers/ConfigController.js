@@ -21,11 +21,11 @@ import {COIConstants} from '../../COIConstants';
 import {FORBIDDEN} from '../../HTTPStatusCodes';
 import Log from '../Log';
 
-export let init = app => {
+export const init = app => {
   /**
     @Role: any
   */
-  app.get('/api/coi/config', function(req, res, next) {
+  app.get('/api/coi/config', (req, res, next) => {
     ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
       .then(config => {
         res.send(config);
@@ -39,7 +39,7 @@ export let init = app => {
   /**
     @Role: any
    */
-  app.get('/api/coi/archived-config/:id', function(req, res, next) {
+  app.get('/api/coi/archived-config/:id', (req, res, next) => {
     ConfigDB.getArchivedConfig(req.dbInfo, req.params.id)
     .then((result) => {
       res.send(JSON.parse(result[0].config));
@@ -53,7 +53,7 @@ export let init = app => {
   /**
     @Role: admin
   */
-  app.post('/api/coi/config/', function(req, res, next){
+  app.post('/api/coi/config/', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(FORBIDDEN);
       return;

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-var path = require('path');
+var path = require('path'); // eslint-disable-line no-var
 
 module.exports = {
   entry: {

@@ -22,7 +22,7 @@ export class CheckboxControl extends React.Component {
   constructor(props) {
     super();
 
-    let validity = this.isValid(props.answer, props.required);
+    const validity = this.isValid(props.answer, props.required);
     this.state = {
       valid: validity
     };
@@ -31,12 +31,12 @@ export class CheckboxControl extends React.Component {
   }
 
   componentDidMount() {
-    let validity = this.isValid(this.props.answer);
+    const validity = this.isValid(this.props.answer);
     this.props.onValidityChange(this.props.questionId, validity);
   }
 
   componentWillReceiveProps(nextProps) {
-    let validity = this.isValid(nextProps.answer, nextProps.required);
+    const validity = this.isValid(nextProps.answer, nextProps.required);
     if (validity !== this.state.valid) {
       this.setState({
         valid: validity
@@ -58,7 +58,7 @@ export class CheckboxControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       option: {
         display: 'inline-block',
         marginRight: 30
@@ -78,7 +78,7 @@ export class CheckboxControl extends React.Component {
       }
     };
 
-    let options = this.props.options.map((option, index) => {
+    const options = this.props.options.map((option, index) => {
       let checked = {};
       if (this.props.answer instanceof Array) {
         checked = this.props.answer.includes(option);
@@ -87,24 +87,24 @@ export class CheckboxControl extends React.Component {
       }
 
       return (
-        <span style={styles.option} key={this.props.questionId + '_' + index}>
+        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
           <div>
             <input
-              id={'multi_' + option}
+              id={`multi_${option}`}
               value={option}
               checked={checked}
               onChange={this.onChange}
               type="checkbox"
               style={styles.radio}
             />
-            <label htmlFor={'multi_' + option} style={styles.label}>{option}</label>
+            <label htmlFor={`multi_${option}`} style={styles.label}>{option}</label>
           </div>
         </span>
       );
     });
 
     return (
-      <div id={'cbc' + this.props.questionId}>
+      <div id={`cbc${this.props.questionId}`}>
         <div>
           {options}
         </div>

@@ -39,7 +39,7 @@ export default class InstructionEditor extends React.Component {
   }
 
   textChanged() {
-    let textarea = this.refs.textarea;
+    const textarea = this.refs.textarea;
     ConfigActions.setInstructions(this.props.step, textarea.value);
   }
 
@@ -50,7 +50,7 @@ export default class InstructionEditor extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         marginBottom: 20,

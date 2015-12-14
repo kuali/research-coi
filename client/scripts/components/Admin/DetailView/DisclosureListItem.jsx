@@ -30,9 +30,9 @@ export class DisclosureListItem extends React.Component {
   }
 
   highlightSearchTerm(value) {
-    let start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
+    const start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
     if (start >= 0) {
-      let matchingValue = value.substr(start, this.props.searchTerm.length);
+      const matchingValue = value.substr(start, this.props.searchTerm.length);
       return (
         <span>
           <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
@@ -48,7 +48,7 @@ export class DisclosureListItem extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         borderBottom: '1px solid #8C8C8C',
         borderRight: '1px solid #8C8C8C',
@@ -66,7 +66,7 @@ export class DisclosureListItem extends React.Component {
       }
     };
 
-    let disclosure = this.props.disclosure;
+    const disclosure = this.props.disclosure;
     let dateToShow;
     if (disclosure.revised_date) {
       dateToShow = (

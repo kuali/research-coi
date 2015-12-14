@@ -35,8 +35,8 @@ export class DetailView extends React.Component {
     super();
 
     this.onChange = this.onChange.bind(this);
-    let store = AdminStore.getState();
-    let configStore = ConfigStore.getState();
+    const store = AdminStore.getState();
+    const configStore = ConfigStore.getState();
     this.state = {
       summaries: store.disclosureSummaries,
       applicationState: store.applicationState,
@@ -72,12 +72,12 @@ export class DetailView extends React.Component {
   }
 
   onChange() {
-    let newState = {};
-    let config = ConfigStore.getState();
+    const newState = {};
+    const config = ConfigStore.getState();
     if (config.isLoaded) {
       newState.config = config.config;
     }
-    let store = AdminStore.getState();
+    const store = AdminStore.getState();
     newState.summaries = store.disclosureSummaries;
     newState.applicationState = store.applicationState;
 
@@ -101,14 +101,14 @@ export class DetailView extends React.Component {
   }
 
   filterDisclosures() {
-    let filtered = this.state.summaries;
+    const filtered = this.state.summaries;
     return filtered;
   }
 
   render() {
     let sidePanel;
     if (this.state.applicationState.commentingPanelShowing) {
-      let comments = this.state.applicationState.currentComments;
+      const comments = this.state.applicationState.currentComments;
 
       sidePanel = (
         <CommentingPanel
@@ -150,7 +150,7 @@ export class DetailView extends React.Component {
       );
     }
 
-    let styles = {
+    const styles = {
       container: {
         position: 'relative',
         transform: this.state.applicationState.listShowing ? 'translateX(0px)' : 'translateX(-320px)',

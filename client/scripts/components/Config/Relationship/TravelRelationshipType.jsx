@@ -32,28 +32,28 @@ export default class TravelRelationshipType extends RelationshipType {
   }
 
   enabledChanged() {
-    let checkbox = this.refs.enabledCheckbox;
+    const checkbox = this.refs.enabledCheckbox;
     this.props.enabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   destinationEnabledChanged() {
-    let checkbox = this.refs.destinationEnabled;
+    const checkbox = this.refs.destinationEnabled;
     this.props.destinationEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   dateEnabledChanged() {
-    let checkbox = this.refs.dateEnabled;
+    const checkbox = this.refs.dateEnabled;
     this.props.dateEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   reasonEnabledChanged() {
-    let checkbox = this.refs.reasonEnabled;
+    const checkbox = this.refs.reasonEnabled;
     this.props.reasonEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       collapsedContent: {

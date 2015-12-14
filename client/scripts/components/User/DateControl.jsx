@@ -23,7 +23,7 @@ export class DateControl extends React.Component {
   constructor(props) {
     super();
 
-    let validity = this.isValid(props.answer);
+    const validity = this.isValid(props.answer);
     this.state = {
       valid: validity
     };
@@ -32,12 +32,12 @@ export class DateControl extends React.Component {
   }
 
   componentDidMount() {
-    let validity = this.isValid(this.props.answer);
+    const validity = this.isValid(this.props.answer);
     this.props.onValidityChange(this.props.questionId, validity);
   }
 
   componentWillReceiveProps(nextProps) {
-    let validity = this.isValid(nextProps.answer);
+    const validity = this.isValid(nextProps.answer);
     if (validity !== this.state.valid) {
       this.setState({
         valid: validity
@@ -55,7 +55,7 @@ export class DateControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       datepicker: {
         marginTop: 4
       }

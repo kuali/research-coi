@@ -28,10 +28,10 @@ export default class NumericField extends TextField {
   }
 
   validateNumeric(e) {
-    var event = e || window.event;
-    var key = event.keyCode || event.which;
+    const event = e || window.event;
+    let key = event.keyCode || event.which;
     key = String.fromCharCode( key );
-    var regex = /[0-9]|\./;
+    const regex = /[0-9]|\./;
     if( !regex.test(key) ) {
       event.returnValue = false;
       if(event.preventDefault) {
@@ -41,7 +41,7 @@ export default class NumericField extends TextField {
   }
 
   render() {
-    let styles = {
+    const styles = {
       currency: {
         position: 'absolute',
         display: 'inline',
@@ -52,7 +52,7 @@ export default class NumericField extends TextField {
       }
     };
 
-    let inputStyle = merge(this.props.styles.input, {padding: '2px 20px'});
+    const inputStyle = merge(this.props.styles.input, {padding: '2px 20px'});
 
     return (
       <div style={this.props.styles.container}>

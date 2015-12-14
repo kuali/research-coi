@@ -39,8 +39,8 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
   }
 
   toggleFilter(evt) {
-    let code = Number(evt.target.id.replace('statFilt', ''));
-    let theStatus = this.props.possibleStatuses.find(status => {
+    const code = Number(evt.target.id.replace('statFilt', ''));
+    const theStatus = this.props.possibleStatuses.find(status => {
       return status.code === code;
     });
     AdminActions.toggleStatusFilter(theStatus);
@@ -54,7 +54,7 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    let styles = {
+    const styles = {
       container: {
         whiteSpace: 'nowrap',
         color: 'black',
@@ -86,12 +86,12 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       }
     };
 
-    let options = this.props.possibleStatuses.filter(status => {
+    const options = this.props.possibleStatuses.filter(status => {
       return status.code !== 3;
     }).sort((a, b) => {
       return a.label.localeCompare(b.label);
     }).map((status) => {
-      let id = `statFilt${status.code}`;
+      const id = `statFilt${status.code}`;
       return (
         <div style={styles.checkbox} key={status.code}>
           <input
@@ -105,10 +105,10 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       );
     });
 
-    let approved = this.props.possibleStatuses.filter(status => {
+    const approved = this.props.possibleStatuses.filter(status => {
       return status.code === 3;
     }).map(status => {
-      let id = `statFilt${status.code}`;
+      const id = `statFilt${status.code}`;
       return (
         <div style={merge(styles.checkbox, {padding: '10px 0'})} key={status.code}>
           <input

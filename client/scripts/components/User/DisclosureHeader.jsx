@@ -22,7 +22,7 @@ import {merge} from '../../merge';
 import {DisclosureActions} from '../../actions/DisclosureActions';
 
 export function DisclosureHeader(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: 'white',
       padding: '17px 0 17px 50px',

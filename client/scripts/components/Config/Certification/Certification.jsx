@@ -48,7 +48,7 @@ export default class Certification extends React.Component {
   }
 
   onChange() {
-    let storeState = ConfigStore.getState();
+    const storeState = ConfigStore.getState();
     this.setState({
       certificationOptions: storeState.config.general.certificationOptions,
       instructions: storeState.config.general.instructions,
@@ -57,17 +57,17 @@ export default class Certification extends React.Component {
   }
 
   textChanged() {
-    let textarea = this.refs.textarea;
+    const textarea = this.refs.textarea;
     ConfigActions.setCertificationText(textarea.value);
   }
 
   requiredChanged() {
-    let checkbox = this.refs.checkbox;
+    const checkbox = this.refs.checkbox;
     ConfigActions.setCertificationRequired(checkbox.checked);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         minHeight: 100
       },

@@ -23,7 +23,7 @@ import {formatDate} from '../../../formatDate';
 import Question from './Question';
 
 export default function QuestionToReview(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       marginBottom: 40
     },
@@ -68,7 +68,7 @@ export default function QuestionToReview(props: Object): React.Element {
     }
   };
 
-  let comments = props.question.comments.map(comment => {
+  const comments = props.question.comments.map(comment => {
     return (
       <div style={styles.comment} key={comment.id}>
         <div style={styles.commentTitle}>Comment from
@@ -92,8 +92,8 @@ export default function QuestionToReview(props: Object): React.Element {
     );
   }
 
-  let questionDetails = props.question.question;
-  let answer = props.question.answer;
+  const questionDetails = props.question.question;
+  const answer = props.question.answer;
   return (
     <div className="flexbox row" style={merge(styles.container, props.style)}>
       <span style={styles.statusIcon}>

@@ -47,9 +47,9 @@ export default class SidePanel extends React.Component {
   }
 
   render() {
-    let submitEnabled = this.props.submitEnabled;
+    const submitEnabled = this.props.submitEnabled;
 
-    let styles = {
+    const styles = {
       container: {
         width: 220
       },

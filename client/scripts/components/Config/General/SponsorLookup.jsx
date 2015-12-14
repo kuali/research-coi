@@ -28,7 +28,7 @@ export default class SponsorLookup extends React.Component {
   }
 
   toggle() {
-    let checkbox = this.refs.checkbox;
+    const checkbox = this.refs.checkbox;
     if (checkbox.checked) {
       ConfigActions.enableSponsorLookup();
     } else {
@@ -37,7 +37,7 @@ export default class SponsorLookup extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         padding: '20px 23px 10px 23px',
         fontSize: 17

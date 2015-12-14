@@ -28,7 +28,7 @@ export class Test extends LoadTest {
   }
   
   getHeaders() {
-    let userId = Math.ceil(Math.random() * 50);
+    const userId = Math.ceil(Math.random() * 50);
     return {
       'Authorization': `Bearer a${userId}`
     };

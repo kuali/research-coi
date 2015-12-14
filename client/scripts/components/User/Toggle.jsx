@@ -33,7 +33,7 @@ export class Toggle extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'inline-block'
       },
@@ -47,10 +47,10 @@ export class Toggle extends React.Component {
       }
     };
 
-    let buttons = this.props.values.map((value, index, array) => {
-      let isFirst = index === 0;
-      let isLast = index === array.length - 1;
-      let isSelected = this.props.selected === value.code;
+    const buttons = this.props.values.map((value, index, array) => {
+      const isFirst = index === 0;
+      const isLast = index === array.length - 1;
+      const isSelected = this.props.selected === value.code;
 
       return (
         <ToggleButton

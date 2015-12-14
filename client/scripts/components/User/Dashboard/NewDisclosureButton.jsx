@@ -32,7 +32,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
   }
 
   renderMobile() {
-    let mobileStyles = {
+    const mobileStyles = {
       container: {
         display: 'inline-block',
         backgroundColor: '#eeeeee',
@@ -53,7 +53,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
         height: 45
       }
     };
-    let styles = merge(this.commonStyles, mobileStyles);
+    const styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <Link to={"/coi/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
@@ -71,7 +71,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         display: 'block',
         backgroundColor: '#eeeeee',
@@ -91,7 +91,7 @@ export class NewDisclosureButton extends ResponsiveComponent {
         fontWeight: 'bold'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <Link to={"/coi/disclosure"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>

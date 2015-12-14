@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-var Alt = require('alt');
-var alt = new Alt();
+import Alt from 'alt';
+const alt = new Alt();
 
 export default alt;

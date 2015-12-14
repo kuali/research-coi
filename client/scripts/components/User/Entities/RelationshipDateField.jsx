@@ -30,7 +30,7 @@ export default class RelationshipDateField extends RelationshipTextField {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginBottom: 16,
         textAlign: 'left',

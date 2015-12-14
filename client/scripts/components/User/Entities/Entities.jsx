@@ -36,7 +36,7 @@ export class Entities extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         overflow: 'hidden'
       },
@@ -72,7 +72,7 @@ export class Entities extends React.Component {
         return entity.active === this.props.applicationState.activeEntityView;
       }).map(
         (entity) => {
-          let entityAppState = this.props.applicationState.entityStates[entity.id];
+          const entityAppState = this.props.applicationState.entityStates[entity.id];
           return (
             <Entity
               entity={entity}
@@ -151,8 +151,8 @@ export class Entities extends React.Component {
       );
     }
 
-    let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
-    let instructions = (
+    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
+    const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}

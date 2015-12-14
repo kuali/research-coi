@@ -47,7 +47,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
   }
 
   findDeclarationTypeByProject(id) {
-    let declaration = this.props.declarations.find((element) => {
+    const declaration = this.props.declarations.find((element) => {
       return element.projectId === id;
     });
 
@@ -59,7 +59,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
   }
 
   findCommentByProject(id) {
-    let relation = this.props.declarations.find((element) => {
+    const relation = this.props.declarations.find((element) => {
       return element.projectId === id;
     });
 
@@ -77,7 +77,7 @@ export class EntityRelationDialog extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         backgroundColor: '#c1c1c1'
       },
@@ -121,9 +121,9 @@ export class EntityRelationDialog extends ResponsiveComponent {
         margin: '0 10px 0 10px'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
-    let projectRelations = [];
+    const projectRelations = [];
     this.props.projects.forEach(project => {
       projectRelations.push(
         <ProjectRelation
@@ -137,13 +137,13 @@ export class EntityRelationDialog extends ResponsiveComponent {
       );
     });
 
-    let declarationTypeOptions = this.props.declarationTypes.map(option =>{
+    const declarationTypeOptions = this.props.declarationTypes.map(option => {
       return (
         <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
       );
     });
 
-    let navButtons = [];
+    const navButtons = [];
     if (this.props.entityCount > 0) {
       if (this.props.id > 0) {
         navButtons.push(

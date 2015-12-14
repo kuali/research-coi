@@ -55,7 +55,7 @@ export class Project extends React.Component {
   }
 
   getDeclarationDescription(typeCd) {
-    let declarationType = window.config.declarationTypes.find(type=>{
+    const declarationType = window.config.declarationTypes.find(type => {
       return type.typeCd === typeCd;
     });
 
@@ -67,7 +67,7 @@ export class Project extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'block',
         margin: '0 3px 25px 0',

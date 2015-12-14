@@ -68,7 +68,7 @@ export default class Question extends React.Component {
 
   deleteIrrelaventAnswers(questionId, newAnswer) {
     if (this.props.question.subQuestions) {
-      let toDelete = this.props.question.subQuestions.filter(question => {
+      const toDelete = this.props.question.subQuestions.filter(question => {
         return question.parent === questionId;
       }).filter(question => {
         return question.question.displayCriteria !== newAnswer;
@@ -81,7 +81,7 @@ export default class Question extends React.Component {
   }
 
   answer(newAnswer, questionId) {
-    let isParentQuestion = this.props.question.id === questionId;
+    const isParentQuestion = this.props.question.id === questionId;
     if (isParentQuestion) {
       this.deleteIrrelaventAnswers(questionId, newAnswer);
       this.changeAnswer(newAnswer);
@@ -92,7 +92,7 @@ export default class Question extends React.Component {
   }
 
   answerMultiple(value, checked, questionId) {
-    let isParentQuestion = this.props.question.id === questionId;
+    const isParentQuestion = this.props.question.id === questionId;
     if (isParentQuestion) {
       let newAnswer = Array.from(this.props.answer);
       if (checked) {
@@ -108,7 +108,7 @@ export default class Question extends React.Component {
       this.changeAnswer(newAnswer);
     }
     else {
-      let questionBeingAnswered = this.props.question.subQuestions.find(subQuestion => {
+      const questionBeingAnswered = this.props.question.subQuestions.find(subQuestion => {
         return subQuestion.id === questionId;
       });
       let newAnswer = Array.from(questionBeingAnswered.answer.value);
@@ -128,12 +128,12 @@ export default class Question extends React.Component {
 
   controlValidityChanged(questionId, isValid) {
     this.setState({
-      isValid: isValid
+      isValid
     });
   }
 
   getControl(question, answer) {
-    let isSubQuestion = question.parent !== null;
+    const isSubQuestion = question.parent !== null;
 
     switch (question.question.type) {
       case COIConstants.QUESTION_TYPE.YESNO:
@@ -227,7 +227,7 @@ export default class Question extends React.Component {
       return;
     }
 
-    let newState = {
+    const newState = {
       revising: false,
       responding: false
     };
@@ -237,7 +237,7 @@ export default class Question extends React.Component {
     }
     else if (this.state.responding) {
       newState.responded = true;
-      let textarea = this.refs.responseText;
+      const textarea = this.refs.responseText;
       PIReviewActions.respond(this.props.reviewId, textarea.value);
     }
 
@@ -245,7 +245,7 @@ export default class Question extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginRight: 25
       },

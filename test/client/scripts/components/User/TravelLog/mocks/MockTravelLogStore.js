@@ -169,4 +169,4 @@ class _MockTravelLogStore extends AutoBindingStore {
   }
 }
 
-export let MockTravelLogStore = alt.createStore(_MockTravelLogStore, 'MockTravelLogStore');
+export const MockTravelLogStore = alt.createStore(_MockTravelLogStore, 'MockTravelLogStore');

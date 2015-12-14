@@ -36,7 +36,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
   shouldComponentUpdate() { return true; }
 
   findDeclarationTypeByEntity(id) {
-    let declaration = this.props.declarations.find((element) => {
+    const declaration = this.props.declarations.find((element) => {
       return element.finEntityId === id;
     });
 
@@ -48,7 +48,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
   }
 
   findCommentByEntity(id) {
-    let declaration = this.props.declarations.find((element) => {
+    const declaration = this.props.declarations.find((element) => {
       return element.finEntityId === id;
     });
 
@@ -70,7 +70,7 @@ export class ManualRelationDialog extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         backgroundColor: '#c1c1c1'
       },
@@ -110,9 +110,9 @@ export class ManualRelationDialog extends ResponsiveComponent {
         minWidth: 90
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
-    let entityRelations = [];
+    const entityRelations = [];
     this.props.entities.forEach((element) => {
       entityRelations.push(
         <EntityRelation

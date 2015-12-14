@@ -45,7 +45,7 @@ export class AdminQuestionnaireSummary extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         boxShadow: '0 0 8px #AAA',

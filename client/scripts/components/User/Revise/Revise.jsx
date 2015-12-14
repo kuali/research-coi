@@ -32,7 +32,7 @@ export class Revise extends React.Component {
   constructor() {
     super();
 
-    let storeState = PIReviewStore.getState();
+    const storeState = PIReviewStore.getState();
     this.state = {
       disclosure: storeState.disclosure,
       applicationState: storeState.applicationState
@@ -54,7 +54,7 @@ export class Revise extends React.Component {
   }
 
   onChange() {
-    let storeState = PIReviewStore.getState();
+    const storeState = PIReviewStore.getState();
     this.setState({
       disclosure: storeState.disclosure,
       applicationState: storeState.applicationState
@@ -66,7 +66,7 @@ export class Revise extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: '#F2F2F2',
         minHeight: 100,

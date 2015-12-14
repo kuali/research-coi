@@ -44,7 +44,7 @@ export default class Questionnaire extends React.Component {
   }
 
   onChange() {
-    let storeState = ConfigStore.getState();
+    const storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
       questions: storeState.config.questions.screening,
@@ -54,7 +54,7 @@ export default class Questionnaire extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         overflowY: 'auto',
         minHeight: 0

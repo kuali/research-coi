@@ -34,34 +34,54 @@ export default class NewQuestion extends React.Component {
   }
 
   typeChosen() {
-    let dropdown = this.refs.typeDropdown;
-    ConfigActions.questionTypeChosen(this.props.questionnaireCategory, this.props.id, dropdown.value);
+    const dropdown = this.refs.typeDropdown;
+    ConfigActions.questionTypeChosen(
+      this.props.questionnaireCategory,
+      this.props.id,
+      dropdown.value
+    );
   }
 
   textChanged() {
-    let textarea = this.refs.questionText;
-    ConfigActions.questionTextChanged(this.props.questionnaireCategory, this.props.id, textarea.value);
+    const textarea = this.refs.questionText;
+    ConfigActions.questionTextChanged(
+      this.props.questionnaireCategory,
+      this.props.id,
+      textarea.value
+    );
   }
 
   optionTextChanged(evt) {
     if (evt.keyCode === COIConstants.RETURN_KEY) {
-      let textbox = this.refs.optionText;
-      ConfigActions.multiSelectOptionAdded(this.props.questionnaireCategory, this.props.id, textbox.value);
+      const textbox = this.refs.optionText;
+      ConfigActions.multiSelectOptionAdded(
+        this.props.questionnaireCategory,
+        this.props.id,
+        textbox.value
+      );
       textbox.value = '';
     }
   }
 
   optionDeleted(optionId) {
-    ConfigActions.multiSelectOptionDeleted(this.props.questionnaireCategory, this.props.id, optionId);
+    ConfigActions.multiSelectOptionDeleted(
+      this.props.questionnaireCategory,
+      this.props.id,
+      optionId
+    );
   }
 
   requiredSelectionsChanged() {
-    let textbox = this.refs.requiredNumSelections;
-    ConfigActions.requiredNumSelectionsChanged(this.props.questionnaireCategory, this.props.id, textbox.value);
+    const textbox = this.refs.requiredNumSelections;
+    ConfigActions.requiredNumSelectionsChanged(
+      this.props.questionnaireCategory,
+      this.props.id,
+      textbox.value
+    );
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         width: '100%'
       },
@@ -136,7 +156,7 @@ export default class NewQuestion extends React.Component {
       }
     };
 
-    let questionTypes = Object.keys(COIConstants.QUESTION_TYPE).map(questionType => {
+    const questionTypes = Object.keys(COIConstants.QUESTION_TYPE).map(questionType => {
       return (
         <option key={questionType} value={COIConstants.QUESTION_TYPE[questionType]}>
           {COIConstants.QUESTION_TYPE[questionType]}
