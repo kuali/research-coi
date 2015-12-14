@@ -84,7 +84,7 @@ node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --kn
 node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi
 ```
 
-Alternately you can add some demonstration data to play with:
+Alternatively you can add some demonstration data to play with:
 ```
 node ~/workspace/kc-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo
 ```
