@@ -42,17 +42,16 @@ export class Project extends React.Component {
     if (undefinedRelationExists('ENTITY', this.props.entities, this.props.declarations)) {
       return 'Action Required';
     }
-    else {
-      let worstDeclaration = 1;
 
-      this.props.declarations.forEach(element => {
-        if (worstDeclaration !== 2 && element.typeCd > 1) {
-          worstDeclaration = element.typeCd;
-        }
-      });
+    let worstDeclaration = 1;
 
-      return this.getDeclarationDescription(worstDeclaration);
-    }
+    this.props.declarations.forEach(element => {
+      if (worstDeclaration !== 2 && element.typeCd > 1) {
+        worstDeclaration = element.typeCd;
+      }
+    });
+
+    return this.getDeclarationDescription(worstDeclaration);
   }
 
   getDeclarationDescription(typeCd) {
@@ -62,9 +61,9 @@ export class Project extends React.Component {
 
     if (declarationType) {
       return declarationType.description;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   render() {

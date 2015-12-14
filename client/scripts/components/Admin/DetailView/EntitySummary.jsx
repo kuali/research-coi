@@ -41,47 +41,42 @@ export default class EntitySummary extends React.Component {
     if (!theAnswer) {
       return '';
     }
-    else {
-      switch (type) {
-        case COIConstants.QUESTION_TYPE.DATE:
-          if (isNaN(theAnswer.answer.value)) {
-            return theAnswer.answer.value;
-          }
-          else {
-            return formatDate(theAnswer.answer.value);
-          }
-          break;
-        case COIConstants.QUESTION_TYPE.TEXTAREA:
+
+    switch (type) {
+      case COIConstants.QUESTION_TYPE.DATE:
+        if (isNaN(theAnswer.answer.value)) {
+          return theAnswer.answer.value;
+        }
+
+        return formatDate(theAnswer.answer.value);
+      case COIConstants.QUESTION_TYPE.TEXTAREA:
+        return (
+          <div>
+            {theAnswer.answer.value}
+          </div>
+        );
+      case COIConstants.QUESTION_TYPE.MULTISELECT:
+        if (Array.isArray(theAnswer.answer.value)) {
+          let answers = theAnswer.answer.value.map((answer, index, array) => {
+            let answerToShow = answer;
+            if (index !== array.length - 1) {
+              answerToShow += ', ';
+            }
+            return (
+              <span key={'ans' + questionId + index}>{answerToShow}</span>
+            );
+          });
+
           return (
             <div>
-              {theAnswer.answer.value}
+              {answers}
             </div>
           );
-        case COIConstants.QUESTION_TYPE.MULTISELECT:
-          if (Array.isArray(theAnswer.answer.value)) {
-            let answers = theAnswer.answer.value.map((answer, index, array) => {
-              let answerToShow = answer;
-              if (index !== array.length - 1) {
-                answerToShow += ', ';
-              }
-              return (
-                <span key={'ans' + questionId + index}>{answerToShow}</span>
-              );
-            });
+        }
 
-            return (
-              <div>
-                {answers}
-              </div>
-            );
-          }
-          else {
-            return theAnswer.answer.value;
-          }
-          break;
-        default:
-          return theAnswer.answer.value;
-      }
+        return theAnswer.answer.value;
+      default:
+        return theAnswer.answer.value;
     }
   }
 

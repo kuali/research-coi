@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint-disable camelcase, no-console */
+/*eslint-disable camelcase, no-console, no-magic-numbers */
 
 var hashCode = require('../../../hash');
 
@@ -510,7 +510,7 @@ exports.seed = function(knex, Promise) {
     return insertInitialArchiveConfig(knex);
   }).then(function() {
     if (!includeDemoData) {
-      return;
+      return undefined;
     }
     console.log('Demo data - disclosure');
     var disclosures = [];

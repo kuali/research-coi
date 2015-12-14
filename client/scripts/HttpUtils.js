@@ -18,12 +18,13 @@
 
 import defaults from 'superagent-defaults';
 import cookies from 'cookies-js';
+import {UNAUTHORIZED} from './HTTPStatusCodes';
 
 export function processResponse(callback) {
   return (err, res) => {
     if (!err) {
       callback(err, res);
-    } else if (err.status === 401) {
+    } else if (err.status === UNAUTHORIZED) {
       window.location = '/auth/';
     }
   };

@@ -17,6 +17,9 @@
 */
 
 /*eslint camelcase:0 */
+
+const MAX_ROWS = 10;
+
 let getKnex;
 try {
   let extensions = require('research-extensions');
@@ -30,14 +33,14 @@ let queryUsingIndex = (knex, term) => {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', term + '%')
-    .limit(10);
+    .limit(MAX_ROWS);
 };
 
 let queryWithoutIndex = (knex, term) => {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', '%' + term + '%')
-    .limit(10);
+    .limit(MAX_ROWS);
 };
 
 export let getSuggestions = (dbInfo, term) => {
@@ -45,11 +48,10 @@ export let getSuggestions = (dbInfo, term) => {
 
   return queryUsingIndex(knex, term)
     .then(result =>{
-      if (result.length < 10) {
+      if (result.length < MAX_ROWS) {
         return queryWithoutIndex(knex, term);
       }
-      else {
-        return result;
-      }
+
+      return result;
     });
 };

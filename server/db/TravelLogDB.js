@@ -125,9 +125,9 @@ let createNewRelationship = (knex, entityId, entry, status) => {
 let isSubmitted = (status) => {
   if (status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS || status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
     return false;
-  } else {
-    return true;
   }
+
+  return true;
 };
 
 let getExistingFinancialEntity = (trx, entityName, disclosureId) => {
@@ -141,12 +141,12 @@ let handleTravelLogEntry = (trx, disclosureId, entry, status) => {
   .then(entity => {
     if (entity[0]) {
       return createNewRelationship(trx, entity[0].id, entry, status);
-    } else {
-      return createNewEntity(trx, disclosureId, entry, status)
-      .then(newEntityId => {
-        return createNewRelationship(trx, newEntityId, entry, status);
-      });
     }
+
+    return createNewEntity(trx, disclosureId, entry, status)
+    .then(newEntityId => {
+      return createNewRelationship(trx, newEntityId, entry, status);
+    });
   });
 };
 
@@ -165,16 +165,16 @@ export let createTravelLogEntry = (dbInfo, entry, userInfo) => {
       if (disclosure[0]) {
         if (isSubmitted(disclosure[0].status_cd) === true) {
           return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.PENDING);
-        } else {
-          return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
         }
-      } else {
-        return createAnnualDisclosure(trx, userInfo).then(disclosureId => {
-          return createNewEntity(trx, disclosureId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(entityId => {
-            return createNewRelationship(trx, entityId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
-          });
-        });
+
+        return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
       }
+
+      return createAnnualDisclosure(trx, userInfo).then(disclosureId => {
+        return createNewEntity(trx, disclosureId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(entityId => {
+          return createNewRelationship(trx, entityId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
+        });
+      });
     });
   });
 };
@@ -309,9 +309,8 @@ export let deleteTravelLogEntry = (dbInfo, id, userInfo) => {
           });
         });
       }
-      else {
-        throw new Error(userInfo.userName + ' is unauthorized to edit this record');
-      }
+
+      throw new Error(userInfo.userName + ' is unauthorized to edit this record');
     });
 };
 
@@ -353,9 +352,9 @@ let updateTravelRelationship = (trx, entry, id) => {
     return trx('travel_relationship')
     .update(travelRelationship)
     .where('relationship_id', id);
-  } else {
-    return undefined;
   }
+
+  return undefined;
 };
 
 let updateRelationship = (trx, entry, id) => {
@@ -364,9 +363,9 @@ let updateRelationship = (trx, entry, id) => {
     return trx('relationship')
     .update(relationship)
     .where('id', id);
-  } else {
-    return undefined;
   }
+
+  return undefined;
 };
 
 let handleOldEntity = (trx, entityId) => {
@@ -392,9 +391,9 @@ let getEntityIdFromName = (trx, name, disclosureId) => {
   .then(entity => {
     if (entity[0]) {
       return entity[0].id;
-    } else {
-      return undefined;
     }
+
+    return undefined;
   });
 };
 
@@ -415,23 +414,23 @@ let updateEntity = (trx, entry, id, schoolId) => {
     return getEntityNameFromId(trx, relationship[0].fin_entity_id).then(entityName => {
       if (entry.entityName === entityName || !entry.entityName) {
         return undefined;
-      } else {
-        return getAnnualDisclosureForUser(trx, schoolId).then(disclosure => {
-          return getEntityIdFromName(trx, entry.entityName, disclosure[0].id).then(entityId => {
-            if (entityId) {
-              return updateRelationshipEntityId(trx, id, entityId).then(()=> {
-                return handleOldEntity(trx, relationship[0].fin_entity_id);
-              });
-            } else {
-              return createNewEntity(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(newEntityId => {
-                return updateRelationshipEntityId(trx, id, newEntityId).then(()=> {
-                  return handleOldEntity(trx, relationship[0].fin_entity_id);
-                });
-              });
-            }
+      }
+
+      return getAnnualDisclosureForUser(trx, schoolId).then(disclosure => {
+        return getEntityIdFromName(trx, entry.entityName, disclosure[0].id).then(entityId => {
+          if (entityId) {
+            return updateRelationshipEntityId(trx, id, entityId).then(()=> {
+              return handleOldEntity(trx, relationship[0].fin_entity_id);
+            });
+          }
+
+          return createNewEntity(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(newEntityId => {
+            return updateRelationshipEntityId(trx, id, newEntityId).then(()=> {
+              return handleOldEntity(trx, relationship[0].fin_entity_id);
+            });
           });
         });
-      }
+      });
     });
   });
 };
@@ -451,8 +450,7 @@ export let updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
         });
       });
     }
-    else {
-      throw new Error(userInfo.userName + ' is unauthorized to edit this record');
-    }
+
+    throw new Error(userInfo.userName + ' is unauthorized to edit this record');
   });
 };

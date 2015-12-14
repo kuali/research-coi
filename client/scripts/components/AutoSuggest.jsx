@@ -42,7 +42,7 @@ class Suggestion extends React.Component {
       let matchingValue = value.substr(start, searchTerm.length);
       return (
         <span>
-          <span style={{display: 'inline'}}>{value.substr(0, start) + ''}</span>
+          <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
           <span className="highlight">
             {matchingValue}
           </span>
@@ -50,9 +50,8 @@ class Suggestion extends React.Component {
         </span>
       );
     }
-    else {
-      return value;
-    }
+
+    return value;
   }
 
   render() {
@@ -125,7 +124,7 @@ export default class AutoSuggest extends React.Component {
   }
 
   keyUp(evt) {
-    switch (evt.keyCode) {
+    switch (evt.keyCode) { // eslint-disable-line default-case
       case COIConstants.RETURN_KEY:
         if (this.state.selectedIndex >= 0) {
           this.onSelected(this.state.suggestions[this.state.selectedIndex].value);

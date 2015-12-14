@@ -18,6 +18,7 @@
 
 import * as ConfigDB from '../db/ConfigDB';
 import {COIConstants} from '../../COIConstants';
+import {FORBIDDEN} from '../../HTTPStatusCodes';
 import Log from '../Log';
 
 export let init = app => {
@@ -54,7 +55,7 @@ export let init = app => {
   */
   app.post('/api/coi/config/', function(req, res, next){
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 

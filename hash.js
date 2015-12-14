@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-magic-numbers */
+
 module.exports = function hashCode(toHash){
   var hash = 0;
   if (toHash.length === 0) { return hash; }

@@ -44,9 +44,8 @@ export default class CommentSummary extends React.Component {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
       }
-      else {
-        return a.topicId - b.topicId;
-      }
+
+      return a.topicId - b.topicId;
     });
 
     return this.getUniqueTopics(questionComments).sort((a, b) => {
@@ -78,9 +77,8 @@ export default class CommentSummary extends React.Component {
     if (theEntity) {
       return theEntity.name;
     }
-    else {
-      return undefined;
-    }
+
+    return undefined;
   }
 
   getDeclarationName(id) {
@@ -91,9 +89,8 @@ export default class CommentSummary extends React.Component {
     if (theDeclaration) {
       return theDeclaration.projectTitle + ' - ' + theDeclaration.entityName;
     }
-    else {
-      return undefined;
-    }
+
+    return undefined;
   }
 
   getEntitiesTopics() {
@@ -103,9 +100,8 @@ export default class CommentSummary extends React.Component {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
       }
-      else {
-        return a.topicId - b.topicId;
-      }
+
+      return a.topicId - b.topicId;
     });
 
     return this.getUniqueTopics(entityComments).map(topicId => {
@@ -131,9 +127,8 @@ export default class CommentSummary extends React.Component {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
       }
-      else {
-        return a.topicId - b.topicId;
-      }
+
+      return a.topicId - b.topicId;
     });
 
     return this.getUniqueTopics(declarationComments).map(topicId => {

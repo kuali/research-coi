@@ -125,16 +125,14 @@ export class DisclosureDetail extends React.Component {
         if (a.parent === b.parent) {
           return a.question.order - b.question.order;
         }
-        else {
-          return aParent.question.order - bParent.question.order;
-        }
+
+        return aParent.question.order - bParent.question.order;
       }
       else if (a.parent && !b.parent) {
         return aParent.question.order - b.question.order;
       }
-      else {
-        return a.question.order - bParent.question.order;
-      }
+
+      return a.question.order - bParent.question.order;
     }).map(question => {
       return {
         id: question.id,

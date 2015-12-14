@@ -91,9 +91,8 @@ export class Relationships extends ResponsiveComponent {
         return element.finEntityId === id;
       });
     }
-    else {
-      return [];
-    }
+
+    return [];
   }
 
   getProjectDeclarations(id) {
@@ -102,9 +101,8 @@ export class Relationships extends ResponsiveComponent {
         return element.projectId === id;
       });
     }
-    else {
-      return [];
-    }
+
+    return [];
   }
 
   isProjectDeclarationOpen(id) {
@@ -112,9 +110,8 @@ export class Relationships extends ResponsiveComponent {
       let state = this.props.declarationStates.projects[id];
       return (state && state.open);
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   isEntityDeclarationOpen(id) {
@@ -122,9 +119,8 @@ export class Relationships extends ResponsiveComponent {
       let state = this.props.declarationStates.entities[id];
       return (state && state.open);
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   viewChanged(newView) {

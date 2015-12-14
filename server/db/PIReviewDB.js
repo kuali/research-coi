@@ -69,19 +69,18 @@ let updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targe
             'c.user_id': userInfo.schoolId
           });
       }
-      else {
-        return knex('comment').insert({
-          'disclosure_id': disclosureId,
-          'topic_section': targetType,
-          'topic_id': targetId,
-          'text': comment,
-          'user_id': userInfo.schoolId,
-          'author': `${userInfo.firstName} ${userInfo.lastName}`,
-          'date': new Date(),
-          'pi_visible': true,
-          'reviewer_visible': true
-        }, 'id');
-      }
+
+      return knex('comment').insert({
+        'disclosure_id': disclosureId,
+        'topic_section': targetType,
+        'topic_id': targetId,
+        'text': comment,
+        'user_id': userInfo.schoolId,
+        'author': `${userInfo.firstName} ${userInfo.lastName}`,
+        'date': new Date(),
+        'pi_visible': true,
+        'reviewer_visible': true
+      }, 'id');
     });
 };
 
@@ -128,9 +127,8 @@ export let recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
               return;
             });
           }
-          else {
-            return 'Unauthorized';
-          }
+
+          return 'Unauthorized';
         });
     });
 };
@@ -336,9 +334,8 @@ export let reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, newAn
               return true;
             });
         }
-        else {
-          return false;
-        }
+
+        return false;
       }),
     updateReviewRecord(knex, reviewId, {revised: true})
   ]);
@@ -372,9 +369,8 @@ export let reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
               return true;
             });
         }
-        else {
-          return false;
-        }
+
+        return false;
       }),
     updateReviewRecord(knex, reviewId, {revised: true})
   ]);
@@ -677,9 +673,8 @@ export let removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => 
             .del()
         ]);
       }
-      else {
-        return 'Unauthorized';
-      }
+
+      return 'Unauthorized';
     });
 };
 
@@ -719,12 +714,11 @@ export let reviseSubQuestion = (dbInfo, userInfo, reviewId, subQuestionId, answe
         if (rowCount[0].answerCount > 0) {
           return DisclosureDB.saveExistingQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, subQuestionId, answer);
         }
-        else {
-          return DisclosureDB.saveNewQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, {
-            questionId: subQuestionId,
-            answer: answer
-          });
-        }
+
+        return DisclosureDB.saveNewQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, {
+          questionId: subQuestionId,
+          answer: answer
+        });
       });
     });
 };
@@ -754,9 +748,8 @@ export let reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
             id: disclosureId
           });
       }
-      else {
-        return 'Unauthorized';
-      }
+
+      return 'Unauthorized';
     });
 };
 

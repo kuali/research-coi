@@ -18,6 +18,7 @@
 
 import * as TravelLogDB from '../db/TravelLogDB';
 import Log from '../Log';
+import {OK} from '../../HTTPStatusCodes';
 
 export let init = app => {
   /**
@@ -70,7 +71,7 @@ export let init = app => {
   app.delete('/api/coi/travel-log-entries/:id', function(req, res, next) {
     TravelLogDB.deleteTravelLogEntry(req.dbInfo, req.params.id, req.userInfo)
       .then(() => {
-        res.sendStatus(200);
+        res.sendStatus(OK);
       })
       .catch(err => {
         Log.error(err);

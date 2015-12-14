@@ -240,9 +240,8 @@ class QuestionnaireConfig extends React.Component {
     if (!potentialParent || potentialParent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
       return false;
     }
-    else {
-      return true;
-    }
+
+    return true;
   }
 
   newQuestionCancelled() {
@@ -301,7 +300,7 @@ class QuestionnaireConfig extends React.Component {
     }).sort((a, b) => {
       if (a.question.order < b.question.order) { return -1; }
       else if (a.question.order === b.question.order) { return 0; }
-      else { return 1; }
+      return 1;
     }).forEach(question => {
       question.question.top = nextQuestionYPosition;
       nextQuestionYPosition += this.findQuestionHeight(question);

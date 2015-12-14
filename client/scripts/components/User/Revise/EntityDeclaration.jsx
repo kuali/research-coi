@@ -261,7 +261,7 @@ export default class EntityDeclaration extends React.Component {
     let relationship;
     if (this.state.revising) {
       let declarationTypes = window.config.declarationTypes.filter(declarationType => {
-        return !!declarationType.enabled && !!declarationType.active;
+        return Boolean(declarationType.enabled) && Boolean(declarationType.active);
       }).map(declarationType => {
         return (
           <div key={declarationType.typeCd} style={styles.declarationType}>

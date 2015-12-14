@@ -33,9 +33,8 @@ export class AdminEntitiesSummary extends React.Component {
         return response.targetId === id;
       });
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   getCommentCount(id) {

@@ -39,7 +39,7 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
   }
 
   toggleFilter(evt) {
-    let code = +(evt.target.id.replace('statFilt', ''));
+    let code = Number(evt.target.id.replace('statFilt', ''));
     let theStatus = this.props.possibleStatuses.find(status => {
       return status.code === code;
     });

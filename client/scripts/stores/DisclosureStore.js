@@ -340,7 +340,7 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   advanceQuestion() {
-    let parentQuestions = window.config.questions.screening.filter(question=>{
+    let parentQuestions = window.config.questions.screening.filter(question => {
       return !question.parent;
     });
 
@@ -868,9 +868,8 @@ class _DisclosureStore extends AutoBindingStore {
         return element.id === id;
       });
     }
-    else {
-      return undefined;
-    }
+
+    return undefined;
   }
 
   toggleDeclaration(params) {
@@ -1248,13 +1247,11 @@ class _DisclosureStore extends AutoBindingStore {
       if (unSubmittedRelationshipStarted()) {
         return this.entityRelationshipStepComplete();
       }
-      else {
-        return true;
-      }
+
+      return true;
     }
-    else {
-      return this.entityRelationshipStepComplete();
-    }
+
+    return this.entityRelationshipStepComplete();
   }
 
 

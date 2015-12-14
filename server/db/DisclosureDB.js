@@ -22,7 +22,11 @@ import * as FileService from '../services/fileService/FileService';
 import {camelizeJson} from './JsonUtils';
 import {COIConstants} from '../../COIConstants';
 
-const ONE_DAY = 1000 * 60 * 60 * 24;
+const MILLIS = 1000;
+const SECONDS = 60;
+const MINUTES = 60;
+const HOURS = 24;
+const ONE_DAY = MILLIS * SECONDS * MINUTES * HOURS;
 
 let getKnex;
 try {
@@ -440,13 +444,11 @@ let flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
           'target_id': id
         });
       }
-      else {
-        return knex('pi_review').insert({
-          'disclosure_id': disclosureId,
-          'target_type': section,
-          'target_id': id
-        }, 'id');
-      }
+      return knex('pi_review').insert({
+        'disclosure_id': disclosureId,
+        'target_type': section,
+        'target_id': id
+      }, 'id');
     });
 };
 
@@ -633,9 +635,8 @@ export let getAnnualDisclosure = (dbInfo, userInfo, piName) => {
             });
         });
       }
-      else {
-        return get(dbInfo, userInfo, result[0].id);
-      }
+
+      return get(dbInfo, userInfo, result[0].id);
     });
 };
 
@@ -760,7 +761,7 @@ export let getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, fi
 
   query.orderBy(dbSortColumn, dbSortDirection);
   query.orderBy('id', 'desc');
-  return query.limit(SUMMARY_PAGE_SIZE).offset(+start);
+  return query.limit(SUMMARY_PAGE_SIZE).offset(Number(start));
 };
 
 export let getSummariesForUser = (dbInfo, userId) => {
@@ -826,16 +827,16 @@ export let submit = (dbInfo, userInfo, disclosureId) => {
 export let getExpirationDate = (date, isRolling, dueDate) => {
   if (isRolling === true) {
     return new Date(date.setFullYear(date.getFullYear() + 1));
-  } else {
-    let dueMonthDay = dueDate.getMonth() + dueDate.getDay();
-    let approveMonthDay = date.getMonth() + date.getDay();
-
-    if (approveMonthDay < dueMonthDay) {
-      return new Date(dueDate.setFullYear(date.getFullYear()));
-    } else {
-      return new Date(dueDate.setFullYear(date.getFullYear() + 1));
-    }
   }
+
+  let dueMonthDay = dueDate.getMonth() + dueDate.getDay();
+  let approveMonthDay = date.getMonth() + date.getDay();
+
+  if (approveMonthDay < dueMonthDay) {
+    return new Date(dueDate.setFullYear(date.getFullYear()));
+  }
+
+  return new Date(dueDate.setFullYear(date.getFullYear() + 1));
 };
 
 let approveDisclosure = (knex, disclosureId, expiredDate) => {
@@ -1026,16 +1027,15 @@ export let saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
             return;
           });
       }
-      else {
-        return knex('state')
-          .insert({
-            key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
-            user_id: userInfo.schoolId,
-            state: JSON.stringify(state)
-          }, 'id').then(() => {
-            return;
-          });
-      }
+
+      return knex('state')
+        .insert({
+          key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+          user_id: userInfo.schoolId,
+          state: JSON.stringify(state)
+        }, 'id').then(() => {
+          return;
+        });
     });
 };
 

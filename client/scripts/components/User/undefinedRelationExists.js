@@ -23,9 +23,8 @@ export function undefinedRelationExists(type, itemsNeedingDisclosures, relations
       if (type === 'PROJECT') {
         return relation.projectId === item.id;
       }
-      else {
-        return relation.finEntityId === item.id;
-      }
+
+      return relation.finEntityId === item.id;
     });
 
     return !existingRelation;

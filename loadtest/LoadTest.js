@@ -16,7 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-magic-numbers */
+
 import http from 'http';
+import {OK} from '../HTTPStatusCodes';
 
 export default class LoadTest {
   constructor() {
@@ -42,9 +45,8 @@ export default class LoadTest {
       times.sort((a, b) => a - b);
       return times[0];
     }
-    else {
-      return 0;
-    }
+
+    return 0;
   }
 
   getAverageTime(times) {
@@ -55,9 +57,8 @@ export default class LoadTest {
 
       return Math.round(sumOfTimes / times.length);
     }
-    else {
-      return 0;
-    }
+
+    return 0;
   }
 
   getLongestTime(times) {
@@ -65,13 +66,12 @@ export default class LoadTest {
       times.sort((a, b) => a - b);
       return times[times.length - 1];
     }
-    else {
-      return 0;
-    }
+
+    return 0;
   }
 
   isValidResponse(response) {
-    return response.statusCode === 200;
+    return response.statusCode === OK;
   }
 
   setup(callback) {

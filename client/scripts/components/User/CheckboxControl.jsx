@@ -49,9 +49,8 @@ export class CheckboxControl extends React.Component {
     if (answer !== undefined && answer instanceof Array) {
       return answer.length >= required;
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   onChange(evt) {

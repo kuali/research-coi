@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-magic-numbers */
+
 import LoadTest from '../../../../../LoadTest';
 
 export class Test extends LoadTest {

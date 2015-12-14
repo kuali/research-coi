@@ -193,8 +193,8 @@ export class Dashboard extends ResponsiveComponent {
     let manualDisclosureEnabled;
     let travelLogEnabled;
 
-    window.config.disclosureTypes.forEach(type=>{
-      switch(type.typeCd.toString()) {
+    window.config.disclosureTypes.forEach(type => {
+      switch(type.typeCd.toString()) { // eslint-disable-line default-case
         case COIConstants.DISCLOSURE_TYPE.ANNUAL:
           annualDisclosureEnabled = type.enabled === 1;
           break;

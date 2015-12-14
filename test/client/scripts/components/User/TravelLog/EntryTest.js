@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
+/* eslint-disable no-magic-numbers */
+
 import React from 'react'; //eslint-disable-line no-unused-vars
 import assert from 'assert';
 import sd from 'skin-deep';

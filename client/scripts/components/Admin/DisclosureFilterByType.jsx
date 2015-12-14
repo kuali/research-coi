@@ -38,7 +38,7 @@ export class DisclosureFilterByType extends DisclosureFilter {
   }
 
   toggleFilter(evt) {
-    let index = +(evt.target.id.replace('typeFilt', ''));
+    let index = Number(evt.target.id.replace('typeFilt', ''));
     AdminActions.toggleTypeFilter(this.props.possibleTypes[index]);
   }
 

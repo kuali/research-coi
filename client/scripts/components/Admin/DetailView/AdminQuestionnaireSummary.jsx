@@ -34,9 +34,8 @@ export class AdminQuestionnaireSummary extends React.Component {
         return response.targetId === id;
       });
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   getCommentCount(id) {

@@ -266,9 +266,8 @@ class _ConfigStore extends AutoBindingStore {
         return question.id === id;
       });
     }
-    else {
-      return this.applicationState.newQuestion[category];
-    }
+
+    return this.applicationState.newQuestion[category];
   }
 
   hasSubQuestions(category, parentId) {
@@ -726,13 +725,10 @@ class _ConfigStore extends AutoBindingStore {
       });
       if (option) {
         return option.description;
-      } else {
-        return 'Undefined';
       }
     }
-    else {
-      return 'Undefined';
-    }
+
+    return 'Undefined';
   }
 
   getRelationshipAmountString(categoryCode, typeCode) {
@@ -743,13 +739,10 @@ class _ConfigStore extends AutoBindingStore {
       });
       if (option) {
         return option.description;
-      } else {
-        return 'Undefined';
       }
     }
-    else {
-      return 'Undefined';
-    }
+
+    return 'Undefined';
   }
 
   getRelationshipPersonTypeString(code) {
@@ -784,9 +777,7 @@ class _ConfigStore extends AutoBindingStore {
     if (theQuestion) {
       return theQuestion.question.numberToShow;
     }
-    else {
-      return undefined;
-    }
+    return undefined;
   }
 }
 

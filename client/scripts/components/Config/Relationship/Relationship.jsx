@@ -169,25 +169,25 @@ export default class Relationship extends React.Component {
               reasonEnabledChanged={this.reasonEnabledChanged}
             />
           );
-        } else {
-          return (
-            <RelationshipType
-              key={matrixType.typeCd}
-              typeCd={matrixType.typeCd}
-              name={matrixType.description}
-              enabled={matrixType.enabled}
-              typeEnabled={matrixType.typeEnabled}
-              amountEnabled={matrixType.amountEnabled}
-              typeOptions={matrixType.typeOptions}
-              amountOptions={matrixType.amountOptions}
-              enabledChanged={this.enabledChanged}
-              typeEnabledChanged={this.typeEnabledChanged}
-              amountEnabledChanged={this.amountEnabledChanged}
-              typeOptionsChanged={this.typeOptionsChanged}
-              amountOptionsChanged={this.amountOptionsChanged}
-            />
-          );
         }
+
+        return (
+          <RelationshipType
+            key={matrixType.typeCd}
+            typeCd={matrixType.typeCd}
+            name={matrixType.description}
+            enabled={matrixType.enabled}
+            typeEnabled={matrixType.typeEnabled}
+            amountEnabled={matrixType.amountEnabled}
+            typeOptions={matrixType.typeOptions}
+            amountOptions={matrixType.amountOptions}
+            enabledChanged={this.enabledChanged}
+            typeEnabledChanged={this.typeEnabledChanged}
+            amountEnabledChanged={this.amountEnabledChanged}
+            typeOptionsChanged={this.typeOptionsChanged}
+            amountOptionsChanged={this.amountOptionsChanged}
+          />
+        );
       });
     }
 

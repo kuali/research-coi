@@ -17,6 +17,8 @@
 */
 
 /*global describe, it */
+/* eslint-disable no-magic-numbers */
+
 import assert from 'assert';
 import * as DisclosureDB from '../../../server/db/DisclosureDB';
 

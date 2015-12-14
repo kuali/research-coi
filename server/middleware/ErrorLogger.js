@@ -17,6 +17,7 @@
 */
 
 import Log from '../Log';
+import {INTERNAL_SERVER_ERROR} from '../../HTTPStatusCodes';
 
 export default function(err, req, res, next) {
   Log.error(err.stack);
@@ -25,6 +26,6 @@ export default function(err, req, res, next) {
     return next(err);
   }
 
-  res.status(500);
+  res.status(INTERNAL_SERVER_ERROR);
   res.send('<html><body>Error</body></html>');
 }

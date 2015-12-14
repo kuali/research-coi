@@ -18,6 +18,8 @@
 
 import knex from 'knex';
 
+const DEFAULT_CONNECTION_POOL_SIZE = 70;
+
 let connectionOptions;
 if (process.env.DB_PACKAGE === 'mysql') {
   connectionOptions = {
@@ -45,7 +47,7 @@ let knexInstance = knex({
   connection: connectionOptions,
   pool: {
     min: 2,
-    max: process.env.CONNECTION_POOL_SIZE || 70
+    max: process.env.CONNECTION_POOL_SIZE || DEFAULT_CONNECTION_POOL_SIZE
   }
 });
 

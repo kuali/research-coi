@@ -20,6 +20,7 @@ import * as PIDB from '../db/PIDB';
 import * as PIReviewDB from '../db/PIReviewDB';
 import Log from '../Log';
 import {COIConstants} from '../../COIConstants';
+import {FORBIDDEN, NO_CONTENT} from '../../HTTPStatusCodes';
 
 export let init = app => {
   /**
@@ -27,7 +28,7 @@ export let init = app => {
   */
   app.get('/api/coi/pi', function(req, res, next) {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
@@ -54,9 +55,8 @@ export let init = app => {
               res.send(response);
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -77,9 +77,8 @@ export let init = app => {
               res.send(response);
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -100,9 +99,8 @@ export let init = app => {
               res.send(response);
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -123,9 +121,8 @@ export let init = app => {
               res.send(response);
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -143,12 +140,11 @@ export let init = app => {
         if (isAllowed) {
           return PIReviewDB.removeRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.params.relationshipId)
             .then(() => {
-              res.status(204).end();
+              res.status(NO_CONTENT).end();
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -166,12 +162,11 @@ export let init = app => {
         if (isAllowed) {
           return PIReviewDB.reviseDeclaration(req.dbInfo, req.userInfo, req.params.reviewId, req.body)
             .then(() => {
-              res.status(204).end();
+              res.status(NO_CONTENT).end();
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -189,12 +184,11 @@ export let init = app => {
         if (isAllowed) {
           return PIReviewDB.reviseSubQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.params.subQuestionId, req.body)
             .then(() => {
-              res.status(204).end();
+              res.status(NO_CONTENT).end();
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -212,16 +206,15 @@ export let init = app => {
         if (isAllowed) {
           return PIReviewDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.reviewId, req.body.toDelete)
             .then(() => {
-              res.status(204).end();
+              res.status(NO_CONTENT).end();
             })
             .catch(err => {
               Log.error(err);
               next(err);
             });
         }
-        else {
-          res.status(403).end();
-        }
+
+        res.status(FORBIDDEN).end();
       })
       .catch(err => {
         Log.error(err);
@@ -249,7 +242,7 @@ export let init = app => {
   */
   app.get('/api/coi/disclosures/:id/pi-responses', function(req, res, next) {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 

@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-magic-numbers */
+
 import LoadTest from '../../../../../../LoadTest';
 import hashCode from '../../../../../../../hash';
 import {getDBConnection} from '../../../../../../DB';
@@ -38,7 +40,7 @@ export class Test extends LoadTest {
         SELECT user_id, id as disclosure_id
         FROM disclosure
         WHERE id < 11`, (err, rows) => {
-      if (err) throw err;
+      if (err) { throw err; }
       this.disclosureMap = {};
       rows.forEach(disclosure => {
         this.disclosureMap[disclosure.user_id] = disclosure.disclosure_id;
@@ -58,10 +60,9 @@ export class Test extends LoadTest {
       this.alreadyAccessed = false;
       return this.id;
     }
-    else {
-      this.alreadyAccessed = true;
-      return this.id;
-    }
+
+    this.alreadyAccessed = true;
+    return this.id;
   }
 
   getDisclosureID() {

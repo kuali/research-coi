@@ -21,6 +21,7 @@ import * as PIReviewDB from '../db/PIReviewDB';
 import multer from 'multer';
 import Log from '../Log';
 import {COIConstants} from '../../COIConstants';
+import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../HTTPStatusCodes';
 
 let upload;
 try {
@@ -42,7 +43,7 @@ export let init = app => {
     .then(results => {
       let disclosure = JSON.parse(results[0].disclosure);
       if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
-        res.sendStatus(403);
+        res.sendStatus(FORBIDDEN);
         return;
       }
       res.send(disclosure);
@@ -117,7 +118,7 @@ export let init = app => {
   */
   app.get('/api/coi/disclosure-summaries', function(req, res, next) {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
@@ -163,7 +164,7 @@ export let init = app => {
   */
   app.get('/api/coi/disclosure-summaries/count', function(req, res, next) {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
@@ -244,7 +245,7 @@ export let init = app => {
   app.put('/api/coi/disclosures/:id/declarations/:declarationId', function(req, res, next) {
     DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.declarationId, req.body)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -289,7 +290,7 @@ export let init = app => {
   app.put('/api/coi/disclosures/:id/submit', function(req, res, next) {
     DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -302,13 +303,13 @@ export let init = app => {
   */
   app.put('/api/coi/disclosures/:id/approve', function(req, res, next) {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
     DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -321,13 +322,13 @@ export let init = app => {
   */
   app.put('/api/coi/disclosures/:id/reject', function(req, res, next) {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
     DisclosureDB.reject(req.dbInfo, req.userInfo.name, req.params.id)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -340,7 +341,7 @@ export let init = app => {
   */
   app.post('/api/coi/disclosures/:id/comments', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
@@ -408,7 +409,7 @@ export let init = app => {
     if (toDelete.length > 0) {
       DisclosureDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.id, toDelete)
         .then(() => {
-          res.status(204).end();
+          res.status(NO_CONTENT).end();
         })
         .catch(err => {
           Log.error(err);
@@ -416,7 +417,7 @@ export let init = app => {
         });
     }
     else {
-      res.status(400).end();
+      res.status(BAD_REQUEST).end();
     }
   });
 
@@ -440,7 +441,7 @@ export let init = app => {
     Can only save the state of their disclosure
   */
   app.post('/api/coi/disclosures/:id/state', (req, res, next) => {
-    res.status(202).end();
+    res.status(ACCEPTED).end();
 
     DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body)
       .then(() => {

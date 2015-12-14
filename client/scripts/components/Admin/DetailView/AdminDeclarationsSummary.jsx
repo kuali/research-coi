@@ -34,9 +34,8 @@ export class AdminDeclarationsSummary extends React.Component {
         return response.targetId === id;
       });
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   getCommentCount(id) {

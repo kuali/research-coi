@@ -104,14 +104,13 @@ export class SidebarStep extends React.Component {
             </li>
           );
         }
-        else {
-          return (
-            <li style={merge(styles.container, styles.incomplete, this.props.style)}>
-              <i className="fa fa-circle" style={merge(styles.futureIcon, styles.incomplete)} />
-              <span style={styles.stepName}>{this.props.label}</span>
-            </li>
-          );
-        }
+
+        return (
+          <li style={merge(styles.container, styles.incomplete, this.props.style)}>
+            <i className="fa fa-circle" style={merge(styles.futureIcon, styles.incomplete)} />
+            <span style={styles.stepName}>{this.props.label}</span>
+          </li>
+        );
     }
   }
 }

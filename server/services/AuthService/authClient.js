@@ -18,6 +18,7 @@
 
 import cache from '../../LruCache';
 import {COIConstants} from '../../../COIConstants';
+import {OK} from '../../../HTTPStatusCodes';
 
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 let http = useSSL ? require('https') : require('http');
@@ -47,7 +48,7 @@ function getUserRoles(dbInfo, schoolId, authToken) {
     };
 
     http.get(options, response => {
-      if (response.statusCode === 200) {
+      if (response.statusCode === OK) {
         resolve(COIConstants.ROLES.ADMIN);
       } else {
         resolve(COIConstants.ROLES.USER);
@@ -77,7 +78,7 @@ export function getUserInfo(dbInfo, hostname, authToken) {
       };
 
       http.get(options, response => {
-        if (response.statusCode !== 200) {
+        if (response.statusCode !== OK) {
           resolve();
         } else {
           let body = '';

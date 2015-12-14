@@ -24,7 +24,6 @@ import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
 import DeclarationType from './DeclarationType';
-import DeleteLink from '../DeleteLink';
 import DoneLink from '../DoneLink';
 import ConfigActions from '../../../actions/ConfigActions';
 import {COIConstants} from '../../../../../COIConstants';

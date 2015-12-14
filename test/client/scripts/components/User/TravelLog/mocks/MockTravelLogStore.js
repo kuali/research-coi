@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
+/* eslint-disable no-magic-numbers */
+
 import {AutoBindingStore} from '../../../../../../../client/scripts/stores/AutoBindingStore';
 import {MockTravelLogActions} from './MockTravelLogAction.js';
 import alt from '../../../../../../../client/scripts/alt';
@@ -104,25 +106,24 @@ class _MockTravelLogStore extends AutoBindingStore {
         endDate: 'required',
         reason: 'required'
       };
-    } else {
-      return {};
     }
 
+    return {};
   }
 
   getErrorsForId(relationshipId) {
     if (relationshipId === 1) {
       return {};
-    } else {
-      return {
-        entityName: 'required',
-        amount: 'required',
-        destination: 'required',
-        startDate: 'required',
-        endDate: 'required',
-        reason: 'required'
-      };
     }
+
+    return {
+      entityName: 'required',
+      amount: 'required',
+      destination: 'required',
+      startDate: 'required',
+      endDate: 'required',
+      reason: 'required'
+    };
   }
 
   turnOnErrors(value) {

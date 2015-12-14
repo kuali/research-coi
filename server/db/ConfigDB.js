@@ -239,16 +239,16 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
             where: {key: 'questionnaire_id', value: result[0].id},
             parent: {key: 'questionnaire_id', value: result[0].id}
           });
-        } else {
-          return query('questionnaire').insert({version: 1, type_cd: 1}, 'id').then(id => {
-            return createCollectionQueries(query, convertQuestionFormat(config.questions.screening), {
-              pk: 'id',
-              table: 'questionnaire_question',
-              where: {key: 'questionnaire_id', value: id[0]},
-              parent: {key: 'questionnaire_id', value: id[0]}
-            });
-          });
         }
+
+        return query('questionnaire').insert({version: 1, type_cd: 1}, 'id').then(id => {
+          return createCollectionQueries(query, convertQuestionFormat(config.questions.screening), {
+            pk: 'id',
+            table: 'questionnaire_question',
+            where: {key: 'questionnaire_id', value: id[0]},
+            parent: {key: 'questionnaire_id', value: id[0]}
+          });
+        });
       })
   );
 
@@ -262,16 +262,15 @@ export let setConfig = (dbInfo, userId, body, optionalTrx) => {
             where: {key: 'questionnaire_id', value: result[0].id},
             parent: {key: 'questionnaire_id', value: result[0].id}
           });
-        } else {
-          return query('questionnaire').insert({version: 1, type_cd: 2}, 'id').then(id => {
-            return createCollectionQueries(query, convertQuestionFormat(config.questions.entities), {
-              pk: 'id',
-              table: 'questionnaire_question',
-              where: {key: 'questionnaire_id', value: id[0]},
-              parent: {key: 'questionnaire_id', value: id[0]}
-            });
-          });
         }
+        return query('questionnaire').insert({version: 1, type_cd: 2}, 'id').then(id => {
+          return createCollectionQueries(query, convertQuestionFormat(config.questions.entities), {
+            pk: 'id',
+            table: 'questionnaire_question',
+            where: {key: 'questionnaire_id', value: id[0]},
+            parent: {key: 'questionnaire_id', value: id[0]}
+          });
+        });
       })
   );
   return Promise.all(queries)

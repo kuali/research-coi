@@ -30,7 +30,7 @@ describe('JsonUtils', () => {
 
   it('izeJson should return null when null', () => {
     let json = izeJson(null, _.camelCase);
-    assert(json == null);
+    assert(json === null);
   });
 
   it('izeJson should throw an error with a null function', () => {

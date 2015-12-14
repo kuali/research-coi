@@ -45,17 +45,16 @@ export class Entity extends ResponsiveComponent {
     if (undefinedRelationExists('PROJECT', this.props.projects, this.props.declarations)) {
       return 'Action Required';
     }
-    else {
-      let worstDeclaration = 1;
 
-      this.props.declarations.forEach(element => {
-        if (worstDeclaration !== 2 && element.typeCd > 1) {
-          worstDeclaration = element.typeCd;
-        }
-      });
+    let worstDeclaration = 1;
 
-      return this.getDeclarationDescription(worstDeclaration);
-    }
+    this.props.declarations.forEach(element => {
+      if (worstDeclaration !== 2 && element.typeCd > 1) {
+        worstDeclaration = element.typeCd;
+      }
+    });
+
+    return this.getDeclarationDescription(worstDeclaration);
   }
 
   getDeclarationDescription(typeCd) {
@@ -65,9 +64,9 @@ export class Entity extends ResponsiveComponent {
 
     if (declarationType) {
       return declarationType.description;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   renderMobile() {}

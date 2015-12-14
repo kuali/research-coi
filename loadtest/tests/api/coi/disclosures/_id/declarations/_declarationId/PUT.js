@@ -16,9 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-magic-numbers */
+
 import LoadTest from '../../../../../../../LoadTest';
 import hashCode from '../../../../../../../../hash';
 import {getDBConnection} from '../../../../../../../DB';
+import {ACCEPTED} from './HTTPStatusCodes';
 
 export class Test extends LoadTest {
   constructor() {
@@ -50,7 +53,7 @@ export class Test extends LoadTest {
         SELECT de.id as declaration_id, di.id as disclosure_id, di.user_id
         FROM declaration de, disclosure di
         WHERE de.disclosure_id = di.id`, (err, rows) => {
-      if (err) throw err;
+      if (err) { throw err; }
       this.disclosureMap = {};
       rows.forEach(row => {
         this.disclosureMap[row.user_id] = {
@@ -73,10 +76,9 @@ export class Test extends LoadTest {
       this.alreadyAccessed = false;
       return this.id;
     }
-    else {
-      this.alreadyAccessed = true;
-      return this.id;
-    }
+
+    this.alreadyAccessed = true;
+    return this.id;
   }
 
   getPath() {
@@ -96,6 +98,6 @@ export class Test extends LoadTest {
   }
 
   isValidResponse(response) {
-    return response.statusCode === 202;
+    return response.statusCode === ACCEPTED;
   }
 }

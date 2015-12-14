@@ -39,9 +39,8 @@ export class ManualEvent extends ResponsiveComponent {
       let state = this.props.declarationStates.manual[id];
       return (state && state.open);
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   renderMobile() {}

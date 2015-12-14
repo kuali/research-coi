@@ -20,10 +20,6 @@ import React from 'react';
 import {merge} from '../merge';
 
 export default class VerticalSlider extends React.Component {
-  constructor() {
-    super();
-  }
-
   componentWillMount() {
     this.setState({
       collapsed: this.props.collapsed

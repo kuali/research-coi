@@ -43,9 +43,8 @@ export class ManualRelationDialog extends ResponsiveComponent {
     if (declaration) {
       return declaration.typeCd;
     }
-    else {
-      return null;
-    }
+
+    return null;
   }
 
   findCommentByEntity(id) {
@@ -56,9 +55,8 @@ export class ManualRelationDialog extends ResponsiveComponent {
     if (declaration) {
       return declaration.comments;
     }
-    else {
-      return null;
-    }
+
+    return null;
   }
 
   setAll() {

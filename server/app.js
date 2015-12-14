@@ -33,73 +33,11 @@ import Log from './Log';
 import methodChecker from './middleware/methodChecker';
 import ErrorLogger from './middleware/ErrorLogger';
 import {COIConstants} from '../COIConstants';
+import {NOT_FOUND} from '../HTTPStatusCodes';
 import adminRoleCheck from './middleware/adminRoleCheck';
 import unauthorized from './middleware/unauthorized';
 
-export function run() {
-  let app = express();
-  app.disable('x-powered-by');
-  app.set('view engine', 'jade');
-  app.set('views', './views');
-  configureProxy(app);
-
-  let config;
-  try {
-    let extensions = require('research-extensions');
-    extensions.express(app);
-    config = extensions.config;
-  } catch (e) {
-    Log.info('extensions not found');
-  }
-
-  conditionallyLogRequests(app);
-
-  app.use('/coi', express.static('client'));
-  app.use('/coi/build', (req, res) => { res.sendStatus(404); }); // Static files that weren't found
-
-  app.use(methodChecker);
-  app.use(cookieParser());
-
-  app.use('/coi/auth', renderView('auth'));
-  app.use('/api', apiAuthentication);
-  app.use('/coi', authentication);
-  app.use('/coi$', renderView('index'));
-  app.use('/coi/$', renderView('index'));
-  app.use('/coi/archiveview', renderView('index'));
-  app.use('/coi/dashboard', renderView('index'));
-  app.use('/coi/disclosure', renderView('index'));
-  app.use('/coi/travelLog', renderView('index'));
-  app.use('/coi/revise', renderView('index'));
-
-  app.use('/coi/admin', adminRoleCheck, renderView('admin/admin'));
-  app.use('/coi/config', adminRoleCheck, renderView('admin/config'));
-  app.use('/coi', unauthorized);
-
-  app.use(bodyParser.json());
-  ConfigController.init(app);
-  DisclosureController.init(app);
-  TravelLogController.init(app);
-  ProjectController.init(app);
-  FileController.init(app);
-  PIController.init(app);
-  UserController.init(app);
-  app.use(ErrorLogger);
-
-  let portNumber = config ? config.port : process.env.COI_PORT || 8090;
-  let server = app.listen(portNumber);
-
-  console.log(`Listening on port ${portNumber} in ${app.get('env')} mode`); // eslint-disable-line no-console
-
-  process.on('uncaughtException', function(err) {
-    Log.error(`Uncaught exception: ${err}`);
-    Log.error(err);
-    Log.error('waiting for pending connections to clear');
-    server.close(() => {
-      Log.error('shutting down');
-      process.exit(1); //eslint-disable-line no-process-exit
-    });
-  });
-}
+const DEFAULT_PORT = 8090;
 
 function conditionallyLogRequests(app) {
   if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
@@ -129,4 +67,69 @@ function configureProxy(app) {
       app.set('trust proxy', TRUST_PROXY);
     }
   }
+}
+
+export function run() {
+  let app = express();
+  app.disable('x-powered-by');
+  app.set('view engine', 'jade');
+  app.set('views', './views');
+  configureProxy(app);
+
+  let config;
+  try {
+    let extensions = require('research-extensions');
+    extensions.express(app);
+    config = extensions.config;
+  } catch (e) {
+    Log.info('extensions not found');
+  }
+
+  conditionallyLogRequests(app);
+
+  app.use('/coi', express.static('client'));
+  app.use('/coi/build', (req, res) => { res.sendStatus(NOT_FOUND); }); // Static files that weren't found
+
+  app.use(methodChecker);
+  app.use(cookieParser());
+
+  app.use('/coi/auth', renderView('auth'));
+  app.use('/api', apiAuthentication);
+  app.use('/coi', authentication);
+  app.use('/coi$', renderView('index'));
+  app.use('/coi/$', renderView('index'));
+  app.use('/coi/archiveview', renderView('index'));
+  app.use('/coi/dashboard', renderView('index'));
+  app.use('/coi/disclosure', renderView('index'));
+  app.use('/coi/travelLog', renderView('index'));
+  app.use('/coi/revise', renderView('index'));
+
+  app.use('/coi/admin', adminRoleCheck, renderView('admin/admin'));
+  app.use('/coi/config', adminRoleCheck, renderView('admin/config'));
+  app.use('/coi', unauthorized);
+
+  app.use(bodyParser.json());
+  ConfigController.init(app);
+  DisclosureController.init(app);
+  TravelLogController.init(app);
+  ProjectController.init(app);
+  FileController.init(app);
+  PIController.init(app);
+  UserController.init(app);
+  app.use(ErrorLogger);
+
+  let portNumber = config ? config.port : process.env.COI_PORT || DEFAULT_PORT;
+  let server = app.listen(portNumber);
+
+  console.log(`Listening on port ${portNumber} in ${app.get('env')} mode`); // eslint-disable-line no-console
+
+  process.on('uncaughtException', function(err) {
+    Log.error(`Uncaught exception: ${err}`);
+    Log.error(err);
+    Log.error('waiting for pending connections to clear');
+    server.close(() => {
+      Log.error('shutting down');
+      process.exit(1); //eslint-disable-line no-process-exit
+    });
+  });
 }

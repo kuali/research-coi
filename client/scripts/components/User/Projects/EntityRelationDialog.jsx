@@ -54,9 +54,8 @@ export class EntityRelationDialog extends ResponsiveComponent {
     if (declaration) {
       return declaration.typeCd;
     }
-    else {
-      return null;
-    }
+
+    return null;
   }
 
   findCommentByProject(id) {
@@ -67,9 +66,8 @@ export class EntityRelationDialog extends ResponsiveComponent {
     if (relation) {
       return relation.comments;
     }
-    else {
-      return null;
-    }
+
+    return null;
   }
 
   setAll() {
