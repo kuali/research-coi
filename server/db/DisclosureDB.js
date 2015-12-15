@@ -176,7 +176,7 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
               .then(dbRelationships => {
                 return Promise.all(
                   dbRelationships.filter(dbRelationship => {
-                    const match = financialEntity.relationships.find(relationship => {
+                    const match = financialEntity.relationships.some(relationship => {
                       return relationship.id === dbRelationship.id;
                     });
                     return !match;
@@ -205,7 +205,8 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
                     person_cd: relationship.personCd,
                     type_cd: !relationship.typeCd ? null : relationship.typeCd,
                     amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-                    comments: relationship.comments
+                    comments: relationship.comments,
+                    status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
                   }, 'id')
                   .then(relationshipId => {
                     relationship.id = relationshipId[0];
@@ -265,18 +266,20 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
                     });
                     if (!match) {
                       queries.push(
-                        knex('file').where('id', result.id).del()
-                        .then(() => {
-                          return new Promise((resolve, reject) => {
-                            FileService.deleteFile(result.key, err => {
-                              if (err) {
-                                reject(err);
-                              } else {
-                                resolve();
-                              }
+                        knex('file')
+                          .where('id', result.id)
+                          .del()
+                          .then(() => {
+                            return new Promise((resolve, reject) => {
+                              FileService.deleteFile(result.key, err => {
+                                if (err) {
+                                  reject(err);
+                                } else {
+                                  resolve();
+                                }
+                              });
                             });
-                          });
-                        })
+                          })
                       );
                     }
                   });

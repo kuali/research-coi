@@ -746,9 +746,7 @@ class _DisclosureStore extends AutoBindingStore {
           }
         });
       }
-
       entity.files = existingFiles;
-
       formData.append('entity', JSON.stringify(entity));
 
       if (!this.applicationState.entityStates[entity.id]) {
