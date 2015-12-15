@@ -342,7 +342,8 @@ class QuestionnaireConfig extends React.Component {
           text={question.question.text}
           isSubQuestion={false}
           top={question.question.top}
-          style={questionStyle} />
+          style={questionStyle}
+        />
       );
 
       this.findSubQuestions(question.id).forEach(subQuestion => {
@@ -362,7 +363,8 @@ class QuestionnaireConfig extends React.Component {
             isSubQuestion={true}
             top={subQuestion.question.top}
             style={{cursor: 'move'}}
-            displayCriteria={subQuestion.question.displayCriteria} />
+            displayCriteria={subQuestion.question.displayCriteria}
+          />
         );
       });
     });

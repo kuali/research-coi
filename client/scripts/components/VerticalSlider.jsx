@@ -27,7 +27,7 @@ export default class VerticalSlider extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({
+    this.setState({ // eslint-disable-line react/no-did-mount-set-state
       height: this.refs.content.clientHeight
     });
   }

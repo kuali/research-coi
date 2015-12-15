@@ -63,9 +63,21 @@ export default class TextField extends React.Component {
       <div style={this.props.styles.container}>
         <label htmlFor={this.props.id} style={this.getLabelStyle(invalid, this.props.styles.label)}>{this.props.label}</label>
         <div id={this.props.id} style={{width: '98%'}}>
-          <DatePicker id="startDate" onChange={this.onStartDateChange} value={this.props.startDate} style={styles.date} textFieldStyle={this.getInputStyle(this.props.startDateInvalid, this.props.styles.input)}/>
+          <DatePicker
+            id="startDate"
+            onChange={this.onStartDateChange}
+            value={this.props.startDate}
+            style={styles.date}
+            textFieldStyle={this.getInputStyle(this.props.startDateInvalid, this.props.styles.input)}
+          />
           <span style={styles.dateMiddle}>TO</span>
-          <DatePicker id="endDate" onChange={this.onEndDateChange} value={this.props.endDate} style={styles.date} textFieldStyle={this.getInputStyle(this.props.endDateInvalid, this.props.styles.input)}/>
+          <DatePicker
+            id="endDate"
+            onChange={this.onEndDateChange}
+            value={this.props.endDate}
+            style={styles.date}
+            textFieldStyle={this.getInputStyle(this.props.endDateInvalid, this.props.styles.input)}
+          />
         </div>
       </div>
     );

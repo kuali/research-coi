@@ -102,7 +102,8 @@ export default class Notification extends React.Component {
           ref="reminderText"
           style={styles.reminderTextbox}
           placeholder="Enter the reminder text here"
-          defaultValue={this.props.reminderText}>
+          defaultValue={this.props.reminderText}
+        >
         </textarea>
       );
 

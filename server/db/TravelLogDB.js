@@ -50,7 +50,19 @@ export const getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, f
       break;
   }
 
-  const query = knex.select('fe.name as entityName', 't.amount', 't.start_date as startDate', 't.end_date as endDate', 't.destination', 't.reason', 'r.status as status', 'r.disclosed_date as disclosedDate', 'r.id as relationshipId', 'r.active as active')
+  const query = knex
+    .select(
+      'fe.name as entityName',
+      't.amount',
+      't.start_date as startDate',
+      't.end_date as endDate',
+      't.destination',
+      't.reason',
+      'r.status as status',
+      'r.disclosed_date as disclosedDate',
+      'r.id as relationshipId',
+      'r.active as active'
+    )
     .from('travel_relationship as t')
     .innerJoin('relationship as r', 'r.id', 't.relationship_id' )
     .innerJoin('fin_entity as fe', 'fe.id', 'r.fin_entity_id')

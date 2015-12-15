@@ -65,7 +65,8 @@ export class Toggle extends ResponsiveComponent {
     return (
       <button
         onClick={this.toggle}
-        style={merge(this.props.selected ? styles.selected : styles.container, this.props.style)}>
+        style={merge(this.props.selected ? styles.selected : styles.container, this.props.style)}
+      >
         {this.props.text}
       </button>
     );

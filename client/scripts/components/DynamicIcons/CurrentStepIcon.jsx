@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable */
+
 import React from 'react';
 
 export function CurrentStepIcon(props: Object): React.Element {

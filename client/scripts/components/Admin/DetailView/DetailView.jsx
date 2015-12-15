@@ -132,7 +132,8 @@ export class DetailView extends React.Component {
       sidePanel = (
         <AdditionalReviewPanel
           managementPlan={managementPlan}
-          readonly={readOnly}/>
+          readonly={readOnly}
+        />
       );
     }
     else if (this.state.applicationState.commentSummaryShowing) {

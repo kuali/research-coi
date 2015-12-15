@@ -149,7 +149,8 @@ export class AdminDeclarationsSummary extends React.Component {
 
         return (
           <div key={`proj${project.id}`}
-            style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}>
+            style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}
+          >
             <div style={styles.name}>{project.name}</div>
             <div style={styles.field}>
               <label style={styles.label}>Project Type:</label>

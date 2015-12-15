@@ -198,7 +198,14 @@ export default class NewQuestion extends React.Component {
         <span style={styles.requiredSelectionsSection}>
           <label style={styles.label} htmlFor="requiredNumSelections">SELECTIONS REQUIRED</label>
           <div>
-            <input style={styles.textbox} type="number" id="requiredNumSelections" ref="requiredNumSelections" onChange={this.requiredSelectionsChanged} value={this.props.question.question.requiredNumSelections} />
+            <input
+              style={styles.textbox}
+              type="number"
+              id="requiredNumSelections"
+              ref="requiredNumSelections"
+              onChange={this.requiredSelectionsChanged}
+              value={this.props.question.question.requiredNumSelections}
+            />
           </div>
         </span>
       );

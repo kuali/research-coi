@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable react/jsx-closing-bracket-location, react/jsx-pascal-case */
+
 import React from 'react';
 
 export function FEPlaceHolder(props: Object): React.Element {

@@ -183,7 +183,8 @@ export default class EntitySummary extends React.Component {
               color: window.colorBlindModeOn ? 'black' : '#0095A0',
               borderBottom: `1px dotted ${window.colorBlindModeOn ? 'black' : '#0095A0'}`
             }}
-            href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
+            href={`/api/coi/files/${encodeURIComponent(file.id)}`}
+          >
               {file.name}
           </a>
         </div>

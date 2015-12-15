@@ -67,7 +67,7 @@ export class ToggleSet extends ResponsiveComponent {
           selected={this.state.value === value.typeCd}
           onClick={this.change}
           key={value.typeCd}
-         />
+        />
       );
     });
 

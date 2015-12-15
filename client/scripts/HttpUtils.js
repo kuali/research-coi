@@ -18,7 +18,7 @@
 
 import defaults from 'superagent-defaults';
 import cookies from 'cookies-js';
-import {UNAUTHORIZED} from './HTTPStatusCodes';
+import {UNAUTHORIZED} from '../../HTTPStatusCodes';
 
 export function processResponse(callback) {
   return (err, res) => {

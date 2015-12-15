@@ -76,7 +76,8 @@ export default class ToggleButton extends React.Component {
           )
         }
         onClick={this.clicked}
-        value={this.props.value.code}>
+        value={this.props.value.code}
+      >
         {this.props.value.description}
         {arrow}
       </button>

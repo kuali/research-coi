@@ -137,7 +137,8 @@ export class Project extends React.Component {
           projectCount={this.props.projectCount}
           onSave={this.toggleDialog}
           onNext={this.props.onNext}
-          onPrevious={this.props.onPrevious} />
+          onPrevious={this.props.onPrevious}
+        />
       );
     }
 

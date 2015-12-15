@@ -271,8 +271,12 @@ export class EntityFormRelationshipStep extends React.Component {
         amountSection = (
           <div style={styles.amountSection}>
             <div style={labelStyle}>AMOUNT</div>
-            <select onChange={this.amountSelected} ref="amountSelect"
-                    value={this.props.appState.potentialRelationship.amountCd} style={dropDownStyle}>
+            <select
+              onChange={this.amountSelected}
+              ref="amountSelect"
+              value={this.props.appState.potentialRelationship.amountCd}
+              style={dropDownStyle}
+            >
               <option value="">--SELECT--</option>
               {amountTypeOptions}
             </select>
@@ -320,10 +324,10 @@ export class EntityFormRelationshipStep extends React.Component {
     if (this.state.relation !== '' && this.state.matrixType.reasonEnabled === 1) {
       reason = (
         <RelationshipTextField
-        invalid={this.props.validating && validationErrors.travelReason ? true : false}
-        onChange={this.reasonChanged}
-        value={this.props.appState.potentialRelationship.travel.reason}
-        label='Reason'
+          invalid={this.props.validating && validationErrors.travelReason ? true : false}
+          onChange={this.reasonChanged}
+          value={this.props.appState.potentialRelationship.travel.reason}
+          label='Reason'
         />
       );
     }
@@ -389,8 +393,12 @@ export class EntityFormRelationshipStep extends React.Component {
         commentTextboxStyle = merge(commentTextboxStyle, styles.invalidField);
       }
 
-      const relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(option => {
-        return <option key={option.typeCd} value={option.typeCd}>{option.description}</option>;
+      const relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(personType => {
+        return (
+          <option key={personType.typeCd} value={personType.typeCd}>
+            {personType.description}
+          </option>
+        );
       });
 
       const htmlId = Math.floor(Math.random() * 1000000000);
@@ -445,7 +453,13 @@ export class EntityFormRelationshipStep extends React.Component {
               <div style={styles.commentArea}>
                 <label htmlFor={htmlId} style={commentStyle}>COMMENTS</label>
                 <div>
-                  <textarea id={htmlId} onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={commentTextboxStyle} ref="commentTextArea" />
+                  <textarea
+                    id={htmlId}
+                    onChange={this.commentChanged}
+                    value={this.props.appState.potentialRelationship.comments}
+                    style={commentTextboxStyle}
+                    ref="commentTextArea"
+                  />
                 </div>
               </div>
               <div style={styles.addButtonSection}>

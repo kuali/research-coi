@@ -68,7 +68,8 @@ export default class NewNotifications extends React.Component {
           onChange={this.setReminderText}
           style={styles.expirationMessage}
           placeholder="Enter the reminder text here"
-          value={this.props.reminderText}>
+          value={this.props.reminderText}
+        >
         </textarea>
       </div>
     );

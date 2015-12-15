@@ -146,7 +146,8 @@ export class Entity extends ResponsiveComponent {
           entityCount={this.props.entityCount}
           onSave={this.toggleDialog}
           onNext={this.props.onNext}
-          onPrevious={this.props.onPrevious} />
+          onPrevious={this.props.onPrevious}
+        />
       );
     }
 

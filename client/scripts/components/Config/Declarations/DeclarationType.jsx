@@ -113,7 +113,15 @@ export default class DeclarationType extends React.Component {
     if (this.typeIsBeingEdited(type)) {
       jsx = (
         <span>
-          <input ref="typeName" type="text" style={styles.textbox} defaultValue={type.description} value={this.getNewValue(type)} onKeyUp={this.lookForEnter} onChange={this.nameChanged} />
+          <input
+            ref="typeName"
+            type="text"
+            style={styles.textbox}
+            defaultValue={type.description}
+            value={this.getNewValue(type)}
+            onKeyUp={this.lookForEnter}
+            onChange={this.nameChanged}
+          />
           <DoneLink style={styles.editLink} onClick={this.doneEditing} />
         </span>
       );

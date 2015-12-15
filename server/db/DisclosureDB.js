@@ -412,7 +412,18 @@ const retrieveComments = (dbInfo, userId, disclosureId) => {
   const knex = getKnex(dbInfo);
 
   return knex('comment')
-    .select('id', 'disclosure_id as disclosureId', 'topic_section as topicSection', 'topic_id as topicId', 'text', 'author', 'user_id as userId', 'date', 'pi_visible as piVisible', 'reviewer_visible as reviewerVisible')
+    .select(
+      'id',
+      'disclosure_id as disclosureId',
+      'topic_section as topicSection',
+      'topic_id as topicId',
+      'text',
+      'author',
+      'user_id as userId',
+      'date',
+      'pi_visible as piVisible',
+      'reviewer_visible as reviewerVisible'
+    )
     .where('disclosure_id', disclosureId)
     .then(comments => {
       comments.forEach(comment => {
@@ -488,7 +499,21 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
     criteria.user_id = userInfo.schoolId;
   }
 
-  return knex.select('de.id', 'de.type_cd as typeCd', 'de.title', 'de.disposition_type_cd as dispositionTypeCd', 'de.status_cd as statusCd', 'de.submitted_by as submittedBy', 'de.submitted_date as submittedDate', 'de.revised_date as revisedDate', 'de.start_date as startDate', 'de.expired_date as expiredDate', 'de.last_review_date as lastReviewDate', 'de.config_id as configId')
+  return knex
+    .select(
+      'de.id',
+      'de.type_cd as typeCd',
+      'de.title',
+      'de.disposition_type_cd as dispositionTypeCd',
+      'de.status_cd as statusCd',
+      'de.submitted_by as submittedBy',
+      'de.submitted_date as submittedDate',
+      'de.revised_date as revisedDate',
+      'de.start_date as startDate',
+      'de.expired_date as expiredDate',
+      'de.last_review_date as lastReviewDate',
+      'de.config_id as configId'
+    )
     .from('disclosure as de')
     .where(criteria);
 };
@@ -507,7 +532,20 @@ export const get = (dbInfo, userInfo, disclosureId) => {
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
-    knex.select('d.id as id', 'd.project_id as projectId', 'd.fin_entity_id as finEntityId', 'd.type_cd as typeCd', 'd.comments as comments', 'p.title as projectTitle', 'fe.name as entityName', 'p.type_cd as projectTypeCd', 'p.sponsor_name as sponsorName', 'pp.role_cd as roleCd', 'fe.active as finEntityActive')
+    knex
+      .select(
+        'd.id as id',
+        'd.project_id as projectId',
+        'd.fin_entity_id as finEntityId',
+        'd.type_cd as typeCd',
+        'd.comments as comments',
+        'p.title as projectTitle',
+        'fe.name as entityName',
+        'p.type_cd as projectTypeCd',
+        'p.sponsor_name as sponsorName',
+        'pp.role_cd as roleCd',
+        'fe.active as finEntityActive'
+      )
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
       .innerJoin('project as p', 'p.id', 'd.project_id')
@@ -556,7 +594,16 @@ export const get = (dbInfo, userInfo, disclosureId) => {
     });
 
     return Promise.all([
-      knex.select('r.id', 'r.fin_entity_id as finEntityId', 'r.relationship_cd as relationshipCd', 'r.person_cd as personCd', 'r.type_cd as typeCd', 'r.amount_cd as amountCd', 'r.comments')
+      knex
+        .select(
+          'r.id',
+          'r.fin_entity_id as finEntityId',
+          'r.relationship_cd as relationshipCd',
+          'r.person_cd as personCd',
+          'r.type_cd as typeCd',
+          'r.amount_cd as amountCd',
+          'r.comments'
+        )
         .from('relationship as r')
         .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
         .andWhereNot('status', COIConstants.RELATIONSHIP_STATUS.PENDING)

@@ -81,10 +81,23 @@ const saveProjectPersons = (dbInfo, persons, projectId) => {
           if (personIdResult.find(pr => {
             return pr.person_id === person.personId && pr.source_person_type === person.sourcePersonType;
           })) {
-            return knex('project_person').update({'active': true, 'role_cd': person.roleCode}).where({'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId});
+            return knex('project_person')
+              .update({'active': true, 'role_cd': person.roleCode})
+              .where({
+                'person_id': person.personId,
+                'source_person_type': person.sourcePersonType,
+                'project_id': projectId
+              });
           }
 
-          return knex('project_person').insert({'active': true, 'role_cd': person.roleCode, 'person_id': person.personId, 'source_person_type': person.sourcePersonType, 'project_id': projectId}, 'id');
+          return knex('project_person')
+            .insert({
+              'active': true,
+              'role_cd': person.roleCode,
+              'person_id': person.personId,
+              'source_person_type': person.sourcePersonType,
+              'project_id': projectId
+            }, 'id');
         });
 
         const deactiveQueries = personIdResult.filter(pr => {

@@ -391,7 +391,15 @@ const getEntitiesAnswers = (knex, entityIDs) => {
 };
 
 const getRelationships = (knex, entityIDs) => {
-  return knex.select('r.id', 'r.comments as comments', 'r.relationship_cd as relationshipCd', 'r.person_cd as personCd', 'r.type_cd as typeCd', 'r.amount_cd as amountCd', 'r.fin_entity_id as finEntityId')
+  return knex
+    .select('r.id',
+      'r.comments as comments',
+      'r.relationship_cd as relationshipCd',
+      'r.person_cd as personCd',
+      'r.type_cd as typeCd',
+      'r.amount_cd as amountCd',
+      'r.fin_entity_id as finEntityId'
+    )
     .from('relationship as r')
     .where('fin_entity_id', 'in', entityIDs)
     .andWhereNot('status', COIConstants.RELATIONSHIP_STATUS.PENDING)

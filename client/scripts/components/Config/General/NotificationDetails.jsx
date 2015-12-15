@@ -125,13 +125,15 @@ export default class NotificationDetails extends React.Component {
     let notifications;
     if (this.props.notifications && this.props.notifications.length > 0) {
       notifications = this.props.notifications.map((notification, index) => {
-        return <Notification
-                  key={index}
-                  id={notification.id}
-                  warningValue={notification.warningValue}
-                  warningPeriod={notification.warningPeriod}
-                  reminderText={notification.reminderText}
-               />;
+        return (
+          <Notification
+            key={index}
+            id={notification.id}
+            warningValue={notification.warningValue}
+            warningPeriod={notification.warningPeriod}
+            reminderText={notification.reminderText}
+          />
+        );
       });
     }
 

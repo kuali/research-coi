@@ -56,11 +56,20 @@ export default class NumericField extends TextField {
 
     return (
       <div style={this.props.styles.container}>
-        <label htmlFor={this.props.id} style={this.getLabelStyle(this.props.invalid, this.props.styles.label)}>{this.props.label}</label>
+        <label htmlFor={this.props.id} style={this.getLabelStyle(this.props.invalid, this.props.styles.label)}>
+          {this.props.label}
+        </label>
         <div style={{position: 'relative'}}>
           <span style={styles.currency}>$</span>
-          <input id={this.props.id} type='text' onChange={this.onChange} name={this.props.name} style={this.getInputStyle(this.props.invalid, inputStyle)}
-                 value={this.props.value} onKeyPress={this.validateNumeric}/>
+          <input
+            id={this.props.id}
+            type='text'
+            onChange={this.onChange}
+            name={this.props.name}
+            style={this.getInputStyle(this.props.invalid, inputStyle)}
+            value={this.props.value}
+            onKeyPress={this.validateNumeric}
+          />
         </div>
       </div>
     );

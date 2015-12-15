@@ -537,9 +537,10 @@ class _DisclosureStore extends AutoBindingStore {
 
     const formData = new FormData();
     formData.append('entity', JSON.stringify(entity));
-    createRequest().put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/financial-entities/${entity.id}`)
-    .send(formData)
-    .end(processResponse(() => {}));
+    createRequest()
+      .put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/financial-entities/${entity.id}`)
+      .send(formData)
+      .end(processResponse(() => {}));
   }
 
   setEntityType(params) {
@@ -673,7 +674,7 @@ class _DisclosureStore extends AutoBindingStore {
 
     const relation = this.applicationState.potentialRelationship;
 
-    relation.id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
+    relation.id = `${COIConstants.TMP_PLACEHOLDER}${new Date().getTime()}`;
     const matrixType = window.config.matrixTypes.find(matrix => {
       return matrix.typeCd === relation.relationshipCd;
     });

@@ -147,9 +147,14 @@ export class ProjectRelationDialog extends ResponsiveComponent {
       );
     });
 
-    const declarationTypeOptions = this.props.declarationTypes.map(option => {
+    const declarationTypeOptions = this.props.declarationTypes.map(declarationType => {
       return (
-        <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
+        <option
+          key={declarationType.typeCd}
+          value={declarationType.typeCd}
+        >
+          {declarationType.description}
+        </option>
       );
     });
 
