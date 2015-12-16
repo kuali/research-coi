@@ -21,6 +21,8 @@ import {GreyButton} from '../GreyButton';
 import {AdminActions} from '../../actions/AdminActions';
 import DisclosureFilter from './DisclosureFilter';
 import DoneWithFilterButton from './DoneWithFilterButton';
+import {COIConstants} from '../../../../COIConstants';
+const APPROVED = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
 import {merge} from '../../merge';
 
 export class DisclosureFilterByStatus extends DisclosureFilter {
@@ -40,16 +42,13 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
 
   toggleFilter(evt) {
     const code = Number(evt.target.id.replace('statFilt', ''));
-    const theStatus = this.props.possibleStatuses.find(status => {
-      return status.code === code;
-    });
+    const theStatus = this.props.possibleStatuses
+      .find(status => status.code === code);
     AdminActions.toggleStatusFilter(theStatus);
   }
 
   isChecked(value) {
-    return this.props.activeFilters.find(filter => {
-      return filter === value;
-    }) !== undefined;
+    return this.props.activeFilters.some(filter => filter === value);
   }
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
@@ -86,41 +85,40 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       }
     };
 
-    const options = this.props.possibleStatuses.filter(status => {
-      return status.code !== 3;
-    }).sort((a, b) => {
-      return a.label.localeCompare(b.label);
-    }).map((status) => {
-      const id = `statFilt${status.code}`;
-      return (
-        <div style={styles.checkbox} key={status.code}>
-          <input
-            id={id}
-            type="checkbox"
-            checked={this.isChecked(status.code)}
-            onChange={this.toggleFilter}
-          />
-          <label htmlFor={id} style={{paddingLeft: 9}}>{status.label}</label>
-        </div>
-      );
-    });
+    const options = this.props.possibleStatuses
+      .filter(status => status.code !== APPROVED)
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .map((status) => {
+        const id = `statFilt${status.code}`;
+        return (
+          <div style={styles.checkbox} key={status.code}>
+            <input
+              id={id}
+              type="checkbox"
+              checked={this.isChecked(status.code)}
+              onChange={this.toggleFilter}
+            />
+            <label htmlFor={id} style={{paddingLeft: 9}}>{status.label}</label>
+          </div>
+        );
+      });
 
-    const approved = this.props.possibleStatuses.filter(status => {
-      return status.code === 3;
-    }).map(status => {
-      const id = `statFilt${status.code}`;
-      return (
-        <div style={merge(styles.checkbox, {padding: '10px 0'})} key={status.code}>
-          <input
-            id={id}
-            type="checkbox"
-            checked={this.isChecked(status.code)}
-            onChange={this.toggleFilter}
-          />
-          <label htmlFor={id} style={{paddingLeft: 9}}>{status.label}</label>
-        </div>
-      );
-    });
+    const approved = this.props.possibleStatuses
+      .filter(status => status.code === APPROVED)
+      .map(status => {
+        const id = `statFilt${status.code}`;
+        return (
+          <div style={merge(styles.checkbox, {padding: '10px 0'})} key={status.code}>
+            <input
+              id={id}
+              type="checkbox"
+              checked={this.isChecked(status.code)}
+              onChange={this.toggleFilter}
+            />
+            <label htmlFor={id} style={{paddingLeft: 9}}>{status.label}</label>
+          </div>
+        );
+      });
 
     return (
       <div style={styles.container}>

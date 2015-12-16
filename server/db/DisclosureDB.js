@@ -723,12 +723,12 @@ export const getSummariesForReviewCount = (dbInfo, filters) => {
       });
     }
   }
-  if (filters.status && filters.status.length > 0) {
+  if (filters.status) {
     query.whereIn('disclosure.status_cd', filters.status);
   }
-  if (filters.type && filters.type.length > 0) {
-    query.whereIn('disclosure_type.description', filters.type);
-  }
+  // if (filters.type) {
+  //   query.whereIn('disclosure_type.description', filters.type);
+  // }
   if (filters.submittedBy) {
     query.where('submitted_by', filters.submittedBy);
   }
@@ -788,12 +788,12 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
       });
     }
   }
-  if (filters.status && filters.status.length > 0) {
+  if (filters.status) {
     query.whereIn('disclosure.status_cd', filters.status);
   }
-  if (filters.type && filters.type.length > 0) {
-    query.whereIn('disclosure_type.description', filters.type);
-  }
+  // if (filters.type) {
+  //   query.whereIn('disclosure_type.description', filters.type);
+  // }
   if (filters.submittedBy) {
     query.where('submitted_by', filters.submittedBy);
   }

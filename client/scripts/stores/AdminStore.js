@@ -25,6 +25,10 @@ import ConfigActions from '../actions/ConfigActions';
 
 const PAGE_SIZE = 40;
 
+function defaultStatusFilters() {
+  return [2, 4, 5, 6];
+}
+
 class _AdminStore extends AutoBindingStore {
   constructor() {
     super(AdminActions);
@@ -38,7 +42,7 @@ class _AdminStore extends AutoBindingStore {
           end: undefined
         },
         submittedBy: undefined,
-        status: [2, 4, 5, 6],
+        status: defaultStatusFilters(),
         type: [],
         search: ''
       },
@@ -267,7 +271,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   clearStatusFilter() {
-    this.applicationState.filters.status = [];
+    this.applicationState.filters.status = defaultStatusFilters();
     this.refreshDisclosures();
   }
 
