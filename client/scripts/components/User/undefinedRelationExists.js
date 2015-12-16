@@ -27,7 +27,7 @@ export function undefinedRelationExists(type, itemsNeedingDisclosures, relations
       return relation.finEntityId === item.id;
     });
 
-    return !existingRelation;
+    return !existingRelation || !existingRelation.typeCd;
   });
 
   return undeclaredRelation !== undefined;

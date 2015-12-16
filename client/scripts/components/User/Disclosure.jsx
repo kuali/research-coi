@@ -67,25 +67,29 @@ export class Disclosure extends React.Component {
     if (!entities || !projects) {
       return false;
     }
-    else if (!relations && (entities.length > 0 || projects.length > 0)) {
+    if (!relations && (entities.length > 0 || projects.length > 0)) {
       return true;
     }
 
     let undefinedFound = false;
-    entities.forEach(entity => {
-      projects.forEach(project => {
-        const existingRelation = relations.find(relation => {
-          return relation.finEntityId === entity.id &&
-            (
-              relation.projectId === project.id
-            );
-        });
+    entities
+      .filter(entity => {
+        return entity.active === 1;
+      })
+      .forEach(entity => {
+        projects.forEach(project => {
+          const existingRelation = relations.find(relation => {
+            return relation.finEntityId === entity.id &&
+              (
+                relation.projectId === project.id
+              );
+          });
 
-        if (!existingRelation) {
-          undefinedFound = true;
-        }
+          if (!existingRelation || !existingRelation.typeCd) {
+            undefinedFound = true;
+          }
+        });
       });
-    });
 
     return undefinedFound;
   }
@@ -99,15 +103,19 @@ export class Disclosure extends React.Component {
     }
 
     let undefinedFound = false;
-    entities.forEach(entity => {
-      const existingRelation = relations.find(relation => {
-        return relation.finEntityId === entity.id && relation.manualId === disclosure.projectId;
-      });
+    entities
+      .filter(entity => {
+        return entity.active === 1;
+      })
+      .forEach(entity => {
+        const existingRelation = relations.find(relation => {
+          return relation.finEntityId === entity.id && relation.manualId === disclosure.projectId;
+        });
 
-      if (!existingRelation) {
-        undefinedFound = true;
-      }
-    });
+        if (!existingRelation || !existingRelation.typeCd) {
+          undefinedFound = true;
+        }
+      });
 
     return undefinedFound;
   }
@@ -117,13 +125,20 @@ export class Disclosure extends React.Component {
       return false;
     }
 
+    const entityInProgress = this.state.applicationState.entityInProgress;
+    if (entityInProgress && entityInProgress.name) {
+      return true;
+    }
+
     let incompleteEntity = false;
     entities.filter(entity => {
       return entity.active === 1;
     })
     .forEach(entity => {
-      if (!DisclosureStore.entityInformationStepComplete(entity.id)
-      || !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)) {
+      if (
+        !DisclosureStore.entityInformationStepComplete(entity.id) ||
+        !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)
+      ) {
         incompleteEntity = true;
       }
     });

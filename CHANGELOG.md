@@ -4,6 +4,7 @@ V1.0.3
   they will be brought back to where they were. The data has always been
   saved. This will simply return them to that place in the process.
 * Fixed bug which prevented adding new relationships to existing entities
+* Fixed bugs with the next step button not enabling/disabling at the correct times
 
 V1.0.2
 
