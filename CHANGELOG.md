@@ -8,6 +8,7 @@ V1.0.3
 * Now shows the revised date (and labels it as such) on the admin list view for
   revised disclosures. Un-revised disclosures still show the submitted date.
 * Improved accuracy of the admin status filter
+* Fixed cancel button on the pi-revise/review screen
 
 V1.0.2
 
