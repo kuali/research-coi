@@ -746,8 +746,20 @@ const SUMMARY_PAGE_SIZE = 40;
 export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters) => {
   const knex = getKnex(dbInfo);
 
-  const query = knex('disclosure').select('submitted_by', 'revised_date', 'disclosure.status_cd as statusCd', 'disclosure_type.description as type', 'id', 'submitted_date')
-    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd');
+  const query = knex('disclosure')
+    .select(
+      'submitted_by',
+      'revised_date',
+      'disclosure.status_cd as statusCd',
+      'disclosure_type.description as type',
+      'id',
+      'submitted_date'
+    )
+    .innerJoin(
+      'disclosure_type',
+      'disclosure_type.type_cd',
+      'disclosure.type_cd'
+    );
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
