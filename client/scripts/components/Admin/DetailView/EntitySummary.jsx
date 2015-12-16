@@ -31,62 +31,61 @@ export default class EntitySummary extends React.Component {
   }
 
   showComments() {
-    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.ENTITIES, this.props.entity.id, 'ENTITY: ' + this.props.entity.name);
+    AdminActions.showCommentingPanel(
+      COIConstants.DISCLOSURE_STEP.ENTITIES,
+      this.props.entity.id,
+      `ENTITY: ${this.props.entity.name}`
+    );
   }
 
   getQuestionAnswer(questionId, entity, type) {
-    let theAnswer = entity.answers.find(answer => {
+    const theAnswer = entity.answers.find(answer => {
       return answer.questionId === questionId;
     });
     if (!theAnswer) {
       return '';
     }
-    else {
-      switch (type) {
-        case COIConstants.QUESTION_TYPE.DATE:
-          if (isNaN(theAnswer.answer.value)) {
-            return theAnswer.answer.value;
-          }
-          else {
-            return formatDate(theAnswer.answer.value);
-          }
-          break;
-        case COIConstants.QUESTION_TYPE.TEXTAREA:
+
+    switch (type) {
+      case COIConstants.QUESTION_TYPE.DATE:
+        if (isNaN(theAnswer.answer.value)) {
+          return theAnswer.answer.value;
+        }
+
+        return formatDate(theAnswer.answer.value);
+      case COIConstants.QUESTION_TYPE.TEXTAREA:
+        return (
+          <div>
+            {theAnswer.answer.value}
+          </div>
+        );
+      case COIConstants.QUESTION_TYPE.MULTISELECT:
+        if (Array.isArray(theAnswer.answer.value)) {
+          const answers = theAnswer.answer.value.map((answer, index, array) => {
+            let answerToShow = answer;
+            if (index !== array.length - 1) {
+              answerToShow += ', ';
+            }
+            return (
+              <span key={`ans${questionId}${index}`}>{answerToShow}</span>
+            );
+          });
+
           return (
             <div>
-              {theAnswer.answer.value}
+              {answers}
             </div>
           );
-        case COIConstants.QUESTION_TYPE.MULTISELECT:
-          if (Array.isArray(theAnswer.answer.value)) {
-            let answers = theAnswer.answer.value.map((answer, index, array) => {
-              let answerToShow = answer;
-              if (index !== array.length - 1) {
-                answerToShow += ', ';
-              }
-              return (
-                <span key={'ans' + questionId + index}>{answerToShow}</span>
-              );
-            });
+        }
 
-            return (
-              <div>
-                {answers}
-              </div>
-            );
-          }
-          else {
-            return theAnswer.answer.value;
-          }
-          break;
-        default:
-          return theAnswer.answer.value;
-      }
+        return theAnswer.answer.value;
+      default:
+        return theAnswer.answer.value;
     }
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         padding: '20px 0'
       },
@@ -155,19 +154,19 @@ export default class EntitySummary extends React.Component {
       }
     };
 
-    let fields = this.props.questions.map(question => {
+    const fields = this.props.questions.map(question => {
       return (
-        <div key={'qa' + question.id} style={{marginBottom: 8}}>
+        <div key={`qa${question.id}`} style={{marginBottom: 8}}>
           <span style={styles.fieldLabel}>{question.text}</span>
           <span style={styles.fieldValue}>{this.getQuestionAnswer(question.id, this.props.entity, question.type)}</span>
         </div>
       );
     });
 
-    let relationships = this.props.entity.relationships.map(relationship => {
+    const relationships = this.props.entity.relationships.map(relationship => {
       return (
         <EntityRelationshipSummary
-          key={'rel' + relationship.id}
+          key={`rel${relationship.id}`}
           style={styles.relationshipSummary}
           relationship={relationship}
           readonly={true}
@@ -176,10 +175,18 @@ export default class EntitySummary extends React.Component {
     });
 
 
-    let files = this.props.entity.files.map(file => {
+    const files = this.props.entity.files.map(file => {
       return (
         <div key={file.id} style={{marginBottom: 5}}>
-          <a style={{color: window.colorBlindModeOn ? 'black' : '#0095A0', borderBottom: '1px dotted ' + (window.colorBlindModeOn ? 'black' : '#0095A0')}} href={'/api/coi/files/' + encodeURIComponent(file.id)}>{file.name}</a>
+          <a style={
+            {
+              color: window.colorBlindModeOn ? 'black' : '#0095A0',
+              borderBottom: `1px dotted ${window.colorBlindModeOn ? 'black' : '#0095A0'}`
+            }}
+            href={`/api/coi/files/${encodeURIComponent(file.id)}`}
+          >
+              {file.name}
+          </a>
         </div>
       );
     });

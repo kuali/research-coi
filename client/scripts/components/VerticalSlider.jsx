@@ -20,10 +20,6 @@ import React from 'react';
 import {merge} from '../merge';
 
 export default class VerticalSlider extends React.Component {
-  constructor() {
-    super();
-  }
-
   componentWillMount() {
     this.setState({
       collapsed: this.props.collapsed
@@ -31,7 +27,7 @@ export default class VerticalSlider extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({
+    this.setState({ // eslint-disable-line react/no-did-mount-set-state
       height: this.refs.content.clientHeight
     });
   }
@@ -50,7 +46,7 @@ export default class VerticalSlider extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       content: {

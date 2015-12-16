@@ -41,7 +41,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
   }
 
   renderMobile() {
-    let mobileStyles = {
+    const mobileStyles = {
       container: {
         color: 'white',
         fontWeight: 'bold',
@@ -53,7 +53,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
         margin: 0
       }
     };
-    let styles = merge(this.commonStyles, mobileStyles);
+    const styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <div style={merge(styles.container, this.props.style)}>
@@ -67,7 +67,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         color: 'white',
         fontWeight: 'bold',
@@ -80,7 +80,7 @@ export class ConfirmationMessage extends ResponsiveComponent {
         borderRadius: 5
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <div style={merge(styles.container, this.props.style)}>

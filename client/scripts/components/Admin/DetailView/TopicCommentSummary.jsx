@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import CommentBubble from './CommentBubble';
 
 export default function TopicCommentSummary(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       paddingBottom: 25
     },

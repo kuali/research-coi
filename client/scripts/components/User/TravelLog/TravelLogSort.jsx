@@ -40,7 +40,7 @@ export default class TravelLogSort extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       select: {

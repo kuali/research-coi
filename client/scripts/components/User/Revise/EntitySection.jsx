@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import EntityToReview from './EntityToReview';
 
 export default function EntitySection(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       margin: '25px 20px 25px 35px',
       backgroundColor: 'white',
@@ -42,7 +42,7 @@ export default function EntitySection(props: Object): React.Element {
     }
   };
 
-  let entities = props.entitiesToReview.map((entitytoReview, index) => {
+  const entities = props.entitiesToReview.map((entitytoReview, index) => {
     return (
       <EntityToReview
         key={entitytoReview.id}

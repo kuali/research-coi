@@ -23,7 +23,7 @@ import UndoButton from './UndoButton';
 import SaveButton from './SaveButton';
 
 export default function ActionPanel(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       padding: '0 20px 0 35px',
       width: 235

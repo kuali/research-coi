@@ -47,29 +47,27 @@ export class ProjectRelationDialog extends ResponsiveComponent {
   }
 
   findDeclarationTypeByEntity(id) {
-    let declaration = this.props.declarations.find(element => {
+    const declaration = this.props.declarations.find(element => {
       return element.finEntityId === id;
     });
 
     if (declaration) {
       return declaration.typeCd;
     }
-    else {
-      return null;
-    }
+
+    return null;
   }
 
   findCommentByEntity(id) {
-    let declaration = this.props.declarations.find(element => {
+    const declaration = this.props.declarations.find(element => {
       return element.finEntityId === id;
     });
 
     if (declaration) {
       return declaration.comments;
     }
-    else {
-      return null;
-    }
+
+    return null;
   }
 
   setAll() {
@@ -83,7 +81,7 @@ export class ProjectRelationDialog extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         backgroundColor: '#c1c1c1'
       },
@@ -129,9 +127,9 @@ export class ProjectRelationDialog extends ResponsiveComponent {
         width: 'initial'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
-    let entityRelations = [];
+    const entityRelations = [];
     this.props.entities.filter(element => {
       return element.active === 1;
     })
@@ -149,13 +147,18 @@ export class ProjectRelationDialog extends ResponsiveComponent {
       );
     });
 
-    let declarationTypeOptions = this.props.declarationTypes.map(option =>{
+    const declarationTypeOptions = this.props.declarationTypes.map(declarationType => {
       return (
-        <option key={option.typeCd} value={option.typeCd}>{option.description}</option>
+        <option
+          key={declarationType.typeCd}
+          value={declarationType.typeCd}
+        >
+          {declarationType.description}
+        </option>
       );
     });
 
-    let navButtons = [];
+    const navButtons = [];
     if (this.props.projectCount > 0) {
       if (this.props.id > 0) {
         navButtons.push(

@@ -52,7 +52,7 @@ export class DatePicker extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         position: 'relative'
       },
@@ -72,7 +72,7 @@ export class DatePicker extends ResponsiveComponent {
         zIndex: 99
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     if (this.props.direction === 'Up') {
       styles.calendar.bottom = 30;
@@ -87,7 +87,8 @@ export class DatePicker extends ResponsiveComponent {
           value={this.props.value ? formatDate(this.props.value) : ''}
           placeholder="Select a date"
           onFocus={this.showCalendar}
-          style={merge(styles.textField, this.props.textFieldStyle)} />
+          style={merge(styles.textField, this.props.textFieldStyle)}
+        />
 
         <DayPicker
           style={styles.calendar}
@@ -95,7 +96,8 @@ export class DatePicker extends ResponsiveComponent {
           enableOutsideDays={true}
           numberOfMonths={1}
           canChangeMonth={true}
-          onDayClick={this.dayClicked} />
+          onDayClick={this.dayClicked}
+        />
       </div>
     );
   }

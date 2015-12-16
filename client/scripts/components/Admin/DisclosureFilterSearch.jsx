@@ -45,7 +45,7 @@ export class DisclosureFilterSearch extends React.Component {
 
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         width: '100%',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
@@ -77,7 +77,7 @@ export class DisclosureFilterSearch extends React.Component {
       }
     };
 
-    let currentValue = this.props.query || '';
+    const currentValue = this.props.query || '';
     return (
       <div style={merge(styles.container, this.props.styles)}>
         <i className="fa fa-search" style={styles.magnifyingGlass} onClick={this.search}></i>

@@ -37,7 +37,7 @@ export default class DisclosureType extends React.Component {
   }
 
   toggle() {
-    let checkbox = this.refs.checkbox;
+    const checkbox = this.refs.checkbox;
     if (checkbox.checked) {
       ConfigActions.enableDisclosureType(this.props.type.typeCd);
     }
@@ -59,7 +59,7 @@ export default class DisclosureType extends React.Component {
   }
 
   doneEditing() {
-    let textbox = this.refs.label;
+    const textbox = this.refs.label;
     ConfigActions.updateDisclosureType(this.props.type.typeCd, textbox.value);
     this.setState({
       editing: false
@@ -67,7 +67,7 @@ export default class DisclosureType extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       editLink: {
@@ -105,7 +105,12 @@ export default class DisclosureType extends React.Component {
     else {
       jsx = (
         <span style={styles.dynamicSpan}>
-          <label htmlFor={this.props.type.typeCd + 'disctype'} style={styles.label}>{this.props.type.description}</label>
+          <label
+            htmlFor={`${this.props.type.typeCd}disctype`}
+            style={styles.label}
+          >
+            {this.props.type.description}
+          </label>
           <EditLink onClick={this.editType} style={styles.editLink} />
         </span>
       );
@@ -116,7 +121,7 @@ export default class DisclosureType extends React.Component {
       checkbox = (
         <input
           ref="checkbox"
-          id={this.props.type.typeCd + 'disctype'}
+          id={`${this.props.type.typeCd}disctype`}
           type="checkbox"
           style={styles.checkbox}
           checked={this.props.type.enabled === 1}

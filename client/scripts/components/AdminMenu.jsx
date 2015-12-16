@@ -37,7 +37,7 @@ export default class AdminMenu extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         color: window.colorBlindModeOn ? 'black' : '#0095A0',

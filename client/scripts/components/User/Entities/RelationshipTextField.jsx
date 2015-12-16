@@ -41,7 +41,7 @@ export default class RelationshipTextField extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginBottom: 16,
         textAlign: 'left',
@@ -59,8 +59,12 @@ export default class RelationshipTextField extends React.Component {
     return (
       <div style={styles.container}>
         <div style={this.getLabelStyle(this.props.invalid)}>{this.props.label}</div>
-        <input type='text' onChange={this.onChange} style={this.getInputStyle(this.props.invalid, styles.textBox)}
-               value={this.props.value}/>
+        <input
+          type='text'
+          onChange={this.onChange}
+          style={this.getInputStyle(this.props.invalid, styles.textBox)}
+          value={this.props.value}
+        />
       </div>
     );
   }

@@ -23,7 +23,7 @@ import {Link} from 'react-router';
 import AdminMenu from '../AdminMenu';
 
 export default function Sidebar(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       color: '#444',
       backgroundColor: '#F2F2F2',
@@ -55,7 +55,7 @@ export default function Sidebar(props: Object): React.Element {
     }
   };
 
-  let steps = [
+  const steps = [
     {
       label: 'General Configuration',
       link: '/coi/config/general',
@@ -83,10 +83,10 @@ export default function Sidebar(props: Object): React.Element {
     }
   ];
 
-  let stepsJsx = steps.map((step, index) => {
-    let parts = step.label.split(' ');
-    let rest = parts.pop();
-    let firstPart = parts.join(' ');
+  const stepsJsx = steps.map((step, index) => {
+    const parts = step.label.split(' ');
+    const rest = parts.pop();
+    const firstPart = parts.join(' ');
 
     let stepStyle = styles.step;
     if (props.active === step.link) {

@@ -50,7 +50,7 @@ export class Disclosure extends React.Component {
     }
     this.steps.push({label: 'Certification', value: STEP.CERTIFY});
 
-    let storeState = DisclosureStore.getState();
+    const storeState = DisclosureStore.getState();
     this.state = {
       percent: 0,
       applicationState: storeState.applicationState,
@@ -67,25 +67,29 @@ export class Disclosure extends React.Component {
     if (!entities || !projects) {
       return false;
     }
-    else if (!relations && (entities.length > 0 || projects.length > 0)) {
+    if (!relations && (entities.length > 0 || projects.length > 0)) {
       return true;
     }
 
     let undefinedFound = false;
-    entities.forEach(entity => {
-      projects.forEach(project => {
-        let existingRelation = relations.find(relation => {
-          return relation.finEntityId === entity.id &&
-            (
-              relation.projectId === project.id
-            );
-        });
+    entities
+      .filter(entity => {
+        return entity.active === 1;
+      })
+      .forEach(entity => {
+        projects.forEach(project => {
+          const existingRelation = relations.find(relation => {
+            return relation.finEntityId === entity.id &&
+              (
+                relation.projectId === project.id
+              );
+          });
 
-        if (!existingRelation) {
-          undefinedFound = true;
-        }
+          if (!existingRelation || !existingRelation.typeCd) {
+            undefinedFound = true;
+          }
+        });
       });
-    });
 
     return undefinedFound;
   }
@@ -99,15 +103,19 @@ export class Disclosure extends React.Component {
     }
 
     let undefinedFound = false;
-    entities.forEach(entity => {
-      let existingRelation = relations.find(relation => {
-        return relation.finEntityId === entity.id && relation.manualId === disclosure.projectId;
-      });
+    entities
+      .filter(entity => {
+        return entity.active === 1;
+      })
+      .forEach(entity => {
+        const existingRelation = relations.find(relation => {
+          return relation.finEntityId === entity.id && relation.manualId === disclosure.projectId;
+        });
 
-      if (!existingRelation) {
-        undefinedFound = true;
-      }
-    });
+        if (!existingRelation || !existingRelation.typeCd) {
+          undefinedFound = true;
+        }
+      });
 
     return undefinedFound;
   }
@@ -117,13 +125,20 @@ export class Disclosure extends React.Component {
       return false;
     }
 
+    const entityInProgress = this.state.applicationState.entityInProgress;
+    if (entityInProgress && entityInProgress.name) {
+      return true;
+    }
+
     let incompleteEntity = false;
-    entities.filter(entity=> {
+    entities.filter(entity => {
       return entity.active === 1;
     })
     .forEach(entity => {
-      if (!DisclosureStore.entityInformationStepComplete(entity.id)
-      || !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)) {
+      if (
+        !DisclosureStore.entityInformationStepComplete(entity.id) ||
+        !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)
+      ) {
         incompleteEntity = true;
       }
     });
@@ -131,7 +146,7 @@ export class Disclosure extends React.Component {
   }
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
-    let disclosureType = this.props.location.query.type;
+    const disclosureType = this.props.location.query.type;
     DisclosureActions.loadDisclosureData(disclosureType);
   }
 
@@ -140,7 +155,7 @@ export class Disclosure extends React.Component {
   }
 
   onChange() {
-    let storeState = DisclosureStore.getState();
+    const storeState = DisclosureStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
       entities: storeState.entities,
@@ -151,12 +166,12 @@ export class Disclosure extends React.Component {
   }
 
   render() {
-    let currentDisclosureId = this.state.applicationState.currentDisclosureState.disclosure.id;
-    let currentDisclosureState = this.state.applicationState.currentDisclosureState;
-    let currentDisclosureStep = currentDisclosureState.step;
-    let currentQuestion = currentDisclosureState.question;
+    const currentDisclosureId = this.state.applicationState.currentDisclosureState.disclosure.id;
+    const currentDisclosureState = this.state.applicationState.currentDisclosureState;
+    const currentDisclosureStep = currentDisclosureState.step;
+    const currentQuestion = currentDisclosureState.question;
 
-    let styles = {
+    const styles = {
       container: {
         padding: '0',
         minHeight: 100
@@ -194,7 +209,7 @@ export class Disclosure extends React.Component {
     const QUESTIONNAIRE_PERCENTAGE = 25;
     let previousLinkLabel = 'PREVIOUS STEP';
     let showPreviousLink = true;
-    let showNextLink = (
+    const showNextLink = (
       currentDisclosureStep !== STEP.QUESTIONNAIRE &&
       currentDisclosureStep !== STEP.CERTIFY &&
       !nextDisabled
@@ -206,7 +221,7 @@ export class Disclosure extends React.Component {
           percent = Math.floor(((currentQuestion - 1) / window.config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
         }
 
-        let question = currentQuestion;
+        const question = currentQuestion;
         currentStep = (
           <Questionnaire
             questions={window.config.questions.screening}
@@ -251,9 +266,9 @@ export class Disclosure extends React.Component {
         stepNumber = 2;
         const PROJECTS_PERCENTAGE = 75;
         percent = PROJECTS_PERCENTAGE;
-        let disclosureType = this.props.location.query.type;
+        const disclosureType = this.props.location.query.type;
         if (disclosureType === COIConstants.DISCLOSURE_TYPE.MANUAL) {
-          let disclosure = this.state.applicationState.currentDisclosureState.disclosure;
+          const disclosure = this.state.applicationState.currentDisclosureState.disclosure;
           currentStep = (
             <ManualEvent
               step={this.state.applicationState.manualStep}
@@ -273,7 +288,7 @@ export class Disclosure extends React.Component {
           );
         }
         else {
-          let activeEntities = this.state.entities.filter(entity => entity.active);
+          const activeEntities = this.state.entities.filter(entity => entity.active);
           currentStep = (
             <Relationships
               projects={this.state.projects}
@@ -308,7 +323,7 @@ export class Disclosure extends React.Component {
         break;
     }
 
-    let submitDisabled = window.config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
+    const submitDisabled = window.config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
 
     return (
       <div className="flexbox column" style={{height: '100%'}}>

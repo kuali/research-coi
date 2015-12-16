@@ -28,7 +28,7 @@ export class SearchFilter extends ResponsiveComponent {
   }
 
   renderMobile() {
-    let mobileStyles = {
+    const mobileStyles = {
       container: {
         backgroundColor: '#2e2e2e',
         padding: '24px 0',
@@ -48,7 +48,7 @@ export class SearchFilter extends ResponsiveComponent {
         verticalAlign: 'middle'
       }
     };
-    let styles = merge(this.commonStyles, mobileStyles);
+    const styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <div style={merge(styles.container, this.props.style)}>
@@ -59,7 +59,7 @@ export class SearchFilter extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         color: 'white',
         textAlign: 'right',
@@ -73,7 +73,7 @@ export class SearchFilter extends ResponsiveComponent {
         verticalAlign: 'middle'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <div style={merge(styles.container, this.props.style)}>

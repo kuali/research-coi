@@ -41,4 +41,4 @@ class _MockPIReviewStore extends AutoBindingStore {
   }
 }
 
-export let MockPIReviewStore = alt.createStore(_MockPIReviewStore, 'MockPIReviewStore');
+export const MockPIReviewStore = alt.createStore(_MockPIReviewStore, 'MockPIReviewStore');

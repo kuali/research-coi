@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import QuestionSummary from './QuestionSummary';
 
 export default function QuestionnaireSummary(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: 'white',
       boxShadow: '0 0 8px #AAA',

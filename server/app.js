@@ -33,11 +33,44 @@ import Log from './Log';
 import methodChecker from './middleware/methodChecker';
 import ErrorLogger from './middleware/ErrorLogger';
 import {COIConstants} from '../COIConstants';
+import {NOT_FOUND} from '../HTTPStatusCodes';
 import adminRoleCheck from './middleware/adminRoleCheck';
 import unauthorized from './middleware/unauthorized';
 
+const DEFAULT_PORT = 8090;
+
+function conditionallyLogRequests(app) {
+  if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
+    app.use((req, res, next) => {
+      const startTime = new Date().getTime();
+      res.on('finish', () => {
+        const elapsedTime = new Date().getTime() - startTime;
+        Log.info(`${req.originalUrl} - ${elapsedTime}ms`);
+      });
+      next();
+    });
+  }
+}
+
+function configureProxy(app) {
+  const TRUST_PROXY = process.env.TRUST_PROXY;
+  if (TRUST_PROXY) {
+    Log.info(`Using TRUST_PROXY value of ${TRUST_PROXY}`);
+
+    if (TRUST_PROXY.toLowerCase() === 'true') {
+      app.set('trust proxy', true);
+    }
+    else if (TRUST_PROXY.toLowerCase() === 'false') {
+      app.set('trust proxy', false);
+    }
+    else {
+      app.set('trust proxy', TRUST_PROXY);
+    }
+  }
+}
+
 export function run() {
-  let app = express();
+  const app = express();
   app.disable('x-powered-by');
   app.set('view engine', 'jade');
   app.set('views', './views');
@@ -45,7 +78,7 @@ export function run() {
 
   let config;
   try {
-    let extensions = require('research-extensions');
+    const extensions = require('research-extensions');
     extensions.express(app);
     config = extensions.config;
   } catch (e) {
@@ -55,7 +88,7 @@ export function run() {
   conditionallyLogRequests(app);
 
   app.use('/coi', express.static('client'));
-  app.use('/coi/build', (req, res) => { res.sendStatus(404); }); // Static files that weren't found
+  app.use('/coi/build', (req, res) => { res.sendStatus(NOT_FOUND); }); // Static files that weren't found
 
   app.use(methodChecker);
   app.use(cookieParser());
@@ -85,12 +118,12 @@ export function run() {
   UserController.init(app);
   app.use(ErrorLogger);
 
-  let portNumber = config ? config.port : process.env.COI_PORT || 8090;
-  let server = app.listen(portNumber);
+  const portNumber = config ? config.port : process.env.COI_PORT || DEFAULT_PORT;
+  const server = app.listen(portNumber);
 
   console.log(`Listening on port ${portNumber} in ${app.get('env')} mode`); // eslint-disable-line no-console
 
-  process.on('uncaughtException', function(err) {
+  process.on('uncaughtException', (err) => {
     Log.error(`Uncaught exception: ${err}`);
     Log.error(err);
     Log.error('waiting for pending connections to clear');
@@ -99,34 +132,4 @@ export function run() {
       process.exit(1); //eslint-disable-line no-process-exit
     });
   });
-}
-
-function conditionallyLogRequests(app) {
-  if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
-    app.use((req, res, next) => {
-      let startTime = new Date().getTime();
-      res.on('finish', function() {
-        let elapsedTime = new Date().getTime() - startTime;
-        Log.info(`${req.originalUrl} - ${elapsedTime}ms`);
-      });
-      next();
-    });
-  }
-}
-
-function configureProxy(app) {
-  const TRUST_PROXY = process.env.TRUST_PROXY;
-  if (TRUST_PROXY) {
-    Log.info(`Using TRUST_PROXY value of ${TRUST_PROXY}`);
-
-    if (TRUST_PROXY.toLowerCase() === 'true') {
-      app.set('trust proxy', true);
-    }
-    else if (TRUST_PROXY.toLowerCase() === 'false') {
-      app.set('trust proxy', false);
-    }
-    else {
-      app.set('trust proxy', TRUST_PROXY);
-    }
-  }
 }

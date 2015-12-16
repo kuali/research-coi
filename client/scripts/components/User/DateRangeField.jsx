@@ -47,7 +47,7 @@ export default class TextField extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       date: {
         width: 120,
         display: 'inline-block'
@@ -57,15 +57,27 @@ export default class TextField extends React.Component {
       }
     };
 
-    let invalid = this.props.startDateInvalid || this.props.endDateInvalid;
+    const invalid = this.props.startDateInvalid || this.props.endDateInvalid;
 
     return (
       <div style={this.props.styles.container}>
         <label htmlFor={this.props.id} style={this.getLabelStyle(invalid, this.props.styles.label)}>{this.props.label}</label>
         <div id={this.props.id} style={{width: '98%'}}>
-          <DatePicker id="startDate" onChange={this.onStartDateChange} value={this.props.startDate} style={styles.date} textFieldStyle={this.getInputStyle(this.props.startDateInvalid, this.props.styles.input)}/>
+          <DatePicker
+            id="startDate"
+            onChange={this.onStartDateChange}
+            value={this.props.startDate}
+            style={styles.date}
+            textFieldStyle={this.getInputStyle(this.props.startDateInvalid, this.props.styles.input)}
+          />
           <span style={styles.dateMiddle}>TO</span>
-          <DatePicker id="endDate" onChange={this.onEndDateChange} value={this.props.endDate} style={styles.date} textFieldStyle={this.getInputStyle(this.props.endDateInvalid, this.props.styles.input)}/>
+          <DatePicker
+            id="endDate"
+            onChange={this.onEndDateChange}
+            value={this.props.endDate}
+            style={styles.date}
+            textFieldStyle={this.getInputStyle(this.props.endDateInvalid, this.props.styles.input)}
+          />
         </div>
       </div>
     );

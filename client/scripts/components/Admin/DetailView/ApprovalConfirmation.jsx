@@ -24,7 +24,7 @@ import {BlueButton} from '../../BlueButton';
 import {AdminActions} from '../../../actions/AdminActions';
 
 export default function ApprovalConfirmation(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       color: 'black',
       fontSize: 15,

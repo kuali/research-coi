@@ -30,11 +30,15 @@ export default class DeclarationSummary extends React.Component {
   }
 
   showComments() {
-    AdminActions.showCommentingPanel(COIConstants.DISCLOSURE_STEP.PROJECTS, this.props.declaration.id, this.props.declaration.projectTitle + ' - ' + this.props.declaration.entityName);
+    AdminActions.showCommentingPanel(
+      COIConstants.DISCLOSURE_STEP.PROJECTS,
+      this.props.declaration.id,
+      `${this.props.declaration.projectTitle} - ${this.props.declaration.entityName}`
+    );
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         fontSize: 12,
         marginBottom: 10

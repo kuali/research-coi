@@ -31,12 +31,18 @@ class _MockTravelLogActions {
 
   cancelEntry(relationshipId) { this.dispatch(relationshipId); }
 
-  updateEntry(field, value, relationshipId) { this.dispatch({field: field, value: value, relationshipId: relationshipId}); }
+  updateEntry(field, value, relationshipId) {
+    this.dispatch({
+      field,
+      value,
+      relationshipId
+    });
+  }
 
   updateTravelLog(field, value) {
     this.dispatch({
-      field: field,
-      value: value
+      field,
+      value
     });
   }
 
@@ -67,4 +73,4 @@ class _MockTravelLogActions {
   }
 }
 
-export let MockTravelLogActions = alt.createActions(_MockTravelLogActions);
+export const MockTravelLogActions = alt.createActions(_MockTravelLogActions);

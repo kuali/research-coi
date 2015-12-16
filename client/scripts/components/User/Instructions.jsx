@@ -24,7 +24,7 @@ import {GreyButton} from '../GreyButton';
 import VerticalSlider from '../VerticalSlider';
 
 export function Instructions(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       color: 'white',
       whiteSpace: 'normal',

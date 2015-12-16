@@ -42,7 +42,7 @@ export class Sidebar extends React.Component {
   }
 
   generateSteps() {
-    let steps = [];
+    const steps = [];
     this.props.steps.forEach((step, index) => {
       let stepState;
       if (index < this.props.activestep) {
@@ -77,7 +77,7 @@ export class Sidebar extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'inline-flex',
         flexDirection: 'column',
@@ -120,7 +120,7 @@ export class Sidebar extends React.Component {
       }
     };
 
-    let steps = this.generateSteps();
+    const steps = this.generateSteps();
     return (
       <span style={merge(styles.container, this.props.style)}>
         <div className="fill">

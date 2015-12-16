@@ -34,7 +34,7 @@ export class QuestionSummary extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         margin: '35px 0px'
       },

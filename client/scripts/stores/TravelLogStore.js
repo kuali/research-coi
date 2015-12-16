@@ -21,7 +21,7 @@ import {TravelLogActions} from '../actions/TravelLogActions.js';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
 
-let cloneObject = original => {
+const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
 };
 
@@ -110,7 +110,7 @@ class _TravelLogStore extends AutoBindingStore {
   }
 
   saveEntry(relationshipId) {
-    let entryToSave = this.entries.find(entry => {
+    const entryToSave = this.entries.find(entry => {
       return entry.relationshipId === relationshipId;
     });
 
@@ -118,13 +118,13 @@ class _TravelLogStore extends AutoBindingStore {
     this.entryStates[relationshipId].snapshot = undefined;
     this.entryStates[relationshipId].validating = false;
 
-    createRequest().put('/api/coi/travel-log-entries/' + relationshipId)
+    createRequest().put(`/api/coi/travel-log-entries/${relationshipId}`)
     .send(entryToSave)
     .end(processResponse(() => {}));
   }
 
   cancelEntry(relationshipId) {
-    let index = this.entries.findIndex(entry => {
+    const index = this.entries.findIndex(entry => {
       return entry.relationshipId === relationshipId;
     });
 
@@ -138,7 +138,7 @@ class _TravelLogStore extends AutoBindingStore {
   }
 
   updateEntry(data) {
-    let entryToSave = this.entries.find(entry => {
+    const entryToSave = this.entries.find(entry => {
       return entry.relationshipId === data.relationshipId;
     });
 
@@ -160,14 +160,14 @@ class _TravelLogStore extends AutoBindingStore {
 
   getErrorsForId(relationshipId) {
     const storeState = this.getState();
-    let entry = storeState.entries.find(ent => {
+    const entry = storeState.entries.find(ent => {
       return ent.relationshipId === relationshipId;
     });
     return this.validateEntry(entry);
   }
 
   validateEntry(entry) {
-    let errors = {};
+    const errors = {};
 
     if (!entry.entityName) {
       errors.entityName = 'Required Field';
@@ -202,7 +202,7 @@ class _TravelLogStore extends AutoBindingStore {
   }
 
   deleteEntry(relationshipId) {
-    createRequest().del('/api/coi/travel-log-entries/' + relationshipId)
+    createRequest().del(`/api/coi/travel-log-entries/${relationshipId}`)
       .end(processResponse((err) => {
         if (!err) {
           this.entries = this.entries.filter(entry => {
@@ -214,7 +214,7 @@ class _TravelLogStore extends AutoBindingStore {
   }
 
   archiveEntry(relationshipId) {
-    createRequest().put('/api/coi/travel-log-entries/' + relationshipId)
+    createRequest().put(`/api/coi/travel-log-entries/${relationshipId}`)
       .send({active: false})
       .end(processResponse((err) => {
         if (!err) {
@@ -228,4 +228,4 @@ class _TravelLogStore extends AutoBindingStore {
 
 }
 
-export let TravelLogStore = alt.createStore(_TravelLogStore, 'TravelLogStore');
+export const TravelLogStore = alt.createStore(_TravelLogStore, 'TravelLogStore');

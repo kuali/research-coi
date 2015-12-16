@@ -29,11 +29,11 @@ export class TableHeading extends ResponsiveComponent {
   }
 
   renderMobile() {
-    let mobileStyles = {
+    const mobileStyles = {
       container: {
       }
     };
-    let styles = merge(this.commonStyles, mobileStyles);
+    const styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <span style={merge(styles.container, this.props.style)}>
@@ -42,7 +42,7 @@ export class TableHeading extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         padding: '15px 0',
         display: 'table-cell',
@@ -53,9 +53,9 @@ export class TableHeading extends ResponsiveComponent {
         verticalAlign: 'middle'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
-    let sortArrow = <SortArrow direction={this.props.sortDirection} />;
+    const sortArrow = <SortArrow direction={this.props.sortDirection} />;
 
     return (
       <span style={merge(styles.container, this.props.style)} role="columnheader" onClick={this.props.sort}>

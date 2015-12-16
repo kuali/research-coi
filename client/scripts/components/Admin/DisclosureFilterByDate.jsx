@@ -49,7 +49,7 @@ export class DisclosureFilterByDate extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    let styles = {
+    const styles = {
       container: {
         whiteSpace: 'nowrap',
         color: 'black',

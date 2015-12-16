@@ -17,39 +17,41 @@
 */
 
 /*eslint camelcase:0 */
+
+const MAX_ROWS = 10;
+
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-let queryUsingIndex = (knex, term) => {
+const queryUsingIndex = (knex, term) => {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
-    .andWhere('submitted_by', 'LIKE', term + '%')
-    .limit(10);
+    .andWhere('submitted_by', 'LIKE', `${term}%`)
+    .limit(MAX_ROWS);
 };
 
-let queryWithoutIndex = (knex, term) => {
+const queryWithoutIndex = (knex, term) => {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
-    .andWhere('submitted_by', 'LIKE', '%' + term + '%')
-    .limit(10);
+    .andWhere('submitted_by', 'LIKE', `%${term}%`)
+    .limit(MAX_ROWS);
 };
 
-export let getSuggestions = (dbInfo, term) => {
-  let knex = getKnex(dbInfo);
+export const getSuggestions = (dbInfo, term) => {
+  const knex = getKnex(dbInfo);
 
   return queryUsingIndex(knex, term)
-    .then(result =>{
-      if (result.length < 10) {
+    .then(result => {
+      if (result.length < MAX_ROWS) {
         return queryWithoutIndex(knex, term);
       }
-      else {
-        return result;
-      }
+
+      return result;
     });
 };

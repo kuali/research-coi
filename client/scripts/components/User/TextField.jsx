@@ -44,8 +44,14 @@ export default class TextField extends React.Component {
     return (
       <div style={this.props.styles.container}>
         <label htmlFor={this.props.id} style={this.getLabelStyle(this.props.invalid, this.props.styles.label)}>{this.props.label}</label>
-        <input id={this.props.id} type='text' onChange={this.onChange} name={this.props.name} style={this.getInputStyle(this.props.invalid, this.props.styles.input)}
-               value={this.props.value}/>
+        <input
+          id={this.props.id}
+          type='text'
+          onChange={this.onChange}
+          name={this.props.name}
+          style={this.getInputStyle(this.props.invalid, this.props.styles.input)}
+          value={this.props.value}
+        />
       </div>
     );
   }

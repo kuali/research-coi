@@ -21,19 +21,19 @@ import _ from 'lodash';
 
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let saveSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
-  let knex = getKnex(dbInfo);
+export const saveSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
+  const knex = getKnex(dbInfo);
 
-  let recordId = record[camelizeJson(tableProps.pk)];
+  const recordId = record[camelizeJson(tableProps.pk)];
   if (recordId) {
-    throw new Error('Record already has an ' + tableProps.pk + ' ' + recordId + ' for table ' + tableProps.table);
+    throw new Error(`Record already has an ${tableProps.pk} ${recordId} for table ${tableProps.table}`);
   }
 
   let query;
@@ -46,17 +46,17 @@ export let saveSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
   return query.insert(snakeizeJson(record), tableProps.pk)
     .into(tableProps.table)
     .then(result => {
-      let updatedRecord = _.clone(record);
+      const updatedRecord = _.clone(record);
       updatedRecord[camelizeJson(tableProps).pk] = result[0];
       return updatedRecord;
     });
 };
 
-export let getExistingSingleRecord = (dbInfo, recordId, tableProps, optionalTrx) => {
-  let knex = getKnex(dbInfo);
+export const getExistingSingleRecord = (dbInfo, recordId, tableProps, optionalTrx) => {
+  const knex = getKnex(dbInfo);
 
   if (!recordId) {
-    throw new Error('Record does not have an ' + tableProps.pk + ' for table ' + tableProps.table);
+    throw new Error(`Record does not have an ${tableProps.pk} for table ${tableProps.table}`);
   }
 
   let query;
@@ -75,12 +75,12 @@ export let getExistingSingleRecord = (dbInfo, recordId, tableProps, optionalTrx)
     });
 };
 
-export let saveExistingSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
-  let knex = getKnex(dbInfo);
+export const saveExistingSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
+  const knex = getKnex(dbInfo);
 
-  let recordId = record[camelizeJson(tableProps).pk];
+  const recordId = record[camelizeJson(tableProps).pk];
   if (!recordId) {
-    throw new Error('Record does not have an ' + tableProps.pk + ' for table ' + tableProps.table);
+    throw new Error(`Record does not have an ${tableProps.pk} for table ${tableProps.table}`);
   }
 
   let query;
@@ -94,16 +94,16 @@ export let saveExistingSingleRecord = (dbInfo, record, tableProps, optionalTrx) 
     .table(tableProps.table)
     .where(tableProps.pk, recordId)
     .then(() => {
-      let updatedRecord = _.clone(record);
+      const updatedRecord = _.clone(record);
       return updatedRecord;
     });
 };
 
-export let deleteExistingSingleRecord = (dbInfo, recordId, tableProps, optionalTrx) => {
-  let knex = getKnex(dbInfo);
+export const deleteExistingSingleRecord = (dbInfo, recordId, tableProps, optionalTrx) => {
+  const knex = getKnex(dbInfo);
 
   if (!recordId) {
-    throw new Error('Record does not have an ' + tableProps.pk + ' for table ' + tableProps.table);
+    throw new Error(`Record does not have an ${tableProps.pk} for table ${tableProps.table}`);
   }
 
   let query;
@@ -118,8 +118,8 @@ export let deleteExistingSingleRecord = (dbInfo, recordId, tableProps, optionalT
     .where(tableProps.pk, recordId);
 };
 
-export let isDisclosureUsers = (dbInfo, disclosureId, userId) => {
-  let knex = getKnex(dbInfo);
+export const isDisclosureUsers = (dbInfo, disclosureId, userId) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('user_id')
     .from('disclosure')
@@ -132,8 +132,8 @@ export let isDisclosureUsers = (dbInfo, disclosureId, userId) => {
     });
 };
 
-export let verifyRelationshipIsUsers = (dbInfo, userId, relationshipId) => {
-  let knex = getKnex(dbInfo);
+export const verifyRelationshipIsUsers = (dbInfo, userId, relationshipId) => {
+  const knex = getKnex(dbInfo);
 
   return knex.select('')
   .from('relationship as r')

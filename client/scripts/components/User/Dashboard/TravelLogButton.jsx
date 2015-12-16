@@ -24,7 +24,7 @@ import {COIConstants} from '../../../../../COIConstants';
 import {Link} from 'react-router';
 
 export function TravelLogButton(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       display: 'block',
       backgroundColor: '#eeeeee',

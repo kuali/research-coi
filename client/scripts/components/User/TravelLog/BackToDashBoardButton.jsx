@@ -25,7 +25,7 @@ export class BackToDashBoardButton extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'block',
         verticalAlign: 'top',

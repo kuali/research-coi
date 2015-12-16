@@ -42,33 +42,32 @@ export class Project extends React.Component {
     if (undefinedRelationExists('ENTITY', this.props.entities, this.props.declarations)) {
       return 'Action Required';
     }
-    else {
-      let worstDeclaration = 1;
 
-      this.props.declarations.forEach(element => {
-        if (worstDeclaration !== 2 && element.typeCd > 1) {
-          worstDeclaration = element.typeCd;
-        }
-      });
+    let worstDeclaration = 1;
 
-      return this.getDeclarationDescription(worstDeclaration);
-    }
+    this.props.declarations.forEach(element => {
+      if (worstDeclaration !== 2 && element.typeCd > 1) {
+        worstDeclaration = element.typeCd;
+      }
+    });
+
+    return this.getDeclarationDescription(worstDeclaration);
   }
 
   getDeclarationDescription(typeCd) {
-    let declarationType = window.config.declarationTypes.find(type=>{
+    const declarationType = window.config.declarationTypes.find(type => {
       return type.typeCd === typeCd;
     });
 
     if (declarationType) {
       return declarationType.description;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'block',
         margin: '0 3px 25px 0',
@@ -138,7 +137,8 @@ export class Project extends React.Component {
           projectCount={this.props.projectCount}
           onSave={this.toggleDialog}
           onNext={this.props.onNext}
-          onPrevious={this.props.onPrevious} />
+          onPrevious={this.props.onPrevious}
+        />
       );
     }
 

@@ -34,9 +34,8 @@ export class AdminQuestionnaireSummary extends React.Component {
         return response.targetId === id;
       });
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   getCommentCount(id) {
@@ -46,7 +45,7 @@ export class AdminQuestionnaireSummary extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         boxShadow: '0 0 8px #AAA',

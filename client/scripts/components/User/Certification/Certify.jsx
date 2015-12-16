@@ -47,7 +47,7 @@ export class Certify extends React.Component {
   shouldComponentUpdate() { return true; }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         overflow: 'hidden'
       },
@@ -72,8 +72,8 @@ export class Certify extends React.Component {
       }
     };
 
-    let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
-    let instructions = (
+    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
+    const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}

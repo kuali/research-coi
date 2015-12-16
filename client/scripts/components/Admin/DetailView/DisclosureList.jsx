@@ -32,7 +32,7 @@ export class DisclosureList extends React.Component {
   }
 
   componentDidMount() {
-    let theList = this.refs.theList;
+    const theList = this.refs.theList;
     let enabled = true;
     theList.addEventListener('scroll', () => {
       if (enabled) {
@@ -55,7 +55,7 @@ export class DisclosureList extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: '#EEEEEE',
         borderLeft: '1px solid #6d6d6d',
@@ -141,7 +141,7 @@ export class DisclosureList extends React.Component {
       );
     }
 
-    let possibleStatuses = [
+    const possibleStatuses = [
       {code: 2, label: ConfigStore.getAdminDisclosureStatusString(2)},
       {code: 3, label: ConfigStore.getAdminDisclosureStatusString(3)},
       {code: 4, label: ConfigStore.getAdminDisclosureStatusString(4)},
@@ -149,7 +149,7 @@ export class DisclosureList extends React.Component {
       {code: 6, label: ConfigStore.getAdminDisclosureStatusString(6)}
     ];
 
-    let possibleTypes = [];
+    const possibleTypes = [];
     if (ConfigStore.getState().config.disclosureTypes) {
       ConfigStore.getState().config.disclosureTypes.map(type => {
         return type.description;

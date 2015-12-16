@@ -109,7 +109,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   stopEditingDeclarationType(typeCd) {
-    let newValue = this.applicationState.declarationsTypesBeingEdited[typeCd].newValue;
+    const newValue = this.applicationState.declarationsTypesBeingEdited[typeCd].newValue;
     if (newValue) {
       this.config.declarationTypes.find(type => { return typeCd === type.typeCd; }).description = newValue;
     }
@@ -118,7 +118,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   toggleDeclarationType(typeCd) {
-    let typeObject = this.config.declarationTypes.find(type => { return typeCd === type.typeCd; });
+    const typeObject = this.config.declarationTypes.find(type => { return typeCd === type.typeCd; });
     typeObject.enabled = typeObject.enabled === 1 ? 0 : 1;
     this.dirty = true;
   }
@@ -266,9 +266,8 @@ class _ConfigStore extends AutoBindingStore {
         return question.id === id;
       });
     }
-    else {
-      return this.applicationState.newQuestion[category];
-    }
+
+    return this.applicationState.newQuestion[category];
   }
 
   hasSubQuestions(category, parentId) {
@@ -354,11 +353,11 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   saveQuestionEdit(params) {
-    let index = this.config.questions[params.category].findIndex(question => {
+    const index = this.config.questions[params.category].findIndex(question => {
       return question.id === params.questionId;
     });
 
-    let editedQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    const editedQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
     delete editedQuestion.showWarning;
     if (index !== -1) {
       this.config.questions[params.category][index] = editedQuestion;
@@ -374,7 +373,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   startEditingQuestion(params) {
-    let clone = JSON.parse(JSON.stringify(this.findQuestion(params.category, params.questionId)));
+    const clone = JSON.parse(JSON.stringify(this.findQuestion(params.category, params.questionId)));
     this.applicationState.questionsBeingEdited[params.category][params.questionId] = clone;
 
     this.dirty = true;
@@ -387,7 +386,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   criteriaChanged(params) {
-    let question = this.findQuestion(params.category, params.questionId);
+    const question = this.findQuestion(params.category, params.questionId);
     if (question) {
       question.question.displayCriteria = params.newValue;
     }
@@ -455,7 +454,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   enabledChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -466,7 +465,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   typeEnabledChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -477,7 +476,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   amountEnabledChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -488,7 +487,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   destinationEnabledChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -499,7 +498,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   dateEnabledChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -510,7 +509,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   reasonEnabledChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -521,7 +520,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   typeOptionsChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -532,7 +531,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   amountOptionsChanged(params) {
-    let target = this.config.matrixTypes.find(matrixType => {
+    const target = this.config.matrixTypes.find(matrixType => {
       return matrixType.typeCd === params.typeCd;
     });
 
@@ -607,7 +606,7 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   loadConfig(id) {
-    createRequest().get('/api/coi/archived-config/' + id)
+    createRequest().get(`/api/coi/archived-config/${id}`)
     .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
@@ -652,9 +651,9 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getDeclarationTypeString(code) {
-    let configState = this.getState();
+    const configState = this.getState();
     if (configState.codeMaps.declarationType) {
-      let typeRecord = configState.codeMaps.declarationType[code];
+      const typeRecord = configState.codeMaps.declarationType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -663,9 +662,9 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getDisclosureStatusString(code) {
-    let configState = this.getState();
+    const configState = this.getState();
     if (configState.codeMaps.disclosureStatus) {
-      let typeRecord = configState.codeMaps.disclosureStatus[code];
+      const typeRecord = configState.codeMaps.disclosureStatus[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -686,9 +685,9 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getDisclosureTypeString(code) {
-    let configState = this.getState();
+    const configState = this.getState();
     if (configState.codeMaps.disclosureType) {
-      let typeRecord = configState.codeMaps.disclosureType[code];
+      const typeRecord = configState.codeMaps.disclosureType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -697,9 +696,9 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getProjectTypeString(code) {
-    let configState = this.getState();
+    const configState = this.getState();
     if (configState.codeMaps.projectType) {
-      let typeRecord = configState.codeMaps.projectType[code];
+      const typeRecord = configState.codeMaps.projectType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -708,9 +707,9 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getRelationshipCategoryTypeString(code) {
-    let configState = this.getState();
+    const configState = this.getState();
     if (configState.codeMaps.relationshipCategoryType) {
-      let typeRecord = configState.codeMaps.relationshipCategoryType[code];
+      const typeRecord = configState.codeMaps.relationshipCategoryType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -719,43 +718,37 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getRelationshipTypeString(categoryCode, typeCode) {
-    let typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
+    const typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
     if (typeRecord) {
-      let option = typeRecord.typeOptions.find(typeOption => {
+      const option = typeRecord.typeOptions.find(typeOption => {
         return typeOption.typeCd === typeCode;
       });
       if (option) {
         return option.description;
-      } else {
-        return 'Undefined';
       }
     }
-    else {
-      return 'Undefined';
-    }
+
+    return 'Undefined';
   }
 
   getRelationshipAmountString(categoryCode, typeCode) {
-    let typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
+    const typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
     if (typeRecord) {
-      let option = typeRecord.amountOptions.find(amountOption => {
+      const option = typeRecord.amountOptions.find(amountOption => {
         return amountOption.typeCd === typeCode;
       });
       if (option) {
         return option.description;
-      } else {
-        return 'Undefined';
       }
     }
-    else {
-      return 'Undefined';
-    }
+
+    return 'Undefined';
   }
 
   getRelationshipPersonTypeString(code) {
-    let configState = this.getState();
+    const configState = this.getState();
     if (configState.codeMaps.relationshipPersonType) {
-      let typeRecord = configState.codeMaps.relationshipPersonType[code];
+      const typeRecord = configState.codeMaps.relationshipPersonType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -764,8 +757,8 @@ class _ConfigStore extends AutoBindingStore {
   }
 
   getQuestionNumberToShow(type, questionId) {
-    let configState = this.getState();
-    let questions = configState.config.questions;
+    const configState = this.getState();
+    const questions = configState.config.questions;
     let collection;
     switch (type) {
       case COIConstants.QUESTIONNAIRE_TYPE.SCREENING:
@@ -777,16 +770,14 @@ class _ConfigStore extends AutoBindingStore {
       default:
         return undefined;
     }
-    let theQuestion = collection.find(question => {
+    const theQuestion = collection.find(question => {
       return question.id === questionId;
     });
 
     if (theQuestion) {
       return theQuestion.question.numberToShow;
     }
-    else {
-      return undefined;
-    }
+    return undefined;
   }
 }
 

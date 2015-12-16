@@ -23,18 +23,18 @@ import {isDisclosureUsers} from './CommonDB';
 
 let getKnex;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getKnex = extensions.getKnex;
 }
 catch (err) {
   getKnex = require('./ConnectionManager');
 }
 
-export let getFile = (dbInfo, userInfo, id) => {
-  let knex = getKnex(dbInfo);
+export const getFile = (dbInfo, userInfo, id) => {
+  const knex = getKnex(dbInfo);
 
-  let criteria = {
-    'id': id
+  const criteria = {
+    id
   };
 
   if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
@@ -44,7 +44,7 @@ export let getFile = (dbInfo, userInfo, id) => {
   return knex.select('*').from('file').where(criteria);
 };
 
-export let saveNewFiles = (dbInfo, body, files, userInfo) => {
+export const saveNewFiles = (dbInfo, body, files, userInfo) => {
   if (body.type !== COIConstants.FILE_TYPE.DISCLOSURE && body.type !== COIConstants.FILE_TYPE.MANAGEMENT_PLAN && body.type !== COIConstants.FILE_TYPE.FINANCIAL_ENTITY) {
     throw Error(`Attempt by ${userInfo.username} to upload an unknown file type`);
   }
@@ -55,11 +55,11 @@ export let saveNewFiles = (dbInfo, body, files, userInfo) => {
         throw Error(`Attempt by ${userInfo.username} to upload a file for disclosure ${body.disclosureId} which isnt theirs`);
       }
 
-      let knex = getKnex(dbInfo);
-      let fileData = [];
+      const knex = getKnex(dbInfo);
+      const fileData = [];
       return Promise.all(
-        files.map(file=>{
-          let fileDatum = {
+        files.map(file => {
+          const fileDatum = {
             file_type: body.type,
             ref_id: body.refId,
             type: file.mimetype,
@@ -82,10 +82,10 @@ export let saveNewFiles = (dbInfo, body, files, userInfo) => {
     });
 };
 
-export let deleteFiles = (dbInfo, userInfo, file, fileId) => {
-  let knex = getKnex(dbInfo);
+export const deleteFiles = (dbInfo, userInfo, file, fileId) => {
+  const knex = getKnex(dbInfo);
 
-  let criteria = {
+  const criteria = {
     'id': fileId
   };
 

@@ -21,7 +21,7 @@ import React from 'react';
 import {merge} from '../../merge';
 
 export default function Panel(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: 'white',
       boxShadow: '0 0 10px #BBB',

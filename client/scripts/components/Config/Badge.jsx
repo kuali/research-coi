@@ -31,7 +31,7 @@ export default class Badge extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         borderRadius: 5,
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',

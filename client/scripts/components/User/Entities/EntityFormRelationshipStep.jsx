@@ -58,8 +58,8 @@ export class EntityFormRelationshipStep extends React.Component {
   }
 
   addRelation() {
-    let validationErrors = DisclosureStore.entityRelationshipStepErrors();
-    let isValid = Object.keys(validationErrors).length === 0;
+    const validationErrors = DisclosureStore.entityRelationshipStepErrors();
+    const isValid = Object.keys(validationErrors).length === 0;
 
     const stepNumber = 2;
     if (isValid) {
@@ -112,7 +112,7 @@ export class EntityFormRelationshipStep extends React.Component {
   relationChosen(relation) {
     DisclosureActions.setEntityRelationshipRelation(relation);
     this.setState({
-      relation: relation,
+      relation,
       matrixType: this.getMatrixType(relation)
     });
   }
@@ -124,10 +124,10 @@ export class EntityFormRelationshipStep extends React.Component {
   }
 
   render() {
-    let validationErrors = DisclosureStore.entityRelationshipStepErrors();
-    let isValid = Object.keys(validationErrors).length === 0;
+    const validationErrors = DisclosureStore.entityRelationshipStepErrors();
+    const isValid = Object.keys(validationErrors).length === 0;
 
-    let styles = {
+    const styles = {
       container: {
         width: '100%'
       },
@@ -224,7 +224,7 @@ export class EntityFormRelationshipStep extends React.Component {
         dropDownStyle = merge(dropDownStyle, styles.invalidField);
       }
 
-      let typeOptions = this.state.matrixType.typeOptions.map(typeOption => {
+      const typeOptions = this.state.matrixType.typeOptions.map(typeOption => {
         return (
           <option key={typeOption.typeCd} value={typeOption.typeCd}>{typeOption.description}</option>
         );
@@ -254,7 +254,7 @@ export class EntityFormRelationshipStep extends React.Component {
         dropDownStyle = merge(dropDownStyle, styles.invalidField);
       }
 
-      let amountTypeOptions = this.state.matrixType.amountOptions.map(type => {
+      const amountTypeOptions = this.state.matrixType.amountOptions.map(type => {
         return <option key={type.typeCd} value={type.typeCd}>{type.description}</option>;
       });
 
@@ -271,8 +271,12 @@ export class EntityFormRelationshipStep extends React.Component {
         amountSection = (
           <div style={styles.amountSection}>
             <div style={labelStyle}>AMOUNT</div>
-            <select onChange={this.amountSelected} ref="amountSelect"
-                    value={this.props.appState.potentialRelationship.amountCd} style={dropDownStyle}>
+            <select
+              onChange={this.amountSelected}
+              ref="amountSelect"
+              value={this.props.appState.potentialRelationship.amountCd}
+              style={dropDownStyle}
+            >
               <option value="">--SELECT--</option>
               {amountTypeOptions}
             </select>
@@ -320,10 +324,10 @@ export class EntityFormRelationshipStep extends React.Component {
     if (this.state.relation !== '' && this.state.matrixType.reasonEnabled === 1) {
       reason = (
         <RelationshipTextField
-        invalid={this.props.validating && validationErrors.travelReason ? true : false}
-        onChange={this.reasonChanged}
-        value={this.props.appState.potentialRelationship.travel.reason}
-        label='Reason'
+          invalid={this.props.validating && validationErrors.travelReason ? true : false}
+          onChange={this.reasonChanged}
+          value={this.props.appState.potentialRelationship.travel.reason}
+          label='Reason'
         />
       );
     }
@@ -349,7 +353,7 @@ export class EntityFormRelationshipStep extends React.Component {
       heading = 'Relationship Details';
     }
     else if (this.props.name) {
-      heading = this.props.name + ' Relationship Details';
+      heading = `${this.props.name} Relationship Details`;
     }
     else {
       heading = 'Financial Entity Relationship Details';
@@ -389,11 +393,15 @@ export class EntityFormRelationshipStep extends React.Component {
         commentTextboxStyle = merge(commentTextboxStyle, styles.invalidField);
       }
 
-      let relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(option =>{
-        return <option key={option.typeCd} value={option.typeCd}>{option.description}</option>;
+      const relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(personType => {
+        return (
+          <option key={personType.typeCd} value={personType.typeCd}>
+            {personType.description}
+          </option>
+        );
       });
 
-      let htmlId = Math.floor(Math.random() * 1000000000);
+      const htmlId = Math.floor(Math.random() * 1000000000);
       relationshipEditor = (
         <div>
           <div style={styles.title}>{heading}</div>
@@ -431,10 +439,10 @@ export class EntityFormRelationshipStep extends React.Component {
                 <ToggleSet
                   selected={this.props.appState.potentialRelationship.relationshipCd}
                   onChoose={this.relationChosen}
-                  values={window.config.matrixTypes.filter(type =>{
+                  values={window.config.matrixTypes.filter(type => {
                     return type.enabled === 1;
                   }).map(type => {
-                    let value = {};
+                    const value = {};
                     value.typeCd = type.typeCd;
                     value.description = type.description;
                     return value;
@@ -445,7 +453,13 @@ export class EntityFormRelationshipStep extends React.Component {
               <div style={styles.commentArea}>
                 <label htmlFor={htmlId} style={commentStyle}>COMMENTS</label>
                 <div>
-                  <textarea id={htmlId} onChange={this.commentChanged} value={this.props.appState.potentialRelationship.comments} style={commentTextboxStyle} ref="commentTextArea" />
+                  <textarea
+                    id={htmlId}
+                    onChange={this.commentChanged}
+                    value={this.props.appState.potentialRelationship.comments}
+                    style={commentTextboxStyle}
+                    ref="commentTextArea"
+                  />
                 </div>
               </div>
               <div style={styles.addButtonSection}>

@@ -31,7 +31,7 @@ export default class EditLink extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #0095A0',
         cursor: 'pointer'

@@ -37,7 +37,7 @@ export class Toggle extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         whiteSpace: 'nowrap',
         padding: '5px 2px',
@@ -60,12 +60,13 @@ export class Toggle extends ResponsiveComponent {
         borderRadius: 5
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <button
         onClick={this.toggle}
-        style={merge(this.props.selected ? styles.selected : styles.container, this.props.style)}>
+        style={merge(this.props.selected ? styles.selected : styles.container, this.props.style)}
+      >
         {this.props.text}
       </button>
     );

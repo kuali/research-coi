@@ -40,7 +40,7 @@ export default class RelationshipType extends React.Component {
   }
 
   enabledChanged() {
-    let checkbox = this.refs.enabledCheckbox;
+    const checkbox = this.refs.enabledCheckbox;
     this.props.enabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
@@ -57,31 +57,31 @@ export default class RelationshipType extends React.Component {
   }
 
   typeEnabledChanged() {
-    let checkbox = this.refs.typeEnabled;
+    const checkbox = this.refs.typeEnabled;
     this.props.typeEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   typeOptionsChanged(newList) {
-    this.props.typeOptionsChanged(this.props.typeCd, newList.map(item=>{
+    this.props.typeOptionsChanged(this.props.typeCd, newList.map(item => {
       item.relationshipCd = this.props.typeCd;
       return item;
     }));
   }
 
   amountEnabledChanged() {
-    let checkbox = this.refs.amountEnabled;
+    const checkbox = this.refs.amountEnabled;
     this.props.amountEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
   amountOptionsChanged(newList) {
-    this.props.amountOptionsChanged(this.props.typeCd, newList.map(item=>{
+    this.props.amountOptionsChanged(this.props.typeCd, newList.map(item => {
       item.relationshipCd = this.props.typeCd;
       return item;
     }));
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       collapsedContent: {

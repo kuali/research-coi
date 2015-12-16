@@ -28,7 +28,14 @@ export class NavSidebar extends React.Component {
   constructor() {
     super();
 
+    this.nextClicked = this.nextClicked.bind(this);
     this.submitDisclosure = this.submitDisclosure.bind(this);
+  }
+
+  nextClicked() {
+    if (!this.props.nextDisabled) {
+      DisclosureActions.nextStep();
+    }
   }
 
   submitDisclosure() {
@@ -38,7 +45,7 @@ export class NavSidebar extends React.Component {
   }
 
   render(): React.Element {
-    let styles = {
+    const styles = {
       navigation: {
         verticalAlign: 'top',
         width: '25%',
@@ -58,7 +65,8 @@ export class NavSidebar extends React.Component {
     if (this.props.showNextLink) {
       nextLink = (
         <NextLink
-          onClick={DisclosureActions.nextStep}
+          onClick={this.nextClicked}
+          disabled={this.props.nextDisabled}
           style={styles.link}
         />
       );

@@ -23,7 +23,7 @@ import ConfigStore from '../../../stores/ConfigStore';
 import {formatDate} from '../../../formatDate';
 
 export function DisclosureDetailHeading(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: 'white',
       padding: '13px 8px 13px 25px',
@@ -59,7 +59,7 @@ export function DisclosureDetailHeading(props: Object): React.Element {
     }
   };
 
-  let disclosure = props.disclosure;
+  const disclosure = props.disclosure;
 
   let dateSection;
   if (disclosure.revisedDate) {

@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable prefer-arrow-callback */
+
 exports.up = function(knex) {
   return knex.schema.createTable('disclosure_type', function(table) {
     table.integer('type_cd').notNullable().primary();

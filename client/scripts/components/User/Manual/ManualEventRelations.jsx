@@ -45,29 +45,28 @@ export class ManualEventRelations extends ResponsiveComponent {
     if (undefinedRelationExists('ENTITY', this.props.entities, this.props.declarations)) {
       return 'Action Required';
     }
-    else {
-      let worstDeclaration = 1;
 
-      this.props.declarations.forEach(element => {
-        if (worstDeclaration !== 2 && element.typeCd > 1) {
-          worstDeclaration = element.typeCd;
-        }
-      });
+    let worstDeclaration = 1;
 
-      return this.getDeclarationDescription(worstDeclaration);
-    }
+    this.props.declarations.forEach(element => {
+      if (worstDeclaration !== 2 && element.typeCd > 1) {
+        worstDeclaration = element.typeCd;
+      }
+    });
+
+    return this.getDeclarationDescription(worstDeclaration);
   }
 
   getDeclarationDescription(typeCd) {
-    let declarationType = window.config.declarationTypes.find(type=>{
+    const declarationType = window.config.declarationTypes.find(type => {
       return type.typeCd === typeCd;
     });
 
     if (declarationType) {
       return declarationType.description;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   editProject() {
@@ -77,7 +76,7 @@ export class ManualEventRelations extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         display: 'block',
         overflow: 'hidden',
@@ -128,7 +127,7 @@ export class ManualEventRelations extends ResponsiveComponent {
         marginBottom: 28
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let relationshipDialog;
     if (this.props.open) {

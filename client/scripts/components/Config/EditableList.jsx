@@ -41,7 +41,7 @@ class EditableItem extends React.Component {
     });
 
     requestAnimationFrame(() => {
-      let textbox = this.refs.textbox;
+      const textbox = this.refs.textbox;
       if (textbox) {
         textbox.focus();
       }
@@ -63,12 +63,12 @@ class EditableItem extends React.Component {
     this.setState({
       editing: false
     });
-    let textbox = this.refs.textbox;
+    const textbox = this.refs.textbox;
     this.props.onEdit(this.props.id, this.props.typeCd, textbox.value);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginBottom: 8
       },
@@ -166,7 +166,7 @@ export default class EditableList extends React.Component {
     });
 
     requestAnimationFrame(() => {
-      let textbox = this.refs.textbox;
+      const textbox = this.refs.textbox;
       if (textbox) {
         textbox.focus();
       }
@@ -174,14 +174,14 @@ export default class EditableList extends React.Component {
   }
 
   delete(id) {
-    let newItems = Array.from(this.props.items);
+    const newItems = Array.from(this.props.items);
     newItems.splice(id, 1);
 
     this.props.onChange(newItems);
   }
 
   edited(id, typeCd, description) {
-    let newItems = Array.from(this.props.items);
+    const newItems = Array.from(this.props.items);
     newItems[id].typeCd = typeCd;
     newItems[id].description = description;
 
@@ -210,9 +210,9 @@ export default class EditableList extends React.Component {
   }
 
   addItem() {
-    let textbox = this.refs.textbox;
+    const textbox = this.refs.textbox;
     if (textbox.value.length > 0) {
-      let newItems = Array.from(this.props.items);
+      const newItems = Array.from(this.props.items);
 
       newItems.push({
         description: textbox.value
@@ -224,7 +224,7 @@ export default class EditableList extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       addAnother: {

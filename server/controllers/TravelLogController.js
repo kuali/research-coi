@@ -18,13 +18,14 @@
 
 import * as TravelLogDB from '../db/TravelLogDB';
 import Log from '../Log';
+import {OK} from '../../HTTPStatusCodes';
 
-export let init = app => {
+export const init = app => {
   /**
     @Role: user
     Can only see travel logs associated with their entities
   */
-  app.get('/api/coi/travel-log-entries', function(req, res, next) {
+  app.get('/api/coi/travel-log-entries', (req, res, next) => {
     let sortColumn = 'name';
     if (req.query.sortColumn) {
       sortColumn = req.query.sortColumn;
@@ -52,7 +53,7 @@ export let init = app => {
    @Role: user
    Can only add travel logs associated with their entities
    */
-  app.post('/api/coi/travel-log-entries', function(req, res, next) {
+  app.post('/api/coi/travel-log-entries', (req, res, next) => {
     TravelLogDB.createTravelLogEntry(req.dbInfo, req.body, req.userInfo)
       .then(travelLog => {
         res.send(travelLog);
@@ -67,10 +68,10 @@ export let init = app => {
    @Role: user
    Can only delete travel logs associated with their entities
    */
-  app.delete('/api/coi/travel-log-entries/:id', function(req, res, next) {
+  app.delete('/api/coi/travel-log-entries/:id', (req, res, next) => {
     TravelLogDB.deleteTravelLogEntry(req.dbInfo, req.params.id, req.userInfo)
       .then(() => {
-        res.sendStatus(200);
+        res.sendStatus(OK);
       })
       .catch(err => {
         Log.error(err);
@@ -82,7 +83,7 @@ export let init = app => {
    @Role: user
    Can only update travel logs associated with their entities
    */
-  app.put('/api/coi/travel-log-entries/:id', function(req, res, next) {
+  app.put('/api/coi/travel-log-entries/:id', (req, res, next) => {
     TravelLogDB.updateTravelLogEntry(req.dbInfo, req.body, req.params.id, req.userInfo)
     .then(travelLog => {
       res.send(travelLog);

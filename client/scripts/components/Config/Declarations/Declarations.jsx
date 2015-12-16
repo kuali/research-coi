@@ -24,7 +24,6 @@ import ActionPanel from '../ActionPanel';
 import InstructionEditor from '../InstructionEditor';
 import ConfigStore from '../../../stores/ConfigStore';
 import DeclarationType from './DeclarationType';
-import DeleteLink from '../DeleteLink';
 import DoneLink from '../DoneLink';
 import ConfigActions from '../../../actions/ConfigActions';
 import {COIConstants} from '../../../../../COIConstants';
@@ -50,7 +49,7 @@ export default class Declarations extends React.Component {
   }
 
   onChange() {
-    let storeState = ConfigStore.getState();
+    const storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
       declarationTypes: storeState.config.declarationTypes,
@@ -66,12 +65,12 @@ export default class Declarations extends React.Component {
   }
 
   updateNewValue() {
-    let textbox = this.refs.newType;
+    const textbox = this.refs.newType;
     ConfigActions.setNewDeclarationTypeText(textbox.value);
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         minHeight: 100
       },

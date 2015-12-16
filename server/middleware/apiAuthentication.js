@@ -18,15 +18,16 @@
 
 import {getUserInfo} from '../services/AuthService/AuthService';
 import Log from '../Log';
+import {UNAUTHORIZED} from '../../HTTPStatusCodes';
 
 function getAuthToken(header) {
   try {
-    let parsedHeader = header.split(' ');
+    const parsedHeader = header.split(' ');
     if (parsedHeader[0] === 'Bearer') {
       return parsedHeader[1];
-    } else {
-      return undefined;
     }
+
+    return undefined;
   } catch(e) {
     return undefined;
   }
@@ -41,7 +42,7 @@ export default function authentication(req, res, next) {
   getUserInfo(req.dbInfo, req.hostname, authToken)
     .then(userInfo => {
       if (!userInfo) {
-        res.sendStatus(401);
+        res.sendStatus(UNAUTHORIZED);
       } else {
         req.userInfo = userInfo;
         next();

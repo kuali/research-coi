@@ -61,9 +61,13 @@ class _PIReviewActions {
     this.dispatch(disclosureId);
   }
 
-  addEntityAttachments(files, entityId) { this.dispatch({files: files, entityId: entityId}); }
+  addEntityAttachments(files, entityId) {
+    this.dispatch({files, entityId});
+  }
 
-  deleteEntityAttachment(index, entityId) { this.dispatch({index: index, entityId: entityId}); }
+  deleteEntityAttachment(index, entityId) {
+    this.dispatch({index, entityId});
+  }
 }
 
 export default alt.createActions(_PIReviewActions);

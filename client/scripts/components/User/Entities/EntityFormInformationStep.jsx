@@ -39,7 +39,7 @@ export class EntityFormInformationStep extends React.Component {
 
   getAnswer(id) {
     if (this.props.answers) {
-      let answerForId = this.props.answers.find(answer => {
+      const answerForId = this.props.answers.find(answer => {
         return answer.questionId === id;
       });
       if (answerForId) {
@@ -62,7 +62,7 @@ export class EntityFormInformationStep extends React.Component {
       validationErrors = DisclosureStore.entityInformationStepErrors(this.props.id);
     }
 
-    let styles = {
+    const styles = {
       container: {
       },
       title: {
@@ -105,9 +105,9 @@ export class EntityFormInformationStep extends React.Component {
     }
 
 
-    let questions = window.config.questions.entities.sort((a, b)=>{
+    const questions = window.config.questions.entities.sort((a, b) => {
       return a.question.order - b.question.order;
-    }).map((question, index)=>{
+    }).map((question, index) => {
       let columnStyle;
       if (question.question.type === COIConstants.QUESTION_TYPE.TEXTAREA) {
         columnStyle = styles.longColumn;

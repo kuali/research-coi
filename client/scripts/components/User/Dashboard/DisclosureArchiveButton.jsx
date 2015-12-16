@@ -29,7 +29,7 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
   }
 
   renderMobile() {
-    let mobileStyles = {
+    const mobileStyles = {
       container: {
         display: 'inline-block',
         backgroundColor: '#2e2e2e',
@@ -49,7 +49,7 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
         height: 45
       }
     };
-    let styles = merge(this.commonStyles, mobileStyles);
+    const styles = merge(this.commonStyles, mobileStyles);
 
     return (
       <Link to={"/coi/archiveview"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
@@ -62,7 +62,7 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
   }
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         display: 'block',
         backgroundColor: '#eeeeee',
@@ -82,7 +82,7 @@ export class DisclosureArchiveButton extends ResponsiveComponent {
         fontWeight: 'bold'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     return (
       <Link to={"/coi/archiveview"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>

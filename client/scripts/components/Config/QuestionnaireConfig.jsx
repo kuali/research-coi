@@ -42,11 +42,11 @@ class QuestionnaireConfig extends React.Component {
   }
 
   subQuestionMoved(draggedQuestionId, targetId) {
-    let draggedQuestion = this.findQuestion(draggedQuestionId);
-    let targetQuestion = this.findQuestion(targetId);
+    const draggedQuestion = this.findQuestion(draggedQuestionId);
+    const targetQuestion = this.findQuestion(targetId);
 
-    let parentOfDraggedQuestion = this.findParentOfSubQuestion(draggedQuestionId);
-    let parentOfTargetQuestion = this.findParentOfSubQuestion(targetId);
+    const parentOfDraggedQuestion = this.findParentOfSubQuestion(draggedQuestionId);
+    const parentOfTargetQuestion = this.findParentOfSubQuestion(targetId);
 
     if (
         this.isMoving ||
@@ -58,7 +58,7 @@ class QuestionnaireConfig extends React.Component {
     }
 
     if (parentOfDraggedQuestion === parentOfTargetQuestion) {
-      let swapValue = draggedQuestion.question.order;
+      const swapValue = draggedQuestion.question.order;
       draggedQuestion.question.order = targetQuestion.question.order;
       targetQuestion.question.order = swapValue;
     }
@@ -72,18 +72,18 @@ class QuestionnaireConfig extends React.Component {
   }
 
   subQuestionMovedToParent(draggedQuestionId, targetId) {
-    let draggedQuestion = this.findQuestion(draggedQuestionId);
+    const draggedQuestion = this.findQuestion(draggedQuestionId);
     if (!draggedQuestion || this.isMoving || draggedQuestion.parent === targetId) {
       return;
     }
 
-    let parent = this.findQuestion(targetId);
+    const parent = this.findQuestion(targetId);
     if (parent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
       return;
     }
 
     draggedQuestion.parent = targetId;
-    let otherSubquestions = this.findSubQuestions(targetId);
+    const otherSubquestions = this.findSubQuestions(targetId);
 
     if (otherSubquestions.length > 0) {
       draggedQuestion.question.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
@@ -107,15 +107,15 @@ class QuestionnaireConfig extends React.Component {
   }
 
   questionMoved(draggedQuestionId, targetId) {
-    let draggedQuestion = this.findQuestion(draggedQuestionId);
-    let targetQuestion = this.findQuestion(targetId);
+    const draggedQuestion = this.findQuestion(draggedQuestionId);
+    const targetQuestion = this.findQuestion(targetId);
 
     if (this.isMoving || draggedQuestion === targetQuestion || targetQuestion.parent) {
       return;
     }
     this.setIsMovingFlag();
 
-    let swapValue = draggedQuestion.question.order;
+    const swapValue = draggedQuestion.question.order;
     draggedQuestion.question.order = targetQuestion.question.order;
     targetQuestion.question.order = swapValue;
 
@@ -129,18 +129,18 @@ class QuestionnaireConfig extends React.Component {
   }
 
   makeSubQuestion(id) {
-    let question = this.findQuestion(id);
+    const question = this.findQuestion(id);
     if (!question || question.parent) {
       return;
     }
 
-    let subQuestions = this.findSubQuestions(id);
+    const subQuestions = this.findSubQuestions(id);
     if (subQuestions.length > 0) {
       return;
     }
 
     // Find closest previous main question
-    let parent = this.findNewParentQuestion(question);
+    const parent = this.findNewParentQuestion(question);
     if (parent) {
       // Can only be a sub question if the parent is a yes/no question
       if (parent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
@@ -154,7 +154,7 @@ class QuestionnaireConfig extends React.Component {
       });
 
       // set new order value on the question
-      let otherSubquestions = this.findSubQuestions(parent.id);
+      const otherSubquestions = this.findSubQuestions(parent.id);
       if (otherSubquestions.length > 0) {
         question.question.order = 1 + otherSubquestions.reduce((previousValue, subQuestion) => {
           return Math.max(previousValue, subQuestion.question.order);
@@ -177,15 +177,15 @@ class QuestionnaireConfig extends React.Component {
   }
 
   findParentOfSubQuestion(subQuestionId) {
-    let question = this.findQuestion(subQuestionId);
+    const question = this.findQuestion(subQuestionId);
     if (question.parent) {
       return this.findQuestion(question.parent);
     }
   }
 
   makeMainQuestion(subQuestionId) {
-    let question = this.findQuestion(subQuestionId);
-    let parent = this.findQuestion(question.parent);
+    const question = this.findQuestion(subQuestionId);
+    const parent = this.findQuestion(question.parent);
     if (question && parent) {
       question.parent = null;
 
@@ -207,7 +207,7 @@ class QuestionnaireConfig extends React.Component {
     const heightOfExpandedMultiSelect = 390;
     let height;
     if (this.isOpen(question.id)) {
-      let editState = this.props.questionsBeingEdited[question.id];
+      const editState = this.props.questionsBeingEdited[question.id];
       if (editState.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
         height = heightOfExpandedMultiSelect;
       }
@@ -236,13 +236,12 @@ class QuestionnaireConfig extends React.Component {
       return false;
     }
 
-    let potentialParent = this.findNewParentQuestion(question);
+    const potentialParent = this.findNewParentQuestion(question);
     if (!potentialParent || potentialParent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
       return false;
     }
-    else {
-      return true;
-    }
+
+    return true;
   }
 
   newQuestionCancelled() {
@@ -258,12 +257,12 @@ class QuestionnaireConfig extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       }
     };
 
-    let newQuestionButtons = [
+    const newQuestionButtons = [
       {
         label: '+ Add',
         onClick: this.addNewQuestion
@@ -277,7 +276,7 @@ class QuestionnaireConfig extends React.Component {
     let newQuestion;
     let newQuestionButton;
     let nextQuestionYPosition = 0;
-    let questionsJSX = [];
+    const questionsJSX = [];
 
     if (this.props.newQuestion) {
       newQuestion = (
@@ -301,7 +300,7 @@ class QuestionnaireConfig extends React.Component {
     }).sort((a, b) => {
       if (a.question.order < b.question.order) { return -1; }
       else if (a.question.order === b.question.order) { return 0; }
-      else { return 1; }
+      return 1;
     }).forEach(question => {
       question.question.top = nextQuestionYPosition;
       nextQuestionYPosition += this.findQuestionHeight(question);
@@ -315,16 +314,16 @@ class QuestionnaireConfig extends React.Component {
         subQuestion.question.top = nextQuestionYPosition;
         nextQuestionYPosition += this.findQuestionHeight(subQuestion);
         currentSubQuestionNumber++;
-        subQuestion.question.numberToShow = currentQuestionNumber + ' - ' + (String.fromCharCode(64 + currentSubQuestionNumber));
+        subQuestion.question.numberToShow = `${currentQuestionNumber} - ${(String.fromCharCode(64 + currentSubQuestionNumber))}`;
       });
     });
 
     this.props.questions.filter(question => {
       return !question.parent;
     }).forEach((question, index) => {
-      let canBeSubQuestion = index > 0 && this.canBeSubQuestion(question);
+      const canBeSubQuestion = index > 0 && this.canBeSubQuestion(question);
 
-      let questionStyle = {
+      const questionStyle = {
         cursor: canBeSubQuestion ? 'move' : 'ns-resize'
       };
 
@@ -343,7 +342,8 @@ class QuestionnaireConfig extends React.Component {
           text={question.question.text}
           isSubQuestion={false}
           top={question.question.top}
-          style={questionStyle} />
+          style={questionStyle}
+        />
       );
 
       this.findSubQuestions(question.id).forEach(subQuestion => {
@@ -363,7 +363,8 @@ class QuestionnaireConfig extends React.Component {
             isSubQuestion={true}
             top={subQuestion.question.top}
             style={{cursor: 'move'}}
-            displayCriteria={subQuestion.question.displayCriteria} />
+            displayCriteria={subQuestion.question.displayCriteria}
+          />
         );
       });
     });

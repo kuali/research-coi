@@ -25,6 +25,10 @@ import ConfigActions from '../actions/ConfigActions';
 
 const PAGE_SIZE = 40;
 
+function defaultStatusFilters() {
+  return [2, 4, 5, 6];
+}
+
 class _AdminStore extends AutoBindingStore {
   constructor() {
     super(AdminActions);
@@ -38,7 +42,7 @@ class _AdminStore extends AutoBindingStore {
           end: undefined
         },
         submittedBy: undefined,
-        status: [2, 4, 5, 6],
+        status: defaultStatusFilters(),
         type: [],
         search: ''
       },
@@ -107,7 +111,7 @@ class _AdminStore extends AutoBindingStore {
   loadDisclosure(id) {
     delete this.applicationState.selectedDisclosure;
     this.applicationState.loadingDisclosure = true;
-    createRequest().get('/api/coi/disclosures/' + id)
+    createRequest().get(`/api/coi/disclosures/${id}`)
            .end(processResponse((err, disclosure) => {
              if (!err) {
                this.loadDisclosureData(disclosure.body);
@@ -124,7 +128,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   loadArchivedDisclosure(id) {
-    createRequest().get('/api/coi/archived-disclosures/' + id + '/latest')
+    createRequest().get(`/api/coi/archived-disclosures/${id}/latest`)
     .end(processResponse((err, disclosure) => {
       if (!err) {
         this.loadDisclosureData(disclosure.body);
@@ -163,7 +167,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   changeSearch(newSearch) {
-    let shouldRefresh = newSearch.length > 2 || this.applicationState.filters.search.length > newSearch.length;
+    const shouldRefresh = newSearch.length > 2 || this.applicationState.filters.search.length > newSearch.length;
     this.applicationState.filters.search = newSearch;
     if (shouldRefresh) {
       this.applicationState.effectiveSearchValue = newSearch;
@@ -220,7 +224,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   approveDisclosure() {
-    createRequest().put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/approve')
+    createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/approve`)
     .send(this.applicationState.selectedDisclosure)
     .type('application/json')
     .end(processResponse(err => {
@@ -237,7 +241,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   rejectDisclosure() {
-    createRequest().put('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/reject')
+    createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/reject`)
     .end(processResponse(err => {
       if (!err) {
         this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
@@ -253,7 +257,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   toggleTypeFilter(toToggle) {
-    let index = this.applicationState.filters.type.findIndex(filter => {
+    const index = this.applicationState.filters.type.findIndex(filter => {
       return filter === toToggle;
     });
     if (index === -1) {
@@ -267,12 +271,12 @@ class _AdminStore extends AutoBindingStore {
   }
 
   clearStatusFilter() {
-    this.applicationState.filters.status = [];
+    this.applicationState.filters.status = defaultStatusFilters();
     this.refreshDisclosures();
   }
 
   toggleStatusFilter(toToggle) {
-    let index = this.applicationState.filters.status.findIndex(filter => {
+    const index = this.applicationState.filters.status.findIndex(filter => {
       return filter === toToggle.code;
     });
     if (index === -1) {
@@ -381,7 +385,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   makeComment(params) {
-    createRequest().post('/api/coi/disclosures/' + this.applicationState.selectedDisclosure.id + '/comments')
+    createRequest().post(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments`)
            .send({
              topicSection: params.topicSection,
              topicId: params.topicId,
@@ -399,7 +403,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   addManagementPlan(files) {
-    let formData = new FormData();
+    const formData = new FormData();
     files.forEach(file => {
       formData.append('attachments', file);
     });
@@ -423,9 +427,9 @@ class _AdminStore extends AutoBindingStore {
   }
 
   deleteManagementPlan() {
-    let file = this.applicationState.selectedDisclosure.managementPlan[0];
+    const file = this.applicationState.selectedDisclosure.managementPlan[0];
 
-    createRequest().del('/api/coi/files/' + file.id)
+    createRequest().del(`/api/coi/files/${file.id}`)
     .send(file)
     .type('application/json')
     .end(processResponse((err) => {
@@ -437,4 +441,4 @@ class _AdminStore extends AutoBindingStore {
   }
 }
 
-export let AdminStore = alt.createStore(_AdminStore, 'AdminStore');
+export const AdminStore = alt.createStore(_AdminStore, 'AdminStore');

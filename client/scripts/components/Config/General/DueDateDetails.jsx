@@ -31,14 +31,14 @@ export default class DueDateDetails extends React.Component {
   }
 
   makeRolling() {
-    let rollingRadio = this.refs.rolling;
+    const rollingRadio = this.refs.rolling;
     if (rollingRadio.checked) {
       ConfigActions.setIsRollingDueDate(true);
     }
   }
 
   makeStatic() {
-    let staticRadio = this.refs.static;
+    const staticRadio = this.refs.static;
     if (staticRadio.checked) {
       ConfigActions.setIsRollingDueDate(false);
     }
@@ -49,7 +49,7 @@ export default class DueDateDetails extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         margin: '0 23px 15px 23px'
       },

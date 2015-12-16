@@ -16,10 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable react/jsx-key */
+
 import React from 'react'; // eslint-disable-line no-unused-vars
 import {merge} from '../merge';
 
-let styles = {
+const styles = {
   container: {
     backgroundColor: '#E6E6E6',
     border: 0,
@@ -32,7 +34,7 @@ let styles = {
   }
 };
 
-export let GreyButton = props => (
+export const GreyButton = props => (
   <button
     {...props}
     style={merge(styles.container, props.style)}

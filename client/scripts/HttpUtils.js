@@ -18,19 +18,20 @@
 
 import defaults from 'superagent-defaults';
 import cookies from 'cookies-js';
+import {UNAUTHORIZED} from '../../HTTPStatusCodes';
 
 export function processResponse(callback) {
   return (err, res) => {
     if (!err) {
       callback(err, res);
-    } else if (err.status === 401) {
+    } else if (err.status === UNAUTHORIZED) {
       window.location = '/auth/';
     }
   };
 }
 
 export function createRequest() {
-  let request = defaults();
-  request.set('Authorization', 'Bearer ' + cookies.get('authToken'));
+  const request = defaults();
+  request.set('Authorization', `Bearer ${cookies.get('authToken')}`);
   return request;
 }

@@ -45,35 +45,34 @@ export class Entity extends ResponsiveComponent {
     if (undefinedRelationExists('PROJECT', this.props.projects, this.props.declarations)) {
       return 'Action Required';
     }
-    else {
-      let worstDeclaration = 1;
 
-      this.props.declarations.forEach(element => {
-        if (worstDeclaration !== 2 && element.typeCd > 1) {
-          worstDeclaration = element.typeCd;
-        }
-      });
+    let worstDeclaration = 1;
 
-      return this.getDeclarationDescription(worstDeclaration);
-    }
+    this.props.declarations.forEach(element => {
+      if (worstDeclaration !== 2 && element.typeCd > 1) {
+        worstDeclaration = element.typeCd;
+      }
+    });
+
+    return this.getDeclarationDescription(worstDeclaration);
   }
 
   getDeclarationDescription(typeCd) {
-    let declarationType = window.config.declarationTypes.find(type=>{
+    const declarationType = window.config.declarationTypes.find(type => {
       return type.typeCd === typeCd;
     });
 
     if (declarationType) {
       return declarationType.description;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         display: 'block',
         margin: '0 3px 25px 0',
@@ -127,7 +126,7 @@ export class Entity extends ResponsiveComponent {
         textTransform: 'capitalize'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let relationshipDialog;
     if (this.props.open) {
@@ -147,11 +146,12 @@ export class Entity extends ResponsiveComponent {
           entityCount={this.props.entityCount}
           onSave={this.toggleDialog}
           onNext={this.props.onNext}
-          onPrevious={this.props.onPrevious} />
+          onPrevious={this.props.onPrevious}
+        />
       );
     }
 
-    let relationships = [];
+    const relationships = [];
     this.props.entity.relationships.forEach((element) => {
       relationships.push(
         <div key={element.id}>{ConfigStore.getRelationshipPersonTypeString(element.personCd)} - {ConfigStore.getRelationshipCategoryTypeString(element.relationshipCd)}</div>

@@ -29,7 +29,7 @@ import Entry from './Entry';
 export default class TravelLog extends React.Component {
   constructor() {
     super();
-    let storeState = TravelLogStore.getState();
+    const storeState = TravelLogStore.getState();
     this.state = {
       entries: storeState.entries,
       potentialEntry: storeState.potentialEntry,
@@ -51,7 +51,7 @@ export default class TravelLog extends React.Component {
   }
 
   onChange() {
-    let storeState = TravelLogStore.getState();
+    const storeState = TravelLogStore.getState();
     this.setState({
       entries: storeState.entries,
       potentialEntry: storeState.potentialEntry,
@@ -61,7 +61,7 @@ export default class TravelLog extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       header: {
         boxShadow: '0 1px 6px #D1D1D1',
         zIndex: 10,

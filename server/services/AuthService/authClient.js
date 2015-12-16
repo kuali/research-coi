@@ -18,13 +18,14 @@
 
 import cache from '../../LruCache';
 import {COIConstants} from '../../../COIConstants';
+import {OK} from '../../../HTTPStatusCodes';
 
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
-let http = useSSL ? require('https') : require('http');
+const http = useSSL ? require('https') : require('http');
 
 let getAuthorizationInfo;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
@@ -37,17 +38,17 @@ try {
 
 function getUserRoles(dbInfo, schoolId, authToken) {
   return new Promise((resolve) => {
-    let authInfo = getAuthorizationInfo(dbInfo);
-    let options = {
+    const authInfo = getAuthorizationInfo(dbInfo);
+    const options = {
       host: authInfo.host,
-      path: '/kc-dev/kc-sys-krad/v1/roles/' + authInfo.adminRole + '/principals/' + schoolId + '?qualification=unitNumber:*',
+      path: `/kc-dev/kc-sys-krad/v1/roles/${authInfo.adminRole}/principals/${schoolId}?qualification=unitNumber:*`,
       headers: {
-        'Authorization': 'Bearer ' + authToken
+        'Authorization': `Bearer ${authToken}`
       }
     };
 
     http.get(options, response => {
-      if (response.statusCode === 200) {
+      if (response.statusCode === OK) {
         resolve(COIConstants.ROLES.ADMIN);
       } else {
         resolve(COIConstants.ROLES.USER);
@@ -63,29 +64,29 @@ function getUserRoles(dbInfo, schoolId, authToken) {
 
 export function getUserInfo(dbInfo, hostname, authToken) {
   return new Promise((resolve, reject) => {
-    let cachedUserInfo = authToken ? cache.get(authToken) : undefined;
+    const cachedUserInfo = authToken ? cache.get(authToken) : undefined;
     if (cachedUserInfo) {
       resolve(cachedUserInfo);
     } else {
-      let options = {
+      const options = {
         host: hostname,
         path: '/api/users/current',
         headers: {
           'Accept': 'application/vnd.kuali.v1+json',
-          'Authorization': 'Bearer ' + authToken
+          'Authorization': `Bearer ${authToken}`
         }
       };
 
       http.get(options, response => {
-        if (response.statusCode !== 200) {
+        if (response.statusCode !== OK) {
           resolve();
         } else {
           let body = '';
-          response.on('data', function (chunk) {
+          response.on('data', (chunk) => {
             body += chunk;
           });
           response.on('end', () => {
-            let userInfo = JSON.parse(body);
+            const userInfo = JSON.parse(body);
             getUserRoles(dbInfo, userInfo.schoolId, authToken).then(role => {
               if (!role) {
                 userInfo.coiRole = COIConstants.ROLES.USER;
@@ -110,5 +111,5 @@ export function getUserInfo(dbInfo, hostname, authToken) {
 }
 
 export function getAuthLink(req) {
-  return '/auth?return_to=' + encodeURIComponent(req.originalUrl);
+  return `/auth?return_to=${encodeURIComponent(req.originalUrl)}`;
 }

@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import DisclosureType from './DisclosureType';
 
 export default function DisclosureTypes(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       padding: '20px 23px 10px 23px',
       fontSize: 15

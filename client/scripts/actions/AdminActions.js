@@ -70,11 +70,7 @@ class _AdminActions {
   }
 
   showCommentingPanel(topic, id, title) {
-    this.dispatch({
-      topic: topic,
-      id: id,
-      title: title
-    });
+    this.dispatch({topic, id, title});
   }
 
   hideCommentingPanel() { this.dispatch(); }
@@ -93,12 +89,12 @@ class _AdminActions {
 
   makeComment(disclosureId, topicSection, topicId, visibleToPI, visibleToReviewers, commentText) {
     this.dispatch({
-      disclosureId: disclosureId,
-      topicSection: topicSection,
-      topicId: topicId,
-      visibleToPI: visibleToPI,
-      visibleToReviewers: visibleToReviewers,
-      commentText: commentText
+      disclosureId,
+      topicSection,
+      topicId,
+      visibleToPI,
+      visibleToReviewers,
+      commentText
     });
   }
 
@@ -108,4 +104,4 @@ class _AdminActions {
 
 }
 
-export let AdminActions = alt.createActions(_AdminActions);
+export const AdminActions = alt.createActions(_AdminActions);

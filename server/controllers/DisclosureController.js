@@ -21,10 +21,11 @@ import * as PIReviewDB from '../db/PIReviewDB';
 import multer from 'multer';
 import Log from '../Log';
 import {COIConstants} from '../../COIConstants';
+import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../HTTPStatusCodes';
 
 let upload;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   upload = extensions.storage;
 }
 catch (err) {
@@ -32,17 +33,17 @@ catch (err) {
 }
 
 
-export let init = app => {
+export const init = app => {
 
   /**
    @Role: admin (can see any) or user (can only see their own)
    */
-  app.get('/api/coi/archived-disclosures/:id/latest', function(req, res, next) {
+  app.get('/api/coi/archived-disclosures/:id/latest', (req, res, next) => {
     DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id)
     .then(results => {
-      let disclosure = JSON.parse(results[0].disclosure);
+      const disclosure = JSON.parse(results[0].disclosure);
       if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
-        res.sendStatus(403);
+        res.sendStatus(FORBIDDEN);
         return;
       }
       res.send(disclosure);
@@ -57,7 +58,7 @@ export let init = app => {
     @Role: user
     Can only see disclosures which they submitted
   */
-  app.get('/api/coi/archived-disclosures', function(req, res, next) {
+  app.get('/api/coi/archived-disclosures', (req, res, next) => {
     DisclosureDB.getArchivedDisclosures(req.dbInfo, req.userInfo.schoolId)
       .then(disclosures => {
         res.send(disclosures);
@@ -72,7 +73,7 @@ export let init = app => {
     @Role: user
     Can only see disclosures which they submitted
   */
-  app.get('/api/coi/disclosure-user-summaries', function(req, res, next) {
+  app.get('/api/coi/disclosure-user-summaries', (req, res, next) => {
     DisclosureDB.getSummariesForUser(req.dbInfo, req.userInfo.schoolId)
       .then(disclosures => {
         res.send(disclosures);
@@ -87,7 +88,7 @@ export let init = app => {
     @Role: user
     Can only see their own annual disclosure
   */
-  app.get('/api/coi/disclosures/annual', function(req, res, next) {
+  app.get('/api/coi/disclosures/annual', (req, res, next) => {
     DisclosureDB.getAnnualDisclosure(req.dbInfo, req.userInfo, req.userInfo.name)
     .then(disclosure => {
       res.send(disclosure);
@@ -101,7 +102,7 @@ export let init = app => {
   /**
     @Role: admin (can see any) or user (can only see their own)
   */
-  app.get('/api/coi/disclosures/:id', function(req, res, next){
+  app.get('/api/coi/disclosures/:id', (req, res, next) => {
     DisclosureDB.get(req.dbInfo, req.userInfo, req.params.id)
       .then(disclosure => {
         res.send(disclosure);
@@ -115,9 +116,9 @@ export let init = app => {
   /**
     @Role: admin
   */
-  app.get('/api/coi/disclosure-summaries', function(req, res, next) {
+  app.get('/api/coi/disclosure-summaries', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
@@ -161,9 +162,9 @@ export let init = app => {
   /**
     @Role: admin
   */
-  app.get('/api/coi/disclosure-summaries/count', function(req, res, next) {
+  app.get('/api/coi/disclosure-summaries/count', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
@@ -195,7 +196,7 @@ export let init = app => {
     @Role: user
     Can only edit entities which are associated with their disclosure
   */
-  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', upload.array('attachments'), function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', upload.array('attachments'), (req, res, next) => {
     DisclosureDB.saveExistingFinancialEntity(req.dbInfo, req.userInfo, req.params.entityId, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
         res.send(financialEntity);
@@ -210,7 +211,7 @@ export let init = app => {
     @Role: user
     Can only add entities to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/financial-entities', upload.array('attachments'), function(req, res, next) {
+  app.post('/api/coi/disclosures/:id/financial-entities', upload.array('attachments'), (req, res, next) => {
     DisclosureDB.saveNewFinancialEntity(req.dbInfo, req.userInfo, req.params.id, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
         res.send(financialEntity);
@@ -225,7 +226,7 @@ export let init = app => {
     @Role: user
     Can only add declarations to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/declarations', function(req, res, next) {
+  app.post('/api/coi/disclosures/:id/declarations', (req, res, next) => {
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
     DisclosureDB.saveDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body)
       .then(declaration => {
@@ -241,10 +242,10 @@ export let init = app => {
     @Role: user
     Can only edit declarations on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/declarations/:declarationId', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/declarations/:declarationId', (req, res, next) => {
     DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.declarationId, req.body)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -256,7 +257,7 @@ export let init = app => {
     @Role: user
     Can only answer questions on disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/question-answers', function(req, res, next) {
+  app.post('/api/coi/disclosures/:id/question-answers', (req, res, next) => {
     DisclosureDB.saveNewQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body)
       .then(answer => {
         res.send(answer);
@@ -271,7 +272,7 @@ export let init = app => {
     @Role: user
     Can only answer questions on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/question-answers/:questionId', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/question-answers/:questionId', (req, res, next) => {
     DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.questionId, req.body)
       .then(answer => {
         res.send(answer);
@@ -286,10 +287,10 @@ export let init = app => {
     @Role: user
     Can only submit disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/submit', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/submit', (req, res, next) => {
     DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -300,15 +301,15 @@ export let init = app => {
   /**
     @Role: admin
   */
-  app.put('/api/coi/disclosures/:id/approve', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/approve', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
     DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -319,15 +320,15 @@ export let init = app => {
   /**
     @Role: admin
   */
-  app.put('/api/coi/disclosures/:id/reject', function(req, res, next) {
+  app.put('/api/coi/disclosures/:id/reject', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
     DisclosureDB.reject(req.dbInfo, req.userInfo.name, req.params.id)
       .then(() => {
-        res.sendStatus(202);
+        res.sendStatus(ACCEPTED);
       })
       .catch(err => {
         Log.error(err);
@@ -340,11 +341,11 @@ export let init = app => {
   */
   app.post('/api/coi/disclosures/:id/comments', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(403);
+      res.sendStatus(FORBIDDEN);
       return;
     }
 
-    let comment = req.body;
+    const comment = req.body;
 
     if (!comment.topicSection ||
         !comment.topicId ||
@@ -394,8 +395,8 @@ export let init = app => {
     Can only delete answers if this disclosure is theirs
   */
   app.delete('/api/coi/disclosures/:id/question-answers', (req, res, next) => {
-    let toDelete = [];
-    let proposedDeletions = req.body.toDelete !== undefined ? req.body.toDelete : [];
+    const toDelete = [];
+    const proposedDeletions = req.body.toDelete !== undefined ? req.body.toDelete : [];
 
     if (Array.isArray(proposedDeletions)) {
       proposedDeletions.forEach(proposedDeletion => {
@@ -408,7 +409,7 @@ export let init = app => {
     if (toDelete.length > 0) {
       DisclosureDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.id, toDelete)
         .then(() => {
-          res.status(204).end();
+          res.status(NO_CONTENT).end();
         })
         .catch(err => {
           Log.error(err);
@@ -416,7 +417,7 @@ export let init = app => {
         });
     }
     else {
-      res.status(400).end();
+      res.status(BAD_REQUEST).end();
     }
   });
 
@@ -440,7 +441,7 @@ export let init = app => {
     Can only save the state of their disclosure
   */
   app.post('/api/coi/disclosures/:id/state', (req, res, next) => {
-    res.status(202).end();
+    res.status(ACCEPTED).end();
 
     DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body)
       .then(() => {

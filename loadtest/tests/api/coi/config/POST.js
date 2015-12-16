@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable quotes */
+/* eslint-disable quotes, max-len */
 import LoadTest from '../../../../LoadTest';
 
 export class Test extends LoadTest {
@@ -26,7 +26,7 @@ export class Test extends LoadTest {
     this.method = 'POST';
     this.path = '/api/coi/config';
 
-    let dataObject = {
+    const dataObject = {
       matrixTypes: [
         {
           typeCd: 1,

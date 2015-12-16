@@ -21,7 +21,7 @@ import React from 'react'; //eslint-disable-line no-unused-vars
 import {merge} from '../../merge';
 
 export function Flag(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       padding: '8px 13px',
       fontSize: 15,

@@ -63,7 +63,7 @@ export class ManualEventEntry extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
       },
       select: {
@@ -120,11 +120,11 @@ export class ManualEventEntry extends ResponsiveComponent {
         fontFamily: 'Lato'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let middle;
     if (this.props.step === 2) {
-      let disclosure = this.props.disclosure;
+      const disclosure = this.props.disclosure;
       middle = (
         <div style={{marginTop: 27}}>
           <div style={styles.row}>

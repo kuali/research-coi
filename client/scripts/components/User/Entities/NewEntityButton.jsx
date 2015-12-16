@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import {PlusIcon} from '../../DynamicIcons/PlusIcon';
 
 export function NewEntityButton(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       display: 'inline-block',
       width: 145,

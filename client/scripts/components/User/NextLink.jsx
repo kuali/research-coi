@@ -21,13 +21,13 @@ import React from 'react';
 import {merge} from '../../merge';
 
 export default function NextLink(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       fontSize: 15,
-      cursor: 'pointer',
+      cursor: props.disabled ? 'default' : 'pointer',
       color: window.colorBlindModeOn ? 'black' : '#555555'
     },
-    icons: {
+    icon: {
       color: window.colorBlindModeOn ? 'black' : '#F57C00',
       fontSize: 29,
       marginRight: 6,
@@ -35,12 +35,21 @@ export default function NextLink(props: Object): React.Element {
     },
     stepLabel: {
       verticalAlign: 'middle'
+    },
+    disabled: {
+      color: '#AAA',
+      cursor: 'default'
     }
   };
 
+  if (props.disabled) {
+    styles.container.color = '#AAA';
+    styles.icon.color = '#AAA';
+  }
+
   return (
     <div onClick={props.onClick} style={merge(styles.container, props.style)}>
-      <i className="fa fa-arrow-circle-right" style={styles.icons}></i>
+      <i className="fa fa-arrow-circle-right" style={styles.icon}></i>
       <span style={styles.stepLabel}>
         NEXT STEP
       </span>

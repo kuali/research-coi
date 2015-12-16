@@ -21,7 +21,7 @@ import React from 'react';
 import {merge} from '../../merge';
 
 export default function DoneWithFilterButton(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       height: 27
     },

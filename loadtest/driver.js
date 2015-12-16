@@ -26,28 +26,7 @@ let testsToRun;
 let currentTestIndex;
 let port;
 
-export default function() {
-  testsToRun = [];
-  currentTestIndex = -1;
-  port = process.env.COI_PORT || 8080;
-
-  if (process.argv.length > 2) {
-    let fsStats = fs.statSync(process.argv[2]);
-    if (fsStats.isDirectory()) {
-      testsToRun = searchDirectoryForTests(process.argv[2]);
-    }
-    else {
-      testsToRun.push(process.argv[2]);
-    }
-  }
-  else {
-    testsToRun = searchDirectoryForTests('loadtest/tests');
-  }
-
-  if (testsToRun.length > 0) {
-    startNextTest();
-  }
-}
+const DEFAULT_PORT = 8080;
 
 function searchDirectoryForTests(baseDirectory) {
   let testsFound = [];
@@ -82,12 +61,35 @@ function startNextTest() {
     return;
   }
 
-  let test = testsToRun[currentTestIndex];
-  let TestClass = require(test.replace('loadtest/', './')).Test;
-  let theTest = new TestClass;
+  const test = testsToRun[currentTestIndex];
+  const TestClass = require(test.replace('loadtest/', './')).Test;
+  const theTest = new TestClass;
   console.log(test);
   theTest.run(port, results => {
     printResults(test, results);
     startNextTest();
   });
+}
+
+export default function() {
+  testsToRun = [];
+  currentTestIndex = -1;
+  port = process.env.COI_PORT || DEFAULT_PORT;
+
+  if (process.argv.length > 2) {
+    const fsStats = fs.statSync(process.argv[2]);
+    if (fsStats.isDirectory()) {
+      testsToRun = searchDirectoryForTests(process.argv[2]);
+    }
+    else {
+      testsToRun.push(process.argv[2]);
+    }
+  }
+  else {
+    testsToRun = searchDirectoryForTests('loadtest/tests');
+  }
+
+  if (testsToRun.length > 0) {
+    startNextTest();
+  }
 }

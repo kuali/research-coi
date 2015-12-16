@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-var */
+
 require('babel/register');
 var app = require('./app');
 app.run();

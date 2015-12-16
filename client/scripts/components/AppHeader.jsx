@@ -46,7 +46,7 @@ export class AppHeader extends React.Component {
   }
 
   onChange() {
-    let userInfoState = UserInfoStore.getState();
+    const userInfoState = UserInfoStore.getState();
     this.setState({
       userInfo: userInfoState.userInfo
     });
@@ -62,7 +62,7 @@ export class AppHeader extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       logo: {
         width: 26,
         height: 26,

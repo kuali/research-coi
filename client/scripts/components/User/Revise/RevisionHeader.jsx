@@ -23,7 +23,7 @@ import {formatDate} from '../../../formatDate';
 import ConfigStore from '../../../stores/ConfigStore';
 
 export default function RevisionHeader(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       backgroundColor: 'white',
       borderBottom: '1px solid #DDD'

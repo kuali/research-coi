@@ -130,8 +130,8 @@ export class EntityForm extends React.Component {
   }
 
   done() {
-    let entityRelationshipsAreSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id);
-    let entityInformationIsSubmittable = DisclosureStore.entityInformationStepComplete(this.props.entity.id);
+    const entityRelationshipsAreSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id);
+    const entityInformationIsSubmittable = DisclosureStore.entityInformationStepComplete(this.props.entity.id);
     if (!this.props.editing || (entityRelationshipsAreSubmittable && entityInformationIsSubmittable)) {
       DisclosureActions.entityFormClosed(this.props.entity);
       DisclosureActions.turnOffValidation(1);
@@ -157,7 +157,7 @@ export class EntityForm extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'inline-block',
         borderRadius: 5,
@@ -201,7 +201,7 @@ export class EntityForm extends React.Component {
       );
     }
 
-    let entity = this.props.entity;
+    const entity = this.props.entity;
     let buttons;
     let backButton;
     if (this.props.update) {
@@ -234,8 +234,8 @@ export class EntityForm extends React.Component {
         </div>
       );
 
-      let entityIsSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id) && DisclosureStore.entityInformationStepComplete(this.props.entity.id);
-      let doneButtonStyle = entityIsSubmittable ? styles.button : merge(styles.button, styles.disabled);
+      const entityIsSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id) && DisclosureStore.entityInformationStepComplete(this.props.entity.id);
+      const doneButtonStyle = entityIsSubmittable ? styles.button : merge(styles.button, styles.disabled);
       if (this.props.editing) {
         buttons = (
           <span>

@@ -24,12 +24,12 @@ import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
   highlightSearchTerm(value) {
-    let start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
+    const start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
     if (start >= 0) {
-      let matchingValue = value.substr(start, this.props.searchTerm.length);
+      const matchingValue = value.substr(start, this.props.searchTerm.length);
       return (
         <span>
-          <span style={{display: 'inline'}}>{value.substr(0, start) + ''}</span>
+          <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
           <span className="highlight">
             {matchingValue}
           </span>
@@ -37,13 +37,12 @@ export class DisclosureTableRow extends React.Component {
         </span>
       );
     }
-    else {
-      return value;
-    }
+
+    return value;
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'table-row',
         height: 43
@@ -63,6 +62,14 @@ export class DisclosureTableRow extends React.Component {
       }
     };
 
+    let dateToShow;
+    if (this.props.revisedDate !== null) {
+      dateToShow = `${formatDate(this.props.revisedDate)} (revised)`;
+    }
+    else {
+      dateToShow = formatDate(this.props.submittedDate);
+    }
+
     return (
       <div role="row" style={merge(styles.container, this.props.style)}>
         <span role="gridcell" style={merge(styles.value, styles.firstColumn)}>
@@ -77,7 +84,7 @@ export class DisclosureTableRow extends React.Component {
           {ConfigStore.getAdminDisclosureStatusString(this.props.statusCd)}
         </span>
         <span role="gridcell" style={merge(styles.value, styles.lastColumn)}>
-          {formatDate(this.props.submittedDate)}
+          {dateToShow}
         </span>
       </div>
     );

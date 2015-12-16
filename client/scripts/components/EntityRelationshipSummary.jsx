@@ -35,7 +35,7 @@ export default class EntityRelationshipSummary extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         color: 'white',
         backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
@@ -84,41 +84,18 @@ export default class EntityRelationshipSummary extends React.Component {
       );
     }
     if (this.props.relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
-      let dateRange = formatDate(this.props.relationship.travel.startDate) + ' - ' + formatDate(this.props.relationship.travel.endDate);
+      const dateRange = `${formatDate(this.props.relationship.travel.startDate)} - ${formatDate(this.props.relationship.travel.endDate)}`;
       return (
         <div style={merge(styles.container, this.props.style)}>
           <div style={styles.summary}>
             {removeButton}
             <span>
-              {ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd) + ' • '}
-              {ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd) + ' • '}
-              {this.props.relationship.travel.amount ? numeral(this.props.relationship.travel.amount).format('$0,0.00') + ' • ' : ''}
-              {this.props.relationship.travel.destination ? this.props.relationship.travel.destination + ' • ' : ''}
-              {dateRange ? dateRange + ' • ' : ''}
+              {`${ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd)} • `}
+              {`${ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd)} • `}
+              {this.props.relationship.travel.amount ? `${numeral(this.props.relationship.travel.amount).format('$0,0.00')} • ` : ''}
+              {this.props.relationship.travel.destination ? `${this.props.relationship.travel.destination} • ` : ''}
+              {dateRange ? `${dateRange} • ` : ''}
               {this.props.relationship.travel.reason ? this.props.relationship.travel.reason : ''}
-            </span>
-          </div>
-          {commentSection}
-        </div>
-      );
-    } else {
-      return (
-        <div style={merge(styles.container, this.props.style)}>
-          <div style={styles.summary}>
-            {removeButton}
-            <span>
-              <span style={{display: 'inline'}}>
-                {ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd) + ' • '}
-              </span>
-              <span style={{display: 'inline'}}>
-                {ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd) + ' • '}
-              </span>
-              <span style={{display: 'inline'}}>
-                {this.props.relationship.typeCd ? ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd) + ' • ' : ''}
-              </span>
-              <span style={{display: 'inline'}}>
-                {this.props.relationship.amountCd ? ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) : ''}
-              </span>
             </span>
           </div>
           {commentSection}
@@ -126,5 +103,27 @@ export default class EntityRelationshipSummary extends React.Component {
       );
     }
 
+    return (
+      <div style={merge(styles.container, this.props.style)}>
+        <div style={styles.summary}>
+          {removeButton}
+          <span>
+            <span style={{display: 'inline'}}>
+              {`${ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd)} • `}
+            </span>
+            <span style={{display: 'inline'}}>
+              {`${ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd)} • `}
+            </span>
+            <span style={{display: 'inline'}}>
+              {this.props.relationship.typeCd ? `${ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd)} • ` : ''}
+            </span>
+            <span style={{display: 'inline'}}>
+              {this.props.relationship.amountCd ? ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) : ''}
+            </span>
+          </span>
+        </div>
+        {commentSection}
+      </div>
+    );
   }
 }

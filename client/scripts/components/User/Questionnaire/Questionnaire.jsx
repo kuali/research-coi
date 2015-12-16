@@ -30,7 +30,7 @@ export class Questionnaire extends React.Component {
   }
 
   getAnswer(id) {
-    let answer = this.props.answers.find(a => {
+    const answer = this.props.answers.find(a => {
       return a.questionId === id;
     });
     if (answer) {
@@ -45,7 +45,7 @@ export class Questionnaire extends React.Component {
       percentToSlide = (this.props.currentquestion - 1) * -FULL_WIDTH_IN_PERCENT;
     }
 
-    let styles = {
+    const styles = {
       container: {
         whiteSpace: 'nowrap'
       },
@@ -61,24 +61,24 @@ export class Questionnaire extends React.Component {
       },
       slider: {
         transition: 'all .2s ease-in-out',
-        transform: 'translateX(' + percentToSlide + '%)'
+        transform: `translateX(${percentToSlide}%)`
       }
     };
 
     let questions = [];
 
     if (this.props.questions) {
-      let parentQuestions = this.props.questions.filter(question=>{
+      const parentQuestions = this.props.questions.filter(question => {
         return !question.parent;
       });
 
-      questions = parentQuestions.sort((a, b)=>{
+      questions = parentQuestions.sort((a, b) => {
         return a.question.order - b.question.order;
       }).map((question, index) => {
-        let answer = this.getAnswer(question.id);
+        const answer = this.getAnswer(question.id);
         let subQuestions = [];
         if (question.question.type === COIConstants.QUESTION_TYPE.YESNO) {
-          subQuestions = this.props.questions.filter(subQuestion =>{
+          subQuestions = this.props.questions.filter(subQuestion => {
             return subQuestion.parent === question.id;
           }).map(subQuestion => {
             subQuestion.answer = this.getAnswer(subQuestion.id);
@@ -104,8 +104,8 @@ export class Questionnaire extends React.Component {
       });
     }
 
-    let instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
-    let instructions = (
+    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
+    const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}

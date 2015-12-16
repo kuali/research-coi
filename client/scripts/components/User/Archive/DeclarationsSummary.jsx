@@ -22,7 +22,7 @@ import DeclarationSummary from './DeclarationSummary';
 
 export default class extends React.Component {
   getProjectTypeString(typeCd) {
-    let theProjectType = this.props.projectTypes.find(projectType => {
+    const theProjectType = this.props.projectTypes.find(projectType => {
       return projectType.typeCd === typeCd;
     });
 
@@ -34,7 +34,7 @@ export default class extends React.Component {
   }
 
   getDeclarationTypeString(typeCd) {
-    let theDeclarationType = this.props.declarationTypes.find(declarationType => {
+    const theDeclarationType = this.props.declarationTypes.find(declarationType => {
       return declarationType.typeCd === typeCd;
     });
 
@@ -47,8 +47,8 @@ export default class extends React.Component {
   }
 
   getUniqueProjects(declarations) {
-    let projects = [];
-    let alreadyAdded = {};
+    const projects = [];
+    const alreadyAdded = {};
 
     declarations.forEach(declaration => {
       if (!alreadyAdded[declaration.projectId]) {
@@ -71,7 +71,7 @@ export default class extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         boxShadow: '0 0 8px #AAA',
@@ -133,10 +133,10 @@ export default class extends React.Component {
     let projects = [];
     if(this.props.declarations !== undefined) {
 
-      let uniqueProjects = this.getUniqueProjects(this.props.declarations);
+      const uniqueProjects = this.getUniqueProjects(this.props.declarations);
 
       projects = uniqueProjects.map((project, index) => {
-        let declarations = this.props.declarations.filter(declaration => {
+        const declarations = this.props.declarations.filter(declaration => {
           return declaration.projectId === project.id && declaration.finEntityActive === 1;
         }).map(declaration => {
           return (
@@ -149,8 +149,10 @@ export default class extends React.Component {
         });
 
         return (
-          <div key={'proj' + project.id}
-            style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}>
+          <div
+            key={`proj${project.id}`}
+            style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}
+          >
             <div style={styles.name}>{project.name}</div>
             <div style={styles.field}>
               <label style={styles.label}>Project Type:</label>

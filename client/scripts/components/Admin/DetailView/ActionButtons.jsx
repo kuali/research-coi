@@ -22,7 +22,7 @@ import {merge} from '../../../merge';
 import {AdminActions} from '../../../actions/AdminActions';
 
 export default function ActionButtons(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       color: '#6d6d6d',
       fontSize: 15,
@@ -54,7 +54,7 @@ export default function ActionButtons(props: Object): React.Element {
   let generalAttachmentButton;
 
   if (props.showAttachments) {
-    let generalAttachmentStyle = merge(styles.button, {borderBottom: '1px solid grey', paddingBottom: 10});
+    const generalAttachmentStyle = merge(styles.button, {borderBottom: '1px solid grey', paddingBottom: 10});
     generalAttachmentButton = (
       <div style={generalAttachmentStyle} onClick={AdminActions.showGeneralAttachmentsPanel}>
         <i className="fa fa-eye" style={styles.icon}></i>

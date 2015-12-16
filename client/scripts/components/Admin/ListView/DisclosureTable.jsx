@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import React from 'react';
 import {merge} from '../../../merge';
 import {DisclosureTableRow} from './DisclosureTableRow';
 import {TableHeading} from './TableHeading';
@@ -60,7 +60,7 @@ export class DisclosureTable extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         display: 'table',
         width: '100%'
@@ -74,7 +74,7 @@ export class DisclosureTable extends React.Component {
       }
     };
 
-    let disclosures = this.props.disclosures.map((disclosure) => {
+    const disclosures = this.props.disclosures.map((disclosure) => {
       return (
         <DisclosureTableRow
           key={disclosure.id}
@@ -83,6 +83,7 @@ export class DisclosureTable extends React.Component {
           type={disclosure.type}
           statusCd={disclosure.statusCd}
           submittedDate={disclosure.submitted_date}
+          revisedDate={disclosure.revised_date}
           searchTerm={this.props.searchTerm}
         />
       );

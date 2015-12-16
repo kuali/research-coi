@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-magic-numbers */
+
 import LoadTest from '../../../../LoadTest';
 
 export class Test extends LoadTest {
@@ -26,9 +28,9 @@ export class Test extends LoadTest {
   }
 
   getHeaders() {
-    let userId = Math.ceil(Math.random() * 500);
-    let isAdmin = Math.ceil(Math.random() * 2) === 1;
-    let userType = isAdmin ? 'a' : 'p';
+    const userId = Math.ceil(Math.random() * 500);
+    const isAdmin = Math.ceil(Math.random() * 2) === 1;
+    const userType = isAdmin ? 'a' : 'p';
     return {
       Authorization: `Bearer ${userType}${userId}`
     };

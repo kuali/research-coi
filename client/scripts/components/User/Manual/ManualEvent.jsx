@@ -36,18 +36,17 @@ export class ManualEvent extends ResponsiveComponent {
 
   isDeclarationOpen(id) {
     if (this.props.declarationStates && this.props.declarationStates.manual) {
-      let state = this.props.declarationStates.manual[id];
+      const state = this.props.declarationStates.manual[id];
       return (state && state.open);
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
         overflow: 'hidden'
       },
@@ -55,7 +54,7 @@ export class ManualEvent extends ResponsiveComponent {
         padding: '46px 0 0 50px'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
     let screen;
     if (this.props.step === 3) {
@@ -78,8 +77,8 @@ export class ManualEvent extends ResponsiveComponent {
       );
     }
 
-    let instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
-    let instructions = (
+    const instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
+    const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing}

@@ -33,7 +33,7 @@ export class SidebarStep extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         padding: '10px 20px 10px 10px',
         fontSize: 18,
@@ -104,14 +104,13 @@ export class SidebarStep extends React.Component {
             </li>
           );
         }
-        else {
-          return (
-            <li style={merge(styles.container, styles.incomplete, this.props.style)}>
-              <i className="fa fa-circle" style={merge(styles.futureIcon, styles.incomplete)} />
-              <span style={styles.stepName}>{this.props.label}</span>
-            </li>
-          );
-        }
+
+        return (
+          <li style={merge(styles.container, styles.incomplete, this.props.style)}>
+            <i className="fa fa-circle" style={merge(styles.futureIcon, styles.incomplete)} />
+            <span style={styles.stepName}>{this.props.label}</span>
+          </li>
+        );
     }
   }
 }

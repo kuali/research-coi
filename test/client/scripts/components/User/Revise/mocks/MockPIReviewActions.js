@@ -28,4 +28,4 @@ class _MockPIReviewActions {
   }
 }
 
-export let MockPIReviewActions = alt.createActions(_MockPIReviewActions);
+export const MockPIReviewActions = alt.createActions(_MockPIReviewActions);

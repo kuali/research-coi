@@ -20,7 +20,7 @@ import * as localClient from './localClient';
 
 let client;
 try {
-  let extensions = require('research-extensions');
+  const extensions = require('research-extensions');
   client = extensions.client ? extensions.client : localClient;
 }
 catch (err) {

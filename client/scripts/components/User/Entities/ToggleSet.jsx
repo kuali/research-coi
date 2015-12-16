@@ -49,16 +49,16 @@ export class ToggleSet extends ResponsiveComponent {
   renderMobile() {}
 
   renderDesktop() {
-    let desktopStyles = {
+    const desktopStyles = {
       container: {
       },
       toggle: {
         margin: '0 10px 10px 0'
       }
     };
-    let styles = merge(this.commonStyles, desktopStyles);
+    const styles = merge(this.commonStyles, desktopStyles);
 
-    let toggles = this.props.values.map(value => {
+    const toggles = this.props.values.map(value => {
       return (
         <Toggle
           style={styles.toggle}
@@ -67,7 +67,7 @@ export class ToggleSet extends ResponsiveComponent {
           selected={this.state.value === value.typeCd}
           onClick={this.change}
           key={value.typeCd}
-         />
+        />
       );
     });
 

@@ -28,8 +28,7 @@ export class ResponsiveComponent extends React.Component {
     if (window.size === 'SMALL') {
       return this.renderMobile();
     }
-    else {
-      return this.renderDesktop();
-    }
+
+    return this.renderDesktop();
   }
 }

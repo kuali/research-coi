@@ -38,7 +38,7 @@ class _PIReviewStore extends AutoBindingStore {
 
   updateCanSubmit() {
     if (this.disclosure.questions) {
-      let allQuestionsDone = this.disclosure.questions.every(question => {
+      const allQuestionsDone = this.disclosure.questions.every(question => {
         return question.reviewedOn !== null;
       });
       if (!allQuestionsDone) {
@@ -48,7 +48,7 @@ class _PIReviewStore extends AutoBindingStore {
     }
 
     if (this.disclosure.entities) {
-      let allEntitiesDone = this.disclosure.entities.every(entity => {
+      const allEntitiesDone = this.disclosure.entities.every(entity => {
         return entity.reviewedOn !== null;
       });
       if (!allEntitiesDone) {
@@ -58,8 +58,8 @@ class _PIReviewStore extends AutoBindingStore {
     }
 
     if (this.disclosure.declarations) {
-      let allDeclarationsDone = this.disclosure.declarations.every(declaration => {
-        let allEntitiesDone = declaration.entities.every(entity => {
+      const allDeclarationsDone = this.disclosure.declarations.every(declaration => {
+        const allEntitiesDone = declaration.entities.every(entity => {
           return entity.reviewedOn !== null;
         });
         return allEntitiesDone;
@@ -96,7 +96,7 @@ class _PIReviewStore extends AutoBindingStore {
 
                    if (question.subQuestions) {
                      question.subQuestions = question.subQuestions.map(subQuestion => {
-                       let newSub = {
+                       const newSub = {
                          id: subQuestion.id,
                          parent: subQuestion.parent,
                          answer: {},
@@ -140,7 +140,7 @@ class _PIReviewStore extends AutoBindingStore {
 
                this.updateCanSubmit();
 
-               createRequest().get('/api/coi/archived-config/' + disclosure.body.configId)
+               createRequest().get(`/api/coi/archived-config/${disclosure.body.configId}`)
                .end(processResponse((error, config) => {
                  if (!error) {
                    window.config = config.body;
@@ -153,7 +153,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   respond(params) {
-    let questionToRespondTo = this.disclosure.questions.find(question => {
+    const questionToRespondTo = this.disclosure.questions.find(question => {
       return params.reviewId === question.reviewId;
     });
     if (questionToRespondTo) {
@@ -163,7 +163,7 @@ class _PIReviewStore extends AutoBindingStore {
       };
     }
 
-    let entityToRespondTo = this.disclosure.entities.find(entity => {
+    const entityToRespondTo = this.disclosure.entities.find(entity => {
       return params.reviewId === entity.reviewId;
     });
     if (entityToRespondTo) {
@@ -191,7 +191,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   revise(params) {
-    let questionToRevise = this.disclosure.questions.find(question => {
+    const questionToRevise = this.disclosure.questions.find(question => {
       return params.reviewId === question.reviewId;
     });
     if (questionToRevise) {
@@ -211,11 +211,11 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   reviseEntityQuestion(params) {
-    let entityToRevise = this.disclosure.entities.find(entity => {
+    const entityToRevise = this.disclosure.entities.find(entity => {
       return params.reviewId === entity.reviewId;
     });
     if (entityToRevise) {
-      let theAnswer = entityToRevise.answers.find(answer => {
+      const theAnswer = entityToRevise.answers.find(answer => {
         return answer.questionId === params.questionId;
       });
 
@@ -239,7 +239,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   addRelationship(params) {
-    let entityToRevise = this.disclosure.entities.find(entity => {
+    const entityToRevise = this.disclosure.entities.find(entity => {
       return params.reviewId === entity.reviewId;
     });
     if (entityToRevise) {
@@ -273,7 +273,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   removeRelationship(params) {
-    let entityToRevise = this.disclosure.entities.find(entity => {
+    const entityToRevise = this.disclosure.entities.find(entity => {
       return params.entityId === entity.id;
     });
     if (entityToRevise) {
@@ -313,10 +313,10 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   reviseSubQuestion(params) {
-    let questionToRevise = this.disclosure.questions.find(question => {
+    const questionToRevise = this.disclosure.questions.find(question => {
       return params.reviewId === question.reviewId;
     });
-    let subQuestionToRevise = questionToRevise.subQuestions.find(subQuestion => {
+    const subQuestionToRevise = questionToRevise.subQuestions.find(subQuestion => {
       return subQuestion.id === params.subQuestionId;
     });
 
@@ -362,7 +362,7 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   addEntityAttachments(data) {
-    let entityToRevise = this.disclosure.entities.find(entity => {
+    const entityToRevise = this.disclosure.entities.find(entity => {
       return data.entityId === entity.id;
     });
 
@@ -370,7 +370,7 @@ class _PIReviewStore extends AutoBindingStore {
       entityToRevise.files = [];
     }
 
-    let formData = new FormData();
+    const formData = new FormData();
     data.files.forEach(file => {
       formData.append('attachments', file);
     });
@@ -397,12 +397,12 @@ class _PIReviewStore extends AutoBindingStore {
   }
 
   deleteEntityAttachment(data) {
-    let entityToRevise = this.disclosure.entities.find(entity => {
+    const entityToRevise = this.disclosure.entities.find(entity => {
       return data.entityId === entity.id;
     });
-    let file = entityToRevise.files[data.index];
+    const file = entityToRevise.files[data.index];
 
-    createRequest().del('/api/coi/files/' + file.id)
+    createRequest().del(`/api/coi/files/${file.id}`)
     .send(file)
     .type('application/json')
     .end(processResponse((err) => {
@@ -417,4 +417,4 @@ class _PIReviewStore extends AutoBindingStore {
   }
 }
 
-export let PIReviewStore = alt.createStore(_PIReviewStore, 'PIReviewStore');
+export const PIReviewStore = alt.createStore(_PIReviewStore, 'PIReviewStore');

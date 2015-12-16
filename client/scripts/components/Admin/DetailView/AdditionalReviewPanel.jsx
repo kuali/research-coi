@@ -23,7 +23,7 @@ import {AdminActions} from '../../../actions/AdminActions';
 import {FileUpload} from '../../FileUpload';
 
 export default function AdditionalReviewPanel(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       padding: '25px 30px',
       backgroundColor: 'white',
@@ -82,7 +82,7 @@ export default function AdditionalReviewPanel(props: Object): React.Element {
     }
   };
 
-  let fileUploadStyles = {
+  const fileUploadStyles = {
     middle: {
       display: 'inline-block',
       textAlign: 'center',

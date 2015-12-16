@@ -30,7 +30,7 @@ export class NumericControl extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         width: '100%',
         display: 'inline-block'

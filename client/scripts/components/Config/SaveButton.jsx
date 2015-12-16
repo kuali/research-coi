@@ -22,7 +22,7 @@ import {merge} from '../../merge';
 import ConfigActions from '../../actions/ConfigActions';
 
 export default function SaveButton(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       cursor: 'pointer'
     },

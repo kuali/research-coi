@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable react/jsx-closing-bracket-location */
+
 import React from 'react';
 
 export function CompletedStepIcon(props: Object): React.Element {

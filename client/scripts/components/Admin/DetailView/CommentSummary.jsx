@@ -25,7 +25,7 @@ import {COIConstants} from '../../../../../COIConstants';
 
 export default class CommentSummary extends React.Component {
   getUniqueTopics(comments) {
-    let topics = [];
+    const topics = [];
     let lastValue;
     comments.forEach(comment => {
       if (lastValue !== comment.topicId) {
@@ -38,31 +38,30 @@ export default class CommentSummary extends React.Component {
   }
 
   getQuestionnaireTopics() {
-    let questionComments = this.props.disclosure.comments.filter(comment => {
+    const questionComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     }).sort((a, b) => {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
       }
-      else {
-        return a.topicId - b.topicId;
-      }
+
+      return a.topicId - b.topicId;
     });
 
     return this.getUniqueTopics(questionComments).sort((a, b) => {
-      let aName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, a);
-      let bName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, b);
+      const aName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, a);
+      const bName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, b);
 
       return String(aName).localeCompare(String(bName));
     }).map(topicId => {
-      let comments = questionComments.filter(comment => {
+      const comments = questionComments.filter(comment => {
         return comment.topicId === topicId;
       });
 
-      let topicName = 'QUESTION ' + ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, topicId);
+      const topicName = `QUESTION ${ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, topicId)}`;
       return (
         <TopicCommentSummary
-          key={'qt' + topicId}
+          key={`qt${topicId}`}
           topicName={topicName}
           comments={comments}
         />
@@ -71,52 +70,49 @@ export default class CommentSummary extends React.Component {
   }
 
   getEntityName(id) {
-    let theEntity = this.props.disclosure.entities.find(entity => {
+    const theEntity = this.props.disclosure.entities.find(entity => {
       return entity.id === id;
     });
 
     if (theEntity) {
       return theEntity.name;
     }
-    else {
-      return undefined;
-    }
+
+    return undefined;
   }
 
   getDeclarationName(id) {
-    let theDeclaration = this.props.disclosure.declarations.find(declaration => {
+    const theDeclaration = this.props.disclosure.declarations.find(declaration => {
       return declaration.id === id;
     });
 
     if (theDeclaration) {
-      return theDeclaration.projectTitle + ' - ' + theDeclaration.entityName;
+      return `${theDeclaration.projectTitle} - ${theDeclaration.entityName}`;
     }
-    else {
-      return undefined;
-    }
+
+    return undefined;
   }
 
   getEntitiesTopics() {
-    let entityComments = this.props.disclosure.comments.filter(comment => {
+    const entityComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.ENTITIES;
     }).sort((a, b) => {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
       }
-      else {
-        return a.topicId - b.topicId;
-      }
+
+      return a.topicId - b.topicId;
     });
 
     return this.getUniqueTopics(entityComments).map(topicId => {
-      let comments = entityComments.filter(comment => {
+      const comments = entityComments.filter(comment => {
         return comment.topicId === topicId;
       });
 
-      let topicName = 'ENTITY: ' + this.getEntityName(topicId);
+      const topicName = `ENTITY: ${this.getEntityName(topicId)}`;
       return (
         <TopicCommentSummary
-          key={'et' + topicId}
+          key={`et${topicId}`}
           topicName={topicName}
           comments={comments}
         />
@@ -125,26 +121,25 @@ export default class CommentSummary extends React.Component {
   }
 
   getDeclarationTopics() {
-    let declarationComments = this.props.disclosure.comments.filter(comment => {
+    const declarationComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.PROJECTS;
     }).sort((a, b) => {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
       }
-      else {
-        return a.topicId - b.topicId;
-      }
+
+      return a.topicId - b.topicId;
     });
 
     return this.getUniqueTopics(declarationComments).map(topicId => {
-      let comments = declarationComments.filter(comment => {
+      const comments = declarationComments.filter(comment => {
         return comment.topicId === topicId;
       });
 
-      let topicName = this.getDeclarationName(topicId);
+      const topicName = this.getDeclarationName(topicId);
       return (
         <TopicCommentSummary
-          key={'et' + topicId}
+          key={`et${topicId}`}
           topicName={topicName}
           comments={comments}
         />
@@ -153,7 +148,7 @@ export default class CommentSummary extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         height: '100%',
@@ -183,9 +178,9 @@ export default class CommentSummary extends React.Component {
       }
     };
 
-    let questionnaireTopics = this.getQuestionnaireTopics();
-    let entitiesTopics = this.getEntitiesTopics();
-    let declarationTopics = this.getDeclarationTopics();
+    const questionnaireTopics = this.getQuestionnaireTopics();
+    const entitiesTopics = this.getEntitiesTopics();
+    const declarationTopics = this.getDeclarationTopics();
 
     return (
       <div className="flexbox column" style={merge(styles.container, this.props.style)}>

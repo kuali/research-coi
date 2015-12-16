@@ -56,36 +56,33 @@ class _DisclosureActions {
   entityFormBackClicked(entityId) { this.dispatch(entityId); }
 
   setEntityActiveStatus(active, id) {
-    this.dispatch({
-      id: id,
-      active: active
-    });
+    this.dispatch({id,active});
   }
 
   setEntityType(newValue, id) {
     this.dispatch({
-      id: id,
+      id,
       type: newValue
     });
   }
 
   setEntityPublic(newValue, id) {
     this.dispatch({
-      id: id,
+      id,
       isPublic: newValue
     });
   }
 
   setEntityIsSponsor(newValue, id) {
     this.dispatch({
-      id: id,
+      id,
       isSponsor: newValue
     });
   }
 
   setEntityDescription(newValue, id) {
     this.dispatch({
-      id: id,
+      id,
       description: newValue
     });
   }
@@ -115,10 +112,7 @@ class _DisclosureActions {
   }
 
   removeEntityRelationship(relationId, entityId) {
-    this.dispatch({
-      relationId: relationId,
-      entityId: entityId
-    });
+    this.dispatch({relationId,entityId});
   }
 
   entityFormClosed(entity) { this.dispatch(entity); }
@@ -136,7 +130,7 @@ class _DisclosureActions {
   toggleDeclaration(id, type) {
     this.dispatch({
       entityId: id,
-      type: type
+      type
     });
   }
 
@@ -144,57 +138,51 @@ class _DisclosureActions {
 
   entityRelationChosen(relationType, finEntityId, projectId, typeCd) {
     this.dispatch({
-      relationType: relationType,
-      finEntityId: finEntityId,
-      projectId: projectId,
-      typeCd: typeCd
+      relationType,
+      finEntityId,
+      projectId,
+      typeCd
     });
   }
 
   declarationCommentedOn(relationType, finEntityId, projectId, comments) {
     this.dispatch({
-      relationType: relationType,
-      finEntityId: finEntityId,
-      projectId: projectId,
-      comments: comments
+      relationType,
+      finEntityId,
+      projectId,
+      comments
     });
   }
 
   setAllForEntity(finEntityId, newValue) {
-    this.dispatch({
-      finEntityId: finEntityId,
-      newValue: newValue
-    });
+    this.dispatch({finEntityId, newValue});
   }
 
   setAllForProject(type, projectId, newValue) {
     this.dispatch({
-      type: type,
-      projectId: projectId,
-      newValue: newValue
+      type,
+      projectId,
+      newValue
     });
   }
 
   toggleConfirmationMessage() { this.dispatch(); }
 
   manualTypeSelected(disclosureId, manualType) {
-    this.dispatch({
-      disclosureId: disclosureId,
-      manualType: manualType
-    });
+    this.dispatch({disclosureId, manualType});
   }
 
   saveManualEvent(disclosureId, id, title, sponsor, role, amount, projectType, startDate, endDate) {
     this.dispatch({
-      disclosureId: disclosureId,
-      id: id,
-      title: title,
-      sponsor: sponsor,
-      role: role,
-      amount: amount,
-      projectType: projectType,
-      startDate: startDate,
-      endDate: endDate
+      disclosureId,
+      id,
+      title,
+      sponsor,
+      role,
+      amount,
+      projectType,
+      startDate,
+      endDate
     });
   }
 
@@ -205,10 +193,7 @@ class _DisclosureActions {
   }
 
   setArchiveSort(field, direction) {
-    this.dispatch({
-      field: field,
-      direction: direction
-    });
+    this.dispatch({field, direction});
   }
 
   loadArchivedDisclosureDetail(id) { this.dispatch(id); }
@@ -221,9 +206,9 @@ class _DisclosureActions {
 
   submitDisclosure() { this.dispatch(); }
 
-  addEntityAttachments(files, entityId) { this.dispatch({files: files, entityId: entityId}); }
+  addEntityAttachments(files, entityId) { this.dispatch({files, entityId}); }
 
-  deleteEntityAttachment(index, entityId) { this.dispatch({index: index, entityId: entityId}); }
+  deleteEntityAttachment(index, entityId) { this.dispatch({index, entityId}); }
 
   addDisclosureAttachment(files) { this.dispatch(files); }
 
@@ -232,4 +217,4 @@ class _DisclosureActions {
   deleteAnswersTo(toDelete) { this.dispatch(toDelete); }
 }
 
-export let DisclosureActions = alt.createActions(_DisclosureActions);
+export const DisclosureActions = alt.createActions(_DisclosureActions);

@@ -16,9 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-magic-numbers */
+
 import LoadTest from '../../../../../../../LoadTest';
 import hashCode from '../../../../../../../../hash';
 import {getDBConnection} from '../../../../../../../DB';
+import {ACCEPTED} from './HTTPStatusCodes';
 
 export class Test extends LoadTest {
   constructor() {
@@ -45,12 +48,12 @@ export class Test extends LoadTest {
   }
 
   setup(done) {
-    let connection = getDBConnection();
+    const connection = getDBConnection();
     connection.query(`
         SELECT de.id as declaration_id, di.id as disclosure_id, di.user_id
         FROM declaration de, disclosure di
         WHERE de.disclosure_id = di.id`, (err, rows) => {
-      if (err) throw err;
+      if (err) { throw err; }
       this.disclosureMap = {};
       rows.forEach(row => {
         this.disclosureMap[row.user_id] = {
@@ -73,21 +76,20 @@ export class Test extends LoadTest {
       this.alreadyAccessed = false;
       return this.id;
     }
-    else {
-      this.alreadyAccessed = true;
-      return this.id;
-    }
+
+    this.alreadyAccessed = true;
+    return this.id;
   }
 
   getPath() {
-    let userId = this.getID();
-    let record = this.disclosureMap[hashCode(`p${userId}`)];
+    const userId = this.getID();
+    const record = this.disclosureMap[hashCode(`p${userId}`)];
 
     return `/api/coi/disclosures/${record.disclosure_id}/declarations/${record.declaration_id}`;
   }
 
   getHeaders() {
-    let id = this.getID();
+    const id = this.getID();
     return {
       'Authorization': `Bearer p${id}`,
       'Content-Length': this.postData.length,
@@ -96,6 +98,6 @@ export class Test extends LoadTest {
   }
 
   isValidResponse(response) {
-    return response.statusCode === 202;
+    return response.statusCode === ACCEPTED;
   }
 }

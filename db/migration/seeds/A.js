@@ -16,7 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint-disable camelcase, no-console */
+/*  eslint-disable
+      camelcase,
+      no-console,
+      no-magic-numbers,
+      no-var,
+      object-shorthand,
+      prefer-template,
+      prefer-arrow-callback,
+      max-len
+*/
 
 var hashCode = require('../../../hash');
 
@@ -273,7 +282,18 @@ function insertFakeProject(knex, userId) {
 
 function insertInitialArchiveConfig(query) {
   return Promise.all([
-    query.select('type_cd as typeCd', 'description', 'enabled', 'type_enabled as typeEnabled', 'amount_enabled as amountEnabled', 'destination_enabled as destinationEnabled', 'date_enabled as dateEnabled', 'reason_enabled as reasonEnabled').from('relationship_category_type'),
+    query
+      .select(
+        'type_cd as typeCd',
+        'description',
+        'enabled',
+        'type_enabled as typeEnabled',
+        'amount_enabled as amountEnabled',
+        'destination_enabled as destinationEnabled',
+        'date_enabled as dateEnabled',
+        'reason_enabled as reasonEnabled'
+      )
+      .from('relationship_category_type'),
     query.select('type_cd as typeCd', 'relationship_cd as relationshipCd', 'description', 'active').from('relationship_type').where('active', true),
     query.select('type_cd as typeCd', 'relationship_cd as relationshipCd', 'description', 'active').from('relationship_amount_type').where('active', true),
     query.select('type_cd as typeCd', 'description', 'active').from('relationship_person_type').where('active', true),
@@ -282,12 +302,38 @@ function insertInitialArchiveConfig(query) {
     query.select('id', 'reminder_text as reminderText', 'warning_value as warningValue', 'warning_period as warningPeriod', 'active').from('notification'),
     query.select('id', 'type_cd as typeCd', 'version').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(function(result) {
       if (result[0]) {
-        return query.select('id', 'active', 'questionnaire_id as questionnaireId', 'parent', 'question').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
+        return query
+          .select(
+            'id',
+            'active',
+            'questionnaire_id as questionnaireId',
+            'parent',
+            'question'
+          )
+          .from(
+            'questionnaire_question as qq'
+          )
+          .where({
+            questionnaire_id: result[0].id,
+            active: true
+          });
       }
     }),
     query.select('id', 'type_cd as typeCd', 'version').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc').then(function(result) {
       if (result[0]) {
-        return query.select('id', 'active', 'questionnaire_id as questionnaireId', 'parent', 'question').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
+        return query
+          .select(
+            'id',
+            'active',
+            'questionnaire_id as questionnaireId',
+            'parent',
+            'question'
+          )
+          .from('questionnaire_question as qq')
+          .where({
+            questionnaire_id: result[0].id,
+            active: true
+          });
       }
     }),
     query.select('status_cd as statusCd', 'description').from('disclosure_status'),
@@ -407,7 +453,16 @@ exports.seed = function(knex, Promise) {
     console.log('Seed - relationship_type');
     return Promise.all([
       knex('relationship_category_type')
-        .insert({type_cd: 1, description: 'Ownership', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
+        .insert({
+          type_cd: 1,
+          description: 'Ownership',
+          enabled: true,
+          type_enabled: true,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
         .then(function(){
           return Promise.all([
             knex('relationship_type').insert({relationship_cd: 1, description: 'Stock', active: true})
@@ -421,7 +476,16 @@ exports.seed = function(knex, Promise) {
           ]);
         }),
       knex('relationship_category_type')
-        .insert({type_cd: 2, description: 'Offices/Positions', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
+        .insert({
+          type_cd: 2,
+          description: 'Offices/Positions',
+          enabled: true,
+          type_enabled: true,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
         .then(function() {
           return Promise.all([
             knex('relationship_type').insert({relationship_cd: 2, description: 'Board Member', active: true})
@@ -436,7 +500,16 @@ exports.seed = function(knex, Promise) {
           ]);
         }),
       knex('relationship_category_type')
-        .insert({type_cd: 3, description: 'Paid Activities', enabled: true, type_enabled: false, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
+        .insert({
+          type_cd: 3,
+          description: 'Paid Activities',
+          enabled: true,
+          type_enabled: false,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
         .then(function() {
           return knex('relationship_amount_type').insert({relationship_cd: 3, description: '$1 - $5,000', active: true})
             .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 3, description: '$5,001 - $10,000', active: true});})
@@ -445,7 +518,16 @@ exports.seed = function(knex, Promise) {
             .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Does not apply', active: true});});
         }),
       knex('relationship_category_type')
-        .insert({type_cd: 4, description: 'Intellectual Property', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
+        .insert({
+          type_cd: 4,
+          description: 'Intellectual Property',
+          enabled: true,
+          type_enabled: true,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
         .then(function() {
           return Promise.all([
             knex('relationship_type').insert({relationship_cd: 4, description: 'Royalty Income', active: true})
@@ -510,7 +592,7 @@ exports.seed = function(knex, Promise) {
     return insertInitialArchiveConfig(knex);
   }).then(function() {
     if (!includeDemoData) {
-      return;
+      return undefined;
     }
     console.log('Demo data - disclosure');
     var disclosures = [];

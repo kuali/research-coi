@@ -44,7 +44,7 @@ export default class General extends React.Component {
   }
 
   onChange() {
-    let storeState = ConfigStore.getState();
+    const storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
       disclosureTypes: storeState.config.disclosureTypes,
@@ -57,7 +57,7 @@ export default class General extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
       },
       header: {

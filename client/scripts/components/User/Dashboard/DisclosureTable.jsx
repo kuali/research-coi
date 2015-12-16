@@ -36,9 +36,9 @@ export class DisclosureTable extends React.Component {
   }
 
   render() {
-    let showButtonColumn = this.atLeastOneRowHasButton(this.props.disclosures);
+    const showButtonColumn = this.atLeastOneRowHasButton(this.props.disclosures);
 
-    let styles = {
+    const styles = {
       container: {
         borderRadius: 5,
         boxShadow: '0 0 10px #C0C0C0',
@@ -68,7 +68,7 @@ export class DisclosureTable extends React.Component {
       }
     };
 
-    let rows = this.props.disclosures ? this.props.disclosures.map((disclosure, index) => {
+    const rows = this.props.disclosures ? this.props.disclosures.map((disclosure, index) => {
       return (
         <DisclosureTableRow
           type={disclosure.type}

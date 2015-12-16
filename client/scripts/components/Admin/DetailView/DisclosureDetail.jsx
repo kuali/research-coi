@@ -36,8 +36,8 @@ export class DisclosureDetail extends React.Component {
   }
 
   makeEntityMap() {
-    let result = {};
-    let entities = this.props.disclosure.entities;
+    const result = {};
+    const entities = this.props.disclosure.entities;
     if (entities !== undefined) {
       entities.forEach(entity => {
         result[entity.id] = entity.name;
@@ -68,9 +68,9 @@ export class DisclosureDetail extends React.Component {
   }
 
   render() {
-    let entityNameMap = this.makeEntityMap();
+    const entityNameMap = this.makeEntityMap();
 
-    let styles = {
+    const styles = {
       container: {
         width: '100%'
       },
@@ -107,7 +107,7 @@ export class DisclosureDetail extends React.Component {
       }
     };
 
-    let screeningQuestions = this.props.config.questions.screening.filter(question => {
+    const screeningQuestions = this.props.config.questions.screening.filter(question => {
       return question.active !== 0;
     }).sort((a, b) => {
       let aParent, bParent;
@@ -125,16 +125,14 @@ export class DisclosureDetail extends React.Component {
         if (a.parent === b.parent) {
           return a.question.order - b.question.order;
         }
-        else {
-          return aParent.question.order - bParent.question.order;
-        }
+
+        return aParent.question.order - bParent.question.order;
       }
       else if (a.parent && !b.parent) {
         return aParent.question.order - b.question.order;
       }
-      else {
-        return a.question.order - bParent.question.order;
-      }
+
+      return a.question.order - bParent.question.order;
     }).map(question => {
       return {
         id: question.id,
@@ -146,7 +144,7 @@ export class DisclosureDetail extends React.Component {
       };
     });
 
-    let entityQuestions = this.props.config.questions.entities.filter(question => {
+    const entityQuestions = this.props.config.questions.entities.filter(question => {
       return question.active !== 0;
     }).sort((a, b) => {
       return a.question.order - b.question.order;
@@ -157,25 +155,25 @@ export class DisclosureDetail extends React.Component {
         type: question.question.type
       };
     });
-    let screeningAnswers = {};
+    const screeningAnswers = {};
     this.props.disclosure.answers.forEach(answer => {
       screeningAnswers[answer.questionId] = answer.answer.value;
     });
 
-    let questionnaireComments = this.props.disclosure.comments.filter(comment => {
+    const questionnaireComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
     });
 
-    let entitiesComments = this.props.disclosure.comments.filter(comment => {
+    const entitiesComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.ENTITIES;
     });
 
-    let declarationsComments = this.props.disclosure.comments.filter(comment => {
+    const declarationsComments = this.props.disclosure.comments.filter(comment => {
       return comment.topicSection === COIConstants.DISCLOSURE_STEP.PROJECTS;
     });
 
 
-    let piComments = this.props.disclosure.comments.filter(comment => {
+    const piComments = this.props.disclosure.comments.filter(comment => {
       return comment.piVisible;
     });
 
@@ -209,11 +207,15 @@ export class DisclosureDetail extends React.Component {
           </span>
           <span style={{display: 'inline-block'}}>
             <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
-            <RejectionConfirmation id={this.props.disclosure.id} canReject={piComments.length > 0 } style={styles.rejection} />
+            <RejectionConfirmation id={this.props.disclosure.id} canReject={piComments.length > 0} style={styles.rejection} />
             <ActionButtons
               style={styles.actionButtons}
               showAttachments={this.props.disclosure.files.length > 0}
-              readonly={this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE || this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED}/>
+              readonly={
+                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
+                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED
+              }
+            />
           </span>
         </div>
       </div>

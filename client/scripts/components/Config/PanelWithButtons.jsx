@@ -22,7 +22,7 @@ import {merge} from '../../merge';
 import {GreyButton} from '../GreyButton';
 
 export default function PanelWithButtons(props: Object): React.Element {
-  let styles = {
+  const styles = {
     container: {
       borderRadius: 5,
       backgroundColor: 'white',

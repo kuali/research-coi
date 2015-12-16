@@ -55,8 +55,8 @@ export default class Entry extends React.Component {
   }
 
   saveEntry() {
-    let errors = TravelLogStore.getErrorsForId(this.props.travelLog.relationshipId);
-    let isValid = Object.keys(errors).length === 0;
+    const errors = TravelLogStore.getErrorsForId(this.props.travelLog.relationshipId);
+    const isValid = Object.keys(errors).length === 0;
     if (isValid) {
       TravelLogActions.saveEntry(this.props.travelLog.relationshipId);
     } else {
@@ -81,7 +81,7 @@ export default class Entry extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         marginTop: '44px',
         backgroundColor: 'white',
@@ -192,7 +192,7 @@ export default class Entry extends React.Component {
 
     let jsx;
     if (this.props.editing) {
-      let errors = TravelLogStore.getErrorsForId(this.props.travelLog.relationshipId);
+      const errors = TravelLogStore.getErrorsForId(this.props.travelLog.relationshipId);
       jsx = (
         <div name='Entry Editor'>
           <div style={{marginBottom: 9}}>
@@ -262,7 +262,7 @@ export default class Entry extends React.Component {
               <span style={{width: '50%', verticalAlign: 'middle'}}>
                 <span style={styles.label}>Dates:</span>
                 <span name="Dates" data-for={this.props.travelLog.entityName} style={styles.data}>
-                  {formatDate(this.props.travelLog.startDate) + ' - ' + formatDate(this.props.travelLog.endDate)}
+                  {`${formatDate(this.props.travelLog.startDate)} - ${formatDate(this.props.travelLog.endDate)}`}
                 </span>
               </span>
             </div>

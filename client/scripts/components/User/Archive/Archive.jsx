@@ -30,7 +30,7 @@ export class Archive extends React.Component {
   constructor() {
     super();
 
-    let storeState = DisclosureStore.getState();
+    const storeState = DisclosureStore.getState();
     this.state = {
       archivedDisclosures: storeState.archivedDisclosures
     };
@@ -49,7 +49,7 @@ export class Archive extends React.Component {
   }
 
   onChange() {
-    let storeState = DisclosureStore.getState();
+    const storeState = DisclosureStore.getState();
     this.setState({
       archivedDisclosures: storeState.archivedDisclosures,
       currentAnnualDisclosureStatus: storeState.currentAnnualDisclosureStatus
@@ -84,9 +84,9 @@ export class Archive extends React.Component {
   }
 
   changeArchive() {
-    let versionPicker = this.refs.versionPicker;
+    const versionPicker = this.refs.versionPicker;
 
-    let theArchive = this.state.archivedDisclosures.find(archive => {
+    const theArchive = this.state.archivedDisclosures.find(archive => {
       return archive.id === parseInt(versionPicker.value);
     });
 
@@ -96,7 +96,7 @@ export class Archive extends React.Component {
   }
 
   render() {
-    let styles = {
+    const styles = {
       container: {
         background: '#eeeeee',
         minHeight: 100
@@ -168,7 +168,7 @@ export class Archive extends React.Component {
     let detail;
     let header;
     if (this.state.archivedDisclosures && this.state.archivedDisclosures.length > 0) {
-      let versions = this.state.archivedDisclosures.map(archivedDisclosure => {
+      const versions = this.state.archivedDisclosures.map(archivedDisclosure => {
         return (
           <option key={archivedDisclosure.id} value={archivedDisclosure.id}>
             Approved {formatDate(archivedDisclosure.approvedDate)}

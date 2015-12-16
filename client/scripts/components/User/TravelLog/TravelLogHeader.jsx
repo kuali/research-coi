@@ -20,14 +20,8 @@ import React from 'react';
 import {merge} from '../../../merge';
 
 export class TravelLogHeader extends React.Component {
-  constructor() {
-    super();
-    this.commonStyles = {
-    };
-  }
-
   render() {
-    let styles = {
+    const styles = {
       container: {
         backgroundColor: 'white',
         padding: '17px 0 17px 50px',
@@ -42,7 +36,6 @@ export class TravelLogHeader extends React.Component {
         color: '#444'
       }
     };
-    styles = merge(this.commonStyles, styles);
 
     return (
       <div style={merge(styles.container, this.props.style)}>
