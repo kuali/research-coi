@@ -1,4 +1,7 @@
 V1.0.3
+* Fixed an issue when running the mock auth client that used the incorrect host 
+  in some situations. Fixed by no longer including protocol of host on the
+  redirect url.
 * Progress through a disclosure is now tracked.
   If a user gets halfway through and stops, when they return
   they will be brought back to where they were. The data has always been
