@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 
 export default class EditLink extends React.Component {
   constructor() {
@@ -31,28 +32,10 @@ export default class EditLink extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #0095A0',
-        cursor: 'pointer'
-      },
-      linkText: {
-        paddingLeft: 2,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        verticalAlign: 'middle',
-        fontSize: 8
-      },
-      icon: {
-        fontSize: 12,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        verticalAlign: 'middle'
-      }
-    };
-
     return (
-      <span onClick={this.onClick} style={merge(styles.container, this.props.style)}>
-        <i className="fa fa-pencil" style={styles.icon}></i>
-        <span style={styles.linkText}>EDIT</span>
+      <span onClick={this.onClick} className={classNames(styles.container, this.props.className)}>
+        <i className={`fa fa-pencil ${styles.icon}`}></i>
+        <span className={styles.linkText}>EDIT</span>
       </span>
     );
   }

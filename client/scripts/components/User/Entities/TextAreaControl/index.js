@@ -16,7 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
 export class TextAreaControl extends React.Component {
   constructor() {
@@ -30,45 +32,30 @@ export class TextAreaControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      textarea: {
-        width: '100%',
-        height: 90,
-        maxWidth: '100%',
-        fontSize: 16,
-        padding: 5,
-        borderRadius: 5,
-        border: '1px solid #AAA',
-        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa'
-      },
-      value: {
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      invalidError: {
-        fontSize: 10,
-        marginTop: 2
-      }
-    };
-
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-        <div style={styles.invalidError}>Required Field</div>
+        <div className={styles.invalidError}>Required Field</div>
       );
     }
 
     if (this.props.readonly) {
       return (
-        <div style={styles.value}>
+        <div className={styles.value}>
           {this.props.answer}
         </div>
       );
     }
 
     return (
-      <div>
-        <textarea id={`eqa${this.props.questionId}`} ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.onChange} />
+      <div className={classNames({[styles.invalid]: this.props.invalid})}>
+        <textarea
+          id={`eqa${this.props.questionId}`}
+          ref="textarea"
+          className={styles.textarea}
+          value={this.props.answer}
+          onChange={this.onChange}
+        />
         {requiredFieldError}
       </div>
     );

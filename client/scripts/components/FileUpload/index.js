@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import {merge} from '../merge';
-import {GreyButton} from './GreyButton';
-import {BlueButton} from './BlueButton';
+import {GreyButton} from '../GreyButton';
+import {BlueButton} from '../BlueButton';
 
 export class FileUpload extends React.Component {
   constructor() {
@@ -39,79 +39,6 @@ export class FileUpload extends React.Component {
   }
 
   render() {
-    const defaultStyles = {
-      dropZone: {
-        border: '3px dashed grey',
-        margin: '0 0 25px 0',
-        borderRadius: 5,
-        padding: 20
-      },
-      dropZoneActive: {
-        backgroundColor: '#0095A0',
-        margin: 25,
-        borderRadius: 5,
-        padding: 23,
-        color: 'white',
-        border: 0
-      },
-      left: {
-        width: '12%',
-        display: 'inline-block',
-        verticalAlign: 'middle'
-      },
-      middle: {
-        width: '66%',
-        display: 'inline-block',
-        textAlign: 'center',
-        verticalAlign: 'middle'
-      },
-      right: {
-        width: '22%',
-        display: 'inline-block'
-      },
-      file: {
-        backgroundColor: '#EEEEEE',
-        marginTop: 10,
-        borderRadius: 5,
-        padding: '10px 19px 15px 19px'
-      },
-      icon: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 32,
-        paddingLeft: 14
-      },
-      button: {
-        padding: 3,
-        width: 90,
-        fontSize: 11
-      },
-      downloadButton: {
-        padding: 1,
-        width: 90,
-        fontWeight: 300,
-        fontSize: 10,
-        marginRight: 7
-      },
-      deleteButton: {
-        padding: 1,
-        width: 90,
-        fontWeight: 300,
-        fontSize: 10,
-        boxShadow: '0 -1px 5px #D0D0D0'
-      },
-      link: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
-        fontSize: 17
-      },
-      downloadButtonLink: {
-        color: '#0095A0',
-        fontSize: 17
-      }
-    };
-
-    const styles = merge(defaultStyles, this.props.styles);
-
     let files;
     if (this.props.files) {
       files = this.props.files.map((file, index) => {
@@ -119,27 +46,27 @@ export class FileUpload extends React.Component {
 
         if (file.preview) {
           downloadLink = (
-            <a target="_blank" style={styles.link} href={file.preview}>
+            <a target="_blank" className={styles.link} href={file.preview}>
               {file.name}
             </a>
           );
           downloadButton = (
-            <a target="_blank" style={styles.downloadButtonLink} href={file.preview}>
+            <a target="_blank" className={styles.downloadButtonLink} href={file.preview}>
               <span>
-                <BlueButton style={styles.downloadButton}>DOWNLOAD</BlueButton>
+                <BlueButton className={`${styles.override} ${styles.downloadButton}`}>DOWNLOAD</BlueButton>
               </span>
             </a>
           );
         } else if(file.key) {
           downloadLink = (
-            <a style={styles.link} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
+            <a className={styles.link} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
               {file.name}
             </a>
           );
           downloadButton = (
-            <a style={styles.downloadButtonLink} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
+            <a className={styles.downloadButtonLink} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
               <span>
-                <BlueButton style={styles.downloadButton}>DOWNLOAD</BlueButton>
+                <BlueButton className={`${styles.override} ${styles.downloadButton}`}>DOWNLOAD</BlueButton>
               </span>
             </a>
           );
@@ -148,12 +75,12 @@ export class FileUpload extends React.Component {
         let deleteButton;
         if (!this.props.readonly) {
           deleteButton = (
-            <GreyButton onClick={this.onDelete} style={styles.deleteButton} value={index}>DELETE FILE</GreyButton>
+            <GreyButton onClick={this.onDelete} className={`${styles.override} ${styles.deleteButton}`} value={index}>DELETE FILE</GreyButton>
           );
         }
 
         return (
-          <div value={index} key={`file_${index}`} style={styles.file}>
+          <div value={index} key={`file_${index}`} className={styles.file}>
             {downloadLink}
             <span style={{float: 'right'}}>
               {downloadButton}
@@ -171,25 +98,26 @@ export class FileUpload extends React.Component {
       dropzone = (
         <Dropzone
           onDrop={this.onDrop}
-          style={styles.dropZone}
-          className="fd"
-          activeClassName="file-drop"
-          activeStyle={styles.dropZoneActive}
+          className={`fd ${styles.dropZone}`}
+          activeClassName={`file-drop ${styles.dropZoneActive}`}
           multiple={this.props.multiple}
         >
-          <div className="not-hovering">
-            <span style={styles.left}>
-              <i className="fa fa-upload" style={styles.icon}></i>
+          <div className={`not-hovering`}>
+            <span className={styles.left}>
+              <i className={`fa fa-upload ${styles.icon}`}></i>
             </span>
-            <span style={styles.middle}>
+            <span className={`${styles.middle} ${this.props.className}`}>
               {this.props.children}
             </span>
-            <span style={styles.right}>
-              <BlueButton style={styles.button}>UPLOAD</BlueButton>
+            <span className={styles.right}>
+              <BlueButton className={`${styles.override} ${styles.button}`}>UPLOAD</BlueButton>
             </span>
           </div>
-          <div className="hovering" style={{textAlign: 'center', height: 31}}>
-            <i className="fa fa-file-text" style={{color: 'white', marginRight: 15, fontSize: 20}}></i>
+          <div className={`hovering`} style={{textAlign: 'center', height: 31}}>
+            <i
+              className={`fa fa-file-text`}
+              style={{color: 'white', marginRight: 15, fontSize: 20}}
+            ></i>
             <span style={{fontSize: 19}}>Drop Me Here!</span>
           </div>
         </Dropzone>
@@ -197,10 +125,10 @@ export class FileUpload extends React.Component {
     }
 
     return (
-    <div>
-      {dropzone}
-      {files}
-    </div>
+      <div>
+        {dropzone}
+        {files}
+      </div>
     );
   }
 }

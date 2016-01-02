@@ -16,17 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {AppHeader} from '../../AppHeader';
-import {PIReviewStore} from '../../../stores/PIReviewStore';
-import RevisionHeader from './RevisionHeader';
-import QuestionnaireSection from './QuestionnaireSection';
-import EntitySection from './EntitySection';
-import DeclarationSection from './DeclarationSection';
-import SidePanel from './SidePanel';
-import PIReviewActions from '../../../actions/PIReviewActions';
-import ConfigStore from '../../../stores/ConfigStore';
+import styles from './style';
+import React from 'react';
+import {AppHeader} from '../../../AppHeader';
+import {PIReviewStore} from '../../../../stores/PIReviewStore';
+import RevisionHeader from '../RevisionHeader';
+import QuestionnaireSection from '../QuestionnaireSection';
+import EntitySection from '../EntitySection';
+import DeclarationSection from '../DeclarationSection';
+import SidePanel from '../SidePanel';
+import PIReviewActions from '../../../../actions/PIReviewActions';
+import ConfigStore from '../../../../stores/ConfigStore';
 
 export class Revise extends React.Component {
   constructor() {
@@ -66,22 +66,6 @@ export class Revise extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        backgroundColor: '#F2F2F2',
-        minHeight: 100,
-        overflowY: 'auto'
-      },
-      disclosure: {
-        overflowY: 'auto'
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 10,
-        position: 'relative'
-      }
-    };
-
     let questionnaire, entities, declarations;
     if (this.state.disclosure) {
       if (this.state.disclosure.questions && this.state.disclosure.questions.length > 0) {
@@ -110,16 +94,16 @@ export class Revise extends React.Component {
     }
 
     return (
-      <div className="flexbox column" style={{height: '100%'}}>
-        <AppHeader style={styles.header} />
-        <div className="fill flexbox column" style={merge(styles.container, this.props.style)}>
+      <div className={`flexbox column`} style={{height: '100%'}}>
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <div className={`fill flexbox column ${styles.container} ${this.props.className}`}>
           <RevisionHeader
             disclosureType={2}
             submittedDate={new Date()}
             returnedDate={new Date()}
           />
-          <div className="flexbox row fill">
-            <span className="fill" style={styles.disclosure}>
+          <div className={`flexbox row fill`}>
+            <span className={`fill ${styles.disclosure}`}>
               {questionnaire}
               {entities}
               {declarations}

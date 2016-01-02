@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {Question} from './Question';
-import {Instructions} from '../Instructions';
-import {COIConstants} from '../../../../../COIConstants';
+import styles from './style';
+import React from 'react';
+import {Question} from '../Question';
+import {Instructions} from '../../Instructions';
+import {COIConstants} from '../../../../../../COIConstants';
 
 export class Questionnaire extends React.Component {
   constructor() {
@@ -44,26 +44,6 @@ export class Questionnaire extends React.Component {
       const FULL_WIDTH_IN_PERCENT = 100;
       percentToSlide = (this.props.currentquestion - 1) * -FULL_WIDTH_IN_PERCENT;
     }
-
-    const styles = {
-      container: {
-        whiteSpace: 'nowrap'
-      },
-      questionArea: {
-        margin: '46px 0 0 50px',
-        overflow: 'hidden',
-        paddingBottom: '140px'
-      },
-      question: {
-        width: '100%',
-        whiteSpace: 'normal',
-        verticalAlign: 'top'
-      },
-      slider: {
-        transition: 'all .2s ease-in-out',
-        transform: `translateX(${percentToSlide}%)`
-      }
-    };
 
     let questions = [];
 
@@ -91,7 +71,7 @@ export class Questionnaire extends React.Component {
             <Question
               id={question.id}
               answer={answer}
-              style={styles.question}
+              className={`${styles.override} ${styles.question}`}
               number={index + 1}
               of={parentQuestions.length}
               question={question}
@@ -105,19 +85,16 @@ export class Questionnaire extends React.Component {
     }
 
     const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
-    const instructions = (
-      <Instructions
-        text={instructionText}
-        collapsed={!this.props.instructionsShowing}
-      />
-    );
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        {instructions}
+      <div className={`${styles.container} ${this.props.className}`}>
+        <Instructions
+          text={instructionText}
+          collapsed={!this.props.instructionsShowing}
+        />
 
-        <div style={styles.questionArea}>
-          <div style={styles.slider}>
+        <div className={styles.questionArea}>
+          <div style={{transition: 'all .2s ease-in-out', transform: `translateX(${percentToSlide}%)`}}>
             {questions}
           </div>
         </div>

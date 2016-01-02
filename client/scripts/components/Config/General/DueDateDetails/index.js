@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {DatePicker} from '../../DatePicker';
-import {merge} from '../../../merge';
-import ConfigActions from '../../../actions/ConfigActions';
+import {DatePicker} from '../../../DatePicker';
+import ConfigActions from '../../../../actions/ConfigActions';
 
 export default class DueDateDetails extends React.Component {
   constructor() {
@@ -49,41 +50,18 @@ export default class DueDateDetails extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        margin: '0 23px 15px 23px'
-      },
-      notificationQuestion: {
-        fontWeight: 'bold',
-        margin: '5px 0 17px 0',
-        textAlign: 'center'
-      },
-      dueDateOptions: {
-        paddingBottom: 15
-      },
-      dueDataType: {
-        flex: 1,
-        fontSize: 17
-      },
-      checkbox: {
-        marginRight: 10
-      },
-      datepicker: {
-        marginTop: 4
-      },
-      title: {
-        fontSize: 12,
-        marginBottom: 10
-      }
-    };
-
     let dueDate;
     if (this.props.isRollingDueDate === false) {
       dueDate = (
         <div>
           <label htmlFor="dueDate">Due Date:</label>
           <div>
-            <DatePicker id="dueDate" style={styles.datepicker} onChange={this.setDueDate} value={this.props.dueDate} />
+            <DatePicker
+              id="dueDate"
+              className={`${styles.override} ${styles.datepicker}`}
+              onChange={this.setDueDate}
+              value={this.props.dueDate}
+            />
           </div>
         </div>
       );
@@ -92,39 +70,39 @@ export default class DueDateDetails extends React.Component {
     let heading;
     if (this.props.showTitleQuestion) {
       heading = (
-        <div style={styles.notificationQuestion}>How are your institution's due dates set up?</div>
+        <div className={styles.notificationQuestion}>How are your institution's due dates set up?</div>
       );
     }
     else {
       heading = (
-        <div style={styles.title}>DISCLOSURE DUE DATES</div>
+        <div className={styles.title}>DISCLOSURE DUE DATES</div>
       );
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
         {heading}
-        <div className="flexbox row" style={styles.dueDateOptions}>
-          <span style={styles.dueDataType}>
+        <div className={classNames('flexbox', 'row', styles.dueDateOptions)}>
+          <span className={styles.dueDataType}>
             <input
               type="radio"
               name="duedatetype"
               id="static"
               ref="static"
               onChange={this.makeStatic}
-              style={styles.checkbox}
+              className={styles.checkbox}
               checked={this.props.isRollingDueDate === false}
             />
             <label htmlFor="static" style={{marginRight: 50}}>Static Annual Due Date</label>
           </span>
-          <span style={styles.dueDataType}>
+          <span className={styles.dueDataType}>
             <input
               type="radio"
               name="duedatetype"
               id="rolling"
               ref="rolling"
               onChange={this.makeRolling}
-              style={styles.checkbox}
+              className={styles.checkbox}
               checked={this.props.isRollingDueDate}
             />
             <label htmlFor="rolling">Rolling Annual Due Date</label>

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,36 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 
-export default function SubmitLink(props: Object): React.Element {
-  const styles = {
-    container: {
-      fontSize: 15,
-      cursor: props.disabled ? 'default' : 'pointer',
-      color: window.colorBlindModeOn ? 'black' : '#555555'
-    },
-    stepLabel: {
-      verticalAlign: 'middle'
-    },
-    icon: {
-      color: window.colorBlindModeOn ? 'black' : '#F57C00',
-      fontSize: 29,
-      marginRight: 6,
-      verticalAlign: 'middle'
-    }
-  };
-
-  if (props.disabled) {
-    styles.container.color = '#AAA';
-    styles.icon.color = '#AAA';
-  }
+export default function SubmitLink(props) {
+  const classes = classNames(
+    {[styles.disabled]: props.disabled},
+    styles.container,
+    props.className
+  );
 
   return (
-    <div onClick={props.onClick} style={merge(styles.container, props.style)}>
-      <i className="fa fa-arrow-circle-right" style={styles.icon}></i>
-      <span style={styles.stepLabel}>
+    <div onClick={props.onClick} className={classes}>
+      <i className={`fa fa-arrow-circle-right ${styles.icon}`}></i>
+      <span className={styles.stepLabel}>
         SUBMIT
       </span>
     </div>

@@ -16,15 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {Toggle} from './Toggle';
+import styles from './style';
+import React from 'react';
+import {Toggle} from '../Toggle';
 
-export class ToggleSet extends ResponsiveComponent {
+export class ToggleSet extends React.Component {
   constructor(props) {
     super();
-    this.commonStyles = {};
 
     this.state = {
       value: props.selected
@@ -46,22 +44,11 @@ export class ToggleSet extends ResponsiveComponent {
     this.props.onChoose(newValue);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-      },
-      toggle: {
-        margin: '0 10px 10px 0'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+  render() {
     const toggles = this.props.values.map(value => {
       return (
         <Toggle
-          style={styles.toggle}
+          className={`${styles.override} ${styles.toggle}`}
           typeCd={value.typeCd}
           text={value.description}
           selected={this.state.value === value.typeCd}
@@ -72,7 +59,7 @@ export class ToggleSet extends ResponsiveComponent {
     });
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={`${styles.container} ${this.props.className}`}>
         {toggles}
       </div>
     );

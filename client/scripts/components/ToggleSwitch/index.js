@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../merge';
 
 export default class ToggleSwitch extends React.Component {
   constructor(props) {
@@ -42,49 +43,19 @@ export default class ToggleSwitch extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        cursor: 'pointer',
-        verticalAlign: 'middle',
-        height: 23,
-        display: 'inline-block'
-      },
-      base: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#999999',
-        color: 'white',
-        fontSize: 7,
-        width: 42,
-        display: 'inline-block',
-        borderRadius: 9,
-        padding: 4,
-        position: 'relative'
-      },
-      label: {
-        width: '50%',
-        display: 'inline-block',
-        textAlign: 'center'
-      },
-      slider: {
-        position: 'absolute',
-        height: 16,
-        width: 16,
-        backgroundColor: '#F2F2F2',
-        borderRadius: 8,
-        top: 0,
-        left: 2,
-        boxShadow: '0 0 1px 1px #AAA',
-        transition: '.1s ease-out transform',
-        transform: this.state.on ? 'translateX(0px)' : 'translateX(22px)'
-      }
-    };
+    const classes = classNames(
+      styles.container,
+      {[styles.on]: this.state.on},
+      this.props.className
+    );
 
     return (
-      <span onClick={this.onClick} style={merge(styles.container, this.props.style)}>
+      <span onClick={this.onClick} className={classes}>
         <span style={{marginRight: 8}}>
-          <span style={styles.base}>
-            <span style={styles.label}>OFF</span>
-            <span style={styles.label}>ON</span>
-            <span style={styles.slider}></span>
+          <span className={styles.base}>
+            <span className={styles.label}>OFF</span>
+            <span className={styles.label}>ON</span>
+            <span className={styles.slider}></span>
           </span>
         </span>
         <span style={{verticalAlign: 'middle'}}>{this.props.label}</span>

@@ -18,26 +18,14 @@
 
 /* eslint-disable react/jsx-key */
 
-import React from 'react'; // eslint-disable-line no-unused-vars
-import {merge} from '../merge';
-
-const styles = {
-  container: {
-    backgroundColor: '#E6E6E6',
-    border: 0,
-    borderBottom: '2px solid #A6A6A6',
-    borderRadius: 3,
-    fontSize: 12,
-    padding: '4px 13px',
-    cursor: 'pointer',
-    minWidth: 100
-  }
-};
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
 export const GreyButton = props => (
   <button
     {...props}
-    style={merge(styles.container, props.style)}
+    className={classNames(styles.container, props.className)}
   >
     {props.children}
   </button>

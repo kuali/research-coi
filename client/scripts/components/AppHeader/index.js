@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../merge';
-import {KualiLogo} from './DynamicIcons/KualiLogo';
-import ToggleSwitch from './ToggleSwitch';
-import ColorActions from '../actions/ColorActions';
+import styles from './style';
+import React from 'react';
+import {KualiLogo} from '../DynamicIcons/KualiLogo';
+import ToggleSwitch from '../ToggleSwitch';
+import ColorActions from '../../actions/ColorActions';
 import cookies from 'cookies-js';
-import UserInfoStore from '../stores/UserInfoStore';
+import UserInfoStore from '../../stores/UserInfoStore';
 
 export class AppHeader extends React.Component {
   constructor() {
@@ -62,82 +62,18 @@ export class AppHeader extends React.Component {
   }
 
   render() {
-    const styles = {
-      logo: {
-        width: 26,
-        height: 26,
-        verticalAlign: 'middle',
-        color: 'black'
-      },
-      kuali: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        marginTop: '-3px'
-      },
-      product: {
-        color: 'black',
-        fontSize: 20,
-        fontWeight: window.colorBlindModeOn ? 'normal' : '300',
-        verticalAlign: 'middle',
-        paddingLeft: 5,
-        paddingRight: 18,
-        borderRight: '1px solid',
-        marginRight: 15
-      },
-      modulename: {
-        color: 'black',
-        fontSize: 16,
-        fontWeight: window.colorBlindModeOn ? 'normal' : '300',
-        paddingLeft: 5,
-        paddingTop: 7
-      },
-      controls: {
-        'float': 'right',
-        display: 'inline-block',
-        padding: 10,
-        fontSize: 13,
-        color: window.colorBlindModeOn ? 'black' : '#808080'
-      },
-      icon: {
-        color: '#676767',
-        width: '65px',
-        verticalAlign: 'middle',
-        padding: '0 10px'
-      },
-      mobileMenu: {
-        color: 'white',
-        height: '100%'
-      },
-      container: {
-        backgroundColor: 'white',
-        padding: '0 10px 0 50px'
-      },
-      usersName: {
-        textTransform: 'uppercase',
-        paddingLeft: 30,
-        verticalAlign: 'middle'
-      },
-      signOut: {
-        borderRight: '1px solid #555555',
-        padding: '0px 30px',
-        verticalAlign: 'middle',
-        cursor: 'pointer',
-        color: window.colorBlindModeOn ? 'black' : '#555555'
-      }
-    };
-
     let signOut;
     if (this.state.userInfo && this.state.userInfo.mock === true) {
       signOut = (
-        <a style={styles.signOut} href="#" onClick={this.logOut}>
-          <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
+        <a className={styles.signOut} href="#" onClick={this.logOut}>
+          <i className={`fa fa-sign-out`} style={{paddingRight: 5, fontSize: 16}}></i>
           SIGN OUT
         </a>
       );
     } else {
       signOut = (
-        <a style={styles.signOut} href="/auth/signout?return_to=/coi">
-          <i className="fa fa-sign-out" style={{paddingRight: 5, fontSize: 16}}></i>
+        <a className={styles.signOut} href="/auth/signout?return_to=/coi">
+          <i className={`fa fa-sign-out`} style={{paddingRight: 5, fontSize: 16}}></i>
           SIGN OUT
         </a>
       );
@@ -149,20 +85,20 @@ export class AppHeader extends React.Component {
     }
 
     return (
-      <header style={merge(styles.container, this.props.style)}>
+      <header className={`${styles.container} ${this.props.className}`}>
         <span style={{margin: '6px 0', display: 'inline-block'}}>
           <a href="/kc-dev">
-            <KualiLogo style={styles.logo} />
-            <span style={styles.product}>
+            <KualiLogo className={`${styles.override} ${styles.logo}`} />
+            <span className={styles.product}>
               Kuali
               <span style={{fontWeight: 'bold'}}>Research</span>
             </span>
           </a>
-          <span style={styles.kuali}>
-            <div style={styles.modulename}>Conflict Of Interest</div>
+          <span className={styles.kuali}>
+            <div className={styles.modulename}>Conflict Of Interest</div>
           </span>
         </span>
-        <span style={styles.controls}>
+        <span className={styles.controls}>
           <span style={{verticalAlign: 'middle'}}>
             <ToggleSwitch
               onChange={this.onContrastChange}
@@ -171,7 +107,7 @@ export class AppHeader extends React.Component {
             />
           </span>
           {signOut}
-          <span style={styles.usersName}>
+          <span className={styles.usersName}>
             Welcome,
             <span style={{marginLeft: 3}}>
               {usersName}

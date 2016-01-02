@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {QuestionSummary} from './QuestionSummary';
-import {Instructions} from '../Instructions';
-import {COIConstants} from '../../../../../COIConstants';
+import styles from './style';
+import React from 'react';
+import {QuestionSummary} from '../QuestionSummary';
+import {Instructions} from '../../Instructions';
+import {COIConstants} from '../../../../../../COIConstants';
 
 export class QuestionnaireSummary extends React.Component {
   constructor() {
@@ -36,24 +36,6 @@ export class QuestionnaireSummary extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'block',
-        overflow: 'hidden'
-      },
-      summaryArea: {
-        padding: '23px 29px',
-        backgroundColor: 'white',
-        margin: '35px 5px 3px 39px',
-        boxShadow: '0 0 8px #AAA',
-        borderRadius: 5
-      },
-      title: {
-        fontWeight: 'bold',
-        fontSize: 18
-      }
-    };
-
     const summaries = [];
     if (this.props.answers) {
       const questionAnswer = this.props.answers.map(a => {
@@ -109,11 +91,11 @@ export class QuestionnaireSummary extends React.Component {
     );
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
+      <span className={`${styles.container} ${this.props.className}`}>
         {instructions}
 
-        <div style={styles.summaryArea}>
-          <div style={styles.title}>
+        <div className={styles.summaryArea}>
+          <div className={styles.title}>
             Please review your questionnaire summary for accuracy before moving on:
           </div>
           {summaries}

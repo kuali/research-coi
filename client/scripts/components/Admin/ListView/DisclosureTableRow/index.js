@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {formatDate} from '../../../formatDate';
-import ConfigStore from '../../../stores/ConfigStore';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {formatDate} from '../../../../formatDate';
+import ConfigStore from '../../../../stores/ConfigStore';
 import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
@@ -30,7 +31,7 @@ export class DisclosureTableRow extends React.Component {
       return (
         <span>
           <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
-          <span className="highlight">
+          <span className={`highlight`}>
             {matchingValue}
           </span>
           <span style={{display: 'inline'}}>{value.substr(start + this.props.searchTerm.length)}</span>
@@ -42,26 +43,6 @@ export class DisclosureTableRow extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'table-row',
-        height: 43
-      },
-      value: {
-        padding: '12px 0 0 0',
-        display: 'table-cell',
-        borderBottom: '1px solid #AAA',
-        fontSize: 15,
-        textOverflow: 'ellipsis'
-      },
-      firstColumn: {
-        padding: '12px 0 0 50px'
-      },
-      lastColumn: {
-        padding: '12px 50px 0 0'
-      }
-    };
-
     let dateToShow;
     if (this.props.revisedDate !== null) {
       dateToShow = `${formatDate(this.props.revisedDate)} (revised)`;
@@ -71,19 +52,19 @@ export class DisclosureTableRow extends React.Component {
     }
 
     return (
-      <div role="row" style={merge(styles.container, this.props.style)}>
-        <span role="gridcell" style={merge(styles.value, styles.firstColumn)}>
+      <div role="row" className={classNames(styles.container, this.props.className)}>
+        <span role="gridcell" className={classNames(styles.value, styles.firstColumn)}>
           <Link to={`/coi/admin/detailview/${this.props.id}/${this.props.statusCd}`}>
             {this.highlightSearchTerm(this.props.submittedBy)}
           </Link>
         </span>
-        {/*<span role="gridcell" style={styles.value}>
+        {/*<span role="gridcell" className={styles.value}>
           {this.highlightSearchTerm(this.props.type)}
         </span>*/}
-        <span role="gridcell" style={styles.value}>
+        <span role="gridcell" className={styles.value}>
           {ConfigStore.getAdminDisclosureStatusString(this.props.statusCd)}
         </span>
-        <span role="gridcell" style={merge(styles.value, styles.lastColumn)}>
+        <span role="gridcell" className={classNames(styles.value, styles.lastColumn)}>
           {dateToShow}
         </span>
       </div>

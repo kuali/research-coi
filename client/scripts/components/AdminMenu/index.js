@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../merge';
 
 export default class AdminMenu extends React.Component {
   constructor() {
@@ -37,56 +38,30 @@ export default class AdminMenu extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        backgroundColor: 'white',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        padding: '25px 0px',
-        fontSize: 20,
-        textAlign: 'center',
-        cursor: 'pointer',
-        zIndex: 9,
-        position: 'relative',
-        boxShadow: '0 0 10px #CCC'
-      },
-      menuItems: {
-        textAlign: 'left',
-        borderTop: '1px solid #CCC',
-        padding: '15px 20px 0 20px',
-        margin: this.state.expanded ? '10px 28px 0 28px' : '-140px 28px 0 28px',
-        transition: 'margin .1s ease-in-out'
-      },
-      menuItem: {
-        display: 'block',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 16,
-        lineHeight: '38px',
-        paddingLeft: 24
-      },
-      arrowIcon: {
-        fontSize: 15,
-        marginRight: 10
-      }
-    };
+    const classes = classNames(
+      styles.container,
+      {[styles.expanded]: this.state.expanded},
+      this.props.className
+    );
 
     return (
-      <div style={merge(styles.container, this.props.style)} onClick={this.toggle}>
+      <div className={classes} onClick={this.toggle}>
         <div>
-          <i className="fa fa-bars"></i>
+          <i className={`fa fa-bars`}></i>
           <span style={{marginLeft: 15}}>ADMIN MENU</span>
         </div>
         <div style={{overflowY: 'hidden'}}>
-          <div style={styles.menuItems}>
-            <a href="/coi/admin" style={styles.menuItem}>
-              <i className="fa fa-chevron-left" style={styles.arrowIcon}></i>
+          <div className={styles.menuItems}>
+            <a href="/coi/admin" className={styles.menuItem}>
+              <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
               Admin Dashboard
             </a>
-            <a href="/coi/config" style={styles.menuItem}>
-              <i className="fa fa-chevron-left" style={styles.arrowIcon}></i>
+            <a href="/coi/config" className={styles.menuItem}>
+              <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
               Configuration
             </a>
-            <a href="/coi/" style={styles.menuItem}>
-              <i className="fa fa-chevron-left" style={styles.arrowIcon}></i>
+            <a href="/coi/" className={styles.menuItem}>
+              <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
               Researcher Dashboard
             </a>
           </div>

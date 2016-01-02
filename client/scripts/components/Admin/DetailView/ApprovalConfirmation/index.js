@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,56 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {GreyButton} from '../../GreyButton';
-import {BlueButton} from '../../BlueButton';
-import {AdminActions} from '../../../actions/AdminActions';
+import {GreyButton} from '../../../GreyButton';
+import {BlueButton} from '../../../BlueButton';
+import {AdminActions} from '../../../../actions/AdminActions';
+import classNames from 'classnames';
 
-export default function ApprovalConfirmation(props: Object): React.Element {
-  const styles = {
-    container: {
-      color: 'black',
-      fontSize: 15,
-      width: 235,
-      backgroundColor: 'white',
-      padding: '20px 24px',
-      boxShadow: '0 0 10px 2px #CCC'
-    },
-    button: {
-      margin: '0 auto',
-      display: 'block',
-      marginBottom: 10,
-      padding: '5px 10px',
-      borderBottom: '2px solid #717171',
-      width: 135,
-      backgroundColor: window.colorBlindModeOn ? 'white' : '#DFDFDF'
-    },
-    yesButton: {
-      margin: '0 auto',
-      display: 'block',
-      marginBottom: 10,
-      padding: '5px 10px',
-      backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-      color: 'white',
-      borderBottom: '2px solid #717171',
-      width: 135,
-      fontWeight: 300,
-      textShadow: '1px 1px 6px #777'
-    },
-    question: {
-      marginBottom: 30
-    }
-  };
-
+export default function ApprovalConfirmation(props) {
   return (
-    <div style={merge(styles.container, props.style)} >
-      <div style={styles.question}>
+    <div className={classNames(styles.container, props.className)} >
+      <div className={styles.question}>
         Are you sure you want to approve this disclosure?
       </div>
 
-      <BlueButton onClick={AdminActions.approveDisclosure} style={styles.yesButton}>YES, CONFIRM</BlueButton>
-      <GreyButton onClick={AdminActions.toggleApprovalConfirmation} style={styles.button}>NO, CANCEL</GreyButton>
+      <BlueButton
+        onClick={AdminActions.approveDisclosure}
+        className={`${styles.override} ${styles.yesButton}`}
+      >
+        YES, CONFIRM
+      </BlueButton>
+      <GreyButton
+        onClick={AdminActions.toggleApprovalConfirmation}
+        className={`${styles.override} ${styles.button}`}
+      >
+        NO, CANCEL
+      </GreyButton>
     </div>
   );
 }

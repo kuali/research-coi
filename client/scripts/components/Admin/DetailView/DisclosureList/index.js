@@ -16,15 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import {DisclosureListItem} from './DisclosureListItem';
-import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
-import SearchFilterGroup from '../SearchFilterGroup';
-import {AdminActions} from '../../../actions/AdminActions';
-import {BlueButton} from '../../BlueButton';
-import ConfigStore from '../../../stores/ConfigStore';
-import AdminMenu from '../../AdminMenu';
+import {DisclosureListItem} from '../DisclosureListItem';
+import {DisclosureFilterSearch} from '../../DisclosureFilterSearch';
+import SearchFilterGroup from '../../SearchFilterGroup';
+import {AdminActions} from '../../../../actions/AdminActions';
+import {BlueButton} from '../../../BlueButton';
+import ConfigStore from '../../../../stores/ConfigStore';
+import AdminMenu from '../../../AdminMenu';
 
 export class DisclosureList extends React.Component {
   constructor() {
@@ -55,56 +56,6 @@ export class DisclosureList extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        backgroundColor: '#EEEEEE',
-        borderLeft: '1px solid #6d6d6d',
-        verticalAlign: 'top',
-        boxShadow: '3px 0px 6px #CCC',
-        transition: 'width .2s ease-in-out',
-        zIndex: 2
-      },
-      list: {
-        listStyleType: 'none',
-        marginTop: 0,
-        padding: 0,
-        overflowX: 'hidden',
-        overflowY: 'auto',
-        width: 320
-      },
-      filterGroup: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      heading: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        backgroundColor: '#EEEEEE',
-        textAlign: 'right',
-        padding: '8px 70px 8px 0',
-        fontWeight: 'bold',
-        fontSize: 17,
-        position: 'relative',
-        zIndex: 2,
-        borderRight: '1px solid #DDD',
-        cursor: 'pointer'
-      },
-      loadMoreButton: {
-        textAlign: 'center',
-        margin: '10px 0'
-      },
-      loadingIndicator: {
-        textAlign: 'center',
-        margin: '10px 0',
-        color: '#777'
-      },
-      filterArrow: {
-        fontSize: 6,
-        verticalAlign: 'top',
-        margin: '7px 0 0 7px',
-        transition: 'transform .1s linear',
-        transform: this.props.showFilters ? 'rotateZ(0deg)' : 'rotateZ(180deg)'
-      }
-    };
-
     let disclosuresJsx;
     if (this.props.summaries) {
       disclosuresJsx = this.props.summaries.map(disclosure => {
@@ -126,7 +77,7 @@ export class DisclosureList extends React.Component {
     let loadMoreButton;
     if (!this.props.loadedAll && !this.props.loadingMore) {
       loadMoreButton = (
-        <div style={styles.loadMoreButton}>
+        <div className={styles.loadMoreButton}>
           <BlueButton onClick={AdminActions.loadMore}>Load more</BlueButton>
         </div>
       );
@@ -135,7 +86,7 @@ export class DisclosureList extends React.Component {
     let loadingIndicator;
     if (this.props.loadingMore) {
       loadingIndicator = (
-        <div style={styles.loadingIndicator}>
+        <div className={styles.loadingIndicator}>
           <span>Loading more...</span>
         </div>
       );
@@ -156,8 +107,16 @@ export class DisclosureList extends React.Component {
       });
     }
 
+    const classes = classNames(
+      'flexbox',
+      'column',
+      styles.container,
+      this.props.className,
+      {[styles.showFilters]: this.props.showFilters}
+    );
+
     return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
+      <div className={classes}>
         <AdminMenu style={{padding: '32px 0px'}} />
         <div style={{width: 320}}>
           <DisclosureFilterSearch
@@ -165,15 +124,15 @@ export class DisclosureList extends React.Component {
             onChange={this.changeSearch}
             onSearch={AdminActions.doSearch}
           />
-          <div style={styles.heading} onClick={AdminActions.toggleFilters}>
+          <div className={styles.heading} onClick={AdminActions.toggleFilters}>
             <span style={{paddingRight: 3}}>
               {this.props.count}
             </span>
             Disclosures Shown
-            <span style={styles.filterArrow}>&#9660;</span>
+            <span className={styles.filterArrow}>&#9660;</span>
           </div>
           <SearchFilterGroup
-            style={styles.filterGroup}
+            className={`${styles.override} ${styles.filterGroup}`}
             filters={this.props.filters}
             possibleStatuses={possibleStatuses}
             possibleTypes={possibleTypes}
@@ -184,7 +143,7 @@ export class DisclosureList extends React.Component {
             visible={this.props.showFilters}
           />
         </div>
-        <ul className="fill" style={styles.list} ref="theList">
+        <ul className={classNames('fill', styles.list)} ref="theList">
           {disclosuresJsx}
 
           {loadMoreButton}

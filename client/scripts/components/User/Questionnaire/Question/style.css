@@ -1,0 +1,86 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  display: inline-block;
+  padding: 0 1px;
+}
+
+.counter {
+  text-align: right;
+  font-size: 17px;
+}
+
+.controls {
+  margin-top: 10px;
+}
+
+.nums {
+  font-size: 38px;
+  margin-left: 10px;
+  color: #0095A0;
+}
+
+:global(.color-blind) .nums {
+  color: black;
+}
+
+.text {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.panel {
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 3px 1px #CCC;
+  z-index: 2;
+  position: relative;
+  margin: 3px;
+}
+
+.nextButton {
+  text-align: right;
+  border-top: 1px solid #CCC;
+  padding: 10px 20px;
+}
+
+.topPanel {
+  padding: 25px 30px;
+}
+
+.subQuestionPanel {
+  background-color: white;
+  border: 1px solid #CCC;
+  margin: -5px 3px 0 3px;
+}
+
+.subQuestionContent {
+  padding: 25px 30px;
+}
+
+.numberToShow {
+  color: #0095A0;
+  font-size: 28px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+:global(.color-blind) .numberToShow {
+  color: black;
+}

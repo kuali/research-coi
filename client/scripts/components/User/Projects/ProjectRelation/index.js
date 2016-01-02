@@ -16,48 +16,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
+import styles from './style';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
 
-export class ProjectRelation extends ResponsiveComponent {
+export class ProjectRelation extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.relationChosen = this.relationChosen.bind(this);
     this.commentMade = this.commentMade.bind(this);
   }
 
   relationChosen(evt) {
-    DisclosureActions.entityRelationChosen('PROJECT', this.props.finEntityId, this.props.project.id, parseInt(evt.target.value));
+    DisclosureActions.entityRelationChosen(
+      'PROJECT',
+      this.props.finEntityId,
+      this.props.project.id,
+      parseInt(evt.target.value)
+    );
   }
 
   commentMade() {
-    DisclosureActions.declarationCommentedOn('PROJECT', this.props.finEntityId, this.props.project.id, this.refs.comment.value);
+    DisclosureActions.declarationCommentedOn(
+      'PROJECT',
+      this.props.finEntityId,
+      this.props.project.id,
+      this.refs.comment.value
+    );
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        padding: '10px 0 3px 0',
-        borderTop: '1px solid #C3C3C3',
-        fontSize: 15
-      },
-      commentBox: {
-        height: 35,
-        padding: 5,
-        border: '1px solid #8D8D8D',
-        fontSize: 15,
-        borderRadius: 5,
-        width: '90%'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+  render() {
     const declarationTypeOptions = this.props.declarationTypes.map(type => {
       return (
       <div key={type.typeCd}>
@@ -81,7 +70,7 @@ export class ProjectRelation extends ResponsiveComponent {
     });
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={`${styles.container} ${this.props.className}`}>
         <span style={{width: '25%', display: 'inline-block', verticalAlign: 'top'}}>
           {this.props.project.name}
         </span>
@@ -94,7 +83,7 @@ export class ProjectRelation extends ResponsiveComponent {
             ref="comment"
             value={this.props.comments}
             onChange={this.commentMade}
-            style={styles.commentBox}
+            className={styles.commentBox}
             aria-label={`Report comments for ${this.props.project.name}`}
           />
         </span>

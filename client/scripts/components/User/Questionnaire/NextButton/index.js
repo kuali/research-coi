@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
 export class NextButton extends React.Component {
   constructor() {
@@ -41,38 +42,15 @@ export class NextButton extends React.Component {
       iconColor = 'black';
     }
 
-    const styles = {
-      icon: {
-        color: iconColor,
-        marginRight: 3,
-        width: 33,
-        fontSize: 26,
-        verticalAlign: 'middle'
-      },
-      next: {
-        display: 'inline-block',
-        cursor: 'pointer'
-      },
-      disabled: {
-        color: '#AAA',
-        cursor: 'default'
-      },
-      text: {
-        verticalAlign: 'middle'
-      }
-    };
-
-    let nextStyle = {};
-    if (this.props.isValid) {
-      nextStyle = styles.next;
-    } else {
-      nextStyle = merge(styles.next, styles.disabled);
-    }
+    const classes = classNames(
+      styles.next,
+      {[styles.disabled]: !this.props.isValid}
+    );
 
     return (
-      <div style={nextStyle} onClick={this.submit}>
-        <span style={styles.text}>NEXT</span>
-        <i className="fa fa-arrow-right" style={styles.icon}></i>
+      <div className={classes} onClick={this.submit}>
+        <span className={styles.text}>NEXT</span>
+        <i className={`fa fa-arrow-right ${styles.icon}`} style={{color: iconColor}}></i>
       </div>
     );
   }

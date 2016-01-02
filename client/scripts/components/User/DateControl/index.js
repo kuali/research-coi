@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {DatePicker} from '../DatePicker';
+import styles from './style';
+import React from 'react';
+import {DatePicker} from '../../DatePicker';
 
 export class DateControl extends React.Component {
   constructor(props) {
@@ -55,17 +56,11 @@ export class DateControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      datepicker: {
-        marginTop: 4
-      }
-    };
-
     return (
       <div>
         <DatePicker
           id={`qn${this.props.questionId}`}
-          style={styles.datepicker}
+          className={`${styles.override} ${styles.datepicker}`}
           onChange={this.onChange}
           value={this.props.answer}
           direction={this.props.direction}

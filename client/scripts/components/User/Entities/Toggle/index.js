@@ -16,14 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
-export class Toggle extends ResponsiveComponent {
+export class Toggle extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.toggle = this.toggle.bind(this);
   }
@@ -34,39 +33,15 @@ export class Toggle extends ResponsiveComponent {
     }
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        whiteSpace: 'nowrap',
-        padding: '5px 2px',
-        fontSize: 12,
-        width: 135,
-        color: '#666',
-        border: '1px solid #ddd',
-        backgroundColor: 'white',
-        borderRadius: 5,
-        boxShadow: '0 0 15px #eee'
-      },
-      selected: {
-        whiteSpace: 'nowrap',
-        padding: '6px 3px',
-        fontSize: 12,
-        width: 135,
-        color: 'white',
-        border: 0,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        borderRadius: 5
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
+  render() {
+    const classes = classNames(
+      {[styles.selected]: this.props.selected},
+      {[styles.container]: !this.props.selected},
+      this.props.className
+    );
 
     return (
-      <button
-        onClick={this.toggle}
-        style={merge(this.props.selected ? styles.selected : styles.container, this.props.style)}
-      >
+      <button onClick={this.toggle} className={classes}>
         {this.props.text}
       </button>
     );

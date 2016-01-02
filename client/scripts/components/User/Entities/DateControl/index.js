@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {DatePicker} from '../../DatePicker';
-import {formatDate} from '../../../formatDate';
+import styles from './style';
+import React from 'react';
+import {DatePicker} from '../../../DatePicker';
+import {formatDate} from '../../../../formatDate';
 
 export class DateControl extends React.Component {
   constructor() {
@@ -32,37 +33,16 @@ export class DateControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      datepicker: {
-        marginTop: 4
-      },
-      value: {
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      textbox: {
-        padding: 6,
-        fontSize: 12,
-        borderRadius: 0,
-        width: '80%',
-        border: '1px solid #B0B0B0'
-      },
-      invalidError: {
-        fontSize: 10,
-        marginTop: 2
-      }
-    };
-
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-      <div style={styles.invalidError}>Required Field</div>
+      <div className={styles.invalidError}>Required Field</div>
       );
     }
 
     if (this.props.readonly) {
       return (
-        <div style={styles.value}>
+        <div className={styles.value}>
           {this.props.answer ? formatDate(this.props.answer) : ''}
         </div>
       );
@@ -72,8 +52,14 @@ export class DateControl extends React.Component {
     <div>
       <DatePicker
         id={`eqa${this.props.questionId}`}
-        textFieldStyle={styles.textbox}
-        style={styles.datepicker}
+        textFieldStyle={{
+          padding: 6,
+          fontSize: 12,
+          borderRadius: 0,
+          width: '80%',
+          border: '1px solid #B0B0B0'
+        }}
+        className={`${styles.override} ${styles.datepicker}`}
         onChange={this.onChange}
         value={this.props.answer}
       />

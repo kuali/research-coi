@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import ProgressIndicator from './ProgressIndicator';
-import {DisclosureActions} from '../../actions/DisclosureActions';
-import NextLink from './NextLink';
-import SubmitLink from './SubmitLink';
-import PreviousLink from './PreviousLink';
+import ProgressIndicator from '../ProgressIndicator';
+import {DisclosureActions} from '../../../actions/DisclosureActions';
+import NextLink from '../NextLink';
+import SubmitLink from '../SubmitLink';
+import PreviousLink from '../PreviousLink';
 
 export class NavSidebar extends React.Component {
   constructor() {
@@ -44,30 +44,14 @@ export class NavSidebar extends React.Component {
     }
   }
 
-  render(): React.Element {
-    const styles = {
-      navigation: {
-        verticalAlign: 'top',
-        width: '25%',
-        paddingTop: 55,
-        textAlign: 'center'
-      },
-      stepButtons: {
-        textAlign: 'left',
-        display: 'inline-block'
-      },
-      link: {
-        margin: '14px 0 14px 0'
-      }
-    };
-
+  render() {
     let nextLink;
     if (this.props.showNextLink) {
       nextLink = (
         <NextLink
           onClick={this.nextClicked}
           disabled={this.props.nextDisabled}
-          style={styles.link}
+          className={`${styles.override} ${styles.link}`}
         />
       );
     }
@@ -78,7 +62,7 @@ export class NavSidebar extends React.Component {
         <SubmitLink
           onClick={this.submitDisclosure}
           disabled={this.props.submitDisabled}
-          style={styles.link}
+          className={`${styles.override} ${styles.link}`}
         />
       );
     }
@@ -88,14 +72,14 @@ export class NavSidebar extends React.Component {
       previousLink = (
         <PreviousLink
           onClick={DisclosureActions.previousQuestion}
-          style={styles.link}
+          className={`${styles.override} ${styles.link}`}
           label={this.props.previousLabel}
         />
       );
     }
 
     return (
-      <span style={styles.navigation}>
+      <span className={styles.navigation}>
         <div onClick={this.advance}>
           <ProgressIndicator
             percent={this.props.percentComplete}
@@ -103,7 +87,7 @@ export class NavSidebar extends React.Component {
           />
         </div>
 
-        <div style={styles.stepButtons}>
+        <div className={styles.stepButtons}>
           {previousLink}
           {submitLink}
           {nextLink}

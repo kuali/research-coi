@@ -16,18 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {ManualEventEntry} from './ManualEventEntry';
-import {ManualEventRelations} from './ManualEventRelations';
-import {Instructions} from '../Instructions';
-import {COIConstants} from '../../../../../COIConstants';
+import styles from './style';
+import React from 'react';
+import {ManualEventEntry} from '../ManualEventEntry';
+import {ManualEventRelations} from '../ManualEventRelations';
+import {Instructions} from '../../Instructions';
+import {COIConstants} from '../../../../../../COIConstants';
 
-export class ManualEvent extends ResponsiveComponent {
+export class ManualEvent extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.isDeclarationOpen = this.isDeclarationOpen.bind(this);
   }
@@ -43,19 +41,7 @@ export class ManualEvent extends ResponsiveComponent {
     return false;
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        overflow: 'hidden'
-      },
-      content: {
-        padding: '46px 0 0 50px'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+  render() {
     let screen;
     if (this.props.step === 3) {
       screen = (
@@ -86,10 +72,10 @@ export class ManualEvent extends ResponsiveComponent {
     );
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={`${styles.container} ${this.props.className}`}>
         {instructions}
 
-        <div style={styles.content}>
+        <div className={styles.content}>
           {screen}
         </div>
       </div>

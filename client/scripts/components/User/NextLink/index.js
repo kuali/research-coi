@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,40 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 
-export default function NextLink(props: Object): React.Element {
-  const styles = {
-    container: {
-      fontSize: 15,
-      cursor: props.disabled ? 'default' : 'pointer',
-      color: window.colorBlindModeOn ? 'black' : '#555555'
-    },
-    icon: {
-      color: window.colorBlindModeOn ? 'black' : '#F57C00',
-      fontSize: 29,
-      marginRight: 6,
-      verticalAlign: 'middle'
-    },
-    stepLabel: {
-      verticalAlign: 'middle'
-    },
-    disabled: {
-      color: '#AAA',
-      cursor: 'default'
-    }
-  };
-
-  if (props.disabled) {
-    styles.container.color = '#AAA';
-    styles.icon.color = '#AAA';
-  }
+export default function NextLink(props) {
+  const classes = classNames(
+    styles.container,
+    {[styles.disabled]: props.disabled},
+    props.className
+  );
 
   return (
-    <div onClick={props.onClick} style={merge(styles.container, props.style)}>
-      <i className="fa fa-arrow-circle-right" style={styles.icon}></i>
-      <span style={styles.stepLabel}>
+    <div onClick={props.onClick} className={classes}>
+      <i className={`fa fa-arrow-circle-right ${styles.icon}`}></i>
+      <span className={styles.stepLabel}>
         NEXT STEP
       </span>
     </div>

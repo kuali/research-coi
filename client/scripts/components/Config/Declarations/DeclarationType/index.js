@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigActions from '../../../actions/ConfigActions';
-import EditLink from '../EditLink';
-import DoneLink from '../DoneLink';
-import DeleteLink from '../DeleteLink';
-import {COIConstants} from '../../../../../COIConstants';
+import ConfigActions from '../../../../actions/ConfigActions';
+import EditLink from '../../EditLink';
+import DoneLink from '../../DoneLink';
+import DeleteLink from '../../DeleteLink';
+import {COIConstants} from '../../../../../../COIConstants';
 
 export default class DeclarationType extends React.Component {
   constructor() {
@@ -73,39 +74,12 @@ export default class DeclarationType extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        fontSize: 17,
-        margin: 20
-      },
-      typeLabel: {
-        verticalAlign: 'middle',
-        paddingLeft: this.props.toggle ? 10 : 28
-      },
-      textbox: {
-        verticalAlign: 'middle',
-        marginLeft: 10,
-        padding: 3,
-        fontSize: 16
-      },
-      editLink: {
-        float: 'right',
-        paddingTop: 2,
-        marginLeft: 3
-      },
-      deleteLink: {
-        float: 'right',
-        paddingTop: 2,
-        marginLeft: 15
-      }
-    };
-
     const type = this.props.type;
 
     let deleteLink;
     if (this.props.delete) {
       deleteLink = (
-        <DeleteLink style={styles.deleteLink} onClick={this.deleteType} />
+        <DeleteLink className={`${styles.override} ${styles.deleteLink}`} onClick={this.deleteType} />
       );
     }
 
@@ -116,24 +90,24 @@ export default class DeclarationType extends React.Component {
           <input
             ref="typeName"
             type="text"
-            style={styles.textbox}
+            className={styles.textbox}
             defaultValue={type.description}
             value={this.getNewValue(type)}
             onKeyUp={this.lookForEnter}
             onChange={this.nameChanged}
           />
-          <DoneLink style={styles.editLink} onClick={this.doneEditing} />
+          <DoneLink className={`${styles.override} ${styles.editLink}`} onClick={this.doneEditing} />
         </span>
       );
     }
     else {
       jsx = (
         <span>
-          <label style={styles.typeLabel} htmlFor={`type_${type.typeCd}`}>
+          <label className={styles.typeLabel} htmlFor={`type_${type.typeCd}`}>
             {type.description}
           </label>
           {deleteLink}
-          <EditLink style={styles.editLink} onClick={this.startEditing} />
+          <EditLink className={`${styles.override} ${styles.editLink}`} onClick={this.startEditing} />
         </span>
       );
     }
@@ -150,8 +124,14 @@ export default class DeclarationType extends React.Component {
       );
     }
 
+    const classes = classNames(
+      styles.container,
+      this.props.className,
+      {[styles.toggle]: this.props.toggle}
+    );
+
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classes}>
         {checkbox}
         {jsx}
       </div>

@@ -16,19 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {AdminStore} from '../../../stores/AdminStore';
-import ConfigStore from '../../../stores/ConfigStore';
-import {DisclosureDetail} from './DisclosureDetail';
-import {DisclosureList} from './DisclosureList';
-import {AdminActions} from '../../../actions/AdminActions';
-import CommentingPanel from './CommentingPanel';
-import AdditionalReviewPanel from './AdditionalReviewPanel';
-import CommentSummary from './CommentSummary';
-import GeneralAttachmentsPanel from './GeneralAttachmentsPanel';
-import {COIConstants} from '../../../../../COIConstants';
-import {AppHeader} from '../../AppHeader';
+import {AdminStore} from '../../../../stores/AdminStore';
+import ConfigStore from '../../../../stores/ConfigStore';
+import {DisclosureDetail} from '../DisclosureDetail';
+import {DisclosureList} from '../DisclosureList';
+import {AdminActions} from '../../../../actions/AdminActions';
+import CommentingPanel from '../CommentingPanel';
+import AdditionalReviewPanel from '../AdditionalReviewPanel';
+import CommentSummary from '../CommentSummary';
+import GeneralAttachmentsPanel from '../GeneralAttachmentsPanel';
+import {COIConstants} from '../../../../../../COIConstants';
+import {AppHeader} from '../../../AppHeader';
+import classNames from 'classnames';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -151,37 +152,6 @@ export class DetailView extends React.Component {
       );
     }
 
-    const styles = {
-      container: {
-        position: 'relative',
-        transform: this.state.applicationState.listShowing ? 'translateX(0px)' : 'translateX(-320px)',
-        transition: 'transform .2s ease-in-out',
-        minHeight: 100
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 19,
-        position: 'relative'
-      },
-      list: {
-        width: 320
-      },
-      sidePanel: {
-        position: 'absolute',
-        backgroundColor: '#DADADA',
-        color: 'black',
-        height: '100%',
-        width: 570,
-        transform: this.state.applicationState.listShowing ? 'translateX(0%)' : 'translateX(-250px)',
-        transition: 'transform .2s ease-in-out',
-        zIndex: 2
-      },
-      loadingDisclosure: {
-        margin: '200px auto',
-        color: '#AAA'
-      }
-    };
-
     let disclosureDetail;
     if (this.state.applicationState.selectedDisclosure && this.state.config) {
       disclosureDetail = (
@@ -196,18 +166,20 @@ export class DetailView extends React.Component {
     }
     else if (this.state.applicationState.loadingDisclosure) {
       disclosureDetail = (
-        <div style={styles.loadingDisclosure}>Loading...</div>
+        <div className={styles.loadingDisclosure}>Loading...</div>
       );
     }
 
     return (
-      <div className="flexbox column" style={{height: '100%', overflowX: 'hidden'}}>
-        <AppHeader style={styles.header} />
-        <div className="flexbox row fill" style={merge(styles.container, this.props.style)} >
+      <div
+        className={`flexbox column ${classNames({[styles.listShowing]: this.state.applicationState.listShowing})}`}
+        style={{height: '100%', overflowX: 'hidden'}}
+      >
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <div className={`flexbox row fill ${classNames(styles.container, this.props.className)}`}>
           <DisclosureList
-            className="inline-flexbox column"
+            className={`inline-flexbox column ${styles.override} ${styles.list}`}
             summaries={this.filterDisclosures()}
-            style={styles.list}
             selected={this.state.applicationState.selectedDisclosure}
             query={this.state.applicationState.query}
             filters={this.state.applicationState.filters}
@@ -218,10 +190,10 @@ export class DetailView extends React.Component {
             loadedAll={this.state.applicationState.loadedAll}
             showFilters={this.state.applicationState.showFilters}
           />
-          <div className="inline-flexbox fill">
+          <div className={`inline-flexbox fill`}>
             {disclosureDetail}
           </div>
-          <span style={styles.sidePanel}>
+          <span className={styles.sidePanel}>
             {sidePanel}
           </span>
         </div>

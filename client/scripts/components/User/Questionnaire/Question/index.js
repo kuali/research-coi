@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {COIConstants} from '../../../../../COIConstants';
-import {RadioControl} from '../RadioControl';
-import {TextAreaControl} from '../TextAreaControl';
-import {NumericControl} from '../NumericControl';
-import {DateControl} from '../DateControl';
-import {CheckboxControl} from '../CheckboxControl';
-import {NextButton} from './NextButton';
+import styles from './style';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {COIConstants} from '../../../../../../COIConstants';
+import {RadioControl} from '../../RadioControl';
+import {TextAreaControl} from '../../TextAreaControl';
+import {NumericControl} from '../../NumericControl';
+import {DateControl} from '../../DateControl';
+import {CheckboxControl} from '../../CheckboxControl';
+import {NextButton} from '../NextButton';
 
 export class Question extends React.Component {
   constructor() {
@@ -227,60 +227,6 @@ export class Question extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'inline-block',
-        padding: '0 1px'
-      },
-      counter: {
-        textAlign: 'right',
-        fontSize: 17
-      },
-      controls: {
-        marginTop: 10
-      },
-      nums: {
-        fontSize: 38,
-        marginLeft: 10,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      text: {
-        fontSize: 20,
-        lineHeight: '28px'
-      },
-      panel: {
-        backgroundColor: 'white',
-        borderRadius: 5,
-        boxShadow: '0px 0px 3px 1px #CCC',
-        zIndex: 2,
-        position: 'relative',
-        margin: 3
-      },
-      nextButton: {
-        textAlign: 'right',
-        borderTop: '1px solid #CCC',
-        padding: '10px 20px'
-      },
-      topPanel: {
-        padding: '25px 30px'
-      },
-      subQuestionPanel: {
-        backgroundColor: 'white',
-        border: '1px solid #CCC',
-        margin: '-5px 3px 0 3px',
-        paddingBotton: '140px'
-      },
-      subQuestionContent: {
-        padding: '25px 30px'
-      },
-      numberToShow: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 28,
-        marginBottom: 10,
-        fontWeight: 'bold'
-      }
-    };
-
     let isValid = this.questionIsValid();
     const subQuestions = [];
     this.props.subQuestions.filter(subQuestion => {
@@ -291,22 +237,22 @@ export class Question extends React.Component {
       let nextDiv;
       if (index === array.length - 1) {
         nextDiv = (
-          <div style={styles.nextButton}>
+          <div className={styles.nextButton}>
             <NextButton onClick={this.next} isValid={isValid} />
           </div>
         );
       }
 
       subQuestions.push(
-        <div key={index} style={styles.subQuestionPanel}>
-          <div style={styles.subQuestionContent}>
-            <div style={styles.numberToShow}>
+        <div key={index} className={styles.subQuestionPanel}>
+          <div className={styles.subQuestionContent}>
+            <div className={styles.numberToShow}>
               {subQuestion.question.numberToShow}
             </div>
-            <label htmlFor={`qn${subQuestion.id}`} style={styles.text}>
+            <label htmlFor={`qn${subQuestion.id}`} className={styles.text}>
               {subQuestion.question.text}
             </label>
-            <div style={styles.controls}>
+            <div className={styles.controls}>
               {this.getControl(subQuestion, subQuestion.answer)}
             </div>
           </div>
@@ -327,24 +273,24 @@ export class Question extends React.Component {
       )
     ) {
       nextButton = (
-        <div style={styles.nextButton}>
+        <div className={styles.nextButton}>
           <NextButton onClick={this.next} isValid={isValid}/>
         </div>
       );
     }
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
-        <div style={styles.panel}>
-          <div style={styles.topPanel}>
-            <label htmlFor={`qn${this.props.question.id}`} style={styles.text}>
+      <span className={`${styles.container} ${this.props.className}`}>
+        <div className={styles.panel}>
+          <div className={styles.topPanel}>
+            <label htmlFor={`qn${this.props.question.id}`} className={styles.text}>
               {this.props.question.question.text}
             </label>
-            <div style={styles.controls}>
+            <div className={styles.controls}>
               {this.getControl(this.props.question, this.props.answer)}
-              <div style={styles.counter}>
+              <div className={styles.counter}>
                 QUESTION
-                <span style={styles.nums}>
+                <span className={styles.nums}>
                   {this.props.number}/{this.props.of}
                 </span>
               </div>

@@ -16,16 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../../stores/DisclosureStore';
 
-export class EntityFormNameStep extends ResponsiveComponent {
+export class EntityFormNameStep extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.updateName = this.updateName.bind(this);
   }
@@ -35,71 +34,33 @@ export class EntityFormNameStep extends ResponsiveComponent {
     DisclosureActions.setInProgressEntityName(newNameValue);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
+  render() {
     const validationErrors = DisclosureStore.entityNameStepErrors();
-
-    const desktopStyles = {
-      container: {
-      },
-      title: {
-        fontWeight: 'bold',
-        fontSize: 17,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      entityName: {
-        display: 'inline-block',
-        marginRight: 20,
-        width: 275,
-        color: this.props.validating && validationErrors.name ? 'red' : 'inherit'
-      },
-      top: {
-        marginTop: 20
-      },
-      bottom: {
-        marginTop: 20
-      },
-      name: {
-        padding: '2px 8px',
-        fontSize: 16,
-        borderRadius: 5,
-        border: '1px solid #AAA',
-        height: 30,
-        width: '100%',
-        borderBottom: this.props.validating && validationErrors.name ? '3px solid red' : '1px solid #AAA'
-      },
-      invalidError: {
-        fontSize: 10,
-        marginTop: 2
-      },
-      nameLabel: {
-        marginBottom: 3,
-        fontWeight: '500',
-        display: 'inline-block',
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
 
     let requiredFieldError;
     if (this.props.validating && validationErrors.name) {
       requiredFieldError = (
-        <div style={styles.invalidError}>{validationErrors.name}</div>
+        <div className={styles.invalidError}>{validationErrors.name}</div>
       );
     }
 
     const htmlId = Math.floor(Math.random() * 1000000000);
-    return (
-      <span style={merge(styles.container, this.props.style)}>
-        <div style={styles.title}>Add New Financial Entity</div>
 
-        <div style={styles.top}>
-          <span style={styles.entityName}>
-            <label htmlFor={htmlId} style={styles.nameLabel}>ENTITY NAME</label>
+    const classes = classNames(
+      styles.container,
+      {[styles.errors]: this.props.validating && validationErrors.name},
+      this.props.className
+    );
+
+    return (
+      <span className={classes}>
+        <div className={styles.title}>Add New Financial Entity</div>
+
+        <div className={styles.top}>
+          <span className={styles.entityName}>
+            <label htmlFor={htmlId} className={styles.nameLabel}>ENTITY NAME</label>
             <div>
-              <input id={htmlId} required onChange={this.updateName} value={this.props.entityName} ref="entityName" type="text" style={styles.name} />
+              <input id={htmlId} required onChange={this.updateName} value={this.props.entityName} ref="entityName" type="text" className={styles.name} />
             </div>
             {requiredFieldError}
           </span>

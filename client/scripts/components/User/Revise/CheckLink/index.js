@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,33 +16,26 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
 
-export default function CheckLink(props: Object): React.Element {
-  const styles = {
-    container: {
-      marginRight: 20,
-      cursor: props.disabled ? 'default' : 'pointer'
-    },
-    link: {
-      borderBottom: props.disabled ? '#AAA' : props.checked ? window.colorBlindModeOn ? '1px dashed black' : '1px dashed #00D000' : '1px dashed #888',
-      color: props.disabled ? '#AAA' : props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : '#666'
-    },
-    checkmark: {
-      color: props.checked ? window.colorBlindModeOn ? 'black' : '#00D000' : 'transparent',
-      marginRight: 3
-    }
-  };
-
+export default function CheckLink(props) {
   const check = (
-    <i className="fa fa-check" style={styles.checkmark}></i>
+    <i className={`fa fa-check ${styles.checkmark}`}></i>
+  );
+
+  const classes = classNames(
+    {[styles.checked]: props.checked},
+    {[styles.disabled]: props.disabled},
+    styles.container,
+    props.className
   );
 
   return (
-    <span style={merge(styles.container, props.style)} onClick={props.onClick}>
+    <span className={classes} onClick={props.onClick}>
       {check}
-      <span style={styles.link}>
+      <span className={styles.link}>
         {props.children}
       </span>
     </span>

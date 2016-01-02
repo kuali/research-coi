@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../merge';
-import {formatDate} from '../formatDate';
+import {formatDate} from '../../formatDate';
 import numeral from 'numeral';
-import ConfigStore from '../stores/ConfigStore';
-import {COIConstants} from '../../../COIConstants';
+import ConfigStore from '../../stores/ConfigStore';
+import {COIConstants} from '../../../../COIConstants';
 
 export default class EntityRelationshipSummary extends React.Component {
   constructor() {
@@ -35,40 +35,11 @@ export default class EntityRelationshipSummary extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        color: 'white',
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        padding: 13,
-        borderRadius: 10,
-        fontSize: 15
-      },
-      removeButton: {
-        'float': 'right',
-        backgroundColor: 'transparent',
-        border: 0,
-        color: 'white',
-        fontWeight: 'normal'
-      },
-      summary: {
-        marginBottom: 7,
-        fontWeight: 'bold'
-      },
-      commentValue: {
-        fontSize: 14
-      },
-      x: {
-        fontWeight: 'bold',
-        marginLeft: 6,
-        fontSize: 15
-      }
-    };
-
     let commentSection;
     if (this.props.relationship.comments) {
       commentSection = (
         <div>
-          <div style={styles.commentValue}>
+          <div className={styles.commentValue}>
             {this.props.relationship.comments}
           </div>
         </div>
@@ -78,16 +49,16 @@ export default class EntityRelationshipSummary extends React.Component {
     let removeButton;
     if (!this.props.readonly) {
       removeButton = (
-        <button onClick={this.remove} style={styles.removeButton}>
-          <i className="fa fa-times" style={styles.x}></i>
+        <button onClick={this.remove} className={styles.removeButton}>
+          <i className={`fa fa-times ${styles.x}`}></i>
         </button>
       );
     }
     if (this.props.relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
       const dateRange = `${formatDate(this.props.relationship.travel.startDate)} - ${formatDate(this.props.relationship.travel.endDate)}`;
       return (
-        <div style={merge(styles.container, this.props.style)}>
-          <div style={styles.summary}>
+        <div className={`${styles.container} ${this.props.className}`}>
+          <div className={styles.summary}>
             {removeButton}
             <span>
               {`${ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd)} • `}
@@ -104,8 +75,8 @@ export default class EntityRelationshipSummary extends React.Component {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.summary}>
+      <div className={`${styles.container} ${this.props.className}`}>
+        <div className={styles.summary}>
           {removeButton}
           <span>
             <span style={{display: 'inline'}}>

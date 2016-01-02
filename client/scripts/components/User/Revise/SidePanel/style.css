@@ -1,0 +1,100 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  width: 220px;
+}
+
+.message {
+  margin: 25px 28px 25px 3px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #AAA;
+}
+
+.submit {
+  color: #CCC;
+  cursor: default;
+  vertical-align: middle;
+  font-size: 18px;
+}
+
+.submitEnabled .submit {
+  color: #333;
+  cursor: pointer;
+}
+
+.cancel {
+  cursor: pointer;
+  vertical-align: middle;
+  font-size: 18px;
+}
+
+.submitIcon {
+  color: #CCC;
+  font-size: 29px;
+  vertical-align: middle;
+  margin: 0 10px 5px 15px;
+}
+
+.submitEnabled .submitIcon {
+  color: #F57C00;
+}
+
+:global(.color-blind) .submitEnabled .submitIcon {
+  color: black;
+}
+
+.cancelIcon {
+  color: #F57C00;
+  font-size: 29px;
+  vertical-align: middle;
+  margin: 0 10px 0 15px;
+}
+
+:global(.color-blind) .cancelIcon {
+  color: black;
+}
+
+.certificationPane {
+  background-color: white;
+  color: black;
+  padding: 25px 15px;
+  box-shadow: 0 0 10px 2px #DDD;
+}
+
+.certCheckbox {
+  padding-top: 17px;
+  text-align: center;
+}
+
+.agreedLabel {
+  padding-left: 5px;
+}
+
+.override.disabledConfirmButton {
+  cursor: default;
+  color: #AAA;
+  background-color: #EEE;
+  border-bottom: 2px solid #AAA;
+  text-shadow: inherit;
+}
+
+.confirmSection {
+  text-align: center;
+  padding-top: 35px;
+}

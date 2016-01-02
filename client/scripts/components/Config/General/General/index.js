@@ -16,15 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import Sidebar from '../Sidebar';
-import Panel from '../Panel';
-import ActionPanel from '../ActionPanel';
-import DisclosureTypes from './DisclosureTypes';
-import ConfigStore from '../../../stores/ConfigStore';
-import DueDateDetails from './DueDateDetails';
-import {AppHeader} from '../../AppHeader';
+import Sidebar from '../../Sidebar';
+import Panel from '../../Panel';
+import ActionPanel from '../../ActionPanel';
+import DisclosureTypes from '../DisclosureTypes';
+import ConfigStore from '../../../../stores/ConfigStore';
+import DueDateDetails from '../DueDateDetails';
+import {AppHeader} from '../../../AppHeader';
 
 export default class General extends React.Component {
   constructor() {
@@ -57,47 +58,17 @@ export default class General extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 10,
-        position: 'relative'
-      },
-      content: {
-        backgroundColor: '#F2F2F2',
-        boxShadow: '2px 8px 8px #ccc inset',
-        minHeight: 0
-      },
-      stepTitle: {
-        boxShadow: '0 2px 8px #D5D5D5',
-        fontSize: 33,
-        textTransform: 'uppercase',
-        padding: '15px 15px 15px 35px',
-        color: '#525252',
-        fontWeight: 300,
-        backgroundColor: 'white',
-        minHeight: 70
-      },
-      configurationArea: {
-        padding: 35,
-        overflowY: 'auto',
-        minHeight: 0
-      }
-    };
-
     return (
-      <div className="flexbox column" style={{height: '100%'}}>
-        <AppHeader style={styles.header} />
-        <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
+      <div className={`flexbox column`} style={{height: '100%'}}>
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
           <Sidebar active="general" />
-          <span style={styles.content} className="inline-flexbox column fill">
-            <div style={styles.stepTitle}>
+          <span className={`inline-flexbox column fill ${styles.content}`}>
+            <div className={styles.stepTitle}>
               General Configuration
             </div>
-            <div className="fill flexbox row" style={styles.configurationArea}>
-              <span className="fill" style={{display: 'inline-block'}}>
+            <div className={`fill flexbox row ${styles.configurationArea}`}>
+              <span className={`fill`} style={{display: 'inline-block'}}>
                 <Panel
                   title="General Disclosure Configuration"
                   style={{overflow: 'visible'}}

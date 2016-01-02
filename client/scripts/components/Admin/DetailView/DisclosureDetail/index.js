@@ -16,16 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {DisclosureDetailHeading} from './DisclosureDetailHeading';
-import ActionButtons from './ActionButtons';
-import {AdminQuestionnaireSummary} from './AdminQuestionnaireSummary';
-import {AdminEntitiesSummary} from './AdminEntitiesSummary';
-import {AdminDeclarationsSummary} from './AdminDeclarationsSummary';
-import ApprovalConfirmation from './ApprovalConfirmation';
-import RejectionConfirmation from './RejectionConfirmation';
-import {COIConstants} from '../../../../../COIConstants';
+import {DisclosureDetailHeading} from '../DisclosureDetailHeading';
+import ActionButtons from '../ActionButtons';
+import {AdminQuestionnaireSummary} from '../AdminQuestionnaireSummary';
+import {AdminEntitiesSummary} from '../AdminEntitiesSummary';
+import {AdminDeclarationsSummary} from '../AdminDeclarationsSummary';
+import ApprovalConfirmation from '../ApprovalConfirmation';
+import RejectionConfirmation from '../RejectionConfirmation';
+import {COIConstants} from '../../../../../../COIConstants';
+import classNames from 'classnames';
 
 export class DisclosureDetail extends React.Component {
   constructor() {
@@ -69,43 +70,6 @@ export class DisclosureDetail extends React.Component {
 
   render() {
     const entityNameMap = this.makeEntityMap();
-
-    const styles = {
-      container: {
-        width: '100%'
-      },
-      actionButtons: {
-        display: this.props.showApproval || this.props.showRejection ? 'none' : 'block',
-        marginTop: 25,
-        marginRight: 25
-      },
-      bottom: {
-        position: 'relative',
-        paddingLeft: 25,
-        minHeight: 0,
-        backgroundColor: '#EEEEEE'
-      },
-      confirmation: {
-        display: this.props.showApproval ? 'block' : 'none',
-        top: 186,
-        right: 20
-      },
-      rejection: {
-        display: this.props.showRejection ? 'block' : 'none'
-      },
-      questionnaire: {
-        marginBottom: 25,
-        marginTop: 25
-      },
-      entities: {
-        marginBottom: 25
-      },
-      detailsFromPI: {
-        overflowY: 'auto',
-        padding: '0 35px 0 3px',
-        display: 'inline-block'
-      }
-    };
 
     const screeningQuestions = this.props.config.questions.screening.filter(question => {
       return question.active !== 0;
@@ -177,23 +141,33 @@ export class DisclosureDetail extends React.Component {
       return comment.piVisible;
     });
 
+    const classes = classNames(
+      'inline-flexbox',
+      'column',
+      styles.container,
+      {[styles.showApproval]: this.props.showApproval},
+      {[styles.showRejection]: this.props.showRejection}
+    );
+
     return (
-      <div className="inline-flexbox column" style={merge(styles.container, this.props.style)} >
+      <div
+        className={classes}
+      >
         <DisclosureDetailHeading disclosure={this.props.disclosure} />
-        <div className="fill flexbox row" style={styles.bottom}>
-          <span className="fill" style={styles.detailsFromPI}>
+        <div className={`fill flexbox row ${styles.bottom}`}>
+          <span className={`fill ${styles.detailsFromPI}`}>
             <AdminQuestionnaireSummary
               questions={screeningQuestions}
               answers={screeningAnswers}
               comments={questionnaireComments}
-              style={styles.questionnaire}
+              className={`${styles.override} ${styles.questionnaire}`}
               piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE)}
             />
             <AdminEntitiesSummary
               questions={entityQuestions}
               entities={this.props.disclosure.entities}
               comments={entitiesComments}
-              style={styles.entities}
+              className={`${styles.override} ${styles.entities}`}
               piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.ENTITIES)}
             />
             <AdminDeclarationsSummary
@@ -201,15 +175,22 @@ export class DisclosureDetail extends React.Component {
               declarations={this.props.disclosure.declarations}
               comments={declarationsComments}
               id={this.props.disclosure.id}
+              className={`${styles.override} ${styles.declarations}`}
               piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.PROJECTS)}
-              style={{marginBottom: 25}}
             />
           </span>
           <span style={{display: 'inline-block'}}>
-            <ApprovalConfirmation id={this.props.disclosure.id} style={styles.confirmation} />
-            <RejectionConfirmation id={this.props.disclosure.id} canReject={piComments.length > 0} style={styles.rejection} />
+            <ApprovalConfirmation
+              id={this.props.disclosure.id}
+              className={`${styles.override} ${styles.confirmation}`}
+            />
+            <RejectionConfirmation
+              id={this.props.disclosure.id}
+              canReject={piComments.length > 0}
+              className={`${styles.override} ${styles.rejection}`}
+            />
             <ActionButtons
-              style={styles.actionButtons}
+              className={`${styles.override} ${styles.actionButtons}`}
               showAttachments={this.props.disclosure.files.length > 0}
               readonly={
                 this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||

@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../merge';
-import {SidebarStep} from './SidebarStep';
-import BackToDashboard from './BackToDashboard';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {SidebarStep} from '../SidebarStep';
+import BackToDashboard from '../BackToDashboard';
 
 export class Sidebar extends React.Component {
   constructor(props) {
@@ -27,9 +28,6 @@ export class Sidebar extends React.Component {
 
     this.state = {
       showing: true
-    };
-
-    this.commonStyles = {
     };
 
     this.close = this.close.bind(this);
@@ -55,19 +53,18 @@ export class Sidebar extends React.Component {
         stepState = 'incomplete';
       }
 
-      let extraStyle;
-      if (index === 0) {
-        extraStyle = {
-          borderTop: '1px solid #c0c0c0'
-        };
-      }
+      const topClass = classNames(
+        styles.override,
+        {[styles.top]: index === 0}
+      );
+
       steps.push(
         <SidebarStep
           label={step.label}
           state={stepState}
           key={index}
           step={step.value}
-          style={extraStyle}
+          className={topClass}
           visited={this.props.visitedSteps[step.value]}
         />
       );
@@ -77,55 +74,12 @@ export class Sidebar extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'inline-flex',
-        flexDirection: 'column',
-        verticalAlign: 'top',
-        backgroundColor: '#eeeeee'
-      },
-      ul: {
-        marginTop: 47,
-        listStyleType: 'none',
-        padding: 0,
-        backgroundColor: '#eeeeee'
-      },
-      li: {
-        padding: '12px 0 12px 58px',
-        fontSize: 16,
-        textTransform: 'uppercase',
-        cursor: 'pointer',
-        whiteSpace: 'nowrap'
-      },
-      selected: {
-        fontWeight: 'bold',
-        backgroundColor: 'white',
-        position: 'relative',
-        borderRight: '5px solid #1481A3'
-      },
-      incomplete: {
-        color: '#bbb'
-      },
-      arrow: {
-        display: 'inline-block',
-        height: 0,
-        width: 0,
-        border: '10px solid transparent',
-        borderLeft: '18px solid #e0e0e0',
-        borderBottom: '21px solid transparent',
-        borderTop: '21px solid transparent',
-        position: 'absolute',
-        right: '-28px',
-        top: 0
-      }
-    };
-
     const steps = this.generateSteps();
     return (
-      <span style={merge(styles.container, this.props.style)}>
-        <div className="fill">
+      <span className={`${styles.container} ${this.props.className}`}>
+        <div className={`fill`}>
           <BackToDashboard />
-          <ul style={styles.ul}>
+          <ul className={styles.ul}>
             {steps}
           </ul>
         </div>

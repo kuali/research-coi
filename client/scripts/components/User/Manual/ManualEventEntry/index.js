@@ -16,17 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {ManualPlaceholder} from '../../DynamicIcons/ManualPlaceholder';
-import {BlueButton} from '../../BlueButton';
+import styles from './style';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {ManualPlaceholder} from '../../../DynamicIcons/ManualPlaceholder';
+import {BlueButton} from '../../../BlueButton';
 
-export class ManualEventEntry extends ResponsiveComponent {
+export class ManualEventEntry extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.typeSelected = this.typeSelected.bind(this);
     this.saveProject = this.saveProject.bind(this);
@@ -60,99 +58,38 @@ export class ManualEventEntry extends ResponsiveComponent {
     DisclosureActions.doneEditingManualEvent(this.props.disclosure.id);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-      },
-      select: {
-        fontSize: 16,
-        height: 30,
-        backgroundColor: 'white'
-      },
-      label: {
-        fontSize: 12
-      },
-      image: {
-        display: 'block',
-        width: 300,
-        height: 300,
-        colorOne: window.config.colors.one,
-        colorTwo: window.config.colors.two,
-        margin: '-12px auto 0 auto'
-      },
-      instructions: {
-        width: 320,
-        display: 'block',
-        margin: '10px auto 0 auto'
-      },
-      cell: {
-        width: '33%',
-        display: 'inline-block',
-        padding: 10
-      },
-      cellLabel: {
-        fontSize: 12,
-        color: window.config.colors.one
-      },
-      saveButton: {
-        padding: '6px 12px',
-        fontSize: 15,
-        width: 'initial'
-      },
-      row: {
-        marginBottom: 5
-      },
-      textfield: {
-        width: '100%',
-        height: 31,
-        fontSize: 16,
-        padding: '0 7px',
-        fontFamily: 'Lato'
-      },
-      projectTypeSelect: {
-        width: '100%',
-        height: 30,
-        fontSize: 16,
-        background: 'white',
-        outline: 0,
-        fontFamily: 'Lato'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+  render() {
     let middle;
     if (this.props.step === 2) {
       const disclosure = this.props.disclosure;
       middle = (
         <div style={{marginTop: 27}}>
-          <div style={styles.row}>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>PROJECT ID:</div>
-              <input onChange={this.saveProject} value={disclosure.projectId} ref="id" type="text" style={styles.textfield} />
+          <div className={styles.row}>
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>PROJECT ID:</div>
+              <input onChange={this.saveProject} value={disclosure.projectId} ref="id" type="text" className={styles.textfield} />
             </span>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>PROJECT TITLE:</div>
-              <input onChange={this.saveProject} value={disclosure.title} ref="title" type="text" style={styles.textfield} />
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>PROJECT TITLE:</div>
+              <input onChange={this.saveProject} value={disclosure.title} ref="title" type="text" className={styles.textfield} />
             </span>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>SPONSOR:</div>
-              <input onChange={this.saveProject} value={disclosure.sponsor} ref="sponsor" type="text" style={styles.textfield} />
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>SPONSOR:</div>
+              <input onChange={this.saveProject} value={disclosure.sponsor} ref="sponsor" type="text" className={styles.textfield} />
             </span>
           </div>
-          <div style={styles.row}>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>PROJECT ROLE:</div>
-              <input onChange={this.saveProject} value={disclosure.role} ref="role" type="text" style={styles.textfield} />
+          <div className={styles.row}>
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>PROJECT ROLE:</div>
+              <input onChange={this.saveProject} value={disclosure.role} ref="role" type="text" className={styles.textfield} />
             </span>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>PROJECT FUNDING AMOUNT:</div>
-              <input onChange={this.saveProject} value={disclosure.amount} ref="amount" type="text" style={styles.textfield} />
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>PROJECT FUNDING AMOUNT:</div>
+              <input onChange={this.saveProject} value={disclosure.amount} ref="amount" type="text" className={styles.textfield} />
             </span>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>PROJECT TYPE:</div>
-              <select onChange={this.saveProject} value={disclosure.projectType} ref="projectType" style={styles.projectTypeSelect}>
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>PROJECT TYPE:</div>
+              <select onChange={this.saveProject} value={disclosure.projectType} ref="projectType" className={styles.projectTypeSelect}>
                 <option value="Resubmission">Resubmission</option>
                 <option value="Classification">Classification</option>
                 <option value="Research">Research</option>
@@ -160,17 +97,22 @@ export class ManualEventEntry extends ResponsiveComponent {
               </select>
             </span>
           </div>
-          <div style={styles.row}>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>PROJECT START DATE:</div>
-              <input onChange={this.saveProject} value={disclosure.startdate} ref="startdate" type="date" style={styles.textfield} />
+          <div className={styles.row}>
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>PROJECT START DATE:</div>
+              <input onChange={this.saveProject} value={disclosure.startdate} ref="startdate" type="date" className={styles.textfield} />
             </span>
-            <span style={styles.cell}>
-              <div style={styles.cellLabel}>PROJECT END DATE:</div>
-              <input onChange={this.saveProject} value={disclosure.enddate} ref="enddate" type="date" style={styles.textfield} />
+            <span className={styles.cell}>
+              <div className={styles.cellLabel}>PROJECT END DATE:</div>
+              <input onChange={this.saveProject} value={disclosure.enddate} ref="enddate" type="date" className={styles.textfield} />
             </span>
-            <span style={merge(styles.cell, {textAlign: 'right'})}>
-              <BlueButton onClick={this.nextScreen} style={styles.saveButton}>Done</BlueButton>
+            <span className={styles.cell} style={{textAlign: 'right'}}>
+              <BlueButton
+                onClick={this.nextScreen}
+                className={`${styles.override} ${styles.saveButton}`}
+              >
+                Done
+              </BlueButton>
             </span>
           </div>
         </div>
@@ -179,8 +121,8 @@ export class ManualEventEntry extends ResponsiveComponent {
     else {
       middle = (
         <div style={{textAlign: 'center'}}>
-          <ManualPlaceholder style={styles.image} />
-          <div style={styles.instructions}>
+          <ManualPlaceholder className={`${styles.override} ${styles.image}`} />
+          <div className={styles.instructions}>
             Select your event type above to begin building your manual event.
           </div>
         </div>
@@ -188,10 +130,10 @@ export class ManualEventEntry extends ResponsiveComponent {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.label} >EVENT TYPE:</div>
+      <div className={`${styles.container} ${this.props.className}`}>
+        <div className={styles.label} >EVENT TYPE:</div>
         <div>
-          <select ref="manualType" onChange={this.typeSelected} style={styles.select} value={this.props.selected}>
+          <select ref="manualType" onChange={this.typeSelected} className={styles.select} value={this.props.selected}>
             <option value="">SELECT</option>
             <option value="AWARD">Manual Award</option>
             <option value="PROPOSAL">Manual Proposal</option>

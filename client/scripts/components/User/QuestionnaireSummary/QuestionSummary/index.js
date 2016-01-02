@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {COIConstants} from '../../../../../COIConstants';
-import {formatDate} from '../../../../scripts/formatDate';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {COIConstants} from '../../../../../../COIConstants';
+import {formatDate} from '../../../../../scripts/formatDate';
 
 export class QuestionSummary extends React.Component {
   constructor() {
@@ -34,55 +35,6 @@ export class QuestionSummary extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        margin: '35px 0px'
-      },
-      option: {
-        display: 'inline-block',
-        marginRight: 30
-      },
-      counter: {
-        display: 'inline-block',
-        width: this.props.question.parent !== null ? 170 : 100,
-        paddingLeft: this.props.question.parent !== null ? 80 : 0,
-        fontSize: 17,
-        verticalAlign: 'top'
-      },
-      controls: {
-        marginTop: 20
-      },
-      radio: {
-        width: 36,
-        height: '4em'
-      },
-      nums: {
-        fontSize: 28,
-        marginLeft: 10
-      },
-      question: {
-        marginTop: 3,
-        lineHeight: '22px'
-      },
-      answer: {
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      editlink: {
-        fontSize: 15,
-        margin: '10px 0 0 8px',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        cursor: 'pointer',
-        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #0095A0',
-        display: 'inline-block'
-      },
-      answerLabel: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 18,
-        marginRight: 7
-      }
-    };
-
     let answer = this.props.answer;
     switch(this.props.question.question.type) {
       case COIConstants.QUESTION_TYPE.DATE:
@@ -94,25 +46,33 @@ export class QuestionSummary extends React.Component {
         }
     }
 
+    const classes = classNames(
+      {[styles.subquestion]: this.props.question.parent !== null},
+      'flexbox',
+      'row',
+      styles.container,
+      this.props.className
+    );
+
     return (
-      <div className="flexbox row" style={merge(styles.container, this.props.style)}>
-        <span style={styles.counter}>
-          <span style={styles.nums}>
+      <div className={classes}>
+        <span className={styles.counter}>
+          <span className={styles.nums}>
             {this.props.question.question.numberToShow}
           </span>
         </span>
 
-        <span className="fill" style={styles.question}>
+        <span className={`fill ${styles.question}`}>
           <div>{this.props.question.question.text}</div>
-          <div style={{marginTop: 15}} className="flexbox row">
-            <span className="fill" style={styles.answer}>
-              <span style={styles.answerLabel}>Answer: </span>
+          <div style={{marginTop: 15}} className={`flexbox row`}>
+            <span className={`fill ${styles.answer}`}>
+              <span className={styles.answerLabel}>Answer: </span>
               <span style={{fontSize: 20}}>
                 {answer}
               </span>
             </span>
             <span onClick={this.reviewQuestion}>
-              <span style={styles.editlink}>&lt; EDIT</span>
+              <span className={styles.editlink}>&lt; EDIT</span>
             </span>
           </div>
         </span>

@@ -16,14 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {GreyButton} from '../GreyButton';
-import {AdminActions} from '../../actions/AdminActions';
-import DisclosureFilter from './DisclosureFilter';
-import DoneWithFilterButton from './DoneWithFilterButton';
-import {COIConstants} from '../../../../COIConstants';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {GreyButton} from '../../GreyButton';
+import {AdminActions} from '../../../actions/AdminActions';
+import DisclosureFilter from '../DisclosureFilter';
+import DoneWithFilterButton from '../DoneWithFilterButton';
+import {COIConstants} from '../../../../../COIConstants';
 const APPROVED = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
-import {merge} from '../../merge';
 
 export class DisclosureFilterByStatus extends DisclosureFilter {
   constructor() {
@@ -53,45 +54,13 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    const styles = {
-      container: {
-        whiteSpace: 'nowrap',
-        color: 'black',
-        width: 238
-      },
-      checkbox: {
-        textAlign: 'left',
-        padding: 10,
-        fontSize: 15
-      },
-      clearButton: {
-        backgroundColor: '#DFDFDF',
-        color: 'black',
-        borderBottom: '3px solid #717171',
-        float: 'right',
-        padding: '4px 7px',
-        width: 135,
-        margin: '10px 0'
-      },
-      x: {
-        fontSize: 15,
-        paddingRight: 8
-      },
-      approvedStatus: {
-        borderTop: '1px solid #AAA',
-        borderBottom: '1px solid #AAA',
-        padding: '6px 0',
-        margin: '0 10px 12px 10px'
-      }
-    };
-
     const options = this.props.possibleStatuses
       .filter(status => status.code !== APPROVED)
       .sort((a, b) => a.label.localeCompare(b.label))
       .map((status) => {
         const id = `statFilt${status.code}`;
         return (
-          <div style={styles.checkbox} key={status.code}>
+          <div className={styles.checkbox} key={status.code}>
             <input
               id={id}
               type="checkbox"
@@ -108,7 +77,7 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       .map(status => {
         const id = `statFilt${status.code}`;
         return (
-          <div style={merge(styles.checkbox, {padding: '10px 0'})} key={status.code}>
+          <div className={styles.checkbox} style={{padding: '10px 0'}} key={status.code}>
             <input
               id={id}
               type="checkbox"
@@ -121,16 +90,16 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       });
 
     return (
-      <div style={styles.container}>
+      <div className={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
         {options}
 
-        <div style={styles.approvedStatus}>
+        <div className={styles.approvedStatus}>
           {approved}
         </div>
 
-        <GreyButton style={styles.clearButton} onClick={this.clear}>
-          <i className="fa fa-times" style={styles.x}></i>
+        <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
+          <i className={classNames('fa', 'fa-times', styles.x)}></i>
           CLEAR FILTER
         </GreyButton>
       </div>

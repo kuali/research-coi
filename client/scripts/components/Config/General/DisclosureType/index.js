@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import EditLink from '../EditLink';
-import DoneLink from '../DoneLink';
-import ConfigActions from '../../../actions/ConfigActions';
+import EditLink from '../../EditLink';
+import DoneLink from '../../DoneLink';
+import ConfigActions from '../../../../actions/ConfigActions';
 
 export default class DisclosureType extends React.Component {
   constructor() {
@@ -67,51 +68,25 @@ export default class DisclosureType extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      editLink: {
-        marginLeft: 10
-      },
-      checkbox: {
-        marginRight: 10,
-        verticalAlign: 'middle'
-      },
-      textbox: {
-        verticalAlign: 'middle',
-        padding: '3px 6px',
-        fontSize: 16,
-        borderRadius: 5,
-        border: '1px solid #AAA'
-      },
-      label: {
-        fontSize: 17
-      },
-      dynamicSpan: {
-        verticalAlign: 'middle',
-        display: 'inline-block'
-      }
-    };
-
     let jsx;
     if (this.state.editing) {
       jsx = (
-        <span style={styles.dynamicSpan}>
-          <input type="text" ref="label" style={styles.textbox} defaultValue={this.props.type.description} onKeyUp={this.keyUp} />
-          <DoneLink onClick={this.doneEditing} style={styles.editLink} />
+        <span className={styles.dynamicSpan}>
+          <input type="text" ref="label" className={styles.textbox} defaultValue={this.props.type.description} onKeyUp={this.keyUp} />
+          <DoneLink onClick={this.doneEditing} className={`${styles.override} ${styles.editLink}`} />
         </span>
       );
     }
     else {
       jsx = (
-        <span style={styles.dynamicSpan}>
+        <span className={styles.dynamicSpan}>
           <label
             htmlFor={`${this.props.type.typeCd}disctype`}
-            style={styles.label}
+            className={styles.label}
           >
             {this.props.type.description}
           </label>
-          <EditLink onClick={this.editType} style={styles.editLink} />
+          <EditLink onClick={this.editType} className={`${styles.override} ${styles.editLink}`} />
         </span>
       );
     }
@@ -123,7 +98,7 @@ export default class DisclosureType extends React.Component {
           ref="checkbox"
           id={`${this.props.type.typeCd}disctype`}
           type="checkbox"
-          style={styles.checkbox}
+          className={styles.checkbox}
           checked={this.props.type.enabled === 1}
           onChange={this.toggle}
         />
@@ -131,7 +106,7 @@ export default class DisclosureType extends React.Component {
     }
 
     return (
-      <span className="fill" style={merge(styles.container, this.props.style)}>
+      <span className={classNames('fill', styles.container, this.props.className)}>
         {checkbox}
         {jsx}
       </span>

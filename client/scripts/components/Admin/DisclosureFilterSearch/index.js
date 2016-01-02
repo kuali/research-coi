@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../merge';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
 export class DisclosureFilterSearch extends React.Component {
   constructor() {
@@ -45,43 +46,19 @@ export class DisclosureFilterSearch extends React.Component {
 
 
   render() {
-    const styles = {
-      container: {
-        width: '100%',
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        padding: '13px 10px',
-        textAlign: 'center',
-        position: 'relative',
-        zIndex: 2
-      },
-      input: {
-        border: 0,
-        padding: '2px 3px 1px 5px',
-        backgroundColor: 'white',
-        outline: 0,
-        height: 25,
-        fontSize: 16,
-        width: 175,
-        verticalAlign: 'middle',
-        borderRadius: '0 5px 5px 0'
-      },
-      magnifyingGlass: {
-        width: 25,
-        height: 25,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        backgroundColor: '#DFDFDF',
-        paddingTop: 8,
-        borderRadius: '0 5px 5px 0',
-        fontSize: 11,
-        transform: 'rotateY(180deg)'
-      }
-    };
-
     const currentValue = this.props.query || '';
     return (
-      <div style={merge(styles.container, this.props.styles)}>
-        <i className="fa fa-search" style={styles.magnifyingGlass} onClick={this.search}></i>
-        <input aria-label="Search" placeholder="Search" style={styles.input} type="text" onChange={this.valueChanged} onKeyUp={this.keyUp} value={currentValue} />
+      <div className={classNames(styles.container, this.props.className)}>
+        <i className={classNames('fa', 'fa-search', styles.magnifyingGlass)} onClick={this.search}></i>
+        <input
+          aria-label="Search"
+          placeholder="Search"
+          className={styles.input}
+          type="text"
+          onChange={this.valueChanged}
+          onKeyUp={this.keyUp}
+          value={currentValue}
+        />
       </div>
     );
   }

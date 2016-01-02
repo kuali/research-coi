@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigActions from '../../../actions/ConfigActions';
+import ConfigActions from '../../../../actions/ConfigActions';
 
 export default class DateOptions extends React.Component {
   constructor() {
@@ -39,29 +40,6 @@ export default class DateOptions extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      warningValue: {
-        margin: '0 5px',
-        border: '1px solid #aaa',
-        height: 24,
-        width: 80
-      },
-      warningPeriod: {
-        marginRight: 5,
-        border: '1px solid #aaa',
-        height: 24,
-        width: 80
-      },
-      send: {
-        verticalAlign: 'middle'
-      },
-      before: {
-        verticalAlign: 'middle'
-      }
-    };
-
     const warningValue = [];
     let i = 1;
     while (i <= 31) {
@@ -72,17 +50,17 @@ export default class DateOptions extends React.Component {
     }
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
-        <span style={styles.send}>Send</span>
-        <select ref="warningValue" value={this.props.warningValue} style={styles.warningValue} onChange={this.setWarningValue}>
+      <span className={classNames(styles.container, this.props.className)}>
+        <span className={styles.send}>Send</span>
+        <select ref="warningValue" value={this.props.warningValue} className={styles.warningValue} onChange={this.setWarningValue}>
           {warningValue}
         </select>
-        <select ref="warningPeriod" value={this.props.warningPeriod} style={styles.warningPeriod} onChange={this.setWarningPeriod}>
+        <select ref="warningPeriod" value={this.props.warningPeriod} className={styles.warningPeriod} onChange={this.setWarningPeriod}>
           <option>Days</option>
           <option>Weeks</option>
           <option>Months</option>
         </select>
-        <span style={styles.before}>before expiration</span>
+        <span className={styles.before}>before expiration</span>
       </span>
     );
   }

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,37 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import CommentBubble from './CommentBubble';
+import CommentBubble from '../CommentBubble';
+import classNames from 'classnames';
 
-export default function TopicCommentSummary(props: Object): React.Element {
-  const styles = {
-    container: {
-      paddingBottom: 25
-    },
-    topicName: {
-      fontSize: 18,
-      marginBottom: 15
-    },
-    date: {
-      float: 'right',
-      fontSize: 13
-    },
-    author: {
-      fontWeight: 'bold',
-      fontSize: 16
-    },
-    text: {
-      fontSize: 13,
-      marginTop: 7,
-      marginBottom: 25
-    },
-    comment: {
-      marginBottom: 15
-    }
-  };
-
+export default function TopicCommentSummary(props) {
   let comments;
   if (props.comments) {
     comments = props.comments.map(comment => {
@@ -58,7 +32,7 @@ export default function TopicCommentSummary(props: Object): React.Element {
           date={comment.date}
           author={comment.author}
           text={comment.text}
-          style={styles.comment}
+          className={`${styles.override} ${styles.comment}`}
           new={false}
         />
       );
@@ -66,8 +40,8 @@ export default function TopicCommentSummary(props: Object): React.Element {
   }
 
   return (
-    <div style={merge(styles.container, props.style)}>
-      <div style={styles.topicName}>{props.topicName}</div>
+    <div className={classNames(styles.container, props.className)}>
+      <div className={styles.topicName}>{props.topicName}</div>
       <div style={{width: '50%', borderBottom: '1px solid black', marginBottom: 15}}></div>
       <div>
         {comments}

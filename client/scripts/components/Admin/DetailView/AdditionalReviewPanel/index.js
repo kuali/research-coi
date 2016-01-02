@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,91 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {AdminActions} from '../../../actions/AdminActions';
-import {FileUpload} from '../../FileUpload';
+import {AdminActions} from '../../../../actions/AdminActions';
+import {FileUpload} from '../../../FileUpload';
+import classNames from 'classnames';
 
-export default function AdditionalReviewPanel(props: Object): React.Element {
-  const styles = {
-    container: {
-      padding: '25px 30px',
-      backgroundColor: 'white',
-      height: '100%',
-      boxShadow: '0 0 10px 0 #AAA'
-    },
-    close: {
-      float: 'right',
-      fontWeight: 'bold',
-      cursor: 'pointer',
-      marginBottom: 8,
-      color: window.colorBlindModeOn ? 'black' : '#0095A0',
-      fontSize: 20
-    },
-    download: {
-      float: 'right',
-      border: 0,
-      backgroundColor: '#333',
-      color: 'white',
-      padding: '5px 10px'
-    },
-    dragAndDrop: {
-      margin: '25px 0',
-      border: '3px dashed #888',
-      padding: '10px 15px',
-      borderRadius: 4
-    },
-    complete: {
-      paddingBottom: 15,
-      fontSize: 14,
-      verticalAlign: 'middle'
-    },
-    additionalReviewerLabel: {
-      borderTop: '1px solid #BBB',
-      paddingTop: 25
-    },
-    searchLabel: {
-      margin: '15px 0 5px 0',
-      fontSize: 12,
-      color: '#666'
-    },
-    searchBox: {
-      width: '100%',
-      border: '1px solid #999',
-      padding: '10px 15px'
-    },
-    title: {
-      fontSize: 22,
-      fontWeight: 300
-    },
-    subLabel: {
-      fontSize: 15,
-      width: '50%',
-      borderBottom: '1px solid #777',
-      paddingBottom: 4
-    }
-  };
-
-  const fileUploadStyles = {
-    middle: {
-      display: 'inline-block',
-      textAlign: 'center',
-      verticalAlign: 'middle',
-      fontSize: 12,
-      width: '66%'
-    }
-  };
-
+export default function AdditionalReviewPanel(props) {
   return (
-    <div style={merge(styles.container, props.style)}>
+    <div className={classNames(styles.container, props.className)}>
       <div style={{paddingBottom: 20}}>
-        <span style={styles.close} onClick={AdminActions.hideAdditionalReviewPanel}>
+        <span className={styles.close} onClick={AdminActions.hideAdditionalReviewPanel}>
           <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
         </span>
-        <span style={styles.title}>ADDITIONAL REVIEW</span>
+        <span className={styles.title}>ADDITIONAL REVIEW</span>
       </div>
       <div style={{paddingTop: 12, marginBottom: 25}}>
-        <span style={styles.subLabel}>MANAGEMENT PLAN</span>
+        <span className={styles.subLabel}>MANAGEMENT PLAN</span>
       </div>
 
       <FileUpload
@@ -111,7 +42,7 @@ export default function AdditionalReviewPanel(props: Object): React.Element {
         delete={AdminActions.deleteManagementPlan}
         files={props.managementPlan}
         multiple={true}
-        styles={fileUploadStyles}
+        className={`${styles.override} ${styles.fileUploadStyles}`}
       >
         <div>Drag and drop or upload your management plan</div>
         <div style={{fontSize: 10, marginTop: 2}}>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>

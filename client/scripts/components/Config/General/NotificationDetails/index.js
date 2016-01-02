@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigActions from '../../../actions/ConfigActions';
-import DateOptions from './DateOptions';
-import Notification from './Notification';
-import DueDateDetails from './DueDateDetails';
+import ConfigActions from '../../../../actions/ConfigActions';
+import DateOptions from '../DateOptions';
+import Notification from '../Notification';
+import DueDateDetails from '../DueDateDetails';
 
 export default class NotificationDetails extends React.Component {
   constructor() {
@@ -75,53 +76,6 @@ export default class NotificationDetails extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        padding: '10px 0',
-        maxWidth: 646,
-        margin: '0 auto'
-      },
-      dateDetailSection: {
-        borderTop: '1px solid #aaa',
-        marginTop: 20,
-        paddingTop: 20
-      },
-      done: {
-        float: 'right',
-        cursor: 'pointer'
-      },
-      buttons: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        marginTop: 20,
-        fontSize: 17,
-        height: 21
-      },
-      add: {
-        cursor: 'pointer'
-      },
-      cancel: {
-        float: 'right',
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        paddingLeft: 5,
-        marginLeft: 25,
-        paddingTop: 7,
-        paddingBottom: 2,
-        fontSize: 8,
-        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #F57C00',
-        cursor: 'pointer',
-        verticalAlign: 'middle'
-      },
-      expirationMessage: {
-        display: 'block',
-        width: '100%',
-        padding: 10,
-        fontSize: 16,
-        marginTop: 10,
-        borderRadius: 5,
-        border: '1px solid #AAA'
-      }
-    };
-
     let notifications;
     if (this.props.notifications && this.props.notifications.length > 0) {
       notifications = this.props.notifications.map((notification, index) => {
@@ -141,13 +95,13 @@ export default class NotificationDetails extends React.Component {
     let addButton;
     if (this.state.canBeAdded) {
       doneButton = (
-        <span style={styles.done} onClick={this.done}>Done</span>
+        <span className={styles.done} onClick={this.done}>Done</span>
       );
     }
 
     if (this.state.canBeAdded || !this.state.adding) {
       addButton = (
-        <span style={styles.add} onClick={this.add}>+ Add Another</span>
+        <span className={styles.add} onClick={this.add}>+ Add Another</span>
       );
     }
 
@@ -155,7 +109,7 @@ export default class NotificationDetails extends React.Component {
     if (this.props.appState && this.state.adding) {
       newNotification = (
         <div>
-          <div style={merge(styles.container, this.props.style)}>
+          <div className={classNames(styles.container, this.props.className)}>
             <div>
               <DateOptions
                 warningValue={this.props.warningValue}
@@ -163,14 +117,14 @@ export default class NotificationDetails extends React.Component {
                 id={this.props.id}
               />
 
-              <span style={styles.cancel} onClick={this.cancel}>
+              <span className={styles.cancel} onClick={this.cancel}>
                 X CANCEL
               </span>
             </div>
             <textarea
               ref="reminderText"
               onChange={this.textChanged}
-              style={styles.expirationMessage}
+              className={styles.expirationMessage}
               placeholder="Enter the reminder text here"
               value={this.props.appState.newNotification.reminderText}
               aria-label="Notification text"
@@ -182,18 +136,18 @@ export default class NotificationDetails extends React.Component {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={`${styles.container} ${this.props.className}`}>
         <DueDateDetails
           isRollingDueDate={this.props.isRollingDueDate}
           dueDate={this.props.dueDate}
         />
 
-        <div style={styles.dateDetailSection}>
+        <div className={styles.dateDetailSection}>
           {notifications}
 
           {newNotification}
 
-          <div style={styles.buttons}>
+          <div className={styles.buttons}>
             {doneButton}
             {addButton}
           </div>

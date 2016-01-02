@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigStore from '../../../stores/ConfigStore';
-import {AdminActions} from '../../../actions/AdminActions';
-import {COIConstants} from '../../../../../COIConstants';
+import ConfigStore from '../../../../stores/ConfigStore';
+import {AdminActions} from '../../../../actions/AdminActions';
+import {COIConstants} from '../../../../../../COIConstants';
+import classNames from 'classnames';
 
 export default class DeclarationSummary extends React.Component {
   constructor() {
@@ -38,51 +39,6 @@ export default class DeclarationSummary extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        fontSize: 12,
-        marginBottom: 10
-      },
-      highlighted: {
-        borderLeft: window.colorBlindModeOn ? '10px solid black' : '10px solid #F57C00',
-        marginLeft: -20,
-        paddingLeft: 10
-      },
-      entityName: {
-        width: '25%',
-        display: 'inline-block'
-      },
-      conflict: {
-        width: '25%',
-        display: 'inline-block'
-      },
-      comments: {
-        width: '50%',
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      commentLink: {
-        fontSize: 14,
-        cursor: 'pointer',
-        margin: '14px 0 34px 0',
-        textAlign: 'right'
-      },
-      commentLabel: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
-        paddingBottom: 3
-      },
-      noComment: {
-        color: window.colorBlindModeOn ? 'black' : '#CCC'
-      }
-    };
-
-    let effectiveStyle = styles.container;
-    if (this.props.changedByPI) {
-      effectiveStyle = merge(effectiveStyle, styles.highlighted);
-    }
-    effectiveStyle = merge(effectiveStyle, this.props.style);
-
     let comment;
     if (this.props.declaration.comments) {
       comment = (
@@ -91,25 +47,31 @@ export default class DeclarationSummary extends React.Component {
     }
     else {
       comment = (
-        <span style={styles.noComment}>none</span>
+        <span className={styles.noComment}>none</span>
       );
     }
 
+    const classes = classNames(
+      styles.container,
+      {[styles.highlighted]: this.props.changedByPI},
+      this.props.className
+    );
+
     return (
-      <div style={effectiveStyle}>
+      <div className={classes}>
         <div>
-          <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
+          <span className={styles.entityName} style={{fontWeight: 'bold'}}>
             {this.props.declaration.entityName}
           </span>
-          <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
+          <span className={styles.conflict} style={{fontWeight: 'bold'}}>
             {ConfigStore.getDeclarationTypeString(this.props.declaration.typeCd)}
           </span>
-          <span style={merge(styles.comments, {fontStyle: 'italic'})}>
+          <span className={styles.comments} style={{fontStyle: 'italic'}}>
             {comment}
           </span>
         </div>
-        <div style={styles.commentLink} onClick={this.showComments}>
-          <span style={styles.commentLabel}>COMMENT ({this.props.commentCount})</span>
+        <div className={styles.commentLink} onClick={this.showComments}>
+          <span className={styles.commentLabel}>COMMENT ({this.props.commentCount})</span>
         </div>
       </div>
     );

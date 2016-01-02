@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigActions from '../../../actions/ConfigActions';
+import ConfigActions from '../../../../actions/ConfigActions';
 
 export default class SponsorLookup extends React.Component {
   constructor() {
@@ -37,25 +38,10 @@ export default class SponsorLookup extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        padding: '20px 23px 10px 23px',
-        fontSize: 17
-      },
-      title: {
-        fontSize: 11,
-        marginBottom: 10
-      },
-      checkbox: {
-        verticalAlign: 'middle',
-        marginRight: 10
-      }
-    };
-
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
         <div>
-          <input ref="checkbox" id="sponsorLookupToggle" type="checkbox" checked={this.props.enabled} style={styles.checkbox} onChange={this.toggle} />
+          <input ref="checkbox" id="sponsorLookupToggle" type="checkbox" checked={this.props.enabled} className={styles.checkbox} onChange={this.toggle} />
           <label htmlFor="sponsorLookupToggle" style={{verticalAlign: 'middle'}}>Lookup financial entities from legacy system?</label>
         </div>
       </div>

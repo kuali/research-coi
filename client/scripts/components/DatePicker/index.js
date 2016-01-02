@@ -16,17 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from './ResponsiveComponent';
-import {merge} from '../merge';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {merge} from '../../merge';
 import DayPicker from 'react-day-picker';
-import {formatDate} from '../formatDate';
+import {formatDate} from '../../formatDate';
 
-export class DatePicker extends ResponsiveComponent {
+export class DatePicker extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
-
+    
     this.state = {
       showingCalendar: false
     };
@@ -49,37 +49,15 @@ export class DatePicker extends ResponsiveComponent {
     this.props.onChange(day.getTime());
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        position: 'relative'
-      },
-      textField: {
-        fontFamily: 'Lato',
-        fontSize: 15,
-        border: '1px solid #999',
-        borderRadius: 5,
-        padding: '3px 5px'
-      },
-      calendar: {
-        position: 'absolute',
-        display: this.state.showingCalendar ? 'block' : 'none',
-        border: '1px solid rgb(119, 119, 119)',
-        backgroundColor: 'white',
-        marginTop: 5,
-        zIndex: 99
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
-    if (this.props.direction === 'Up') {
-      styles.calendar.bottom = 30;
-    }
+  render() {
+    const classes = classNames(
+      {[styles.showingCalendar]: this.state.showingCalendar},
+      styles.container,
+      this.props.className
+    );
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classes}>
         <input
           readOnly={true}
           type="text"
@@ -87,11 +65,21 @@ export class DatePicker extends ResponsiveComponent {
           value={this.props.value ? formatDate(this.props.value) : ''}
           placeholder="Select a date"
           onFocus={this.showCalendar}
-          style={merge(styles.textField, this.props.textFieldStyle)}
+          style={merge({
+            fontFamily: 'Lato',
+            fontSize: 15,
+            border: '1px solid #999',
+            borderRadius: 5,
+            padding: '3px 5px'
+          }, this.props.textFieldStyle)}
         />
 
         <DayPicker
-          style={styles.calendar}
+          className={classNames(
+            styles.override,
+            styles.calendar,
+            {[styles.up]: this.props.direction === 'Up'}
+          )}
           ref="daypicker"
           enableOutsideDays={true}
           numberOfMonths={1}

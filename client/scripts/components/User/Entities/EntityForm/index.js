@@ -16,14 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {GreyButton} from '../../GreyButton';
-import {merge} from '../../../merge';
-import {EntityFormNameStep} from './EntityFormNameStep';
-import {EntityFormInformationStep} from './EntityFormInformationStep';
-import {EntityFormRelationshipStep} from './EntityFormRelationshipStep';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
+import styles from './style';
+import React from 'react';
+import {GreyButton} from '../../../GreyButton';
+import classNames from 'classnames';
+import {EntityFormNameStep} from '../EntityFormNameStep';
+import {EntityFormInformationStep} from '../EntityFormInformationStep';
+import {EntityFormRelationshipStep} from '../EntityFormRelationshipStep';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../../stores/DisclosureStore';
 
 export class EntityForm extends React.Component {
   constructor() {
@@ -157,47 +158,25 @@ export class EntityForm extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'inline-block',
-        borderRadius: 5,
-        overflow: 'hidden',
-        position: 'relative',
-        zIndex: 2
-      },
-      content: {
-        backgroundColor: 'white',
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        padding: 25,
-        fontSize: 14,
-        borderBottom: '1px solid #DEDEDE'
-      },
-      button: {
-        marginLeft: 20,
-        minWidth: 100
-      },
-      disabled: {
-        color: '#AAA',
-        cursor: 'default'
-      },
-      controls: {
-        backgroundColor: 'white',
-        padding: 15,
-        textAlign: 'right'
-      }
-    };
-
     let currentStep;
     let submitButton;
     let nextButton;
     if (this.isStepValidating() && !this.isCurrentStepValid()) {
       nextButton = (
-        <GreyButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.next}>Next &gt;</GreyButton>
+        <GreyButton
+          title="Please correct the marked fields"
+          className={`${styles.override} ${styles.button} ${styles.disabled}`}
+          onClick={this.next}
+        >
+          Next &gt;
+        </GreyButton>
       );
     }
     else {
       nextButton = (
-        <GreyButton style={styles.button} onClick={this.next}>Next &gt;</GreyButton>
+        <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.next}>
+          Next &gt;
+        </GreyButton>
       );
     }
 
@@ -235,20 +214,26 @@ export class EntityForm extends React.Component {
       );
 
       const entityIsSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id) && DisclosureStore.entityInformationStepComplete(this.props.entity.id);
-      const doneButtonStyle = entityIsSubmittable ? styles.button : merge(styles.button, styles.disabled);
+
+      const doneButtonStyle = classNames(
+        styles.override,
+        styles.button,
+        {[styles.disabled]: !entityIsSubmittable}
+      );
+
       if (this.props.editing) {
         buttons = (
           <span>
-            <GreyButton style={styles.button} onClick={this.undo}>Undo</GreyButton>
-            <GreyButton style={doneButtonStyle} onClick={this.done}>Done</GreyButton>
+            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.undo}>Undo</GreyButton>
+            <GreyButton className={doneButtonStyle} onClick={this.done}>Done</GreyButton>
           </span>
         );
       }
       else {
         buttons = (
           <span>
-            <GreyButton style={styles.button} onClick={this.edit}>Edit</GreyButton>
-            <GreyButton style={styles.button} onClick={this.done}>Done</GreyButton>
+            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.edit}>Edit</GreyButton>
+            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.done}>Done</GreyButton>
           </span>
         );
       }
@@ -278,7 +263,7 @@ export class EntityForm extends React.Component {
           );
 
           backButton = (
-            <GreyButton style={styles.button} onClick={this.back}>Back</GreyButton>
+            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.back}>Back</GreyButton>
           );
 
           break;
@@ -297,17 +282,23 @@ export class EntityForm extends React.Component {
 
           if (this.isStepValidating() && !this.isCurrentStepValid()) {
             submitButton = (
-              <GreyButton title="Please correct the marked fields" style={merge(styles.button, styles.disabled)} onClick={this.submit}>Submit</GreyButton>
+              <GreyButton
+                title="Please correct the marked fields"
+                className={`${styles.override} ${styles.button} ${styles.disabled}`}
+                onClick={this.submit}
+              >
+                Submit
+              </GreyButton>
             );
           }
           else {
             submitButton = (
-              <GreyButton style={styles.button} onClick={this.submit}>Submit</GreyButton>
+              <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.submit}>Submit</GreyButton>
             );
           }
 
           backButton = (
-            <GreyButton style={styles.button} onClick={this.back}>Back</GreyButton>
+            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.back}>Back</GreyButton>
           );
 
           nextButton = null;
@@ -317,7 +308,7 @@ export class EntityForm extends React.Component {
       buttons = (
         <span>
           {backButton}
-          <GreyButton style={styles.button} onClick={this.cancel}>Cancel</GreyButton>
+          <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.cancel}>Cancel</GreyButton>
           {nextButton}
           {submitButton}
         </span>
@@ -325,11 +316,11 @@ export class EntityForm extends React.Component {
     }
 
     return (
-      <span ref="theForm" style={merge(styles.container, this.props.style)}>
-        <div style={styles.content}>
+      <span ref="theForm" className={`${styles.container} ${this.props.className}`}>
+        <div className={styles.content}>
           {currentStep}
         </div>
-        <div style={styles.controls}>
+        <div className={styles.controls}>
           {buttons}
         </div>
       </span>

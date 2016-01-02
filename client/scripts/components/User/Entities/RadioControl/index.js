@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import React from 'react';
 
 export class RadioControl extends React.Component {
   constructor() {
@@ -30,37 +31,18 @@ export class RadioControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      option: {
-        display: 'inline-block',
-        marginRight: 30,
-        width: '100%'
-      },
-      label: {
-        cursor: 'pointer'
-      },
-      value: {
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      invalidError: {
-        fontSize: 10,
-        marginTop: 2
-      }
-    };
-
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-        <div style={styles.invalidError}>Required Field</div>
+        <div className={styles.invalidError}>Required Field</div>
       );
     }
 
     const options = this.props.options.map((option, index) => {
       return (
-        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
+        <span className={styles.option} key={`${this.props.questionId}_${index}`}>
           <div>
-            <label htmlFor={`multi_${option}_${this.props.questionId}`} style={styles.label}>
+            <label htmlFor={`multi_${option}_${this.props.questionId}`} className={styles.label}>
               <input
                 id={`multi_${option}_${this.props.questionId}`}
                 value={option}
@@ -79,14 +61,14 @@ export class RadioControl extends React.Component {
 
     if (this.props.readonly) {
       return (
-        <div style={styles.value}>
+        <div className={styles.value}>
           {this.props.answer}
         </div>
       );
     }
 
     return (
-      <div style={styles.container}>
+      <div className={styles.container}>
         {options}
         {requiredFieldError}
       </div>

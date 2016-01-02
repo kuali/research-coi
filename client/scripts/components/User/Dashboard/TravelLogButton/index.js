@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,40 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigStore from '../../../stores/ConfigStore';
-import {COIConstants} from '../../../../../COIConstants';
+import ConfigStore from '../../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../../COIConstants';
 import {Link} from 'react-router';
 
-export function TravelLogButton(props: Object): React.Element {
-  const styles = {
-    container: {
-      display: 'block',
-      backgroundColor: '#eeeeee',
-      verticalAlign: 'top',
-      padding: '20px 30px 20px 30px',
-      cursor: 'pointer',
-      color: '#444',
-      fontWeight: '300',
-      borderTop: '1px solid #c0c0c0'
-    },
-    primary: {
-      fontSize: 28,
-      fontWeight: 300
-    },
-    secondary: {
-      fontSize: 22,
-      fontWeight: 'bold'
-    }
-  };
-
+export function TravelLogButton(props) {
   return (
-    <Link to={`/coi/travelLog`} style={merge(styles.container, props.style)}>
+    <Link to={`/coi/travelLog`} className={`${styles.container} ${props.className}`}>
       <div>
         <span>
-          <div style={styles.primary}>Update</div>
-          <div style={styles.secondary}>{ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.TRAVEL)}</div>
+          <div className={styles.primary}>Update</div>
+          <div className={styles.secondary}>{ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.TRAVEL)}</div>
         </span>
       </div>
     </Link>

@@ -16,14 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
-import {GreyButton} from '../GreyButton';
-import {BlueButton} from '../BlueButton';
-import Gripper from '../DynamicIcons/Gripper';
+import {GreyButton} from '../../GreyButton';
+import {BlueButton} from '../../BlueButton';
+import Gripper from '../../DynamicIcons/Gripper';
 import {DragSource, DropTarget} from 'react-dnd';
-import NewQuestion from './NewQuestion';
-import ConfigActions from '../../actions/ConfigActions';
+import NewQuestion from '../NewQuestion';
+import ConfigActions from '../../../actions/ConfigActions';
 
 const questionTarget = {
   hover(props, monitor) {
@@ -111,85 +112,6 @@ class Question extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        borderRadius: 5,
-        backgroundColor: 'white',
-        boxShadow: '0 0 10px #BBB',
-        overflow: 'hidden',
-        visibility: this.props.isDragging ? 'hidden' : 'visible',
-        marginLeft: this.props.isSubQuestion ? 100 : 0,
-        transition: 'all .2s ease-in-out'
-      },
-      content: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        height: '100%'
-      },
-      gripper: {
-        backgroundColor: window.colorBlindModeOn ? '#666' : this.props.isSubQuestion ? '#F57C00' : '#0095A0',
-        verticalAlign: 'top',
-        display: 'inline-block',
-        width: 25
-      },
-      gripperIcon: {
-        marginLeft: 5,
-        width: 15,
-        height: 42,
-        color: 'rgba(0, 0, 0, .4)'
-      },
-      top: {
-        padding: 10
-      },
-      number: {
-        fontSize: 34,
-        height: '100%',
-        verticalAlign: 'top',
-        padding: '0px 17px'
-      },
-      text: {
-        overflow: 'hidden',
-        height: '3em',
-        lineHeight: '1.5em',
-        marginTop: 5,
-        fontSize: 12,
-        verticalAlign: 'top',
-        display: 'inline-block'
-      },
-      bottom: {
-        borderTop: '1px solid #AAA',
-        padding: '10px 20px 10px 10px',
-        whiteSpace: 'nowrap',
-        height: 54
-      },
-      button: {
-        float: 'right',
-        margin: '4px 0 3px 10px',
-        height: 27,
-        width: 124
-      },
-      nonFloatButton: {
-        margin: '4px 0 3px 10px',
-        height: 27,
-        width: 124
-      },
-      dropdown: {
-        marginLeft: 5
-      },
-      extraSpace: {
-        position: 'absolute',
-        width: '100%',
-        top: this.props.top,
-        transition: 'all .2s ease-in-out'
-      },
-      warning: {
-        color: window.colorBlindModeOn ? 'black' : 'red',
-        fontSize: 14,
-        whiteSpace: 'normal',
-        paddingLeft: 10
-      }
-    };
-
     let buttons;
     let questionDetails;
 
@@ -198,7 +120,7 @@ class Question extends React.Component {
       displayCondition = (
         <span>
           Display if parent is
-          <select ref="displayCriteria" style={styles.dropdown} value={this.props.displayCriteria} onChange={this.criteriaChanged}>
+          <select ref="displayCriteria" className={styles.dropdown} value={this.props.displayCriteria} onChange={this.criteriaChanged}>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
           </select>
@@ -208,7 +130,7 @@ class Question extends React.Component {
 
     if (this.props.editState) {
       questionDetails = (
-        <div className="flexbox row" style={styles.top}>
+        <div className={`flexbox row ${styles.top}`}>
           <NewQuestion
             id={this.props.id}
             question={this.props.editState}
@@ -220,50 +142,59 @@ class Question extends React.Component {
       let subQuestionWarning;
       if (this.props.editState.showWarning) {
         subQuestionWarning = (
-          <div style={styles.warning}>Only Yes/No can have subquestions. All subquestions will be deleted.</div>
+          <div className={styles.warning}>Only Yes/No can have subquestions. All subquestions will be deleted.</div>
         );
       }
 
       buttons = (
-        <div className="flexbox row">
-          <div className="fill">
+        <div className={`flexbox row`}>
+          <div className={`fill`}>
             {subQuestionWarning}
           </div>
           <span>
-            <GreyButton style={styles.nonFloatButton} onClick={this.cancel}>Cancel</GreyButton>
-            <BlueButton style={styles.nonFloatButton} onClick={this.save}>Save</BlueButton>
+            <GreyButton className={`${styles.override} ${styles.nonFloatButton}`} onClick={this.cancel}>Cancel</GreyButton>
+            <BlueButton className={`${styles.override} ${styles.nonFloatButton}`} onClick={this.save}>Save</BlueButton>
           </span>
         </div>
       );
     }
     else {
       questionDetails = (
-        <div className="flexbox row" style={styles.top}>
-          <span style={styles.number}>{this.props.number}</span>
-          <span className="fill" style={styles.text}>{this.props.text}</span>
+        <div className={`flexbox row ${styles.top}`}>
+          <span className={styles.number}>{this.props.number}</span>
+          <span className={`fill ${styles.text}`}>{this.props.text}</span>
         </div>
       );
 
       buttons = (
         <div>
-          <GreyButton style={styles.button} onClick={this.edit}>Edit</GreyButton>
-          <GreyButton style={styles.button} onClick={this.deleteQuestion}>Delete</GreyButton>
+          <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.edit}>Edit</GreyButton>
+          <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.deleteQuestion}>Delete</GreyButton>
           {displayCondition}
         </div>
       );
     }
 
+    const classes = classNames(
+      styles.container,
+      this.props.className,
+      'flexbox',
+      'row',
+      {[styles.dragging]: this.props.isDragging},
+      {[styles.subQuestion]: this.props.isSubQuestion}
+    );
+
     return this.props.connectDragSource(
       this.props.connectDropTarget(
-        <div style={styles.extraSpace}>
-          <div className="flexbox row" style={merge(styles.container, this.props.style)}>
-            <span style={styles.gripper}>
-              <Gripper style={styles.gripperIcon} />
+        <div style={{position: 'absolute', width: '100%', top: this.props.top, transition: 'all .2s ease-in-out'}}>
+          <div className={classes}>
+            <span className={styles.gripper}>
+              <Gripper className={`${styles.override} ${styles.gripperIcon}`} color="rgba(0, 0, 0, .4)" />
             </span>
-            <span className="fill" style={styles.content}>
+            <span className={`fill ${styles.content}`}>
               {questionDetails}
 
-              <div style={styles.bottom}>
+              <div className={styles.bottom}>
                 {buttons}
               </div>
             </span>

@@ -17,8 +17,9 @@
 */
 
 /*global TWEEN*/
+
+import styles from './style';
 import React from 'react';
-import {merge} from '../../merge';
 
 export default class ProgressIndicator extends React.Component {
   constructor(props) {
@@ -102,17 +103,8 @@ export default class ProgressIndicator extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        position: 'relative',
-        textAlign: 'center',
-        width: 120,
-        height: 120
-      }
-    };
-
     return (
-      <canvas style={merge(styles.container, this.props.style)} width="200" height="200" ref="theCanvas">
+      <canvas className={`${styles.container} ${this.props.className}`} width="200" height="200" ref="theCanvas">
       </canvas>
     );
   }

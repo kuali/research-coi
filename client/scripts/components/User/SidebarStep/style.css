@@ -1,0 +1,75 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  padding: 10px 20px 10px 10px;
+  font-size: 18px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.selected {
+  font-weight: bold;
+  background-color: white;
+  position: relative;
+  color: black;
+  box-shadow: 0 0 8px #CDCDCD;
+  border-right: 5px solid #0095A0;
+}
+
+:global(.color-blind) .selected {
+  border-right: 5px solid black;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.incomplete {
+  color: #C1C1C1;
+  font-weight: 300;
+}
+
+:global(.color-blind) .incomplete {
+  color: black;
+}
+
+.stepName {
+  vertical-align: middle;
+  padding-left: 5px;
+}
+
+.override.icon {
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;
+}
+
+.futureIcon {
+  vertical-align: middle;
+  color: #0095A0;
+  font-size: 16px;
+  width: 50px;
+  margin: 17px 0 17px 0;
+  text-align: center;
+}
+
+:global(.color-blind) .futureIcon {
+  color: black;
+}

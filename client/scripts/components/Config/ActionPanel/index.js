@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,28 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
-import UndoButton from './UndoButton';
-import SaveButton from './SaveButton';
+import UndoButton from '../UndoButton';
+import SaveButton from '../SaveButton';
 
-export default function ActionPanel(props: Object): React.Element {
-  const styles = {
-    container: {
-      padding: '0 20px 0 35px',
-      width: 235
-    },
-    saveAndUndo: {
-      position: 'fixed',
-      transition: 'opacity .1s linear',
-      opacity: props.visible ? 1 : 0
-    }
-  };
+export default function ActionPanel(props) {
+  const classes = classNames(
+    styles.container,
+    props.className,
+    {[styles.visible]: props.visible}
+  );
 
   return (
-    <span style={merge(styles.container, props.style)}>
-      <div style={styles.saveAndUndo}>
-        <SaveButton style={{marginBottom: 30}} />
+    <span className={classes}>
+      <div className={styles.saveAndUndo}>
+        <SaveButton className={`${styles.override} ${styles.saveButton}`} />
         <UndoButton />
       </div>
     </span>

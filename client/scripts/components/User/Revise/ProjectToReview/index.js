@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,48 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import EntityDeclaration from './EntityDeclaration';
+import EntityDeclaration from '../EntityDeclaration';
 
-export default function ProjectToReview(props: Object): React.Element {
-  const styles = {
-    container: {
-      paddingBottom: 10
-    },
-    projectTitle: {
-      fontSize: 20,
-      margin: '20px 0 20px 45px'
-    },
-    headings: {
-      borderBottom: '1px solid #CCC',
-      marginLeft: 45,
-      marginRight: 35,
-      paddingBottom: 4
-    },
-    entityName: {
-      display: 'inline-block',
-      width: 250,
-      fontSize: 14
-    },
-    relationship: {
-      display: 'inline-block',
-      width: 230,
-      fontSize: 14
-    },
-    comment: {
-      display: 'inline-block',
-      fontSize: 14
-    },
-    commentFiller: {
-      width: 300
-    },
-    borderArea: {
-      borderBottom: '1px solid #333',
-      margin: '30px 0 0 50px'
-    }
-  };
-
+export default function ProjectToReview(props) {
   let entityDeclarations;
   if (props.project.entities) {
     entityDeclarations = props.project.entities.map(entityDeclaration => {
@@ -76,23 +38,23 @@ export default function ProjectToReview(props: Object): React.Element {
   let bottomBorder;
   if (!props.last) {
     bottomBorder = (
-      <div className="flexbox row">
-        <span className="fill" style={styles.borderArea}></span>
-        <span style={styles.commentFiller}></span>
+      <div className={`flexbox row`}>
+        <span className={`fill ${styles.borderArea}`}></span>
+        <span className={styles.commentFiller}></span>
       </div>
     );
   }
 
   return (
-    <div style={merge(styles.container, props.style)}>
-      <div style={styles.projectTitle}>{props.project.name}</div>
-      <div className="flexbox row">
-        <span className="fill" style={styles.headings}>
-          <span style={styles.entityName}>FINANCIAL ENTITY</span>
-          <span style={styles.relationship}>REPORTER RELATIONSHIP</span>
-          <span style={styles.comment}>REPORTER COMMENTS</span>
+    <div className={`${styles.container} ${props.className}`}>
+      <div className={styles.projectTitle}>{props.project.name}</div>
+      <div className={`flexbox row`}>
+        <span className={`fill ${styles.headings}`}>
+          <span className={styles.entityName}>FINANCIAL ENTITY</span>
+          <span className={styles.relationship}>REPORTER RELATIONSHIP</span>
+          <span className={styles.comment}>REPORTER COMMENTS</span>
         </span>
-        <span style={styles.commentFiller}></span>
+        <span className={styles.commentFiller}></span>
       </div>
       {entityDeclarations}
 

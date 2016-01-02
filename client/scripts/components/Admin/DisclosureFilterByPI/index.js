@@ -16,12 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {GreyButton} from '../GreyButton';
-import {AdminActions} from '../../actions/AdminActions';
-import DisclosureFilter from './DisclosureFilter';
-import DoneWithFilterButton from './DoneWithFilterButton';
-import PISearchBox from './PISearchBox';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {GreyButton} from '../../GreyButton';
+import {AdminActions} from '../../../actions/AdminActions';
+import DisclosureFilter from '../DisclosureFilter';
+import DoneWithFilterButton from '../DoneWithFilterButton';
+import PISearchBox from '../PISearchBox';
 
 export class DisclosureFilterByPI extends DisclosureFilter {
   constructor() {
@@ -41,45 +43,18 @@ export class DisclosureFilterByPI extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    const styles = {
-      container: {
-        whiteSpace: 'nowrap',
-        color: 'black',
-        padding: '10px 0 10px 10px',
-        width: 300
-      },
-      clearButton: {
-        backgroundColor: '#DFDFDF',
-        color: 'black',
-        borderBottom: '3px solid #717171',
-        float: 'right',
-        padding: '4px 7px',
-        width: 135,
-        margin: '10px 0'
-      },
-      searchBoxDiv: {
-        borderBottom: '1px solid #AAA',
-        paddingBottom: 10,
-        marginBottom: 10
-      },
-      x: {
-        fontSize: 15,
-        paddingRight: 8
-      }
-    };
-
     return (
-      <div style={styles.container}>
+      <div className={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
 
         <label htmlFor="pisearchbox" style={{fontSize: 13}}>SEARCH FOR NAME:</label>
 
-        <div style={styles.searchBoxDiv}>
+        <div className={styles.searchBoxDiv}>
           <PISearchBox value={this.props.piName} onSelected={this.piSelected} />
         </div>
 
-        <GreyButton style={styles.clearButton} onClick={this.clear}>
-          <i className="fa fa-times" style={styles.x}></i>
+        <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
+          <i className={classNames('fa', 'fa-times', styles.x)}></i>
           CLEAR FILTER
         </GreyButton>
       </div>

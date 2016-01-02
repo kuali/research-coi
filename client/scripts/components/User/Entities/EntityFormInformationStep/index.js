@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {Question} from './Question';
-import {COIConstants} from '../../../../../COIConstants';
-import {FileUpload} from '../../FileUpload';
+import styles from './style';
+import React from 'react';
+import {DisclosureStore} from '../../../../stores/DisclosureStore';
+import {Question} from '../Question';
+import {COIConstants} from '../../../../../../COIConstants';
+import {FileUpload} from '../../../FileUpload';
 
 export class EntityFormInformationStep extends React.Component {
   constructor() {
@@ -62,36 +62,11 @@ export class EntityFormInformationStep extends React.Component {
       validationErrors = DisclosureStore.entityInformationStepErrors(this.props.id);
     }
 
-    const styles = {
-      container: {
-      },
-      title: {
-        fontWeight: 'bold',
-        fontSize: 17,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      column: {
-        width: '33%',
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      longColumn: {
-        width: '66%',
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      attachmentLabel: {
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12,
-        margin: '25px 0 6px 0'
-      }
-    };
-
     let heading = null;
     if (!this.props.update) {
       if (this.props.name) {
         heading = (
-          <div style={styles.title}>
+          <div className={styles.title}>
             {this.props.name}
             <span style={{marginLeft: 3}}>Information</span>
           </div>
@@ -99,7 +74,7 @@ export class EntityFormInformationStep extends React.Component {
       }
       else {
         heading = (
-          <div style={styles.title}>Add New Financial Entity</div>
+          <div className={styles.title}>Add New Financial Entity</div>
         );
       }
     }
@@ -115,7 +90,7 @@ export class EntityFormInformationStep extends React.Component {
         columnStyle = styles.column;
       }
       return (
-        <div style={columnStyle} key={index}>
+        <div className={columnStyle} key={index}>
           <Question
             readonly={this.props.readonly}
             entityId={this.props.id}
@@ -134,7 +109,7 @@ export class EntityFormInformationStep extends React.Component {
     if (!this.props.readonly || this.props.files && this.props.files.length > 0) {
       attachmentSection = (
         <div>
-          <div style={styles.attachmentLabel}>
+          <div className={styles.attachmentLabel}>
             ATTACHMENTS
           </div>
 
@@ -154,7 +129,7 @@ export class EntityFormInformationStep extends React.Component {
     }
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
+      <span className={`${styles.container} ${this.props.className}`}>
         {heading}
         <div style={{color: '#333'}}>
           {questions}

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,48 +16,29 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import DisclosureType from './DisclosureType';
+import DisclosureType from '../DisclosureType';
 
-export default function DisclosureTypes(props: Object): React.Element {
-  const styles = {
-    container: {
-      padding: '20px 23px 10px 23px',
-      fontSize: 15
-    },
-    optionRow: {
-      paddingBottom: 20
-    },
-    editLink: {
-      marginLeft: 10
-    },
-    checkbox: {
-      marginRight: 10
-    },
-    title: {
-      fontSize: 12,
-      marginBottom: 10
-    }
-  };
-
+export default function DisclosureTypes(props) {
   let rows;
   if (props.types && props.types.length > 0) {
     rows = (
       <div>
-        <div style={styles.optionRow} className="flexbox row">
+        <div className={classNames(styles.optionRow, 'flexbox', 'row')}>
           <DisclosureType type={props.types[1]} canToggle={true} />
           <DisclosureType type={props.types[3]} canToggle={true} />
         </div>
-        <div style={styles.optionRow}>
+        <div className={styles.optionRow}>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={merge(styles.container, props.style)}>
-      <div style={styles.title}>DISCLOSURE TITLE</div>
+    <div className={classNames(styles.container, props.className)}>
+      <div className={styles.title}>DISCLOSURE TITLE</div>
       {rows}
     </div>
   );

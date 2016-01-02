@@ -16,69 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../ResponsiveComponent';
-import {merge} from '../../merge';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
-export class SearchFilter extends ResponsiveComponent {
-  constructor() {
-    super();
-    this.commonStyles = {
-    };
-  }
-
-  renderMobile() {
-    const mobileStyles = {
-      container: {
-        backgroundColor: '#2e2e2e',
-        padding: '24px 0',
-        color: 'white',
-        fontSize: 25,
-        textAlign: 'center',
-        borderBottom: '2px solid #4a4a4a'
-      },
-      arrow: {
-        'float': 'right',
-        marginRight: 25,
-        fontSize: 48,
-        verticalAlign: 'middle',
-        marginTop: -12
-      },
-      label: {
-        verticalAlign: 'middle'
-      }
-    };
-    const styles = merge(this.commonStyles, mobileStyles);
-
+export class SearchFilter extends React.Component {
+  render() {
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <span style={styles.label}>{this.props.children}</span>
-        <span style={styles.arrow}>&gt;</span>
-      </div>
-    );
-  }
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        color: 'white',
-        textAlign: 'right',
-        padding: 8,
-        fontSize: 12,
-        fontWeight: 300
-      },
-      arrows: {
-        fontSize: 7,
-        marginLeft: 4,
-        verticalAlign: 'middle'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
-    return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
         {this.props.children}
-        <span style={styles.arrows}>&#9654;</span>
+        <span className={styles.arrows}>&#9654;</span>
       </div>
     );
   }

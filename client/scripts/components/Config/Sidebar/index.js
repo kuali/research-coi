@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,44 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 import {Link} from 'react-router';
-import AdminMenu from '../AdminMenu';
+import AdminMenu from '../../AdminMenu';
 
-export default function Sidebar(props: Object): React.Element {
-  const styles = {
-    container: {
-      color: '#444',
-      backgroundColor: '#F2F2F2',
-      display: 'inline-block',
-      minWidth: 300
-    },
-    firstWord: {
-      fontSize: 28,
-      fontWeight: 300
-    },
-    rest: {
-      fontSize: 22,
-      fontWeight: 'bold'
-    },
-    step: {
-      padding: '20px 20px 20px 40px',
-      display: 'block',
-      borderRight: '1px solid #c0c0c0',
-      borderBottom: '1px solid #c0c0c0',
-      cursor: 'pointer',
-      color: '#666666'
-    },
-    firstStep: {
-      borderTop: '1px solid #c0c0c0'
-    },
-    active: {
-      backgroundColor: 'white',
-      borderRight: window.colorBlindModeOn ? '5px solid black' : '5px solid #0095A0'
-    }
-  };
-
+export default function Sidebar(props) {
   const steps = [
     {
       label: 'General Configuration',
@@ -88,23 +56,22 @@ export default function Sidebar(props: Object): React.Element {
     const rest = parts.pop();
     const firstPart = parts.join(' ');
 
-    let stepStyle = styles.step;
-    if (props.active === step.link) {
-      stepStyle = merge(stepStyle, styles.active);
-    }
-    else if (index === 0) {
-      stepStyle = merge(stepStyle, styles.firstStep);
-    }
+    const classes = classNames(
+      styles.step,
+      {[styles.active]: props.active === step.link},
+      {[styles.firstStep]: index === 0}
+    );
+
     return (
-      <Link key={index} to={step.link} style={stepStyle}>
-        <div style={styles.firstWord}>{firstPart}</div>
-        <div style={styles.rest}>{rest}</div>
+      <Link key={index} to={step.link} className={classes}>
+        <div className={styles.firstWord}>{firstPart}</div>
+        <div className={styles.rest}>{rest}</div>
       </Link>
     );
   });
 
   return (
-    <span style={merge(styles.container, props.style)}>
+    <span className={classNames(styles.container, props.className)}>
       <AdminMenu style={{marginBottom: 34, padding: '23px 0px'}} />
       {stepsJsx}
     </span>

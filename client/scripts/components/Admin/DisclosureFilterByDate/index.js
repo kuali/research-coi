@@ -16,12 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {DatePicker} from '../DatePicker';
-import {GreyButton} from '../GreyButton';
-import {AdminActions} from '../../actions/AdminActions';
-import DisclosureFilter from './DisclosureFilter';
-import DoneWithFilterButton from './DoneWithFilterButton';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {DatePicker} from '../../DatePicker';
+import {GreyButton} from '../../GreyButton';
+import {AdminActions} from '../../../actions/AdminActions';
+import DisclosureFilter from '../DisclosureFilter';
+import DoneWithFilterButton from '../DoneWithFilterButton';
 
 export class DisclosureFilterByDate extends DisclosureFilter {
   constructor() {
@@ -49,52 +51,12 @@ export class DisclosureFilterByDate extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    const styles = {
-      container: {
-        whiteSpace: 'nowrap',
-        color: 'black',
-        position: 'relative'
-      },
-      inputDivs: {
-      },
-      label: {
-        display: 'block',
-        fontSize: 13,
-        paddingBottom: 4
-      },
-      dropDown: {
-        width: 176,
-        height: 27,
-        backgroundColor: 'white',
-        fontSize: 14,
-        borderBottom: '1px solid #aaa'
-      },
-      clearButton: {
-        backgroundColor: '#DFDFDF',
-        color: 'black',
-        borderBottom: '3px solid #717171',
-        float: 'right',
-        padding: '4px 7px',
-        width: 135,
-        margin: '10px 0 20px 0'
-      },
-      x: {
-        fontSize: 15,
-        paddingRight: 8
-      },
-      theDates: {
-        margin: '10px 10px 20px 10px',
-        paddingBottom: 30,
-        borderBottom: '1px solid #AAA'
-      }
-    };
-
     let sortFields;
     if (this.props.showSort) {
       sortFields = (
-        <div style={styles.inputDivs}>
-          <label htmlFor="dateSort" style={styles.label}>Sort</label>
-          <select style={styles.dropDown} id="dateSort" value={this.props.sortDirection} onChange={this.setOrder}>
+        <div className={styles.inputDivs}>
+          <label htmlFor="dateSort" className={styles.label}>Sort</label>
+          <select className={styles.dropDown} id="dateSort" value={this.props.sortDirection} onChange={this.setOrder}>
             <option value="DESCENDING">Newest - Oldest</option>
             <option value="ASCENDING">Oldest - Newest</option>
           </select>
@@ -103,22 +65,22 @@ export class DisclosureFilterByDate extends DisclosureFilter {
     }
 
     return (
-      <div style={styles.container}>
+      <div className={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
-        <div style={styles.theDates}>
+        <div className={styles.theDates}>
           <span style={{marginRight: 25}}>
-            <label htmlFor="fromDate" style={styles.label}>FROM DATE:</label>
+            <label htmlFor="fromDate" className={styles.label}>FROM DATE:</label>
             <DatePicker id="fromDate" onChange={this.setFromDate} value={this.props.startDate} />
           </span>
           <span>
-            <label htmlFor="toDate" style={styles.label}>TO DATE:</label>
+            <label htmlFor="toDate" className={styles.label}>TO DATE:</label>
             <DatePicker id="toDate" onChange={this.setToDate} value={this.props.endDate} />
           </span>
         </div>
         {sortFields}
         <div>
-          <GreyButton style={styles.clearButton} onClick={this.clear}>
-            <i className="fa fa-times" style={styles.x}></i>
+          <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
+            <i className={classNames('fa', 'fa-times', styles.x)}></i>
             CLEAR FILTER
           </GreyButton>
         </div>

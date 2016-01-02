@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,40 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {formatDate} from '../../../formatDate';
-import ConfigStore from '../../../stores/ConfigStore';
+import {formatDate} from '../../../../formatDate';
+import ConfigStore from '../../../../stores/ConfigStore';
 
-export default function RevisionHeader(props: Object): React.Element {
-  const styles = {
-    container: {
-      backgroundColor: 'white',
-      borderBottom: '1px solid #DDD'
-    },
-    disclosureType: {
-      display: 'inline-block',
-      borderRight: '2px solid #ABABAB',
-      fontSize: 30,
-      fontWeight: 300,
-      paddingRight: 22,
-      margin: '10px 22px 10px 48px',
-      verticalAlign: 'middle'
-    },
-    dates: {
-      display: 'inline-block',
-      verticalAlign: 'middle',
-      fontWeight: 'bold',
-      fontSize: 15
-    }
-  };
-
+export default function RevisionHeader(props) {
   return (
-    <div style={merge(styles.container, props.style)}>
-      <span style={styles.disclosureType}>
+    <div className={`${styles.container} ${props.className}`}>
+      <span className={styles.disclosureType}>
         {ConfigStore.getDisclosureTypeString(props.disclosureType).toUpperCase()}
       </span>
-      <span style={styles.dates}>
+      <span className={styles.dates}>
         <div>
           Submitted on
           <span style={{marginLeft: 3}}>

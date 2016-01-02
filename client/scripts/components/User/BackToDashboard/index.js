@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,30 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../merge';
 import {Link} from 'react-router';
 
-export default function BackToDashboard(props: Object): React.Element {
-  const styles = {
-    container: {
-      backgroundColor: 'white',
-      color: window.colorBlindModeOn ? 'black' : '#0095A0',
-      padding: '25px 0px',
-      fontSize: 20,
-      textAlign: 'center',
-      cursor: 'pointer',
-      zIndex: 9,
-      position: 'relative',
-      boxShadow: '0 0 10px #CCC'
-    }
-  };
-
+export default function BackToDashboard(props) {
   return (
     <Link to={"/coi/dashboard"}>
-      <div style={merge(styles.container, props.style)}>
+      <div className={`${styles.container} ${props.className}`}>
         <div>
-          <i className="fa fa-arrow-left"></i>
+          <i className={`fa fa-arrow-left`}></i>
           <span style={{marginLeft: 15}}>BACK TO DASHBOARD</span>
         </div>
       </div>

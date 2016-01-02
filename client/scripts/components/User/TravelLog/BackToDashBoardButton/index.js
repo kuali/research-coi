@@ -16,42 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
 import {Link} from 'react-router';
 
 export class BackToDashBoardButton extends React.Component {
-  constructor() {
-    super();
-  }
-
   render() {
-    const styles = {
-      container: {
-        display: 'block',
-        verticalAlign: 'top',
-        padding: '20px 30px 20px 30px',
-        cursor: 'pointer',
-        color: '#444',
-        fontWeight: '300',
-        borderBottom: '1px solid #c0c0c0',
-        borderTop: '1px solid #c0c0c0'
-      },
-      primary: {
-        fontSize: 28,
-        fontWeight: 300
-      },
-      secondary: {
-        fontSize: 22,
-        fontWeight: 'bold'
-      }
-    };
-
     return (
-      <Link to={`/coi/dashboard`} style={styles.container} name='Back Button'>
+      <Link to={`/coi/dashboard`} className={styles.container} name='Back Button'>
         <div>
           <span>
-            <div style={styles.primary}>Back</div>
-            <div style={styles.secondary}>To Dashboard</div>
+            <div className={styles.primary}>Back</div>
+            <div className={styles.secondary}>To Dashboard</div>
           </span>
         </div>
       </Link>

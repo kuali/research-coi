@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import EditableList from '../EditableList';
-import {BlueButton} from '../../BlueButton';
-import {GreyButton} from '../../GreyButton';
+import EditableList from '../../EditableList';
+import {BlueButton} from '../../../BlueButton';
+import {GreyButton} from '../../../GreyButton';
 
 export default class RelationshipType extends React.Component {
   constructor() {
@@ -81,70 +82,34 @@ export default class RelationshipType extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      collapsedContent: {
-        borderBottom: '1px solid #E6E6E6',
-        paddingBottom: 20,
-        marginBottom: 15,
-        verticalAlign: 'top'
-      },
-      configureButton: {
-        float: 'right',
-        fontSize: 9
-      },
-      closeButton: {
-        float: 'right',
-        fontSize: 9
-      },
-      name: {
-        fontSize: 14
-      },
-      left: {
-        paddingRight: 25,
-        width: 130
-      },
-      checkboxLabel: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginLeft: 10,
-        verticalAlign: 'middle'
-      },
-      amountSection: {
-        paddingLeft: 27,
-        margin: '40px 0'
-      }
-    };
-
     let content;
     if (this.state.editing) {
       content = (
         <div>
           <div style={{marginBottom: 30}}>
-            <BlueButton style={styles.closeButton} onClick={this.close}>
+            <BlueButton className={`${styles.override} ${styles.closeButton}`} onClick={this.close}>
               Close
             </BlueButton>
-            <label htmlFor={`rtcb${this.props.typeCd}`} style={styles.name}>{this.props.name}</label>
+            <label htmlFor={`rtcb${this.props.typeCd}`} className={styles.name}>{this.props.name}</label>
           </div>
-          <div className="flexbox row" style={{paddingLeft: 27}}>
-            <span style={styles.left}>
+          <div className={`flexbox row`} style={{paddingLeft: 27}}>
+            <span className={styles.left}>
               <input id="typeCheckbox" type="checkbox" ref="typeEnabled" checked={this.props.typeEnabled === 1} onChange={this.typeEnabledChanged} />
-              <label htmlFor="typeCheckbox" style={styles.checkboxLabel}>Type</label>
+              <label htmlFor="typeCheckbox" className={styles.checkboxLabel}>Type</label>
             </span>
-            <span className="fill" style={{display: 'inline-block'}}>
+            <span className={`fill`} style={{display: 'inline-block'}}>
               <EditableList
                 items={this.props.typeOptions}
                 onChange={this.typeOptionsChanged}
               />
             </span>
           </div>
-          <div className="flexbox row" style={styles.amountSection}>
-            <span style={styles.left}>
+          <div className={`flexbox row ${styles.amountSection}`}>
+            <span className={styles.left}>
               <input id="amountCheckbox" type="checkbox" ref="amountEnabled" checked={this.props.amountEnabled === 1} onChange={this.amountEnabledChanged} />
-              <label htmlFor="amountCheckbox" style={styles.checkboxLabel}>Amount</label>
+              <label htmlFor="amountCheckbox" className={styles.checkboxLabel}>Amount</label>
             </span>
-            <span className="fill">
+            <span className={`fill`}>
               <EditableList
                 items={this.props.amountOptions}
                 onChange={this.amountOptionsChanged}
@@ -156,17 +121,17 @@ export default class RelationshipType extends React.Component {
     }
     else {
       content = (
-        <div style={styles.collapsedContent}>
-          <GreyButton style={styles.configureButton} onClick={this.configure}>
+        <div className={styles.collapsedContent}>
+          <GreyButton className={`${styles.override} ${styles.configureButton}`} onClick={this.configure}>
             Configure
           </GreyButton>
-          <label htmlFor={`rtcb${this.props.typeCd}`} style={styles.name}>{this.props.name}</label>
+          <label htmlFor={`rtcb${this.props.typeCd}`} className={styles.name}>{this.props.name}</label>
         </div>
       );
     }
 
     return (
-      <div className="flexbox row" style={merge(styles.container, this.props.style)}>
+      <div className={classNames('flexbox', 'row', styles.container, this.props.className)}>
         <span style={{margin: '0 10px 0 20px'}}>
           <input
             type="checkbox"
@@ -177,7 +142,7 @@ export default class RelationshipType extends React.Component {
             style={{verticalAlign: 'top'}}
           />
         </span>
-        <span className="fill">
+        <span className={`fill`}>
           {content}
         </span>
       </div>

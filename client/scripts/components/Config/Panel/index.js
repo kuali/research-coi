@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,38 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 
-export default function Panel(props: Object): React.Element {
-  const styles = {
-    container: {
-      backgroundColor: 'white',
-      boxShadow: '0 0 10px #BBB',
-      marginBottom: 22,
-      borderRadius: 5
-    },
-    title: {
-      borderBottom: '1px solid #AAA',
-      padding: '10px 17px',
-      fontSize: 17,
-      backgroundColor: 'white',
-      color: 'black',
-      borderRadius: '5px 5px 0 0',
-      overflow: 'hidden'
-    },
-    content: {
-      padding: 10,
-      borderRadius: '0 0 5px 5px'
-    }
-  };
-
+export default function Panel(props) {
   return (
-    <div style={merge(styles.container, props.style)}>
-      <div style={styles.title}>
+    <div className={classNames(styles.container, props.className)}>
+      <div className={styles.title}>
         {props.title}
       </div>
-      <div style={styles.content}>
+      <div className={styles.content}>
         {props.children}
       </div>
     </div>

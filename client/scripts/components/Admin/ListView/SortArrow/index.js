@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,29 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
 
-export default function SortArrow(props: Object): React.Element {
-  const styles = {
-    container: {
-      fontSize: 9,
-      marginLeft: 5,
-      verticalAlign: 'middle'
-    }
-  };
-
+export default function SortArrow(props) {
   let arrow;
   if (props.direction === 'DESCENDING') {
     arrow = (
-      <span style={merge(styles.container, props.style)}>
+      <span className={classNames(styles.container, props.className)}>
         &#9660;
       </span>
     );
   }
   else {
     arrow = (
-      <span style={merge(styles.container, props.style)}>
+      <span className={classNames(styles.container, props.className)}>
         &#9650;
       </span>
     );

@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigActions from '../../../actions/ConfigActions';
-import EditLink from '../EditLink';
-import DeleteLink from '../DeleteLink';
-import DoneLink from '../DoneLink';
-import DateOptions from './DateOptions';
+import ConfigActions from '../../../../actions/ConfigActions';
+import EditLink from '../../EditLink';
+import DeleteLink from '../../DeleteLink';
+import DoneLink from '../../DoneLink';
+import DateOptions from '../DateOptions';
 
 export default class Notification extends React.Component {
   constructor() {
@@ -56,35 +57,6 @@ export default class Notification extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        marginBottom: 40
-      },
-      edit: {
-        marginRight: 10
-      },
-      done: {
-      },
-      delete: {
-      },
-      reminderText: {
-        display: 'block',
-        width: '100%',
-        fontSize: 16,
-        margin: '7px 5px 30px 5px',
-        color: '#333',
-        whiteSpace: 'pre',
-        wordWrap: 'break-word'
-      },
-      reminderTextbox: {
-        display: 'block',
-        width: '100%',
-        padding: 10,
-        fontSize: 16,
-        marginTop: 10
-      }
-    };
-
     const warningValue = [];
     let i = 1;
     while (i <= 31) {
@@ -100,7 +72,7 @@ export default class Notification extends React.Component {
       reminderText = (
         <textarea
           ref="reminderText"
-          style={styles.reminderTextbox}
+          className={styles.reminderTextbox}
           placeholder="Enter the reminder text here"
           defaultValue={this.props.reminderText}
         >
@@ -109,26 +81,26 @@ export default class Notification extends React.Component {
 
       buttons = (
         <span style={{float: 'right'}}>
-          <DoneLink style={styles.done} onClick={this.done} />
+          <DoneLink onClick={this.done} />
         </span>
       );
     } else {
       reminderText = (
-        <div style={styles.reminderText}>
+        <div className={styles.reminderText}>
           {this.props.reminderText}
         </div>
       );
 
       buttons = (
         <span style={{float: 'right'}}>
-          <EditLink style={styles.edit} onClick={this.edit} />
-          <DeleteLink style={styles.delete} onClick={this.delete} />
+          <EditLink className={`${styles.override} ${styles.edit}`} onClick={this.edit} />
+          <DeleteLink onClick={this.delete} />
         </span>
       );
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
         {buttons}
 
         <div>

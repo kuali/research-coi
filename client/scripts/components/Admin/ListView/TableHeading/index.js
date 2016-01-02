@@ -16,50 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import SortArrow from './SortArrow';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import SortArrow from '../SortArrow';
 
-export class TableHeading extends ResponsiveComponent {
-  constructor() {
-    super();
-    this.commonStyles = {
-    };
-  }
-
-  renderMobile() {
-    const mobileStyles = {
-      container: {
-      }
-    };
-    const styles = merge(this.commonStyles, mobileStyles);
-
-    return (
-      <span style={merge(styles.container, this.props.style)}>
-      </span>
-    );
-  }
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        padding: '15px 0',
-        display: 'table-cell',
-        borderBottom: '1px solid #aaa',
-        whiteSpace: 'nowrap'
-      },
-      label: {
-        verticalAlign: 'middle'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+export class TableHeading extends React.Component {
+  render() {
     const sortArrow = <SortArrow direction={this.props.sortDirection} />;
 
     return (
-      <span style={merge(styles.container, this.props.style)} role="columnheader" onClick={this.props.sort}>
-        <span style={styles.label}>{this.props.children}</span>
+      <span
+        className={classNames(this.props.className, styles.container)}
+        role="columnheader"
+        onClick={this.props.sort}
+      >
+        <span className={styles.label}>{this.props.children}</span>
         {this.props.active ? sortArrow : <span></span>}
       </span>
     );

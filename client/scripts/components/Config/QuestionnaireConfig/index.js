@@ -16,16 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import NewQuestion from './NewQuestion';
-import Question from './Question';
-import NewQuestionButton from './NewQuestionButton';
-import {COIConstants} from '../../../../COIConstants';
-import PanelWithButtons from './PanelWithButtons';
-import ConfigActions from '../../actions/ConfigActions';
+import NewQuestion from '../NewQuestion';
+import Question from '../Question';
+import NewQuestionButton from '../NewQuestionButton';
+import {COIConstants} from '../../../../../COIConstants';
+import PanelWithButtons from '../PanelWithButtons';
+import ConfigActions from '../../../actions/ConfigActions';
 
 class QuestionnaireConfig extends React.Component {
   constructor() {
@@ -257,11 +258,6 @@ class QuestionnaireConfig extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      }
-    };
-
     const newQuestionButtons = [
       {
         label: '+ Add',
@@ -370,7 +366,7 @@ class QuestionnaireConfig extends React.Component {
     });
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
           {newQuestionButton}
           {newQuestion}
 

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,59 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
 
-export default function DeclarationSummary(props: Object): React.Element {
-  const styles = {
-    container: {
-      fontSize: 12,
-      marginBottom: 10
-    },
-    highlighted: {
-      borderLeft: window.colorBlindModeOn ? '10px solid black' : '10px solid #F57C00',
-      marginLeft: -20,
-      paddingLeft: 10
-    },
-    entityName: {
-      width: '25%',
-      display: 'inline-block'
-    },
-    conflict: {
-      width: '25%',
-      display: 'inline-block'
-    },
-    comments: {
-      width: '50%',
-      display: 'inline-block',
-      verticalAlign: 'top'
-    },
-    commentLink: {
-      fontSize: 14,
-      cursor: 'pointer',
-      margin: '14px 0 34px 0',
-      textAlign: 'right'
-    },
-    commentLabel: {
-      color: window.colorBlindModeOn ? 'black' : '#0095A0',
-      borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
-      paddingBottom: 3
-    }
-  };
-
-  let effectiveStyle = styles.container;
-  effectiveStyle = merge(effectiveStyle, props.style);
-
+export default function DeclarationSummary(props) {
   return (
-    <div style={effectiveStyle}>
+    <div className={classNames(styles.container, props.className)}>
       <div>
-        <span style={merge(styles.entityName, {fontWeight: 'bold'})}>
+        <span className={styles.entityName} style={{fontWeight: 'bold'}}>
           {props.declaration.entityName}
         </span>
-        <span style={merge(styles.conflict, {fontWeight: 'bold'})}>
+        <span className={styles.conflict} style={{fontWeight: 'bold'}}>
           {props.disposition}
         </span>
-        <span style={merge(styles.comments, {fontStyle: 'italic'})}>
+        <span className={styles.comments} style={{fontStyle: 'italic'}}>
           {props.declaration.comments}
         </span>
       </div>

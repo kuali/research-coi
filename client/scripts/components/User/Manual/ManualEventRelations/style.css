@@ -1,0 +1,83 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  display: block;
+  overflow: hidden;
+  margin-bottom: 25px;
+  box-shadow: 0 0 15px #E6E6E6;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.content {
+  padding: 16px;
+  font-size: 22px;
+  z-index: 10;
+  position: relative;
+  box-shadow: 0 0 10px #ddd;
+}
+
+.title {
+  font-size: 23px;
+  margin-bottom: 5px;
+}
+
+.right {
+  display: inline-block;
+  margin: 0 0 0 17px;
+  vertical-align: top;
+  font-size: 18px;
+  padding-top: 9px;
+}
+
+.left {
+  display: inline-block;
+  font-size: 18px;
+  margin-left: 25px;
+  width: 50%;
+  vertical-align: top;
+}
+
+.item {
+  margin-top: 9px;
+}
+
+.override.button {
+  margin: 7px 10px 7px 0;
+  font-size: 11px;
+}
+
+.editButton {
+  margin-bottom: 0;
+}
+
+.value {
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.attention {
+  color: red;
+  text-transform: capitalize;
+  margin-bottom: 28px;
+}
+
+:global(.color-blind) .attention {
+  color: black;
+}

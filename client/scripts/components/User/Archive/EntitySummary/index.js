@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import {COIConstants} from '../../../../../COIConstants';
-import {formatDate} from '../../../formatDate';
-import EntityRelationshipSummary from '../../EntityRelationshipSummary';
+import {COIConstants} from '../../../../../../COIConstants';
+import {formatDate} from '../../../../formatDate';
+import EntityRelationshipSummary from '../../../EntityRelationshipSummary';
 
 export default class EntitySummary extends React.Component {
   getQuestionAnswer(questionId, entity, type) {
@@ -70,80 +71,11 @@ export default class EntitySummary extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        padding: '20px 0 10px 0'
-      },
-      entity: {
-        borderBottom: '1px solid #999'
-      },
-      highlighted: {
-        borderLeft: window.colorBlindModeOn ? '10px solid black' : '10px solid #F57C00',
-        marginLeft: -20,
-        paddingLeft: 10
-      },
-      name: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 11
-      },
-      fieldLabel: {
-        fontWeight: 'bold',
-        display: 'inline-block'
-      },
-      fieldValue: {
-        marginLeft: 4,
-        display: 'inline-block'
-      },
-      relations: {
-        display: 'inline-block',
-        width: '60%',
-        verticalAlign: 'top'
-      },
-      left: {
-        display: 'inline-block',
-        width: '40%',
-        verticalAlign: 'top',
-        fontSize: 13,
-        paddingRight: 4
-      },
-      commentLink: {
-        fontSize: 14,
-        cursor: 'pointer',
-        textAlign: 'right',
-        verticalAlign: 'bottom',
-        width: '30%',
-        display: 'inline-block'
-      },
-      relationshipsLabel: {
-        marginBottom: 8,
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12
-      },
-      relationshipSummary: {
-        marginBottom: 10
-      },
-      bottom: {
-        margin: '25px 0 34px 0',
-        width: '100%',
-        display: 'inline-block'
-      },
-      bottomLeft: {
-        width: '70%',
-        display: 'inline-block'
-      },
-      commentLabel: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        borderBottom: window.colorBlindModeOn ? '1px dashed black' : '1px dashed #0095A0',
-        paddingBottom: 3
-      }
-    };
-
     const fields = this.props.questions.map(question => {
       return (
         <div key={`qa${question.id}`} style={{marginBottom: 8}}>
-          <span style={styles.fieldLabel}>{question.question.text}</span>
-          <span style={styles.fieldValue}>{this.getQuestionAnswer(question.id, this.props.entity, question.question.type)}</span>
+          <span className={styles.fieldLabel}>{question.question.text}</span>
+          <span className={styles.fieldValue}>{this.getQuestionAnswer(question.id, this.props.entity, question.question.type)}</span>
         </div>
       );
     });
@@ -152,7 +84,7 @@ export default class EntitySummary extends React.Component {
       return (
         <EntityRelationshipSummary
           key={`rel${relationship.id}`}
-          style={styles.relationshipSummary}
+          className={`${styles.override} ${styles.relationshipSummary}`}
           relationship={relationship}
           readonly={true}
         />
@@ -176,19 +108,17 @@ export default class EntitySummary extends React.Component {
       );
     });
 
-    let effectiveStyle = styles.container;
-    if (this.props.changedByPI) {
-      effectiveStyle = merge(effectiveStyle, styles.highlighted);
-    }
-    if (!this.props.isLast) {
-      effectiveStyle = merge(effectiveStyle, styles.entity);
-    }
-    effectiveStyle = merge(effectiveStyle, this.props.style);
+    const classes = classNames(
+      styles.container,
+      {[styles.highlighted]: this.props.changedByPI},
+      {[styles.entity]: !this.props.isLast},
+      this.props.style
+    );
 
     let attachmentSection;
     if (files.length > 0) {
       attachmentSection = (
-        <div style={styles.bottomLeft}>
+        <div className={styles.bottomLeft}>
           <div style={{color: window.colorBlindModeOn ? 'black' : '#888', fontSize: 12}}>ATTACHMENTS</div>
           {files}
         </div>
@@ -196,17 +126,17 @@ export default class EntitySummary extends React.Component {
     }
 
     return (
-      <div style={effectiveStyle}>
-        <div style={styles.name}>{this.props.entity.name}</div>
+      <div className={classes}>
+        <div className={styles.name}>{this.props.entity.name}</div>
         <div>
-          <span style={styles.left}>
+          <span className={styles.left}>
             {fields}
           </span>
-          <span style={styles.relations}>
-            <div style={styles.relationshipsLabel}>RELATIONSHIP(S)</div>
+          <span className={styles.relations}>
+            <div className={styles.relationshipsLabel}>RELATIONSHIP(S)</div>
             {relationships}
           </span>
-          <div style={styles.bottom}>
+          <div className={styles.bottom}>
             {attachmentSection}
           </div>
         </div>

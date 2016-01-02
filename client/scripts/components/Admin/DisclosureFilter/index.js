@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 
 export default class DisclosureFilter extends React.Component {
   constructor() {
@@ -74,83 +75,35 @@ export default class DisclosureFilter extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        cursor: 'pointer',
-        padding: 7,
-        textAlign: 'right',
-        fontSize: '.8em',
-        color: '#444'
-      },
-      popOut: {
-        position: 'absolute',
-        top: -22,
-        left: '100%',
-        backgroundColor: 'white',
-        padding: 10,
-        zIndex: 1,
-        display: this.state.showing ? 'block' : 'none',
-        boxShadow: '2px 3px 10px #AAA',
-        borderRadius: 5
-      },
-      arrows: {
-        fontSize: 7,
-        marginLeft: 4,
-        verticalAlign: 'middle',
-        color: 'white'
-      },
-      clear: {
-        display: 'inline-block',
-        width: 40,
-        fontWeight: 'bold',
-        verticalAlign: 'middle',
-        color: 'white'
-      },
-      label: {
-        verticalAlign: 'middle',
-        color: 'white'
-      },
-      filter: {
-        padding: '0 22px 0 42px',
-        position: 'relative',
-        backgroundColor: this.props.active ? window.colorBlindModeOn ? '#444' : '#007F88' : 'initial'
-      },
-      arrow: {
-        width: 0,
-        height: 0,
-        position: 'absolute',
-        left: -35,
-        top: 28,
-        borderTop: '12px solid transparent',
-        borderRight: '19px solid white',
-        borderBottom: '12px solid transparent',
-        borderLeft: '17px solid transparent'
-      }
-    };
-
     let clearButton;
     if (this.props.active) {
       clearButton = (
-        <span onClick={this.clear} style={styles.clear}>
-          <i className="fa fa-times"></i>
+        <span onClick={this.clear} className={styles.clear}>
+          <i className={`fa fa-times`}></i>
         </span>
       );
     }
     else {
       clearButton = (
-        <span style={styles.clear}></span>
+        <span className={styles.clear}></span>
       );
     }
 
+    const classes = classNames(
+      styles.filter,
+      {[styles.showing]: this.state.showing},
+      {[styles.active]: this.props.active}
+    );
+
     return (
-      <div style={styles.filter}>
-        <div style={merge(styles.container, this.props.style)} onClick={this.showHideFilter}>
-          <span style={styles.label}>{this.label}</span>
-          <span style={styles.arrows}>&#9654;</span>
+      <div className={classes}>
+        <div className={classNames(styles.container, this.props.className)} onClick={this.showHideFilter}>
+          <span className={styles.label}>{this.label}</span>
+          <span className={styles.arrows}>&#9654;</span>
           {clearButton}
         </div>
-        <div ref="root" style={styles.popOut}>
-          <span style={styles.arrow}></span>
+        <div ref="root" className={styles.popOut}>
+          <span className={styles.arrow}></span>
           {this.renderFilter()}
         </div>
       </div>

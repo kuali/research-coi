@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,31 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import ProjectToReview from './ProjectToReview';
+import ProjectToReview from '../ProjectToReview';
 
-export default function DeclarationSection(props: Object): React.Element {
-  const styles = {
-    container: {
-      margin: '25px 20px 25px 35px',
-      backgroundColor: 'white',
-      borderRadius: 5,
-      boxShadow: '0 0 10px 2px #DDD',
-      overflow: 'hidden'
-    },
-    title: {
-      fontSize: 23,
-      padding: '10px 18px',
-      borderBottom: '1px solid #AAA',
-      backgroundColor: 'white',
-      color: 'black'
-    },
-    body: {
-      padding: 23
-    }
-  };
-
+export default function DeclarationSection(props) {
   const projects = props.declarationsToReview;
 
   const projectsJSX = projects.map((project, index) => {
@@ -55,11 +34,11 @@ export default function DeclarationSection(props: Object): React.Element {
   });
 
   return (
-    <div style={merge(styles.container, props.style)} name='Declaration Section'>
-      <div style={styles.title}>
+    <div className={`${styles.container} ${props.className}`} name='Declaration Section'>
+      <div className={styles.title}>
         PROJECT DECLARATIONS
       </div>
-      <div style={styles.body}>
+      <div className={styles.body}>
         {projectsJSX}
       </div>
     </div>

@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import React from 'react';
 
 export class CheckboxControl extends React.Component {
   constructor(props) {
@@ -58,26 +59,6 @@ export class CheckboxControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      option: {
-        display: 'inline-block',
-        marginRight: 30
-      },
-      radio: {
-        width: 22,
-        height: '4em',
-        verticalAlign: 'middle'
-      },
-      label: {
-        cursor: 'pointer',
-        width: 80,
-        display: 'inline-block',
-        verticalAlign: 'middle',
-        fontWeight: 'bold',
-        paddingLeft: 5
-      }
-    };
-
     const options = this.props.options.map((option, index) => {
       let checked = {};
       if (this.props.answer instanceof Array) {
@@ -87,7 +68,7 @@ export class CheckboxControl extends React.Component {
       }
 
       return (
-        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
+        <span className={styles.option} key={`${this.props.questionId}_${index}`}>
           <div>
             <input
               id={`multi_${option}`}
@@ -95,9 +76,9 @@ export class CheckboxControl extends React.Component {
               checked={checked}
               onChange={this.onChange}
               type="checkbox"
-              style={styles.radio}
+              className={styles.radio}
             />
-            <label htmlFor={`multi_${option}`} style={styles.label}>{option}</label>
+            <label htmlFor={`multi_${option}`} className={styles.label}>{option}</label>
           </div>
         </span>
       );

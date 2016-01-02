@@ -16,15 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';  //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {ToggleSet} from './ToggleSet';
-import EntityRelationshipSummary from '../../EntityRelationshipSummary';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {BlueButton} from '../../BlueButton';
-import RelationshipTextField from './RelationshipTextField';
-import RelationshipDateField from './RelationshipDateField';
+import {ToggleSet} from '../ToggleSet';
+import EntityRelationshipSummary from '../../../EntityRelationshipSummary';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../../stores/DisclosureStore';
+import {BlueButton} from '../../../BlueButton';
+import RelationshipTextField from '../RelationshipTextField';
+import RelationshipDateField from '../RelationshipDateField';
 
 export class EntityFormRelationshipStep extends React.Component {
   constructor() {
@@ -127,101 +128,13 @@ export class EntityFormRelationshipStep extends React.Component {
     const validationErrors = DisclosureStore.entityRelationshipStepErrors();
     const isValid = Object.keys(validationErrors).length === 0;
 
-    const styles = {
-      container: {
-        width: '100%'
-      },
-      title: {
-        fontWeight: this.props.update ? 'normal' : 'bold',
-        fontSize: 17,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      instructions: {
-        fontSize: 14,
-        marginBottom: 25,
-        marginTop: 10
-      },
-      left: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        width: '30%',
-        paddingRight: 40
-      },
-      right: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        width: '70%'
-      },
-      personSection: {
-        marginBottom: 24,
-        verticalAlign: 'top'
-      },
-      commentArea: {
-        marginTop: 7
-      },
-      addButtonSection: {
-        textAlign: 'right'
-      },
-      textarea: {
-        height: 90,
-        width: '100%',
-        border: '1px solid #C7C7C7',
-        fontSize: 16,
-        padding: 5,
-        borderRadius: 5
-      },
-      top: {
-        marginBottom: 20
-      },
-      addButton: {
-        backgroundColor: this.props.validating && !isValid ? '#D8D8D8' : window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: this.props.validating && !isValid ? '#939393' : 'white',
-        padding: '3px 9px 4px 7px',
-        marginTop: 10,
-        cursor: this.props.validating && !isValid ? 'default' : 'pointer',
-        width: 'initial',
-        borderBottom: '2px solid #717171'
-      },
-      submittedrelations: {
-        borderTop: '1px solid #DEDEDE',
-        paddingTop: 20
-      },
-      typeSection: {
-        marginBottom: 24,
-        display: 'block'
-      },
-      amountSection: {
-        textAlign: 'left',
-        display: 'block'
-      },
-      dropDown: {
-        width: '100%',
-        height: 27,
-        backgroundColor: 'transparent',
-        fontSize: 14,
-        borderBottom: '1px solid #aaa'
-      },
-      invalidField: {
-        borderBottom: '3px solid red'
-      },
-      invalidText: {
-        color: window.colorBlindModeOn ? 'black' : 'red',
-        display: 'block',
-        paddingBottom: 3
-      }
-    };
-
     let typeSection;
     if (this.state.relation !== '' && this.state.matrixType.typeEnabled === 1) {
-      let labelStyle = {
-        paddingBottom: 3,
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12
-      };
       let dropDownStyle = styles.dropDown;
+      let labelStyle = styles.labelStyle;
       if (this.props.validating && validationErrors.type) {
         labelStyle = styles.invalidText;
-        dropDownStyle = merge(dropDownStyle, styles.invalidField);
+        dropDownStyle += ` ${styles.invalidField}`;
       }
 
       const typeOptions = this.state.matrixType.typeOptions.map(typeOption => {
@@ -231,9 +144,14 @@ export class EntityFormRelationshipStep extends React.Component {
       });
 
       typeSection = (
-        <div style={styles.typeSection}>
-          <div style={labelStyle}>TYPE</div>
-          <select onChange={this.typeSelected} ref="typeSelect" value={this.props.appState.potentialRelationship.typeCd} style={dropDownStyle}>
+        <div className={styles.typeSection}>
+          <div className={labelStyle}>TYPE</div>
+          <select
+            onChange={this.typeSelected}
+            ref="typeSelect"
+            value={this.props.appState.potentialRelationship.typeCd}
+            className={dropDownStyle}
+          >
             <option value="">--SELECT--</option>
             {typeOptions}
           </select>
@@ -243,15 +161,11 @@ export class EntityFormRelationshipStep extends React.Component {
 
     let amountSection;
     if (this.state.relation !== '' && this.state.matrixType.amountEnabled === 1) {
-      let labelStyle = {
-        paddingBottom: 3,
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12
-      };
+      let labelStyle = styles.labelStyle;
       let dropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.amount) {
         labelStyle = styles.invalidText;
-        dropDownStyle = merge(dropDownStyle, styles.invalidField);
+        dropDownStyle += ` ${styles.invalidField}`;
       }
 
       const amountTypeOptions = this.state.matrixType.amountOptions.map(type => {
@@ -269,13 +183,13 @@ export class EntityFormRelationshipStep extends React.Component {
         );
       } else {
         amountSection = (
-          <div style={styles.amountSection}>
-            <div style={labelStyle}>AMOUNT</div>
+          <div className={styles.amountSection}>
+            <div className={labelStyle}>AMOUNT</div>
             <select
               onChange={this.amountSelected}
               ref="amountSelect"
               value={this.props.appState.potentialRelationship.amountCd}
-              style={dropDownStyle}
+              className={dropDownStyle}
             >
               <option value="">--SELECT--</option>
               {amountTypeOptions}
@@ -339,7 +253,7 @@ export class EntityFormRelationshipStep extends React.Component {
           <EntityRelationshipSummary
             readonly={this.props.readonly}
             entityId={this.props.id}
-            style={{marginBottom: 20}}
+            className={`${styles.override} ${styles.summary}`}
             relationship={relation}
             key={relation.id}
             onRemove={this.onRemoveRelationship}
@@ -361,36 +275,24 @@ export class EntityFormRelationshipStep extends React.Component {
 
     let relationshipEditor;
     if (!this.props.readonly) {
-      let personLabelStyle = {
-        paddingBottom: 3,
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12
-      };
+      let personLabelStyle = styles.labelStyle;
       let personDropDownStyle = styles.dropDown;
       if (this.props.validating && validationErrors.person) {
         personLabelStyle = styles.invalidText;
-        personDropDownStyle = merge(personDropDownStyle, styles.invalidField);
+        personDropDownStyle += ` ${styles.invalidField}`;
       }
 
 
-      let relationStyle = {
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12
-      };
+      let relationStyle = styles.relationStyle;
       if (this.props.validating && validationErrors.relation) {
         relationStyle = styles.invalidText;
       }
 
-      let commentStyle = {
-        display: 'block',
-        paddingBottom: 3,
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12
-      };
+      let commentStyle = styles.commentStyle;
       let commentTextboxStyle = styles.textarea;
       if (this.props.validating && validationErrors.comment) {
         commentStyle = styles.invalidText;
-        commentTextboxStyle = merge(commentTextboxStyle, styles.invalidField);
+        commentTextboxStyle += ` ${styles.invalidField}`;
       }
 
       const relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(personType => {
@@ -404,22 +306,22 @@ export class EntityFormRelationshipStep extends React.Component {
       const htmlId = Math.floor(Math.random() * 1000000000);
       relationshipEditor = (
         <div>
-          <div style={styles.title}>{heading}</div>
+          <div className={styles.title}>{heading}</div>
 
-          <div style={styles.instructions}>
+          <div className={styles.instructions}>
             <div>Use the builder below to indicate your relationships with this Financial Entity.</div>
           </div>
 
-          <div style={styles.top}>
-            <span style={styles.left}>
-              <div style={styles.personSection}>
-                <div style={personLabelStyle}>PERSON</div>
+          <div className={styles.top}>
+            <span className={styles.left}>
+              <div className={styles.personSection}>
+                <div className={personLabelStyle}>PERSON</div>
                 <div>
                   <select
                     onChange={this.personSelected}
                     ref="personSelect"
                     value={this.props.appState.potentialRelationship.personCd}
-                    style={personDropDownStyle}
+                    className={personDropDownStyle}
                   >
                     <option value="">--SELECT--</option>
                     {relationshipPersonTypeOptions}
@@ -433,8 +335,8 @@ export class EntityFormRelationshipStep extends React.Component {
               {returnDate}
               {reason}
             </span>
-            <span style={styles.right}>
-              <div style={relationStyle}>RELATIONSHIP</div>
+            <span className={styles.right}>
+              <div className={relationStyle}>RELATIONSHIP</div>
               <div>
                 <ToggleSet
                   selected={this.props.appState.potentialRelationship.relationshipCd}
@@ -450,23 +352,23 @@ export class EntityFormRelationshipStep extends React.Component {
                 />
               </div>
 
-              <div style={styles.commentArea}>
-                <label htmlFor={htmlId} style={commentStyle}>COMMENTS</label>
+              <div className={styles.commentArea}>
+                <label htmlFor={htmlId} className={commentStyle}>COMMENTS</label>
                 <div>
                   <textarea
                     id={htmlId}
                     onChange={this.commentChanged}
                     value={this.props.appState.potentialRelationship.comments}
-                    style={commentTextboxStyle}
+                    className={commentTextboxStyle}
                     ref="commentTextArea"
                   />
                 </div>
               </div>
-              <div style={styles.addButtonSection}>
+              <div className={styles.addButtonSection}>
                 <BlueButton
                   onClick={this.addRelation}
                   title={this.props.validating && !isValid ? 'Please correct the highlighted fields' : ''}
-                  style={styles.addButton}
+                  className={`${styles.override} ${styles.addButton}`}
                 >
                   + Add Additional Relationship
                 </BlueButton>
@@ -480,7 +382,7 @@ export class EntityFormRelationshipStep extends React.Component {
     let relationshipSummariesSection;
     if (relationshipSummaries.length > 0) {
       relationshipSummariesSection = (
-        <div style={!this.props.readonly ? styles.submittedrelations : {}}>
+        <div className={classNames({[styles.submittedrelations]: !this.props.readonly})}>
           <div style={{color: window.colorBlindModeOn ? 'black' : '#888', marginBottom: 10, fontSize: 12}}>
             RELATIONSHIPS
           </div>
@@ -489,8 +391,15 @@ export class EntityFormRelationshipStep extends React.Component {
       );
     }
 
+    const classes = classNames(
+      styles.container,
+      this.props.className,
+      {[styles.update]: this.props.update},
+      {[styles.errors]: this.props.validating && !isValid}
+    );
+
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classes}>
         {relationshipEditor}
         {relationshipSummariesSection}
       </div>

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,29 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import EntitySummary from './EntitySummary';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import EntitySummary from '../EntitySummary';
 
-export default function EntitiesSummary(props: Object): React.Element {
-  const styles = {
-    container: {
-      backgroundColor: 'white',
-      boxShadow: '0 0 8px #AAA',
-      borderRadius: 5,
-      overflow: 'hidden'
-    },
-    heading: {
-      borderBottom: '1px solid #999',
-      fontSize: 25,
-      color: 'black',
-      padding: 10
-    },
-    body: {
-      padding: '0 20px'
-    }
-  };
-
+export default function EntitiesSummary(props) {
   let entities;
   if(props.entities !== undefined) {
     entities = props.entities.filter(entity => {
@@ -57,9 +39,9 @@ export default function EntitiesSummary(props: Object): React.Element {
   }
 
   return (
-    <div style={merge(styles.container, props.style)} >
-      <div style={styles.heading}>FINANCIAL ENTITIES</div>
-      <div style={styles.body}>
+    <div className={classNames(styles.container, props.className)} >
+      <div className={styles.heading}>FINANCIAL ENTITIES</div>
+      <div className={styles.body}>
         {entities}
       </div>
     </div>

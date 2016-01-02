@@ -16,19 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {EntityRelationDialog} from './EntityRelationDialog';
-import {GreyButton} from '../../GreyButton';
-import {undefinedRelationExists} from '../undefinedRelationExists';
-import ConfigStore from '../../../stores/ConfigStore';
+import styles from './style';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {EntityRelationDialog} from '../EntityRelationDialog';
+import {GreyButton} from '../../../GreyButton';
+import {undefinedRelationExists} from '../../undefinedRelationExists';
+import ConfigStore from '../../../../stores/ConfigStore';
 
-export class Entity extends ResponsiveComponent {
+export class Entity extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.toggleDialog = this.toggleDialog.bind(this);
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
@@ -69,72 +67,14 @@ export class Entity extends ResponsiveComponent {
     return null;
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        display: 'block',
-        margin: '0 3px 25px 0',
-        boxShadow: '0px 0px 3px 1px #CCC',
-        borderRadius: 5,
-        backgroundColor: 'white'
-      },
-      content: {
-        padding: 16,
-        fontSize: 22,
-        zIndex: 10,
-        position: 'relative',
-        boxShadow: '0 0 10px #ddd'
-      },
-      title: {
-        fontSize: 23,
-        marginBottom: 5
-      },
-      right: {
-        display: 'inline-block',
-        margin: '0 0 0 17px',
-        verticalAlign: 'top',
-        fontSize: 18
-      },
-      left: {
-        display: 'inline-block',
-        fontSize: 18,
-        marginLeft: 25,
-        width: '60%',
-        verticalAlign: 'top'
-      },
-      item: {
-        marginTop: 9
-      },
-      button: {
-        margin: '7px 10px 7px 0'
-      },
-      value: {
-        fontWeight: 'bold',
-        marginLeft: 7,
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      flag: {
-        float: 'right',
-        position: 'relative',
-        zIndex: 11
-      },
-      attention: {
-        color: window.colorBlindModeOn ? 'black' : 'red',
-        textTransform: 'capitalize'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+  render() {
     let relationshipDialog;
     if (this.props.open) {
       relationshipDialog = (
         <EntityRelationDialog
           declarations={this.props.declarations}
           projects={this.props.projects}
-          style={{display: this.props.open ? 'block' : 'none'}}
+          className={`${styles.override} ${this.props.open ? styles.block : styles.none}`}
           title={this.props.title}
           type={this.props.type}
           role={this.props.role}
@@ -161,7 +101,7 @@ export class Entity extends ResponsiveComponent {
     let status;
     if (this.getDisplayStatus() === 'Action Required') {
       status = (
-        <div style={styles.attention}>
+        <div className={styles.attention}>
           - {this.getDisplayStatus()} -
         </div>
       );
@@ -176,27 +116,31 @@ export class Entity extends ResponsiveComponent {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.content}>
-          <div style={styles.title}>
-            <span style={styles.value}>
+      <div className={`${styles.container} ${this.props.className}`}>
+        <div className={styles.content}>
+          <div className={styles.title}>
+            <span className={styles.value}>
               {this.props.title}
             </span>
           </div>
           <div>
-            <span style={styles.left}>
-              <div style={styles.item}>
-                <span style={{display: 'inline-block', verticalAlign: 'top'}}>Relationship:</span>
-                <span style={styles.value}>
+            <span className={styles.left}>
+              <div className={styles.item}>
+                <span style={{display: 'inline-block', verticalAlign: 'top'}}>
+                  Relationship:
+                </span>
+                <span className={styles.value}>
                   {relationships}
                 </span>
               </div>
             </span>
-            <span style={styles.right}>
+            <span className={styles.right}>
               {status}
 
               <div>
-                <GreyButton style={styles.button} onClick={this.toggleDialog}>Update</GreyButton>
+                <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.toggleDialog}>
+                  Update
+                </GreyButton>
               </div>
             </span>
           </div>

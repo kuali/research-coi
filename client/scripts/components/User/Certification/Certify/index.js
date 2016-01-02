@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {COIConstants} from '../../../../../COIConstants';
-import {Instructions} from '../Instructions';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {FileUpload} from '../../FileUpload';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {COIConstants} from '../../../../../../COIConstants';
+import {Instructions} from '../../Instructions';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {FileUpload} from '../../../FileUpload';
 
 export class Certify extends React.Component {
   constructor() {
@@ -47,31 +48,6 @@ export class Certify extends React.Component {
   shouldComponentUpdate() { return true; }
 
   render() {
-    const styles = {
-      container: {
-        overflow: 'hidden'
-      },
-      content: {
-        display: 'inline-block',
-        padding: '46px 0 0 50px'
-      },
-      p: {
-        fontSize: '16px'
-      },
-      ul: {
-        fontSize: '16px'
-      },
-      cert: {
-        backgroundColor: 'white',
-        padding: '20px 30px',
-        borderRadius: 5,
-        boxShadow: '0px 0px 3px 1px #CCC',
-        marginRight: 3,
-        marginBottom: 3,
-        display: 'inline-block'
-      }
-    };
-
     const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
     const instructions = (
       <Instructions
@@ -97,11 +73,11 @@ export class Certify extends React.Component {
       );
     }
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
         {instructions}
 
-        <div style={styles.content}>
-          <span style={styles.cert}>
+        <div className={styles.content}>
+          <span className={styles.cert}>
             <div style={{whiteSpace: 'pre-wrap', marginBottom: 25}}>
               {window.config.general.certificationOptions.text}
             </div>

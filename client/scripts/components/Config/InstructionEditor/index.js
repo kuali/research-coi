@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
-import ConfigActions from '../../actions/ConfigActions';
+import ConfigActions from '../../../actions/ConfigActions';
 
 export default class InstructionEditor extends React.Component {
   constructor(props) {
@@ -50,72 +51,28 @@ export default class InstructionEditor extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        backgroundColor: 'white',
-        marginBottom: 20,
-        borderRadius: 5,
-        overflow: 'hidden',
-        boxShadow: '0 0 10px #BBB'
-      },
-      flipper: {
-        position: 'absolute',
-        right: 22,
-        transform: this.state.open ? 'rotateZ(-180deg)' : 'rotateZ(0deg) translateY(-3px)',
-        transition: 'transform .2s linear',
-        fontSize: 25
-      },
-      top: {
-        padding: '10px 20px',
-        position: 'relative',
-        zIndex: 2,
-        backgroundColor: 'white',
-        cursor: 'pointer',
-        fontSize: 18,
-        color: 'black',
-        borderRadius: '5px 5px 0 0'
-      },
-      bottom: {
-        borderTop: '1px solid #AAA',
-        padding: '15px 27px 21px 27px',
-        zIndex: 1,
-        position: 'relative',
-        marginTop: this.state.open ? 0 : -146,
-        transition: 'margin-top .2s ease-out'
-      },
-      textarea: {
-        width: '100%',
-        height: 85,
-        fontSize: 16,
-        padding: 10,
-        borderRadius: 5,
-        border: '1px solid #AAA'
-      },
-      label: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        paddingBottom: 2,
-        color: '#555',
-        display: 'block'
-      }
-    };
+    const classes = classNames(
+      styles.container,
+      this.props.className,
+      {[styles.open]: this.state.open}
+    );
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.top} onClick={this.toggle}>
+      <div className={classes}>
+        <div className={styles.top} onClick={this.toggle}>
           {this.props.step}
           <span style={{marginLeft: 3}}>Instructions</span>
-          <span style={styles.flipper}>
-            <i className="fa fa-caret-down"></i>
+          <span className={styles.flipper}>
+            <i className={`fa fa-caret-down`}></i>
           </span>
         </div>
         <div style={{overflow: 'hidden'}}>
-          <div style={styles.bottom}>
-            <label htmlFor="instructionText" style={styles.label}>INSTRUCTION TEXT</label>
+          <div className={styles.bottom}>
+            <label htmlFor="instructionText" className={styles.label}>INSTRUCTION TEXT</label>
             <div>
               <textarea
                 id="instructionText"
-                style={styles.textarea}
+                className={styles.textarea}
                 placeholder="Type instructions here"
                 onChange={this.textChanged}
                 ref="textarea"

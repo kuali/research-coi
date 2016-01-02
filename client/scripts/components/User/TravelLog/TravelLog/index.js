@@ -16,15 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {AppHeader} from '../../AppHeader';
-import {TravelLogHeader} from './TravelLogHeader';
-import TravelLogForm from './TravelLogForm';
-import TravelLogSort from './TravelLogSort';
-import {BackToDashBoardButton} from './BackToDashBoardButton';
-import {TravelLogStore} from '../../../stores/TravelLogStore';
-import {TravelLogActions} from '../../../actions/TravelLogActions';
-import Entry from './Entry';
+import {AppHeader} from '../../../AppHeader';
+import {TravelLogHeader} from '../TravelLogHeader';
+import TravelLogForm from '../TravelLogForm';
+import TravelLogSort from '../TravelLogSort';
+import {BackToDashBoardButton} from '../BackToDashBoardButton';
+import {TravelLogStore} from '../../../../stores/TravelLogStore';
+import {TravelLogActions} from '../../../../actions/TravelLogActions';
+import Entry from '../Entry';
 
 export default class TravelLog extends React.Component {
   constructor() {
@@ -61,40 +62,6 @@ export default class TravelLog extends React.Component {
   }
 
   render() {
-    const styles = {
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 10,
-        position: 'relative'
-      },
-      top: {
-        marginTop: 20
-      },
-      sidebar: {
-        minWidth: 300,
-        display: 'inline-block',
-        backgroundColor: '#eeeeee',
-        verticalAlign: 'top',
-        paddingTop: 125,
-        boxShadow: '2px 1px 8px #D5D5D5',
-        zIndex: 9
-      },
-      content: {
-        verticalAlign: 'top',
-        width: '80%',
-        display: 'inline-block',
-        overflow: 'auto',
-        backgroundColor: '#eeeeee'
-      },
-      entryList: {
-        maxWidth: 900,
-        margin: '44px 50px',
-        borderTop: '1px solid #CCC',
-        paddingTop: '44px'
-      }
-    };
-
-
     let travelLogs;
     if (this.state.entries.length > 0) {
       travelLogs = this.state.entries.map(travelLog => {
@@ -110,16 +77,16 @@ export default class TravelLog extends React.Component {
     }
 
     return (
-      <div className="flexbox column" style={{height: '100%'}} name='Travel Log'>
-        <AppHeader style={styles.header} />
-        <span className="flexbox row fill" style={styles.container}>
-          <span style={styles.sidebar}>
+      <div className={`flexbox column`} style={{height: '100%'}} name='Travel Log'>
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <span className={`flexbox row fill ${styles.container}`}>
+          <span className={styles.sidebar}>
             <BackToDashBoardButton/>
           </span>
-          <span className="fill" style={styles.content}>
+          <span className={`fill ${styles.content}`}>
             <TravelLogHeader/>
             <TravelLogForm entry={this.state.potentialEntry} validating={this.state.validating}/>
-            <div style={styles.entryList}>
+            <div className={styles.entryList}>
               <TravelLogSort/>
               {travelLogs}
             </div>

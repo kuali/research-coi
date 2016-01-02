@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {TravelLogActions} from '../../../actions/TravelLogActions';
+import {TravelLogActions} from '../../../../actions/TravelLogActions';
 
 export default class TravelLogSort extends React.Component {
   constructor() {
@@ -40,44 +41,24 @@ export default class TravelLogSort extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      select: {
-        width: 150,
-        height: 27,
-        fontSize: 14,
-        borderBottom: '1px solid #aaa',
-        marginRight: 8
-      },
-      value: {
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      label: {
-        fontSize: 14,
-        marginRight: '5px'
-      }
-    };
-
     return (
-      <div style={styles.container} name='Travel Log Sort'>
+      <div className={styles.container} name='Travel Log Sort'>
         <div>
-          <span style={styles.label}>Sort By:</span>
-          <select style={styles.select} onChange={this.sortColumnChanged}>
+          <span className={styles.label}>Sort By:</span>
+          <select className={styles.select} onChange={this.sortColumnChanged}>
             <option value="name">Entity Name</option>
             <option value="date">Date</option>
             <option value="destination">Destination</option>
             <option value="amount">Amount</option>
           </select>
-          <span style={styles.label}></span>
-          <select style={styles.select} onChange={this.sortDirectionChanged}>
+          <span className={styles.label}></span>
+          <select className={styles.select} onChange={this.sortDirectionChanged}>
             <option value="ASCENDING">Ascending</option>
             <option value="DESCENDING">Descending</option>
           </select>
           <div style={{float: 'right'}}>
-            <span style={styles.label}>View By:</span>
-            <select style={styles.select} onChange={this.filterChanged}>
+            <span className={styles.label}>View By:</span>
+            <select className={styles.select} onChange={this.filterChanged}>
               <option value="all">All</option>
               <option value="disclosed">Already Disclosed</option>
               <option value="notYetdisclosed">Not Yet Disclosed</option>

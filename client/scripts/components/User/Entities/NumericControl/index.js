@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import React from 'react';
 
 export class NumericControl extends React.Component {
   constructor() {
@@ -30,36 +31,16 @@ export class NumericControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        width: '100%',
-        display: 'inline-block'
-      },
-      textbox: {
-        padding: 6,
-        width: '80%',
-        border: '1px solid #B0B0B0'
-      },
-      value: {
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      invalidError: {
-        fontSize: 10,
-        marginTop: 2
-      }
-    };
-
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-      <div style={styles.invalidError}>Required Field</div>
+      <div className={styles.invalidError}>Required Field</div>
       );
     }
 
     if (this.props.readonly) {
       return (
-        <div style={styles.value}>
+        <div className={styles.value}>
           {this.props.answer}
         </div>
       );
@@ -67,8 +48,14 @@ export class NumericControl extends React.Component {
 
     return (
     <div>
-      <div style={styles.container}>
-        <input style={styles.textbox} type="number" id={`eqa${this.props.questionId}`} onChange={this.onChange} value={this.props.answer} />
+      <div className={styles.container}>
+        <input
+          className={styles.textbox}
+          type="number"
+          id={`eqa${this.props.questionId}`}
+          onChange={this.onChange}
+          value={this.props.answer}
+        />
       </div>
       {requiredFieldError}
     </div>

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import CommentBubble from './CommentBubble';
-import {AdminActions} from '../../../actions/AdminActions';
-import {BlueButton} from '../../BlueButton';
+import CommentBubble from '../CommentBubble';
+import {AdminActions} from '../../../../actions/AdminActions';
+import {BlueButton} from '../../../BlueButton';
+import classNames from 'classnames';
 
 export default class CommentingPanel extends React.Component {
   constructor() {
@@ -46,89 +46,9 @@ export default class CommentingPanel extends React.Component {
       false,
       commentText
     );
-
   }
 
-  render(): React.Element {
-    const styles = {
-      container: {
-        backgroundColor: 'white',
-        height: '100%',
-        boxShadow: '0 0 10px 0 #AAA'
-      },
-      heading: {
-        color: 'black',
-        padding: '18px 20px 10px 20px',
-        marginBottom: 20,
-        boxShadow: '22px 50px 100px white',
-        zIndex: 99,
-        position: 'relative',
-        backgroundColor: 'white'
-      },
-      close: {
-        float: 'right',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        marginBottom: 8,
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 20
-      },
-      topic: {
-        minWidth: '50%',
-        borderBottom: '1px solid black',
-        display: 'inline-block',
-        fontSize: 15,
-        paddingBottom: 6
-      },
-      controls: {
-        color: '#333',
-        height: 150,
-        backgroundColor: '#F2F2F2',
-        width: '100%',
-        padding: '10px 20px',
-        borderTop: '1px solid #333'
-      },
-      commentText: {
-        width: '55%',
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      right: {
-        width: '45%',
-        display: 'inline-block',
-        verticalAlign: 'top',
-        paddingLeft: 25
-      },
-      textbox: {
-        width: '100%',
-        height: 100,
-        borderRadius: 5,
-        padding: 5,
-        fontSize: 13,
-        border: '1px solid #AAA'
-      },
-      checkLabel: {
-        fontSize: 11
-      },
-      comments: {
-        overflowY: 'auto',
-        flexDirection: 'column-reverse',
-        msFlexDirection: 'column-reverse',
-        paddingLeft: 22
-      },
-      comment: {
-        marginTop: 10,
-        marginBottom: 10
-      },
-      submitButton: {
-        marginTop: 25,
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: 'white',
-        fontSize: 17,
-        borderBottom: '3px solid #797979'
-      }
-    };
-
+  render() {
     let comments;
     if (this.props.comments) {
       comments = this.props.comments.map(comment => {
@@ -139,7 +59,7 @@ export default class CommentingPanel extends React.Component {
             date={comment.date}
             author={comment.author}
             text={comment.text}
-            style={styles.comment}
+            className={`${styles.override} ${styles.comment}`}
             new={comment.new}
           />
         );
@@ -149,21 +69,26 @@ export default class CommentingPanel extends React.Component {
     let commentForm;
     if (!this.props.readonly) {
       commentForm = (
-        <div style={styles.controls}>
-            <span style={styles.commentText}>
+        <div className={styles.controls}>
+            <span className={styles.commentText}>
               <div>COMMENT:</div>
               <div>
-                <textarea style={styles.textbox} ref="commentText" />
+                <textarea className={styles.textbox} ref="commentText" />
               </div>
             </span>
-            <span style={styles.right}>
+            <span className={styles.right}>
               <div>RECIPIENT:</div>
               <div>
                 <input type="checkbox" id="piCheck" ref="piCheck" />
-                <label htmlFor="piCheck" style={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
+                <label htmlFor="piCheck" className={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
               </div>
               <div>
-                <BlueButton style={styles.submitButton} onClick={this.makeComment}>Submit</BlueButton>
+                <BlueButton
+                  className={`${styles.override} ${styles.submitButton}`}
+                  onClick={this.makeComment}
+                >
+                  Submit
+                </BlueButton>
               </div>
             </span>
         </div>
@@ -171,15 +96,15 @@ export default class CommentingPanel extends React.Component {
     }
 
     return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <div style={styles.heading}>
-          <span style={styles.close} onClick={AdminActions.hideCommentingPanel}>
+      <div className={classNames('flexbox', 'column', styles.container, this.props.className)}>
+        <div className={styles.heading}>
+          <span className={styles.close} onClick={AdminActions.hideCommentingPanel}>
             <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
           </span>
-          <span style={styles.topic}>{this.props.topic}</span>
+          <span className={styles.topic}>{this.props.topic}</span>
         </div>
 
-        <div className="fill flexbox" style={styles.comments}>
+        <div className={`fill flexbox ${styles.comments}`}>
           <div style={{width: '100%'}}>
             {comments}
           </div>

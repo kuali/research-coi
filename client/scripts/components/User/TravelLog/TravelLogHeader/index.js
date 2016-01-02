@@ -16,30 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
 
 export class TravelLogHeader extends React.Component {
   render() {
-    const styles = {
-      container: {
-        backgroundColor: 'white',
-        padding: '17px 0 17px 50px',
-        position: 'relative',
-        boxShadow: '0 2px 8px #D5D5D5'
-      },
-      heading: {
-        fontSize: '33px',
-        margin: '0 0 0 0',
-        textTransform: 'uppercase',
-        fontWeight: 300,
-        color: '#444'
-      }
-    };
-
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <h2 style={styles.heading}>
+      <div className={`${styles.container} ${this.props.className}`}>
+        <h2 className={styles.heading}>
          Travel Log
         </h2>
       </div>

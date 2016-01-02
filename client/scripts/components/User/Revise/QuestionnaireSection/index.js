@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,47 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import QuestionToReview from './QuestionToReview';
+import QuestionToReview from '../QuestionToReview';
 
-export default function QuestionnaireSection(props: Object): React.Element {
-  const styles = {
-    container: {
-      margin: '25px 20px 25px 35px',
-      backgroundColor: 'white',
-      borderRadius: 5,
-      boxShadow: '0 0 10px 2px #DDD',
-      overflow: 'hidden'
-    },
-    title: {
-      fontSize: 23,
-      padding: '10px 18px',
-      borderBottom: '1px solid #AAA',
-      backgroundColor: 'white',
-      color: 'black'
-    },
-    body: {
-      padding: 23
-    }
-  };
-
+export default function QuestionnaireSection(props) {
   const questions = props.questions.map((question, index) => {
     return (
       <QuestionToReview
         key={question.id}
         question={question}
-        style={{marginBottom: index === props.questions.length - 1 ? 0 : 40}}
+        className={classNames(
+          styles.override,
+          styles.question,
+          {[styles.last]: index === props.questions.length - 1}
+        )}
       />
     );
   });
 
   return (
-    <div style={merge(styles.container, props.style)}>
-      <div style={styles.title}>
+    <div className={`${styles.container} ${props.className}`}>
+      <div className={styles.title}>
         QUESTIONNAIRE
       </div>
-      <div style={styles.body}>
+      <div className={styles.body}>
         {questions}
       </div>
     </div>

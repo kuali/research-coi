@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {GreyButton} from '../../GreyButton';
-import {EntityForm} from './EntityForm';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
-import ConfigStore from '../../../stores/ConfigStore';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {GreyButton} from '../../../GreyButton';
+import {EntityForm} from '../EntityForm';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {DisclosureStore} from '../../../../stores/DisclosureStore';
+import ConfigStore from '../../../../stores/ConfigStore';
 
 export class Entity extends React.Component {
   constructor() {
@@ -44,66 +45,25 @@ export class Entity extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'block',
-        margin: '0 3px 25px 0',
-        backgroundColor: 'white',
-        boxShadow: '0px 0px 3px 1px #CCC',
-        borderRadius: 5
-      },
-      content: {
-        position: 'relative',
-        zIndex: 10,
-        padding: '13px 16px',
-        boxShadow: '0 0 15px #E6E6E6',
-        fontSize: 17,
-        backgroundColor: 'white',
-        borderRadius: 5
-      },
-      name: {
-        display: 'inline-block',
-        fontSize: 24,
-        fontWeight: 'bold'
-      },
-      dataitem: {
-        margin: '10px 0',
-        fontSize: 20,
-        display: 'inline-block'
-      },
-      button: {
-        margin: '7px 10px 7px 0',
-        minWidth: 110
-      },
-      relationships: {
-        fontWeight: 'bold',
-        marginLeft: 7,
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      entityForm: {
-        display: this.props.step >= 0 ? 'block' : 'none',
-        transition: 'margin-top .2s ease-in-out'
-      },
-      buttonCell: {
-        width: 268
-      },
-      relationshipLabel: {
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      attention: {
-        float: 'right',
-        color: window.colorBlindModeOn ? 'black' : '#D3121C',
-        marginRight: 20
-      }
-    };
-
     let statusButton;
     if (this.props.entity.active === 1) {
-      statusButton = (<GreyButton onClick={this.toggleStatus} style={styles.button}>Deactivate</GreyButton>);
+      statusButton = (
+        <GreyButton
+          onClick={this.toggleStatus}
+          className={`${styles.override} ${styles.button}`}
+        >
+          Deactivate
+        </GreyButton>
+      );
     } else {
-      statusButton = (<GreyButton onClick={this.toggleStatus} style={styles.button}>Reactivate</GreyButton>);
+      statusButton = (
+        <GreyButton
+          onClick={this.toggleStatus}
+          className={`${styles.override} ${styles.button}`}
+        >
+          Reactivate
+        </GreyButton>
+      );
     }
 
     const relationships = this.props.entity.relationships.map((relationship) => {
@@ -119,24 +79,35 @@ export class Entity extends React.Component {
     if (!DisclosureStore.entityInformationStepComplete(this.props.entity.id) ||
       !DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id)) {
       warning = (
-        <div style={styles.attention}>- Needs Attention -</div>
+        <div className={styles.attention}>- Needs Attention -</div>
       );
     }
 
+    const classes = classNames(
+      styles.container,
+      this.props.className,
+      {[styles.showForm]: this.props.step >= 0}
+    );
+
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.content}>
-          <div style={styles.name}>{this.props.entity.name}</div>
+      <div className={classes}>
+        <div className={styles.content}>
+          <div className={styles.name}>{this.props.entity.name}</div>
           {warning}
-          <div style={{margin: '10px 0 0 20px'}} className="flexbox row">
-            <span className="fill" style={styles.dataitem}>
-              <span style={styles.relationshipLabel}>Relationship:</span>
-              <span style={styles.relationships}>
+          <div style={{margin: '10px 0 0 20px'}} className={`flexbox row`}>
+            <span className={`fill ${styles.dataitem}`}>
+              <span className={styles.relationshipLabel}>Relationship:</span>
+              <span className={styles.relationships}>
                 {relationships}
               </span>
             </span>
-            <span style={styles.buttonCell}>
-              <GreyButton style={styles.button} onClick={this.showForm}>View Summary</GreyButton>
+            <span className={styles.buttonCell}>
+              <GreyButton
+                className={`${styles.override} ${styles.button}`}
+                onClick={this.showForm}
+              >
+                View Summary
+              </GreyButton>
               {statusButton}
             </span>
           </div>
@@ -145,7 +116,7 @@ export class Entity extends React.Component {
         <EntityForm
           update="true"
           step={this.props.step}
-          style={styles.entityForm}
+          className={`${styles.override} ${styles.entityForm}`}
           entity={this.props.entity}
           editing={this.props.editing}
           snapshot={this.props.snapshot}

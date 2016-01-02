@@ -16,11 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {GreyButton} from '../GreyButton';
-import {AdminActions} from '../../actions/AdminActions';
-import DisclosureFilter from './DisclosureFilter';
-import DoneWithFilterButton from './DoneWithFilterButton';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {GreyButton} from '../../GreyButton';
+import {AdminActions} from '../../../actions/AdminActions';
+import DisclosureFilter from '../DisclosureFilter';
+import DoneWithFilterButton from '../DoneWithFilterButton';
 
 export class DisclosureFilterByType extends DisclosureFilter {
   constructor() {
@@ -50,34 +52,10 @@ export class DisclosureFilterByType extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    const styles = {
-      container: {
-        whiteSpace: 'nowrap',
-        color: 'black'
-      },
-      checkbox: {
-        textAlign: 'left',
-        padding: 10
-      },
-      clearButton: {
-        backgroundColor: '#DFDFDF',
-        color: 'black',
-        borderBottom: '3px solid #717171',
-        float: 'right',
-        padding: '4px 7px',
-        width: 135,
-        margin: '10px 0'
-      },
-      x: {
-        fontSize: 15,
-        paddingRight: 8
-      }
-    };
-
     const options = this.props.possibleTypes.map((type, index) => {
       const id = `typeFilt${index}`;
       return (
-        <div style={styles.checkbox} key={type}>
+        <div className={styles.checkbox} key={type}>
           <input
             id={id}
             type="checkbox"
@@ -90,11 +68,11 @@ export class DisclosureFilterByType extends DisclosureFilter {
     });
 
     return (
-      <div style={styles.container}>
+      <div className={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
         {options}
-        <GreyButton style={styles.clearButton} onClick={this.clear}>
-          <i className="fa fa-times" style={styles.x}></i>
+        <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
+          <i className={classNames('fa', 'fa-times', styles.x)}></i>
           CLEAR FILTER
         </GreyButton>
       </div>

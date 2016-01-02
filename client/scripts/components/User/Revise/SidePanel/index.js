@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import {BlueButton} from '../../BlueButton';
+import {BlueButton} from '../../../BlueButton';
 import {Link} from 'react-router';
-import PIReviewActions from '../../../actions/PIReviewActions';
+import PIReviewActions from '../../../../actions/PIReviewActions';
 
 export default class SidePanel extends React.Component {
   constructor() {
@@ -49,80 +50,25 @@ export default class SidePanel extends React.Component {
   render() {
     const submitEnabled = this.props.submitEnabled;
 
-    const styles = {
-      container: {
-        width: 220
-      },
-      message: {
-        margin: '25px 28px 25px 3px',
-        paddingBottom: 18,
-        borderBottom: '1px solid #AAA'
-      },
-      submit: {
-        color: submitEnabled ? '#333' : '#CCC',
-        cursor: submitEnabled ? 'pointer' : 'default',
-        verticalAlign: 'middle',
-        fontSize: 18
-      },
-      cancel: {
-        cursor: 'pointer',
-        verticalAlign: 'middle',
-        fontSize: 18
-      },
-      submitIcon: {
-        color: submitEnabled ? window.colorBlindModeOn ? 'black' : '#F57C00' : '#CCC',
-        fontSize: 29,
-        verticalAlign: 'middle',
-        margin: '0 10px 5px 15px'
-      },
-      cancelIcon: {
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        fontSize: 29,
-        verticalAlign: 'middle',
-        margin: '0 10px 0 15px'
-      },
-      certificationPane: {
-        backgroundColor: 'white',
-        color: 'black',
-        padding: '25px 15px',
-        boxShadow: '0 0 10px 2px #DDD'
-      },
-      certCheckbox: {
-        paddingTop: 17,
-        textAlign: 'center'
-      },
-      agreedLabel: {
-        paddingLeft: 5
-      },
-      disabledConfirmButton: {
-        cursor: 'default',
-        color: '#AAA',
-        backgroundColor: '#EEE',
-        borderBottom: '2px solid #AAA',
-        textShadow: 'inherit'
-      },
-      confirmSection: {
-        textAlign: 'center',
-        paddingTop: 35
-      }
-    };
-
     let content;
     if (this.props.showingCertification) {
-      let confirmButtonStyle = {};
-      if (!this.state.agreed) {
-        confirmButtonStyle = styles.disabledConfirmButton;
-      }
-
       content = (
-        <div style={styles.certificationPane}>
+        <div className={styles.certificationPane}>
           <div>{this.props.certificationText}</div>
-          <div style={styles.certCheckbox}>
+          <div className={styles.certCheckbox}>
             <input type="checkbox" id="certCheck" onChange={this.onAgreeChange} />
-            <label style={styles.agreedLabel} htmlFor="certCheck">Agreed</label>
+            <label className={styles.agreedLabel} htmlFor="certCheck">Agreed</label>
           </div>
-          <div style={styles.confirmSection}>
-            <BlueButton onClick={this.confirm} style={confirmButtonStyle}>Confirm</BlueButton>
+          <div className={styles.confirmSection}>
+            <BlueButton
+              onClick={this.confirm}
+              className={classNames(
+                styles.override,
+                {[styles.disabledConfirmButton]: !this.state.agreed}
+              )}
+            >
+              Confirm
+            </BlueButton>
           </div>
         </div>
       );
@@ -137,23 +83,30 @@ export default class SidePanel extends React.Component {
       }
       content = (
         <div>
-          <div style={styles.message}>{message}</div>
-          <div style={styles.submit} onClick={PIReviewActions.submit}>
-            <i className="fa fa-arrow-circle-right" style={styles.submitIcon}></i>
+          <div className={styles.message}>{message}</div>
+          <div className={styles.submit} onClick={PIReviewActions.submit}>
+            <i className={`fa fa-arrow-circle-right ${styles.submitIcon}`}></i>
             SUBMIT
           </div>
 
           <Link to={`/coi/dashboard`}>
-            <div style={styles.cancel}>
-              <i className="fa fa-times-circle" style={styles.cancelIcon}></i>
+            <div className={styles.cancel}>
+              <i className={`fa fa-times-circle ${styles.cancelIcon}`}></i>
               CANCEL
             </div>
           </Link>
         </div>
       );
     }
+
+    const classes = classNames(
+      styles.container,
+      {[styles.submitEnabled]: submitEnabled},
+      this.props.className
+    );
+
     return (
-      <span style={merge(styles.container, this.props.style)}>
+      <span className={classes}>
         {content}
       </span>
     );

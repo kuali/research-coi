@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../merge';
 
 export default class VerticalSlider extends React.Component {
   componentWillMount() {
@@ -46,27 +47,20 @@ export default class VerticalSlider extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      content: {
-        transition: 'transform .1s ease-out',
-        transform: this.state.collapsed ? 'translateY(-100%)' : 'translateY(0%)',
-        position: 'absolute',
-        top: 0
-      },
-      spacer: {
-        height: this.state.collapsed ? 0 : this.state.height,
-        transition: 'height .1s ease-out'
-      }
-    };
+    const classes = classNames(
+      styles.container,
+      {[styles.collapsed]: this.state.collapsed},
+      this.props.className
+    );
+
+    const height = this.state.collapsed ? 0 : this.state.height;
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div ref="content" style={styles.content}>
+      <div className={classes}>
+        <div ref="content" className={styles.content}>
           {this.props.children}
         </div>
-        <div style={styles.spacer}></div>
+        <div className={styles.spacer} style={{height}}></div>
       </div>
     );
   }

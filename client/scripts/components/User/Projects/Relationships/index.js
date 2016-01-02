@@ -16,21 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {Project} from './Project';
-import {Entity} from './Entity';
-import {Toggle} from '../Toggle';
-import {Instructions} from '../Instructions';
-import {COIConstants} from '../../../../../COIConstants';
-import ConfigStore from '../../../stores/ConfigStore';
+import styles from './style';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {Project} from '../Project';
+import {Entity} from '../Entity';
+import {Toggle} from '../../Toggle';
+import {Instructions} from '../../Instructions';
+import {COIConstants} from '../../../../../../COIConstants';
+import ConfigStore from '../../../../stores/ConfigStore';
 
-export class Relationships extends ResponsiveComponent {
+export class Relationships extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.openNext = this.openNext.bind(this);
     this.openPrevious = this.openPrevious.bind(this);
@@ -127,19 +125,7 @@ export class Relationships extends ResponsiveComponent {
     DisclosureActions.changeDeclarationView(newView);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        overflow: 'hidden'
-      },
-      content: {
-        padding: '46px 0 0 50px'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+  render() {
     const projectView = this.props.view === 0;
     const relationshipNodes = [];
     let declarations;
@@ -200,16 +186,16 @@ export class Relationships extends ResponsiveComponent {
     );
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={`${styles.container} ${this.props.className}`}>
         {instructions}
 
-        <div style={styles.content}>
+        <div className={styles.content}>
           <div style={{textAlign: 'right'}}>
             <Toggle
               values={[{code: 0, description: 'Project View'}, {code: 1, description: 'SFI View'}]}
               selected={this.props.view}
               onChange={this.viewChanged}
-              style={{marginBottom: 18}}
+              className={`${styles.override} ${styles.toggle}`}
             />
           </div>
 

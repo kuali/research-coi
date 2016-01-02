@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
 
 export default class DeleteLink extends React.Component {
   constructor() {
@@ -31,28 +32,10 @@ export default class DeleteLink extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #F57C00',
-        cursor: 'pointer'
-      },
-      linkText: {
-        paddingLeft: 2,
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle',
-        fontSize: 8
-      },
-      icon: {
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle',
-        fontSize: 14
-      }
-    };
-
     return (
-      <span onClick={this.props.onClick} style={merge(styles.container, this.props.style)}>
-        <i className="fa fa-times-circle" style={styles.icon}></i>
-        <span style={styles.linkText}>Delete</span>
+      <span onClick={this.props.onClick} className={classNames(styles.container, this.props.className)}>
+        <i className={`fa fa-times-circle ${styles.icon}`}></i>
+        <span className={styles.linkText}>Delete</span>
       </span>
     );
   }

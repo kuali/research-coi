@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import RelationshipTextField from './RelationshipTextField';
-import {DatePicker} from '../../DatePicker';
+import styles from './style';
+import React from 'react';
+import RelationshipTextField from '../RelationshipTextField';
+import {DatePicker} from '../../../DatePicker';
 
 export default class RelationshipDateField extends RelationshipTextField {
   constructor() {
@@ -30,26 +31,17 @@ export default class RelationshipDateField extends RelationshipTextField {
   }
 
   render() {
-    const styles = {
-      container: {
-        marginBottom: 16,
-        textAlign: 'left',
-        display: 'block'
-      },
-      textBox: {
-        padding: 6,
-        width: '100%',
-        borderRadius: 0,
-        fontSize: 16,
-        border: '1px solid #B0B0B0'
-      }
-    };
-
     return (
-    <div style={styles.container}>
+    <div className={styles.container}>
       <div style={this.getLabelStyle(this.props.invalid)}>{this.props.label}</div>
       <DatePicker
-        textFieldStyle={this.getInputStyle(this.props.invalid, styles.textBox)}
+        textFieldStyle={this.getInputStyle(this.props.invalid, {
+          padding: 6,
+          width: '100%',
+          borderRadius: 0,
+          fontSize: 16,
+          border: '1px solid #B0B0B0'
+        })}
         onChange={this.onChange}
         value={this.props.value}
       />

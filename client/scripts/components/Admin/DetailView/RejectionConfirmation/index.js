@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {GreyButton} from '../../GreyButton';
-import {BlueButton} from '../../BlueButton';
-import {AdminActions} from '../../../actions/AdminActions';
+import {GreyButton} from '../../../GreyButton';
+import {BlueButton} from '../../../BlueButton';
+import {AdminActions} from '../../../../actions/AdminActions';
+import classNames from 'classnames';
 
 export default class RejectionConfirmation extends React.Component {
   constructor() {
@@ -33,80 +34,44 @@ export default class RejectionConfirmation extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        color: 'black',
-        fontSize: 15,
-        width: 235,
-        backgroundColor: 'white',
-        padding: '20px 24px',
-        boxShadow: '0 0 10px 2px #CCC'
-      },
-      button: {
-        margin: '0 auto',
-        display: 'block',
-        marginBottom: 10,
-        padding: '5px 10px',
-        borderBottom: '2px solid #717171',
-        width: 135,
-        backgroundColor: window.colorBlindModeOn ? 'white' : '#DFDFDF'
-      },
-      yesButton: {
-        margin: '0 auto',
-        display: 'block',
-        marginBottom: 10,
-        padding: '5px 10px',
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0',
-        color: 'white',
-        borderBottom: '2px solid #717171',
-        width: 135,
-        fontWeight: 300,
-        textShadow: '1px 1px 6px #777'
-      },
-      generalComments: {
-        fontSize: 12,
-        marginBottom: 3
-      },
-      commentText: {
-        display: 'block',
-        width: '100%',
-        height: 200,
-        marginBottom: 30,
-        borderRadius: 5,
-        border: '1px solid #AAA',
-        padding: 7,
-        fontSize: 14
-      },
-      question: {
-        paddingBottom: 17,
-        borderBottom: '1px solid #AAA',
-        marginBottom: 17
-      }
-    };
-
     let rejectionSection;
     if (this.props.canReject) {
       rejectionSection = (
-        <div style={merge(styles.container, this.props.style)} >
-          <div style={styles.question}>
+        <div className={classNames(styles.container, this.props.className)}>
+          <div className={styles.question}>
             Are you sure you want to send this disclosure back for further review?
           </div>
 
-          <div style={styles.generalComments}>NOTIFICATION TO USER</div>
-          <textarea ref="comments" style={styles.commentText} />
+          <div className={styles.generalComments}>NOTIFICATION TO USER</div>
+          <textarea ref="comments" className={styles.commentText} />
 
-          <BlueButton onClick={this.reject} style={styles.yesButton}>YES, SUBMIT</BlueButton>
-          <GreyButton onClick={AdminActions.toggleRejectionConfirmation} style={styles.button}>NO, CANCEL</GreyButton>
+          <BlueButton
+            onClick={this.reject}
+            className={`${styles.override} ${styles.yesButton}`}
+          >
+            YES, SUBMIT
+          </BlueButton>
+          <GreyButton
+            onClick={AdminActions.toggleRejectionConfirmation}
+            className={`${styles.override} ${styles.button}`}
+          >
+            NO, CANCEL
+          </GreyButton>
         </div>
       );
     } else {
       rejectionSection = (
-        <div style={merge(styles.container, this.props.style)} >
-          <div style={styles.question}>
+        <div className={classNames(styles.container, this.props.className)}>
+          <div className={styles.question}>
             Please add one or more comments visible to the PI before sending back a disclosure.
           </div>
 
-          <GreyButton onClick={AdminActions.toggleRejectionConfirmation} style={styles.button}>CLOSE</GreyButton>
+          <GreyButton
+            onClick={AdminActions.toggleRejectionConfirmation}
+            className={`${styles.override} ${styles.button}`}
+          >
+            CLOSE
+          </GreyButton>
         </div>
       );
     }

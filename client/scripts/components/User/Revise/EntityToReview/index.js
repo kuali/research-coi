@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {formatDate} from '../../../formatDate';
-import CheckLink from './CheckLink';
-import PIReviewActions from '../../../actions/PIReviewActions';
-import {EntityFormInformationStep} from '../Entities/EntityFormInformationStep';
-import {EntityFormRelationshipStep} from '../Entities/EntityFormRelationshipStep';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
+import {formatDate} from '../../../../formatDate';
+import CheckLink from '../CheckLink';
+import PIReviewActions from '../../../../actions/PIReviewActions';
+import {EntityFormInformationStep} from '../../Entities/EntityFormInformationStep';
+import {EntityFormRelationshipStep} from '../../Entities/EntityFormRelationshipStep';
+import {DisclosureStore} from '../../../../stores/DisclosureStore';
 
 export default class EntityToReview extends React.Component {
   constructor(props) {
@@ -133,71 +133,14 @@ export default class EntityToReview extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      statusIcon: {
-        width: 45
-      },
-      commentTitle: {
-        fontWeight: 'bold',
-        fontSize: 15
-      },
-      commentDate: {
-        fontStyle: 'italic',
-        fontSize: 12,
-        paddingTop: 2
-      },
-      commentText: {
-        fontSize: 14
-      },
-      commentSection: {
-        width: 300
-      },
-      comments: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#D8E9EB',
-        color: window.colorBlindModeOn ? 'white' : 'black',
-        borderRadius: 5,
-        padding: '1px 10px'
-      },
-      comment: {
-        margin: '15px 10px'
-      },
-      completed: {
-        color: window.colorBlindModeOn ? 'black' : 'green',
-        fontSize: 35
-      },
-      incomplete: {
-        color: window.colorBlindModeOn ? 'black' : '#E85723',
-        fontSize: 35
-      },
-      entityName: {
-        fontSize: 25
-      },
-      actions: {
-        display: 'inline-block',
-        float: 'right'
-      },
-      responseText: {
-        width: '100%',
-        height: 120,
-        borderRadius: 5,
-        border: '1px solid #AAA',
-        margin: '10px 0',
-        fontSize: 16,
-        padding: '6px 8px',
-        backgroundColor: '#EEEEEE'
-      }
-    };
-
     const comments = this.props.entity.comments.map(comment => {
       return (
-        <div style={styles.comment} key={comment.id}>
-          <div style={styles.commentTitle}>Comment from
+        <div className={styles.comment} key={comment.id}>
+          <div className={styles.commentTitle}>Comment from
             <span style={{marginLeft: 3}}>{comment.author}</span>:
           </div>
-          <div style={styles.commentText}>{comment.text}</div>
-          <div style={styles.commentDate}>{formatDate(comment.date)}</div>
+          <div className={styles.commentText}>{comment.text}</div>
+          <div className={styles.commentDate}>{formatDate(comment.date)}</div>
         </div>
       );
     });
@@ -205,19 +148,19 @@ export default class EntityToReview extends React.Component {
     let icon;
     if (this.props.entity.reviewedOn !== null) {
       icon = (
-        <i className="fa fa-check-circle" style={styles.completed}></i>
+        <i className={`fa fa-check-circle ${styles.completed}`}></i>
       );
     }
     else {
       icon = (
-        <i className="fa fa-exclamation-circle" style={styles.incomplete}></i>
+        <i className={`fa fa-exclamation-circle ${styles.incomplete}`}></i>
       );
     }
 
     let actions;
     if (this.state.revising || this.state.responding) {
       actions = (
-        <span style={styles.actions}>
+        <span className={styles.actions}>
           {/*<CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>*/}
           <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
         </span>
@@ -225,7 +168,7 @@ export default class EntityToReview extends React.Component {
     }
     else {
       actions = (
-        <span style={styles.actions}>
+        <span className={styles.actions}>
           <CheckLink checked={this.state.revised} onClick={this.revise}>REVISE</CheckLink>
           <CheckLink checked={this.state.responded} onClick={this.respond}>RESPOND</CheckLink>
         </span>
@@ -240,18 +183,18 @@ export default class EntityToReview extends React.Component {
       }
       responseText = (
         <div>
-          <textarea aria-label="Response" ref="responseText" style={styles.responseText} defaultValue={defaultText} />
+          <textarea aria-label="Response" ref="responseText" className={styles.responseText} defaultValue={defaultText} />
         </div>
       );
     }
 
     return (
-      <div className="flexbox row" style={merge(styles.container, this.props.style)}>
-        <span style={styles.statusIcon}>
+      <div className={`flexbox row ${styles.container} ${this.props.className}`}>
+        <span className={styles.statusIcon}>
           {icon}
         </span>
-        <span style={{marginRight: 25}} className="fill">
-          <div style={styles.entityName}>{this.props.entity.name}</div>
+        <span style={{marginRight: 25}} className={`fill`}>
+          <div className={styles.entityName}>{this.props.entity.name}</div>
           <div style={{marginBottom: 10}}>
             <EntityFormInformationStep
               id={this.props.entity.id}
@@ -281,8 +224,8 @@ export default class EntityToReview extends React.Component {
             {actions}
           </div>
         </span>
-        <span style={styles.commentSection}>
-          <div style={styles.comments}>
+        <span className={styles.commentSection}>
+          <div className={styles.comments}>
             {comments}
           </div>
         </span>

@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import DeclarationsSummary from './DeclarationsSummary';
-import EntitiesSummary from './EntitiesSummary';
-import QuestionnaireSummary from './QuestionnaireSummary';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import DeclarationsSummary from '../DeclarationsSummary';
+import EntitiesSummary from '../EntitiesSummary';
+import QuestionnaireSummary from '../QuestionnaireSummary';
 
 export default class extends React.Component {
   getAnswerMap(answers) {
@@ -35,18 +36,6 @@ export default class extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        padding: 20
-      },
-      questionnaire: {
-        marginBottom: 25
-      },
-      entities: {
-        marginBottom: 25
-      }
-    };
-
     const disclosure = this.props.disclosure;
     let detail;
     if (disclosure) {
@@ -55,11 +44,11 @@ export default class extends React.Component {
           <QuestionnaireSummary
             questions={this.props.config.questions.screening}
             answers={this.getAnswerMap(disclosure.answers)}
-            style={styles.questionnaire}
+            className={`${styles.override} ${styles.questionnaire}`}
           />
           <EntitiesSummary
             entities={disclosure.entities}
-            style={styles.entities}
+            className={`${styles.override} ${styles.entities}`}
             questions={this.props.config.questions.entities}
           />
           <DeclarationsSummary
@@ -73,7 +62,7 @@ export default class extends React.Component {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
         {detail}
       </div>
     );

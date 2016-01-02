@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {ProjectRelationDialog} from './ProjectRelationDialog';
-import {GreyButton} from '../../GreyButton';
-import {undefinedRelationExists} from '../undefinedRelationExists';
+import styles from './style';
+import React from 'react';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {ProjectRelationDialog} from '../ProjectRelationDialog';
+import {GreyButton} from '../../../GreyButton';
+import {undefinedRelationExists} from '../../undefinedRelationExists';
 
 export class Project extends React.Component {
   constructor() {
@@ -67,66 +67,13 @@ export class Project extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'block',
-        margin: '0 3px 25px 0',
-        boxShadow: '0px 0px 3px 1px #CCC',
-        borderRadius: 5,
-        backgroundColor: 'white'
-      },
-      content: {
-        padding: 16,
-        fontSize: 22,
-        zIndex: 10,
-        position: 'relative',
-        boxShadow: '0 0 10px #ddd'
-      },
-      title: {
-        fontSize: 23,
-        marginBottom: 5
-      },
-      right: {
-        display: 'inline-block',
-        margin: '0 0 0 17px',
-        verticalAlign: 'top',
-        fontSize: 18,
-        paddingTop: 9
-      },
-      left: {
-        display: 'inline-block',
-        fontSize: 18,
-        marginLeft: 25,
-        width: '60%',
-        verticalAlign: 'top'
-      },
-      item: {
-        marginTop: 9,
-        fontWeight: '300'
-      },
-      button: {
-        margin: '7px 10px 7px 0',
-        width: 100,
-        fontSize: 12
-      },
-      value: {
-        fontWeight: 'bold',
-        marginLeft: 5
-      },
-      attention: {
-        color: window.colorBlindModeOn ? 'black' : '#D3121C',
-        textTransform: 'capitalize',
-        marginBottom: 28
-      }
-    };
-
     let relationshipDialog;
     if (this.props.open) {
       relationshipDialog = (
         <ProjectRelationDialog
           declarations={this.props.declarations}
           entities={this.props.entities}
-          style={{display: this.props.open ? 'block' : 'none'}}
+          className={`${styles.override} ${this.props.open ? styles.block : styles.none}`}
           title={this.props.title}
           type={this.props.type}
           role={this.props.role}
@@ -145,7 +92,7 @@ export class Project extends React.Component {
     let status;
     if (this.getDisplayStatus() === 'Action Required') {
       status = (
-        <div style={styles.attention}>
+        <div className={styles.attention}>
           - {this.getDisplayStatus()} -
         </div>
       );
@@ -160,39 +107,41 @@ export class Project extends React.Component {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
-        <div style={styles.content}>
-          <div style={styles.title}>
-            <span style={styles.value}>
+      <div className={`${styles.container} ${this.props.className}`}>
+        <div className={styles.content}>
+          <div className={styles.title}>
+            <span className={styles.value}>
               {this.props.title}
             </span>
           </div>
           <div>
-            <span style={styles.left}>
-              <div style={styles.item}>
+            <span className={styles.left}>
+              <div className={styles.item}>
                 Project Type:
-                <span style={styles.value}>
+                <span className={styles.value}>
                   {this.props.type}
                 </span>
               </div>
-              <div style={styles.item}>
+              <div className={styles.item}>
                 Project Role:
-                <span style={styles.value}>
+                <span className={styles.value}>
                   {this.props.role}
                 </span>
               </div>
-              <div style={styles.item}>
+              <div className={styles.item}>
                 Sponsor:
-                <span style={styles.value}>
+                <span className={styles.value}>
                   {this.props.sponsor}
                 </span>
               </div>
             </span>
-            <span style={styles.right}>
+            <span className={styles.right}>
               {status}
 
               <div>
-                <GreyButton style={styles.button} onClick={this.toggleDialog}>Update</GreyButton>
+                <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.toggleDialog}>
+                  Update
+                </GreyButton>
               </div>
             </span>
           </div>

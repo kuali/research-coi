@@ -27,6 +27,12 @@ class _ColorStore extends AutoBindingStore {
 
   setColorBlindMode(newValue) {
     window.localStorage.setItem('colorBlindModeOn', newValue);
+    if (newValue) {
+      document.body.classList.add('color-blind');
+    }
+    else {
+      document.body.classList.remove('color-blind');
+    }
     window.colorBlindModeOn = newValue;
   }
 }

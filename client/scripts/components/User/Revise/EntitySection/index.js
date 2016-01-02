@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,31 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import EntityToReview from './EntityToReview';
+import EntityToReview from '../EntityToReview';
 
-export default function EntitySection(props: Object): React.Element {
-  const styles = {
-    container: {
-      margin: '25px 20px 25px 35px',
-      backgroundColor: 'white',
-      borderRadius: 5,
-      boxShadow: '0 0 10px 2px #DDD',
-      overflow: 'hidden'
-    },
-    title: {
-      fontSize: 23,
-      padding: '10px 18px',
-      borderBottom: '1px solid #AAA',
-      backgroundColor: 'white',
-      color: 'black'
-    },
-    body: {
-      padding: 23
-    }
-  };
-
+export default function EntitySection(props) {
   const entities = props.entitiesToReview.map((entitytoReview, index) => {
     return (
       <EntityToReview
@@ -49,17 +29,21 @@ export default function EntitySection(props: Object): React.Element {
         entity={entitytoReview}
         respondedTo={entitytoReview.respondedTo}
         revised={entitytoReview.revised}
-        style={{marginBottom: index === props.entitiesToReview.length - 1 ? 0 : 50}}
+        className={classNames(
+          styles.override,
+          styles.entity,
+          {[styles.last]: index === props.entitiesToReview.length - 1}
+        )}
       />
     );
   });
 
   return (
-    <div style={merge(styles.container, props.style)}>
-      <div style={styles.title}>
+    <div className={`${styles.container} ${props.className}`}>
+      <div className={styles.title}>
         FINANCIAL ENTITIES
       </div>
-      <div style={styles.body}>
+      <div className={styles.body}>
         {entities}
       </div>
     </div>

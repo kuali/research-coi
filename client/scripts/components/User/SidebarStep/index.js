@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../merge';
-import {CurrentStepIcon} from '../DynamicIcons/CurrentStepIcon';
-import {CompletedStepIcon} from '../DynamicIcons/CompletedStepIcon';
-import {DisclosureActions} from '../../actions/DisclosureActions';
+import styles from './style';
+import React from 'react';
+import classNames from 'classnames';
+import {CurrentStepIcon} from '../../DynamicIcons/CurrentStepIcon';
+import {CompletedStepIcon} from '../../DynamicIcons/CompletedStepIcon';
+import {DisclosureActions} from '../../../actions/DisclosureActions';
 
 export class SidebarStep extends React.Component {
   constructor() {
@@ -33,82 +34,45 @@ export class SidebarStep extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        padding: '10px 20px 10px 10px',
-        fontSize: 18,
-        textTransform: 'uppercase',
-        whiteSpace: 'nowrap',
-        borderBottom: '1px solid #c0c0c0'
-      },
-      selected: {
-        fontWeight: 'bold',
-        backgroundColor: 'white',
-        position: 'relative',
-        color: 'black',
-        boxShadow: '0 0 8px #CDCDCD',
-        borderRight: window.colorBlindModeOn ? '5px solid black' : '5px solid #0095A0'
-      },
-      clickable: {
-        cursor: 'pointer'
-      },
-      incomplete: {
-        color: window.colorBlindModeOn ? 'black' : '#C1C1C1',
-        fontWeight: 300
-      },
-      stepName: {
-        verticalAlign: 'middle',
-        paddingLeft: 5
-      },
-      icon: {
-        width: 50,
-        height: 50,
-        verticalAlign: 'middle',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      futureIcon: {
-        verticalAlign: 'middle',
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 16,
-        width: 50,
-        margin: '17px 0 17px 0px',
-        textAlign: 'center'
-      }
-    };
-
     switch (this.props.state.toLowerCase()) {
       case 'complete':
         return (
-          <div style={merge(styles.clickable, this.props.style)} onClick={this.navigate}>
-            <li style={styles.container}>
-              <CompletedStepIcon style={styles.icon} />
-              <span style={styles.stepName}>{this.props.label}</span>
+          <div className={classNames(styles.clickable, this.props.className)} onClick={this.navigate}>
+            <li className={styles.container}>
+              <CompletedStepIcon
+                className={`${styles.override} ${styles.icon}`}
+                color={window.colorBlindModeOn ? 'black' : '#0095A0'}
+              />
+              <span className={styles.stepName}>{this.props.label}</span>
             </li>
           </div>
         );
       case 'active':
         return (
-          <div style={this.props.style}>
-            <li style={merge(styles.container, styles.selected)}>
-              <CurrentStepIcon style={styles.icon} />
-              <span style={styles.stepName}>{this.props.label}</span>
+          <div className={classNames(this.props.className)}>
+            <li className={`${styles.container} ${styles.selected}`}>
+              <CurrentStepIcon
+                className={`${styles.override} ${styles.icon}`}
+                color={window.colorBlindModeOn ? 'black' : '#0095A0'}
+              />
+              <span className={styles.stepName}>{this.props.label}</span>
             </li>
           </div>
         );
       case 'incomplete':
         if (this.props.visited) {
           return (
-            <li style={merge(styles.container, styles.clickable, this.props.style)} onClick={this.navigate}>
-              <i className="fa fa-circle" style={styles.futureIcon}></i>
-              <span style={styles.stepName}>{this.props.label}</span>
+            <li className={classNames(styles.container, styles.clickable, this.props.className)} onClick={this.navigate}>
+              <i className={`fa fa-circle ${styles.futureIcon}`}></i>
+              <span className={styles.stepName}>{this.props.label}</span>
             </li>
           );
         }
 
         return (
-          <li style={merge(styles.container, styles.incomplete, this.props.style)}>
-            <i className="fa fa-circle" style={merge(styles.futureIcon, styles.incomplete)} />
-            <span style={styles.stepName}>{this.props.label}</span>
+          <li className={classNames(styles.container, styles.incomplete, this.props.className)}>
+            <i className={`fa fa-circle ${styles.futureIcon} ${styles.incomplete}`} />
+            <span className={styles.stepName}>{this.props.label}</span>
           </li>
         );
     }

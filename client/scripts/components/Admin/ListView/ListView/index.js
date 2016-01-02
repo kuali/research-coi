@@ -16,17 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {AdminStore} from '../../../stores/AdminStore';
-import {AdminActions} from '../../../actions/AdminActions';
-import SearchFilterGroup from '../SearchFilterGroup';
-import {DisclosureTable} from './DisclosureTable';
-import {DisclosureFilterSearch} from '../DisclosureFilterSearch';
-import {BlueButton} from '../../BlueButton';
-import ConfigStore from '../../../stores/ConfigStore';
-import AdminMenu from '../../AdminMenu';
-import {AppHeader} from '../../AppHeader';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {AdminStore} from '../../../../stores/AdminStore';
+import {AdminActions} from '../../../../actions/AdminActions';
+import SearchFilterGroup from '../../SearchFilterGroup';
+import {DisclosureTable} from '../DisclosureTable';
+import {DisclosureFilterSearch} from '../../DisclosureFilterSearch';
+import {BlueButton} from '../../../BlueButton';
+import ConfigStore from '../../../../stores/ConfigStore';
+import AdminMenu from '../../../AdminMenu';
+import {AppHeader} from '../../../AppHeader';
 
 export class ListView extends React.Component {
   constructor() {
@@ -97,84 +98,11 @@ export class ListView extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        minHeight: 100
-      },
-      sidebar: {
-        minWidth: 300,
-        backgroundColor: '#eeeeee',
-        boxShadow: '2px 0px 6px #D1D1D1',
-        zIndex: 9
-      },
-      content: {
-        display: 'inline-block',
-        backgroundColor: '#eeeeee',
-        overflowY: 'auto'
-      },
-      table: {
-        backgroundColor: 'white',
-        borderRadius: 5,
-        overflow: 'hidden',
-        boxShadow: '0 0 9px #bbb'
-      },
-      filterGroup: {
-        backgroundColor: window.colorBlindModeOn ? 'black' : '#0095A0'
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 19,
-        position: 'relative'
-      },
-      header2: {
-        backgroundColor: 'white',
-        padding: '17px 0 17px 50px',
-        position: 'relative',
-        borderBottom: '1px solid #e3e3e3',
-        boxShadow: '0 1px 6px #D1D1D1'
-      },
-      title: {
-        fontSize: '33px',
-        margin: '0 0 0 0',
-        textTransform: 'uppercase',
-        fontWeight: 300,
-        color: '#525252'
-      },
-      heading: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        backgroundColor: '#EEEEEE',
-        textAlign: 'right',
-        padding: '8px 70px 8px 0',
-        fontWeight: 'bold',
-        fontSize: 17,
-        position: 'relative',
-        zIndex: 2,
-        borderRight: '1px solid #DDD',
-        cursor: 'pointer'
-      },
-      loadMoreButton: {
-        textAlign: 'center',
-        margin: '10px 0'
-      },
-      loadingIndicator: {
-        textAlign: 'center',
-        margin: '10px 0',
-        color: '#777'
-      },
-      filterArrow: {
-        fontSize: 6,
-        verticalAlign: 'top',
-        margin: '7px 0 0 7px',
-        transition: 'transform .1s linear',
-        transform: this.state.data.applicationState.showFilters ? 'rotateZ(0deg)' : 'rotateZ(180deg)'
-      }
-    };
-
     const filtered = this.state.data.disclosureSummaries;
     let loadMoreButton;
     if (!this.state.data.applicationState.loadedAll && !this.state.data.applicationState.loadingMore) {
       loadMoreButton = (
-        <div style={styles.loadMoreButton}>
+        <div className={styles.loadMoreButton}>
           <BlueButton onClick={this.loadMore}>Load more</BlueButton>
         </div>
       );
@@ -183,7 +111,7 @@ export class ListView extends React.Component {
     let loadingIndicator;
     if (this.state.data.applicationState.loadingMore) {
       loadingIndicator = (
-        <div style={styles.loadingIndicator}>
+        <div className={styles.loadingIndicator}>
           <span>Loading more...</span>
         </div>
       );
@@ -204,26 +132,35 @@ export class ListView extends React.Component {
       });
     }
 
+    const classes = classNames(
+      'flexbox',
+      'fill',
+      'row',
+      styles.container,
+      this.props.className,
+      {[styles.showFilters]: this.state.data.applicationState.showFilters}
+    );
+
     return (
-      <div className="flexbox column" style={{height: '100%', overflowX: 'hidden'}}>
-        <AppHeader style={styles.header} />
-        <div className="flexbox fill row" style={merge(styles.container, this.props.style)}>
-          <span style={styles.sidebar}>
+      <div className={`flexbox column`} style={{height: '100%', overflowX: 'hidden'}}>
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <div className={classes}>
+          <span className={styles.sidebar}>
             <AdminMenu />
             <DisclosureFilterSearch
               query={this.state.data.applicationState.filters.search}
               onChange={this.changeSearch}
               onSearch={this.doSearch}
             />
-            <div style={styles.heading} onClick={this.toggleFilters}>
+            <div className={styles.heading} onClick={this.toggleFilters}>
               <span style={{paddingRight: 3}}>
                 {this.state.data.applicationState.summaryCount}
               </span>
               Disclosures Shown
-              <span style={styles.filterArrow}>&#9660;</span>
+              <span className={styles.filterArrow}>&#9660;</span>
             </div>
             <SearchFilterGroup
-              style={styles.filterGroup}
+              className={`${styles.override} ${styles.filterGroup}`}
               filters={this.state.data.applicationState.filters}
               possibleStatuses={possibleStatuses}
               possibleTypes={possibleTypes}
@@ -234,16 +171,16 @@ export class ListView extends React.Component {
               visible={this.state.data.applicationState.showFilters}
             />
           </span>
-          <span className="fill" style={styles.content} ref="rightPanel">
-            <div style={styles.header2}>
-              <h2 style={styles.title}>COI ADMIN DASHBOARD</h2>
+          <span className={`fill ${styles.content}`} ref="rightPanel">
+            <div className={styles.header2}>
+              <h2 className={styles.title}>COI ADMIN DASHBOARD</h2>
             </div>
             <div style={{padding: '33px 38px'}}>
               <DisclosureTable
                 sort={this.state.data.applicationState.sort}
                 sortDirection={this.state.data.applicationState.sortDirection}
                 page={this.state.data.applicationState.page}
-                style={styles.table}
+                className={`${styles.override} ${styles.table}`}
                 disclosures={filtered}
                 searchTerm={this.state.data.applicationState.effectiveSearchValue}
               />

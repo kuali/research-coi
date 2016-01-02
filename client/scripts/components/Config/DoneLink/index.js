@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
-import CheckmarkIcon from '../DynamicIcons/CheckmarkIcon';
+import CheckmarkIcon from '../../DynamicIcons/CheckmarkIcon';
 
 export default class DoneLink extends React.Component {
   constructor() {
@@ -32,29 +33,10 @@ export default class DoneLink extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        borderBottom: window.colorBlindModeOn ? '1px dotted black' : '1px dotted #F57C00',
-        cursor: 'pointer'
-      },
-      linkText: {
-        paddingLeft: 2,
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle',
-        fontSize: 8
-      },
-      icon: {
-        width: 15,
-        height: 15,
-        color: window.colorBlindModeOn ? 'black' : '#F57C00',
-        verticalAlign: 'middle'
-      }
-    };
-
     return (
-      <span onClick={this.props.onClick} style={merge(styles.container, this.props.style)}>
-        <CheckmarkIcon style={styles.icon} />
-        <span style={styles.linkText}>Done</span>
+      <span onClick={this.props.onClick} className={classNames(styles.container, this.props.className)}>
+        <CheckmarkIcon className={`${styles.override} ${styles.icon}`} color="#F57C00" />
+        <span className={styles.linkText}>Done</span>
       </span>
     );
   }

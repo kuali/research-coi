@@ -16,79 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
+import styles from './style';
+import React from 'react';
 import {Link} from 'react-router';
 
-export class DisclosureArchiveButton extends ResponsiveComponent {
-  constructor() {
-    super();
-    this.commonStyles = {
-    };
-  }
-
-  renderMobile() {
-    const mobileStyles = {
-      container: {
-        display: 'inline-block',
-        backgroundColor: '#2e2e2e',
-        verticalAlign: 'top',
-        padding: 5,
-        cursor: 'pointer',
-        color: 'white',
-        fontWeight: '300',
-        fontSize: 11,
-        textTransform: 'uppercase',
-        textAlign: 'center',
-        width: '20%'
-      },
-      icon: {
-        color: 'white',
-        width: 45,
-        height: 45
-      }
-    };
-    const styles = merge(this.commonStyles, mobileStyles);
-
+export class DisclosureArchiveButton extends React.Component {
+  render() {
     return (
-      <Link to={"/coi/archiveview"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
+      <Link to={"/coi/archiveview"} query={{type: this.props.type}} className={`${styles.container} ${this.props.className}`}>
         <div>
-          <div>Disclosure</div>
-          <div>Archive</div>
-        </div>
-      </Link>
-    );
-  }
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        display: 'block',
-        backgroundColor: '#eeeeee',
-        verticalAlign: 'top',
-        padding: '20px 30px 20px 30px',
-        cursor: 'pointer',
-        color: window.colorBlindModeOn ? 'black' : '#666',
-        fontWeight: '300',
-        borderTop: '1px solid #c0c0c0'
-      },
-      primary: {
-        fontSize: 28,
-        fontWeight: 300
-      },
-      secondary: {
-        fontSize: 22,
-        fontWeight: 'bold'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
-    return (
-      <Link to={"/coi/archiveview"} query={{type: this.props.type}} style={merge(styles.container, this.props.style)}>
-        <div>
-          <div style={styles.primary}>View</div>
-          <div style={styles.secondary}>Disclosure Archives</div>
+          <div className={styles.primary}>View</div>
+          <div className={styles.secondary}>Disclosure Archives</div>
         </div>
       </Link>
     );

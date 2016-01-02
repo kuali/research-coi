@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {formatDate} from '../../../formatDate';
-import ConfigStore from '../../../stores/ConfigStore';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {formatDate} from '../../../../formatDate';
+import ConfigStore from '../../../../stores/ConfigStore';
 import {Link} from 'react-router';
 
 export class DisclosureListItem extends React.Component {
@@ -36,7 +37,7 @@ export class DisclosureListItem extends React.Component {
       return (
         <span>
           <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
-          <span className="highlight">
+          <span className={`highlight`}>
             {matchingValue}
           </span>
           <span style={{display: 'inline'}}>{value.substr(start + this.props.searchTerm.length)}</span>
@@ -48,24 +49,6 @@ export class DisclosureListItem extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        borderBottom: '1px solid #8C8C8C',
-        borderRight: '1px solid #8C8C8C',
-        padding: 6,
-        paddingLeft: 40,
-        fontSize: '.9em',
-        backgroundColor: this.props.selected ? (window.colorBlindModeOn ? 'white' : '#E1EEEF') : 'white',
-        cursor: 'pointer'
-      },
-      disclosureType: {
-        fontWeight: 'bold'
-      },
-      submittedBy: {
-        fontWeight: 'bold'
-      }
-    };
-
     const disclosure = this.props.disclosure;
     let dateToShow;
     if (disclosure.revised_date) {
@@ -79,13 +62,19 @@ export class DisclosureListItem extends React.Component {
       );
     }
 
+    const classes = classNames(
+      styles.container,
+      this.props.className,
+      {[styles.selected]: this.props.selected}
+    );
+
     return (
       <Link to={`/coi/admin/detailview/${this.props.disclosure.id}/${disclosure.statusCd}`}>
-        <li style={merge(styles.container, this.props.style)}>
-          {/*<div style={styles.disclosureType}>
+        <li className={classes}>
+          {/*<div className={styles.disclosureType}>
             {this.highlightSearchTerm(disclosure.type)}
           </div>*/}
-          <div style={styles.submittedBy}>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
+          <div className={styles.submittedBy}>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
           {dateToShow}
           <div>{ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</div>
         </li>

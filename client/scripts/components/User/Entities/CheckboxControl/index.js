@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import React from 'react';
 
 export class CheckboxControl extends React.Component {
   constructor() {
@@ -30,31 +31,10 @@ export class CheckboxControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      option: {
-        display: 'inline-block',
-        marginRight: 30
-      },
-      radio: {
-        width: 22
-      },
-      label: {
-        cursor: 'pointer'
-      },
-      value: {
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      invalidError: {
-        fontSize: 10,
-        marginTop: 2
-      }
-    };
-
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-      <div style={styles.invalidError}>Required Field</div>
+      <div className={styles.invalidError}>Required Field</div>
       );
     }
 
@@ -67,7 +47,7 @@ export class CheckboxControl extends React.Component {
       }
 
       return (
-        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
+        <span className={styles.option} key={`${this.props.questionId}_${index}`}>
           <span>
             <input
               key={option}
@@ -76,10 +56,10 @@ export class CheckboxControl extends React.Component {
               checked={checked}
               onChange={this.onChange}
               type="checkbox"
-              style={styles.radio}
+              className={styles.radio}
             />
           </span>
-          <label htmlFor={`multi_${option}`} style={styles.label}>{option}</label>
+          <label htmlFor={`multi_${option}`} className={styles.label}>{option}</label>
         </span>
       );
     });
@@ -87,7 +67,7 @@ export class CheckboxControl extends React.Component {
 
     if (this.props.readonly) {
       return (
-        <div style={styles.value}>
+        <div className={styles.value}>
           {this.props.answer ? this.props.answer.join(', ') : ''}
         </div>
       );

@@ -16,12 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import TopicCommentSummary from './TopicCommentSummary';
-import {AdminActions} from '../../../actions/AdminActions';
-import ConfigStore from '../../../stores/ConfigStore';
-import {COIConstants} from '../../../../../COIConstants';
+import TopicCommentSummary from '../TopicCommentSummary';
+import {AdminActions} from '../../../../actions/AdminActions';
+import ConfigStore from '../../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../../COIConstants';
+import classNames from 'classnames';
 
 export default class CommentSummary extends React.Component {
   getUniqueTopics(comments) {
@@ -148,51 +149,21 @@ export default class CommentSummary extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        backgroundColor: 'white',
-        height: '100%',
-        boxShadow: '0 0 10px 0 #AAA',
-        color: 'black',
-        padding: '10px 25px 0 25px'
-      },
-      heading: {
-        color: 'black',
-        padding: '10px 20px 10px 0',
-        height: 50,
-        zIndex: 99,
-        position: 'relative',
-        backgroundColor: 'white',
-        boxShadow: '0 5px 10px white'
-      },
-      close: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        float: 'right',
-        fontSize: 20
-      },
-      title: {
-        fontWeight: 300,
-        fontSize: 23
-      }
-    };
-
     const questionnaireTopics = this.getQuestionnaireTopics();
     const entitiesTopics = this.getEntitiesTopics();
     const declarationTopics = this.getDeclarationTopics();
 
     return (
-      <div className="flexbox column" style={merge(styles.container, this.props.style)}>
-        <div style={styles.heading}>
-          <span style={styles.title}>COMMENTS</span>
-          <span style={styles.close} onClick={AdminActions.hideCommentSummary}>
-            <i className="fa fa-times" style={{fontSize: 23, marginRight: 3}}></i>
+      <div className={classNames('flexbox', 'column', styles.container, this.props.className)}>
+        <div className={styles.heading}>
+          <span className={styles.title}>COMMENTS</span>
+          <span className={styles.close} onClick={AdminActions.hideCommentSummary}>
+            <i className={`fa fa-times`} style={{fontSize: 23, marginRight: 3}}></i>
             CLOSE
           </span>
         </div>
 
-        <div className="fill" style={{overflowY: 'auto', paddingBottom: 15}}>
+        <div className={`fill`} style={{overflowY: 'auto', paddingBottom: 15}}>
           {questionnaireTopics}
           {entitiesTopics}
           {declarationTopics}

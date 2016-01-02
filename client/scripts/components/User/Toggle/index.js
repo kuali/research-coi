@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../merge';
-import ToggleButton from './ToggleButton';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import ToggleButton from '../ToggleButton';
 
 export class Toggle extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.clicked = this.clicked.bind(this);
   }
@@ -33,41 +33,26 @@ export class Toggle extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'inline-block'
-      },
-      first: {
-        borderRadius: '7px 0 0 7px',
-        borderRight: 0
-      },
-      last: {
-        borderRadius: '0 7px 7px 0',
-        borderLeft: 0
-      }
-    };
-
     const buttons = this.props.values.map((value, index, array) => {
-      const isFirst = index === 0;
-      const isLast = index === array.length - 1;
-      const isSelected = this.props.selected === value.code;
+      const classes = classNames(
+        styles.override,
+        {[styles.first]: index === 0},
+        {[styles.last]: index === array.length - 1}
+      );
 
       return (
         <ToggleButton
-          style={merge(
-            isFirst ? styles.first : {},
-            isLast ? styles.last : {}
-          )}
+          className={classes}
           onClick={this.clicked}
           value={value}
           key={value.code}
-          isSelected={isSelected}
+          isSelected={this.props.selected === value.code}
         />
       );
     });
 
     return (
-      <span style={merge(styles.container, this.props.style)}>
+      <span className={`${styles.container} ${this.props.className}`}>
         {buttons}
       </span>
     );

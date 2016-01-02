@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,35 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../merge';
-import ConfigActions from '../../actions/ConfigActions';
+import ConfigActions from '../../../actions/ConfigActions';
 
-export default function SaveButton(props: Object): React.Element {
-  const styles = {
-    container: {
-      cursor: 'pointer'
-    },
-    saveIcon: {
-      fontSize: 28,
-      color: window.colorBlindModeOn ? 'black' : '#F57C00',
-      verticalAlign: 'middle'
-    },
-    saveText: {
-      verticalAlign: 'middle',
-      paddingLeft: 10,
-      fontSize: 17,
-      color: '#525252',
-      paddingTop: 3
-    }
-  };
-
+export default function SaveButton(props) {
   return (
-    <div className="flexbox row" onClick={ConfigActions.saveAll} style={merge(styles.container, props.style)}>
+    <div className={`flexbox row ${styles.container} ${props.className}`} onClick={ConfigActions.saveAll}>
       <span>
-        <i className="fa fa-check-circle" style={styles.saveIcon}></i>
+        <i className={`fa fa-check-circle ${styles.saveIcon}`}></i>
       </span>
-      <span className="fill" style={styles.saveText}>SAVE CHANGES</span>
+      <span className={`fill ${styles.saveText}`}>SAVE CHANGES</span>
     </div>
   );
 }

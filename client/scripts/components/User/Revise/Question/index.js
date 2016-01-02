@@ -16,17 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import CheckLink from './CheckLink';
-import PIReviewActions from '../../../actions/PIReviewActions';
-import {COIConstants} from '../../../../../COIConstants';
-import {RadioControl} from '../RadioControl';
-import {TextAreaControl} from '../TextAreaControl';
-import {CheckboxControl} from '../CheckboxControl';
-import {NumericControl} from '../NumericControl';
-import {DateControl} from '../DateControl';
-import {formatDate} from '../../../formatDate';
+import CheckLink from '../CheckLink';
+import PIReviewActions from '../../../../actions/PIReviewActions';
+import {COIConstants} from '../../../../../../COIConstants';
+import {RadioControl} from '../../RadioControl';
+import {TextAreaControl} from '../../TextAreaControl';
+import {CheckboxControl} from '../../CheckboxControl';
+import {NumericControl} from '../../NumericControl';
+import {DateControl} from '../../DateControl';
+import {formatDate} from '../../../../formatDate';
 
 export default class Question extends React.Component {
   constructor(props) {
@@ -245,38 +245,10 @@ export default class Question extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        marginRight: 25
-      },
-      answerLabel: {
-        color: '#666',
-        fontSize: 13
-      },
-      actions: {
-        display: 'inline-block',
-        float: 'right'
-      },
-      text: {
-        marginBottom: 10,
-        fontSize: 15
-      },
-      responseText: {
-        width: '100%',
-        height: 120,
-        borderRadius: 5,
-        border: '1px solid #AAA',
-        margin: '10px 0',
-        fontSize: 16,
-        padding: '6px 8px',
-        backgroundColor: '#EEEEEE'
-      }
-    };
-
     let actions;
     if (this.state.revising || this.state.responding) {
       actions = (
-        <span style={styles.actions}>
+        <span className={styles.actions}>
           {/*<CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>*/}
           <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
         </span>
@@ -284,7 +256,7 @@ export default class Question extends React.Component {
     }
     else {
       actions = (
-        <span style={styles.actions}>
+        <span className={styles.actions}>
           <CheckLink checked={this.state.revised} onClick={this.revise}>REVISE</CheckLink>
           <CheckLink checked={this.state.responded} onClick={this.respond}>RESPOND</CheckLink>
         </span>
@@ -299,7 +271,7 @@ export default class Question extends React.Component {
       }
       responseText = (
         <div>
-          <textarea aria-label="Response" ref="responseText" style={styles.responseText} defaultValue={defaultText} />
+          <textarea aria-label="Response" ref="responseText" className={styles.responseText} defaultValue={defaultText} />
         </div>
       );
     }
@@ -345,13 +317,13 @@ export default class Question extends React.Component {
         }
         if (this.state.revising) {
           return (
-            <div className="flexbox row" key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
+            <div className={`flexbox row`} key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
               <span style={{width: 70, fontSize: 22, verticalAlign: 'top'}}>
                 <div>{subQuestion.question.numberToShow}</div>
               </span>
-              <span className="fill">
+              <span className={`fill`}>
                 <div style={{marginBottom: 10}}>{subQuestion.question.text}</div>
-                <div style={styles.answerLabel}>ANSWER</div>
+                <div className={styles.answerLabel}>ANSWER</div>
                 {this.getControl(subQuestion, answerValue)}
               </span>
             </div>
@@ -370,13 +342,13 @@ export default class Question extends React.Component {
           );
         }
         return (
-          <div className="flexbox row" key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
+          <div className={`flexbox row`} key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
             <span style={{width: 70, fontSize: 22, verticalAlign: 'top'}}>
               <div>{subQuestion.question.numberToShow}</div>
             </span>
-            <span className="fill">
+            <span className={`fill`}>
               <div style={{marginBottom: 10}}>{subQuestion.question.text}</div>
-              <div style={styles.answerLabel}>ANSWER</div>
+              <div className={styles.answerLabel}>ANSWER</div>
               {subQuestionAnswer}
             </span>
           </div>
@@ -385,13 +357,13 @@ export default class Question extends React.Component {
     }
 
     return (
-      <span style={merge(styles.container, this.props.style)} className="fill">
-        <div style={styles.text}>
+      <span className={`fill ${styles.container} ${this.props.className}`}>
+        <div className={styles.text}>
           {this.props.text}
         </div>
         <div>
           <span style={{display: 'inline-block'}}>
-            <div style={styles.answerLabel}>ANSWER</div>
+            <div className={styles.answerLabel}>ANSWER</div>
             {answerArea}
           </span>
         </div>

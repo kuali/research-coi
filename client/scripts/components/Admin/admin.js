@@ -58,7 +58,11 @@ class App extends SizeAwareComponent {
   }
 }
 
-window.colorBlindModeOn = window.localStorage.getItem('colorBlindModeOn') === 'true';
+window.colorBlindModeOn = false;
+if (window.localStorage.getItem('colorBlindModeOn') === 'true') {
+  document.body.classList.add('color-blind');
+  window.colorBlindModeOn = true;
+}
 
 // Then load config and re-render
 createRequest()

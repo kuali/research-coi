@@ -16,26 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {AppHeader} from '../../AppHeader';
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {NewDisclosureButton} from './NewDisclosureButton';
-import {DisclosureArchiveButton} from './DisclosureArchiveButton';
-import {ConfirmationMessage} from './ConfirmationMessage';
-import {DisclosureTable} from './DisclosureTable';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {TravelLogButton} from './TravelLogButton';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {COIConstants} from '../../../../../COIConstants';
-import ConfigStore from '../../../stores/ConfigStore';
-import UserInfoStore from '../../../stores/UserInfoStore';
-import AdminMenu from '../../AdminMenu';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {AppHeader} from '../../../AppHeader';
+import {NewDisclosureButton} from '../NewDisclosureButton';
+import {DisclosureArchiveButton} from '../DisclosureArchiveButton';
+import {ConfirmationMessage} from '../ConfirmationMessage';
+import {DisclosureTable} from '../DisclosureTable';
+import {DisclosureStore} from '../../../../stores/DisclosureStore';
+import {TravelLogButton} from '../TravelLogButton';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {COIConstants} from '../../../../../../COIConstants';
+import ConfigStore from '../../../../stores/ConfigStore';
+import UserInfoStore from '../../../../stores/UserInfoStore';
+import AdminMenu from '../../../AdminMenu';
 
-export class Dashboard extends ResponsiveComponent {
+export class Dashboard extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     const storeState = DisclosureStore.getState();
     const configState = ConfigStore.getState();
@@ -74,109 +73,8 @@ export class Dashboard extends ResponsiveComponent {
     });
   }
 
-  renderMobile() {
-    const mobileStyles = {
-      container: {
-        width: '100%',
-        background: '#DDD',
-        height: '0'
-      },
-      content: {
-        verticalAlign: 'top',
-        overflowY: 'auto',
-        overflowX: 'hidden'
-      },
-      header: {
-        backgroundColor: 'white',
-        position: 'relative',
-        borderBottom: '1px solid #e3e3e3',
-        padding: '6px 0',
-        marginBottom: 6
-      },
-      heading: {
-        textAlign: 'center',
-        fontSize: '21px',
-        margin: '0 0 0 0',
-        textTransform: 'uppercase',
-        fontWeight: 300,
-        color: '#747474'
-      },
-      mobileMenu: {
-        width: '100%'
-      }
-    };
-    const styles = merge(this.commonStyles, mobileStyles);
-
-    let confirmationMessage;
-    if (this.state && this.state.confirmationShowing) {
-      confirmationMessage = (
-        <ConfirmationMessage />
-      );
-    }
-    return (
-      <span className="flexbox column fill" style={merge(styles.container, this.props.style)}>
-        <span className="fill" style={styles.content}>
-          <div style={styles.header}>
-            <h2 style={styles.heading}>MY COI DASHBOARD</h2>
-          </div>
-          {confirmationMessage}
-
-          <DisclosureTable disclosures={this.state.disclosureSummaries} />
-        </span>
-        <div style={styles.mobileMenu}>
-          <NewDisclosureButton type="Annual" />
-          <TravelLogButton />
-          <NewDisclosureButton type="Manual" />
-          <DisclosureArchiveButton />
-        </div>
-      </span>
-    );
-  }
-
-  renderDesktop() {
+  render() {
     const isAdmin = this.state.userInfo && this.state.userInfo.coiRole === COIConstants.ROLES.ADMIN;
-
-    const desktopStyles = {
-      container: {
-        width: '100%',
-        backgroundColor: '#eeeeee',
-        minHeight: 100,
-        overflowY: 'auto'
-      },
-      sidebar: {
-        minWidth: 300,
-        backgroundColor: '#eeeeee',
-        verticalAlign: 'top',
-        paddingTop: isAdmin ? 0 : 122,
-        boxShadow: '1px 0px 6px #D1D1D1'
-      },
-      content: {
-        verticalAlign: 'top'
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 10,
-        position: 'relative'
-      },
-      header2: {
-        backgroundColor: 'white',
-        padding: '17px 0 17px 50px',
-        position: 'relative',
-        borderBottom: '1px solid #e3e3e3',
-        boxShadow: '0 1px 6px #D1D1D1'
-      },
-      heading: {
-        fontSize: '33px',
-        margin: '0 0 0 0',
-        textTransform: 'uppercase',
-        fontWeight: 300,
-        color: '#525252'
-      },
-      borderBottom: {
-        borderBottom: '1px solid #c0c0c0'
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
 
     let confirmationMessage;
     if (this.state && this.state.applicationState && this.state.applicationState.confirmationShowing) {
@@ -243,26 +141,32 @@ export class Dashboard extends ResponsiveComponent {
     let adminMenu;
     if (isAdmin) {
       adminMenu = (
-        <AdminMenu style={{marginBottom: 45}} />
+        <AdminMenu className={`${styles.override} ${styles.adminMenu}`} />
       );
     }
 
+    const classes = classNames(
+      'flexbox',
+      'column',
+      {[styles.isAdmin]: isAdmin}
+    );
+
     return (
-      <div className="flexbox column" style={{height: '100%'}}>
-        <AppHeader style={styles.header} />
-        <span className="flexbox row fill" style={merge(styles.container, this.props.style)}>
-          <span style={styles.sidebar}>
+      <div className={classes} style={{height: '100%'}}>
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <span className={`flexbox row fill ${styles.container} ${this.props.className}`}>
+          <span className={styles.sidebar}>
             {adminMenu}
             {annualDisclosureButton}
             {travelLogButton}
             {manualDisclosureButton}
             <div>
-              <DisclosureArchiveButton style={styles.borderBottom} />
+              <DisclosureArchiveButton className={`${styles.override} ${styles.borderBottom}`} />
             </div>
           </span>
-          <span className="fill" style={styles.content}>
-            <div style={styles.header2}>
-              <h2 style={styles.heading}>MY COI DASHBOARD</h2>
+          <span className={`fill ${styles.content}`}>
+            <div className={styles.header2}>
+              <h2 className={styles.heading}>MY COI DASHBOARD</h2>
             </div>
             {confirmationMessage}
 

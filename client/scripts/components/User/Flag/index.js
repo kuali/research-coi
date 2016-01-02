@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,45 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../merge';
+import styles from './style';
+import React from 'react';
 
-export function Flag(props: Object): React.Element {
-  const styles = {
-    container: {
-      padding: '8px 13px',
-      fontSize: 15,
-      display: 'inline-block',
-      color: 'white',
-      backgroundColor: 'inherit',
-      fontWeight: 'transparent'
-    }
-  };
-
+export function Flag(props) {
   let text;
+  let extraClass;
   switch (props.type) {
     case 'NONE':
       text = 'NO CONFLICT';
-      styles.container.backgroundColor = '#e0e0e0';
-      styles.container.color = 'black';
+      extraClass = styles.noConflict;
       break;
     case 'POTENTIAL':
       text = 'POTENTIAL RELATIONSHIP';
-      styles.container.backgroundColor = '#535353';
+      extraClass = styles.potential;
       break;
     case 'MANAGED':
       text = 'MANAGED RELATIONSHIP';
-      styles.container.backgroundColor = '#434343';
+      extraClass = styles.managed;
       break;
     case 'ATTENTION':
       text = 'ATTENTION REQUIRED';
-      styles.container.backgroundColor = 'black';
-      styles.container.fontWeight = 'bold';
+      extraClass = styles.attention;
       break;
   }
 
   return (
-    <span style={merge(styles.container, props.style)}>
+    <span className={`${styles.container} ${props.className} ${extraClass}`}>
       {text}
     </span>
   );

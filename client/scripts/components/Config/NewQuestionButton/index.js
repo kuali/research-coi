@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,61 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../merge';
-import {PlusIcon} from '../DynamicIcons/PlusIcon';
+import {PlusIcon} from '../../DynamicIcons/PlusIcon';
 
-export default function NewQuestionButton(props: Object): React.Element {
-  const styles = {
-    container: {
-      display: 'inline-block',
-      width: 145,
-      height: 145,
-      backgroundColor: 'white',
-      color: 'white',
-      padding: '10px',
-      fontSize: 23,
-      position: 'relative',
-      cursor: 'pointer',
-      boxShadow: '0 0 10px #BBB',
-      borderRadius: 6,
-      marginBottom: 10
-    },
-    plus: {
-      position: 'absolute',
-      display: 'block',
-      fontSize: 32,
-      top: 10,
-      right: 12,
-      color: 'black'
-    },
-    newText: {
-      color: window.colorBlindModeOn ? 'black' : '#535353',
-      fontWeight: 400
-    },
-    questionText: {
-      color: window.colorBlindModeOn ? 'black' : '#0095A0',
-      fontWeight: 'bold'
-    },
-    img: {
-      height: 42,
-      width: 42,
-      color: window.colorBlindModeOn ? 'black' : '#0095A0'
-    },
-    text: {
-      verticalAlign: 'middle',
-      marginTop: 67
-    }
-  };
-
+export default function NewQuestionButton(props) {
   return (
-    <span onClick={props.onClick} style={merge(styles.container, props.style)}>
-      <div style={styles.text}>
-        <div style={styles.newText}>New</div>
-        <div style={styles.questionText}>Question</div>
+    <span onClick={props.onClick} className={classNames(styles.container, props.className)}>
+      <div className={styles.text}>
+        <div className={styles.newText}>New</div>
+        <div className={styles.questionText}>Question</div>
       </div>
-      <span style={styles.plus}>
-        <PlusIcon style={styles.img} />
+      <span className={styles.plus}>
+        <PlusIcon className={`${styles.override} ${styles.img}`} color="#0095A0" />
       </span>
     </span>
   );

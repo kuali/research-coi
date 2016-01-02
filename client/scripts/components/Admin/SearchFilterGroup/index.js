@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,30 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../merge';
-import {DisclosureFilterByStatus} from './DisclosureFilterByStatus';
-import {DisclosureFilterByDate} from './DisclosureFilterByDate';
-import {DisclosureFilterByPI} from './DisclosureFilterByPI';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {DisclosureFilterByStatus} from '../DisclosureFilterByStatus';
+import {DisclosureFilterByDate} from '../DisclosureFilterByDate';
+import {DisclosureFilterByPI} from '../DisclosureFilterByPI';
 
-export default function SearchFilterGroup(props: Object): React.Element {
-  const styles = {
-    container: {
-      backgroundColor: '#eeeeee',
-      padding: '12px 0 12px 0',
-      marginTop: props.visible ? 0 : -119,
-      transition: 'margin-top .1s ease-in-out'
-    },
-    filters: {
-      backgroundColor: window.config.colors.three,
-      textAlign: 'right',
-      color: 'white',
-      width: '100%',
-      position: 'relative'
-    }
-  };
+export default function SearchFilterGroup(props) {
+  const classes = classNames(
+    styles.container,
+    props.className,
+    {[styles.visible]: props.visible}
+  );
+
   return (
-    <div style={merge(styles.container, props.style)}>
+    <div className={classes}>
       <DisclosureFilterByDate
         active={props.filters.date.start || props.filters.date.end}
         startDate={props.filters.date.start}

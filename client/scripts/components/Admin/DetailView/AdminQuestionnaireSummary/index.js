@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import QuestionSummary from './QuestionSummary';
+import QuestionSummary from '../QuestionSummary';
+import classNames from 'classnames';
 
 export class AdminQuestionnaireSummary extends React.Component {
   constructor() {
@@ -45,24 +46,6 @@ export class AdminQuestionnaireSummary extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        backgroundColor: 'white',
-        boxShadow: '0 0 8px #AAA',
-        borderRadius: 5,
-        overflow: 'hidden'
-      },
-      heading: {
-        borderBottom: '1px solid #999',
-        fontSize: 25,
-        color: 'black',
-        padding: 10
-      },
-      body: {
-        padding: '13px 20px'
-      }
-    };
-
     let questions;
     if(this.props.questions !== undefined) {
       questions = this.props.questions.filter(question => {
@@ -81,9 +64,9 @@ export class AdminQuestionnaireSummary extends React.Component {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)} >
-        <div style={styles.heading}>QUESTIONNAIRE</div>
-        <div style={styles.body}>
+      <div className={classNames(styles.container, this.props.className)}>
+        <div className={styles.heading}>QUESTIONNAIRE</div>
+        <div className={styles.body}>
           {questions}
         </div>
       </div>

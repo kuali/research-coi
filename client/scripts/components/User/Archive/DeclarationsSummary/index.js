@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import DeclarationSummary from './DeclarationSummary';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import DeclarationSummary from '../DeclarationSummary';
 
 export default class extends React.Component {
   getProjectTypeString(typeCd) {
@@ -71,68 +72,8 @@ export default class extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        backgroundColor: 'white',
-        boxShadow: '0 0 8px #AAA',
-        borderRadius: 5,
-        overflow: 'hidden'
-      },
-      heading: {
-        borderBottom: '1px solid #999',
-        fontSize: 25,
-        color: 'black',
-        padding: 10
-      },
-      body: {
-        padding: '13px 20px'
-      },
-      name: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 11
-      },
-      titles: {
-        borderBottom: '1px solid #ccc',
-        color: window.colorBlindModeOn ? 'black' : '#888',
-        fontSize: 12,
-        marginBottom: 10
-      },
-      entityName: {
-        width: '25%',
-        display: 'inline-block'
-      },
-      conflict: {
-        width: '25%',
-        display: 'inline-block'
-      },
-      comments: {
-        width: '50%',
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      relationship: {
-        marginBottom: 15,
-        paddingBottom: 15,
-        borderBottom: '2px solid #666'
-      },
-      lastrelationship: {
-        paddingBottom: 15,
-        borderBottom: 0
-      },
-      label: {
-        paddingRight: 5
-      },
-      field: {
-        display: 'inline-block',
-        width: '100%',
-        padding: '0px 0px 10px 10px'
-      }
-    };
-
     let projects = [];
     if(this.props.declarations !== undefined) {
-
       const uniqueProjects = this.getUniqueProjects(this.props.declarations);
 
       projects = uniqueProjects.map((project, index) => {
@@ -151,25 +92,25 @@ export default class extends React.Component {
         return (
           <div
             key={`proj${project.id}`}
-            style={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}
+            className={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}
           >
-            <div style={styles.name}>{project.name}</div>
-            <div style={styles.field}>
-              <label style={styles.label}>Project Type:</label>
+            <div className={styles.name}>{project.name}</div>
+            <div className={styles.field}>
+              <label className={styles.label}>Project Type:</label>
               <span style={{fontWeight: 'bold'}}>{project.type}</span>
             </div>
-            <div style={styles.field}>
-              <label style={styles.label}>Project Role:</label>
+            <div className={styles.field}>
+              <label className={styles.label}>Project Role:</label>
               <span style={{fontWeight: 'bold'}}>{project.role}</span>
             </div>
-            <div style={styles.field}>
-              <label style={styles.label}>Sponsor:</label>
+            <div className={styles.field}>
+              <label className={styles.label}>Sponsor:</label>
               <span style={{fontWeight: 'bold'}}>{project.sponsor}</span>
             </div>
-            <div style={styles.titles}>
-              <span style={styles.entityName}>FINANCIAL ENTITY</span>
-              <span style={styles.conflict}>REPORTER RELATIONSHIP</span>
-              <span style={styles.comments}>REPORTER COMMENTS</span>
+            <div className={styles.titles}>
+              <span className={styles.entityName}>FINANCIAL ENTITY</span>
+              <span className={styles.conflict}>REPORTER RELATIONSHIP</span>
+              <span className={styles.comments}>REPORTER COMMENTS</span>
             </div>
             {declarations}
           </div>
@@ -178,9 +119,9 @@ export default class extends React.Component {
     }
 
     return (
-      <div style={merge(styles.container, this.props.style)} >
-        <div style={styles.heading}>PROJECT DECLARATIONS</div>
-        <div style={styles.body}>
+      <div className={classNames(styles.container, this.props.className)} >
+        <div className={styles.heading}>PROJECT DECLARATIONS</div>
+        <div className={styles.body}>
           {projects}
         </div>
       </div>

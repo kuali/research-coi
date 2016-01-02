@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import {DisclosureTableRow} from './DisclosureTableRow';
-import {COIConstants} from '../../../../../COIConstants';
+import {DisclosureTableRow} from '../DisclosureTableRow';
+import {COIConstants} from '../../../../../../COIConstants';
 
 export class DisclosureTable extends React.Component {
   atLeastOneRowHasButton(disclosures) {
@@ -38,36 +39,6 @@ export class DisclosureTable extends React.Component {
   render() {
     const showButtonColumn = this.atLeastOneRowHasButton(this.props.disclosures);
 
-    const styles = {
-      container: {
-        borderRadius: 5,
-        boxShadow: '0 0 10px #C0C0C0',
-        margin: '44px 50px',
-        overflow: 'hidden'
-      },
-      heading: {
-        fontWeight: window.colorBlindModeOn ? 'normal' : 300,
-        display: 'inline-block',
-        padding: '20px 0',
-        fontSize: 17
-      },
-      headings: {
-        borderBottom: '1px solid #BBB',
-        padding: '0 60px',
-        backgroundColor: 'white',
-        borderRadius: '5px 5px 0 0'
-      },
-      columnOne: {
-        width: showButtonColumn ? '35%' : '33%'
-      },
-      columnTwo: {
-        width: showButtonColumn ? '25%' : '33%'
-      },
-      columnThree: {
-        width: showButtonColumn ? '25%' : '33%'
-      }
-    };
-
     const rows = this.props.disclosures ? this.props.disclosures.map((disclosure, index) => {
       return (
         <DisclosureTableRow
@@ -83,12 +54,24 @@ export class DisclosureTable extends React.Component {
       );
     }) : null;
 
+    const classes = classNames(
+      styles.container,
+      this.props.className,
+      {[styles.showButtonColumn]: showButtonColumn}
+    );
+
     return (
-      <div role="grid" style={merge(styles.container, this.props.style)}>
-        <div role="row" style={styles.headings}>
-          <span role="columnheader" style={merge(styles.heading, styles.columnOne)}>DISCLOSURE TYPE</span>
-          <span role="columnheader" style={merge(styles.heading, styles.columnTwo)}>STATUS</span>
-          <span role="columnheader" style={merge(styles.heading, styles.columnThree)}>LAST REVIEW</span>
+      <div role="grid" className={classes}>
+        <div role="row" className={styles.headings}>
+          <span role="columnheader" className={`${styles.heading} ${styles.columnOne}`}>
+            DISCLOSURE TYPE
+          </span>
+          <span role="columnheader" className={`${styles.heading} ${styles.columnTwo}`}>
+            STATUS</span
+          >
+          <span role="columnheader" className={`${styles.heading} ${styles.columnThree}`}>
+            LAST REVIEW
+          </span>
         </div>
         {rows}
       </div>

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,63 +16,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import {AdminActions} from '../../../actions/AdminActions';
+import {AdminActions} from '../../../../actions/AdminActions';
 
-export default function AdditionalReviewPanel(props: Object): React.Element {
-  const styles = {
-    container: {
-      backgroundColor: 'white',
-      height: '100%',
-      boxShadow: '0 0 10px 0 #AAA'
-    },
-    close: {
-      float: 'right',
-      fontWeight: 'bold',
-      cursor: 'pointer',
-      marginBottom: 8,
-      color: window.colorBlindModeOn ? 'black' : '#0095A0',
-      fontSize: 20
-    },
-    title: {
-      fontSize: 22,
-      fontWeight: 300,
-      borderBottom: '1px solid #888'
-    },
-    fileLink: {
-      color: window.colorBlindModeOn ? 'black' : '#0095A0',
-      borderBottom: `1px dotted ${(window.colorBlindModeOn ? 'black' : '#0095A0')}`
-    },
-    heading: {
-      color: 'black',
-      padding: '18px 20px 10px 20px',
-      marginBottom: 20
-    },
-    files: {
-      padding: '0 20px'
-    }
-  };
-
+export default function AdditionalReviewPanel(props) {
   const files = props.files.map(file => {
     return (
       <div key={file.id} style={{marginBottom: 5}}>
-        <a style={styles.fileLink} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>{file.name}</a>
+        <a className={styles.fileLink} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>{file.name}</a>
       </div>
     );
   });
-  return (
-  <div style={merge(styles.container, props.style)}>
-    <div style={styles.heading}>
-      <span style={styles.close} onClick={AdminActions.hideGeneralAttachmentsPanel}>
-        <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
-      </span>
-      <span style={styles.title}>ATTACHMENTS</span>
-    </div>
-    <div style={styles.files}>
-      {files}
-    </div>
 
-  </div>
+  return (
+    <div className={classNames(styles.container, props.className)}>
+      <div className={styles.heading}>
+        <span className={styles.close} onClick={AdminActions.hideGeneralAttachmentsPanel}>
+          <i className={`fa fa-times`} style={{fontSize: 23}}></i> CLOSE
+        </span>
+        <span className={styles.title}>ATTACHMENTS</span>
+      </div>
+      <div className={styles.files}>
+        {files}
+      </div>
+    </div>
   );
 }

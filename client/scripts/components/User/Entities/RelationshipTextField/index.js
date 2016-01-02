@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
 export default class RelationshipTextField extends React.Component {
   constructor() {
@@ -37,32 +38,20 @@ export default class RelationshipTextField extends React.Component {
   }
 
   getInputStyle(invalid, style) {
-    return invalid === true ? merge(style, {borderBottom: '3px solid red'}) : style;
+    return classNames(
+      style,
+      {[styles.invalid]: invalid === true}
+    );
   }
 
   render() {
-    const styles = {
-      container: {
-        marginBottom: 16,
-        textAlign: 'left',
-        display: 'block'
-      },
-      textBox: {
-        padding: 6,
-        width: '100%',
-        borderRadius: 0,
-        fontSize: 16,
-        border: '1px solid #B0B0B0'
-      }
-    };
-
     return (
-      <div style={styles.container}>
+      <div className={styles.container}>
         <div style={this.getLabelStyle(this.props.invalid)}>{this.props.label}</div>
         <input
           type='text'
           onChange={this.onChange}
-          style={this.getInputStyle(this.props.invalid, styles.textBox)}
+          className={this.getInputStyle(this.props.invalid, styles.textBox)}
           value={this.props.value}
         />
       </div>

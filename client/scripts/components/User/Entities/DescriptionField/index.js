@@ -16,14 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {ResponsiveComponent} from '../../ResponsiveComponent';
-import {merge} from '../../../merge';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
-export class DescriptionField extends ResponsiveComponent {
+export class DescriptionField extends React.Component {
   constructor() {
     super();
-    this.commonStyles = {};
 
     this.setDescription = this.setDescription.bind(this);
   }
@@ -32,43 +31,18 @@ export class DescriptionField extends ResponsiveComponent {
     this.props.onChange(this.refs.description.value);
   }
 
-  renderMobile() {}
-
-  renderDesktop() {
-    const desktopStyles = {
-      container: {
-        color: this.props.invalid ? 'red' : 'inherit'
-      },
-      value: {
-        color: 'black',
-        fontWeight: 'bold'
-      },
-      description: {
-        width: '100%',
-        height: 90,
-        border: '1px solid #C7C7C7',
-        fontSize: 16,
-        padding: 5,
-        borderBottom: this.props.invalid ? '3px solid red' : '1px solid #aaa'
-      },
-      invalidError: {
-        fontSize: 10,
-        marginTop: 2
-      }
-    };
-    const styles = merge(this.commonStyles, desktopStyles);
-
+  render() {
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-        <div style={styles.invalidError}>Required Field</div>
+        <div className={styles.invalidError}>Required Field</div>
       );
     }
 
     let dom;
     if (this.props.readonly) {
       dom = (
-        <div style={styles.value}>{this.props.value}</div>
+        <div className={styles.value}>{this.props.value}</div>
       );
     }
     else {
@@ -77,14 +51,20 @@ export class DescriptionField extends ResponsiveComponent {
           required
           ref="description"
           onChange={this.setDescription}
-          style={styles.description}
+          className={styles.description}
           value={this.props.value}
         />
       );
     }
 
+    const classes = classNames(
+      {[styles.invalid]: this.props.invalid},
+      styles.container,
+      this.props.className
+    );
+
     return (
-      <span style={merge(styles.container, this.props.style)}>
+      <span className={classes}>
         <div style={{fontSize: 13}}>Describe the entity's area of business and your relationship to it:</div>
         <div>
           {dom}

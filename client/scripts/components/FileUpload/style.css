@@ -1,0 +1,106 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.dropZone {
+  border: 3px dashed grey;
+  margin: 0 0 25px 0;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.dropZoneActive {
+  background-color: #0095A0;
+  margin: 25px;
+  border-radius: 5px;
+  padding: 23px;
+  color: white;
+  border: 0;
+}
+
+.left {
+  width: 12%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.middle {
+  width: 66%;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.right {
+  width: 22%;
+  display: inline-block;
+}
+
+.file {
+  background-color: #EEEEEE;
+  margin-top: 10px;
+  border-radius: 5px;
+  padding: 10px 19px 15px 19px;
+}
+
+.icon {
+  color: #0095A0;
+  font-size: 32px;
+  padding-left: 14px;
+}
+
+:global(.color-blind) .icon {
+  color: black;
+}
+
+.override.button {
+  padding: 3px;
+  width: 90px;
+  font-size: 11px;
+}
+
+.override.downloadButton {
+  padding: 1px;
+  width: 90px;
+  font-weight: 300;
+  font-size: 10px;
+  margin-right: 7px;
+}
+
+.override.deleteButton {
+  padding: 1px;
+  width: 90px;
+  font-weight: 300;
+  font-size: 10px;
+  box-shadow: 0 -1px 5px #D0D0D0;
+}
+
+.link {
+  color: #0095A0;
+  border-bottom: 1px dashed #0095A0;
+  font-size: 17px;
+}
+
+:global(.color-blind) .link {
+  color: black;
+  border-bottom: 1px dashed black;
+}
+
+.downloadButtonLink {
+  color: #0095A0;
+  font-size: 17px;
+}

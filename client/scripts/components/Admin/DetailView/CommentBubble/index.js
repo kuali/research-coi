@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -17,54 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../../merge';
-import {formatDate} from '../../../formatDate';
+import {formatDate} from '../../../../formatDate';
+import classNames from 'classnames';
 
-export default function CommentBubble(props: Object): React.Element {
-  const styles = {
-    container: {
-      backgroundColor: props.isUser ? 'white' : window.colorBlindModeOn ? 'white' : '#D0E3E5',
-      border: '1px solid #CCC',
-      borderRadius: 10,
-      boxShadow: '0 0 10px 0px #CCC',
-      color: 'black',
-      display: 'inline-block',
-      marginLeft: props.isUser ? '35%' : '0',
-      padding: '8px 25px 15px 25px',
-      transform: props.new ? 'translateY(125%)' : 'translateY(0%)',
-      transition: 'transform .2s ease-out',
-      width: '60%'
-    },
-    date: {
-      float: 'right',
-      color: '#666',
-      fontSize: 12,
-      fontWeight: 300
-    },
-    author: {
-      fontWeight: 'bold',
-      fontSize: 14
-    },
-    text: {
-      fontSize: 12,
-      marginTop: 7
-    }
-  };
-
+export default function CommentBubble(props) {
   let theDate;
   if (props.date) {
     theDate = formatDate(props.date);
   }
 
+  const classes = classNames(
+    styles.container,
+    {[styles.isUser]: props.isUser},
+    {[styles.new]: props.new},
+    props.className
+  );
+
   return (
-    <div style={merge(styles.container, props.style)}>
+    <div className={classes}>
       <span style={{width: '100%'}}>
         <div>
-          <span style={styles.date}>{theDate}</span>
-          <span style={styles.author}>{props.author}</span>
+          <span className={styles.date}>{theDate}</span>
+          <span className={styles.author}>{props.author}</span>
         </div>
-        <div style={styles.text}>
+        <div className={styles.text}>
           {props.text}
         </div>
       </span>

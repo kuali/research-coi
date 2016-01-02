@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import React from 'react';
 
 export class NumericControl extends React.Component {
   constructor(props) {
@@ -54,24 +55,11 @@ export class NumericControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        width: '100%',
-        display: 'inline-block'
-      },
-      textbox: {
-        padding: 6,
-        fontSize: 16,
-        borderRadius: 5,
-        border: '1px solid #B0B0B0'
-      }
-    };
-
     return (
       <div>
-        <div style={styles.container}>
+        <div className={styles.container}>
           <input
-            style={styles.textbox}
+            className={styles.textbox}
             type="number"
             id={`qn${this.props.questionId}`}
             onChange={this.onChange}

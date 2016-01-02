@@ -16,21 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {merge} from '../../merge';
-import {AppHeader} from '../AppHeader';
-import {Sidebar} from './Sidebar';
-import {DisclosureHeader} from './DisclosureHeader';
-import {DisclosureStore} from '../../stores/DisclosureStore';
-import {DisclosureActions} from '../../actions/DisclosureActions';
-import {COIConstants} from '../../../../COIConstants';
-import {Questionnaire} from './Questionnaire/Questionnaire';
-import {QuestionnaireSummary} from './QuestionnaireSummary/QuestionnaireSummary';
-import {ManualEvent} from './Manual/ManualEvent';
-import {Relationships} from './Projects/Relationships';
-import {Entities} from './Entities/Entities';
-import {Certify} from './Certification/Certify';
-import {NavSidebar} from './NavSidebar';
+import {AppHeader} from '../../AppHeader';
+import {Sidebar} from '../Sidebar';
+import {DisclosureHeader} from '../DisclosureHeader';
+import {DisclosureStore} from '../../../stores/DisclosureStore';
+import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {COIConstants} from '../../../../../COIConstants';
+import {Questionnaire} from '../Questionnaire/Questionnaire';
+import {QuestionnaireSummary} from '../QuestionnaireSummary/QuestionnaireSummary';
+import {ManualEvent} from '../Manual/ManualEvent';
+import {Relationships} from '../Projects/Relationships';
+import {Entities} from '../Entities/Entities';
+import {Certify} from '../Certification/Certify';
+import {NavSidebar} from '../NavSidebar';
 const STEP = COIConstants.DISCLOSURE_STEP;
 
 export class Disclosure extends React.Component {
@@ -171,36 +171,6 @@ export class Disclosure extends React.Component {
     const currentDisclosureStep = currentDisclosureState.step;
     const currentQuestion = currentDisclosureState.question;
 
-    const styles = {
-      container: {
-        padding: '0',
-        minHeight: 100
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 10,
-        position: 'relative'
-      },
-      content: {
-        verticalAlign: 'top',
-        width: '80%',
-        overflow: 'auto',
-        backgroundColor: '#eeeeee'
-      },
-      middle: {
-        width: '75%',
-        zIndex: 10,
-        position: 'relative',
-        overflowY: 'hidden'
-      },
-      sidebar: {
-        minWidth: 300,
-        boxShadow: '2px 1px 8px #D5D5D5',
-        zIndex: 9,
-        position: 'relative'
-      }
-    };
-
     let stepNumber = 0;
     let percent = 0;
     let heading;
@@ -326,20 +296,20 @@ export class Disclosure extends React.Component {
     const submitDisabled = window.config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
 
     return (
-      <div className="flexbox column" style={{height: '100%'}}>
-        <AppHeader style={styles.header} />
-        <div className="flexbox row fill" style={merge(styles.container, this.props.style)}>
+      <div className={`flexbox column`} style={{height: '100%'}}>
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <Sidebar
-            style={styles.sidebar}
+            className={`${styles.override} ${styles.sidebar}`}
             steps={this.steps}
             activestep={stepNumber}
             visitedSteps={this.state.applicationState.currentDisclosureState.visitedSteps}
           />
 
-          <span className="fill" style={styles.content}>
+          <span className={`fill ${styles.content}`}>
             <DisclosureHeader>{heading}</DisclosureHeader>
 
-            <span style={styles.middle}>
+            <span className={styles.middle}>
               {currentStep}
             </span>
 

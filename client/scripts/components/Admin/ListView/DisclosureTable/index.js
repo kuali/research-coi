@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import {DisclosureTableRow} from './DisclosureTableRow';
-import {TableHeading} from './TableHeading';
-import {AdminActions} from '../../../actions/AdminActions';
-
+import {DisclosureTableRow} from '../DisclosureTableRow';
+import {TableHeading} from '../TableHeading';
+import {AdminActions} from '../../../../actions/AdminActions';
 
 export class DisclosureTable extends React.Component {
   constructor() {
@@ -60,20 +60,6 @@ export class DisclosureTable extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        display: 'table',
-        width: '100%'
-      },
-      headings: {
-        color: window.colorBlindModeOn ? 'black' : '#0095A0',
-        fontSize: 14,
-        display: 'table-row',
-        cursor: 'pointer',
-        fontWeight: 'bold'
-      }
-    };
-
     const disclosures = this.props.disclosures.map((disclosure) => {
       return (
         <DisclosureTableRow
@@ -90,13 +76,13 @@ export class DisclosureTable extends React.Component {
     });
 
     return (
-      <div role="grid" style={merge(styles.container, this.props.style)}>
-        <div role="row" style={styles.headings}>
+      <div role="grid" className={classNames(styles.container, this.props.className)}>
+        <div role="row" className={styles.headings}>
           <TableHeading
             sort={this.sortBySubmittedBy}
             sortDirection={this.props.sortDirection}
             active={this.props.sort === 'SUBMITTED_BY'}
-            style={{padding: '10px 0 10px 50px'}}
+            className={`${styles.override} ${styles.colOneHeading}`}
           >
             SUBMITTED BY
           </TableHeading>
@@ -112,7 +98,7 @@ export class DisclosureTable extends React.Component {
             sort={this.sortBySubmittedDate}
             sortDirection={this.props.sortDirection}
             active={this.props.sort === 'SUBMITTED_DATE'}
-            style={{padding: '10px 50px 10px 0px'}}
+            className={`${styles.override} ${styles.colTwoHeading}`}
           >
             DATE SUBMITTED
           </TableHeading>

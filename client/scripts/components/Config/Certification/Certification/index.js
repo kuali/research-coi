@@ -16,16 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import Sidebar from '../Sidebar';
-import Panel from '../Panel';
-import ActionPanel from '../ActionPanel';
-import InstructionEditor from '../InstructionEditor';
-import ConfigActions from '../../../actions/ConfigActions';
-import ConfigStore from '../../../stores/ConfigStore';
-import {COIConstants} from '../../../../../COIConstants';
-import {AppHeader} from '../../AppHeader';
+import Sidebar from '../../Sidebar';
+import Panel from '../../Panel';
+import ActionPanel from '../../ActionPanel';
+import InstructionEditor from '../../InstructionEditor';
+import ConfigActions from '../../../../actions/ConfigActions';
+import ConfigStore from '../../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../../COIConstants';
+import {AppHeader} from '../../../AppHeader';
 
 export default class Certification extends React.Component {
   constructor() {
@@ -67,66 +68,15 @@ export default class Certification extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        minHeight: 100
-      },
-      header: {
-        boxShadow: '0 1px 6px #D1D1D1',
-        zIndex: 10,
-        position: 'relative'
-      },
-      content: {
-        backgroundColor: '#F2F2F2',
-        boxShadow: '2px 8px 8px #ccc inset'
-      },
-      stepTitle: {
-        boxShadow: '0 2px 8px #D5D5D5',
-        fontSize: 33,
-        textTransform: 'uppercase',
-        padding: '15px 15px 15px 35px',
-        color: '#525252',
-        fontWeight: 300,
-        backgroundColor: 'white',
-        minHeight: 70
-      },
-      configurationArea: {
-        padding: 35,
-        overflowY: 'auto',
-        minHeight: 0
-      },
-      textarea: {
-        width: '100%',
-        height: 160,
-        padding: 10,
-        fontSize: 16,
-        margin: '2px 0 30px 0',
-        borderRadius: 5,
-        border: '1px solid #AAA'
-      },
-      details: {
-        padding: '3px 15px 12px 15px'
-      },
-      requireLabel: {
-        paddingLeft: 8,
-        fontSize: 14
-      },
-      textLabel: {
-        fontSize: 11,
-        fontWeight: 'bold',
-        paddingBottom: 2
-      }
-    };
-
     let details;
     if (this.state.certificationOptions) {
       details = (
         <div>
-          <label htmlFor="certText" style={styles.textLabel}>CERTIFICATION TEXT</label>
-          <textarea id="certText" ref="textarea" style={styles.textarea} value={this.state.certificationOptions.text} onChange={this.textChanged} />
+          <label htmlFor="certText" className={styles.textLabel}>CERTIFICATION TEXT</label>
+          <textarea id="certText" ref="textarea" className={styles.textarea} value={this.state.certificationOptions.text} onChange={this.textChanged} />
           <div>
             <input type="checkbox" ref="checkbox" id="requiredagreement" checked={this.state.certificationOptions.required} onChange={this.requiredChanged} />
-            <label style={styles.requireLabel} htmlFor="requiredagreement">Require checkbox agreement</label>
+            <label className={styles.requireLabel} htmlFor="requiredagreement">Require checkbox agreement</label>
           </div>
         </div>
       );
@@ -138,22 +88,22 @@ export default class Certification extends React.Component {
     }
 
     return (
-      <div className="flexbox column" style={{height: '100%'}}>
-        <AppHeader style={styles.header} />
-        <span className="fill flexbox row" style={merge(styles.container, this.props.style)}>
+      <div className={`flexbox column`} style={{height: '100%'}}>
+        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
           <Sidebar active="certification" />
-          <span style={styles.content} className="inline-flexbox column fill">
-            <div style={styles.stepTitle}>
+          <span className={classNames('inline-flexbox', 'column', 'fill', styles.content)}>
+            <div className={styles.stepTitle}>
               Customize Certification
             </div>
-            <div className="fill flexbox row" style={styles.configurationArea}>
-              <span className="fill" style={{display: 'inline-block'}}>
+            <div className={classNames('fill', 'flexbox', 'row', styles.configurationArea)}>
+              <span className={`fill`} style={{display: 'inline-block'}}>
                 <InstructionEditor
                   step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
                   value={instructionText}
                 />
                 <Panel title="Certification">
-                  <div style={styles.details}>
+                  <div className={styles.details}>
                     {details}
                   </div>
                 </Panel>

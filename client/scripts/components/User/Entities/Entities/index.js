@@ -16,17 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {merge} from '../../../merge';
-import {NewEntityButton} from './NewEntityButton';
-import {FEPlaceHolder} from '../../DynamicIcons/FEPlaceHolder';
-import {Entity} from './Entity';
-import {EntityForm} from './EntityForm';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {Instructions} from '../Instructions';
-import {COIConstants} from '../../../../../COIConstants';
-import {Toggle} from '../Toggle';
-import {BlueButton} from '../../BlueButton';
+import styles from './style';
+import React from 'react';
+import {NewEntityButton} from '../NewEntityButton';
+import {FEPlaceHolder} from '../../../DynamicIcons/FEPlaceHolder';
+import {Entity} from '../Entity';
+import {EntityForm} from '../EntityForm';
+import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {Instructions} from '../../Instructions';
+import {COIConstants} from '../../../../../../COIConstants';
+import {Toggle} from '../../Toggle';
+import {BlueButton} from '../../../BlueButton';
 
 export class Entities extends React.Component {
   shouldComponentUpdate() { return true; }
@@ -36,35 +36,6 @@ export class Entities extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-        overflow: 'hidden'
-      },
-      content: {
-        padding: '46px 0 0 50px'
-      },
-      newentitybutton: {
-        margin: '0 30px 30px 0'
-      },
-      newentityform: {
-        verticalAlign: 'top',
-        margin: '0 3px 30px 0',
-        display: 'block',
-        boxShadow: '0px 0px 3px 1px #CCC'
-      },
-      viewToggle: {
-        'float': 'right',
-        marginTop: 111
-      },
-      placeholder: {
-        colorOne: window.colorBlindModeOn ? '#555' : '#0097a7',
-        colorTwo: window.colorBlindModeOn ? 'black' : '#00bcd4',
-        width: 300,
-        height: 300,
-        marginTop: -61
-      }
-    };
-
     let viewToggle;
     let entities;
     if (this.props.entities) {
@@ -96,7 +67,7 @@ export class Entities extends React.Component {
             ]}
             selected={this.props.applicationState.activeEntityView}
             onChange={this.viewChanged}
-            style={styles.viewToggle}
+            className={`${styles.override} ${styles.viewToggle}`}
           />
         );
       }
@@ -107,7 +78,10 @@ export class Entities extends React.Component {
     let placeholder;
     if (this.props.applicationState.newEntityFormStep < 0) {
       newEntityButton = (
-        <NewEntityButton onClick={DisclosureActions.newEntityInitiated} style={styles.newentitybutton} />
+        <NewEntityButton
+          onClick={DisclosureActions.newEntityInitiated}
+          className={`${styles.override} ${styles.newentitybutton}`}
+        />
       );
 
       if (entities.length === 0) {
@@ -118,7 +92,9 @@ export class Entities extends React.Component {
               <div>You currently have no active financial entities.</div>
               <div>Add new financial entities to view them here.</div>
               <div style={{marginTop: 20}}>
-                <BlueButton onClick={DisclosureActions.nextStep}>I have no entities to disclose</BlueButton>
+                <BlueButton onClick={DisclosureActions.nextStep}>
+                  I have no entities to disclose
+                </BlueButton>
               </div>
             </div>
           );
@@ -133,7 +109,7 @@ export class Entities extends React.Component {
 
         placeholder = (
           <div style={{textAlign: 'center'}}>
-            <FEPlaceHolder style={styles.placeholder} />
+            <FEPlaceHolder className={`${styles.override} ${styles.placeholder}`} />
             {text}
           </div>
         );
@@ -143,7 +119,7 @@ export class Entities extends React.Component {
       entityForm = (
         <EntityForm
           step={this.props.applicationState.newEntityFormStep}
-          style={styles.newentityform}
+          className={`${styles.override} ${styles.newentityform}`}
           entity={this.props.inProgress}
           editing={true}
           appState={this.props.applicationState}
@@ -160,10 +136,10 @@ export class Entities extends React.Component {
     );
 
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={`${styles.container} ${this.props.className}`}>
         {instructions}
 
-        <div style={styles.content}>
+        <div className={styles.content}>
           <div>
             <div>
               {newEntityButton}

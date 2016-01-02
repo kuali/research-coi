@@ -16,10 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import ConfigActions from '../../../actions/ConfigActions';
-import DateOptions from './DateOptions';
+import ConfigActions from '../../../../actions/ConfigActions';
+import DateOptions from '../DateOptions';
 
 export default class NewNotifications extends React.Component {
   constructor() {
@@ -34,24 +35,8 @@ export default class NewNotifications extends React.Component {
   }
 
   render() {
-    const styles = {
-      container: {
-      },
-      edit: {
-        float: 'right'
-      },
-      expirationMessage: {
-        display: 'block',
-        width: '100%',
-        padding: 10,
-        fontSize: 16,
-        marginTop: 10,
-        borderRadius: 5
-      }
-    };
-
     return (
-      <div style={merge(styles.container, this.props.style)}>
+      <div className={classNames(styles.container, this.props.className)}>
         <div>
           <DateOptions
             warningValue={this.props.warningValue}
@@ -59,14 +44,14 @@ export default class NewNotifications extends React.Component {
             id={this.props.id}
           />
 
-          <span style={styles.cancel} onClick={this.cancel}>
+          <span className={styles.cancel} onClick={this.cancel}>
             X CANCEL
           </span>
         </div>
         <textarea
           ref="reminderText"
           onChange={this.setReminderText}
-          style={styles.expirationMessage}
+          className={styles.expirationMessage}
           placeholder="Enter the reminder text here"
           value={this.props.reminderText}
         >

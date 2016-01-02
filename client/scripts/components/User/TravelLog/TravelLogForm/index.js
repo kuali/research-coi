@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
 import React from 'react';
-import {BlueButton} from '../../BlueButton';
-import {TravelLogActions} from '../../../actions/TravelLogActions';
-import {TravelLogStore} from '../../../stores/TravelLogStore';
-import TextField from '../TextField';
-import CurrencyField from '../CurrencyField';
-import DateRangeField from '../DateRangeField';
+import {BlueButton} from '../../../BlueButton';
+import {TravelLogActions} from '../../../../actions/TravelLogActions';
+import {TravelLogStore} from '../../../../stores/TravelLogStore';
+import TextField from '../../TextField';
+import CurrencyField from '../../CurrencyField';
+import DateRangeField from '../../DateRangeField';
 
 export default class TravelLogForm extends React.Component {
     constructor() {
@@ -56,46 +57,37 @@ export default class TravelLogForm extends React.Component {
     }
 
     render() {
-      const styles = {
+      const textFieldStyles = {
         container: {
-          margin: '44px 50px',
-          maxWidth: 1000
+          display: 'inline-block',
+          width: '33%',
+          paddingRight: 15
         },
-        textField: {
-          container: {
-            display: 'inline-block',
-            width: '33%',
-            paddingRight: 15
-          },
-          input: {
-            padding: '2px 8px',
-            fontSize: 16,
-            borderRadius: 5,
-            border: '1px solid #ccc',
-            height: 30,
-            width: '95%'
-          },
-          label: {
-            marginBottom: 5,
-            fontSize: 12,
-            display: 'inline-block'
-          }
+        input: {
+          padding: '2px 8px',
+          fontSize: 16,
+          borderRadius: 5,
+          border: '1px solid #ccc',
+          height: 30,
+          width: '95%'
         },
-        row: {
-          marginBottom: 25
+        label: {
+          marginBottom: 5,
+          fontSize: 12,
+          display: 'inline-block'
         }
       };
 
       const errors = TravelLogStore.getErrors();
       return (
-        <div style={styles.container} name='Travel Log Form'>
-          <div style={styles.row}>
+        <div className={styles.container} name='Travel Log Form'>
+          <div className={styles.row}>
             <TextField
               id='entityName'
               label='ENTITY NAME'
               onChange={this.updateField}
               name="Entity Name"
-              styles={styles.textField}
+              styles={textFieldStyles}
               value={this.props.entry.entityName}
               invalid={this.props.validating && errors.entityName ? true : false}
             />
@@ -104,7 +96,7 @@ export default class TravelLogForm extends React.Component {
               label='AMOUNT'
               onChange={this.updateField}
               name="Amount"
-              styles={styles.textField}
+              styles={textFieldStyles}
               value={this.props.entry.amount}
               invalid={this.props.validating && errors.amount ? true : false}
             />
@@ -113,18 +105,18 @@ export default class TravelLogForm extends React.Component {
               label='DESTINATION'
               onChange={this.updateField}
               name="Destinantion"
-              styles={styles.textField}
+              styles={textFieldStyles}
               value={this.props.entry.destination}
               invalid={this.props.validating && errors.destination ? true : false}
             />
           </div>
-          <div style={styles.row}>
+          <div className={styles.row}>
             <DateRangeField
               id='dateRange'
               label='DATE RANGE'
               onStartDateChange={this.updateStartDate}
               onEndDateChange={this.updateEndDate}
-              styles={styles.textField}
+              styles={textFieldStyles}
               startDate={this.props.entry.startDate}
               endDate={this.props.entry.endDate}
               startDateInvalid={this.props.validating && errors.startDate ? true : false}
@@ -135,11 +127,11 @@ export default class TravelLogForm extends React.Component {
               label='REASON'
               onChange={this.updateField}
               name="Reason"
-              styles={styles.textField}
+              styles={textFieldStyles}
               value={this.props.entry.reason}
               invalid={this.props.validating && errors.reason ? true : false}
             />
-            <div style={styles.textField.container}>
+            <div style={textFieldStyles.container}>
               <BlueButton onClick={this.addEntry}>+ ADD</BlueButton>
             </div>
           </div>

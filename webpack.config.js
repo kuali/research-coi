@@ -44,7 +44,13 @@ module.exports = {
         exclude: /(node_modules)/,
         loader: 'babel-loader?cacheDirectory=true'
       },
-      {test: /\.css/, loader: 'style!css'}
+      {
+        test: /\.css/,
+        loader: 'style!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss'
+      }
     ]
-  }
+  },
+  postcss: [
+    require('autoprefixer')
+  ]
 };

@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import React from 'react';
 
 export class RadioControl extends React.Component {
   constructor(props) {
@@ -54,28 +55,9 @@ export class RadioControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      option: {
-        margin: '5px 30px 0 0'
-      },
-      radio: {
-        width: 22,
-        height: 18,
-        verticalAlign: 'middle'
-      },
-      label: {
-        cursor: 'pointer',
-        width: 80,
-        display: 'inline-block',
-        verticalAlign: 'middle',
-        fontWeight: 'bold',
-        paddingLeft: 5
-      }
-    };
-
     const options = this.props.options.map((option, index) => {
       return (
-        <span style={styles.option} key={`${this.props.questionId}_${index}`}>
+        <span className={styles.option} key={`${this.props.questionId}_${index}`}>
           <div>
             <input
               id={`multi_${option}_${this.props.questionId}`}
@@ -83,10 +65,10 @@ export class RadioControl extends React.Component {
               checked={this.props.answer === option}
               onChange={this.onChange}
               type="radio"
-              style={styles.radio}
+              className={styles.radio}
               name={`radioControl:${this.props.questionId}`}
             />
-            <label htmlFor={`multi_${option}_${this.props.questionId}`} style={styles.label}>{option}</label>
+            <label htmlFor={`multi_${option}_${this.props.questionId}`} className={styles.label}>{option}</label>
           </div>
         </span>
       );

@@ -16,13 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
-import {COIConstants} from '../../../../../COIConstants';
-import {RadioControl} from './RadioControl';
-import {TextAreaControl} from './TextAreaControl';
-import {NumericControl} from './NumericControl';
-import {DateControl} from './DateControl';
-import {CheckboxControl} from './CheckboxControl';
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {COIConstants} from '../../../../../../COIConstants';
+import {RadioControl} from '../RadioControl';
+import {TextAreaControl} from '../TextAreaControl';
+import {NumericControl} from '../NumericControl';
+import {DateControl} from '../DateControl';
+import {CheckboxControl} from '../CheckboxControl';
 
 export class Question extends React.Component {
   constructor() {
@@ -128,31 +130,18 @@ export class Question extends React.Component {
     }
   }
 
-
   render() {
-    const styles = {
-      container: {
-        display: 'inline-block',
-        width: '90%',
-        marginTop: 20,
-        color: this.props.invalid ? 'red' : 'inherit'
-      },
-      counter: {
-        'float': 'right',
-        fontSize: 17,
-        marginTop: 30
-      },
-      controls: {
-        marginTop: 10
-      }
-    };
+    const classes = classNames(
+      styles.container,
+      {[styles.invalid]: this.props.invalid}
+    );
 
     return (
-    <span style={styles.container}>
+      <span className={classes}>
         <label htmlFor={`eqa${this.props.question.id}`}>
           {this.props.question.question.text}
         </label>
-        <div style={styles.controls}>
+        <div className={styles.controls}>
           {this.getControl(this.props.question, this.props.answer)}
         </div>
       </span>

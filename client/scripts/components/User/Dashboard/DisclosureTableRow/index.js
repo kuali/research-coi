@@ -16,18 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
-import {merge} from '../../../merge';
-import {GreyButton} from '../../GreyButton';
-import {formatDate} from '../../../formatDate';
-import ConfigStore from '../../../stores/ConfigStore';
-import {COIConstants} from '../../../../../COIConstants';
+import {GreyButton} from '../../../GreyButton';
+import {formatDate} from '../../../../formatDate';
+import ConfigStore from '../../../../stores/ConfigStore';
+import {COIConstants} from '../../../../../../COIConstants';
 import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
   wrapWithUpdateLink(dom) {
     return (
-      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={"/coi/disclosure"} query={{type: this.props.type }}>
+      <Link
+        style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
+        to={"/coi/disclosure"}
+        query={{type: this.props.type }}
+      >
         {dom}
       </Link>
     );
@@ -35,46 +40,16 @@ export class DisclosureTableRow extends React.Component {
 
   wrapWithReviseLink(dom) {
     return (
-      <Link style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}} to={`/coi/revise/${this.props.disclosureId}`}>
+      <Link
+        style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
+        to={`/coi/revise/${this.props.disclosureId}`}
+      >
         {dom}
       </Link>
     );
   }
 
   render() {
-    const styles = {
-      container: {
-        padding: '20px 60px',
-        borderBottom: '5px solid white',
-        backgroundColor: this.props.type === 'Annual' ? '#E9E9E9' : '#F7F7F7',
-        color: window.colorBlindModeOn ? 'black' : '#333'
-      },
-      cell: {
-        display: 'inline-block',
-        verticalAlign: 'top'
-      },
-      one: {
-        width: this.props.showButtonColumn ? '35%' : '33%'
-      },
-      two: {
-        width: this.props.showButtonColumn ? '25%' : '33%',
-        fontSize: 17
-      },
-      three: {
-        width: this.props.showButtonColumn ? '25%' : '33%',
-        fontSize: 17
-      },
-      four: {
-        width: '15%'
-      },
-      type: {
-        fontSize: 17
-      },
-      extra: {
-        fontSize: 14
-      }
-    };
-
     const updateable = this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
       this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
       this.props.status === COIConstants.DISCLOSURE_STATUS.EXPIRED;
@@ -84,9 +59,9 @@ export class DisclosureTableRow extends React.Component {
     let extraInfo;
     if (this.props.expiresOn) {
       extraInfo = (
-        <span role="gridcell" style={merge(styles.cell, styles.one)}>
-          <div style={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
-          <div style={styles.extra}>
+        <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
+          <div className={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
+          <div className={styles.extra}>
             Expires On:
             <span style={{marginLeft: 3}}>
               {formatDate(this.props.expiresOn)}
@@ -97,8 +72,8 @@ export class DisclosureTableRow extends React.Component {
     }
     else {
       extraInfo = (
-        <span role="gridcell" style={merge(styles.cell, styles.one)}>
-          <div style={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
+        <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
+          <div className={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
         </span>
       );
     }
@@ -110,7 +85,7 @@ export class DisclosureTableRow extends React.Component {
     }
 
     let status = (
-      <span role="gridcell" style={merge(styles.cell, styles.two)}>
+      <span role="gridcell" className={`${styles.cell} ${styles.two}`}>
         {ConfigStore.getDisclosureStatusString(this.props.status)}
       </span>
     );
@@ -122,7 +97,7 @@ export class DisclosureTableRow extends React.Component {
     }
 
     let lastReviewed = (
-      <span role="gridcell" style={merge(styles.cell, styles.three)}>
+      <span role="gridcell" className={`${styles.cell} ${styles.three}`}>
         {this.props.lastreviewed ? formatDate(this.props.lastreviewed) : 'None'}
       </span>
     );
@@ -147,14 +122,21 @@ export class DisclosureTableRow extends React.Component {
     let buttonColumn;
     if (this.props.showButtonColumn) {
       buttonColumn = (
-        <span role="gridcell" style={merge(styles.cell, styles.four)}>
+        <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
           {button}
         </span>
       );
     }
 
+    const classes = classNames(
+      styles.container,
+      {[styles.showButtonColumn]: this.props.showButtonColumn},
+      {[styles.annual]: this.props.type === 'Annual'},
+      this.props.className
+    );
+
     return (
-      <div role="row" style={merge(styles.container, this.props.style)}>
+      <div role="row" className={classes}>
         {extraInfo}
         {status}
         {lastReviewed}

@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import styles from './style';
+import React from 'react';
 
 export class TextAreaControl extends React.Component {
   constructor(props) {
@@ -54,21 +55,15 @@ export class TextAreaControl extends React.Component {
   }
 
   render() {
-    const styles = {
-      textarea: {
-        width: '100%',
-        height: 160,
-        padding: 10,
-        fontSize: 16,
-        marginTop: 2,
-        borderRadius: 5,
-        border: '1px solid #AAA'
-      }
-    };
-
     return (
       <div>
-        <textarea id={`qn${this.props.questionId}`} ref="textarea" style={styles.textarea} value={this.props.answer} onChange={this.onChange} />
+        <textarea
+          id={`qn${this.props.questionId}`}
+          ref="textarea"
+          className={styles.textarea}
+          value={this.props.answer}
+          onChange={this.onChange}
+        />
       </div>
     );
   }
