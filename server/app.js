@@ -78,7 +78,7 @@ export function run() {
 
   let config;
   try {
-    const extensions = require('research-extensions');
+    const extensions = require('research-extensions').default;
     extensions.express(app);
     config = extensions.config;
   } catch (e) {

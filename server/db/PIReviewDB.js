@@ -23,7 +23,7 @@ import * as DisclosureDB from './DisclosureDB';
 
 let getKnex;
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
 }
 catch (err) {

@@ -30,7 +30,7 @@ const ONE_DAY = MILLIS * SECONDS * MINUTES * HOURS;
 
 let getKnex;
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
 }
 catch (err) {

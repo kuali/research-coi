@@ -25,7 +25,7 @@ const http = useSSL ? require('https') : require('http');
 
 let getAuthorizationInfo;
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars

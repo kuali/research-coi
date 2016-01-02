@@ -16,7 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import jsdom from 'jsdom';
+require('css-modules-require-hook');
+require('babel-register');
+
+var jsdom = require('jsdom'); // eslint-disable-line no-var
+
 // A super simple DOM ready for React to render into
 // Store this DOM and the window in global scope ready for React to access
 global.document = jsdom.jsdom('<!doctype html><html><body></body></html>');
