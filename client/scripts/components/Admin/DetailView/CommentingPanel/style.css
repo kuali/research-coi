@@ -1,0 +1,112 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  background-color: white;
+  height: 100%;
+  box-shadow: 0 0 10px 0 #AAA;
+}
+
+.heading {
+  color: black;
+  padding: 18px 20px 10px 20px;
+  margin-bottom: 20px;
+  box-shadow: 22px 50px 100px white;
+  z-index: 99;
+  position: relative;
+  background-color: white;
+}
+
+.close {
+  float: right;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 8px;
+  color: #0095A0;
+  font-size: 20px;
+}
+
+:global(.color-blind) .close {
+  color: black;
+}
+
+.topic {
+  min-width: 50%;
+  border-bottom: 1px solid black;
+  display: inline-block;
+  font-size: 15px;
+  padding-bottom: 6px;
+}
+
+.controls {
+  color: #333;
+  height: 150px;
+  background-color: #F2F2F2;
+  width: 100%;
+  padding: 10px 20px;
+  border-top: 1px solid #333;
+}
+
+.commentText {
+  width: 55%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.right {
+  width: 45%;
+  display: inline-block;
+  vertical-align: top;
+  padding-left: 25px;
+}
+
+.textbox {
+  width: 100%;
+  height: 100px;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 13px;
+  border: 1px solid #AAA;
+}
+
+.checkLabel {
+  font-size: 11px;
+}
+
+.comments {
+  overflow-y: auto;
+  flex-direction: column-reverse;
+  padding-left: 22px;
+}
+
+.override.comment {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.override.submitButton {
+  margin-top: 25px;
+  background-color: #0095A0;
+  color: white;
+  font-size: 17px;
+  border-bottom: 3px solid #797979;
+}
+
+:global(.color-blind) .override.submitButton {
+  background-color: black;
+}

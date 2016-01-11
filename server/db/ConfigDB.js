@@ -21,7 +21,7 @@ import {camelizeJson, snakeizeJson} from './JsonUtils';
 
 let getKnex;
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
 }
 catch (err) {

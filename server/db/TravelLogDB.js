@@ -23,7 +23,7 @@ import * as FileService from '../services/fileService/FileService';
 
 let getKnex;
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
 }
 catch (err) {

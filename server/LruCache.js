@@ -26,7 +26,7 @@ const options = {
   length(n) { return n.length; }
 };
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   config = extensions.config;
   options.max = config.cacheMax || MAX_ENTRIES_IN_CACHE;
   options.maxAge = config.cacheMaxAge || ONE_MINUTE;

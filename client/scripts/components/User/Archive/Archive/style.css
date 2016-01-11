@@ -1,0 +1,107 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  background: #eeeeee;
+  min-height: 100px;
+}
+
+.override.header {
+  box-shadow: 0 1px 6px #D1D1D1;
+  z-index: 10;
+  position: relative;
+}
+
+.sidebar {
+  min-width: 300px;
+  display: inline-block;
+  background-color: #eeeeee;
+  vertical-align: top;
+  padding-top: 125px;
+  box-shadow: 2px 1px 8px #D5D5D5;
+}
+
+.sidebarButton {
+  border-bottom: 1px solid #DDD;
+  padding: 20px 40px;
+  cursor: pointer;
+  color: #666;
+}
+
+:global(.color-blind) .sidebarButton {
+  border-bottom: 1px solid black;
+  color: black;
+}
+
+.firstButton {
+  border-top: 1px solid #DDD;
+}
+
+:global(.color-blind) .firstButton {
+  border-top: 1px solid black;
+}
+
+.sidebarTopText {
+  font-size: 28px;
+  font-weight: 300;
+}
+
+.sidebarBottomText {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.content {
+  vertical-align: top;
+}
+
+.header2 {
+  background-color: white;
+  padding: 12px 0 13px 33px;
+  position: relative;
+  border-bottom: 1px solid #e3e3e3;
+  box-shadow: 0 2px 8px #CCC;
+  min-height: 83px;
+}
+
+.heading {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.dateRow {
+  font-size: 14px;
+}
+
+.dateValue {
+  font-weight: bold;
+  margin-left: 3px;
+}
+
+.versionPicker {
+  float: right;
+  margin-right: 55px;
+  padding-top: 8px;
+}
+
+.versionLabel {
+  font-size: 12px;
+}
+
+.versionDropDown {
+}

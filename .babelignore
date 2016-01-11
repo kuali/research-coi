@@ -1,0 +1,5 @@
+node_modules
+uploads
+client/build
+client/images
+client/styles

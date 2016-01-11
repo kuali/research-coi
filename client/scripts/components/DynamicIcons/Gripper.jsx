@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -21,16 +20,14 @@
 
 import React from 'react';
 
-export default function Gripper(props: Object): React.Element {
+export default function Gripper(props) {
   return (
-    <svg {...props} style={props.style} version="1.1" data-icon="menu" data-container-transform="translate(0 4)" viewBox="0 0 32 40" x="0px" y="0px" role="img" aria-label="Gripper">
-      <path fill={props.style.color} d="M0 0v3h32v-3h-32zm0 20v3h32v-3h-32zm0 20v3h32v-3h-32z" transform="translate(0 4)"/>
+    <svg className={props.className} version="1.1" data-icon="menu" data-container-transform="translate(0 4)" viewBox="0 0 32 40" x="0px" y="0px" role="img" aria-label="Gripper">
+      <path fill={props.color} d="M0 0v3h32v-3h-32zm0 20v3h32v-3h-32zm0 20v3h32v-3h-32z" transform="translate(0 4)"/>
     </svg>
   );
 }
 
 Gripper.defaultProps = {
-  style: {
-    color: 'white'
-  }
+  color: 'white'
 };

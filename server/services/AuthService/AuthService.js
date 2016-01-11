@@ -22,7 +22,7 @@ import * as mockAuthClient from './mockAuthClient';
 let client;
 
 try {
-  const extensions = require('research-extensions'); // eslint-disable-line no-unused-vars
+  const extensions = require('research-extensions').default; // eslint-disable-line no-unused-vars
   client = authClient;
 } catch (e) {
   client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? authClient : mockAuthClient;

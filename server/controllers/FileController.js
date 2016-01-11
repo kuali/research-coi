@@ -24,7 +24,7 @@ import {FORBIDDEN, ACCEPTED} from '../../HTTPStatusCodes';
 
 let upload;
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   upload = extensions.storage;
 }
 catch (err) {

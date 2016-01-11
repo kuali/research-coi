@@ -22,7 +22,7 @@ const MAX_ROWS = 10;
 
 let getKnex;
 try {
-  const extensions = require('research-extensions');
+  const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
 }
 catch (err) {

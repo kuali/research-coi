@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -21,11 +20,11 @@
 
 import React from 'react';
 
-export function ManualPlaceholder(props: Object): React.Element {
+export function ManualPlaceholder(props) {
   return (
-    <svg {...props} style={props.style} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 350 350" enable-background="new 0 0 350 350">
+    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 350 350" enable-background="new 0 0 350 350">
       <g>
-        <path fill={props.style.colorOne} d="M328.4,173.8c0,3.9-0.1,7.8-0.4,11.6c0,0.1,0,0.1,0,0.2c0,0,0,0.1,0,0.1c-6.1,79.3-72.3,141.7-153.1,141.7
+        <path fill={props.colorOne} d="M328.4,173.8c0,3.9-0.1,7.8-0.4,11.6c0,0.1,0,0.1,0,0.2c0,0,0,0.1,0,0.1c-6.1,79.3-72.3,141.7-153.1,141.7
               c-4.7,0-9.4-0.2-14-0.6c-2-0.2-3.9-0.4-5.9-0.6c-75.4-9.8-133.7-74.2-133.7-152.3C21.2,89,90,20.2,174.8,20.2
               c80.8,0,147.1,62.5,153.1,141.7C328.2,165.9,328.4,169.8,328.4,173.8z"/>
         <path opacity="0.2" d="M328.5,187c-3.8,43-25.9,83.1-60.4,109.1c-16.8,12.7-36.1,21.9-56.5,26.8c-10.5,2.5-21.3,4-32.1,4.2
@@ -33,7 +32,7 @@ export function ManualPlaceholder(props: Object): React.Element {
               c-4.1-5.2-8.2-10.3-12.3-15.5c-8-10.1-16-20.1-24-30.2c-5-6.3-10.3-12.6-15-19.1c-10.5-14.4-17.6-31.1-20.8-48.7
               c-7-38.9,6.2-79.8,34.7-107.2c30.1-28.9,74.1-40.1,114.4-29c17,4.7,32.9,13.2,46.2,24.7c8.6,7.4,15.5,16.3,22.6,25.1
               c16.3,20.5,32.6,41,48.9,61.5c0.9,1.2,2.1,2.4,2.9,3.6C330.2,177.3,328.9,182.6,328.5,187z"/>
-        <path fill={props.style.colorTwo} d="M293.9,173.7c0,3-0.1,6-0.3,9c0,0,0,0.1,0,0.1c0,0,0,0.1,0,0.1c-0.1,1.6-0.3,3.2-0.5,4.8
+        <path fill={props.colorTwo} d="M293.9,173.7c0,3-0.1,6-0.3,9c0,0,0,0.1,0,0.1c0,0,0,0.1,0,0.1c-0.1,1.6-0.3,3.2-0.5,4.8
               c-0.6,5.4-1.6,10.7-3,15.9c-3.2,12.5-8.5,24.3-15.3,34.8c-6.9,10.7-15.5,20.2-25.4,28.2c-6.2,5-12.9,9.4-20.1,13.1
               c-1.3,0.7-2.6,1.3-3.9,1.9c-15,7.1-31.6,11.1-49.2,11.3c-0.5,0-1,0-1.5,0c-3.7,0-7.3-0.2-10.9-0.5c-11-1-21.5-3.5-31.4-7.2
               c-45-17.1-77-60.6-77-111.5c0-65.9,53.4-119.2,119.2-119.2C240.6,54.5,293.9,107.9,293.9,173.7z"/>
@@ -166,7 +165,6 @@ export function ManualPlaceholder(props: Object): React.Element {
 }
 
 ManualPlaceholder.defaultProps = {
-  style: {
-    color: 'white'
-  }
+  colorOne: '#348FF7',
+  colorTwo: '#0E4BB6'
 };

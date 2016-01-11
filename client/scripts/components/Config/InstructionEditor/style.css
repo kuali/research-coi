@@ -1,0 +1,78 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  background-color: white;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 0 10px #BBB;
+}
+
+.flipper {
+  position: absolute;
+  right: 22px;
+  transform: rotateZ(0deg) translateY(-3px);
+  transition: transform 0.2s linear;
+  font-size: 25px;
+}
+
+.open .flipper {
+  transform: rotateZ(-180deg);
+}
+
+.top {
+  padding: 10px 20px;
+  position: relative;
+  z-index: 2;
+  background-color: white;
+  cursor: pointer;
+  font-size: 18px;
+  color: black;
+  border-radius: 5px 5px 0 0;
+}
+
+.bottom {
+  border-top: 1px solid #AAA;
+  padding: 15px 27px 21px 27px;
+  z-index: 1;
+  position: relative;
+  margin-top: -146px;
+  transition: margin-top 0.2s ease-out;
+}
+
+.open .bottom {
+  margin-top: 0;
+}
+
+.textarea {
+  width: 100%;
+  height: 85px;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #AAA;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: bold;
+  padding-bottom: 2px;
+  color: #555;
+  display: block;
+}

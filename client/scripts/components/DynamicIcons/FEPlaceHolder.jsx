@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -21,11 +20,11 @@
 
 import React from 'react';
 
-export function FEPlaceHolder(props: Object): React.Element {
+export function FEPlaceHolder(props) {
   return (
-    <svg {...props} style={props.style} version="1.1" x="0px" y="0px" viewBox="0 0 350 350" enable-background="new 0 0 350 350">
+    <svg className={props.className} version="1.1" x="0px" y="0px" viewBox="0 0 350 350" enable-background="new 0 0 350 350">
       <g>
-        <path fill={props.style.colorOne} d="M332.1,174.8c0,4-0.1,8-0.4,11.9c0,0.1,0,0.1,0,0.2c0,0,0,0.1,0,0.1c-6.2,81.3-74.1,145.2-157,145.2
+        <path fill={props.colorOne} d="M332.1,174.8c0,4-0.1,8-0.4,11.9c0,0.1,0,0.1,0,0.2c0,0,0,0.1,0,0.1c-6.2,81.3-74.1,145.2-157,145.2
           c-4.8,0-9.6-0.2-14.4-0.6c-2-0.2-4-0.4-6-0.7c-77.3-10-137-76.1-137-156.1c0-87,70.5-157.4,157.4-157.4c82.9,0,150.8,64,157,145.3
           C332,166.7,332.1,170.7,332.1,174.8z"/>
         <path opacity="0.2" d="M332.1,174.8c0,4-0.1,8-0.4,11.9c0,0.1,0,0.1,0,0.2c0,0,0,0.1,0,0.1c-6.2,81.3-74.1,145.2-157,145.2
@@ -137,7 +136,7 @@ export function FEPlaceHolder(props: Object): React.Element {
           c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3
           c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.3,0.3
           c0.1,0.1,0.2,0.2,0.3,0.3c0,0,0.1,0.1,0.1,0.1C332,166.7,332.1,170.7,332.1,174.8z"/>
-        <path fill={props.style.colorTwo} d="M296.8,174.7c0,3.1-0.1,6.2-0.3,9.2c0,0.1,0,0.1,0,0.1c0,0,0,0.1,0,0.1C291.6,247.3,238.9,297,174.6,297
+        <path fill={props.colorTwo} d="M296.8,174.7c0,3.1-0.1,6.2-0.3,9.2c0,0.1,0,0.1,0,0.1c0,0,0,0.1,0,0.1C291.6,247.3,238.9,297,174.6,297
           c-3.8,0-7.5-0.2-11.2-0.5c-62.3-5.6-111.1-58-111.1-121.7c0-67.5,54.7-122.2,122.2-122.2C242.1,52.5,296.8,107.2,296.8,174.7z"/>
         <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="117.4805" y1="132.6119" x2="256.5151" y2="265.2549">
           <stop offset="0.2044" style={{stopColor: '#000000'}}/>
@@ -193,7 +192,6 @@ export function FEPlaceHolder(props: Object): React.Element {
 
 
 FEPlaceHolder.defaultProps = {
-  style: {
-    color: 'white'
-  }
+  colorOne: window.colorBlindModeOn ? '#555' : '#0097a7',
+  colorTwo: window.colorBlindModeOn ? 'black' : '#00bcd4'
 };

@@ -1,0 +1,64 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  min-height: 100px;
+}
+
+.override.header {
+  box-shadow: 0 1px 6px #D1D1D1;
+  z-index: 10;
+  position: relative;
+}
+
+.content {
+  background-color: #F2F2F2;
+  box-shadow: 2px 8px 8px #ccc inset;
+}
+
+.stepTitle {
+  box-shadow: 0 2px 8px #D5D5D5;
+  font-size: 33px;
+  text-transform: uppercase;
+  padding: 15px 15px 15px 35px;
+  color: #525252;
+  font-weight: 300;
+  background-color: white;
+  min-height: 70px;
+}
+
+.configurationArea {
+  padding: 35px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.peopleLeft {
+  padding-right: 25px;
+}
+
+.panelInstructions {
+  margin-bottom: 35px;
+}
+
+.peopleCheckboxLabel {
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 10px;
+  vertical-align: middle;
+}

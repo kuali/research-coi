@@ -18,7 +18,7 @@
 
 /* eslint-disable no-magic-numbers */
 
-import React from 'react'; //eslint-disable-line no-unused-vars
+import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
 import {MockTravelLogActions} from './mocks/MockTravelLogAction';

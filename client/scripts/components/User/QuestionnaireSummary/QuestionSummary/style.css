@@ -1,0 +1,87 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2015 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  margin: 35px 0;
+}
+
+.option {
+  display: inline-block;
+  margin-right: 30px;
+}
+
+.counter {
+  display: inline-block;
+  width: 100px;
+  padding-left: 0;
+  font-size: 17px;
+  vertical-align: top;
+}
+
+.subquestion .counter {
+  width: 170px;
+  padding-left: 80px;
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+.radio {
+  width: 36px;
+  height: 4em;
+}
+
+.nums {
+  font-size: 28px;
+  margin-left: 10px;
+}
+
+.question {
+  margin-top: 3px;
+  line-height: 22px;
+}
+
+.answer {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.editlink {
+  font-size: 15px;
+  margin: 10px 0 0 8px;
+  color: #0095A0;
+  cursor: pointer;
+  border-bottom: 1px dotted #0095A0;
+  display: inline-block;
+}
+
+:global(.color-blind) .editlink {
+  color: black;
+  border-bottom: 1px dotted black;
+}
+
+.answerLabel {
+  color: #0095A0;
+  font-size: 18px;
+  margin-right: 7px;
+}
+
+:global(.color-blind) .answerLabel {
+  color: black;
+}
