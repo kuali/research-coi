@@ -61,7 +61,7 @@ export default class TravelLogSort extends React.Component {
             <select className={styles.select} onChange={this.filterChanged}>
               <option value="all">All</option>
               <option value="disclosed">Already Disclosed</option>
-              <option value="notYetdisclosed">Not Yet Disclosed</option>
+              <option value="notYetDisclosed">Not Yet Disclosed</option>
               <option value="archived">Archived</option>
             </select>
           </div>

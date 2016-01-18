@@ -75,7 +75,7 @@ export const getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, f
       query.andWhere('r.active', true).andWhere('r.status', COIConstants.RELATIONSHIP_STATUS.DISCLOSED);
       break;
     case 'notYetDisclosed':
-      query.andWhere('r.active', true).andWhereIn('r.status', [COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.PENDING]);
+      query.whereIn('r.status', [COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.PENDING]).andWhere('r.active', true);
       break;
     case 'archived':
       query.andWhere('r.active', false);
