@@ -118,18 +118,6 @@ export function run() {
   UserController.init(app);
   app.use(ErrorLogger);
 
-  const portNumber = config ? config.port : process.env.COI_PORT || DEFAULT_PORT;
-  const server = app.listen(portNumber);
-
-  console.log(`Listening on port ${portNumber} in ${app.get('env')} mode`); // eslint-disable-line no-console
-
-  process.on('uncaughtException', (err) => {
-    Log.error(`Uncaught exception: ${err}`);
-    Log.error(err);
-    Log.error('waiting for pending connections to clear');
-    server.close(() => {
-      Log.error('shutting down');
-      process.exit(1); //eslint-disable-line no-process-exit
-    });
-  });
+  app.set('portNumber', config ? config.port : process.env.COI_PORT || DEFAULT_PORT);
+  return app;
 }

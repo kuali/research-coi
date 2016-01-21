@@ -403,8 +403,6 @@ class _PIReviewStore extends AutoBindingStore {
     const file = entityToRevise.files[data.index];
 
     createRequest().del(`/api/coi/files/${file.id}`)
-    .send(file)
-    .type('application/json')
     .end(processResponse((err) => {
       if (!err) {
         entityToRevise.files.splice(data.index, 1);

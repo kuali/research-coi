@@ -73,7 +73,7 @@ export const init = app => {
     @Role: admin or user for their own files
   */
   app.delete('/api/coi/files/:id', (req, res, next) => {
-    FileDb.deleteFiles(req.dbInfo, req.userInfo, req.body, req.params.id)
+    FileDb.deleteFiles(req.dbInfo, req.userInfo, req.params.id)
       .then(() => {
         res.sendStatus(ACCEPTED);
       })

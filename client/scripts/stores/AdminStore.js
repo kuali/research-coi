@@ -430,8 +430,6 @@ class _AdminStore extends AutoBindingStore {
     const file = this.applicationState.selectedDisclosure.managementPlan[0];
 
     createRequest().del(`/api/coi/files/${file.id}`)
-    .send(file)
-    .type('application/json')
     .end(processResponse((err) => {
       if (!err) {
         this.applicationState.selectedDisclosure.managementPlan.splice(0, 1);

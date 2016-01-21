@@ -26,6 +26,7 @@ import {Link} from 'react-router';
 import ArchiveDetail from '../ArchiveDetail';
 import {formatDate} from '../../../../formatDate';
 import {COIConstants} from '../../../../../../COIConstants';
+import ManagementPlan from '../ManagementPlan';
 
 export class Archive extends React.Component {
   constructor() {
@@ -99,6 +100,7 @@ export class Archive extends React.Component {
   render() {
     let detail;
     let header;
+    let managementPlan;
     if (this.state.archivedDisclosures && this.state.archivedDisclosures.length > 0) {
       const versions = this.state.archivedDisclosures.map(archivedDisclosure => {
         return (
@@ -138,6 +140,14 @@ export class Archive extends React.Component {
             config={this.state.config}
           />
         );
+        if (this.state.disclosure.managementPlan.length > 0) {
+          const file = this.state.disclosure.managementPlan[0];
+          managementPlan = (
+            <ManagementPlan
+              fileId={file.id}
+            />
+          );
+        }
       }
     }
     else {
@@ -193,6 +203,7 @@ export class Archive extends React.Component {
             <div className={styles.header2}>
               {header}
             </div>
+            {managementPlan}
             <div className={`fill`} style={{overflowY: 'auto'}}>
               {detail}
             </div>
