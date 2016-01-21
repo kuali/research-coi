@@ -32,20 +32,20 @@ export default class RelationshipDateField extends RelationshipTextField {
 
   render() {
     return (
-    <div className={styles.container}>
-      <div style={this.getLabelStyle(this.props.invalid)}>{this.props.label}</div>
-      <DatePicker
-        textFieldStyle={this.getInputStyle(this.props.invalid, {
-          padding: 6,
-          width: '100%',
-          borderRadius: 0,
-          fontSize: 16,
-          border: '1px solid #B0B0B0'
-        })}
-        onChange={this.onChange}
-        value={this.props.value}
-      />
-    </div>
+      <div className={styles.container}>
+        <div style={this.getLabelStyle(this.props.invalid)}>{this.props.label}</div>
+        <DatePicker
+          textFieldStyle={this.getInputStyle(this.props.invalid, {
+            padding: 6,
+            width: '100%',
+            borderRadius: 0,
+            fontSize: 16,
+            border: '1px solid #B0B0B0'
+          })}
+          onChange={this.onChange}
+          value={this.props.value}
+        />
+      </div>
     );
   }
 }

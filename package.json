@@ -6,7 +6,9 @@
   "scripts": {
     "test": "BABEL_ENV=test NODE_ENV=test mocha --recursive --require test/setup.js --require babel-register --require babel-polyfill",
     "start": "node server/bootstrap.js",
+    "lint": "npm run eslint && npm run stylelint",
     "eslint": "eslint client db server test",
+    "stylelint": "stylelint client/**/**/*.css",
     "webpack": "webpack -p",
     "load": "node loadtest"
   },
@@ -63,7 +65,7 @@
     "css-loader": "0.23.0",
     "css-modules-require-hook": "2.1.0",
     "eslint": "1.9.0",
-    "eslint-plugin-react": "3.11.3",
+    "eslint-plugin-react": "3.15.0",
     "file": "0.2.2",
     "jsdom": "7.0.2",
     "mocha": "2.2.4",
@@ -77,6 +79,8 @@
     "skin-deep": "0.13.0",
     "style-loader": "0.13.0",
     "supertest": "1.1.0",
+    "stylelint": "4.0.0",
+    "stylelint-config-standard": "1.0.0",
     "webpack": "1.8.11"
   }
 }

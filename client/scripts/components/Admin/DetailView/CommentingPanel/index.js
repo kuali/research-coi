@@ -70,27 +70,27 @@ export default class CommentingPanel extends React.Component {
     if (!this.props.readonly) {
       commentForm = (
         <div className={styles.controls}>
-            <span className={styles.commentText}>
-              <div>COMMENT:</div>
-              <div>
-                <textarea className={styles.textbox} ref="commentText" />
-              </div>
-            </span>
-            <span className={styles.right}>
-              <div>RECIPIENT:</div>
-              <div>
-                <input type="checkbox" id="piCheck" ref="piCheck" />
-                <label htmlFor="piCheck" className={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
-              </div>
-              <div>
-                <BlueButton
-                  className={`${styles.override} ${styles.submitButton}`}
-                  onClick={this.makeComment}
-                >
-                  Submit
-                </BlueButton>
-              </div>
-            </span>
+          <span className={styles.commentText}>
+            <div>COMMENT:</div>
+            <div>
+              <textarea className={styles.textbox} ref="commentText" />
+            </div>
+          </span>
+          <span className={styles.right}>
+            <div>RECIPIENT:</div>
+            <div>
+              <input type="checkbox" id="piCheck" ref="piCheck" />
+              <label htmlFor="piCheck" className={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
+            </div>
+            <div>
+              <BlueButton
+                className={`${styles.override} ${styles.submitButton}`}
+                onClick={this.makeComment}
+              >
+                Submit
+              </BlueButton>
+            </div>
+          </span>
         </div>
       );
     }

@@ -291,7 +291,7 @@ export default class Question extends React.Component {
         );
       } else if (this.props.type === COIConstants.QUESTION_TYPE.DATE) {
         answerArea = (
-        <div>{formatDate(this.props.answer)}</div>
+          <div>{formatDate(this.props.answer)}</div>
         );
       }
       else {

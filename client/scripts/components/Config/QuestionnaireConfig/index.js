@@ -367,12 +367,12 @@ class QuestionnaireConfig extends React.Component {
 
     return (
       <div className={classNames(styles.container, this.props.className)}>
-          {newQuestionButton}
-          {newQuestion}
+        {newQuestionButton}
+        {newQuestion}
 
-          <div style={{position: 'relative', marginTop: 16, minHeight: nextQuestionYPosition}}>
-            {questionsJSX}
-          </div>
+        <div style={{position: 'relative', marginTop: 16, minHeight: nextQuestionYPosition}}>
+          {questionsJSX}
+        </div>
       </div>
     );
   }

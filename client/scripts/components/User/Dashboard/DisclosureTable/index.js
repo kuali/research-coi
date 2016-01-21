@@ -67,8 +67,8 @@ export class DisclosureTable extends React.Component {
             DISCLOSURE TYPE
           </span>
           <span role="columnheader" className={`${styles.heading} ${styles.columnTwo}`}>
-            STATUS</span
-          >
+            STATUS
+          </span>
           <span role="columnheader" className={`${styles.heading} ${styles.columnThree}`}>
             LAST REVIEW
           </span>

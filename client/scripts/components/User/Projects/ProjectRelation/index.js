@@ -49,23 +49,23 @@ export class ProjectRelation extends React.Component {
   render() {
     const declarationTypeOptions = this.props.declarationTypes.map(type => {
       return (
-      <div key={type.typeCd}>
-        <input
-          type="radio"
-          ref="none"
-          checked={this.props.typeCd === type.typeCd}
-          value={type.typeCd}
-          onChange={this.relationChosen}
-          name={`${this.props.project.id}relation${this.props.finEntityId}`}
-          id={`${this.props.project.id}r${this.props.finEntityId}${type.typeCd}`}
-        />
-        <label
-          htmlFor={`${this.props.project.id}r${this.props.finEntityId}${type.typeCd}`}
-          style={{fontSize: 14, marginLeft: 6}}
-        >
-          {type.description}
-        </label>
-      </div>
+        <div key={type.typeCd}>
+          <input
+            type="radio"
+            ref="none"
+            checked={this.props.typeCd === type.typeCd}
+            value={type.typeCd}
+            onChange={this.relationChosen}
+            name={`${this.props.project.id}relation${this.props.finEntityId}`}
+            id={`${this.props.project.id}r${this.props.finEntityId}${type.typeCd}`}
+          />
+          <label
+            htmlFor={`${this.props.project.id}r${this.props.finEntityId}${type.typeCd}`}
+            style={{fontSize: 14, marginLeft: 6}}
+          >
+            {type.description}
+          </label>
+        </div>
       );
     });
 

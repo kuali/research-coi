@@ -21,14 +21,16 @@ html {
   height: 100%;
 }
 
-*, *:before, *:after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
-}     
+}
 
 body {
   height: 100%;
   margin: 0;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
 }
 
 #theApp {
@@ -45,7 +47,9 @@ button {
   cursor: pointer;
 }
 
-select, input, textarea {
+select,
+input,
+textarea {
   outline: 0;
 }
 
@@ -54,11 +58,11 @@ span {
 }
 
 .hoverable:hover {
-  background-color: #F9F9F9;
+  background-color: #f9f9f9;
 }
 
 .autosuggest-results > li:hover {
-  background-color: #EEE;
+  background-color: #eee;
 }
 
 .fd .not-hovering {
