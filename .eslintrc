@@ -30,6 +30,7 @@
         "no-multi-spaces": 2,
         "no-else-return": 2,
         "no-eq-null": 2,
+        "space-infix-ops": 2,
         "no-floating-decimal": 2,
         "no-implicit-coercion": 2,
         "no-lone-blocks": 2,

@@ -1314,8 +1314,6 @@ class _DisclosureStore extends AutoBindingStore {
     const file = this.files[index];
 
     createRequest().del(`/api/coi/files/${file.id}`)
-      .send(file)
-      .type('application/json')
       .end(processResponse((err) => {
         if (!err) {
           this.files.splice(index, 1);

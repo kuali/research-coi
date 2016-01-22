@@ -15,27 +15,32 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-let client;
-try {
-  const extensions = require('research-extensions').default; // eslint-disable-line no-unused-vars
-  if (process.env.NODE_ENV === 'test') {
-    client = require('./mockAuthClient');
-  } else {
-    client = require('./authClient');
-  }
-} catch (e) {
-  client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? require('./authClient') : require('./mockAuthClient');
+
+.container {
+background-color: #0095A0;
+  color:white;
+  width:100%;
+  min-height:40px;
+  min-width: 500px;
+  display:inline-block;
+  padding: 8px 20px 0px 20px;
+  z-index: 1;
 }
 
-
-export function getUserInfo(dbInfo, hostname, authToken) {
-  return client.getUserInfo(dbInfo, hostname, authToken);
+.header {
+  font-size: 19px;
+  font-weight: 300;
+  vertical-align: middle;
+}
+.downloadButtonLink {
+  float: right;
 }
 
-export function getAuthLink(req) {
-  return client.getAuthLink(req);
+.button {
+  border: 1px solid white;
 }
 
-export function authView(req, res) {
-  return client.authView(req, res);
+:global(.color-blind) .container {
+  background-color: #333;
+  border: 1px solid white;
 }

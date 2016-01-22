@@ -4,7 +4,7 @@
   "description": "KualiCo Research Conflict of Interest",
   "main": "server/app.js",
   "scripts": {
-    "test": "BABEL_ENV=test NODE_ENV=test mocha --recursive --require test/setup.js",
+    "test": "BABEL_ENV=test NODE_ENV=test mocha --recursive --require test/setup.js --require babel-register --require babel-polyfill",
     "start": "node server/bootstrap.js",
     "eslint": "eslint client db server test",
     "webpack": "webpack -p",
@@ -76,6 +76,7 @@
     "react-addons-test-utils": "0.14.2",
     "skin-deep": "0.13.0",
     "style-loader": "0.13.0",
+    "supertest": "1.1.0",
     "webpack": "1.8.11"
   }
 }

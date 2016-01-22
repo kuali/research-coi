@@ -21,4 +21,20 @@
 require('babel-register');
 require('babel-polyfill');
 var app = require('./app');
-app.run();
+var Log = require('./Log');
+
+var application = app.run();
+var portNumber = application.get('portNumber');
+var server = application.listen(portNumber);
+
+console.log(`Listening on port ${portNumber} in ${application.get('env')} mode`); // eslint-disable-line no-console
+
+process.on('uncaughtException', (err) => {
+  Log.error(`Uncaught exception: ${err}`);
+  Log.error(err);
+  Log.error('waiting for pending connections to clear');
+  server.close(() => {
+    Log.error('shutting down');
+    process.exit(1); //eslint-disable-line no-process-exit
+  });
+});
