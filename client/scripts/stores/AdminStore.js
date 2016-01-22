@@ -271,7 +271,7 @@ class _AdminStore extends AutoBindingStore {
   }
 
   clearStatusFilter() {
-    this.applicationState.filters.status = [];
+    this.applicationState.filters.status = defaultStatusFilters();
     this.refreshDisclosures();
   }
 
