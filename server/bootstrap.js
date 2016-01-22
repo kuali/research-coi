@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable no-var */
+/* eslint-disable no-var, prefer-template, no-console, no-process-exit */
 
 require('babel-register');
 require('babel-polyfill');
@@ -27,14 +27,14 @@ var application = app.run();
 var portNumber = application.get('portNumber');
 var server = application.listen(portNumber);
 
-console.log(`Listening on port ${portNumber} in ${application.get('env')} mode`); // eslint-disable-line no-console
+console.log('Listening on port ' + portNumber + ' in ' + application.get('env') + ' mode');
 
 process.on('uncaughtException', (err) => {
-  Log.error(`Uncaught exception: ${err}`);
+  Log.error('Uncaught exception: ' + err);
   Log.error(err);
   Log.error('waiting for pending connections to clear');
   server.close(() => {
     Log.error('shutting down');
-    process.exit(1); //eslint-disable-line no-process-exit
+    process.exit(1);
   });
 });
