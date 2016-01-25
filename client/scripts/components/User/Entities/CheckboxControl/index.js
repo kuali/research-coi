@@ -34,7 +34,7 @@ export class CheckboxControl extends React.Component {
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-      <div className={styles.invalidError}>Required Field</div>
+        <div className={styles.invalidError}>Required Field</div>
       );
     }
 

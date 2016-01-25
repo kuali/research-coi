@@ -36,7 +36,7 @@ export class DateControl extends React.Component {
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
-      <div className={styles.invalidError}>Required Field</div>
+        <div className={styles.invalidError}>Required Field</div>
       );
     }
 
@@ -49,22 +49,22 @@ export class DateControl extends React.Component {
     }
 
     return (
-    <div>
-      <DatePicker
-        id={`eqa${this.props.questionId}`}
-        textFieldStyle={{
-          padding: 6,
-          fontSize: 12,
-          borderRadius: 0,
-          width: '80%',
-          border: '1px solid #B0B0B0'
-        }}
-        className={`${styles.override} ${styles.datepicker}`}
-        onChange={this.onChange}
-        value={this.props.answer}
-      />
-      {requiredFieldError}
-    </div>
+      <div>
+        <DatePicker
+          id={`eqa${this.props.questionId}`}
+          textFieldStyle={{
+            padding: 6,
+            fontSize: 12,
+            borderRadius: 0,
+            width: '80%',
+            border: '1px solid #B0B0B0'
+          }}
+          className={`${styles.override} ${styles.datepicker}`}
+          onChange={this.onChange}
+          value={this.props.answer}
+        />
+        {requiredFieldError}
+      </div>
     );
   }
 }

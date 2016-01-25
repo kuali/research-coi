@@ -60,7 +60,7 @@ export class Certify extends React.Component {
 
     if (window.config.general.certificationOptions.required) {
       agreement = (
-      <div style={{marginTop: 20}}>
+        <div style={{marginTop: 20}}>
           <span style={{display: 'inline-block', width: '5%'}}>
             <input type="checkbox" id="certCheckbox" onChange={this.certify} checked={this.props.isCertified}/>
           </span>
@@ -69,7 +69,7 @@ export class Certify extends React.Component {
             INTERESTS obtained during the term of this disclosure. I certify that this is a complete
             disclosure of all my financial interests related to the projects therein.
           </label>
-      </div>
+        </div>
       );
     }
     return (
