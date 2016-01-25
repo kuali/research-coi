@@ -17,13 +17,13 @@
 */
 
 .container {
-background-color: #0095A0;
-  color:white;
-  width:100%;
-  min-height:40px;
+  background-color: #0095A0;
+  color: white;
+  width: 100%;
+  min-height: 40px;
   min-width: 500px;
-  display:inline-block;
-  padding: 8px 20px 0px 20px;
+  display: inline-block;
+  padding: 8px 20px 0 20px;
   z-index: 1;
 }
 
@@ -32,6 +32,7 @@ background-color: #0095A0;
   font-weight: 300;
   vertical-align: middle;
 }
+
 .downloadButtonLink {
   float: right;
 }

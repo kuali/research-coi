@@ -27,6 +27,7 @@ import CommentingPanel from '../CommentingPanel';
 import AdditionalReviewPanel from '../AdditionalReviewPanel';
 import CommentSummary from '../CommentSummary';
 import GeneralAttachmentsPanel from '../GeneralAttachmentsPanel';
+import UploadAttachmentsPanel from '../UploadAttachmentsPanel';
 import {COIConstants} from '../../../../../../COIConstants';
 import {AppHeader} from '../../../AppHeader';
 import classNames from 'classnames';
@@ -148,6 +149,16 @@ export class DetailView extends React.Component {
       sidePanel = (
         <GeneralAttachmentsPanel
           files={this.state.applicationState.selectedDisclosure.files}
+        />
+      );
+    }
+    else if (this.state.applicationState.uploadAttachmentsShowing) {
+      const adminFiles = this.state.applicationState.selectedDisclosure.files
+        .filter(file => file.file_type === COIConstants.FILE_TYPE.ADMIN );
+      sidePanel = (
+        <UploadAttachmentsPanel
+          files={adminFiles}
+          readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}
         />
       );
     }

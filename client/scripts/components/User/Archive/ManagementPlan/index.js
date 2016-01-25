@@ -23,12 +23,12 @@ import {BlueButton} from '../../../BlueButton';
 export default function ManagementPlan(props) {
   return (
     <div className={styles.container}>
-        <span className={styles.header}>MANAGEMENT PLAN ATTACHED</span>
-        <a className={styles.downloadButtonLink} href={`/api/coi/files/${encodeURIComponent(props.fileId)}`}>
-            <span>
-              <BlueButton className={styles.button}>DOWNLOAD</BlueButton>
-            </span>
-        </a>
+      <span className={styles.header}>MANAGEMENT PLAN ATTACHED</span>
+      <a className={styles.downloadButtonLink} href={`/api/coi/files/${encodeURIComponent(props.fileId)}`}>
+        <span>
+          <BlueButton className={styles.button}>DOWNLOAD</BlueButton>
+        </span>
+      </a>
     </div>
   );
 }

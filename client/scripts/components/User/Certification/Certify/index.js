@@ -72,6 +72,10 @@ export class Certify extends React.Component {
         </div>
       );
     }
+
+    const disclosureFiles = this.props.files
+      .filter(file => file.file_type === COIConstants.FILE_TYPE.DISCLOSURE);
+
     return (
       <div className={classNames(styles.container, this.props.className)}>
         {instructions}
@@ -86,7 +90,7 @@ export class Certify extends React.Component {
               readOnly={false}
               onDrop={this.addDisclosureAttachment}
               delete={this.deleteDisclosureAttachment}
-              files={this.props.files}
+              files={disclosureFiles}
               multiple={true}
             >
               <div>Drag and Drop or Click to upload your attachments</div>

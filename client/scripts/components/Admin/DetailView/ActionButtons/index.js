@@ -71,6 +71,12 @@ export default function ActionButtons(props) {
           <div>REVIEW COMMENTS</div>
         </span>
       </div>
+      <div className={styles.button} onClick={AdminActions.showUploadAttachmentsPanel}>
+        <i className={`fa fa-download ${styles.icon}`}></i>
+        <span className={styles.label}>
+          <div>UPLOAD ATTACHMENTS</div>
+        </span>
+      </div>
     </div>
   );
 }

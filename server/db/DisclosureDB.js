@@ -556,11 +556,11 @@ export const get = (dbInfo, userInfo, disclosureId) => {
       .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
       .where('d.disclosure_id', disclosureId),
     retrieveComments(dbInfo, userInfo.schoolId, disclosureId),
-    knex.select('id', 'name', 'key')
+    knex.select('id', 'name', 'key', 'file_type')
       .from('file')
-      .where({
-        ref_id: disclosureId,
-        file_type: COIConstants.FILE_TYPE.DISCLOSURE
+      .whereIn('file_type', [COIConstants.FILE_TYPE.DISCLOSURE, COIConstants.FILE_TYPE.ADMIN])
+      .andWhere({
+        ref_id: disclosureId
       }),
     knex.select('id', 'name', 'key')
       .from('file')
