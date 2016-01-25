@@ -26,6 +26,7 @@ export default function ActionButtons(props) {
   if (props.showAttachments) {
     generalAttachmentButton = (
       <div
+        name='General Attachments Button'
         className={styles.button}
         style={{borderBottom: '1px solid grey', paddingBottom: 10}}
         onClick={AdminActions.showGeneralAttachmentsPanel}
@@ -40,14 +41,22 @@ export default function ActionButtons(props) {
   let sendBackButton;
   if (!props.readonly) {
     approveButton = (
-      <div className={styles.button} onClick={AdminActions.toggleApprovalConfirmation}>
+      <div
+        name='Approve Button'
+        className={styles.button}
+        onClick={AdminActions.toggleApprovalConfirmation}
+      >
         <i className={`fa fa-check ${styles.icon}`}></i>
         <span className={styles.label}>APPROVE</span>
       </div>
     );
 
     sendBackButton = (
-      <div className={styles.button} onClick={AdminActions.toggleRejectionConfirmation}>
+      <div
+        name='Send Back Button'
+        className={styles.button}
+        onClick={AdminActions.toggleRejectionConfirmation}
+      >
         <i className={`fa fa-times ${styles.icon} ${styles.sendBackIcon}`}></i>
         <span className={styles.label}>SEND BACK</span>
       </div>
@@ -55,23 +64,34 @@ export default function ActionButtons(props) {
   }
 
   return (
-    <div className={classNames(styles.container, props.className)}>
+    <div name='Action Buttons' className={classNames(styles.container, props.className)}>
       {generalAttachmentButton}
       {approveButton}
       {sendBackButton}
-      <div className={styles.button} onClick={AdminActions.showAdditionalReviewPanel}>
+      <div name='Additional Review Button'
+        className={styles.button}
+        onClick={AdminActions.showAdditionalReviewPanel}
+      >
         <i className={`fa fa-eye ${styles.icon}`}></i>
         <span className={styles.label}>
           <div>ADDITIONAL REVIEW</div>
         </span>
       </div>
-      <div className={styles.button} onClick={AdminActions.showCommentSummary}>
+      <div
+        name='Review Comments Button'
+        className={styles.button}
+        onClick={AdminActions.showCommentSummary}
+      >
         <i className={`fa fa-binoculars ${styles.icon}`}></i>
         <span className={styles.label}>
           <div>REVIEW COMMENTS</div>
         </span>
       </div>
-      <div className={styles.button} onClick={AdminActions.showUploadAttachmentsPanel}>
+      <div
+        name='Upload Attachments Button'
+        className={styles.button}
+        onClick={AdminActions.showUploadAttachmentsPanel}
+      >
         <i className={`fa fa-download ${styles.icon}`}></i>
         <span className={styles.label}>
           <div>UPLOAD ATTACHMENTS</div>

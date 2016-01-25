@@ -36,60 +36,15 @@
   color: black;
 }
 
-.download {
-  float: right;
-  border: 0;
-  background-color: #333;
-  color: white;
-  padding: 5px 10px;
-}
-
-.dragAndDrop {
-  margin: 25px 0;
-  border: 3px dashed #888;
-  padding: 10px 15px;
-  border-radius: 4px;
-}
-
-.complete {
-  padding-bottom: 15px;
-  font-size: 14px;
-  vertical-align: middle;
-}
-
-.additionalReviewerLabel {
-  border-top: 1px solid #BBB;
-  padding-top: 25px;
-}
-
 .header {
   border-bottom: 1px solid #777;
   margin-bottom: 20px;
   padding-bottom: 10px;
 }
 
-.searchLabel {
-  margin: 15px 0 5px 0;
-  font-size: 12px;
-  color: #666;
-}
-
-.searchBox {
-  width: 100%;
-  border: 1px solid #999;
-  padding: 10px 15px;
-}
-
 .title {
   font-size: 22px;
   font-weight: 300;
-}
-
-.subLabel {
-  font-size: 15px;
-  width: 50%;
-  border-bottom: 1px solid #777;
-  padding-bottom: 4px;
 }
 
 .override.fileUploadStyles {
