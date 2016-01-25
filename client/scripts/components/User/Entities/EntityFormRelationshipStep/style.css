@@ -94,8 +94,10 @@
 }
 
 .errors .override.addButton {
-  background-color: #D8D8D8;
-  color: #939393;
+  background-color: #E6E6E6;
+  color: #AAA;
+  text-shadow: none;
+  border-bottom: 2px solid #BBB;
   cursor: default;
 }
 

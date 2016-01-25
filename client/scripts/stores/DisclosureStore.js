@@ -28,6 +28,44 @@ const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
 };
 
+export function unSubmittedRelationshipStarted(storeState) {
+  if (
+    !storeState ||
+    !storeState.applicationState ||
+    !storeState.applicationState.potentialRelationship
+  ) {
+    return false;
+  }
+
+  const {personCd, comments, relationshipCd} = storeState.applicationState.potentialRelationship;
+
+  const personStarted = (
+    personCd !== undefined &&
+    (
+      (typeof personCd === 'string' && personCd.length > 0) ||
+      (typeof personCd !== 'string' && personCd !== 0)
+    )
+  );
+
+  const commentsStarted = (
+    comments !== undefined &&
+    (
+      (typeof comments === 'string' && comments.length > 0) ||
+      (typeof comments !== 'string' && comments !== 0)
+    )
+  );
+
+  const relationshipStarted = (
+    relationshipCd !== undefined &&
+    (
+      (typeof relationshipCd === 'string' && relationshipCd.length > 0) ||
+      (typeof relationshipCd !== 'string' && relationshipCd !== 0)
+    )
+  );
+
+  return personStarted || commentsStarted || relationshipStarted;
+}
+
 class _DisclosureStore extends AutoBindingStore {
   constructor() {
     super(DisclosureActions);
@@ -1235,15 +1273,8 @@ class _DisclosureStore extends AutoBindingStore {
       return entity.relationships && entity.relationships.length > 0;
     };
 
-    const unSubmittedRelationshipStarted = () => {
-      const potentialRelationship = storeState.applicationState.potentialRelationship;
-      return (potentialRelationship.personCd && potentialRelationship.personCd.length > 0) ||
-          (potentialRelationship.comments && potentialRelationship.comments.length > 0) ||
-          (potentialRelationship.relationshipCd && potentialRelationship.relationshipCd.length > 0);
-    };
-
     if (atLeastOneRelationshipAdded()) {
-      if (unSubmittedRelationshipStarted()) {
+      if (unSubmittedRelationshipStarted(storeState)) {
         return this.entityRelationshipStepComplete();
       }
 
