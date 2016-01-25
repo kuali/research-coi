@@ -58,7 +58,10 @@ export const getFile = (dbInfo, userInfo, id) => {
 };
 
 export const saveNewFiles = (dbInfo, body, files, userInfo) => {
-  if (body.type !== COIConstants.FILE_TYPE.DISCLOSURE && body.type !== COIConstants.FILE_TYPE.MANAGEMENT_PLAN && body.type !== COIConstants.FILE_TYPE.FINANCIAL_ENTITY) {
+  if (body.type !== COIConstants.FILE_TYPE.DISCLOSURE &&
+    body.type !== COIConstants.FILE_TYPE.MANAGEMENT_PLAN &&
+    body.type !== COIConstants.FILE_TYPE.FINANCIAL_ENTITY &&
+    body.type !== COIConstants.FILE_TYPE.ADMIN) {
     throw Error(`Attempt by ${userInfo.username} to upload an unknown file type`);
   }
 

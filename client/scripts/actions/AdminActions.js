@@ -19,6 +19,19 @@
 import alt from '../alt';
 
 class _AdminActions {
+
+  constructor() {
+    this.generateActions(
+      'showUploadAttachmentsPanel',
+      'hideUploadAttachmentsPanel',
+      'addAdminAttachment',
+      'deleteAdminAttachment',
+      'addAdminAttachmentToState',
+      'removeAdminAttachmentFromState',
+      'setApplicationStateForTest'
+    );
+  }
+
   changeSort(newSortField) { this.dispatch(newSortField); }
 
   flipSortDirection() { this.dispatch(); }

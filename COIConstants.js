@@ -42,7 +42,8 @@ export const COIConstants = {
   FILE_TYPE: {
     FINANCIAL_ENTITY: 'financialEntity',
     DISCLOSURE: 'disclosure',
-    MANAGEMENT_PLAN: 'managementPlan'
+    MANAGEMENT_PLAN: 'managementPlan',
+    ADMIN: 'admin'
   },
   DISCLOSURE_TYPE: {
     MANUAL: '1',

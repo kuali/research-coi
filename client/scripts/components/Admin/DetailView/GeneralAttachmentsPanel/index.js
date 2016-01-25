@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {AdminActions} from '../../../../actions/AdminActions';
 
-export default function AdditionalReviewPanel(props) {
+export default function GeneralAttachmentsPanel(props) {
   const files = props.files.map(file => {
     return (
       <div key={file.id} style={{marginBottom: 5}}>

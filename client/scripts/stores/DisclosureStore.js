@@ -1310,10 +1310,10 @@ class _DisclosureStore extends AutoBindingStore {
       }));
   }
 
-  deleteDisclosureAttachment(index) {
-    const file = this.files[index];
+  deleteDisclosureAttachment(id) {
+    const index = this.files.findIndex(f => f.id === parseInt(id));
 
-    createRequest().del(`/api/coi/files/${file.id}`)
+    createRequest().del(`/api/coi/files/${id}`)
       .end(processResponse((err) => {
         if (!err) {
           this.files.splice(index, 1);
@@ -1321,7 +1321,6 @@ class _DisclosureStore extends AutoBindingStore {
         }
       }));
   }
-
 
   certify(value) {
     this.applicationState.currentDisclosureState.isCertified = value;

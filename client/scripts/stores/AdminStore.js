@@ -22,7 +22,6 @@ import {COIConstants} from '../../../COIConstants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
 import ConfigActions from '../actions/ConfigActions';
-
 const PAGE_SIZE = 40;
 
 function defaultStatusFilters() {
@@ -33,6 +32,11 @@ class _AdminStore extends AutoBindingStore {
   constructor() {
     super(AdminActions);
 
+    this.exportPublicMethods({
+      createAdminAttachmentFormData: this.createAdminAttachmentFormData
+    });
+
+    this.bindActions(AdminActions);
     this.applicationState = {
       sort: 'SUBMITTED_DATE',
       sortDirection: 'ASCENDING',
@@ -59,6 +63,7 @@ class _AdminStore extends AutoBindingStore {
       commentingPanelShowing: false,
       additionalReviewShowing: false,
       commentSummaryShowing: false,
+      uploadAttachmentsShowing: false,
       loadingDisclosure: false
     };
 
@@ -371,6 +376,20 @@ class _AdminStore extends AutoBindingStore {
     }, 400);
   }
 
+  showUploadAttachmentsPanel(){
+    this.applicationState.listShowing = false;
+    this.applicationState.uploadAttachmentsShowing = true;
+  }
+
+  hideUploadAttachmentsPanel(timeout) {
+    timeout = !isNaN(timeout) ? timeout : 400;
+    this.applicationState.listShowing = true;
+    setTimeout(() => {
+      this.applicationState.uploadAttachmentsShowing = false;
+      this.emitChange();
+    }, timeout);
+  }
+
   showCommentSummary() {
     this.applicationState.listShowing = false;
     this.applicationState.commentSummaryShowing = true;
@@ -436,6 +455,62 @@ class _AdminStore extends AutoBindingStore {
         this.emitChange();
       }
     }));
+  }
+
+  addAdminAttachment(files) {
+    createRequest().post('/api/coi/files')
+      .send(this.createAdminAttachmentFormData(files))
+      .end(processResponse((err, res) => {
+        if (!err) {
+          this.addAdminAttachmentToState(res.body);
+          this.emitChange();
+        }
+      })
+    );
+  }
+
+  createAdminAttachmentFormData(files) {
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append('attachments', file);
+    });
+
+    formData.append('data', JSON.stringify({
+      refId: this.applicationState.selectedDisclosure.id,
+      type: COIConstants.FILE_TYPE.ADMIN,
+      disclosureId: this.applicationState.selectedDisclosure.id
+    }));
+
+    return formData;
+  }
+
+  addAdminAttachmentToState(files) {
+    if (!this.applicationState.selectedDisclosure.files) {
+      this.applicationState.selectedDisclosure.files = [];
+    }
+    files.forEach(file => {
+      this.applicationState.selectedDisclosure.files.push(file);
+    });
+  }
+
+  deleteAdminAttachment(id) {
+    createRequest().del(`/api/coi/files/${id}`)
+      .type('application/json')
+      .end(processResponse((err) => {
+        if (!err) {
+          this.removeAdminAttachmentFromState(id);
+          this.emitChange();
+        }
+      }));
+  }
+
+  removeAdminAttachmentFromState(id) {
+    const index = this.applicationState.selectedDisclosure.files.findIndex(f => parseInt(id) === f.id);
+    this.applicationState.selectedDisclosure.files.splice(index, 1);
+  }
+
+  setApplicationStateForTest(update) {
+    this.applicationState = Object.assign({}, this.applicationState, update);
   }
 }
 

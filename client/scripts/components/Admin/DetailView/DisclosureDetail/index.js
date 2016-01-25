@@ -149,6 +149,10 @@ export class DisclosureDetail extends React.Component {
       {[styles.showRejection]: this.props.showRejection}
     );
 
+    const showAttachments = this.props.disclosure.files
+        .filter(file => file.fileType === COIConstants.FILE_TYPE.DISCLOSURE)
+        .length > 0;
+
     return (
       <div
         className={classes}
@@ -191,7 +195,7 @@ export class DisclosureDetail extends React.Component {
             />
             <ActionButtons
               className={`${styles.override} ${styles.actionButtons}`}
-              showAttachments={this.props.disclosure.files.length > 0}
+              showAttachments={showAttachments}
               readonly={
                 this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
                 this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED

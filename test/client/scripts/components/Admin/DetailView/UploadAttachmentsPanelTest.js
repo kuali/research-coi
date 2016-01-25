@@ -16,19 +16,24 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import styles from './style';
 import React from 'react';
-import {BlueButton} from '../../../BlueButton';
+import assert from 'assert';
+import sd from 'skin-deep';
+import UploadAttachmentsPanel from '../../../../../../client/scripts/components/Admin/DetailView/UploadAttachmentsPanel';
 
-export default function ManagementPlan(props) {
-  return (
-    <div className={styles.container}>
-      <span className={styles.header}>MANAGEMENT PLAN ATTACHED</span>
-      <a className={styles.downloadButtonLink} href={`/api/coi/files/${encodeURIComponent(props.fileId)}`}>
-        <span>
-          <BlueButton className={styles.button}>DOWNLOAD</BlueButton>
-        </span>
-      </a>
-    </div>
-  );
-}
+/*global describe, it */
+
+
+describe('UploadAttachmentsPanel', () => {
+  it('should render', () => {
+    const tree = sd.shallowRender(
+      <UploadAttachmentsPanel
+        readonly="false"
+        files={[]}
+      />
+    );
+
+    const vdom = tree.getRenderOutput();
+    assert.equal(vdom.props.name, 'Upload Attachments Panel');
+  });
+});
