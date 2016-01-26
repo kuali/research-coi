@@ -28,6 +28,16 @@ const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
 };
 
+function provided(value) {
+  return (
+    (value !== undefined && value !== null) &&
+    (
+      (typeof value === 'string' && value.length > 0) ||
+      (typeof value !== 'string' && value !== 0)
+    )
+  );
+}
+
 export function unSubmittedRelationshipStarted(storeState) {
   if (
     !storeState ||
@@ -39,31 +49,82 @@ export function unSubmittedRelationshipStarted(storeState) {
 
   const {personCd, comments, relationshipCd} = storeState.applicationState.potentialRelationship;
 
-  const personStarted = (
-    personCd !== undefined &&
-    (
-      (typeof personCd === 'string' && personCd.length > 0) ||
-      (typeof personCd !== 'string' && personCd !== 0)
-    )
-  );
+  return provided(personCd) || provided(comments) || provided(relationshipCd);
+}
 
-  const commentsStarted = (
-    comments !== undefined &&
-    (
-      (typeof comments === 'string' && comments.length > 0) ||
-      (typeof comments !== 'string' && comments !== 0)
-    )
-  );
+export function entityRelationshipStepErrors(potentialRelationship, matrixTypes) {
+  const errors = {};
 
-  const relationshipStarted = (
-    relationshipCd !== undefined &&
-    (
-      (typeof relationshipCd === 'string' && relationshipCd.length > 0) ||
-      (typeof relationshipCd !== 'string' && relationshipCd !== 0)
-    )
-  );
+  const {
+    personCd,
+    comments,
+    relationshipCd,
+    typeCd,
+    travel,
+    amountCd
+  } = potentialRelationship;
 
-  return personStarted || commentsStarted || relationshipStarted;
+  if (!provided(personCd)) {
+    errors.person = 'Required Field';
+  }
+
+  if (!provided(comments)) {
+    errors.comment = 'Required Field';
+  }
+
+  if (!provided(relationshipCd)) {
+    errors.relation = 'Required Field';
+    return errors;
+  }
+
+  const matrixType = matrixTypes.find(type => type.typeCd === relationshipCd);
+  if (matrixType === undefined) {
+    throw new Error('Invalid relationshipCd');
+  }
+
+  if (matrixType.typeEnabled === 1 && !provided(typeCd)) {
+    errors.type = 'Required Field';
+  }
+
+  if (matrixType.amountEnabled === 1) {
+    if (matrixType.description === 'Travel') {
+      if (!provided(travel.amount)) {
+        errors.travelAmount = 'Required Field';
+      } else if (isNaN(travel.amount)) {
+        errors.travelAmount = 'Numeric Value Only';
+      }
+    } else {
+      if (!provided(amountCd)) {
+        errors.amount = 'Required Field';
+      }
+    }
+  }
+
+  if (matrixType.destinationEnabled === 1 && !provided(travel.destination)) {
+    errors.travelDestination = 'Required Field';
+  }
+
+  if (matrixType.dateEnabled === 1) {
+    if (!provided(travel.startDate)) {
+      errors.travelStartDate = 'Required Field';
+    }
+    if (!provided(travel.endDate)) {
+      errors.travelEndDate = 'Required Field';
+    }
+    if (
+      travel.startDate &&
+      travel.endDate &&
+      travel.startDate > travel.endDate
+    ) {
+      errors.travelEndDate = 'Return date must be after departure date';
+    }
+  }
+
+  if (matrixType.reasonEnabled === 1 && !provided(travel.reason)) {
+    errors.travelReason = 'Required Field';
+  }
+
+  return errors;
 }
 
 class _DisclosureStore extends AutoBindingStore {
@@ -1176,75 +1237,10 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   entityRelationshipStepErrors() {
-    const storeState = this.getState();
-    const errors = {};
-
-    const potentialRelationship = storeState.applicationState.potentialRelationship;
-    if (potentialRelationship.personCd === undefined || potentialRelationship.personCd.length === 0) {
-      errors.person = 'Required Field';
-    }
-
-    if (potentialRelationship.comments === undefined || potentialRelationship.comments.length === 0) {
-      errors.comment = 'Required Field';
-    }
-
-    const matrixType = window.config.matrixTypes.find(type => {
-      return type.typeCd === potentialRelationship.relationshipCd;
-    });
-
-
-    if (potentialRelationship.relationshipCd !== undefined && potentialRelationship.relationshipCd.length !== 0) {
-      if (matrixType.typeEnabled === 1) {
-        if (potentialRelationship.typeCd === undefined || potentialRelationship.typeCd.length === 0) {
-          errors.type = 'Required Field';
-        }
-      }
-
-      if (matrixType.amountEnabled === 1) {
-        if (matrixType.description === 'Travel') {
-          if (potentialRelationship.travel.amount === undefined || potentialRelationship.travel.amount.length === 0) {
-            errors.travelAmount = 'Required Field';
-          } else if (isNaN(potentialRelationship.travel.amount)) {
-            errors.travelAmount = 'Numeric Value Only';
-          }
-        } else {
-          if (potentialRelationship.amountCd === undefined || potentialRelationship.amountCd.length === 0) {
-            errors.amount = 'Required Field';
-          }
-        }
-      }
-
-      if (matrixType.destinationEnabled === 1) {
-        if (potentialRelationship.travel.destination === undefined || potentialRelationship.travel.destination.length === 0) {
-          errors.travelDestination = 'Required Field';
-        }
-      }
-
-      if (matrixType.dateEnabled === 1) {
-        if (potentialRelationship.travel.startDate === undefined || potentialRelationship.travel.startDate.length === 0) {
-          errors.travelStartDate = 'Required Field';
-        }
-        if (potentialRelationship.travel.endDate === undefined || potentialRelationship.travel.endDate.length === 0) {
-          errors.travelEndDate = 'Required Field';
-        }
-        if (potentialRelationship.travel.startDate && potentialRelationship.travel.endDate &&
-          potentialRelationship.travel.startDate > potentialRelationship.travel.endDate) {
-          errors.travelEndDate = 'Return date must be after departure date';
-        }
-      }
-
-      if (matrixType.reasonEnabled === 1) {
-        if (potentialRelationship.travel.reason === undefined || potentialRelationship.travel.reason.length === 0) {
-          errors.travelReason = 'Required Field';
-        }
-      }
-
-    }
-    else {
-      errors.relation = 'Required Field';
-    }
-
-    return errors;
+    return entityRelationshipStepErrors(
+      this.getState().applicationState.potentialRelationship,
+      window.config.matrixTypes
+    );
   }
 
   entityRelationshipStepComplete() {
