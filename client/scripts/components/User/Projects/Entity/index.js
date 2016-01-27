@@ -94,7 +94,11 @@ export class Entity extends React.Component {
     const relationships = [];
     this.props.entity.relationships.forEach((element) => {
       relationships.push(
-        <div key={element.id}>{ConfigStore.getRelationshipPersonTypeString(element.personCd)} - {ConfigStore.getRelationshipCategoryTypeString(element.relationshipCd)}</div>
+        <div key={element.id}>
+          {ConfigStore.getRelationshipPersonTypeString(element.personCd)}
+          -
+          {ConfigStore.getRelationshipCategoryTypeString(element.relationshipCd)}
+        </div>
       );
     });
 

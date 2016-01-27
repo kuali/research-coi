@@ -166,7 +166,13 @@ export default class Relationship extends React.Component {
                     <div className={styles.panelInstructions}>Configure the people types for your relationship matrix:</div>
                     <div className={`flexbox row`} style={{paddingLeft: 27}}>
                       <span className={styles.peopleLeft}>
-                        <input id="peopleCheckbox" type="checkbox" ref="peopleEnabled" checked={this.state.peopleEnabled} onChange={this.peopleEnabledChanged} />
+                        <input
+                          id="peopleCheckbox"
+                          type="checkbox"
+                          ref="peopleEnabled"
+                          checked={this.state.peopleEnabled}
+                          onChange={this.peopleEnabledChanged}
+                        />
                         <label htmlFor="peopleCheckbox" className={styles.peopleCheckboxLabel}>People</label>
                       </span>
                       <span className={`fill`}>

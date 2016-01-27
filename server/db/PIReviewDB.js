@@ -595,7 +595,14 @@ export const getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
 
       const knex = getKnex(dbInfo);
 
-      return knex.select('p.id', 'p.target_type as targetType', 'p.target_id as targetId', 'p.reviewed_on as reviewedOn', 'p.revised', 'p.responded_to as respondedTo')
+      return knex.select(
+          'p.id',
+          'p.target_type as targetType',
+          'p.target_id as targetId',
+          'p.reviewed_on as reviewedOn',
+          'p.revised',
+          'p.responded_to as respondedTo'
+        )
         .from('pi_review as p')
         .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
         .where({

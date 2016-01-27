@@ -267,7 +267,13 @@ export default class Entry extends React.Component {
               </span>
               <span style={{width: '50%'}}>
                 <span className={styles.label}>Amount:</span>
-                <span name="Amount" data-for={this.props.travelLog.entityName} className={styles.data}>{numeral(this.props.travelLog.amount).format('$0,0.00')}</span>
+                <span
+                  name="Amount"
+                  data-for={this.props.travelLog.entityName}
+                  className={styles.data}
+                >
+                  {numeral(this.props.travelLog.amount).format('$0,0.00')}
+                </span>
               </span>
             </div>
             <div>

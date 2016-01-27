@@ -213,7 +213,10 @@ export class EntityForm extends React.Component {
         </div>
       );
 
-      const entityIsSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id) && DisclosureStore.entityInformationStepComplete(this.props.entity.id);
+      const entityIsSubmittable = (
+        DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id) &&
+        DisclosureStore.entityInformationStepComplete(this.props.entity.id)
+      );
 
       const doneButtonStyle = classNames(
         styles.override,

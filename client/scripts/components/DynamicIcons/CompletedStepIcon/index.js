@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable react/jsx-closing-bracket-location */
+/* eslint-disable react/jsx-closing-bracket-location, max-len */
 
 import React from 'react';
 
