@@ -74,7 +74,7 @@ export class EntityForm extends React.Component {
       case 1:
         return DisclosureStore.entityInformationStepComplete(this.props.entity.id);
       case 2:
-        return DisclosureStore.entityRelationshipStepComplete();
+        return DisclosureStore.entityRelationshipStepComplete(this.props.entity.id);
     }
   }
 

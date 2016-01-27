@@ -1,4 +1,5 @@
 ##coi-1601
+* Fixed bug which prevented two new relations to simultaneusly added to different entities.
 * Fixed validation of new entity relationships.  Previously it was possible to 
   submit an entity without a comment.
 

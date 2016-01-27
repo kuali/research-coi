@@ -9,11 +9,7 @@ describe('DisclosureStore', () => {
   describe('unsubmittedRelationshipStarted', () => {
     it('returns false for empty person string', () => {
       const result = unSubmittedRelationshipStarted({
-        applicationState: {
-          potentialRelationship: {
-            personCd: ''
-          }
-        }
+        personCd: ''
       });
 
       assert.equal(result, false);
@@ -21,11 +17,7 @@ describe('DisclosureStore', () => {
 
     it('returns false for empty comment string', () => {
       const result = unSubmittedRelationshipStarted({
-        applicationState: {
-          potentialRelationship: {
-            comments: ''
-          }
-        }
+        comments: ''
       });
 
       assert.equal(result, false);
@@ -33,11 +25,7 @@ describe('DisclosureStore', () => {
 
     it('returns false for empty relationshipCd string', () => {
       const result = unSubmittedRelationshipStarted({
-        applicationState: {
-          potentialRelationship: {
-            relationshipCd: ''
-          }
-        }
+        relationshipCd: ''
       });
 
       assert.equal(result, false);
@@ -50,20 +38,11 @@ describe('DisclosureStore', () => {
       result = unSubmittedRelationshipStarted({
       });
       assert.equal(result, false);
-
-      result = unSubmittedRelationshipStarted({
-        applicationState: {}
-      });
-      assert.equal(result, false);
     });
 
     it('person has started', () => {
       const result = unSubmittedRelationshipStarted({
-        applicationState: {
-          potentialRelationship: {
-            personCd: 4
-          }
-        }
+        personCd: 4
       });
 
       assert.equal(result, true);
@@ -71,11 +50,7 @@ describe('DisclosureStore', () => {
 
     it('relationship has started', () => {
       const result = unSubmittedRelationshipStarted({
-        applicationState: {
-          potentialRelationship: {
-            relationshipCd: 3
-          }
-        }
+        relationshipCd: 3
       });
 
       assert.equal(result, true);
@@ -83,11 +58,7 @@ describe('DisclosureStore', () => {
 
     it('comments has started', () => {
       const result = unSubmittedRelationshipStarted({
-        applicationState: {
-          potentialRelationship: {
-            comments: 'bla'
-          }
-        }
+        comments: 'bla'
       });
 
       assert.equal(result, true);
@@ -95,10 +66,6 @@ describe('DisclosureStore', () => {
 
     it('no parts have started', () => {
       const result = unSubmittedRelationshipStarted({
-        applicationState: {
-          potentialRelationship: {
-          }
-        }
       });
 
       assert.equal(result, false);

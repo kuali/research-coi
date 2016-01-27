@@ -87,25 +87,25 @@ class _DisclosureActions {
     });
   }
 
-  setEntityRelationshipPerson(person) { this.dispatch(person); }
+  setEntityRelationshipPerson(person, entityId) { this.dispatch({person, entityId}); }
 
-  setEntityRelationshipTravelAmount(amount) { this.dispatch(amount); }
+  setEntityRelationshipTravelAmount(amount, entityId) { this.dispatch({amount, entityId}); }
 
-  setEntityRelationshipTravelDestination(destination) { this.dispatch(destination); }
+  setEntityRelationshipTravelDestination(destination, entityId) { this.dispatch({destination, entityId}); }
 
-  setEntityRelationshipTravelStartDate(date) { this.dispatch(date); }
+  setEntityRelationshipTravelStartDate(date, entityId) { this.dispatch({date, entityId}); }
 
-  setEntityRelationshipTravelEndDate(date) { this.dispatch(date); }
+  setEntityRelationshipTravelEndDate(date, entityId) { this.dispatch({date, entityId}); }
 
-  setEntityRelationshipTravelReason(reason) { this.dispatch(reason); }
+  setEntityRelationshipTravelReason(reason, entityId) { this.dispatch({reason, entityId}); }
 
-  setEntityRelationshipRelation(relation) { this.dispatch(relation); }
+  setEntityRelationshipRelation(relation, entityId) { this.dispatch({relation, entityId}); }
 
-  setEntityRelationshipType(type) { this.dispatch(type); }
+  setEntityRelationshipType(type, entityId) { this.dispatch({type, entityId}); }
 
-  setEntityRelationshipAmount(amount) { this.dispatch(amount); }
+  setEntityRelationshipAmount(amount, entityId) { this.dispatch({amount, entityId}); }
 
-  setEntityRelationshipComment(comment) { this.dispatch(comment); }
+  setEntityRelationshipComment(comment, entityId) { this.dispatch({comment, entityId}); }
 
   addEntityRelationship(entityId) {
     this.dispatch(entityId);

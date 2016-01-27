@@ -59,12 +59,12 @@ export class EntityFormRelationshipStep extends React.Component {
   }
 
   addRelation() {
-    const validationErrors = DisclosureStore.entityRelationshipStepErrors();
+    const validationErrors = DisclosureStore.entityRelationshipStepErrors(this.props.id);
     const isValid = Object.keys(validationErrors).length === 0;
 
     const stepNumber = 2;
     if (isValid) {
-      this.props.onAddRelationship(this.props.appState.potentialRelationship);
+      this.props.onAddRelationship(this.props.appState.potentialRelationships[this.props.id]);
 
       this.setState({
         relation: ''
@@ -76,42 +76,51 @@ export class EntityFormRelationshipStep extends React.Component {
   }
 
   typeSelected() {
-    DisclosureActions.setEntityRelationshipType(parseInt(this.refs.typeSelect.value));
+    DisclosureActions.setEntityRelationshipType(
+      parseInt(this.refs.typeSelect.value),
+      this.props.id
+    );
   }
 
   amountSelected() {
-    DisclosureActions.setEntityRelationshipAmount(parseInt(this.refs.amountSelect.value));
+    DisclosureActions.setEntityRelationshipAmount(
+      parseInt(this.refs.amountSelect.value),
+      this.props.id
+    );
   }
 
   personSelected() {
-    DisclosureActions.setEntityRelationshipPerson(parseInt(this.refs.personSelect.value));
+    DisclosureActions.setEntityRelationshipPerson(
+      parseInt(this.refs.personSelect.value),
+      this.props.id
+    );
   }
 
   amountChanged(value) {
-    DisclosureActions.setEntityRelationshipTravelAmount(value);
+    DisclosureActions.setEntityRelationshipTravelAmount(value, this.props.id);
   }
 
   destinationChanged(value) {
-    DisclosureActions.setEntityRelationshipTravelDestination(value);
+    DisclosureActions.setEntityRelationshipTravelDestination(value, this.props.id);
   }
 
   startDateSelected(newDate) {
-    DisclosureActions.setEntityRelationshipTravelStartDate(newDate);
+    DisclosureActions.setEntityRelationshipTravelStartDate(newDate, this.props.id);
   }
 
   endDateSelected(newDate) {
-    DisclosureActions.setEntityRelationshipTravelEndDate(newDate);
+    DisclosureActions.setEntityRelationshipTravelEndDate(newDate, this.props.id);
   }
 
   reasonChanged(value) {
-    DisclosureActions.setEntityRelationshipTravelReason(value);
+    DisclosureActions.setEntityRelationshipTravelReason(value, this.props.id);
   }
   commentChanged() {
-    DisclosureActions.setEntityRelationshipComment(this.refs.commentTextArea.value);
+    DisclosureActions.setEntityRelationshipComment(this.refs.commentTextArea.value, this.props.id);
   }
 
   relationChosen(relation) {
-    DisclosureActions.setEntityRelationshipRelation(relation);
+    DisclosureActions.setEntityRelationshipRelation(relation, this.props.id);
     this.setState({
       relation,
       matrixType: this.getMatrixType(relation)
@@ -125,7 +134,31 @@ export class EntityFormRelationshipStep extends React.Component {
   }
 
   render() {
-    const validationErrors = DisclosureStore.entityRelationshipStepErrors();
+    let potentialRelationship;
+    if (this.props.id) {
+      potentialRelationship = this.props.appState.potentialRelationships[this.props.id];
+    }
+    else {
+      potentialRelationship = this.props.appState.potentialRelationships.new;
+    }
+    if (!potentialRelationship) {
+      potentialRelationship = {
+        comments: '',
+        typeCd: '',
+        amountCd: '',
+        personCd: '',
+        relationshipCd: '',
+        travel: {
+          amount: 0,
+          destination: '',
+          startDate: 0,
+          endDate: 0,
+          reason: ''
+        }
+      };
+    }
+
+    const validationErrors = DisclosureStore.entityRelationshipStepErrors(this.props.id);
     const isValid = Object.keys(validationErrors).length === 0;
 
     let typeSection;
@@ -149,7 +182,7 @@ export class EntityFormRelationshipStep extends React.Component {
           <select
             onChange={this.typeSelected}
             ref="typeSelect"
-            value={this.props.appState.potentialRelationship.typeCd}
+            value={potentialRelationship.typeCd}
             className={dropDownStyle}
           >
             <option value="">--SELECT--</option>
@@ -177,7 +210,7 @@ export class EntityFormRelationshipStep extends React.Component {
           <RelationshipTextField
             invalid={this.props.validating && validationErrors.travelAmount ? true : false}
             onChange={this.amountChanged}
-            value={this.props.appState.potentialRelationship.travel.amount}
+            value={potentialRelationship.travel.amount}
             label='Amount'
           />
         );
@@ -188,7 +221,7 @@ export class EntityFormRelationshipStep extends React.Component {
             <select
               onChange={this.amountSelected}
               ref="amountSelect"
-              value={this.props.appState.potentialRelationship.amountCd}
+              value={potentialRelationship.amountCd}
               className={dropDownStyle}
             >
               <option value="">--SELECT--</option>
@@ -205,7 +238,7 @@ export class EntityFormRelationshipStep extends React.Component {
         <RelationshipTextField
           invalid={this.props.validating && validationErrors.travelDestination ? true : false}
           onChange={this.destinationChanged}
-          value={this.props.appState.potentialRelationship.travel.destination}
+          value={potentialRelationship.travel.destination}
           label='Destination'
         />
       );
@@ -219,7 +252,7 @@ export class EntityFormRelationshipStep extends React.Component {
         <RelationshipDateField
           invalid={this.props.validating && validationErrors.travelStartDate ? true : false}
           onChange={this.startDateSelected}
-          value={this.props.appState.potentialRelationship.travel.startDate}
+          value={potentialRelationship.travel.startDate}
           label='Departure Date'
         />
       );
@@ -228,7 +261,7 @@ export class EntityFormRelationshipStep extends React.Component {
         <RelationshipDateField
           invalid={this.props.validating && validationErrors.travelEndDate ? true : false}
           onChange={this.endDateSelected}
-          value={this.props.appState.potentialRelationship.travel.endDate}
+          value={potentialRelationship.travel.endDate}
           label='Return Date'
         />
       );
@@ -240,7 +273,7 @@ export class EntityFormRelationshipStep extends React.Component {
         <RelationshipTextField
           invalid={this.props.validating && validationErrors.travelReason ? true : false}
           onChange={this.reasonChanged}
-          value={this.props.appState.potentialRelationship.travel.reason}
+          value={potentialRelationship.travel.reason}
           label='Reason'
         />
       );
@@ -320,7 +353,7 @@ export class EntityFormRelationshipStep extends React.Component {
                   <select
                     onChange={this.personSelected}
                     ref="personSelect"
-                    value={this.props.appState.potentialRelationship.personCd}
+                    value={potentialRelationship.personCd}
                     className={personDropDownStyle}
                   >
                     <option value="">--SELECT--</option>
@@ -339,7 +372,7 @@ export class EntityFormRelationshipStep extends React.Component {
               <div className={relationStyle}>RELATIONSHIP</div>
               <div>
                 <ToggleSet
-                  selected={this.props.appState.potentialRelationship.relationshipCd}
+                  selected={potentialRelationship.relationshipCd}
                   onChoose={this.relationChosen}
                   values={window.config.matrixTypes.filter(type => {
                     return type.enabled === 1;
@@ -358,7 +391,7 @@ export class EntityFormRelationshipStep extends React.Component {
                   <textarea
                     id={htmlId}
                     onChange={this.commentChanged}
-                    value={this.props.appState.potentialRelationship.comments}
+                    value={potentialRelationship.comments}
                     className={commentTextboxStyle}
                     ref="commentTextArea"
                   />

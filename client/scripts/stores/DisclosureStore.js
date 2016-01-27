@@ -38,22 +38,23 @@ function provided(value) {
   );
 }
 
-export function unSubmittedRelationshipStarted(storeState) {
+export function unSubmittedRelationshipStarted(potentialRelationship) {
   if (
-    !storeState ||
-    !storeState.applicationState ||
-    !storeState.applicationState.potentialRelationship
+    !potentialRelationship
   ) {
     return false;
   }
 
-  const {personCd, comments, relationshipCd} = storeState.applicationState.potentialRelationship;
-
+  const {personCd, comments, relationshipCd} = potentialRelationship;
   return provided(personCd) || provided(comments) || provided(relationshipCd);
 }
 
 export function entityRelationshipStepErrors(potentialRelationship, matrixTypes) {
   const errors = {};
+
+  if (!potentialRelationship) {
+    return errors;
+  }
 
   const {
     personCd,
@@ -175,13 +176,7 @@ class _DisclosureStore extends AutoBindingStore {
         active: 1,
         answers: []
       },
-      potentialRelationship: {
-        personCd: '',
-        relationshipCd: '',
-        typeCd: '',
-        amountCd: '',
-        comments: '',
-        travel: {}
+      potentialRelationships: {
       },
       validatingEntityNameStep: false,
       validatingEntityInformationStep: false,
@@ -662,106 +657,93 @@ class _DisclosureStore extends AutoBindingStore {
     entity.description = params.description;
   }
 
-  setEntityRelationshipPerson(personCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  getPotentialRelationship(entityId = 'new') {
+    let relationship = this.applicationState.potentialRelationships[entityId];
+    if (!relationship) {
+      this.applicationState.potentialRelationships[entityId] = {
+        personCd: '',
+        relationshipCd: '',
+        typeCd: '',
+        amountCd: '',
+        comments: '',
+        travel: {}
+      };
+      relationship = this.applicationState.potentialRelationships[entityId];
     }
-
-    this.applicationState.potentialRelationship.personCd = personCd;
+    return relationship;
   }
 
-  setEntityRelationshipTravelAmount(amount) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
-
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.amount = amount;
+  setEntityRelationshipPerson(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.personCd = params.person;
   }
 
-  setEntityRelationshipTravelDestination(destination) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelAmount(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.destination = destination;
+    relationship.travel.amount = params.amount;
   }
 
-  setEntityRelationshipTravelStartDate(date) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelDestination(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.startDate = date;
+    relationship.travel.destination = params.destination;
   }
 
-  setEntityRelationshipTravelEndDate(date) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelStartDate(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.endDate = date;
+    relationship.travel.startDate = params.date;
   }
 
-  setEntityRelationshipTravelReason(reason) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelEndDate(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.reason = reason;
+    relationship.travel.endDate = params.date;
   }
 
-  setEntityRelationshipRelation(relationshipCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelReason(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    this.applicationState.potentialRelationship.relationshipCd = relationshipCd;
-    this.setEntityRelationshipType('');
-    this.setEntityRelationshipAmount('');
+    relationship.travel.reason = params.reason;
   }
 
-  setEntityRelationshipType(typeCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
+  setEntityRelationshipRelation(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
 
-    this.applicationState.potentialRelationship.typeCd = typeCd;
+    relationship.relationshipCd = params.relation;
+    this.setEntityRelationshipType('', params.entityId);
+    this.setEntityRelationshipAmount('', params.entityId);
   }
 
-  setEntityRelationshipAmount(amountCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
-
-    this.applicationState.potentialRelationship.amountCd = amountCd;
+  setEntityRelationshipType(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.typeCd = params.type;
   }
 
-  setEntityRelationshipComment(comment) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
+  setEntityRelationshipAmount(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.amountCd = params.amount;
+  }
 
-    this.applicationState.potentialRelationship.comments = comment;
+  setEntityRelationshipComment(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.comments = params.comment;
   }
 
   addEntityRelationship(entityId) {
@@ -771,7 +753,10 @@ class _DisclosureStore extends AutoBindingStore {
       entity.relationships = [];
     }
 
-    const relation = this.applicationState.potentialRelationship;
+    let relation = this.applicationState.potentialRelationships[entityId];
+    if (!relation) {
+      relation = this.applicationState.potentialRelationships.new;
+    }
 
     relation.id = `${COIConstants.TMP_PLACEHOLDER}${new Date().getTime()}`;
     const matrixType = window.config.matrixTypes.find(matrix => {
@@ -784,18 +769,12 @@ class _DisclosureStore extends AutoBindingStore {
     relation.person = this.getDescriptionFromCode(relation.personCd, window.config.relationshipPersonTypes);
     entity.relationships.push(relation);
 
-    this.applicationState.potentialRelationship = {
-      personCd: '',
-      person: '',
-      relationship: '',
-      relationshipCd: '',
-      type: '',
-      typeCd: '',
-      amount: '',
-      amountCd: '',
-      comments: '',
-      travel: {}
-    };
+    if (entityId) {
+      delete this.applicationState.potentialRelationships[entityId];
+    }
+    else {
+      delete this.applicationState.potentialRelationships.new;
+    }
   }
 
   getDescriptionFromCode(typeCd, collection) {
@@ -829,9 +808,12 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityFormClosed(entity) {
     if (entity.id) {
-      const personCd = this.applicationState.potentialRelationship.personCd;
-      if (personCd && personCd > 0) {
-        this.addEntityRelationship(entity.id);
+      const potentialRelationship = this.applicationState.potentialRelationships[entity.id];
+      if (potentialRelationship) {
+        const personCd = potentialRelationship.personCd;
+        if (personCd && personCd > 0) {
+          this.addEntityRelationship(entity.id);
+        }
       }
 
       const formData = new FormData();
@@ -887,9 +869,16 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   saveInProgressEntity(entity) {
-    const personCd = this.applicationState.potentialRelationship.personCd;
-    if (personCd && personCd > 0) {
-      this.addEntityRelationship();
+    let potentialRelationship = this.applicationState.potentialRelationships[entity.id];
+    if (!entity.id) {
+      potentialRelationship = this.applicationState.potentialRelationships.new;
+    }
+
+    if (potentialRelationship) {
+      const personCd = potentialRelationship.personCd;
+      if (personCd && personCd > 0) {
+        this.addEntityRelationship();
+      }
     }
 
     if (!this.entities) {
@@ -1236,15 +1225,15 @@ class _DisclosureStore extends AutoBindingStore {
     return true;
   }
 
-  entityRelationshipStepErrors() {
+  entityRelationshipStepErrors(entityId = 'new') {
     return entityRelationshipStepErrors(
-      this.getState().applicationState.potentialRelationship,
+      this.getState().applicationState.potentialRelationships[entityId],
       window.config.matrixTypes
     );
   }
 
-  entityRelationshipStepComplete() {
-    const errors = this.entityRelationshipStepErrors();
+  entityRelationshipStepComplete(entityId) {
+    const errors = this.entityRelationshipStepErrors(entityId);
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -1257,9 +1246,7 @@ class _DisclosureStore extends AutoBindingStore {
     const storeState = this.getState();
     let entity;
     if (id) {
-      entity = storeState.entities.find(ent => {
-        return ent.id === id;
-      });
+      entity = storeState.entities.find(ent => ent.id === id);
     }
     else {
       entity = storeState.applicationState.entityInProgress;
@@ -1270,14 +1257,18 @@ class _DisclosureStore extends AutoBindingStore {
     };
 
     if (atLeastOneRelationshipAdded()) {
-      if (unSubmittedRelationshipStarted(storeState)) {
-        return this.entityRelationshipStepComplete();
+      let potentialRelationship = storeState.applicationState.potentialRelationships[id];
+      if (!potentialRelationship) {
+        potentialRelationship = storeState.applicationState.potentialRelationships.new;
+      }
+      if (unSubmittedRelationshipStarted(potentialRelationship)) {
+        return this.entityRelationshipStepComplete(id);
       }
 
       return true;
     }
 
-    return this.entityRelationshipStepComplete();
+    return this.entityRelationshipStepComplete(id);
   }
 
 
