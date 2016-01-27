@@ -66,13 +66,25 @@ export default class TravelRelationshipType extends RelationshipType {
           </div>
           <div className={`flexbox row ${styles.amountSection}`}>
             <span className={styles.left}>
-              <input id="amountCheckbox" type="checkbox" ref="amountEnabled" checked={this.props.amountEnabled === 1} onChange={this.amountEnabledChanged} />
+              <input
+                id="amountCheckbox"
+                type="checkbox"
+                ref="amountEnabled"
+                checked={this.props.amountEnabled === 1}
+                onChange={this.amountEnabledChanged}
+              />
               <label htmlFor="amountCheckbox" className={styles.checkboxLabel}>Amount</label>
             </span>
           </div>
           <div className={`flexbox row ${styles.amountSection}`}>
             <span className={styles.left}>
-              <input id="destinationCheckbox" type="checkbox" ref="destinationEnabled" checked={this.props.destinationEnabled === 1} onChange={this.destinationEnabledChanged} />
+              <input
+                id="destinationCheckbox"
+                type="checkbox"
+                ref="destinationEnabled"
+                checked={this.props.destinationEnabled === 1}
+                onChange={this.destinationEnabledChanged}
+              />
               <label htmlFor="destinationCheckbox" className={styles.checkboxLabel}>Destination</label>
             </span>
           </div>

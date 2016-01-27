@@ -28,6 +28,106 @@ const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
 };
 
+function provided(value) {
+  return (
+    (value !== undefined && value !== null) &&
+    (
+      (typeof value === 'string' && value.length > 0) ||
+      (typeof value !== 'string' && value !== 0)
+    )
+  );
+}
+
+export function unSubmittedRelationshipStarted(potentialRelationship) {
+  if (
+    !potentialRelationship
+  ) {
+    return false;
+  }
+
+  const {personCd, comments, relationshipCd} = potentialRelationship;
+  return provided(personCd) || provided(comments) || provided(relationshipCd);
+}
+
+export function entityRelationshipStepErrors(potentialRelationship, matrixTypes) {
+  const errors = {};
+
+  if (!potentialRelationship) {
+    return errors;
+  }
+
+  const {
+    personCd,
+    comments,
+    relationshipCd,
+    typeCd,
+    travel,
+    amountCd
+  } = potentialRelationship;
+
+  if (!provided(personCd)) {
+    errors.person = 'Required Field';
+  }
+
+  if (!provided(comments)) {
+    errors.comment = 'Required Field';
+  }
+
+  if (!provided(relationshipCd)) {
+    errors.relation = 'Required Field';
+    return errors;
+  }
+
+  const matrixType = matrixTypes.find(type => type.typeCd === relationshipCd);
+  if (matrixType === undefined) {
+    throw new Error('Invalid relationshipCd');
+  }
+
+  if (matrixType.typeEnabled === 1 && !provided(typeCd)) {
+    errors.type = 'Required Field';
+  }
+
+  if (matrixType.amountEnabled === 1) {
+    if (matrixType.description === 'Travel') {
+      if (!provided(travel.amount)) {
+        errors.travelAmount = 'Required Field';
+      } else if (isNaN(travel.amount)) {
+        errors.travelAmount = 'Numeric Value Only';
+      }
+    } else {
+      if (!provided(amountCd)) {
+        errors.amount = 'Required Field';
+      }
+    }
+  }
+
+  if (matrixType.destinationEnabled === 1 && !provided(travel.destination)) {
+    errors.travelDestination = 'Required Field';
+  }
+
+  if (matrixType.dateEnabled === 1) {
+    if (!provided(travel.startDate)) {
+      errors.travelStartDate = 'Required Field';
+    }
+    if (!provided(travel.endDate)) {
+      errors.travelEndDate = 'Required Field';
+    }
+    if (
+      travel.startDate &&
+      travel.endDate &&
+      travel.startDate > travel.endDate
+    ) {
+      errors.travelEndDate = 'Return date must be after departure date';
+    }
+  }
+
+  if (matrixType.reasonEnabled === 1 && !provided(travel.reason)) {
+    errors.travelReason = 'Required Field';
+  }
+
+  return errors;
+}
+
 class _DisclosureStore extends AutoBindingStore {
   constructor() {
     super(DisclosureActions);
@@ -76,13 +176,7 @@ class _DisclosureStore extends AutoBindingStore {
         active: 1,
         answers: []
       },
-      potentialRelationship: {
-        personCd: '',
-        relationshipCd: '',
-        typeCd: '',
-        amountCd: '',
-        comments: '',
-        travel: {}
+      potentialRelationships: {
       },
       validatingEntityNameStep: false,
       validatingEntityInformationStep: false,
@@ -563,106 +657,93 @@ class _DisclosureStore extends AutoBindingStore {
     entity.description = params.description;
   }
 
-  setEntityRelationshipPerson(personCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  getPotentialRelationship(entityId = 'new') {
+    let relationship = this.applicationState.potentialRelationships[entityId];
+    if (!relationship) {
+      this.applicationState.potentialRelationships[entityId] = {
+        personCd: '',
+        relationshipCd: '',
+        typeCd: '',
+        amountCd: '',
+        comments: '',
+        travel: {}
+      };
+      relationship = this.applicationState.potentialRelationships[entityId];
     }
-
-    this.applicationState.potentialRelationship.personCd = personCd;
+    return relationship;
   }
 
-  setEntityRelationshipTravelAmount(amount) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
-
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.amount = amount;
+  setEntityRelationshipPerson(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.personCd = params.person;
   }
 
-  setEntityRelationshipTravelDestination(destination) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelAmount(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.destination = destination;
+    relationship.travel.amount = params.amount;
   }
 
-  setEntityRelationshipTravelStartDate(date) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelDestination(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.startDate = date;
+    relationship.travel.destination = params.destination;
   }
 
-  setEntityRelationshipTravelEndDate(date) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelStartDate(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.endDate = date;
+    relationship.travel.startDate = params.date;
   }
 
-  setEntityRelationshipTravelReason(reason) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelEndDate(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    if (!this.applicationState.potentialRelationship.travel) {
-      this.applicationState.potentialRelationship.travel = {};
-    }
-
-    this.applicationState.potentialRelationship.travel.reason = reason;
+    relationship.travel.endDate = params.date;
   }
 
-  setEntityRelationshipRelation(relationshipCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
+  setEntityRelationshipTravelReason(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    if (!relationship.travel) {
+      relationship.travel = {};
     }
 
-    this.applicationState.potentialRelationship.relationshipCd = relationshipCd;
-    this.setEntityRelationshipType('');
-    this.setEntityRelationshipAmount('');
+    relationship.travel.reason = params.reason;
   }
 
-  setEntityRelationshipType(typeCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
+  setEntityRelationshipRelation(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
 
-    this.applicationState.potentialRelationship.typeCd = typeCd;
+    relationship.relationshipCd = params.relation;
+    this.setEntityRelationshipType('', params.entityId);
+    this.setEntityRelationshipAmount('', params.entityId);
   }
 
-  setEntityRelationshipAmount(amountCd) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
-
-    this.applicationState.potentialRelationship.amountCd = amountCd;
+  setEntityRelationshipType(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.typeCd = params.type;
   }
 
-  setEntityRelationshipComment(comment) {
-    if (!this.applicationState.potentialRelationship) {
-      this.applicationState.potentialRelationship = {};
-    }
+  setEntityRelationshipAmount(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.amountCd = params.amount;
+  }
 
-    this.applicationState.potentialRelationship.comments = comment;
+  setEntityRelationshipComment(params) {
+    const relationship = this.getPotentialRelationship(params.entityId);
+    relationship.comments = params.comment;
   }
 
   addEntityRelationship(entityId) {
@@ -672,7 +753,10 @@ class _DisclosureStore extends AutoBindingStore {
       entity.relationships = [];
     }
 
-    const relation = this.applicationState.potentialRelationship;
+    let relation = this.applicationState.potentialRelationships[entityId];
+    if (!relation) {
+      relation = this.applicationState.potentialRelationships.new;
+    }
 
     relation.id = `${COIConstants.TMP_PLACEHOLDER}${new Date().getTime()}`;
     const matrixType = window.config.matrixTypes.find(matrix => {
@@ -685,18 +769,12 @@ class _DisclosureStore extends AutoBindingStore {
     relation.person = this.getDescriptionFromCode(relation.personCd, window.config.relationshipPersonTypes);
     entity.relationships.push(relation);
 
-    this.applicationState.potentialRelationship = {
-      personCd: '',
-      person: '',
-      relationship: '',
-      relationshipCd: '',
-      type: '',
-      typeCd: '',
-      amount: '',
-      amountCd: '',
-      comments: '',
-      travel: {}
-    };
+    if (entityId) {
+      delete this.applicationState.potentialRelationships[entityId];
+    }
+    else {
+      delete this.applicationState.potentialRelationships.new;
+    }
   }
 
   getDescriptionFromCode(typeCd, collection) {
@@ -730,9 +808,12 @@ class _DisclosureStore extends AutoBindingStore {
 
   entityFormClosed(entity) {
     if (entity.id) {
-      const personCd = this.applicationState.potentialRelationship.personCd;
-      if (personCd && personCd > 0) {
-        this.addEntityRelationship(entity.id);
+      const potentialRelationship = this.applicationState.potentialRelationships[entity.id];
+      if (potentialRelationship) {
+        const personCd = potentialRelationship.personCd;
+        if (personCd && personCd > 0) {
+          this.addEntityRelationship(entity.id);
+        }
       }
 
       const formData = new FormData();
@@ -788,9 +869,16 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   saveInProgressEntity(entity) {
-    const personCd = this.applicationState.potentialRelationship.personCd;
-    if (personCd && personCd > 0) {
-      this.addEntityRelationship();
+    let potentialRelationship = this.applicationState.potentialRelationships[entity.id];
+    if (!entity.id) {
+      potentialRelationship = this.applicationState.potentialRelationships.new;
+    }
+
+    if (potentialRelationship) {
+      const personCd = potentialRelationship.personCd;
+      if (personCd && personCd > 0) {
+        this.addEntityRelationship();
+      }
     }
 
     if (!this.entities) {
@@ -1137,80 +1225,15 @@ class _DisclosureStore extends AutoBindingStore {
     return true;
   }
 
-  entityRelationshipStepErrors() {
-    const storeState = this.getState();
-    const errors = {};
-
-    const potentialRelationship = storeState.applicationState.potentialRelationship;
-    if (potentialRelationship.personCd === undefined || potentialRelationship.personCd.length === 0) {
-      errors.person = 'Required Field';
-    }
-
-    if (potentialRelationship.comments === undefined || potentialRelationship.comments.length === 0) {
-      errors.comment = 'Required Field';
-    }
-
-    const matrixType = window.config.matrixTypes.find(type => {
-      return type.typeCd === potentialRelationship.relationshipCd;
-    });
-
-
-    if (potentialRelationship.relationshipCd !== undefined && potentialRelationship.relationshipCd.length !== 0) {
-      if (matrixType.typeEnabled === 1) {
-        if (potentialRelationship.typeCd === undefined || potentialRelationship.typeCd.length === 0) {
-          errors.type = 'Required Field';
-        }
-      }
-
-      if (matrixType.amountEnabled === 1) {
-        if (matrixType.description === 'Travel') {
-          if (potentialRelationship.travel.amount === undefined || potentialRelationship.travel.amount.length === 0) {
-            errors.travelAmount = 'Required Field';
-          } else if (isNaN(potentialRelationship.travel.amount)) {
-            errors.travelAmount = 'Numeric Value Only';
-          }
-        } else {
-          if (potentialRelationship.amountCd === undefined || potentialRelationship.amountCd.length === 0) {
-            errors.amount = 'Required Field';
-          }
-        }
-      }
-
-      if (matrixType.destinationEnabled === 1) {
-        if (potentialRelationship.travel.destination === undefined || potentialRelationship.travel.destination.length === 0) {
-          errors.travelDestination = 'Required Field';
-        }
-      }
-
-      if (matrixType.dateEnabled === 1) {
-        if (potentialRelationship.travel.startDate === undefined || potentialRelationship.travel.startDate.length === 0) {
-          errors.travelStartDate = 'Required Field';
-        }
-        if (potentialRelationship.travel.endDate === undefined || potentialRelationship.travel.endDate.length === 0) {
-          errors.travelEndDate = 'Required Field';
-        }
-        if (potentialRelationship.travel.startDate && potentialRelationship.travel.endDate &&
-          potentialRelationship.travel.startDate > potentialRelationship.travel.endDate) {
-          errors.travelEndDate = 'Return date must be after departure date';
-        }
-      }
-
-      if (matrixType.reasonEnabled === 1) {
-        if (potentialRelationship.travel.reason === undefined || potentialRelationship.travel.reason.length === 0) {
-          errors.travelReason = 'Required Field';
-        }
-      }
-
-    }
-    else {
-      errors.relation = 'Required Field';
-    }
-
-    return errors;
+  entityRelationshipStepErrors(entityId = 'new') {
+    return entityRelationshipStepErrors(
+      this.getState().applicationState.potentialRelationships[entityId],
+      window.config.matrixTypes
+    );
   }
 
-  entityRelationshipStepComplete() {
-    const errors = this.entityRelationshipStepErrors();
+  entityRelationshipStepComplete(entityId) {
+    const errors = this.entityRelationshipStepErrors(entityId);
 
     if (Object.keys(errors).length > 0) {
       return false;
@@ -1223,9 +1246,7 @@ class _DisclosureStore extends AutoBindingStore {
     const storeState = this.getState();
     let entity;
     if (id) {
-      entity = storeState.entities.find(ent => {
-        return ent.id === id;
-      });
+      entity = storeState.entities.find(ent => ent.id === id);
     }
     else {
       entity = storeState.applicationState.entityInProgress;
@@ -1235,22 +1256,19 @@ class _DisclosureStore extends AutoBindingStore {
       return entity.relationships && entity.relationships.length > 0;
     };
 
-    const unSubmittedRelationshipStarted = () => {
-      const potentialRelationship = storeState.applicationState.potentialRelationship;
-      return (potentialRelationship.personCd && potentialRelationship.personCd.length > 0) ||
-          (potentialRelationship.comments && potentialRelationship.comments.length > 0) ||
-          (potentialRelationship.relationshipCd && potentialRelationship.relationshipCd.length > 0);
-    };
-
     if (atLeastOneRelationshipAdded()) {
-      if (unSubmittedRelationshipStarted()) {
-        return this.entityRelationshipStepComplete();
+      let potentialRelationship = storeState.applicationState.potentialRelationships[id];
+      if (!potentialRelationship) {
+        potentialRelationship = storeState.applicationState.potentialRelationships.new;
+      }
+      if (unSubmittedRelationshipStarted(potentialRelationship)) {
+        return this.entityRelationshipStepComplete(id);
       }
 
       return true;
     }
 
-    return this.entityRelationshipStepComplete();
+    return this.entityRelationshipStepComplete(id);
   }
 
 

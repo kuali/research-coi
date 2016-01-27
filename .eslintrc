@@ -22,7 +22,8 @@
             2, 
             { "skipBlankLines": true }
         ],
-        "max-len": [1, 180, 2],
+        "dot-notation": 2,
+        "max-len": [1, 160, 2],
         "no-unexpected-multiline": 2,
         "block-scoped-var": 2,
         "consistent-return": 2,
@@ -42,7 +43,7 @@
         "no-with": 2,
         "yoda": 2,
         "no-shadow": 2,
-        "no-use-before-define": 2,
+        "no-use-before-define": [2, 'nofunc'],
         "arrow-spacing": 2,
         "constructor-super": 2,
         "no-const-assign": 2,
@@ -74,7 +75,8 @@
     "env": {
         "es6": true,
         "node": true,
-        "browser": true
+        "browser": true,
+        "mocha": true
     },
     "extends": "eslint:recommended",
     "ecmaFeatures": {

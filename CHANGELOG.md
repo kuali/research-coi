@@ -1,3 +1,8 @@
+##coi-1601
+* Fixed bug which prevented two new relations to simultaneusly added to different entities.
+* Fixed validation of new entity relationships.  Previously it was possible to 
+  submit an entity without a comment.
+
 ##coi-1512
 * Fixed an issue when running the mock auth client that used the incorrect host 
   in some situations. Fixed by no longer including protocol of host on the

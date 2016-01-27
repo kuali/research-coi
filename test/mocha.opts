@@ -1,0 +1,6 @@
+--recursive
+--harmony
+--require babel-register
+--require babel-polyfill
+--require test/setup.js
+test

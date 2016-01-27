@@ -209,7 +209,14 @@ export const setConfig = (dbInfo, userId, body, optionalTrx) => {
     );
 
     queries.push(
-      createCollectionQueries(query, type.amount_options, {pk: 'type_cd', table: 'relationship_amount_type', where: {key: 'relationship_cd', value: type.type_cd}})
+      createCollectionQueries(query, type.amount_options, {
+        pk: 'type_cd',
+        table: 'relationship_amount_type',
+        where: {
+          key: 'relationship_cd',
+          value: type.type_cd
+        }
+      })
     );
   });
 

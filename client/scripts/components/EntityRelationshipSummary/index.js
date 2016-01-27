@@ -86,10 +86,18 @@ export default class EntityRelationshipSummary extends React.Component {
               {`${ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd)} • `}
             </span>
             <span style={{display: 'inline'}}>
-              {this.props.relationship.typeCd ? `${ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd)} • ` : ''}
+              {
+                this.props.relationship.typeCd ?
+                  `${ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd)} • ` :
+                  ''
+              }
             </span>
             <span style={{display: 'inline'}}>
-              {this.props.relationship.amountCd ? ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) : ''}
+              {
+                this.props.relationship.amountCd ?
+                  ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) :
+                  ''
+              }
             </span>
           </span>
         </div>

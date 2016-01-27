@@ -105,7 +105,13 @@ const saveProjectPersons = (dbInfo, persons, projectId) => {
             return person.personId === pr.person_id && person.sourcePersonType === pr.source_person_type;
           }) === undefined;
         }).map(result => {
-          return knex('project_person').update('active', false).where({'person_id': result.person_id, 'source_person_type': result.source_person_type, 'project_id': projectId});
+          return knex('project_person')
+            .update('active', false)
+            .where({
+              'person_id': result.person_id,
+              'source_person_type': result.source_person_type,
+              'project_id': projectId
+            });
         });
 
         if (deactiveQueries.length > 0) {
