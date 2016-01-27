@@ -28,6 +28,8 @@ class _ConfigStore extends AutoBindingStore {
 
     this.codeMaps = {};
 
+    this.bindActions(ConfigActions);
+
     this.exportPublicMethods({
       getDeclarationTypeString: this.getDeclarationTypeString,
       getDisclosureStatusString: this.getDisclosureStatusString,
@@ -786,6 +788,19 @@ class _ConfigStore extends AutoBindingStore {
       return theQuestion.question.numberToShow;
     }
     return undefined;
+  }
+
+  toggleAutoApprove() {
+    if (this.config.general.autoApprove === undefined) {
+      this.config.general.autoApprove = true;
+    } else {
+      this.config.general.autoApprove = !this.config.general.autoApprove;
+    }
+    this.dirty = true;
+  }
+
+  setStateForTest(data) {
+    this[data.key] = data.value;
   }
 }
 

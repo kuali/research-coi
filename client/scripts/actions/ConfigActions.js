@@ -19,6 +19,12 @@
 import alt from '../alt';
 
 class _ConfigActions {
+  constructor() {
+    this.generateActions(
+      'toggleAutoApprove',
+      'setStateForTest'
+    );
+  }
   startEditingDeclarationType(id) { this.dispatch(id); }
 
   updateDeclarationType(id, newValue) {
