@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+.app {
+  height: 100%;
+}
+
 .container {
   background: #eeeeee;
   min-height: 100px;
@@ -104,4 +108,14 @@
 }
 
 .versionDropDown {
+}
+
+@media print {
+  .sidebar, .header, .versionPicker {
+    display: none;
+  }
+
+  .app {
+    height: initial;
+  }
 }

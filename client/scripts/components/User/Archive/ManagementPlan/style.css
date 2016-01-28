@@ -45,3 +45,9 @@
   background-color: #333;
   border: 1px solid white;
 }
+
+@media print {
+  .button {
+    display: none;
+  }
+}
