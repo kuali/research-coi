@@ -187,7 +187,7 @@ export class Archive extends React.Component {
     );
 
     return (
-      <div className={`flexbox column`} style={{height: '100%'}}>
+      <div className={`flexbox column ${styles.app}`}>
         <AppHeader className={`${styles.override} ${styles.header}`} />
         <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <span className={styles.sidebar}>

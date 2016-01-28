@@ -119,3 +119,17 @@ span {
   -ms-flex-direction: column;
   flex-direction: column;
 }
+
+@media print {
+  html, body, #theApp {
+    height: initial;
+  }
+
+  .inline-flexbox, span {
+    display: inline;
+  }
+
+  .flexbox {
+    display: block;
+  }
+}
