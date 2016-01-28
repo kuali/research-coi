@@ -288,7 +288,7 @@ export const init = app => {
     Can only submit disclosures which are theirs
   */
   app.put('/api/coi/disclosures/:id/submit', (req, res, next) => {
-    DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id)
+    DisclosureDB.submit(req.dbInfo, req.body, req.userInfo, req.params.id)
       .then(() => {
         res.sendStatus(ACCEPTED);
       })

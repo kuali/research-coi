@@ -1354,6 +1354,7 @@ class _DisclosureStore extends AutoBindingStore {
   submitDisclosure() {
     createRequest()
       .put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/submit`)
+      .send(this.applicationState.currentDisclosureState.disclosure)
       .end(processResponse(err => {
         if (!err) {
           this.resetDisclosure();

@@ -835,54 +835,29 @@ export const getSummariesForUser = (dbInfo, userId) => {
 
 const updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, newStatus) => {
   return knex('fin_entity')
-  .update({status: newStatus})
-  .where('disclosure_id', disclosureId)
-  .andWhere('status', oldStatus)
-  .then(() => {
-    return knex('fin_entity')
-    .select('id')
+    .update({status: newStatus})
     .where('disclosure_id', disclosureId)
-    .then(results => {
-      return Promise.all(
-      results.map(result => {
-        const update = {};
-        update.status = newStatus;
-        if (newStatus === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
-          update.disclosed_date = new Date();
-        }
+    .andWhere('status', oldStatus)
+    .then(() => {
+      return knex('fin_entity')
+        .select('id')
+        .where('disclosure_id', disclosureId)
+        .then(results => {
+          return Promise.all(
+            results.map(result => {
+              const update = {};
+              update.status = newStatus;
+              if (newStatus === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
+                update.disclosed_date = new Date();
+              }
 
-        return knex('relationship')
-        .update(update)
-        .where('fin_entity_id', result.id)
-        .andWhere('status', oldStatus);
-      })
-      );
-    });
-  });
-};
-
-const updateStatus = (knex, name, disclosureId) => {
-  return knex('disclosure')
-  .update({
-    status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
-    submitted_by: name,
-    submitted_date: new Date()
-  })
-  .where('id', disclosureId);
-};
-
-export const submit = (dbInfo, userInfo, disclosureId) => {
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by ${userInfo.username} to submit disclosure ${disclosureId} which isnt theirs`);
-      }
-
-      const knex = getKnex(dbInfo);
-      return Promise.all([
-        updateStatus(knex, userInfo.name, disclosureId),
-        updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED)
-      ]);
+              return knex('relationship')
+                .update(update)
+                .where('fin_entity_id', result.id)
+                .andWhere('status', oldStatus);
+            })
+          );
+        });
     });
 };
 
@@ -965,6 +940,42 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId) => {
     const expiredDate = getExpirationDate(new Date(disclosure.submittedDate), generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
     return approveDisclosure(knex, disclosureId, expiredDate);
   });
+};
+
+const updateStatus = (knex, name, disclosureId) => {
+  return knex('disclosure')
+  .update({
+    status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+    submitted_by: name,
+    submitted_date: new Date()
+  })
+  .where('id', disclosureId);
+};
+
+export const submit = (dbInfo, disclosure, userInfo, disclosureId) => {
+  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+    .then(isSubmitter => {
+      if (!isSubmitter) {
+        throw Error(`Attempt by ${userInfo.username} to submit disclosure ${disclosureId} which isnt theirs`);
+      }
+
+      const knex = getKnex(dbInfo);
+      return Promise.all([
+        updateStatus(knex, userInfo.name, disclosureId),
+        updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED)
+      ]).then(() => {
+        return knex('config').select('config').where({id: disclosure.configId}).then(config => {
+          const autoApprove = JSON.parse(config[0].config).general.autoApprove;
+          if (autoApprove) {
+            return knex('fin_entity').count('id as count').where({active: true, disclosure_id: disclosureId}).then(count => {
+              if (count[0].count === 0) {
+                return approve(dbInfo, disclosure, COIConstants.SYSTEM_USER, disclosureId);
+              }
+            });
+          }
+        });
+      });
+    });
 };
 
 export const reject = (dbInfo, displayName, disclosureId) => {

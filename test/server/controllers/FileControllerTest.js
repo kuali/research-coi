@@ -23,6 +23,7 @@ import assert from 'assert';
 import * as app from '../../../server/app';
 import request from 'supertest';
 import {COIConstants} from '../../../COIConstants';
+import hashCode from '../../../hash';
 let getKnex;
 try {
   const extensions = require('research-extensions').default;
@@ -33,23 +34,22 @@ catch (err) {
 }
 const knex = getKnex({});
 
+
 describe('FileController', () => {
+  let disclosureId;
+  const user = 'FileControllerTest';
+  const userId = hashCode(user);
+  const today = new Date();
 
   before(async function(){
-    const disclosure = await knex('disclosure').select('id').where({id:1});
-    if (!disclosure[0]) {
-      await knex('disclosure').insert({
-        id: 1,
-        type_cd: 2,
-        status_cd: 1,
-        user_id:-1291059799,
-        start_date: new Date(),
-        config_id: 1});
-    } else {
-      await knex('disclosure').update({
-        user_id: -1291059799
-      }).where({id: 1});
-    }
+    const disclosure = await knex('disclosure').insert({
+      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
+      status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+      user_id: userId,
+      start_date: today,
+      config_id: 1}, 'id');
+
+    disclosureId = disclosure[0];
   });
 
   it('successfully uploads mulitiple files', async function() {
@@ -58,15 +58,15 @@ describe('FileController', () => {
       .attach('attachments','COIConstants.js')
       .attach('attachments','README.md')
       .field('data', JSON.stringify({
-        refId: 1,
+        refId: disclosureId,
         type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN,
-        disclosureId: 1
+        disclosureId
       }))
       .set('Authorization','Bearer admin')
       .expect(200);
 
     assert.equal(response.body.length, 2);
-    assert.equal(response.body[0].user_id,92668751);
+    assert.equal(response.body[0].user_id,hashCode('admin'));
 
   });
 
@@ -75,15 +75,15 @@ describe('FileController', () => {
       .post('/api/coi/files')
       .attach('attachments','COIConstants.js')
       .field('data', JSON.stringify({
-        refId: 1,
+        refId: disclosureId,
         type: COIConstants.FILE_TYPE.DISCLOSURE,
-        disclosureId: 1
+        disclosureId
       }))
-      .set('Authorization','Bearer jtester')
+      .set('Authorization',`Bearer ${user}`)
       .expect(200);
 
     assert.equal(response.body.length, 1);
-    assert.equal(response.body[0].user_id,-1291059799);
+    assert.equal(response.body[0].user_id,userId);
   });
 
   it('should not allow user retrieve files that are not theirs', async function() {
@@ -96,14 +96,14 @@ describe('FileController', () => {
   it('should not allow user to retrieve file not in db', async function() {
     await request(app.run())
       .get('/api/coi/files/abc')
-      .set('Authorization','Bearer cate')
+      .set('Authorization',`Bearer ${user}`)
       .expect(403);
   });
 
   it('should allow user to retrieve files created by and admin if they are attached to there disclosure', async function() {
     const response = await request(app.run())
       .get('/api/coi/files/1')
-      .set('Authorization','Bearer jtester')
+      .set('Authorization',`Bearer ${user}`)
       .expect(200);
 
     assert.equal(response.header['content-disposition'], 'attachment; filename="COIConstants.js"');
@@ -121,7 +121,7 @@ describe('FileController', () => {
   it('successfully retrieve files', async function() {
     const response = await request(app.run())
       .get('/api/coi/files/3')
-      .set('Authorization','Bearer jtester')
+      .set('Authorization',`Bearer ${user}`)
       .expect(200);
 
     assert.equal(response.header['content-disposition'], 'attachment; filename="COIConstants.js"');
@@ -149,5 +149,6 @@ describe('FileController', () => {
 
   after(async function() {
     await knex('file').truncate();
+    await knex('disclosure').del().where({id: disclosureId});
   });
 });
