@@ -556,6 +556,11 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
+  toggleInstructionsExpanded() {
+    this.config.general.instructionsExpanded = !this.config.general.instructionsExpanded;
+    this.dirty = true;
+  }
+
   mapCodes() {
     this.codeMaps.declarationType = {};
     this.config.declarationTypes.forEach(typeRecord => {
@@ -596,6 +601,9 @@ class _ConfigStore extends AutoBindingStore {
     .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
+        if (this.config.general.instructionsExpanded === undefined) {
+          this.config.general.instructionsExpanded = true;
+        }
 
         this.mapCodes();
 

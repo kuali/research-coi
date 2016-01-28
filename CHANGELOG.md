@@ -1,4 +1,5 @@
 ##coi-1601
+* Can now configure whether instructions show by default.  (Turned on initially)
 * Improved printing of archived disclosures.
 * Fixed bug which prevented two new relations to simultaneusly added to different entities.
 * Fixed validation of new entity relationships.  Previously it was possible to 
