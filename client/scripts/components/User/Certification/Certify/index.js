@@ -73,8 +73,12 @@ export class Certify extends React.Component {
       );
     }
 
-    const disclosureFiles = this.props.files
-      .filter(file => file.file_type === COIConstants.FILE_TYPE.DISCLOSURE);
+    let disclosureFiles;
+    if (this.props.files) {
+      disclosureFiles = this.props.files.filter(
+        file => file.file_type === COIConstants.FILE_TYPE.DISCLOSURE
+      );
+    }
 
     return (
       <div className={classNames(styles.container, this.props.className)}>
