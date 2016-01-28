@@ -5,6 +5,12 @@
 * Fixed bug which prevented two new relations to simultaneusly added to different entities.
 * Fixed validation of new entity relationships.  Previously it was possible to 
   submit an entity without a comment.
+* Changed wording of "Clear Filter" button on the admin list view filter by
+  status to 'Reset Filter'
+* Added ability to view management plans on archived disclosures
+* Fixed Travel Log view by filter to display correctly when 'Not Yet Disclosed'
+  is selected.
+* Added ability for admins to add attachments to a disclosure being reviewed.
 
 ##coi-1512
 * Fixed an issue when running the mock auth client that used the incorrect host 
