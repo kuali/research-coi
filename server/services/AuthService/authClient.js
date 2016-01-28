@@ -70,9 +70,8 @@ export function getUserInfo(dbInfo, hostname, authToken) {
     } else {
       const options = {
         host: hostname,
-        path: '/api/users/current',
+        path: '/api/v1/users/current',
         headers: {
-          'Accept': 'application/vnd.kuali.v1+json',
           'Authorization': `Bearer ${authToken}`
         }
       };
