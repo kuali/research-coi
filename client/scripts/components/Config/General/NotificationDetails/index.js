@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-
+/*eslint  no-unused-vars:0 */
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';

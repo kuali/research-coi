@@ -24,23 +24,21 @@ import {AppHeader} from '../../../../../../client/scripts/components/AppHeader';
 import Sidebar from '../../../../../../client/scripts/components/Config/Sidebar';
 import Panel from '../../../../../../client/scripts/components/Config/Panel';
 import DisclosureTypes from '../../../../../../client/scripts/components/Config/General/DisclosureTypes';
-import DueDateDetails from '../../../../../../client/scripts/components/Config/General/DueDateDetails';
 import AutoApproveDisclosure from '../../../../../../client/scripts/components/Config/General/AutoApproveDisclosure';
 import ActionPanel from '../../../../../../client/scripts/components/Config/ActionPanel';
 import assert from 'assert';
 
 /*global describe, it */
 
-describe('UploadAttachmentsPanel', () => {
-  it('should render unchecked if checked is undefined', () => {
+describe('General', () => {
+  it('should render ', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(<General/>);
     const component = renderer.getRenderOutput();
     assert(ShallowTestUtils.findWithType(component,AppHeader));
     assert(ShallowTestUtils.findWithType(component,Sidebar));
     assert(ShallowTestUtils.findWithType(component,DisclosureTypes));
-    assert(ShallowTestUtils.findWithType(component,Panel));
-    assert(ShallowTestUtils.findWithType(component,DueDateDetails));
+    assert.equal(ShallowTestUtils.findAllWithType(component,Panel).length,3);
     assert(ShallowTestUtils.findWithType(component,AutoApproveDisclosure));
     assert(ShallowTestUtils.findWithType(component,ActionPanel));
     const title = ShallowTestUtils.findWithClass(component,

@@ -121,11 +121,14 @@ span {
 }
 
 @media print {
-  html, body, #theApp {
+  html,
+  body,
+  #theApp {
     height: initial;
   }
 
-  .inline-flexbox, span {
+  .inline-flexbox,
+  span {
     display: inline;
   }
 

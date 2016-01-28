@@ -24,7 +24,6 @@ import Panel from '../../Panel';
 import ActionPanel from '../../ActionPanel';
 import DisclosureTypes from '../DisclosureTypes';
 import ConfigStore from '../../../../stores/ConfigStore';
-import DueDateDetails from '../DueDateDetails';
 import {AppHeader} from '../../../AppHeader';
 import AutoApproveDisclosure from '../AutoApproveDisclosure';
 import NotificationDetails from '../NotificationDetails';
