@@ -11,6 +11,8 @@
 * Fixed Travel Log view by filter to display correctly when 'Not Yet Disclosed'
   is selected.
 * Added ability for admins to add attachments to a disclosure being reviewed.
+* Added ability to auto approve disclosures with out financial entities.  Can turn on/off
+  in the configuration (Turned off initially).
 
 ##coi-1512
 * Fixed an issue when running the mock auth client that used the incorrect host 
