@@ -17,14 +17,20 @@
 */
 
 .container {
-  padding: 5px 0 10px 23px;
-  font-size: 17px;
+  padding: 20px 23px 10px 23px;
+  font-size: 15px;
 }
 
 .checkbox {
   margin-right: 10px;
+  vertical-align: middle;
 }
 
 .label {
-  vertical-align: middle;
+  font-size: 17px;
+}
+
+.title {
+  font-size: 12px;
+  margin-bottom: 10px;
 }

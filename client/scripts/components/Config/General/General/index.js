@@ -24,8 +24,8 @@ import Panel from '../../Panel';
 import ActionPanel from '../../ActionPanel';
 import DisclosureTypes from '../DisclosureTypes';
 import ConfigStore from '../../../../stores/ConfigStore';
-import DueDateDetails from '../DueDateDetails';
 import {AppHeader} from '../../../AppHeader';
+import AutoApproveDisclosure from '../AutoApproveDisclosure';
 import NotificationDetails from '../NotificationDetails';
 import ExpandInstructionsToggle from '../ExpandInstructionsToggle';
 
@@ -55,8 +55,9 @@ export default class General extends React.Component {
       isRollingDueDate: storeState.config.general.isRollingDueDate,
       notifications: storeState.config.notifications,
       sponsorLookup: storeState.config.general.sponsorLookup,
-      dirty: storeState.dirty,
-      instructionsExpanded: storeState.config.general.instructionsExpanded
+      autoApprove: storeState.config.general.autoApprove,
+      instructionsExpanded: storeState.config.general.instructionsExpanded,
+      dirty: storeState.dirty
     });
   }
 
@@ -93,6 +94,7 @@ export default class General extends React.Component {
 
                 <Panel title="General Configuration Options">
                   <ExpandInstructionsToggle checked={this.state.instructionsExpanded} />
+                  <AutoApproveDisclosure checked={this.state.autoApprove} />
                 </Panel>
               </span>
               <ActionPanel visible={this.state.dirty} />
