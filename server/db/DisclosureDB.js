@@ -521,9 +521,14 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
     .where(criteria);
 };
 
-export const get = (dbInfo, userInfo, disclosureId) => {
+export const get = (dbInfo, userInfo, disclosureId, trx) => {
   let disclosure;
-  const knex = getKnex(dbInfo);
+  let knex;
+  if (trx) {
+    knex = trx;
+  } else {
+    knex = getKnex(dbInfo);
+  }
 
   return Promise.all([
     getDisclosure(knex, userInfo, disclosureId),
@@ -921,8 +926,14 @@ const deletePIReviewsForDisclsoure = (knex, disclosureId) => {
     .where('disclosure_id', disclosureId);
 };
 
-export const approve = (dbInfo, disclosure, displayName, disclosureId) => {
-  const knex = getKnex(dbInfo);
+export const approve = (dbInfo, disclosure, displayName, disclosureId, trx) => {
+  let knex;
+  if (trx) {
+    knex = trx;
+  } else {
+    knex = getKnex(dbInfo);
+  }
+
 
   disclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
   disclosure.lastReviewDate = new Date();
@@ -952,7 +963,7 @@ const updateStatus = (knex, name, disclosureId) => {
   .where('id', disclosureId);
 };
 
-export const submit = (dbInfo, disclosure, userInfo, disclosureId) => {
+export const submit = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
@@ -960,19 +971,23 @@ export const submit = (dbInfo, disclosure, userInfo, disclosureId) => {
       }
 
       const knex = getKnex(dbInfo);
-      return Promise.all([
-        updateStatus(knex, userInfo.name, disclosureId),
-        updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED)
-      ]).then(() => {
-        return knex('config').select('config').where({id: disclosure.configId}).then(config => {
-          const autoApprove = JSON.parse(config[0].config).general.autoApprove;
-          if (autoApprove) {
-            return knex('fin_entity').count('id as count').where({active: true, disclosure_id: disclosureId}).then(count => {
-              if (count[0].count === 0) {
-                return approve(dbInfo, disclosure, COIConstants.SYSTEM_USER, disclosureId);
+      return knex.transaction(trx => {
+        return Promise.all([
+          updateStatus(trx, userInfo.name, disclosureId),
+          updateEntitiesAndRelationshipsStatuses(trx, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED)
+        ]).then(() => {
+          return get(dbInfo, userInfo, disclosureId, trx).then(disclosure => {
+            return trx('config').select('config').where({id: disclosure.configId}).then(config => {
+              const autoApprove = JSON.parse(config[0].config).general.autoApprove;
+              if (autoApprove) {
+                return trx('fin_entity').count('id as count').where({active: true, disclosure_id: disclosureId}).then(count => {
+                  if (count[0].count === 0) {
+                    return approve(dbInfo, disclosure, COIConstants.SYSTEM_USER, disclosureId, trx);
+                  }
+                });
               }
             });
-          }
+          });
         });
       });
     });

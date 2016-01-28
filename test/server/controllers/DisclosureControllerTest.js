@@ -179,13 +179,12 @@ describe('DisclosureController',async () => {
         .expect(ACCEPTED);
 
       const submittedDisclosure = await knex('disclosure')
-        .select('status_cd','submitted_by', 'submitted_date')
+        .select('status_cd','submitted_by', 'submitted_date', 'expired_date')
         .where({id: disclosure.id});
 
       assert.equal(submittedDisclosure[0].status_cd, COIConstants.DISCLOSURE_STATUS.UP_TO_DATE);
       assert.equal(submittedDisclosure[0].submitted_by, `User ${user}`);
-      assert.equal(formatDate(submittedDisclosure[0].submitted_date), formatDate(today));
-
+      assert(new Date(submittedDisclosure[0].expired_date) > today);
 
       const disclosureArchive = await knex('disclosure_archive')
         .select('*')
