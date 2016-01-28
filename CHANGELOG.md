@@ -1,4 +1,5 @@
 ##coi-1601
+* Instruction box now spans full width of the pane.
 * Can now configure whether instructions show by default.  (Turned on initially)
 * Improved printing of archived disclosures.
 * Fixed bug which prevented two new relations to simultaneusly added to different entities.
