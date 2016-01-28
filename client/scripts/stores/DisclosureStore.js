@@ -145,7 +145,6 @@ class _DisclosureStore extends AutoBindingStore {
 
     // initialize state here
     this.disclosures = [];
-
     this.applicationState = {
       archiveFilter: '2',
       archiveQuery: '',
@@ -266,6 +265,14 @@ class _DisclosureStore extends AutoBindingStore {
   }
 
   loadDisclosureState(disclosureId) {
+    const hideInstructions = window.config.general.instructionsExpanded === false;
+    if (hideInstructions) {
+      this.applicationState.instructionsShowing = !hideInstructions;
+    }
+    else {
+      this.applicationState.instructionsShowing = true;
+    }
+
     return new Promise((resolve, reject) => {
       createRequest()
         .get(`/api/coi/disclosures/${disclosureId}/state`)

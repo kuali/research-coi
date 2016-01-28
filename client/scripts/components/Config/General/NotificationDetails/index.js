@@ -105,7 +105,7 @@ export default class NotificationDetails extends React.Component {
       );
     }
 
-    let newNotification;
+    /* let newNotification;
     if (this.props.appState && this.state.adding) {
       newNotification = (
         <div>
@@ -134,7 +134,7 @@ export default class NotificationDetails extends React.Component {
         </div>
       );
     }
-
+*/
     return (
       <div className={`${styles.container} ${this.props.className}`}>
         <DueDateDetails
@@ -142,7 +142,7 @@ export default class NotificationDetails extends React.Component {
           dueDate={this.props.dueDate}
         />
 
-        <div className={styles.dateDetailSection}>
+        {/*<div className={styles.dateDetailSection}>
           {notifications}
 
           {newNotification}
@@ -151,7 +151,7 @@ export default class NotificationDetails extends React.Component {
             {doneButton}
             {addButton}
           </div>
-        </div>
+        </div>*/}
       </div>
     );
   }

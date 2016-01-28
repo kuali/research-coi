@@ -26,6 +26,8 @@ import DisclosureTypes from '../DisclosureTypes';
 import ConfigStore from '../../../../stores/ConfigStore';
 import DueDateDetails from '../DueDateDetails';
 import {AppHeader} from '../../../AppHeader';
+import NotificationDetails from '../NotificationDetails';
+import ExpandInstructionsToggle from '../ExpandInstructionsToggle';
 
 export default class General extends React.Component {
   constructor() {
@@ -53,7 +55,8 @@ export default class General extends React.Component {
       isRollingDueDate: storeState.config.general.isRollingDueDate,
       notifications: storeState.config.notifications,
       sponsorLookup: storeState.config.general.sponsorLookup,
-      dirty: storeState.dirty
+      dirty: storeState.dirty,
+      instructionsExpanded: storeState.config.general.instructionsExpanded
     });
   }
 
@@ -70,29 +73,27 @@ export default class General extends React.Component {
             <div className={`fill flexbox row ${styles.configurationArea}`}>
               <span className={`fill`} style={{display: 'inline-block'}}>
                 <Panel
-                  title="General Disclosure Configuration"
+                  title="Disclosure Types"
                   style={{overflow: 'visible'}}
                 >
                   <DisclosureTypes
                     types={this.state.disclosureTypes}
                     appState={this.state.applicationState}
                   />
-
-                  <DueDateDetails
-                    isRollingDueDate={this.state.isRollingDueDate}
-                    dueDate={this.state.dueDate}
-                    showTitleQuestion={false}
-                  />
                 </Panel>
 
-                {/*<Panel title="Expiration Notifications">
+                <Panel title="Expiration Notifications">
                   <NotificationDetails
                     dueDate={this.state.dueDate}
                     isRollingDueDate={this.state.isRollingDueDate}
                     notifications={this.state.notifications}
                     appState={this.state.applicationState}
                   />
-                </Panel>*/}
+                </Panel>
+
+                <Panel title="General Configuration Options">
+                  <ExpandInstructionsToggle checked={this.state.instructionsExpanded} />
+                </Panel>
               </span>
               <ActionPanel visible={this.state.dirty} />
             </div>

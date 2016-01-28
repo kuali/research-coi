@@ -1,0 +1,12 @@
+.container {
+  padding: 5px 0 10px 23px;
+  font-size: 17px;
+}
+
+.checkbox {
+  margin-right: 10px;
+}
+
+.label {
+  vertical-align: middle;
+}

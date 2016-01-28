@@ -67,21 +67,9 @@ export default class DueDateDetails extends React.Component {
       );
     }
 
-    let heading;
-    if (this.props.showTitleQuestion) {
-      heading = (
-        <div className={styles.notificationQuestion}>How are your institution's due dates set up?</div>
-      );
-    }
-    else {
-      heading = (
-        <div className={styles.title}>DISCLOSURE DUE DATES</div>
-      );
-    }
-
     return (
       <div className={classNames(styles.container, this.props.className)}>
-        {heading}
+        <div className={styles.notificationQuestion}>How are your institution's due dates set up?</div>
         <div className={classNames('flexbox', 'row', styles.dueDateOptions)}>
           <span className={styles.dueDataType}>
             <input

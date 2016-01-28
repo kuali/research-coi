@@ -189,6 +189,8 @@ class _ConfigActions {
     this.dispatch({step, newValue});
   }
 
+  toggleInstructionsExpanded() { this.dispatch(); }
+
   loadConfig(id) { this.dispatch(id); }
 
   saveAll() { this.dispatch(); }
