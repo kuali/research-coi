@@ -64,7 +64,7 @@ export const init = app => {
         return ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
           .then(config => {
             config.general = req.body.general;
-            return ConfigDB.archiveConfig(req.dbInfo, config)
+            return ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config)
               .then(() => {
                 res.send(config);
               })
