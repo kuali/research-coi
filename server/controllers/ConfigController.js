@@ -20,6 +20,27 @@ import * as ConfigDB from '../db/ConfigDB';
 import {COIConstants} from '../../COIConstants';
 import {FORBIDDEN} from '../../HTTPStatusCodes';
 import Log from '../Log';
+import wrapAsync from './wrapAsync';
+
+export async function saveConfig(req, res, next) {
+  try {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+      res.sendStatus(FORBIDDEN);
+      return;
+    }
+
+    await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body);
+    const config = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
+    config.general = req.body.general;
+    await ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config);
+
+    res.send(config);
+  }
+  catch(err) {
+    Log.error(err);
+    next(err);
+  }
+}
 
 export const init = app => {
   /**
@@ -53,30 +74,5 @@ export const init = app => {
   /**
     @Role: admin
   */
-  app.post('/api/coi/config/', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
-    ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body)
-      .then(() => {
-        return ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
-          .then(config => {
-            config.general = req.body.general;
-            return ConfigDB.archiveConfig(req.dbInfo, config)
-              .then(() => {
-                res.send(config);
-              })
-              .catch(err => {
-                Log.error(err);
-                next(err);
-              });
-          });
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.post('/api/coi/config/', wrapAsync(saveConfig));
 };

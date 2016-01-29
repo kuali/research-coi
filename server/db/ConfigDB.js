@@ -286,9 +286,14 @@ export const setConfig = (dbInfo, userId, body, optionalTrx) => {
     });
 };
 
-export const archiveConfig = (dbInfo, config) => {
+export const archiveConfig = (dbInfo, userId, userName, config) => {
   const knex = getKnex(dbInfo);
-  return knex('config').insert({config: JSON.stringify(config)}, 'id');
+  return knex('config').insert({
+    config: JSON.stringify(config),
+    user_id: userId,
+    user_name: userName,
+    updated_date: new Date()
+  }, 'id');
 };
 
 export const getArchivedConfig = (dbInfo, id) => {

@@ -1,4 +1,5 @@
 ##coi-1601
+* Now tracks the user id, user name, and time of change when a config modification is made.  DB MIGRATION REQUIRED!
 * Instruction box now spans full width of the pane.
 * Can now configure whether instructions show by default.  (Turned on initially)
 * Improved printing of archived disclosures.
