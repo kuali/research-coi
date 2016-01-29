@@ -21,6 +21,33 @@ import {COIConstants} from '../../COIConstants';
 import {FORBIDDEN} from '../../HTTPStatusCodes';
 import Log from '../Log';
 
+export function saveConfig(req, res, next) {
+  if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+    res.sendStatus(FORBIDDEN);
+    return;
+  }
+
+  ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body)
+    .then(() => {
+      return ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
+        .then(config => {
+          config.general = req.body.general;
+          return ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config)
+            .then(() => {
+              res.send(config);
+            })
+            .catch(err => {
+              Log.error(err);
+              next(err);
+            });
+        });
+    })
+    .catch(err => {
+      Log.error(err);
+      next(err);
+    });
+}
+
 export const init = app => {
   /**
     @Role: any
@@ -53,30 +80,5 @@ export const init = app => {
   /**
     @Role: admin
   */
-  app.post('/api/coi/config/', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
-    ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body)
-      .then(() => {
-        return ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
-          .then(config => {
-            config.general = req.body.general;
-            return ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config)
-              .then(() => {
-                res.send(config);
-              })
-              .catch(err => {
-                Log.error(err);
-                next(err);
-              });
-          });
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.post('/api/coi/config/', saveConfig);
 };
