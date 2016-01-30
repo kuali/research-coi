@@ -56,7 +56,7 @@ function stubArchiveConfig() {
   });
 }
 
-describe.only('ConfigController', () => {
+describe('ConfigController', () => {
   describe('saveConfig', () => {
     before(() => {
       stubSetConfig();
