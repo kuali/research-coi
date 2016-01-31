@@ -18,103 +18,47 @@
 
 import alt from '../alt';
 
-class _AdminActions {
-
-  constructor() {
-    this.generateActions(
-      'showUploadAttachmentsPanel',
-      'hideUploadAttachmentsPanel',
-      'addAdminAttachment',
-      'deleteAdminAttachment',
-      'addAdminAttachmentToState',
-      'removeAdminAttachmentFromState',
-      'setApplicationStateForTest'
-    );
-  }
-
-  changeSort(newSortField) { this.dispatch(newSortField); }
-
-  flipSortDirection() { this.dispatch(); }
-
-  changeTypeFilter(newType) { this.dispatch(newType); }
-
-  changeSearch(newSearch) { this.dispatch(newSearch); }
-
-  doSearch() { this.dispatch(); }
-
-  setStartDateFilter(newValue) { this.dispatch(newValue); }
-
-  setEndDateFilter(newValue) { this.dispatch(newValue); }
-
-  clearDateFilter() { this.dispatch(); }
-
-  clearSubmittedByFilter() { this.dispatch(); }
-
-  setSubmittedByFilter(name) { this.dispatch(name); }
-
-  changeReporterFilter(newFilter) { this.dispatch(newFilter); }
-
-  toggleFilters() { this.dispatch(); }
-
-  loadDisclosure(id) { this.dispatch(id); }
-
-  loadArchivedDisclosure(id) { this.dispatch(id); }
-
-  toggleApprovalConfirmation() { this.dispatch(); }
-
-  approveDisclosure() { this.dispatch(); }
-
-  toggleRejectionConfirmation() { this.dispatch(); }
-
-  rejectDisclosure() { this.dispatch(); }
-
-  clearTypeFilter() { this.dispatch(); }
-
-  toggleTypeFilter(toToggle) { this.dispatch(toToggle); }
-
-  clearStatusFilter() { this.dispatch(); }
-
-  toggleStatusFilter(toToggle) { this.dispatch(toToggle); }
-
-  setSortDirection(newDirection) { this.dispatch(newDirection); }
-
-  loadMore() {
-    this.dispatch();
-  }
-
-  showCommentingPanel(topic, id, title) {
-    this.dispatch({topic, id, title});
-  }
-
-  hideCommentingPanel() { this.dispatch(); }
-
-  showAdditionalReviewPanel() { this.dispatch(); }
-
-  hideAdditionalReviewPanel() { this.dispatch(); }
-
-  showGeneralAttachmentsPanel() { this.dispatch(); }
-
-  hideGeneralAttachmentsPanel() { this.dispatch(); }
-
-  showCommentSummary() { this.dispatch(); }
-
-  hideCommentSummary() { this.dispatch(); }
-
-  makeComment(disclosureId, topicSection, topicId, visibleToPI, visibleToReviewers, commentText) {
-    this.dispatch({
-      disclosureId,
-      topicSection,
-      topicId,
-      visibleToPI,
-      visibleToReviewers,
-      commentText
-    });
-  }
-
-  addManagementPlan(files) { this.dispatch(files); }
-
-  deleteManagementPlan() { this.dispatch(); }
-
-}
-
-export const AdminActions = alt.createActions(_AdminActions);
+export const AdminActions = alt.generateActions(
+  'showUploadAttachmentsPanel',
+  'hideUploadAttachmentsPanel',
+  'addAdminAttachment',
+  'deleteAdminAttachment',
+  'addAdminAttachmentToState',
+  'removeAdminAttachmentFromState',
+  'setApplicationStateForTest',
+  'changeSort',
+  'flipSortDirection',
+  'changeTypeFilter',
+  'changeSearch',
+  'doSearch',
+  'setStartDateFilter',
+  'setEndDateFilter',
+  'clearDateFilter',
+  'clearSubmittedByFilter',
+  'setSubmittedByFilter',
+  'changeReporterFilter',
+  'toggleFilters',
+  'loadDisclosure',
+  'loadArchivedDisclosure',
+  'toggleApprovalConfirmation',
+  'approveDisclosure',
+  'toggleRejectionConfirmation',
+  'rejectDisclosure',
+  'clearTypeFilter',
+  'toggleTypeFilter',
+  'clearStatusFilter',
+  'toggleStatusFilter',
+  'setSortDirection',
+  'loadMore',
+  'hideCommentingPanel',
+  'showAdditionalReviewPanel',
+  'hideAdditionalReviewPanel',
+  'showGeneralAttachmentsPanel',
+  'hideGeneralAttachmentsPanel',
+  'showCommentSummary',
+  'hideCommentSummary',
+  'addManagementPlan',
+  'deleteManagementPlan',
+  'showCommentingPanel',
+  'makeComment'
+);

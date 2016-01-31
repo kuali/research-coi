@@ -18,37 +18,19 @@
 
 import alt from '../alt';
 
-class _TravelLogActions {
-  addEntry() { this.dispatch(); }
-
-  updateTravelLog(field, value) {
-    this.dispatch({field, value});
-  }
-
-  loadTravelLogEntries() {
-    this.dispatch();
-  }
-
-  sortColumnChanged(value) { this.dispatch(value); }
-
-  sortDirectionChanged(value) { this.dispatch(value); }
-
-  filterChanged(value) { this.dispatch(value); }
-
-  turnOnValidations() { this.dispatch(); }
-
-  turnOnValidationsForEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  deleteEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  archiveEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  editEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  saveEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  cancelEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  updateEntry(field, value, relationshipId) { this.dispatch({field, value, relationshipId}); }
-}
-export const TravelLogActions = alt.createActions(_TravelLogActions);
+export const TravelLogActions = alt.generateActions(
+  'addEntry',
+  'loadTravelLogEntries',
+  'sortColumnChanged',
+  'sortDirectionChanged',
+  'filterChanged',
+  'turnOnValidations',
+  'turnOnValidationsForEntry',
+  'deleteEntry',
+  'archiveEntry',
+  'editEntry',
+  'saveEntry',
+  'cancelEntry',
+  'updateTravelLog',
+  'updateEntry'
+);

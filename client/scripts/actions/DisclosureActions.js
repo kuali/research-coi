@@ -18,203 +18,68 @@
 
 import alt from '../alt';
 
-class _DisclosureActions {
-  changeArchiveFilter(newValue) { this.dispatch(newValue); }
-
-  loadArchivedDisclosures() { this.dispatch(); }
-
-  changeArchivedQuery(newQuery) { this.dispatch(newQuery); }
-
-  loadDisclosureSummaries() { this.dispatch(); }
-
-  loadDisclosureData(disclosureType) {this.dispatch(disclosureType); }
-
-  toggleInstructions() { this.dispatch(); }
-
-  submitQuestion(question) { this.dispatch(question); }
-
-  answerQuestion(question) { this.dispatch(question); }
-
-  answerMultiple(question) { this.dispatch(question); }
-
-  answerEntityQuestion(question) {this.dispatch(question); }
-
-  answerEntityMultiple(question) { this.dispatch(question); }
-
-  previousQuestion() { this.dispatch(); }
-
-  setCurrentQuestion(newQuestionId) { this.dispatch(newQuestionId); }
-
-  nextStep() { this.dispatch(); }
-
-  newEntityInitiated() { this.dispatch(); }
-
-  setInProgressEntityName(newNameValue) { this.dispatch(newNameValue); }
-
-  entityFormNextClicked(entityId) { this.dispatch(entityId); }
-
-  entityFormBackClicked(entityId) { this.dispatch(entityId); }
-
-  setEntityActiveStatus(active, id) {
-    this.dispatch({id,active});
-  }
-
-  setEntityType(newValue, id) {
-    this.dispatch({
-      id,
-      type: newValue
-    });
-  }
-
-  setEntityPublic(newValue, id) {
-    this.dispatch({
-      id,
-      isPublic: newValue
-    });
-  }
-
-  setEntityIsSponsor(newValue, id) {
-    this.dispatch({
-      id,
-      isSponsor: newValue
-    });
-  }
-
-  setEntityDescription(newValue, id) {
-    this.dispatch({
-      id,
-      description: newValue
-    });
-  }
-
-  setEntityRelationshipPerson(person, entityId) { this.dispatch({person, entityId}); }
-
-  setEntityRelationshipTravelAmount(amount, entityId) { this.dispatch({amount, entityId}); }
-
-  setEntityRelationshipTravelDestination(destination, entityId) { this.dispatch({destination, entityId}); }
-
-  setEntityRelationshipTravelStartDate(date, entityId) { this.dispatch({date, entityId}); }
-
-  setEntityRelationshipTravelEndDate(date, entityId) { this.dispatch({date, entityId}); }
-
-  setEntityRelationshipTravelReason(reason, entityId) { this.dispatch({reason, entityId}); }
-
-  setEntityRelationshipRelation(relation, entityId) { this.dispatch({relation, entityId}); }
-
-  setEntityRelationshipType(type, entityId) { this.dispatch({type, entityId}); }
-
-  setEntityRelationshipAmount(amount, entityId) { this.dispatch({amount, entityId}); }
-
-  setEntityRelationshipComment(comment, entityId) { this.dispatch({comment, entityId}); }
-
-  addEntityRelationship(entityId) {
-    this.dispatch(entityId);
-  }
-
-  removeEntityRelationship(relationId, entityId) {
-    this.dispatch({relationId,entityId});
-  }
-
-  entityFormClosed(entity) { this.dispatch(entity); }
-
-  saveInProgressEntity(entity) { this.dispatch(entity); }
-
-  changeActiveEntityView(newView) { this.dispatch(newView); }
-
-  updateEntityFormOpened(id) { this.dispatch(id); }
-
-  editEntity(id) { this.dispatch(id); }
-
-  undoEntityChanges(snapshot) { this.dispatch(snapshot); }
-
-  toggleDeclaration(id, type) {
-    this.dispatch({
-      entityId: id,
-      type
-    });
-  }
-
-  changeDeclarationView(newView) { this.dispatch(newView); }
-
-  entityRelationChosen(relationType, finEntityId, projectId, typeCd) {
-    this.dispatch({
-      relationType,
-      finEntityId,
-      projectId,
-      typeCd
-    });
-  }
-
-  declarationCommentedOn(relationType, finEntityId, projectId, comments) {
-    this.dispatch({
-      relationType,
-      finEntityId,
-      projectId,
-      comments
-    });
-  }
-
-  setAllForEntity(finEntityId, newValue) {
-    this.dispatch({finEntityId, newValue});
-  }
-
-  setAllForProject(type, projectId, newValue) {
-    this.dispatch({
-      type,
-      projectId,
-      newValue
-    });
-  }
-
-  toggleConfirmationMessage() { this.dispatch(); }
-
-  manualTypeSelected(disclosureId, manualType) {
-    this.dispatch({disclosureId, manualType});
-  }
-
-  saveManualEvent(disclosureId, id, title, sponsor, role, amount, projectType, startDate, endDate) {
-    this.dispatch({
-      disclosureId,
-      id,
-      title,
-      sponsor,
-      role,
-      amount,
-      projectType,
-      startDate,
-      endDate
-    });
-  }
-
-  doneEditingManualEvent(disclosureId) { this.dispatch(disclosureId); }
-
-  jumpToStep(step) {
-    this.dispatch(step);
-  }
-
-  setArchiveSort(field, direction) {
-    this.dispatch({field, direction});
-  }
-
-  loadArchivedDisclosureDetail(id) { this.dispatch(id); }
-
-  turnOnValidation(step) { this.dispatch(step); }
-
-  turnOffValidation(step) { this.dispatch(step); }
-
-  certify(value) { this.dispatch(value); }
-
-  submitDisclosure() { this.dispatch(); }
-
-  addEntityAttachments(files, entityId) { this.dispatch({files, entityId}); }
-
-  deleteEntityAttachment(index, entityId) { this.dispatch({index, entityId}); }
-
-  addDisclosureAttachment(files) { this.dispatch(files); }
-
-  deleteDisclosureAttachment(index) { this.dispatch(index); }
-
-  deleteAnswersTo(toDelete) { this.dispatch(toDelete); }
-}
-
-export const DisclosureActions = alt.createActions(_DisclosureActions);
+export const DisclosureActions = alt.generateActions(
+  'changeArchiveFilter',
+  'loadArchivedDisclosures',
+  'changeArchivedQuery',
+  'loadDisclosureSummaries',
+  'loadDisclosureData',
+  'toggleInstructions',
+  'submitQuestion',
+  'answerQuestion',
+  'answerMultiple',
+  'answerEntityQuestion',
+  'answerEntityMultiple',
+  'previousQuestion',
+  'setCurrentQuestion',
+  'nextStep',
+  'newEntityInitiated',
+  'setInProgressEntityName',
+  'entityFormNextClicked',
+  'entityFormBackClicked',
+  'addEntityRelationship',
+  'entityFormClosed',
+  'saveInProgressEntity',
+  'changeActiveEntityView',
+  'updateEntityFormOpened',
+  'editEntity',
+  'undoEntityChanges',
+  'changeDeclarationView',
+  'toggleConfirmationMessage',
+  'doneEditingManualEvent',
+  'jumpToStep',
+  'loadArchivedDisclosureDetail',
+  'turnOnValidation',
+  'turnOffValidation',
+  'certify',
+  'submitDisclosure',
+  'addDisclosureAttachment',
+  'deleteDisclosureAttachment',
+  'deleteAnswersTo',
+  'setEntityActiveStatus',
+  'setEntityType',
+  'setEntityPublic',
+  'setEntityIsSponsor',
+  'setEntityDescription',
+  'setEntityRelationshipPerson',
+  'setEntityRelationshipTravelAmount',
+  'setEntityRelationshipTravelDestination',
+  'setEntityRelationshipTravelStartDate',
+  'setEntityRelationshipTravelEndDate',
+  'setEntityRelationshipTravelReason',
+  'setEntityRelationshipRelation',
+  'setEntityRelationshipType',
+  'setEntityRelationshipAmount',
+  'setEntityRelationshipComment',
+  'removeEntityRelationship',
+  'toggleDeclaration',
+  'entityRelationChosen',
+  'declarationCommentedOn',
+  'setAllForEntity',
+  'setAllForProject',
+  'manualTypeSelected',
+  'saveManualEvent',
+  'setArchiveSort',
+  'addEntityAttachments',
+  'deleteEntityAttachment'
+);

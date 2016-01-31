@@ -18,13 +18,12 @@
 
 /* eslint-disable no-magic-numbers */
 
-import {AutoBindingStore} from '../../../../../../../client/scripts/stores/AutoBindingStore';
 import {MockTravelLogActions} from './MockTravelLogAction.js';
 import alt from '../../../../../../../client/scripts/alt';
 
-class _MockTravelLogStore extends AutoBindingStore {
+class _MockTravelLogStore {
   constructor() {
-    super(MockTravelLogActions);
+    this.bindActions(MockTravelLogActions);
 
     this.exportPublicMethods({
       getErrors: this.getErrors,
@@ -87,8 +86,8 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.cancelId = relationshipId;
   }
 
-  updateEntry(data) {
-    this.updateValue = data.value;
+  updateEntry([, value]) {
+    this.updateValue = value;
   }
 
   turnOnValidationsForEntry(relationshipId) {
@@ -138,8 +137,8 @@ class _MockTravelLogStore extends AutoBindingStore {
     this.archiveId = relationshipId;
   }
 
-  updateTravelLog(data) {
-    this.updateLogValue = data.value;
+  updateTravelLog([field, value]) { // eslint-disable-line no-unused-vars
+    this.updateLogValue = value;
   }
 
   addEntry() {

@@ -16,8 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/*global describe, it, beforeEach */
-/* eslint-disable no-magic-numbers */
 import alt from '../../../../client/scripts/alt';
 import assert from 'assert';
 import ConfigStore from '../../../../client/scripts/stores/ConfigStore';

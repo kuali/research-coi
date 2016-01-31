@@ -16,13 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import {AutoBindingStore} from '../../../../../../../client/scripts/stores/AutoBindingStore';
 import {MockPIReviewActions} from './MockPIReviewActions';
 import alt from '../../../../../../../client/scripts/alt';
 
-class _MockPIReviewStore extends AutoBindingStore {
+class _MockPIReviewStore {
   constructor() {
-    super(MockPIReviewActions);
+    this.bindActions(MockPIReviewActions);
 
     this.exportPublicMethods({
     });
@@ -32,12 +31,12 @@ class _MockPIReviewStore extends AutoBindingStore {
 
   }
 
-  reviseDeclaration(params) {
-    this.reviseId = params.reviewId;
+  reviseDeclaration([reviewId]) {
+    this.reviseId = reviewId;
   }
 
-  respond(params) {
-    this.responseId = params.reviewId;
+  respond([reviewId]) {
+    this.responseId = reviewId;
   }
 }
 

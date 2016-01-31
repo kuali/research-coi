@@ -18,59 +18,21 @@
 
 import alt from '../../../../../../../client/scripts/alt';
 
-class _MockTravelLogActions {
-  turnOnValidationsForEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  deleteEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  archiveEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  editEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  saveEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  cancelEntry(relationshipId) { this.dispatch(relationshipId); }
-
-  updateEntry(field, value, relationshipId) {
-    this.dispatch({
-      field,
-      value,
-      relationshipId
-    });
-  }
-
-  updateTravelLog(field, value) {
-    this.dispatch({
-      field,
-      value
-    });
-  }
-
-  addEntry() { this.dispatch(); }
-
-  turnOnValidations() { this.dispatch(); }
-
-  turnOnErrors(value) { this.dispatch(value); }
-
-  sortColumnChanged(value) {
-    this.dispatch(value);
-  }
-
-  sortDirectionChanged(value) {
-    this.dispatch(value);
-  }
-
-  filterChanged(value) {
-    this.dispatch(value);
-  }
-
-  updateEntryState(relationshipId) {
-    this.dispatch(relationshipId);
-  }
-
-  loadTravelLogEntries() {
-    this.dispatch();
-  }
-}
-
-export const MockTravelLogActions = alt.createActions(_MockTravelLogActions);
+export const MockTravelLogActions = alt.generateActions(
+  'turnOnValidationsForEntry',
+  'deleteEntry',
+  'archiveEntry',
+  'editEntry',
+  'saveEntry',
+  'cancelEntry',
+  'updateEntry',
+  'updateTravelLog',
+  'addEntry',
+  'turnOnValidations',
+  'turnOnErrors',
+  'sortColumnChanged',
+  'sortDirectionChanged',
+  'filterChanged',
+  'updateEntryState',
+  'loadTravelLogEntries'
+);

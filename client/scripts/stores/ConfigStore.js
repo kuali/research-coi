@@ -17,15 +17,12 @@
 */
 
 import ConfigActions from '../actions/ConfigActions';
-import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import {COIConstants} from '../../../COIConstants';
 import {processResponse, createRequest} from '../HttpUtils';
 
-class _ConfigStore extends AutoBindingStore {
+class _ConfigStore {
   constructor() {
-    super(ConfigActions);
-
     this.codeMaps = {};
 
     this.bindActions(ConfigActions);
@@ -105,8 +102,8 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  updateDeclarationType(params) {
-    this.applicationState.declarationsTypesBeingEdited[params.id].newValue = params.newValue;
+  updateDeclarationType([id, newValue]) {
+    this.applicationState.declarationsTypesBeingEdited[id].newValue = newValue;
     this.dirty = true;
   }
 
@@ -173,8 +170,8 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  updateDisclosureType(params) {
-    this.config.disclosureTypes.find(type => { return params.typeCd === type.typeCd; }).description = params.newValue;
+  updateDisclosureType([typeCd, newValue]) {
+    this.config.disclosureTypes.find(type => { return typeCd === type.typeCd; }).description = newValue;
     this.dirty = true;
   }
 
@@ -198,47 +195,47 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  setWarningValueOnNotification(params) {
+  setWarningValueOnNotification([id, newValue]) {
     let targetNote;
-    if (params.id) {
-      targetNote = this.config.notifications.find(notification => { return notification.id === params.id; });
+    if (id) {
+      targetNote = this.config.notifications.find(notification => { return notification.id === id; });
     }
     else {
       targetNote = this.applicationState.newNotification;
     }
 
     if (targetNote) {
-      targetNote.warningValue = params.newValue;
+      targetNote.warningValue = newValue;
     }
     this.dirty = true;
   }
 
-  setWarningPeriodOnNotification(params) {
+  setWarningPeriodOnNotification([id, newValue]) {
     let targetNote;
-    if (params.id) {
-      targetNote = this.config.notifications.find(notification => { return notification.id === params.id; });
+    if (id) {
+      targetNote = this.config.notifications.find(notification => { return notification.id === id; });
     }
     else {
       targetNote = this.applicationState.newNotification;
     }
 
     if (targetNote) {
-      targetNote.warningPeriod = params.newValue;
+      targetNote.warningPeriod = newValue;
     }
     this.dirty = true;
   }
 
-  setReminderTextOnNotification(params) {
+  setReminderTextOnNotification([id, newValue]) {
     let targetNote;
-    if (params.id) {
-      targetNote = this.config.notifications.find(notification => { return notification.id === params.id; });
+    if (id) {
+      targetNote = this.config.notifications.find(notification => { return notification.id === id; });
     }
     else {
       targetNote = this.applicationState.newNotification;
     }
 
     if (targetNote) {
-      targetNote.reminderText = params.newValue;
+      targetNote.reminderText = newValue;
     }
     this.dirty = true;
   }
@@ -278,71 +275,71 @@ class _ConfigStore extends AutoBindingStore {
     });
   }
 
-  questionTypeChosen(params) {
+  questionTypeChosen([category, questionId, type]) {
     let targetQuestion;
-    if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    if (questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[category][questionId];
 
-      targetQuestion.showWarning = this.hasSubQuestions(params.category, targetQuestion.id) && params.type !== COIConstants.QUESTION_TYPE.YESNO;
+      targetQuestion.showWarning = this.hasSubQuestions(category, targetQuestion.id) && type !== COIConstants.QUESTION_TYPE.YESNO;
     }
     else {
-      targetQuestion = this.applicationState.newQuestion[params.category];
+      targetQuestion = this.applicationState.newQuestion[category];
     }
 
-    targetQuestion.question.type = params.type;
+    targetQuestion.question.type = type;
     this.dirty = true;
   }
 
-  questionTextChanged(params) {
+  questionTextChanged([category, questionId, text]) {
     let targetQuestion;
-    if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    if (questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[category][questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion[params.category];
+      targetQuestion = this.applicationState.newQuestion[category];
     }
 
-    targetQuestion.question.text = params.text;
+    targetQuestion.question.text = text;
     this.dirty = true;
   }
 
-  updateQuestions(params) {
-    this.config.questions[params.category] = params.questions;
+  updateQuestions([category, questions]) {
+    this.config.questions[category] = questions;
     this.dirty = true;
   }
 
-  cancelNewQuestion(params) {
-    this.applicationState.newQuestion[params.category] = undefined;
+  cancelNewQuestion(category) {
+    this.applicationState.newQuestion[category] = undefined;
     this.dirty = true;
   }
 
-  saveNewQuestion(params) {
-    if (!this.applicationState.newQuestion[params.category].question.type) {
+  saveNewQuestion(category) {
+    if (!this.applicationState.newQuestion[category].question.type) {
       return;
     }
 
-    this.config.questions[params.category].filter(question => {
+    this.config.questions[category].filter(question => {
       return !question.parent;
     }).forEach(question => {
       question.question.order += 1;
     });
 
-    this.applicationState.newQuestion[params.category].question.order = 1;
-    this.applicationState.newQuestion[params.category].active = 1;
-    this.applicationState.newQuestion[params.category].id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
-    this.config.questions[params.category].push(this.applicationState.newQuestion[params.category]);
-    this.applicationState.newQuestion[params.category] = undefined;
+    this.applicationState.newQuestion[category].question.order = 1;
+    this.applicationState.newQuestion[category].active = 1;
+    this.applicationState.newQuestion[category].id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
+    this.config.questions[category].push(this.applicationState.newQuestion[category]);
+    this.applicationState.newQuestion[category] = undefined;
     this.dirty = true;
   }
 
-  startNewQuestion(params) {
-    this.applicationState.newQuestion[params.category] = {question: {}};
+  startNewQuestion(category) {
+    this.applicationState.newQuestion[category] = {question: {}};
     this.dirty = true;
   }
 
-  deleteQuestion(params) {
-    this.config.questions[params.category] = this.config.questions[params.category].filter(question => {
-      return question.id !== params.questionId && question.parent !== params.questionId;
+  deleteQuestion([category, questionId]) {
+    this.config.questions[category] = this.config.questions[category].filter(question => {
+      return question.id !== questionId && question.parent !== questionId;
     });
 
     this.dirty = true;
@@ -354,93 +351,93 @@ class _ConfigStore extends AutoBindingStore {
     });
   }
 
-  saveQuestionEdit(params) {
-    const index = this.config.questions[params.category].findIndex(question => {
-      return question.id === params.questionId;
+  saveQuestionEdit([category, questionId]) {
+    const index = this.config.questions[category].findIndex(question => {
+      return question.id === questionId;
     });
 
-    const editedQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    const editedQuestion = this.applicationState.questionsBeingEdited[category][questionId];
     delete editedQuestion.showWarning;
     if (index !== -1) {
-      this.config.questions[params.category][index] = editedQuestion;
+      this.config.questions[category][index] = editedQuestion;
     }
 
     if (editedQuestion.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
-      this.removeSubQuestions(params.category, editedQuestion.id);
+      this.removeSubQuestions(category, editedQuestion.id);
     }
 
-    delete this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    delete this.applicationState.questionsBeingEdited[category][questionId];
 
     this.dirty = true;
   }
 
-  startEditingQuestion(params) {
-    const clone = JSON.parse(JSON.stringify(this.findQuestion(params.category, params.questionId)));
-    this.applicationState.questionsBeingEdited[params.category][params.questionId] = clone;
+  startEditingQuestion([category, questionId]) {
+    const clone = JSON.parse(JSON.stringify(this.findQuestion(category, questionId)));
+    this.applicationState.questionsBeingEdited[category][questionId] = clone;
 
     this.dirty = true;
   }
 
-  cancelQuestionEdit(params) {
-    delete this.applicationState.questionsBeingEdited[params.category][params.questionId];
+  cancelQuestionEdit([category, questionId]) {
+    delete this.applicationState.questionsBeingEdited[category][questionId];
 
     this.dirty = true;
   }
 
-  criteriaChanged(params) {
-    const question = this.findQuestion(params.category, params.questionId);
+  criteriaChanged([category, questionId, newValue]) {
+    const question = this.findQuestion(category, questionId);
     if (question) {
-      question.question.displayCriteria = params.newValue;
+      question.question.displayCriteria = newValue;
     }
 
     this.dirty = true;
   }
 
-  multiSelectOptionAdded(params) {
+  multiSelectOptionAdded([category, questionId, newValue]) {
     let targetQuestion;
-    if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    if (questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[category][questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion[params.category];
+      targetQuestion = this.applicationState.newQuestion[category];
     }
 
     if (!targetQuestion.question.options) {
       targetQuestion.question.options = [];
     }
-    targetQuestion.question.options.push(params.newValue);
+    targetQuestion.question.options.push(newValue);
 
     this.dirty = true;
   }
 
-  multiSelectOptionDeleted(params) {
+  multiSelectOptionDeleted([category, questionId, optionId]) {
     let targetQuestion;
-    if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    if (questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[category][questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion[params.category];
+      targetQuestion = this.applicationState.newQuestion[category];
     }
 
     if (targetQuestion.question.options) {
       targetQuestion.question.options = targetQuestion.question.options.filter(option => {
-        return option !== params.optionId;
+        return option !== optionId;
       });
     }
 
     this.dirty = true;
   }
 
-  requiredNumSelectionsChanged(params) {
+  requiredNumSelectionsChanged([category, questionId, newValue]) {
     let targetQuestion;
-    if (params.questionId) {
-      targetQuestion = this.applicationState.questionsBeingEdited[params.category][params.questionId];
+    if (questionId) {
+      targetQuestion = this.applicationState.questionsBeingEdited[category][questionId];
     }
     else {
-      targetQuestion = this.applicationState.newQuestion[params.category];
+      targetQuestion = this.applicationState.newQuestion[category];
     }
 
-    targetQuestion.question.requiredNumSelections = params.newValue;
+    targetQuestion.question.requiredNumSelections = newValue;
 
     this.dirty = true;
   }
@@ -455,90 +452,90 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  enabledChanged(params) {
+  enabledChanged([typeCd, newValue]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.enabled = params.newValue;
+      target.enabled = newValue;
     }
     this.dirty = true;
   }
 
-  typeEnabledChanged(params) {
+  typeEnabledChanged([typeCd, newValue]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.typeEnabled = params.newValue;
+      target.typeEnabled = newValue;
     }
     this.dirty = true;
   }
 
-  amountEnabledChanged(params) {
+  amountEnabledChanged([typeCd, newValue]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.amountEnabled = params.newValue;
+      target.amountEnabled = newValue;
     }
     this.dirty = true;
   }
 
-  destinationEnabledChanged(params) {
+  destinationEnabledChanged([typeCd, newValue]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.destinationEnabled = params.newValue;
+      target.destinationEnabled = newValue;
     }
     this.dirty = true;
   }
 
-  dateEnabledChanged(params) {
+  dateEnabledChanged([typeCd, newValue]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.dateEnabled = params.newValue;
+      target.dateEnabled = newValue;
     }
     this.dirty = true;
   }
 
-  reasonEnabledChanged(params) {
+  reasonEnabledChanged([typeCd, newValue]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.reasonEnabled = params.newValue;
+      target.reasonEnabled = newValue;
     }
     this.dirty = true;
   }
 
-  typeOptionsChanged(params) {
+  typeOptionsChanged([typeCd, newList]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.typeOptions = params.newList;
+      target.typeOptions = newList;
     }
     this.dirty = true;
   }
 
-  amountOptionsChanged(params) {
+  amountOptionsChanged([typeCd, newList]) {
     const target = this.config.matrixTypes.find(matrixType => {
-      return matrixType.typeCd === params.typeCd;
+      return matrixType.typeCd === typeCd;
     });
 
     if (target) {
-      target.amountOptions = params.newList;
+      target.amountOptions = newList;
     }
     this.dirty = true;
   }
@@ -553,8 +550,8 @@ class _ConfigStore extends AutoBindingStore {
     this.dirty = true;
   }
 
-  setInstructions(params) {
-    this.config.general.instructions[params.step] = params.newValue;
+  setInstructions([step, newValue]) {
+    this.config.general.instructions[step] = newValue;
     this.dirty = true;
   }
 

@@ -17,18 +17,14 @@
 */
 
 import PIReviewActions from '../actions/PIReviewActions';
-import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
 import ConfigActions from '../actions/ConfigActions';
 import {COIConstants} from '../../../COIConstants';
 
-class _PIReviewStore extends AutoBindingStore {
+class _PIReviewStore {
   constructor() {
-    super(PIReviewActions);
-
-    this.exportPublicMethods({
-    });
+    this.bindActions(PIReviewActions);
 
     this.applicationState = {
       canSubmit: false,
@@ -152,19 +148,19 @@ class _PIReviewStore extends AutoBindingStore {
            }));
   }
 
-  respond(params) {
+  respond([reviewId, comment]) {
     const questionToRespondTo = this.disclosure.questions.find(question => {
-      return params.reviewId === question.reviewId;
+      return reviewId === question.reviewId;
     });
     if (questionToRespondTo) {
       questionToRespondTo.reviewedOn = new Date();
       questionToRespondTo.piResponse = {
-        text: params.comment
+        text: comment
       };
     }
 
     const entityToRespondTo = this.disclosure.entities.find(entity => {
-      return params.reviewId === entity.reviewId;
+      return reviewId === entity.reviewId;
     });
     if (entityToRespondTo) {
       entityToRespondTo.reviewedOn = new Date();
@@ -172,56 +168,56 @@ class _PIReviewStore extends AutoBindingStore {
 
     this.disclosure.declarations.forEach(project => {
       project.entities.forEach(entity => {
-        if (entity.reviewId === params.reviewId) {
+        if (entity.reviewId === reviewId) {
           entity.reviewedOn = new Date();
           entity.piResponse = {
-            text: params.comment
+            text: comment
           };
         }
       });
     });
 
     this.updateCanSubmit();
-    createRequest().post(`/api/coi/pi-response/${params.reviewId}`)
+    createRequest().post(`/api/coi/pi-response/${reviewId}`)
       .send({
-        comment: params.comment
+        comment
       })
       .end(processResponse(() => {
       }));
   }
 
-  revise(params) {
+  revise([reviewId, newAnswer]) {
     const questionToRevise = this.disclosure.questions.find(question => {
-      return params.reviewId === question.reviewId;
+      return reviewId === question.reviewId;
     });
     if (questionToRevise) {
       questionToRevise.answer = {
-        value: params.newAnswer
+        value: newAnswer
       };
       questionToRevise.reviewedOn = new Date();
     }
 
     this.updateCanSubmit();
 
-    createRequest().put(`/api/coi/pi-revise/${params.reviewId}`)
+    createRequest().put(`/api/coi/pi-revise/${reviewId}`)
       .send({
-        answer: params.newAnswer
+        answer: newAnswer
       })
       .end(processResponse(() => {}));
   }
 
-  reviseEntityQuestion(params) {
+  reviseEntityQuestion([reviewId, questionId, newValue]) {
     const entityToRevise = this.disclosure.entities.find(entity => {
-      return params.reviewId === entity.reviewId;
+      return reviewId === entity.reviewId;
     });
     if (entityToRevise) {
       const theAnswer = entityToRevise.answers.find(answer => {
-        return answer.questionId === params.questionId;
+        return answer.questionId === questionId;
       });
 
       if (theAnswer) {
         theAnswer.answer = {
-          value: params.newValue
+          value: newValue
         };
       }
 
@@ -231,16 +227,16 @@ class _PIReviewStore extends AutoBindingStore {
 
     this.updateCanSubmit();
 
-    createRequest().put(`/api/coi/pi-revise/${params.reviewId}/entity-question/${params.questionId}`)
+    createRequest().put(`/api/coi/pi-revise/${reviewId}/entity-question/${questionId}`)
       .send({
-        answer: params.newValue
+        answer: newValue
       })
       .end(processResponse(() => {}));
   }
 
-  addRelationship(params) {
+  addRelationship([reviewId, newRelationship]) {
     const entityToRevise = this.disclosure.entities.find(entity => {
-      return params.reviewId === entity.reviewId;
+      return reviewId === entity.reviewId;
     });
     if (entityToRevise) {
       if (entityToRevise.relationships === undefined) {
@@ -248,7 +244,7 @@ class _PIReviewStore extends AutoBindingStore {
       }
       entityToRevise.relationships.push({
         amount: '',
-        comments: params.newRelationship.comments,
+        comments: newRelationship.comments,
         finEntityId: entityToRevise.id,
         id: new Date().getTime(),
         person: '',
@@ -262,8 +258,8 @@ class _PIReviewStore extends AutoBindingStore {
 
     this.updateCanSubmit();
 
-    createRequest().post(`/api/coi/pi-revise/${params.reviewId}/entity-relationship`)
-      .send(params.newRelationship)
+    createRequest().post(`/api/coi/pi-revise/${reviewId}/entity-relationship`)
+      .send(newRelationship)
       .end(processResponse((err, relationships) => {
         if (!err) {
           entityToRevise.relationships = relationships.body;
@@ -272,13 +268,13 @@ class _PIReviewStore extends AutoBindingStore {
       }));
   }
 
-  removeRelationship(params) {
+  removeRelationship([entityId, reviewId, relationshipId]) {
     const entityToRevise = this.disclosure.entities.find(entity => {
-      return params.entityId === entity.id;
+      return entityId === entity.id;
     });
     if (entityToRevise) {
       entityToRevise.relationships = entityToRevise.relationships.filter(relationship => {
-        return relationship.id !== params.relationshipId;
+        return relationship.id !== relationshipId;
       });
 
       entityToRevise.reviewedOn = new Date();
@@ -287,63 +283,63 @@ class _PIReviewStore extends AutoBindingStore {
 
     this.updateCanSubmit();
 
-    createRequest().del(`/api/coi/pi-revise/${params.reviewId}/entity-relationship/${params.relationshipId}`)
+    createRequest().del(`/api/coi/pi-revise/${reviewId}/entity-relationship/${relationshipId}`)
       .end(processResponse(() => {}));
   }
 
-  reviseDeclaration(params) {
+  reviseDeclaration([reviewId, disposition, comment]) {
     this.disclosure.declarations.forEach(project => {
       project.entities.forEach(entity => {
-        if (entity.reviewId === params.reviewId) {
+        if (entity.reviewId === reviewId) {
           entity.reviewedOn = new Date();
           entity.revised = true;
-          entity.comments = params.declarationComment;
-          entity.relationshipCd = parseInt(params.disposition);
+          entity.comments = comment;
+          entity.relationshipCd = parseInt(disposition);
         }
       });
     });
 
     this.updateCanSubmit();
-    createRequest().put(`/api/coi/pi-revise/${params.reviewId}/declaration`)
+    createRequest().put(`/api/coi/pi-revise/${reviewId}/declaration`)
       .send({
-        disposition: params.disposition,
-        comment: params.declarationComment
+        disposition,
+        comment
       })
       .end(processResponse(() => {}));
   }
 
-  reviseSubQuestion(params) {
+  reviseSubQuestion([reviewId, subQuestionId, answer]) {
     const questionToRevise = this.disclosure.questions.find(question => {
-      return params.reviewId === question.reviewId;
+      return reviewId === question.reviewId;
     });
     const subQuestionToRevise = questionToRevise.subQuestions.find(subQuestion => {
-      return subQuestion.id === params.subQuestionId;
+      return subQuestion.id === subQuestionId;
     });
 
     if (subQuestionToRevise) {
       subQuestionToRevise.answer = {
-        value: params.answer
+        value: answer
       };
       questionToRevise.reviewedOn = new Date();
     }
 
     this.updateCanSubmit();
 
-    createRequest().put(`/api/coi/pi-revise/${params.reviewId}/subquestion-answer/${params.subQuestionId}`)
+    createRequest().put(`/api/coi/pi-revise/${reviewId}/subquestion-answer/${subQuestionId}`)
       .send({
         answer: {
-          value: params.answer
+          value: answer
         }
       })
       .type('application/json')
       .end();
   }
 
-  deleteAnswers(params) {
-    if (params.toDelete.length > 0) {
-      createRequest().del(`/api/coi/pi-revise/${params.reviewId}/question-answers`)
+  deleteAnswers([reviewId, toDelete]) {
+    if (toDelete.length > 0) {
+      createRequest().del(`/api/coi/pi-revise/${reviewId}/question-answers`)
         .send({
-          toDelete: params.toDelete
+          toDelete
         })
         .type('application/json')
         .end();
@@ -361,9 +357,9 @@ class _PIReviewStore extends AutoBindingStore {
       }));
   }
 
-  addEntityAttachments(data) {
+  addEntityAttachments([files, entityId]) {
     const entityToRevise = this.disclosure.entities.find(entity => {
-      return data.entityId === entity.id;
+      return entityId === entity.id;
     });
 
     if(!entityToRevise.files) {
@@ -371,7 +367,7 @@ class _PIReviewStore extends AutoBindingStore {
     }
 
     const formData = new FormData();
-    data.files.forEach(file => {
+    files.forEach(file => {
       formData.append('attachments', file);
     });
 
@@ -396,16 +392,16 @@ class _PIReviewStore extends AutoBindingStore {
     }));
   }
 
-  deleteEntityAttachment(data) {
+  deleteEntityAttachment([index, entityId]) {
     const entityToRevise = this.disclosure.entities.find(entity => {
-      return data.entityId === entity.id;
+      return entityId === entity.id;
     });
-    const file = entityToRevise.files[data.index];
+    const file = entityToRevise.files[index];
 
     createRequest().del(`/api/coi/files/${file.id}`)
     .end(processResponse((err) => {
       if (!err) {
-        entityToRevise.files.splice(data.index, 1);
+        entityToRevise.files.splice(index, 1);
         entityToRevise.reviewedOn = new Date();
         entityToRevise.revised = 1;
         this.updateCanSubmit();
