@@ -135,11 +135,13 @@ export class EntityFormRelationshipStep extends React.Component {
 
   render() {
     let potentialRelationship;
-    if (this.props.id) {
-      potentialRelationship = this.props.appState.potentialRelationships[this.props.id];
-    }
-    else {
-      potentialRelationship = this.props.appState.potentialRelationships.new;
+    if (this.props.appState) {
+      if (this.props.id) {
+        potentialRelationship = this.props.appState.potentialRelationships[this.props.id];
+      }
+      else {
+        potentialRelationship = this.props.appState.potentialRelationships.new;
+      }
     }
     if (!potentialRelationship) {
       potentialRelationship = {

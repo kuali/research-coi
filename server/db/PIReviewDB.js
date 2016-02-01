@@ -659,9 +659,10 @@ export const addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => 
           fin_entity_id: reviewTarget.targetId,
           relationship_cd: newRelationship.relationshipCd,
           person_cd: newRelationship.personCd,
-          type_cd: newRelationship.typeCd,
-          amount_cd: newRelationship.amountCd,
-          comments: newRelationship.comments
+          type_cd: !newRelationship.typeCd ? null : newRelationship.typeCd,
+          amount_cd: !newRelationship.amountCd ? null : newRelationship.amountCd,
+          comments: newRelationship.comments,
+          status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
         }, 'id')
         .then(() => {
           return Promise.all([
