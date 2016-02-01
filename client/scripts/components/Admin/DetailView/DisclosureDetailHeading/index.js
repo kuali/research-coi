@@ -20,14 +20,15 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import ConfigStore from '../../../../stores/ConfigStore';
-import {formatDate} from '../../../../formatDate';
+import {formatDate, formatDateTime} from '../../../../formatDate';
+import {COIConstants} from '../../../../../../COIConstants';
 
 export function DisclosureDetailHeading(props) {
   const disclosure = props.disclosure;
 
-  let dateSection;
+  let submittedDate;
   if (disclosure.revisedDate) {
-    dateSection = (
+    submittedDate = (
       <div className={styles.details}>
         <span className={styles.label}>Revised On:</span>
         <span className={styles.value}>
@@ -39,7 +40,7 @@ export function DisclosureDetailHeading(props) {
     );
   }
   else {
-    dateSection = (
+    submittedDate = (
       <div className={styles.details}>
         <span className={styles.label}>Submitted On:</span>
         <span className={styles.value}>
@@ -47,6 +48,16 @@ export function DisclosureDetailHeading(props) {
           <span style={{marginRight: 3}}>•</span>
           {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}
         </span>
+      </div>
+    );
+  }
+
+  let approvedDate;
+  if (disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+    approvedDate = (
+      <div className={styles.details}>
+        <span className={styles.label}>Approved On:</span>
+        <span className={styles.value}>{formatDateTime(disclosure.lastReviewDate)}</span>
       </div>
     );
   }
@@ -68,7 +79,8 @@ export function DisclosureDetailHeading(props) {
           <span className={styles.label}>Submitted By:</span>
           <span className={styles.value}>{disclosure.submittedBy}</span>
         </div>
-        {dateSection}
+        {submittedDate}
+        {approvedDate}
       </span>
     </div>
   );

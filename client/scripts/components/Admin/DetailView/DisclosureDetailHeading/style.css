@@ -20,10 +20,10 @@
   background-color: white;
   padding: 13px 8px 13px 25px;
   line-height: 20px;
-  min-height: 89px;
   box-shadow: 0 2px 9px #CCC;
   z-index: 1;
   position: relative;
+  box-sizing: content-box;
 }
 
 .type {

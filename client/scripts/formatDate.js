@@ -28,3 +28,7 @@ else {
 export function formatDate(date: number) {
   return moment(date).format('ll');
 }
+
+export function formatDateTime(date: number) {
+  return moment(date).format('lll');
+}
