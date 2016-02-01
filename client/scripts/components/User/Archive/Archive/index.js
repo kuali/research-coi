@@ -24,7 +24,7 @@ import {DisclosureStore} from '../../../../stores/DisclosureStore';
 import {DisclosureActions} from '../../../../actions/DisclosureActions';
 import {Link} from 'react-router';
 import ArchiveDetail from '../ArchiveDetail';
-import {formatDate} from '../../../../formatDate';
+import {formatDate, formatDateTime} from '../../../../formatDate';
 import {COIConstants} from '../../../../../../COIConstants';
 import ManagementPlan from '../ManagementPlan';
 
@@ -75,7 +75,7 @@ export class Archive extends React.Component {
       return '';
     }
 
-    return formatDate(this.state.disclosure.lastReviewDate);
+    return formatDateTime(this.state.disclosure.lastReviewDate);
   }
 
   displayArchive(archive) {
@@ -105,7 +105,7 @@ export class Archive extends React.Component {
       const versions = this.state.archivedDisclosures.map(archivedDisclosure => {
         return (
           <option key={archivedDisclosure.id} value={archivedDisclosure.id}>
-            Approved {formatDate(archivedDisclosure.approvedDate)}
+            Approved {formatDateTime(archivedDisclosure.approvedDate)}
           </option>
         );
       });
