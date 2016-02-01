@@ -17,7 +17,6 @@
 */
 
 import {AdminActions} from '../actions/AdminActions';
-import {AutoBindingStore} from './AutoBindingStore';
 import {COIConstants} from '../../../COIConstants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
@@ -28,10 +27,8 @@ function defaultStatusFilters() {
   return [2, 4, 5, 6];
 }
 
-class _AdminStore extends AutoBindingStore {
+class _AdminStore {
   constructor() {
-    super(AdminActions);
-
     this.exportPublicMethods({
       createAdminAttachmentFormData: this.createAdminAttachmentFormData
     });
@@ -332,12 +329,12 @@ class _AdminStore extends AutoBindingStore {
     }
   }
 
-  showCommentingPanel(params) {
+  showCommentingPanel([topic, id, title]) {
     this.applicationState.listShowing = false;
     this.applicationState.commentingPanelShowing = true;
-    this.applicationState.commentTopic = params.topic;
-    this.applicationState.commentId = params.id;
-    this.applicationState.commentTitle = params.title;
+    this.applicationState.commentTopic = topic;
+    this.applicationState.commentId = id;
+    this.applicationState.commentTitle = title;
 
     this.updateCurrentComments(false);
   }
@@ -403,14 +400,14 @@ class _AdminStore extends AutoBindingStore {
     }, 400);
   }
 
-  makeComment(params) {
+  makeComment([topicSection, topicId, visibleToPI, visibleToReviewers, text]) {
     createRequest().post(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments`)
            .send({
-             topicSection: params.topicSection,
-             topicId: params.topicId,
-             visibleToPI: params.visibleToPI,
-             visibleToReviewers: params.visibleToReviewers,
-             text: params.commentText
+             topicSection,
+             topicId,
+             visibleToPI,
+             visibleToReviewers,
+             text
            })
            .end(processResponse((err, updatedComments) => {
              if (!err) {

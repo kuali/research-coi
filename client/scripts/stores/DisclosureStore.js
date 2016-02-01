@@ -17,7 +17,6 @@
 */
 
 import {DisclosureActions} from '../actions/DisclosureActions';
-import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 import {COIConstants} from '../../../COIConstants';
 import {processResponse, createRequest} from '../HttpUtils';
@@ -128,9 +127,9 @@ export function entityRelationshipStepErrors(potentialRelationship, matrixTypes)
   return errors;
 }
 
-class _DisclosureStore extends AutoBindingStore {
+class _DisclosureStore {
   constructor() {
-    super(DisclosureActions);
+    this.bindActions(DisclosureActions);
 
     this.exportPublicMethods({
       getDisclosure: this.getDisclosure,
@@ -547,20 +546,20 @@ class _DisclosureStore extends AutoBindingStore {
     }
   }
 
-  addEntityAttachments(data) {
-    const entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
+  addEntityAttachments([files, entityId]) {
+    const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
     if(!entity.files) {
       entity.files = [];
     }
 
-    data.files.forEach(file => {
+    files.forEach(file => {
       entity.files.push(file);
     });
   }
 
-  deleteEntityAttachment(data) {
-    const entity = data.entityId ? this.getEntity(data.entityId) : this.applicationState.entityInProgress;
-    entity.files.splice(data.index, 1);
+  deleteEntityAttachment([index, entityId]) {
+    const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
+    entity.files.splice(index, 1);
   }
 
   nextStep() {
@@ -632,9 +631,9 @@ class _DisclosureStore extends AutoBindingStore {
     });
   }
 
-  setEntityActiveStatus(params) {
-    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
-    entity.active = params.active;
+  setEntityActiveStatus([active, id]) {
+    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
+    entity.active = active;
 
     const formData = new FormData();
     formData.append('entity', JSON.stringify(entity));
@@ -644,24 +643,24 @@ class _DisclosureStore extends AutoBindingStore {
       .end(processResponse(() => {}));
   }
 
-  setEntityType(params) {
-    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
-    entity.type = params.type;
+  setEntityType([type, id]) {
+    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
+    entity.type = type;
   }
 
-  setEntityPublic(params) {
-    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
-    entity.isPublic = params.isPublic;
+  setEntityPublic([isPublic, id]) {
+    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
+    entity.isPublic = isPublic;
   }
 
-  setEntityIsSponsor(params) {
-    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
-    entity.isSponsor = params.isSponsor;
+  setEntityIsSponsor([isSponsor, id]) {
+    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
+    entity.isSponsor = isSponsor;
   }
 
-  setEntityDescription(params) {
-    const entity = params.id ? this.getEntity(params.id) : this.applicationState.entityInProgress;
-    entity.description = params.description;
+  setEntityDescription([description, id]) {
+    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
+    entity.description = description;
   }
 
   getPotentialRelationship(entityId = 'new') {
@@ -680,77 +679,77 @@ class _DisclosureStore extends AutoBindingStore {
     return relationship;
   }
 
-  setEntityRelationshipPerson(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
-    relationship.personCd = params.person;
+  setEntityRelationshipPerson([person, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
+    relationship.personCd = person;
   }
 
-  setEntityRelationshipTravelAmount(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
+  setEntityRelationshipTravelAmount([amount, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
     if (!relationship.travel) {
       relationship.travel = {};
     }
 
-    relationship.travel.amount = params.amount;
+    relationship.travel.amount = amount;
   }
 
-  setEntityRelationshipTravelDestination(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
+  setEntityRelationshipTravelDestination([destination, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
     if (!relationship.travel) {
       relationship.travel = {};
     }
 
-    relationship.travel.destination = params.destination;
+    relationship.travel.destination = destination;
   }
 
-  setEntityRelationshipTravelStartDate(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
+  setEntityRelationshipTravelStartDate([date, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
     if (!relationship.travel) {
       relationship.travel = {};
     }
 
-    relationship.travel.startDate = params.date;
+    relationship.travel.startDate = date;
   }
 
-  setEntityRelationshipTravelEndDate(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
+  setEntityRelationshipTravelEndDate([date, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
     if (!relationship.travel) {
       relationship.travel = {};
     }
 
-    relationship.travel.endDate = params.date;
+    relationship.travel.endDate = date;
   }
 
-  setEntityRelationshipTravelReason(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
+  setEntityRelationshipTravelReason([reason, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
     if (!relationship.travel) {
       relationship.travel = {};
     }
 
-    relationship.travel.reason = params.reason;
+    relationship.travel.reason = reason;
   }
 
-  setEntityRelationshipRelation(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
+  setEntityRelationshipRelation([relation, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
 
-    relationship.relationshipCd = params.relation;
-    this.setEntityRelationshipType('', params.entityId);
-    this.setEntityRelationshipAmount('', params.entityId);
+    relationship.relationshipCd = relation;
+    this.setEntityRelationshipType('', entityId);
+    this.setEntityRelationshipAmount('', entityId);
   }
 
-  setEntityRelationshipType(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
-    relationship.typeCd = params.type;
+  setEntityRelationshipType([type, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
+    relationship.typeCd = type;
   }
 
-  setEntityRelationshipAmount(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
-    relationship.amountCd = params.amount;
+  setEntityRelationshipAmount([amount, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
+    relationship.amountCd = amount;
   }
 
-  setEntityRelationshipComment(params) {
-    const relationship = this.getPotentialRelationship(params.entityId);
-    relationship.comments = params.comment;
+  setEntityRelationshipComment([comment, entityId]) {
+    const relationship = this.getPotentialRelationship(entityId);
+    relationship.comments = comment;
   }
 
   addEntityRelationship(entityId) {
@@ -804,9 +803,8 @@ class _DisclosureStore extends AutoBindingStore {
     }
   }
 
-  removeEntityRelationship(params) {
-    const relationId = params.relationId;
-    const entity = params.entityId ? this.getEntity(params.entityId) : this.applicationState.entityInProgress;
+  removeEntityRelationship([relationId, entityId]) {
+    const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
 
     entity.relationships = entity.relationships.filter((relationship) => {
       return relationship.id !== relationId;
@@ -966,9 +964,9 @@ class _DisclosureStore extends AutoBindingStore {
     return undefined;
   }
 
-  toggleDeclaration(params) {
+  toggleDeclaration([entityId, type]) {
     let collectionToUse;
-    switch (params.type) {
+    switch (type) {
       case 'PROJECT':
         collectionToUse = this.applicationState.declarationStates.projects;
         break;
@@ -980,11 +978,11 @@ class _DisclosureStore extends AutoBindingStore {
         break;
     }
 
-    if (collectionToUse[params.entityId]) {
-      collectionToUse[params.entityId].open = !collectionToUse[params.entityId].open;
+    if (collectionToUse[entityId]) {
+      collectionToUse[entityId].open = !collectionToUse[entityId].open;
     }
     else {
-      collectionToUse[params.entityId] = {
+      collectionToUse[entityId] = {
         open: true
       };
     }
@@ -994,13 +992,13 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.declarationView = newView;
   }
 
-  entityRelationChosen(params) {
+  entityRelationChosen([relationType, finEntityId, projectId, typeCd]) {
     if (!this.declarations) {
       this.declarations = [];
     }
 
     let field;
-    switch (params.relationType) {
+    switch (relationType) {
       case 'PROJECT':
         field = 'projectId';
         break;
@@ -1011,11 +1009,11 @@ class _DisclosureStore extends AutoBindingStore {
 
     // Look for existing relation
     const existing = this.declarations.find(declaration => {
-      return declaration.finEntityId === params.finEntityId && declaration[field] === params.projectId;
+      return declaration.finEntityId === finEntityId && declaration[field] === projectId;
     });
 
     if (existing) {
-      existing.typeCd = params.typeCd;
+      existing.typeCd = typeCd;
       createRequest()
         .put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/declarations/${existing.id}`)
         .send(existing)
@@ -1024,10 +1022,10 @@ class _DisclosureStore extends AutoBindingStore {
     }
     else {
       const newRelation = {
-        finEntityId: params.finEntityId,
-        typeCd: params.typeCd
+        finEntityId,
+        typeCd
       };
-      newRelation[field] = params.projectId;
+      newRelation[field] = projectId;
       createRequest()
         .post(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/declarations`)
         .send(newRelation)
@@ -1041,13 +1039,13 @@ class _DisclosureStore extends AutoBindingStore {
     }
   }
 
-  declarationCommentedOn(params) {
+  declarationCommentedOn([relationType, finEntityId, projectId, comments]) {
     if (!this.declarations) {
       this.declarations = [];
     }
 
     let field;
-    switch (params.relationType) {
+    switch (relationType) {
       case 'PROJECT':
         field = 'projectId';
         break;
@@ -1058,11 +1056,11 @@ class _DisclosureStore extends AutoBindingStore {
 
     // Look for existing relation
     const existing = this.declarations.find(declaration => {
-      return declaration.finEntityId === params.finEntityId && declaration[field] === params.projectId;
+      return declaration.finEntityId === finEntityId && declaration[field] === projectId;
     });
 
     if (existing) {
-      existing.comments = params.comments;
+      existing.comments = comments;
       createRequest()
         .put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/declarations/${existing.id}`)
         .send(existing)
@@ -1071,10 +1069,10 @@ class _DisclosureStore extends AutoBindingStore {
     }
     else {
       const newRelation = {
-        finEntityId: params.finEntityId,
-        comments: params.comments
+        finEntityId,
+        comments
       };
-      newRelation[field] = params.projectId;
+      newRelation[field] = projectId;
       createRequest()
         .post(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/declarations`)
         .send(newRelation)
@@ -1088,25 +1086,25 @@ class _DisclosureStore extends AutoBindingStore {
     }
   }
 
-  setAllForEntity(params) {
+  setAllForEntity([finEntityId, typeCd]) {
     this.projects.forEach(project => {
-      this.entityRelationChosen({
-        relationType: 'PROJECT',
-        finEntityId: params.finEntityId,
-        projectId: project.id,
-        typeCd: params.newValue
-      });
+      this.entityRelationChosen([
+        'PROJECT',
+        finEntityId,
+        project.id,
+        typeCd
+      ]);
     });
   }
 
-  setAllForProject(params) {
+  setAllForProject([relationType, projectId, typeCd]) {
     this.entities.forEach(entity => {
-      this.entityRelationChosen({
-        relationType: params.type,
-        finEntityId: entity.id,
-        projectId: params.projectId,
-        typeCd: params.newValue
-      });
+      this.entityRelationChosen([
+        relationType,
+        entity.id,
+        projectId,
+        typeCd
+      ]);
     });
   }
 
@@ -1130,17 +1128,17 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.manualStep = 2;
   }
 
-  saveManualEvent(params) {
+  saveManualEvent([id, title, sponsor, role, amount, projectType, startDate, endDate]) {
     const disclosure = this.applicationState.currentDisclosureState.disclosure;
     if (disclosure) {
-      disclosure.amount = params.amount;
-      disclosure.enddate = params.endDate;
-      disclosure.projectId = params.id;
-      disclosure.projectType = params.projectType;
-      disclosure.role = params.role;
-      disclosure.sponsor = params.sponsor;
-      disclosure.startdate = params.startDate;
-      disclosure.title = params.title;
+      disclosure.amount = amount;
+      disclosure.enddate = endDate;
+      disclosure.projectId = id;
+      disclosure.projectType = projectType;
+      disclosure.role = role;
+      disclosure.sponsor = sponsor;
+      disclosure.startdate = startDate;
+      disclosure.title = title;
     }
   }
 
@@ -1153,9 +1151,9 @@ class _DisclosureStore extends AutoBindingStore {
     this.applicationState.currentDisclosureState.visitedSteps[step] = true;
   }
 
-  setArchiveSort(params) {
-    this.applicationState.archiveSortField = params.field;
-    this.applicationState.archiveSortDirection = params.direction;
+  setArchiveSort([field, direction]) {
+    this.applicationState.archiveSortField = field;
+    this.applicationState.archiveSortDirection = direction;
   }
 
   entityNameStepErrors() {

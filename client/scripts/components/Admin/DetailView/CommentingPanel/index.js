@@ -39,7 +39,6 @@ export default class CommentingPanel extends React.Component {
     textarea.value = '';
 
     AdminActions.makeComment(
-      this.props.disclosureId,
       this.props.topicSection,
       this.props.topicId,
       visibleToPI,

@@ -34,15 +34,11 @@ export class ManualEventEntry extends React.Component {
   shouldComponentUpdate() { return true; }
 
   typeSelected() {
-    DisclosureActions.manualTypeSelected(
-      this.props.disclosure.id,
-      this.refs.manualType.value
-    );
+    DisclosureActions.manualTypeSelected();
   }
 
   saveProject() {
     DisclosureActions.saveManualEvent(
-      this.props.disclosure.id,
       this.refs.id.value,
       this.refs.title.value,
       this.refs.sponsor.value,

@@ -17,12 +17,11 @@
 */
 
 import ColorActions from '../actions/ColorActions';
-import {AutoBindingStore} from './AutoBindingStore';
 import alt from '../alt';
 
-class _ColorStore extends AutoBindingStore {
+class _ColorStore {
   constructor() {
-    super(ColorActions);
+    this.bindActions(ColorActions);
   }
 
   setColorBlindMode(newValue) {

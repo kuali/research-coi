@@ -18,14 +18,7 @@
 
 import alt from '../../../../../../../client/scripts/alt';
 
-class _MockPIReviewActions {
-  reviseDeclaration(reviewId, disposition, declarationComment) {
-    this.dispatch({reviewId, disposition, declarationComment});
-  }
-
-  respond(reviewId, comment) {
-    this.dispatch({reviewId, comment});
-  }
-}
-
-export const MockPIReviewActions = alt.createActions(_MockPIReviewActions);
+export const MockPIReviewActions = alt.generateActions(
+  'reviseDeclaration',
+  'respond'
+);

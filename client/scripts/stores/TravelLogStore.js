@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {AutoBindingStore} from './AutoBindingStore';
 import {TravelLogActions} from '../actions/TravelLogActions.js';
 import alt from '../alt';
 import {processResponse, createRequest} from '../HttpUtils';
@@ -25,9 +24,9 @@ const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
 };
 
-class _TravelLogStore extends AutoBindingStore {
+class _TravelLogStore {
   constructor() {
-    super(TravelLogActions);
+    this.bindActions(TravelLogActions);
 
     this.exportPublicMethods({
       getErrors: this.getErrors,
@@ -76,8 +75,8 @@ class _TravelLogStore extends AutoBindingStore {
     this.refreshTravelLogEntries();
   }
 
-  updateTravelLog(data) {
-    this.potentialEntry[data.field] = data.value;
+  updateTravelLog([field, value]) {
+    this.potentialEntry[field] = value;
   }
 
   addEntry() {
@@ -137,12 +136,12 @@ class _TravelLogStore extends AutoBindingStore {
     this.entryStates[relationshipId].validating = false;
   }
 
-  updateEntry(data) {
+  updateEntry([field, value, relationshipId]) {
     const entryToSave = this.entries.find(entry => {
-      return entry.relationshipId === data.relationshipId;
+      return entry.relationshipId === relationshipId;
     });
 
-    entryToSave[data.field] = data.value;
+    entryToSave[field] = value;
   }
 
   turnOnValidations() {

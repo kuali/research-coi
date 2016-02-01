@@ -1,0 +1,17 @@
+{
+  "ignore": [
+    "**/node_modules/**",
+    "**/client/build",
+    "scripts/lib/",
+    "webpack.config.js"
+  ],
+  "test": [
+    "test/**"
+  ],
+  "dependencies": {
+    "unused-ignores": [
+      "jade",
+      "moment"
+    ]
+  }
+}
