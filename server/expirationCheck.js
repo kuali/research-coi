@@ -18,11 +18,11 @@
 
 import Log from './Log';
 import {COIConstants} from '../COIConstants';
-import getKnex from './db/ConnectionManager';
 
 const MILLIS_IN_A_DAY = 86400000;
 
 async function checkForExpiredDisclosures(expiredCode) {
+  const getKnex = require('./db/ConnectionManager');
   try {
     Log.info('Checking for disclosures which have expired');
     const knex = getKnex();
