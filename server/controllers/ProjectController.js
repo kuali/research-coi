@@ -18,6 +18,8 @@
 
 import * as ProjectDB from '../db/ProjectDB';
 import Log from '../Log';
+import { FORBIDDEN } from '../../HTTPStatusCodes';
+import {COIConstants} from '../../COIConstants';
 
 export const init = app => {
   app.post('/api/coi/projects', (req, res, next) => {
@@ -39,6 +41,44 @@ export const init = app => {
     ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId)
       .then(projects => {
         res.send(projects);
+      })
+      .catch(err => {
+        Log.error(err);
+        next(err);
+      });
+  });
+
+  /**
+    @Role: admin
+  */
+  app.get('/api/v1/coi/project-disclosure-statuses/:sourceId/:projectId', (req, res, next) => {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+      res.sendStatus(FORBIDDEN);
+      return;
+    }
+
+    ProjectDB.getProjectStatuses(req.dbInfo, req.params.sourceId, req.params.projectId)
+      .then(statuses => {
+        res.send(statuses);
+      })
+      .catch(err => {
+        Log.error(err);
+        next(err);
+      });
+  });
+
+  /**
+   @Role: admin
+   */
+  app.get('/api/v1/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', (req, res, next) => {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+      res.sendStatus(FORBIDDEN);
+      return;
+    }
+
+    ProjectDB.getProjectStatus(req.dbInfo, req.params.sourceId, req.params.projectId, req.params.personId)
+      .then(status => {
+        res.send(status);
       })
       .catch(err => {
         Log.error(err);
