@@ -36,6 +36,7 @@ import {COIConstants} from '../COIConstants';
 import {NOT_FOUND} from '../HTTPStatusCodes';
 import adminRoleCheck from './middleware/adminRoleCheck';
 import unauthorized from './middleware/unauthorized';
+import scheduleExpirationCheck from './expirationCheck';
 
 const DEFAULT_PORT = 8090;
 
@@ -119,5 +120,8 @@ export function run() {
   app.use(ErrorLogger);
 
   app.set('portNumber', config ? config.port : process.env.COI_PORT || DEFAULT_PORT);
+
+  scheduleExpirationCheck();
+
   return app;
 }

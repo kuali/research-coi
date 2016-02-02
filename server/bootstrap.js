@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable */
+/* eslint-disable no-var, prefer-arrow-callback, prefer-template, no-console */
 
 require('babel-register');
 require('babel-polyfill');
 var app = require('./app');
-var Log = require('./Log');
+var Log = require('./Log').default;
 
 var application = app.run();
 var portNumber = application.get('portNumber');
