@@ -17,6 +17,8 @@
 */
 
 /*eslint camelcase:0 */
+import {COIConstants} from '../../COIConstants';
+
 let getKnex;
 try {
   const extensions = require('research-extensions').default;
@@ -157,3 +159,74 @@ export const saveProjects = (dbInfo, projects) => {
     return saveNewProjects(dbInfo, projects);
   });
 };
+
+function getStatus(trx, projectPerson) {
+  const result = {
+    userId: projectPerson.person_id,
+    status: COIConstants.NOT_YET_DISCLOSED
+  };
+  return trx('declaration')
+    .select('disclosure_id')
+    .where({
+      project_id: projectPerson.projectId,
+      disclosure_id: projectPerson.disclosureId
+    })
+    .then(declaration => {
+      if (declaration.length > 0) {
+        return trx('disclosure as d')
+          .select('ds.description as status')
+          .innerJoin('disclosure_status as ds', 'ds.status_cd', 'd.status_cd')
+          .where({id: declaration[0].disclosure_id})
+          .then(disclosure => {
+            result.status = disclosure[0].status;
+            return result;
+          });
+      }
+      return result;
+    });
+}
+
+async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) {
+  const criteria = {
+    'p.source_system': sourceSystem,
+    'p.source_identifier': sourceIdentifier
+  };
+
+  if (personId) {
+    criteria['pp.person_id'] = personId;
+  }
+
+  const projectPersons = await trx('project as p')
+    .distinct('pp.person_id')
+    .select('p.id as projectId', 'd.id as disclosureId')
+    .innerJoin('project_person as pp', 'p.id', 'pp.project_id')
+    .innerJoin('disclosure as d', 'd.user_id', 'pp.person_id')
+    .where(criteria);
+
+  return projectPersons;
+}
+
+export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier) {
+  const knex = getKnex(dbInfo);
+  return knex.transaction(async function(trx) {
+    const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier);
+    const queries = projectPersons.map(projectPerson => {
+      return getStatus(trx, projectPerson);
+    });
+
+    return Promise.all(queries);
+  });
+}
+
+export async function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, personId) {
+  const knex = getKnex(dbInfo);
+  return knex.transaction(async function(trx) {
+    const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier, personId);
+
+    if (projectPersons[0]) {
+      return getStatus(trx, projectPersons[0]);
+    }
+
+    return {};
+  });
+}

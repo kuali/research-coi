@@ -101,6 +101,7 @@ export const COIConstants = {
   STATE_TYPE: {
     ANNUAL_DISCLOSURE_STATE: 'annual_disclosure_state'
   },
+  NOT_YET_DISCLOSED: 'Not Yet Disclosed',
   SYSTEM_USER: 'system'
 
 };
