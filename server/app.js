@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import healthReport from './controllers/healthReport';
 import * as ConfigController from './controllers/ConfigController';
 import * as DisclosureController from './controllers/DisclosureController';
 import * as TravelLogController from './controllers/TravelLogController';
@@ -96,7 +95,6 @@ export function run() {
   app.use(cookieParser());
 
   app.use('/coi/auth', renderView('auth'));
-  app.get('/coi/health', healthReport);
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
   app.use('/coi$', renderView('index'));
