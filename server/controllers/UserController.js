@@ -15,6 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
+import { getReviewers } from '../services/AuthService/AuthService';
+import Log from '../Log';
 
 export const init = app => {
   /**
@@ -26,6 +28,15 @@ export const init = app => {
       lastName: req.userInfo.lastName,
       coiRole: req.userInfo.coiRole,
       mock: req.userInfo.mock
+    });
+  });
+
+  app.get('/api/v1/coi/reviewers', (req, res, next) => {
+    getReviewers(req.dbInfo, req.headers.authorization).then(results => {
+      res.send(results);
+    }).catch(err => {
+      Log.error(err);
+      next(err);
     });
   });
 };

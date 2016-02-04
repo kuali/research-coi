@@ -16,22 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {getUserInfo} from '../services/AuthService/AuthService';
+import {getUserInfo, getAuthToken} from '../services/AuthService/AuthService';
 import Log from '../Log';
 import {UNAUTHORIZED} from '../../HTTPStatusCodes';
-
-function getAuthToken(header) {
-  try {
-    const parsedHeader = header.split(' ');
-    if (parsedHeader[0] === 'Bearer') {
-      return parsedHeader[1];
-    }
-
-    return undefined;
-  } catch(e) {
-    return undefined;
-  }
-}
 
 export default function authentication(req, res, next) {
   let authToken = getAuthToken(req.headers.authorization);

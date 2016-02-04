@@ -19,7 +19,6 @@
 import cache from '../../LruCache';
 import {COIConstants} from '../../../COIConstants';
 import {OK} from '../../../HTTPStatusCodes';
-
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const http = useSSL ? require('https') : require('http');
 
@@ -31,7 +30,8 @@ try {
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
       host: process.env.AUTHZ_HOST || 'uit.kuali.dev',
-      adminRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator'
+      adminRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator',
+      reviewerRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator'
     };
   };
 }
@@ -112,3 +112,42 @@ export function getUserInfo(dbInfo, hostname, authToken) {
 export function getAuthLink(req) {
   return `/auth?return_to=${encodeURIComponent(req.originalUrl)}`;
 }
+
+export async function getReviewers(dbInfo, authToken) {
+  return new Promise((resolve) => {
+    const authInfo = getAuthorizationInfo(dbInfo);
+    const options = {
+      host: authInfo.host,
+      path: `/kc-dev/kc-sys-krad/v1/roles/${authInfo.reviewerRole}/principals`,
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    };
+
+    http.get(options, response => {
+      let body = '';
+      response.on('data', (chunk) => {
+        body += chunk;
+      });
+      response.on('end', () => {
+        if (response.statusCode === OK) {
+          const results = JSON.parse(body);
+          resolve(results.map(result => {
+            return {
+              userId: result.memberId,
+              displayName: result.fullName,
+              email: result.email
+            };
+          }));
+        }
+        resolve();
+      });
+      response.on('error', () => {
+        resolve();
+      });
+    }).on('error', () => {
+      resolve();
+    });
+  });
+}
+

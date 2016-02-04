@@ -26,7 +26,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager');
+  getKnex = require('./ConnectionManager').default;
 }
 
 const queryUsingIndex = (knex, term) => {
