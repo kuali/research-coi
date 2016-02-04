@@ -39,3 +39,20 @@ export function getAuthLink(req) {
 export function authView(req, res) {
   return client.authView(req, res);
 }
+
+export function getReviewers(dbInfo, authHeader) {
+  return client.getReviewers(dbInfo, getAuthToken(authHeader));
+}
+
+export function getAuthToken(header) {
+  try {
+    const parsedHeader = header.split(' ');
+    if (parsedHeader[0] === 'Bearer') {
+      return parsedHeader[1];
+    }
+
+    return undefined;
+  } catch(e) {
+    return undefined;
+  }
+}

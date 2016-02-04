@@ -73,3 +73,17 @@ export function getAuthLink(req) {
   return `/coi/auth?return_to=${returnToValue}`;
 }
 
+export function getReviewers(dbInfo, authToken) { //eslint-disable-line no-unused-vars
+  return Promise.resolve([
+    {
+      userId: hashCode('reviewer1'),
+      displayName: 'Reviewer 1',
+      email: 'reviewer1@email.com'
+    },
+    {
+      userId: hashCode('reviewer2'),
+      displayName: 'reviewer2@email.com'
+    }
+  ]);
+}
+
