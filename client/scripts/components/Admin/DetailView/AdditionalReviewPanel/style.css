@@ -82,10 +82,25 @@
 .subLabel {
   font-size: 15px;
   width: 50%;
-  border-bottom: 1px solid #777;
   padding-bottom: 4px;
 }
 
 .override.fileUploadStyles {
   font-size: 12px;
+}
+
+.reviewers {
+  margin-top: 20px;
+  border-top: 1px solid lightgray;
+  padding-top: 20px;
+}
+
+.noReviewers {
+  padding-top: 20px;
+  text-align: center;
+}
+
+.autoSuggest {
+  width: 100%;
+  margin-top: 5px;
 }

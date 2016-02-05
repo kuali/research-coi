@@ -38,7 +38,7 @@ export class DisclosureFilterByPI extends DisclosureFilter {
   }
 
   piSelected(piName) {
-    AdminActions.setSubmittedByFilter(piName);
+    AdminActions.setSubmittedByFilter(piName.value);
   }
 
   // render() is implemented in DisclosureFilter, which will call renderFilter

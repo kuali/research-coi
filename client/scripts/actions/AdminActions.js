@@ -60,5 +60,9 @@ export const AdminActions = alt.generateActions(
   'addManagementPlan',
   'deleteManagementPlan',
   'showCommentingPanel',
-  'makeComment'
+  'makeComment',
+  'addAdditionalReviewer',
+  'removeAdditionalReviewer',
+  'addReviewerToState',
+  'removeReviewerFromState'
 );

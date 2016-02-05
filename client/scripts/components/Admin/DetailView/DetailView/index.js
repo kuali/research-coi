@@ -126,13 +126,17 @@ export class DetailView extends React.Component {
     }
     else if (this.state.applicationState.additionalReviewShowing) {
       let managementPlan;
+      let reviewers = [];
       let readOnly = true;
       if (this.state.applicationState.selectedDisclosure) {
+        reviewers = this.state.applicationState.selectedDisclosure.reviewers;
         managementPlan = this.state.applicationState.selectedDisclosure.managementPlan;
         readOnly = this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
       }
       sidePanel = (
         <AdditionalReviewPanel
+          reviewerSearchValue={this.state.applicationState.reviewerSearchValue}
+          reviewers={reviewers}
           managementPlan={managementPlan}
           readonly={readOnly}
         />

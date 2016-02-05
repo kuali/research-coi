@@ -573,6 +573,9 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         ref_id: disclosureId,
         file_type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN
       }),
+    knex('additional_reviewer')
+      .select('id', 'disclosure_id as disclosureId', 'user_id as userId', 'name', 'email', 'title', 'unit_name as unitName')
+      .where({disclosure_id: disclosureId}),
     isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
   ]).then(([
     disclosureRecords,
@@ -582,6 +585,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     commentRecords,
     fileRecords,
     managementPlans,
+    additionalReviewers,
     isOwner
   ]) => {
     if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
@@ -597,6 +601,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     disclosure.comments = commentRecords;
     disclosure.files = fileRecords;
     disclosure.managementPlan = managementPlans;
+    disclosure.reviewers = additionalReviewers;
     disclosure.answers.forEach(answer => {
       answer.answer = JSON.parse(answer.answer);
     });

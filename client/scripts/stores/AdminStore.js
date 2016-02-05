@@ -30,7 +30,8 @@ function defaultStatusFilters() {
 class _AdminStore {
   constructor() {
     this.exportPublicMethods({
-      createAdminAttachmentFormData: this.createAdminAttachmentFormData
+      createAdminAttachmentFormData: this.createAdminAttachmentFormData,
+      populateReviewer: this.populateReviewer
     });
 
     this.bindActions(AdminActions);
@@ -61,7 +62,8 @@ class _AdminStore {
       additionalReviewShowing: false,
       commentSummaryShowing: false,
       uploadAttachmentsShowing: false,
-      loadingDisclosure: false
+      loadingDisclosure: false,
+      reviewerSearchValue: ''
     };
 
     this.disclosureSummaries = [];
@@ -508,6 +510,46 @@ class _AdminStore {
 
   setApplicationStateForTest(update) {
     this.applicationState = Object.assign({}, this.applicationState, update);
+  }
+
+  populateReviewer(disclosureId, reviewer) {
+    reviewer.disclosureId = disclosureId;
+    reviewer.name = reviewer.value;
+    return reviewer;
+  }
+
+  addReviewerToState(reviewer) {
+    if (this.applicationState.selectedDisclosure.reviewers === undefined) {
+      this.applicationState.selectedDisclosure.reviewers = [];
+    }
+
+    this.applicationState.selectedDisclosure.reviewers.push(reviewer);
+  }
+
+  addAdditionalReviewer(suggestion) {
+    createRequest().post('/api/coi/additional-reviewers')
+      .send(this.populateReviewer(this.applicationState.selectedDisclosure.id, suggestion))
+      .end(processResponse((err, res) => {
+        if (!err) {
+          this.addReviewerToState(res.body);
+          this.emitChange();
+        }
+      }));
+  }
+
+  removeReviewerFromState(id) {
+    const index = this.applicationState.selectedDisclosure.reviewers.indexOf(reviewer => reviewer.id === id);
+    this.applicationState.selectedDisclosure.reviewers.splice(index,1);
+  }
+
+  removeAdditionalReviewer(id) {
+    createRequest().del(`/api/coi/additional-reviewers/${id}`)
+    .end(processResponse(err => {
+      if (!err) {
+        this.removeReviewerFromState(id);
+        this.emitChange();
+      }
+    }));
   }
 }
 

@@ -20,9 +20,40 @@ import styles from './style';
 import React from 'react';
 import {AdminActions} from '../../../../actions/AdminActions';
 import {FileUpload} from '../../../FileUpload';
+import AutoSuggest from '../../../AutoSuggest';
+import Suggestion from '../ReviewerSuggestion';
+import AdditionalReviewer from '../AdditionalReviewer';
+
 import classNames from 'classnames';
 
 export default function AdditionalReviewPanel(props) {
+  let additionalReview;
+  if (props.reviewers.length > 0) {
+    const reviewers = props.reviewers.map((reviewer, index) => {
+      return (
+        <AdditionalReviewer
+          index={index}
+          key={reviewer.userId}
+          {...reviewer}
+        />
+      );
+    });
+
+    additionalReview = (
+      <div className={styles.reviewers}>
+        <span className={styles.reviewerLabel}>Additional Reviewers</span>
+        {reviewers}
+      </div>
+    );
+  } else {
+    additionalReview = (
+      <div className={styles.noReviewers}>
+        You have not assigned additional reviewers to this disclosure.<br/>
+        Search for reviewers above to add here.
+      </div>
+    );
+  }
+
   return (
     <div className={classNames(styles.container, props.className)}>
       <div style={{paddingBottom: 20}}>
@@ -31,6 +62,7 @@ export default function AdditionalReviewPanel(props) {
         </span>
         <span className={styles.title}>ADDITIONAL REVIEW</span>
       </div>
+
       <div style={{paddingTop: 12, marginBottom: 25}}>
         <span className={styles.subLabel}>MANAGEMENT PLAN</span>
       </div>
@@ -47,6 +79,25 @@ export default function AdditionalReviewPanel(props) {
         <div>Drag and drop or upload your management plan</div>
         <div style={{fontSize: 10, marginTop: 2}}>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
       </FileUpload>
+
+      <div style={{paddingTop: 12, borderTop: '1px solid #777'}}>
+        <div style={{paddingTop: 12, marginBottom: 15}}>
+          <span className={styles.subLabel}>ADDITIONAL REVIEWERS</span>
+        </div>
+        <label style={{fontSize: '12px', paddingBottom: '5px', color: '#777'}}>SEARCH REVIEWERS</label>
+        <AutoSuggest
+          suggestion={Suggestion}
+          endpoint='/api/coi/reviewers'
+          value={props.reviewerSearchValue}
+          onSuggestionSelected={AdminActions.addAdditionalReviewer}
+          className={styles.autoSuggest}
+          inline={false}
+        />
+
+        {additionalReview}
+      </div>
+
+
     </div>
   );
 }
