@@ -61,18 +61,6 @@
   display: inline-block;
   padding: 10px;
   font-size: 13px;
-  color: #808080;
-}
-
-:global(.color-blind) .controls {
-  color: black;
-}
-
-.icon {
-  color: #676767;
-  width: 65px;
-  vertical-align: middle;
-  padding: 0 10px;
 }
 
 .mobileMenu {
@@ -89,16 +77,26 @@
   text-transform: uppercase;
   padding-left: 30px;
   vertical-align: middle;
+  border-left: 1px solid #555555;
 }
 
-.signOut {
-  border-right: 1px solid #555555;
-  padding: 0 30px;
-  vertical-align: middle;
-  cursor: pointer;
+.colorToggle {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #BBB;
+  margin-bottom: 8px;
+}
+
+.icon {
+  font-size: 16px;
+  padding-right: 8px;
+}
+
+.menuItem {
+  padding: 7px 0 7px 20px;
+  display: block;
   color: #555555;
 }
 
-:global(.color-blind) .signOut {
+:global(.color-blind) .menuItem {
   color: black;
 }
