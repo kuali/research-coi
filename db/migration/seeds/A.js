@@ -28,6 +28,7 @@
 */
 
 var hashCode = require('../../../hash');
+var moment = require('moment');
 
 var includeDemoData = process.argv[8] === 'demo';
 
@@ -377,7 +378,7 @@ function insertInitialArchiveConfig(query) {
       peopleEnabled: true,
       sponsorLookup: true,
 
-      dueDate: new Date(2015, 1, 1),
+      dueDate: moment().add(6, 'months').toDate(),
       isRollingDueDate: false,
       instructions: {
         'Questionnaire': 'Please answer each question thoughtfully. You will have an opportunity to review and edit your answers after completing the questionnaire.',
