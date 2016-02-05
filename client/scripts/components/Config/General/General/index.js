@@ -64,7 +64,7 @@ export default class General extends React.Component {
   render() {
     return (
       <div className={`flexbox column`} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
           <Sidebar active="general" />
           <span className={`inline-flexbox column fill ${styles.content}`}>

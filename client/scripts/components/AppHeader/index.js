@@ -96,7 +96,7 @@ export class AppHeader extends React.Component {
             </span>
           </a>
           <span className={styles.kuali}>
-            <div className={styles.modulename}>Conflict Of Interest</div>
+            <div className={styles.modulename}>{this.props.moduleName}</div>
           </span>
         </span>
         <span className={styles.controls}>

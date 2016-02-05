@@ -95,7 +95,7 @@ export class Revise extends React.Component {
 
     return (
       <div className={`flexbox column`} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`fill flexbox column ${styles.container} ${this.props.className}`}>
           <RevisionHeader
             disclosureType={2}

@@ -143,7 +143,7 @@ export class ListView extends React.Component {
 
     return (
       <div className={`flexbox column`} style={{height: '100%', overflowX: 'hidden'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={classes}>
           <span className={styles.sidebar}>
             <AdminMenu />

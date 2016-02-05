@@ -188,7 +188,7 @@ export class Archive extends React.Component {
 
     return (
       <div className={`flexbox column ${styles.app}`}>
-        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <span className={styles.sidebar}>
             {updateDisclosureLink}

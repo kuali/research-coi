@@ -153,7 +153,7 @@ export class Dashboard extends React.Component {
 
     return (
       <div className={classes} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <span className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <span className={styles.sidebar}>
             {adminMenu}
