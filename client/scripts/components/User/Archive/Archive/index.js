@@ -192,7 +192,10 @@ export class Archive extends React.Component {
         <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <span className={styles.sidebar}>
             {updateDisclosureLink}
-            <Link to={"/coi/dashboard"}>
+            <Link
+              to={"/coi/dashboard"}
+              query={{type: COIConstants.DISCLOSURE_TYPE.ANNUAL}}
+            >
               <div className={linkClasses}>
                 <div className={styles.sidebarTopText}>Back To</div>
                 <div className={styles.sidebarBottomText}>Dashboard</div>
