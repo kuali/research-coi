@@ -155,4 +155,51 @@ describe('AdminStore', () => {
       assert.equal(files[0].name, 'file2');
     });
   });
+
+  describe('addReviewerToState', () => {
+    it('should create a reviewer array and add to it', () => {
+      setApplicationState({
+        selectedDisclosure: {}
+      });
+      let reviewers = AdminStore.getState().applicationState.selectedDisclosure.reviewers;
+
+      assert.equal(reviewers, undefined);
+
+      alt.dispatcher.dispatch({
+        action: AdminActions.ADD_REVIEWER_TO_STATE,
+        data: {name: 'reviewer'}
+      });
+
+      reviewers = AdminStore.getState().applicationState.selectedDisclosure.reviewers;
+
+      assert.equal(reviewers.length, 1);
+      assert.equal(reviewers[0].name, 'reviewer');
+    });
+  });
+
+  describe('removeReviewerFromState', () => {
+    it('should create a reviewer array and add to it', () => {
+      setApplicationState({
+        selectedDisclosure: {
+          reviewers: [
+            {id:1, name: 'reviewer'}
+          ]
+        }
+      });
+
+      let reviewers = AdminStore.getState().applicationState.selectedDisclosure.reviewers;
+
+      assert.equal(reviewers.length, 1);
+      assert.equal(reviewers[0].name, 'reviewer');
+
+      alt.dispatcher.dispatch({
+        action: AdminActions.REMOVE_REVIEWER_FROM_STATE,
+        data: 1
+      });
+
+      reviewers = AdminStore.getState().applicationState.selectedDisclosure.reviewers;
+
+      assert.equal(reviewers.length, 0);
+    });
+  });
 });

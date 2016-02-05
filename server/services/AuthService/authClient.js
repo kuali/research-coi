@@ -21,6 +21,7 @@ import {COIConstants} from '../../../COIConstants';
 import {OK} from '../../../HTTPStatusCodes';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const http = useSSL ? require('https') : require('http');
+const REVIEWER_CACHE_KEY = 'reviewers';
 
 let getAuthorizationInfo;
 try {
@@ -115,6 +116,10 @@ export function getAuthLink(req) {
 
 export async function getReviewers(dbInfo, authToken) {
   return new Promise((resolve) => {
+    const cachedReviewers = cache.get(REVIEWER_CACHE_KEY);
+    if (cachedReviewers) {
+      return resolve(cachedReviewers);
+    }
     const authInfo = getAuthorizationInfo(dbInfo);
     const options = {
       host: authInfo.host,
@@ -132,13 +137,15 @@ export async function getReviewers(dbInfo, authToken) {
       response.on('end', () => {
         if (response.statusCode === OK) {
           const results = JSON.parse(body);
-          resolve(results.map(result => {
+          const reviewers = results.map(result => {
             return {
               userId: result.memberId,
-              displayName: result.fullName,
+              value: result.fullName,
               email: result.email
             };
-          }));
+          });
+          cache.set(REVIEWER_CACHE_KEY, reviewers);
+          resolve(reviewers);
         }
         resolve();
       });

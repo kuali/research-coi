@@ -51,7 +51,7 @@ export const init = app => {
   /**
     @Role: admin
   */
-  app.get('/api/v1/coi/project-disclosure-statuses/:sourceId/:projectId', (req, res, next) => {
+  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(FORBIDDEN);
       return;
@@ -70,7 +70,7 @@ export const init = app => {
   /**
    @Role: admin
    */
-  app.get('/api/v1/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', (req, res, next) => {
+  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
       res.sendStatus(FORBIDDEN);
       return;

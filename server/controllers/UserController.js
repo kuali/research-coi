@@ -31,9 +31,16 @@ export const init = app => {
     });
   });
 
-  app.get('/api/v1/coi/reviewers', (req, res, next) => {
+  /**
+   @Role: any
+   */
+  app.get('/api/coi/reviewers', (req, res, next) => {
+    if (!req.query.term) {
+      res.send([]);
+      return;
+    }
     getReviewers(req.dbInfo, req.headers.authorization).then(results => {
-      res.send(results);
+      res.send(results.filter(result => result.value.toLowerCase().indexOf(req.query.term.toLowerCase()) >= 0 ));
     }).catch(err => {
       Log.error(err);
       next(err);

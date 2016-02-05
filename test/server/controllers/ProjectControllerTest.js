@@ -124,11 +124,11 @@ describe('ProjectControllerTest', () => {
     await createUserData(projectIds[0], user2Id, 'COI');
   });
 
-  describe('api/v1/coi/project-disclosure-statuses/:sourceId/:projectId', () => {
+  describe('api/coi/project-disclosure-statuses/:sourceId/:projectId', () => {
     it('should return not yet disclosed if no declaration are present', async function() {
       await knex('declaration').del();
       const response = await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/${source}/${sourceId}`)
+        .get(`/api/coi/project-disclosure-statuses/${source}/${sourceId}`)
         .set('Authorization','Bearer admin')
         .expect(OK);
 
@@ -153,7 +153,7 @@ describe('ProjectControllerTest', () => {
 
 
       const response = await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/${source}/${sourceId}`)
+        .get(`/api/coi/project-disclosure-statuses/${source}/${sourceId}`)
         .set('Authorization','Bearer admin')
         .expect(OK);
 
@@ -175,7 +175,7 @@ describe('ProjectControllerTest', () => {
 
     it('should return empty array', async function() {
       const response = await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/NOSOURCE/NOID`)
+        .get(`/api/coi/project-disclosure-statuses/NOSOURCE/NOID`)
         .set('Authorization','Bearer admin')
         .expect(OK);
 
@@ -185,17 +185,17 @@ describe('ProjectControllerTest', () => {
 
     it('should return forbidden for non admins', async function() {
       await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/NOSOURCE/NOID`)
+        .get(`/api/coi/project-disclosure-statuses/NOSOURCE/NOID`)
         .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
     });
   });
 
-  describe('api/v1/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', () => {
+  describe('api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', () => {
     it('should return not yet disclosed if no declaration are present', async function() {
       await knex('declaration').del();
       const response = await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/${source}/${sourceId}/${user1Id}`)
+        .get(`/api/coi/project-disclosure-statuses/${source}/${sourceId}/${user1Id}`)
         .set('Authorization','Bearer admin')
         .expect(OK);
 
@@ -209,7 +209,7 @@ describe('ProjectControllerTest', () => {
     it('should return the disclosure status if declarations are present', async function() {
       await addDeclaration(projectIds[0],disclosureIds[0],financialEntityIds[0]);
       const response = await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/${source}/${sourceId}/${user1Id}`)
+        .get(`/api/coi/project-disclosure-statuses/${source}/${sourceId}/${user1Id}`)
         .set('Authorization','Bearer admin')
         .expect(OK);
 
@@ -221,7 +221,7 @@ describe('ProjectControllerTest', () => {
 
     it('should return empty object', async function() {
       const response = await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/NOSOURCE/NOID/NOPERSON`)
+        .get(`/api/coi/project-disclosure-statuses/NOSOURCE/NOID/NOPERSON`)
         .set('Authorization','Bearer admin')
         .expect(OK);
 
@@ -231,7 +231,7 @@ describe('ProjectControllerTest', () => {
 
     it('should return forbidden for non admins', async function() {
       await request(app.run())
-        .get(`/api/v1/coi/project-disclosure-statuses/NOSOURCE/NOID/NOPERSON`)
+        .get(`/api/coi/project-disclosure-statuses/NOSOURCE/NOID/NOPERSON`)
         .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
     });

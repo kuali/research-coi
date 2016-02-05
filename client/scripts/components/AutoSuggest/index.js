@@ -21,7 +21,6 @@ import classNames from 'classnames';
 import React from 'react';
 import {processResponse, createRequest} from '../../HttpUtils';
 import {COIConstants} from '../../../../COIConstants';
-import Suggestion from '../Suggestion';
 
 export default class AutoSuggest extends React.Component {
   constructor(props) {
@@ -44,8 +43,8 @@ export default class AutoSuggest extends React.Component {
     });
   }
 
-  onSelected(newValue) {
-    this.props.onSuggestionSelected(newValue);
+  onSelected(suggestion) {
+    this.props.onSuggestionSelected(suggestion);
     this.setState({
       suggestions: []
     });
@@ -73,7 +72,7 @@ export default class AutoSuggest extends React.Component {
     switch (evt.keyCode) { // eslint-disable-line default-case
       case COIConstants.RETURN_KEY:
         if (this.state.selectedIndex >= 0) {
-          this.onSelected(this.state.suggestions[this.state.selectedIndex].value);
+          this.onSelected(this.state.suggestions[this.state.selectedIndex]);
         }
         else {
           this.onSelected(this.state.value);
@@ -108,7 +107,7 @@ export default class AutoSuggest extends React.Component {
 
   suggestionClicked(suggestion) {
     this.setState({
-      value: suggestion
+      value: suggestion.value
     });
 
     this.onSelected(suggestion);
@@ -116,12 +115,13 @@ export default class AutoSuggest extends React.Component {
 
   render() {
     let suggestionList;
+    const Suggestion = this.props.suggestion;
     if (this.state.suggestions && this.state.suggestions.length > 0) {
       const suggestions = this.state.suggestions.map((suggestion, index) => {
         return (
           <Suggestion
             key={index}
-            value={suggestion.value}
+            suggestion={suggestion}
             onClick={this.suggestionClicked}
             selected={this.state.selectedIndex === index}
             searchTerm={this.state.value}
@@ -142,7 +142,6 @@ export default class AutoSuggest extends React.Component {
         </ul>
       );
     }
-
     const classes = classNames(
       {[styles.inline]: this.props.inline},
       styles.container,

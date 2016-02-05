@@ -19,8 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-
-export default class Suggestion extends React.Component {
+export default class ReviewerSuggestion extends React.Component {
   constructor() {
     super();
 
@@ -64,7 +63,12 @@ export default class Suggestion extends React.Component {
         onClick={this.onClick}
         role="option"
       >
-        {this.highlightSearchTerm(this.props.suggestion.value, this.props.searchTerm)}
+        <div className={styles.name}>
+          {this.highlightSearchTerm(this.props.suggestion.value, this.props.searchTerm)}
+        </div>
+        <div className={styles.email}>
+          {this.props.suggestion.email}
+        </div>
       </li>
     );
   }

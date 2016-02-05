@@ -16,30 +16,40 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react';
-import AutoSuggest from '../../AutoSuggest';
-import Suggestion from '../../Suggestion';
+.container {
+  display: inline-block;
+  min-height: 80px;
+  width: 100%;
+  background-color: #EEEEEE;
+  border-radius: 5px;
+  margin-top: 20px;
+}
 
-export default class PISearchBox extends React.Component {
-  constructor() {
-    super();
+.content {
+  padding: 10px 0 5px 15px;
+  font-size: 14px;
+  min-height: 60px;
+  border-bottom: 2px solid lightgray;
+}
 
-    this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
-  }
+.buttons {
+  min-height: 20px;
+}
 
-  onSuggestionSelected(suggestion) {
-    this.props.onSelected(suggestion);
-  }
+.name {
+  padding-bottom: 5px;
+  font-weight: bold;
+}
 
-  render() {
-    return (
-      <AutoSuggest
-        endpoint='/api/coi/pi'
-        suggestion={Suggestion}
-        value={this.props.value}
-        onSuggestionSelected={this.onSuggestionSelected}
-        inline={true}
-      />
-    );
-  }
+.button {
+  float: right;
+  margin-right: 10px;
+  border: none;
+  color: #0095A0;
+  background-color: transparent;
+  font-weight: 500;
+}
+
+:global(.color-blind) .button {
+  color: black;
 }

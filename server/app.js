@@ -24,6 +24,7 @@ import * as ProjectController from './controllers/ProjectController';
 import * as FileController from './controllers/FileController';
 import * as PIController from './controllers/PIController';
 import * as UserController from './controllers/UserController';
+import * as AdditionalReviewerController from './controllers/AdditionalReviewerController';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -119,6 +120,7 @@ export function run() {
   FileController.init(app);
   PIController.init(app);
   UserController.init(app);
+  AdditionalReviewerController.init(app);
   app.use(ErrorLogger);
 
   app.set('portNumber', config ? config.port : process.env.COI_PORT || DEFAULT_PORT);
