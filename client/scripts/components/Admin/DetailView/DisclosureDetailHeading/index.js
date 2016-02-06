@@ -53,7 +53,10 @@ export function DisclosureDetailHeading(props) {
   }
 
   let approvedDate;
-  if (disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+  if (
+    disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE &&
+    disclosure.lastReviewDate
+  ) {
     approvedDate = (
       <div className={styles.details}>
         <span className={styles.label}>Approved On:</span>
