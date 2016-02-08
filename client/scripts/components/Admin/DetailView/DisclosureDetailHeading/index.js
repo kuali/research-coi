@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import React from 'react';
 import ConfigStore from '../../../../stores/ConfigStore';
 import {formatDate, formatDateTime} from '../../../../formatDate';
-import {COIConstants} from '../../../../../../COIConstants';
+import {DISCLOSURE_STATUS} from '../../../../../../COIConstants';
 
 export function DisclosureDetailHeading(props) {
   const disclosure = props.disclosure;
@@ -53,7 +53,10 @@ export function DisclosureDetailHeading(props) {
   }
 
   let approvedDate;
-  if (disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+  if (
+    disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE &&
+    disclosure.lastReviewDate
+  ) {
     approvedDate = (
       <div className={styles.details}>
         <span className={styles.label}>Approved On:</span>
