@@ -23,6 +23,7 @@ import ToggleSwitch from '../ToggleSwitch';
 import ColorActions from '../../actions/ColorActions';
 import cookies from 'cookies-js';
 import UserInfoStore from '../../stores/UserInfoStore';
+import Menu from '../Menu';
 
 export class AppHeader extends React.Component {
   constructor() {
@@ -65,15 +66,15 @@ export class AppHeader extends React.Component {
     let signOut;
     if (this.state.userInfo && this.state.userInfo.mock === true) {
       signOut = (
-        <a className={styles.signOut} href="#" onClick={this.logOut}>
-          <i className={`fa fa-sign-out`} style={{paddingRight: 5, fontSize: 16}}></i>
+        <a className={styles.menuItem} href="#" onClick={this.logOut}>
+          <i className={`fa fa-sign-out ${styles.icon}`}></i>
           SIGN OUT
         </a>
       );
     } else {
       signOut = (
-        <a className={styles.signOut} href="/auth/signout?return_to=/coi">
-          <i className={`fa fa-sign-out`} style={{paddingRight: 5, fontSize: 16}}></i>
+        <a className={styles.menuItem} href="/auth/signout?return_to=/coi">
+          <i className={`fa fa-sign-out ${styles.icon}`}></i>
           SIGN OUT
         </a>
       );
@@ -95,18 +96,24 @@ export class AppHeader extends React.Component {
             </span>
           </a>
           <span className={styles.kuali}>
-            <div className={styles.modulename}>Conflict Of Interest</div>
+            <div className={styles.modulename}>{this.props.moduleName}</div>
           </span>
         </span>
         <span className={styles.controls}>
-          <span style={{verticalAlign: 'middle'}}>
-            <ToggleSwitch
-              onChange={this.onContrastChange}
-              defaultValue={window.colorBlindModeOn ? 'On' : 'Off'}
-              label="CONTRAST MODE"
-            />
-          </span>
-          {signOut}
+          <Menu>
+            <div className={styles.colorToggle}>
+              <ToggleSwitch
+                onChange={this.onContrastChange}
+                defaultValue={window.colorBlindModeOn ? 'On' : 'Off'}
+                label="CONTRAST MODE"
+              />
+            </div>
+            <a href="about" className={styles.menuItem}>
+              <i className={`fa fa-info-circle ${styles.icon}`} />
+              ABOUT
+            </a>
+            {signOut}
+          </Menu>
           <span className={styles.usersName}>
             Welcome,
             <span style={{marginLeft: 3}}>

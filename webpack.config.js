@@ -22,7 +22,8 @@ module.exports = {
   entry: {
     user: './client/scripts/components/User/app.js',
     admin: './client/scripts/components/Admin/admin.js',
-    config: './client/scripts/components/Config/config.js'
+    config: './client/scripts/components/Config/config.js',
+    about: './client/scripts/components/About/about.js'
   },
   output: {
     path: path.join(__dirname, 'client/build'),

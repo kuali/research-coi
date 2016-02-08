@@ -89,7 +89,7 @@ export default class Certification extends React.Component {
 
     return (
       <div className={`flexbox column`} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} />
+        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
           <Sidebar active="certification" />
           <span className={classNames('inline-flexbox', 'column', 'fill', styles.content)}>

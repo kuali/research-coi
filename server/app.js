@@ -107,6 +107,7 @@ export function run() {
   app.use('/coi/disclosure', renderView('index'));
   app.use('/coi/travelLog', renderView('index'));
   app.use('/coi/revise', renderView('index'));
+  app.use('/coi/about', renderView('about'));
 
   app.use('/coi/admin', adminRoleCheck, renderView('admin/admin'));
   app.use('/coi/config', adminRoleCheck, renderView('admin/config'));
