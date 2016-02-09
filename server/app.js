@@ -29,7 +29,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
-import apiAuthentication from './middleware/apiAuthentication';
+import apiAuthentication from './middleware/apiAthentication';
 import renderView from './middleware/renderView';
 import Log from './Log';
 import methodChecker from './middleware/methodChecker';
