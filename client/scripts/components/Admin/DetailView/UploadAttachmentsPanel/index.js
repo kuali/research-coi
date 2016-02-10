@@ -40,7 +40,7 @@ export default function UploadAttachmentsPanel(props) {
         multiple={true}
         className={`${styles.override} ${styles.fileUploadStyles}`}
       >
-        <div>Drag and drop or upload your management plan</div>
+        <div>Drag and drop or upload your attachments</div>
         <div style={{fontSize: 10, marginTop: 2}}>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
       </FileUpload>
     </div>
