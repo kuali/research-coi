@@ -15,9 +15,17 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
+import { ROLES } from '../../COIConstants';
+export function configCheck(req, res, next) {
+  roleCheck([ROLES.ADMIN], req.userInfo.coiRole, res, next);
+}
 
-export default function(req, res, next) {
-  if (req.userInfo.coiRole !== 'admin') {
+export function adminCheck(req, res, next) {
+  roleCheck([ROLES.ADMIN, ROLES.REVIEWER], req.userInfo.coiRole, res, next);
+}
+
+function roleCheck(roles, role, res, next) {
+  if (!roles.includes(role)) {
     res.render('unauthorized');
     return;
   }

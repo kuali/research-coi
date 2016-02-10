@@ -97,6 +97,7 @@ export const QUESTIONNAIRE_TYPE = {
 
 export const ROLES = {
   ADMIN: 'admin',
+  REVIEWER: 'reviewer',
   USER: 'user'
 };
 

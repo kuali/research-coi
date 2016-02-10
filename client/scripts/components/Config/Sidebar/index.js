@@ -20,6 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router';
+import { ROLES } from '../../../../../COIConstants';
 import AdminMenu from '../../AdminMenu';
 
 export default function Sidebar(props) {
@@ -72,7 +73,7 @@ export default function Sidebar(props) {
 
   return (
     <span className={classNames(styles.container, props.className)}>
-      <AdminMenu style={{marginBottom: 34, padding: '23px 0px'}} />
+      <AdminMenu role={ROLES.ADMIN} style={{marginBottom: 34, padding: '23px 0px'}} />
       {stepsJsx}
     </span>
   );

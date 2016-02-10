@@ -498,7 +498,8 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
     'id': disclosureId
   };
 
-  if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+  if (userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
+    userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
     criteria.user_id = userInfo.schoolId;
   }
 
@@ -588,7 +589,8 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     additionalReviewers,
     isOwner
   ]) => {
-    if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+    if (userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
+      userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
       if (!isOwner) {
         throw Error(`Attempt by ${userInfo.username} to load disclosure ${disclosureId} which is not theirs`);
       }
@@ -753,7 +755,7 @@ export const getSummariesForReviewCount = (dbInfo, filters) => {
 };
 
 const SUMMARY_PAGE_SIZE = 40;
-export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters) => {
+export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosures) => {
   const knex = getKnex(dbInfo);
 
   const query = knex('disclosure')
@@ -829,6 +831,11 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
     default:
       dbSortColumn = 'submitted_by';
       break;
+  }
+
+
+  if (reviewerDisclosures) {
+    query.whereIn('id', reviewerDisclosures);
   }
 
   query.orderBy(dbSortColumn, dbSortDirection);

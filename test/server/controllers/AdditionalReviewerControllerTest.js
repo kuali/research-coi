@@ -58,7 +58,6 @@ async function addReviewer(disclosureId, user) {
 }
 
 let disclosureId;
-let reviewerId;
 describe('AdditionalReviewerControllerTest', () => {
   before(async function(){
     const disclosure = await knex('disclosure').insert({
@@ -102,22 +101,59 @@ describe('AdditionalReviewerControllerTest', () => {
   });
 
   describe('/api/coi/additional-reviewers/:id', async () => {
-    before(async () => {
-      reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest2');
-    });
-
-    it('should only allow admins to remove reviewers', async () => {
+    it('should not allow users to remove reviewers', async () => {
+      const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest2');
       await request(app.run())
         .del(`/api/coi/additional-reviewers/${reviewerId}`)
         .set('Authorization',`Bearer cate`)
         .expect(FORBIDDEN);
     });
 
-    it('should successfully remove reviewer', async () => {
+    it('should not allow reviewers to remove reviewers', async () => {
+      const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest3');
+      await request(app.run())
+        .del(`/api/coi/additional-reviewers/${reviewerId}`)
+        .set('Authorization',`Bearer reviewerDeleteTest3`)
+        .expect(FORBIDDEN);
+    });
 
+    it('should allow admins to remove reviewers', async () => {
+      const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest4');
       await request(app.run())
         .del(`/api/coi/additional-reviewers/${reviewerId}`)
         .set('Authorization',`Bearer admin`)
+        .expect(OK);
+
+      const reviewers = await knex('additional_reviewer')
+        .select('id')
+        .where({id: reviewerId});
+
+      assert.equal(reviewers.length,0);
+    });
+  });
+
+  describe('/api/coi/additional-reviewers/current/:disclosureId', async () => {
+    it('should not allow users to remove current reviewer', async () => {
+      await addReviewer(disclosureId,'reviewerDeleteTest5');
+      await request(app.run())
+        .del(`/api/coi/additional-reviewers/current/${disclosureId}`)
+        .set('Authorization',`Bearer cate`)
+        .expect(FORBIDDEN);
+    });
+
+    it('should not allow users to remove current reviewer', async () => {
+      await addReviewer(disclosureId,'reviewerDeleteTest6');
+      await request(app.run())
+        .del(`/api/coi/additional-reviewers/current/${disclosureId}`)
+        .set('Authorization',`Bearer admin`)
+        .expect(FORBIDDEN);
+    });
+
+    it('should allow reviewers to remove themselves', async () => {
+      const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest7');
+      await request(app.run())
+        .del(`/api/coi/additional-reviewers/current/${disclosureId}`)
+        .set('Authorization',`Bearer reviewerDeleteTest7`)
         .expect(OK);
 
       const reviewers = await knex('additional_reviewer')

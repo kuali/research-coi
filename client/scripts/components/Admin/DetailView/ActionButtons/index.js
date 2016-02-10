@@ -20,6 +20,7 @@ import React from 'react';
 import {AdminActions} from '../../../../actions/AdminActions';
 import styles from './style';
 import classNames from 'classnames';
+import { ROLES } from '../../../../../../COIConstants';
 
 export default function ActionButtons(props) {
   let generalAttachmentButton;
@@ -39,7 +40,7 @@ export default function ActionButtons(props) {
 
   let approveButton;
   let sendBackButton;
-  if (!props.readonly) {
+  if (!props.readonly && props.role === ROLES.ADMIN) {
     approveButton = (
       <div
         name='Approve Button'
@@ -63,11 +64,11 @@ export default function ActionButtons(props) {
     );
   }
 
-  return (
-    <div name='Action Buttons' className={classNames(styles.container, props.className)}>
-      {generalAttachmentButton}
-      {approveButton}
-      {sendBackButton}
+  let additionalReviewButton;
+  let uploadAttachmentsButton;
+
+  if (props.role === ROLES.ADMIN) {
+    additionalReviewButton = (
       <div name='Additional Review Button'
         className={styles.button}
         onClick={AdminActions.showAdditionalReviewPanel}
@@ -77,16 +78,9 @@ export default function ActionButtons(props) {
           <div>ADDITIONAL REVIEW</div>
         </span>
       </div>
-      <div
-        name='Review Comments Button'
-        className={styles.button}
-        onClick={AdminActions.showCommentSummary}
-      >
-        <i className={`fa fa-binoculars ${styles.icon}`}></i>
-        <span className={styles.label}>
-          <div>REVIEW COMMENTS</div>
-        </span>
-      </div>
+    );
+
+    uploadAttachmentsButton = (
       <div
         name='Upload Attachments Button'
         className={styles.button}
@@ -97,6 +91,43 @@ export default function ActionButtons(props) {
           <div>UPLOAD ATTACHMENTS</div>
         </span>
       </div>
+    );
+  }
+
+  let completeReviewButton;
+
+  if (props.role === ROLES.REVIEWER) {
+    completeReviewButton = (
+      <div
+        name='Complete Review'
+        className={styles.button}
+        onClick={AdminActions.completeReview}
+      >
+        <i className={`fa fa-check ${styles.icon}`}></i>
+        <span className={styles.label}>COMPLETE REVIEW</span>
+      </div>
+    );
+  }
+
+  return (
+    <div name='Action Buttons' className={classNames(styles.container, props.className)}>
+      {generalAttachmentButton}
+      {completeReviewButton}
+      {approveButton}
+      {sendBackButton}
+      {additionalReviewButton}
+      <div
+        name='Review Comments Button'
+        className={styles.button}
+        onClick={AdminActions.showCommentSummary}
+      >
+        <i className={`fa fa-binoculars ${styles.icon}`}></i>
+        <span className={styles.label}>
+          <div>REVIEW COMMENTS</div>
+        </span>
+      </div>
+      {uploadAttachmentsButton}
+
     </div>
   );
 }

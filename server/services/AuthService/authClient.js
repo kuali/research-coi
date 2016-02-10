@@ -17,7 +17,7 @@
 */
 
 import cache from '../../LruCache';
-import {COIConstants} from '../../../COIConstants';
+import { ROLES } from '../../../COIConstants';
 import {OK} from '../../../HTTPStatusCodes';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const http = useSSL ? require('https') : require('http');
@@ -32,17 +32,16 @@ try {
     return {
       host: process.env.AUTHZ_HOST || 'uit.kuali.dev',
       adminRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator',
-      reviewerRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator'
+      reviewerRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Reviewer'
     };
   };
 }
 
-function getUserRoles(dbInfo, schoolId, authToken) {
+function isUserInRole(host, role, schoolId, authToken) {
   return new Promise((resolve) => {
-    const authInfo = getAuthorizationInfo(dbInfo);
     const options = {
-      host: authInfo.host,
-      path: `/kc-dev/kc-sys-krad/v1/roles/${authInfo.adminRole}/principals/${schoolId}?qualification=unitNumber:*`,
+      host,
+      path: `/kc-dev/kc-sys-krad/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`,
       headers: {
         'Authorization': `Bearer ${authToken}`
       }
@@ -50,17 +49,32 @@ function getUserRoles(dbInfo, schoolId, authToken) {
 
     http.get(options, response => {
       if (response.statusCode === OK) {
-        resolve(COIConstants.ROLES.ADMIN);
+        resolve(true);
       } else {
-        resolve(COIConstants.ROLES.USER);
+        resolve(false);
       }
       response.on('error', () => {
-        resolve(COIConstants.ROLES.USER);
+        resolve(false);
       });
     }).on('error', () => {
-      resolve(COIConstants.ROLES.USER);
+      resolve(false);
     });
   });
+}
+
+async function getUserRoles(dbInfo, schoolId, authToken) {
+  const authInfo = getAuthorizationInfo(dbInfo);
+  const isAdmin = await isUserInRole(authInfo.host, authInfo.adminRole, schoolId, authToken);
+  if (isAdmin) {
+    return ROLES.ADMIN;
+  }
+
+  const isReviewer = await isUserInRole(authInfo.host, authInfo.reviewerRole, schoolId, authToken);
+  if (isReviewer) {
+    return ROLES.REVIEWER;
+  }
+
+  return ROLES.USER;
 }
 
 export function getUserInfo(dbInfo, hostname, authToken) {
@@ -85,19 +99,21 @@ export function getUserInfo(dbInfo, hostname, authToken) {
           response.on('data', (chunk) => {
             body += chunk;
           });
-          response.on('end', () => {
-            const userInfo = JSON.parse(body);
-            getUserRoles(dbInfo, userInfo.schoolId, authToken).then(role => {
+          response.on('end', async () => {
+            try {
+              const userInfo = JSON.parse(body);
+              const role = await getUserRoles(dbInfo, userInfo.schoolId, authToken);
               if (!role) {
-                userInfo.coiRole = COIConstants.ROLES.USER;
+                userInfo.coiRole = ROLES.USER;
               } else {
                 userInfo.coiRole = role;
               }
+
               cache.set(authToken, userInfo);
               resolve(userInfo);
-            }).catch(err => {
+            } catch(err) {
               reject(err);
-            });
+            }
           });
           response.on('error', (err) => {
             reject(err);

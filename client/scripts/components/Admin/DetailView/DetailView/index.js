@@ -30,6 +30,7 @@ import GeneralAttachmentsPanel from '../GeneralAttachmentsPanel';
 import UploadAttachmentsPanel from '../UploadAttachmentsPanel';
 import {COIConstants} from '../../../../../../COIConstants';
 import {AppHeader} from '../../../AppHeader';
+import UserInfoStore from '../../../../stores/UserInfoStore';
 import classNames from 'classnames';
 
 export class DetailView extends React.Component {
@@ -42,7 +43,8 @@ export class DetailView extends React.Component {
     this.state = {
       summaries: store.disclosureSummaries,
       applicationState: store.applicationState,
-      config: configStore.config
+      config: configStore.config,
+      userInfo: UserInfoStore.getState().userInfo
     };
 
     this.searchFilter = this.searchFilter.bind(this);
@@ -82,7 +84,7 @@ export class DetailView extends React.Component {
     const store = AdminStore.getState();
     newState.summaries = store.disclosureSummaries;
     newState.applicationState = store.applicationState;
-
+    newState.userInfo = UserInfoStore.getState().userInfo;
     this.setState(newState);
   }
 
@@ -176,6 +178,7 @@ export class DetailView extends React.Component {
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
           config={this.state.config}
+          role={this.state.userInfo.coiRole}
         />
       );
     }

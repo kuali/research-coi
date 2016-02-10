@@ -19,88 +19,141 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
+import { ROLES } from '../../../../../../COIConstants';
 import ActionButtons from '../../../../../../client/scripts/components/Admin/DetailView/ActionButtons';
 
 /*global describe, it */
 
 describe('ActionButtons', () => {
-  it('show attachments false readOnly false', () => {
+  it('show attachments false readOnly false admin true', () => {
     const tree = sd.shallowRender(
       <ActionButtons
         showAttachments={false}
         readonly={false}
+        role={ROLES.ADMIN}
       />
     );
 
     const vdom = tree.getRenderOutput();
     assert.equal(vdom.props.name, 'Action Buttons');
     const children = vdom.props.children;
-    assert.equal(children.length, 6);
+    assert.equal(children.length, 7);
     assert.equal(children[0], undefined);
-    assert.equal(children[1].props.name, 'Approve Button');
-    assert.equal(children[2].props.name, 'Send Back Button');
-    assert.equal(children[3].props.name, 'Additional Review Button');
-    assert.equal(children[4].props.name, 'Review Comments Button');
-    assert.equal(children[5].props.name, 'Upload Attachments Button');
+    assert.equal(children[1], undefined);
+    assert.equal(children[2].props.name, 'Approve Button');
+    assert.equal(children[3].props.name, 'Send Back Button');
+    assert.equal(children[4].props.name, 'Additional Review Button');
+    assert.equal(children[5].props.name, 'Review Comments Button');
+    assert.equal(children[6].props.name, 'Upload Attachments Button');
   });
 
-  it('show attachments true readOnly false', () => {
+  it('show attachments true readOnly false admin true', () => {
     const tree = sd.shallowRender(
       <ActionButtons
         showAttachments={true}
         readonly={false}
+        role={ROLES.ADMIN}
       />
     );
 
     const vdom = tree.getRenderOutput();
     assert.equal(vdom.props.name, 'Action Buttons');
     const children = vdom.props.children;
-    assert.equal(children.length, 6);
+    assert.equal(children.length, 7);
     assert.equal(children[0].props.name, 'General Attachments Button');
-    assert.equal(children[1].props.name, 'Approve Button');
-    assert.equal(children[2].props.name, 'Send Back Button');
-    assert.equal(children[3].props.name, 'Additional Review Button');
-    assert.equal(children[4].props.name, 'Review Comments Button');
-    assert.equal(children[5].props.name, 'Upload Attachments Button');
+    assert.equal(children[1], undefined);
+    assert.equal(children[2].props.name, 'Approve Button');
+    assert.equal(children[3].props.name, 'Send Back Button');
+    assert.equal(children[4].props.name, 'Additional Review Button');
+    assert.equal(children[5].props.name, 'Review Comments Button');
+    assert.equal(children[6].props.name, 'Upload Attachments Button');
   });
 
-  it('show attachments true readOnly true', () => {
+  it('show attachments true readOnly true admin true', () => {
     const tree = sd.shallowRender(
       <ActionButtons
         showAttachments={true}
         readonly={true}
+        role={ROLES.ADMIN}
       />
     );
 
     const vdom = tree.getRenderOutput();
     assert.equal(vdom.props.name, 'Action Buttons');
     const children = vdom.props.children;
-    assert.equal(children.length, 6);
+    assert.equal(children.length, 7);
     assert.equal(children[0].props.name, 'General Attachments Button');
     assert.equal(children[1], undefined);
     assert.equal(children[2], undefined);
-    assert.equal(children[3].props.name, 'Additional Review Button');
-    assert.equal(children[4].props.name, 'Review Comments Button');
-    assert.equal(children[5].props.name, 'Upload Attachments Button');
+    assert.equal(children[3], undefined);
+    assert.equal(children[4].props.name, 'Additional Review Button');
+    assert.equal(children[5].props.name, 'Review Comments Button');
+    assert.equal(children[6].props.name, 'Upload Attachments Button');
   });
 
-  it('show attachments false readOnly true', () => {
+  it('show attachments false readOnly true admin true', () => {
     const tree = sd.shallowRender(
       <ActionButtons
         showAttachments={false}
         readonly={true}
+        role={ROLES.ADMIN}
       />
     );
 
     const vdom = tree.getRenderOutput();
     assert.equal(vdom.props.name, 'Action Buttons');
     const children = vdom.props.children;
-    assert.equal(children.length, 6);
+    assert.equal(children.length, 7);
     assert.equal(children[0], undefined);
     assert.equal(children[1], undefined);
     assert.equal(children[2], undefined);
-    assert.equal(children[3].props.name, 'Additional Review Button');
-    assert.equal(children[4].props.name, 'Review Comments Button');
-    assert.equal(children[5].props.name, 'Upload Attachments Button');
+    assert.equal(children[3], undefined);
+    assert.equal(children[4].props.name, 'Additional Review Button');
+    assert.equal(children[5].props.name, 'Review Comments Button');
+    assert.equal(children[6].props.name, 'Upload Attachments Button');
+  });
+
+  it('show attachments false readOnly false role reviewer', () => {
+    const tree = sd.shallowRender(
+      <ActionButtons
+        showAttachments={false}
+        readonly={true}
+        role={ROLES.REVIEWER}
+      />
+    );
+
+    const vdom = tree.getRenderOutput();
+    assert.equal(vdom.props.name, 'Action Buttons');
+    const children = vdom.props.children;
+    assert.equal(children.length, 7);
+    assert.equal(children[0], undefined);
+    assert.equal(children[1].props.name, 'Complete Review');
+    assert.equal(children[2], undefined);
+    assert.equal(children[3], undefined);
+    assert.equal(children[4], undefined);
+    assert.equal(children[5].props.name, 'Review Comments Button');
+    assert.equal(children[6], undefined);
+  });
+
+  it('show attachments false readOnly false role reviewer', () => {
+    const tree = sd.shallowRender(
+      <ActionButtons
+        showAttachments={true}
+        readonly={true}
+        role={ROLES.REVIEWER}
+      />
+    );
+
+    const vdom = tree.getRenderOutput();
+    assert.equal(vdom.props.name, 'Action Buttons');
+    const children = vdom.props.children;
+    assert.equal(children.length, 7);
+    assert.equal(children[0].props.name, 'General Attachments Button');
+    assert.equal(children[1].props.name, 'Complete Review');
+    assert.equal(children[2], undefined);
+    assert.equal(children[3], undefined);
+    assert.equal(children[4], undefined);
+    assert.equal(children[5].props.name, 'Review Comments Button');
+    assert.equal(children[6], undefined);
   });
 });

@@ -27,6 +27,33 @@ catch (err) {
   getKnex = require('./ConnectionManager').default;
 }
 
+export async function getDisclosuresForReviewer(dbInfo, schoolId) {
+  const knex = getKnex(dbInfo);
+  try {
+    const reviewers = await knex('additional_reviewer')
+      .select('disclosure_id as disclosureId')
+      .where({user_id: schoolId});
+    return reviewers.map(reviewer => {
+      return reviewer.disclosureId.toString();
+    });
+  } catch(err) {
+    return Promise.reject(err);
+  }
+
+}
+
+export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) {
+  const knex = getKnex(dbInfo);
+  return knex('additional_reviewer')
+    .select('id')
+    .where({
+      user_id: schoolId,
+      disclosure_id: disclosureId
+    });
+
+
+}
+
 export async function createAdditionalReviewer(dbInfo, reviewer) {
   const knex = getKnex(dbInfo);
   try {
