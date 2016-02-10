@@ -28,6 +28,7 @@ import {BlueButton} from '../../../BlueButton';
 import ConfigStore from '../../../../stores/ConfigStore';
 import AdminMenu from '../../../AdminMenu';
 import {AppHeader} from '../../../AppHeader';
+import UserInfoStore from '../../../../stores/UserInfoStore';
 
 export class ListView extends React.Component {
   constructor() {
@@ -35,7 +36,8 @@ export class ListView extends React.Component {
 
     this.state = {
       data: AdminStore.getState(),
-      config: ConfigStore.getState().config
+      config: ConfigStore.getState().config,
+      userInfo: UserInfoStore.getState().userInfo
     };
 
     this.changeSearch = this.changeSearch.bind(this);
@@ -77,7 +79,8 @@ export class ListView extends React.Component {
   onChange() {
     this.setState({
       data: AdminStore.getState(),
-      config: ConfigStore.getState().config
+      config: ConfigStore.getState().config,
+      userInfo: UserInfoStore.getState().userInfo
     });
   }
 
@@ -146,7 +149,7 @@ export class ListView extends React.Component {
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={classes}>
           <span className={styles.sidebar}>
-            <AdminMenu />
+            <AdminMenu role={this.state.userInfo.coiRole} />
             <DisclosureFilterSearch
               query={this.state.data.applicationState.filters.search}
               onChange={this.changeSearch}

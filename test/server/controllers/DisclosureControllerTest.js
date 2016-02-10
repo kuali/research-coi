@@ -25,7 +25,7 @@ import request from 'supertest';
 import {COIConstants} from '../../../COIConstants';
 import hashCode from '../../../hash';
 import {formatDate} from '../../../client/scripts/formatDate';
-import { ACCEPTED, OK} from '../../../HTTPStatusCodes';
+import { ACCEPTED, OK, FORBIDDEN, INTERNAL_SERVER_ERROR} from '../../../HTTPStatusCodes';
 
 let getKnex;
 try {
@@ -70,10 +70,28 @@ async function changeDisclosureStatus(status, id) {
     .where({id});
 }
 
+function createComment(disclosureId, user) {
+  return {
+    disclosureId,
+    topicSection: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+    topicId: 1,
+    text: 'blah',
+    userId: hashCode(user),
+    author: user,
+    date: new Date(),
+    visibleToPI: true,
+    visibleToReviewers: true
+  };
+}
+
 describe('DisclosureController',async () => {
   let disclosureId;
+  let disclosure1Id;
+  let additionalReviewerId;
   const user = 'DisclosureControllerTest';
   const userId = hashCode(user);
+  const reviewer = 'reviewerDisclosureControllerTest';
+  const reviewerId = hashCode(reviewer);
   const today = new Date();
 
   before(async function(){
@@ -85,10 +103,28 @@ describe('DisclosureController',async () => {
       config_id: 1}, 'id');
 
     disclosureId = disclosure[0];
+
+    const additionalReviewer = await knex('additional_reviewer').insert({
+      disclosure_id: disclosureId,
+      user_id: reviewerId,
+      name: reviewer,
+      email: 'test@test.com'
+    },'id');
+
+    additionalReviewerId = additionalReviewer[0];
+
+    const disclosure1 = await knex('disclosure').insert({
+      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
+      status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+      user_id: userId,
+      start_date: today,
+      config_id: 1}, 'id');
+
+    disclosure1Id = disclosure1[0];
   });
 
   describe('/api/coi/disclosure/:id', async () => {
-    it('should retrieve a disclosure with given id ', async function () {
+    it('user should be able to retrieve there own disclosures', async function () {
       const response = await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
         .set('Authorization', `Bearer ${user}`)
@@ -99,6 +135,107 @@ describe('DisclosureController',async () => {
       assert.equal(disclosure.typeCd, COIConstants.DISCLOSURE_TYPE.ANNUAL);
       assert.equal(disclosure.statusCd, COIConstants.DISCLOSURE_STATUS.IN_PROGRESS);
       assert.equal(formatDate(disclosure.startDate), formatDate(today));
+    });
+
+    it('user should not be able to retrieve others disclosures', async function () {
+      await request(app.run())
+        .get(`/api/coi/disclosures/${disclosureId}`)
+        .set('Authorization', `Bearer cate`)
+        .expect(INTERNAL_SERVER_ERROR);
+    });
+
+    it('reviewer should be able to retrieve disclosures when they are a reviewer', async function () {
+      await request(app.run())
+        .get(`/api/coi/disclosures/${disclosureId}`)
+        .set('Authorization', `Bearer ${reviewer}`)
+        .expect(OK);
+    });
+
+    it('reviewer should not be able to retrieve disclosures when they are not a reviewer', async function () {
+      await request(app.run())
+        .get(`/api/coi/disclosures/${disclosureId}`)
+        .set('Authorization', `Bearer reviewer1234`)
+        .expect(FORBIDDEN);
+    });
+
+    it('admin should be able to retrieve disclosures', async function () {
+      await request(app.run())
+        .get(`/api/coi/disclosures/${disclosureId}`)
+        .set('Authorization', `Bearer admin`)
+        .expect(OK);
+    });
+  });
+
+  describe('/api/coi/disclosure-summaries', async () => {
+    it('user should not be able to retrieve disclosure summaries', async function () {
+      await request(app.run())
+        .get(`/api/coi/disclosure-summaries`)
+        .set('Authorization', `Bearer cate`)
+        .expect(FORBIDDEN);
+    });
+
+    it('reviewer should be able to retrieve disclosure summaries when they are a reviewer', async function () {
+      const response = await request(app.run())
+        .get(`/api/coi/disclosure-summaries`)
+        .set('Authorization', `Bearer ${reviewer}`)
+        .expect(OK);
+
+      const summaries = response.body;
+      assert.equal(summaries.length, 1);
+    });
+
+    it('reviewer should not be able to retrieve disclosure summaries when they are not a reviewer', async function () {
+      const response = await request(app.run())
+        .get(`/api/coi/disclosure-summaries`)
+        .set('Authorization', `Bearer reviewer1234`)
+        .expect(OK);
+
+      const summaries = response.body;
+      assert.equal(summaries.length, 0);
+    });
+
+    it('admin should be able to retrieve disclosures', async function () {
+      const response = await request(app.run())
+        .get(`/api/coi/disclosure-summaries`)
+        .set('Authorization', `Bearer admin`)
+        .expect(OK);
+
+      const summaries = response.body;
+      assert.equal(summaries.length, 2);
+    });
+  });
+
+  describe('/api/coi/disclosures/:id/comments', async () => {
+    it('user should not be able add comments', async function () {
+      await request(app.run())
+        .post(`/api/coi/disclosures/${disclosureId}/comments`)
+        .send(createComment(disclosureId, 'cate'))
+        .set('Authorization', `Bearer cate`)
+        .expect(FORBIDDEN);
+    });
+
+    it('admin should be able add comments', async function () {
+      await request(app.run())
+        .post(`/api/coi/disclosures/${disclosureId}/comments`)
+        .send(createComment(disclosureId, 'admin'))
+        .set('Authorization', `Bearer admin`)
+        .expect(OK);
+    });
+
+    it('reviewer should be able add comments to disclosures when they are a reviewer', async function () {
+      await request(app.run())
+        .post(`/api/coi/disclosures/${disclosureId}/comments`)
+        .send(createComment(disclosureId, reviewer))
+        .set('Authorization', `Bearer ${reviewer}`)
+        .expect(OK);
+    });
+
+    it('reviewer should not be able add comments to disclosures when they are not a reviewer', async function () {
+      await request(app.run())
+        .post(`/api/coi/disclosures/${disclosure1Id}/comments`)
+        .send(createComment(disclosure1Id, reviewer))
+        .set('Authorization', `Bearer ${reviewer}`)
+        .expect(FORBIDDEN);
     });
   });
 
@@ -197,7 +334,9 @@ describe('DisclosureController',async () => {
   });
 
   after(async function() {
-    await knex('disclosure_archive').del().where({disclosure_id: disclosureId});
-    await knex('disclosure').del().where({id: disclosureId});
+    await knex('comment').del().whereIn('disclosure_id', [disclosureId, disclosure1Id]);
+    await knex('additional_reviewer').del().where({id: additionalReviewerId});
+    await knex('disclosure_archive').del().whereIn('disclosure_id', [disclosureId, disclosure1Id]);
+    await knex('disclosure').del().whereIn('id',[disclosureId, disclosure1Id]);
   });
 });

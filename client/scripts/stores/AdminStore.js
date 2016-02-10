@@ -113,6 +113,7 @@ class _AdminStore {
   }
 
   loadDisclosure(id) {
+
     delete this.applicationState.selectedDisclosure;
     this.applicationState.loadingDisclosure = true;
     createRequest().get(`/api/coi/disclosures/${id}`)
@@ -550,6 +551,15 @@ class _AdminStore {
         this.emitChange();
       }
     }));
+  }
+
+  completeReview() {
+    createRequest().del(`/api/coi/additional-reviewers/current/${this.applicationState.selectedDisclosure.id}`)
+      .end(processResponse(err => {
+        if (!err) {
+          window.location = '/coi/admin';
+        }
+      }));
   }
 }
 

@@ -196,6 +196,7 @@ export class DisclosureDetail extends React.Component {
             <ActionButtons
               className={`${styles.override} ${styles.actionButtons}`}
               showAttachments={showAttachments}
+              role={this.props.role}
               readonly={
                 this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
                 this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED

@@ -56,4 +56,20 @@ export const init = app => {
       next(err);
     });
   });
+
+  app.delete('/api/coi/additional-reviewers/current/:disclosureId', async (req, res, next) => {
+    try {
+      if (req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, req.userInfo.schoolId, req.params.disclosureId);
+      await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, additionalReviewer[0].id);
+      res.sendStatus(OK);
+    } catch(err) {
+      Log.error(err);
+      next(err);
+    }
+  });
 };

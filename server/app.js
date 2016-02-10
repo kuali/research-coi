@@ -36,7 +36,7 @@ import methodChecker from './middleware/methodChecker';
 import ErrorLogger from './middleware/ErrorLogger';
 import {COIConstants} from '../COIConstants';
 import {NOT_FOUND} from '../HTTPStatusCodes';
-import adminRoleCheck from './middleware/adminRoleCheck';
+import { configCheck, adminCheck } from './middleware/roleCheck';
 import unauthorized from './middleware/unauthorized';
 import scheduleExpirationCheck from './expirationCheck';
 
@@ -109,8 +109,8 @@ export function run() {
   app.use('/coi/revise', renderView('index'));
   app.use('/coi/about', renderView('about'));
 
-  app.use('/coi/admin', adminRoleCheck, renderView('admin/admin'));
-  app.use('/coi/config', adminRoleCheck, renderView('admin/config'));
+  app.use('/coi/admin', adminCheck, renderView('admin/admin'));
+  app.use('/coi/config', configCheck, renderView('admin/config'));
   app.use('/coi', unauthorized);
 
   app.use(bodyParser.json());

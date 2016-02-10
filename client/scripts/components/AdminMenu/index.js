@@ -19,6 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
+import { ROLES } from '../../../../COIConstants';
 
 export default class AdminMenu extends React.Component {
   constructor() {
@@ -44,6 +45,16 @@ export default class AdminMenu extends React.Component {
       this.props.className
     );
 
+    let configLink;
+    if (this.props.role === ROLES.ADMIN) {
+      configLink = (
+        <a href="/coi/config" className={styles.menuItem}>
+          <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+          Configuration
+        </a>
+      );
+    }
+
     return (
       <div className={classes} onClick={this.toggle}>
         <div>
@@ -56,10 +67,7 @@ export default class AdminMenu extends React.Component {
               <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
               Admin Dashboard
             </a>
-            <a href="/coi/config" className={styles.menuItem}>
-              <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
-              Configuration
-            </a>
+            {configLink}
             <a href="/coi/" className={styles.menuItem}>
               <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
               Researcher Dashboard

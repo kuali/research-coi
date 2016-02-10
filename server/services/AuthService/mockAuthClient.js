@@ -48,7 +48,23 @@ export function getUserInfo(dbInfo, hostname, token) {
         mock: true
       });
     }
-    else {
+    else if (lowercaseToken.startsWith('reviewer')) {
+      resolve({
+        id: hashCode(token),
+        name: `Reviewer ${token}`,
+        username: token,
+        email: `${token}@email.com`,
+        createdAt: 1259218800,
+        updatedAt: 1259218800,
+        role: 'admin',
+        firstName: 'Reviewer',
+        lastName: token,
+        phone: '801-322-3323',
+        schoolId: hashCode(token),
+        coiRole: COIConstants.ROLES.REVIEWER,
+        mock: true
+      });
+    } else {
       resolve({
         id: hashCode(token),
         name: `User ${token}`,

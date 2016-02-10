@@ -21,6 +21,7 @@ import * as PIReviewDB from '../db/PIReviewDB';
 import Log from '../Log';
 import {COIConstants} from '../../COIConstants';
 import {FORBIDDEN, NO_CONTENT} from '../../HTTPStatusCodes';
+import { getDisclosuresForReviewer } from '../db/AdditionalReviewerDb';
 
 export const init = app => {
   /**
@@ -238,12 +239,21 @@ export const init = app => {
   });
 
   /**
-    @Role: admin
-  */
-  app.get('/api/coi/disclosures/:id/pi-responses', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+   @Role: admin (can see any) or reviewer (can only see ones where they are a reviewer)
+   */
+  app.get('/api/coi/disclosures/:id/pi-responses', async (req, res, next) => {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
+      req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
       res.sendStatus(FORBIDDEN);
       return;
+    }
+
+    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+      const reviewerDisclosureIds = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      if (!reviewerDisclosureIds.includes(req.params.id)) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
     }
 
     PIReviewDB.getPIResponseInfo(req.dbInfo, req.params.id)

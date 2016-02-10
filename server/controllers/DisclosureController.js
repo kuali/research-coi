@@ -18,6 +18,7 @@
 
 import * as DisclosureDB from '../db/DisclosureDB';
 import * as PIReviewDB from '../db/PIReviewDB';
+import { getDisclosuresForReviewer } from '../db/AdditionalReviewerDb';
 import multer from 'multer';
 import Log from '../Log';
 import {COIConstants} from '../../COIConstants';
@@ -99,10 +100,20 @@ export const init = app => {
     });
   });
 
+
   /**
     @Role: admin (can see any) or user (can only see their own)
+    or reviewer (can only see ones where they are a reviewer)
   */
-  app.get('/api/coi/disclosures/:id', (req, res, next) => {
+  app.get('/api/coi/disclosures/:id', async (req, res, next) => {
+    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+      const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      if (!reviewerDisclosures.includes(req.params.id)) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+    }
+
     DisclosureDB.get(req.dbInfo, req.userInfo, req.params.id)
       .then(disclosure => {
         res.send(disclosure);
@@ -114,12 +125,18 @@ export const init = app => {
   });
 
   /**
-    @Role: admin
+    @Role: admin (can see any) or reviewer (can only see ones where they are a reviewer)
   */
-  app.get('/api/coi/disclosure-summaries', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+  app.get('/api/coi/disclosure-summaries', async (req, res, next) => {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
+      req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
       res.sendStatus(FORBIDDEN);
       return;
+    }
+
+    let reviewerDisclosureIds;
+    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+      reviewerDisclosureIds = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
     }
 
     let sortColumn = 'DATE_SUBMITTED';
@@ -149,7 +166,7 @@ export const init = app => {
     if (req.query.start && !isNaN(req.query.start)) {
       start = req.query.start;
     }
-    DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, start, filters)
+    DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosureIds)
       .then(summaries => {
         res.send(summaries);
       })
@@ -337,12 +354,21 @@ export const init = app => {
   });
 
   /**
-    @Role: admin
-  */
-  app.post('/api/coi/disclosures/:id/comments', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+   @Role: admin (can see any) or reviewer (can only see ones where they are a reviewer)
+   */
+  app.post('/api/coi/disclosures/:id/comments', async (req, res, next) => {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
+      req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
       res.sendStatus(FORBIDDEN);
       return;
+    }
+
+    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+      const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      if (!reviewerDisclosures.includes(req.params.id)) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
     }
 
     const comment = req.body;

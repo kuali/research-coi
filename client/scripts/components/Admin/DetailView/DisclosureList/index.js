@@ -23,6 +23,7 @@ import {DisclosureListItem} from '../DisclosureListItem';
 import {DisclosureFilterSearch} from '../../DisclosureFilterSearch';
 import SearchFilterGroup from '../../SearchFilterGroup';
 import {AdminActions} from '../../../../actions/AdminActions';
+import UserInfoStore from '../../../../stores/UserInfoStore';
 import {BlueButton} from '../../../BlueButton';
 import ConfigStore from '../../../../stores/ConfigStore';
 import AdminMenu from '../../../AdminMenu';
@@ -117,7 +118,7 @@ export class DisclosureList extends React.Component {
 
     return (
       <div className={classes}>
-        <AdminMenu style={{padding: '32px 0px'}} />
+        <AdminMenu role={UserInfoStore.getState().userInfo.coiRole} style={{padding: '32px 0px'}} />
         <div style={{width: 320}}>
           <DisclosureFilterSearch
             query={this.props.filters.search}
