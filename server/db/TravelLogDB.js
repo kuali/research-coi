@@ -17,9 +17,9 @@
 */
 
 /*eslint camelcase:0 */
-import {COIConstants} from '../../COIConstants';
-import {verifyRelationshipIsUsers} from './CommonDB';
-import * as FileService from '../services/fileService/FileService';
+import {COIConstants} from '../../coi-constants';
+import {verifyRelationshipIsUsers} from './common-d-b';
+import * as FileService from '../services/file-service/file-service';
 
 let getKnex;
 try {
@@ -27,7 +27,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 
 export const getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, filter) => {

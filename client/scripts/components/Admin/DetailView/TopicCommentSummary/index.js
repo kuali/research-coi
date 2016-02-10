@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import CommentBubble from '../CommentBubble';
+import CommentBubble from '../comment-bubble';
 import classNames from 'classnames';
 
 export default function TopicCommentSummary(props) {

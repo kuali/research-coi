@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import PIReviewActions from '../actions/PIReviewActions';
+import PIReviewActions from '../actions/pi-review-actions';
 import alt from '../alt';
-import {processResponse, createRequest} from '../HttpUtils';
-import ConfigActions from '../actions/ConfigActions';
-import {COIConstants} from '../../../COIConstants';
+import {processResponse, createRequest} from '../http-utils';
+import ConfigActions from '../actions/config-actions';
+import {COIConstants} from '../../../coi-constants';
 
 class _PIReviewStore {
   constructor() {

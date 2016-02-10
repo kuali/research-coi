@@ -17,10 +17,10 @@
  */
 
 import assert from 'assert';
-import {saveConfig} from '../../../server/controllers/ConfigController';
+import {saveConfig} from '../../../server/controllers/config-controller';
 import sinon from 'sinon';
-import * as ConfigDB from '../../../server/db/ConfigDB';
-import Log from '../../../server/Log';
+import * as ConfigDB from '../../../server/db/config-d-b';
+import Log from '../../../server/log';
 
 let req;
 let res;

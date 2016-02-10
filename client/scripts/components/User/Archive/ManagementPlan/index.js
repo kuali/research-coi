@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import {BlueButton} from '../../../BlueButton';
+import {BlueButton} from '../../../blue-button';
 
 export default function ManagementPlan(props) {
   return (

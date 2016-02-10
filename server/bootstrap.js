@@ -21,7 +21,7 @@
 require('babel-register');
 require('babel-polyfill');
 var app = require('./app');
-var Log = require('./Log').default;
+var Log = require('./log').default;
 
 var application = app.run();
 var portNumber = application.get('portNumber');

@@ -18,9 +18,9 @@
 
 import styles from './style';
 import React from 'react';
-import {GreyButton} from '../../../GreyButton';
-import {BlueButton} from '../../../BlueButton';
-import {AdminActions} from '../../../../actions/AdminActions';
+import {GreyButton} from '../../../grey-button';
+import {BlueButton} from '../../../blue-button';
+import {AdminActions} from '../../../../actions/admin-actions';
 import classNames from 'classnames';
 
 export default function ApprovalConfirmation(props) {

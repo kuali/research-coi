@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureFilterByStatus} from '../DisclosureFilterByStatus';
-import {DisclosureFilterByDate} from '../DisclosureFilterByDate';
-import {DisclosureFilterByPI} from '../DisclosureFilterByPI';
+import {DisclosureFilterByStatus} from '../disclosure-filter-by-status';
+import {DisclosureFilterByDate} from '../disclosure-filter-by-date';
+import {DisclosureFilterByPI} from '../disclosure-filter-by-p-i';
 
 export default function SearchFilterGroup(props) {
   const classes = classNames(

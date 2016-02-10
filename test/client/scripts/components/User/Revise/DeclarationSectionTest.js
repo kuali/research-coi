@@ -19,7 +19,7 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import DeclarationSection from '../../../../../../client/scripts/components/User/Revise/DeclarationSection';
+import DeclarationSection from '../../../../../../client/scripts/components/user/revise/declaration-section';
 
 /*global describe, it */
 

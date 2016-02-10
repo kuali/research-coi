@@ -19,16 +19,16 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import Sidebar from '../../Sidebar';
-import Panel from '../../Panel';
-import ActionPanel from '../../ActionPanel';
-import InstructionEditor from '../../InstructionEditor';
-import ConfigStore from '../../../../stores/ConfigStore';
-import DeclarationType from '../DeclarationType';
-import DoneLink from '../../DoneLink';
-import ConfigActions from '../../../../actions/ConfigActions';
-import {COIConstants} from '../../../../../../COIConstants';
-import {AppHeader} from '../../../AppHeader';
+import Sidebar from '../../sidebar';
+import Panel from '../../panel';
+import ActionPanel from '../../action-panel';
+import InstructionEditor from '../../instruction-editor';
+import ConfigStore from '../../../../stores/config-store';
+import DeclarationType from '../declaration-type';
+import DoneLink from '../../done-link';
+import ConfigActions from '../../../../actions/config-actions';
+import {COIConstants} from '../../../../../../coi-constants';
+import {AppHeader} from '../../../app-header';
 
 export default class Declarations extends React.Component {
   constructor() {

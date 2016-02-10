@@ -18,11 +18,11 @@
 
 import styles from './style';
 import React from 'react';
-import ProgressIndicator from '../ProgressIndicator';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import NextLink from '../NextLink';
-import SubmitLink from '../SubmitLink';
-import PreviousLink from '../PreviousLink';
+import ProgressIndicator from '../progress-indicator';
+import {DisclosureActions} from '../../../actions/disclosure-actions';
+import NextLink from '../next-link';
+import SubmitLink from '../submit-link';
+import PreviousLink from '../previous-link';
 
 export class NavSidebar extends React.Component {
   constructor() {

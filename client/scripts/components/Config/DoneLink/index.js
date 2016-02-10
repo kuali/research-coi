@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import CheckmarkIcon from '../../DynamicIcons/CheckmarkIcon';
+import CheckmarkIcon from '../../dynamic-icons/checkmark-icon';
 
 export default class DoneLink extends React.Component {
   constructor() {

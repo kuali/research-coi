@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {camelizeJson, snakeizeJson} from './JsonUtils';
+import {camelizeJson, snakeizeJson} from './json-utils';
 import _ from 'lodash';
 
 let getKnex;
@@ -25,7 +25,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 
 export const saveSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {

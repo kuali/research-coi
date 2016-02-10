@@ -18,14 +18,14 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {COIConstants} from '../../../../../../COIConstants';
-import {RadioControl} from '../../RadioControl';
-import {TextAreaControl} from '../../TextAreaControl';
-import {NumericControl} from '../../NumericControl';
-import {DateControl} from '../../DateControl';
-import {CheckboxControl} from '../../CheckboxControl';
-import {NextButton} from '../NextButton';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {COIConstants} from '../../../../../../coi-constants';
+import {RadioControl} from '../../radio-control';
+import {TextAreaControl} from '../../text-area-control';
+import {NumericControl} from '../../numeric-control';
+import {DateControl} from '../../date-control';
+import {CheckboxControl} from '../../checkbox-control';
+import {NextButton} from '../next-button';
 
 export class Question extends React.Component {
   constructor() {

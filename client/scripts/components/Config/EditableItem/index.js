@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import CheckmarkIcon from '../../DynamicIcons/CheckmarkIcon';
-import {COIConstants} from '../../../../../COIConstants';
+import CheckmarkIcon from '../../dynamic-icons/checkmark-icon';
+import {COIConstants} from '../../../../../coi-constants';
 
 export default class EditableItem extends React.Component {
   constructor() {

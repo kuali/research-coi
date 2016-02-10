@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
-import {COIConstants} from '../../../../../../COIConstants';
-import {AdminActions} from '../../../../actions/AdminActions';
+import {formatDate} from '../../../../format-date';
+import {COIConstants} from '../../../../../../coi-constants';
+import {AdminActions} from '../../../../actions/admin-actions';
 
 export default class QuestionSummary extends React.Component {
   constructor() {

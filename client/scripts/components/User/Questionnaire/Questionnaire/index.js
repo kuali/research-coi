@@ -18,9 +18,9 @@
 
 import styles from './style';
 import React from 'react';
-import {Question} from '../Question';
-import {Instructions} from '../../Instructions';
-import {COIConstants} from '../../../../../../COIConstants';
+import {Question} from '../question';
+import {Instructions} from '../../instructions';
+import {COIConstants} from '../../../../../../coi-constants';
 
 export class Questionnaire extends React.Component {
   constructor() {

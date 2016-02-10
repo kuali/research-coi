@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import ConfigStore from '../../../../stores/ConfigStore';
-import {COIConstants} from '../../../../../../COIConstants';
+import ConfigStore from '../../../../stores/config-store';
+import {COIConstants} from '../../../../../../coi-constants';
 import {Link} from 'react-router';
 
 export function TravelLogButton(props) {

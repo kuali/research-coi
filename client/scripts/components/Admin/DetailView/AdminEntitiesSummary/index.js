@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import EntitySummary from '../EntitySummary';
+import EntitySummary from '../entity-summary';
 import classNames from 'classnames';
 
 export class AdminEntitiesSummary extends React.Component {

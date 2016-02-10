@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import ConfigActions from '../actions/ConfigActions';
+import ConfigActions from '../actions/config-actions';
 import alt from '../alt';
-import {COIConstants} from '../../../COIConstants';
-import {processResponse, createRequest} from '../HttpUtils';
+import {COIConstants} from '../../../coi-constants';
+import {processResponse, createRequest} from '../http-utils';
 
 class _ConfigStore {
   constructor() {

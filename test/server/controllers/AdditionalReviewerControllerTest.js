@@ -22,9 +22,9 @@
 import assert from 'assert';
 import * as app from '../../../server/app';
 import request from 'supertest';
-import {COIConstants} from '../../../COIConstants';
+import {COIConstants} from '../../../coi-constants';
 import hashCode from '../../../hash';
-import { OK, FORBIDDEN, INTERNAL_SERVER_ERROR } from '../../../HTTPStatusCodes';
+import { OK, FORBIDDEN, INTERNAL_SERVER_ERROR } from '../../../http-status-codes';
 
 let getKnex;
 try {
@@ -32,7 +32,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('../../../server/db/ConnectionManager').default;
+  getKnex = require('../../../server/db/connection-manager').default;
 }
 const knex = getKnex({});
 

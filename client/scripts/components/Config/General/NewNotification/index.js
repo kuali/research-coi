@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigActions from '../../../../actions/ConfigActions';
-import DateOptions from '../DateOptions';
+import ConfigActions from '../../../../actions/config-actions';
+import DateOptions from '../date-options';
 
 export default class NewNotifications extends React.Component {
   constructor() {

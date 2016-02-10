@@ -19,13 +19,13 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';  //eslint-disable-line no-unused-vars
-import {ToggleSet} from '../ToggleSet';
-import EntityRelationshipSummary from '../../../EntityRelationshipSummary';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
-import {BlueButton} from '../../../BlueButton';
-import RelationshipTextField from '../RelationshipTextField';
-import RelationshipDateField from '../RelationshipDateField';
+import {ToggleSet} from '../toggle-set';
+import EntityRelationshipSummary from '../../../entity-relationship-summary';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
+import {BlueButton} from '../../../blue-button';
+import RelationshipTextField from '../relationship-text-field';
+import RelationshipDateField from '../relationship-date-field';
 
 export class EntityFormRelationshipStep extends React.Component {
   constructor() {

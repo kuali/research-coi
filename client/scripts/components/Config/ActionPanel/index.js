@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import UndoButton from '../UndoButton';
-import SaveButton from '../SaveButton';
+import UndoButton from '../undo-button';
+import SaveButton from '../save-button';
 
 export default function ActionPanel(props) {
   const classes = classNames(

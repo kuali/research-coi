@@ -18,7 +18,7 @@
 
 /* eslint-disable no-magic-numbers */
 
-import {MockTravelLogActions} from './MockTravelLogAction.js';
+import {MockTravelLogActions} from './mock-travel-log-action.js';
 import alt from '../../../../../../../client/scripts/alt';
 
 class _MockTravelLogStore {

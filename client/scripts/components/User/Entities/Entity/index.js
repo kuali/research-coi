@@ -19,11 +19,11 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {GreyButton} from '../../../GreyButton';
-import {EntityForm} from '../EntityForm';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
-import ConfigStore from '../../../../stores/ConfigStore';
+import {GreyButton} from '../../../grey-button';
+import {EntityForm} from '../entity-form';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
+import ConfigStore from '../../../../stores/config-store';
 
 export class Entity extends React.Component {
   constructor() {

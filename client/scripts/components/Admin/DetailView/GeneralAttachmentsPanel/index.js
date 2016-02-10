@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {AdminActions} from '../../../../actions/AdminActions';
+import {AdminActions} from '../../../../actions/admin-actions';
 
 export default function GeneralAttachmentsPanel(props) {
   const files = props.files.map(file => {

@@ -18,9 +18,9 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {GreyButton} from '../../GreyButton';
-import VerticalSlider from '../../VerticalSlider';
+import {DisclosureActions} from '../../../actions/disclosure-actions';
+import {GreyButton} from '../../grey-button';
+import VerticalSlider from '../../vertical-slider';
 
 export function Instructions(props) {
   return (

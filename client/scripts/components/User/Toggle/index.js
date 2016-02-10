@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ToggleButton from '../ToggleButton';
+import ToggleButton from '../toggle-button';
 
 export class Toggle extends React.Component {
   constructor() {

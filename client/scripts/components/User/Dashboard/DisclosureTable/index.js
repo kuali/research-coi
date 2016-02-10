@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureTableRow} from '../DisclosureTableRow';
-import {COIConstants} from '../../../../../../COIConstants';
+import {DisclosureTableRow} from '../disclosure-table-row';
+import {COIConstants} from '../../../../../../coi-constants';
 
 export class DisclosureTable extends React.Component {
   atLeastOneRowHasButton(disclosures) {

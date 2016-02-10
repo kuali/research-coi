@@ -19,8 +19,8 @@
 import styles from './style';
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import {GreyButton} from '../GreyButton';
-import {BlueButton} from '../BlueButton';
+import {GreyButton} from '../grey-button';
+import {BlueButton} from '../blue-button';
 
 export class FileUpload extends React.Component {
   constructor() {

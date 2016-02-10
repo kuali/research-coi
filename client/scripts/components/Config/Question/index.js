@@ -19,12 +19,12 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {GreyButton} from '../../GreyButton';
-import {BlueButton} from '../../BlueButton';
-import Gripper from '../../DynamicIcons/Gripper';
+import {GreyButton} from '../../grey-button';
+import {BlueButton} from '../../blue-button';
+import Gripper from '../../dynamic-icons/gripper';
 import {DragSource, DropTarget} from 'react-dnd';
-import NewQuestion from '../NewQuestion';
-import ConfigActions from '../../../actions/ConfigActions';
+import NewQuestion from '../new-question';
+import ConfigActions from '../../../actions/config-actions';
 
 const questionTarget = {
   hover(props, monitor) {

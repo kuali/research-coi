@@ -18,12 +18,12 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
-import CheckLink from '../CheckLink';
-import PIReviewActions from '../../../../actions/PIReviewActions';
-import {EntityFormInformationStep} from '../../Entities/EntityFormInformationStep';
-import {EntityFormRelationshipStep} from '../../Entities/EntityFormRelationshipStep';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
+import {formatDate} from '../../../../format-date';
+import CheckLink from '../check-link';
+import PIReviewActions from '../../../../actions/pi-review-actions';
+import {EntityFormInformationStep} from '../../entities/entity-form-information-step';
+import {EntityFormRelationshipStep} from '../../entities/entity-form-relationship-step';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
 
 export default class EntityToReview extends React.Component {
   constructor(props) {

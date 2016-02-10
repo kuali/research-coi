@@ -18,8 +18,8 @@
 
 import alt from '../../../../client/scripts/alt';
 import assert from 'assert';
-import ConfigStore from '../../../../client/scripts/stores/ConfigStore';
-import ConfigActions from '../../../../client/scripts/actions/ConfigActions';
+import ConfigStore from '../../../../client/scripts/stores/config-store';
+import ConfigActions from '../../../../client/scripts/actions/config-actions';
 
 const setState = (data) => {
   alt.dispatcher.dispatch({

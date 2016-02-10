@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import TextField from '../TextField';
+import TextField from '../text-field';
 import {merge} from '../../../merge';
 
 export default class NumericField extends TextField {

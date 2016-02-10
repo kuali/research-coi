@@ -20,8 +20,8 @@
 /* eslint-disable no-magic-numbers */
 import alt from '../../../../client/scripts/alt';
 import assert from 'assert';
-import {AdminStore} from '../../../../client/scripts/stores/AdminStore';
-import {AdminActions} from '../../../../client/scripts/actions/AdminActions';
+import {AdminStore} from '../../../../client/scripts/stores/admin-store';
+import {AdminActions} from '../../../../client/scripts/actions/admin-actions';
 
 const setApplicationState = (data) => {
   alt.dispatcher.dispatch({

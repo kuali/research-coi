@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import DeclarationSummary from '../DeclarationSummary';
+import DeclarationSummary from '../declaration-summary';
 
 export default class extends React.Component {
   getProjectTypeString(typeCd) {

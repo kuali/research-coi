@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import EntityToReview from '../EntityToReview';
+import EntityToReview from '../entity-to-review';
 
 export default function EntitySection(props) {
   const entities = props.entitiesToReview.map((entitytoReview, index) => {

@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as ConfigDB from '../db/ConfigDB';
-import {COIConstants} from '../../COIConstants';
-import {FORBIDDEN} from '../../HTTPStatusCodes';
-import Log from '../Log';
-import wrapAsync from './wrapAsync';
+import * as ConfigDB from '../db/config-d-b';
+import {COIConstants} from '../../coi-constants';
+import {FORBIDDEN} from '../../http-status-codes';
+import Log from '../log';
+import wrapAsync from './wrap-async';
 
 export async function saveConfig(req, res, next) {
   try {

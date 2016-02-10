@@ -18,10 +18,10 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../formatDate';
+import {formatDate} from '../../format-date';
 import numeral from 'numeral';
-import ConfigStore from '../../stores/ConfigStore';
-import {COIConstants} from '../../../../COIConstants';
+import ConfigStore from '../../stores/config-store';
+import {COIConstants} from '../../../../coi-constants';
 
 export default class EntityRelationshipSummary extends React.Component {
   constructor() {

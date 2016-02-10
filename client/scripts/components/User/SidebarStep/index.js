@@ -19,9 +19,9 @@
 import styles from './style';
 import React from 'react';
 import classNames from 'classnames';
-import {CurrentStepIcon} from '../../DynamicIcons/CurrentStepIcon';
-import {CompletedStepIcon} from '../../DynamicIcons/CompletedStepIcon';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
+import {CurrentStepIcon} from '../../dynamic-icons/current-step-icon';
+import {CompletedStepIcon} from '../../dynamic-icons/completed-step-icon';
+import {DisclosureActions} from '../../../actions/disclosure-actions';
 
 export class SidebarStep extends React.Component {
   constructor() {

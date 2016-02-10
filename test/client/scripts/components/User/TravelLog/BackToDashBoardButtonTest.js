@@ -19,7 +19,7 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import {BackToDashBoardButton} from '../../../../../../client/scripts/components/User/TravelLog/BackToDashBoardButton';
+import {BackToDashBoardButton} from '../../../../../../client/scripts/components/user/travel-log/back-to-dash-board-button';
 
 /*global describe, it */
 

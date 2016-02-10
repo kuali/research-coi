@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
-import Question from '../Question';
+import {formatDate} from '../../../../format-date';
+import Question from '../question';
 
 export default function QuestionToReview(props) {
   const comments = props.question.comments.map(comment => {

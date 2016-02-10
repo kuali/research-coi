@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {processResponse, createRequest} from '../../HttpUtils';
-import {COIConstants} from '../../../../COIConstants';
+import {processResponse, createRequest} from '../../http-utils';
+import {COIConstants} from '../../../../coi-constants';
 
 export default class AutoSuggest extends React.Component {
   constructor(props) {

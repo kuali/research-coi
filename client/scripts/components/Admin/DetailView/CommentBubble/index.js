@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
+import {formatDate} from '../../../../format-date';
 import classNames from 'classnames';
 
 export default function CommentBubble(props) {

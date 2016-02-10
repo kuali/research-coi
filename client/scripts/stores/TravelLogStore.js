@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {TravelLogActions} from '../actions/TravelLogActions.js';
+import {TravelLogActions} from '../actions/travel-log-actions.js';
 import alt from '../alt';
-import {processResponse, createRequest} from '../HttpUtils';
+import {processResponse, createRequest} from '../http-utils';
 
 const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));

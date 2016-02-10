@@ -19,7 +19,7 @@
 import React from 'react';//eslint-disable-line no-unused-vars
 import sd from 'skin-deep';
 import assert from 'assert';
-import {TravelLogHeader} from '../../../../../../client/scripts/components/User/TravelLog/TravelLogHeader';
+import {TravelLogHeader} from '../../../../../../client/scripts/components/user/travel-log/travel-log-header';
 
 /*global describe, it */
 

@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as ProjectDB from '../db/ProjectDB';
-import Log from '../Log';
-import { FORBIDDEN } from '../../HTTPStatusCodes';
-import {COIConstants} from '../../COIConstants';
+import * as ProjectDB from '../db/project-d-b';
+import Log from '../log';
+import { FORBIDDEN } from '../../http-status-codes';
+import {COIConstants} from '../../coi-constants';
 
 export const init = app => {
   app.post('/api/coi/projects', (req, res, next) => {

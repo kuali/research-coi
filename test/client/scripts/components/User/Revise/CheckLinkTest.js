@@ -19,7 +19,7 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import CheckLink from '../../../../../../client/scripts/components/User/Revise/CheckLink';
+import CheckLink from '../../../../../../client/scripts/components/user/revise/check-link';
 
 /*global describe, it */
 

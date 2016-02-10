@@ -18,10 +18,10 @@
 
 import styles from './style';
 import React from 'react';
-import {ManualEventEntry} from '../ManualEventEntry';
-import {ManualEventRelations} from '../ManualEventRelations';
-import {Instructions} from '../../Instructions';
-import {COIConstants} from '../../../../../../COIConstants';
+import {ManualEventEntry} from '../manual-event-entry';
+import {ManualEventRelations} from '../manual-event-relations';
+import {Instructions} from '../../instructions';
+import {COIConstants} from '../../../../../../coi-constants';
 
 export class ManualEvent extends React.Component {
   constructor() {

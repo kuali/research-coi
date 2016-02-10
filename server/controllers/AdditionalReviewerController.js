@@ -15,10 +15,10 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-import * as AdditionalReviewerDB from '../db/AdditionalReviewerDb';
-import Log from '../Log';
-import { COIConstants } from '../../COIConstants';
-import { OK, FORBIDDEN } from '../../HTTPStatusCodes';
+import * as AdditionalReviewerDB from '../db/additional-reviewer-db';
+import Log from '../log';
+import { COIConstants } from '../../coi-constants';
+import { OK, FORBIDDEN } from '../../http-status-codes';
 
 export const init = app => {
   /**

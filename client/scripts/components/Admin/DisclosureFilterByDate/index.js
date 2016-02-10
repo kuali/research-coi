@@ -19,11 +19,11 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DatePicker} from '../../DatePicker';
-import {GreyButton} from '../../GreyButton';
-import {AdminActions} from '../../../actions/AdminActions';
-import DisclosureFilter from '../DisclosureFilter';
-import DoneWithFilterButton from '../DoneWithFilterButton';
+import {DatePicker} from '../../date-picker';
+import {GreyButton} from '../../grey-button';
+import {AdminActions} from '../../../actions/admin-actions';
+import DisclosureFilter from '../disclosure-filter';
+import DoneWithFilterButton from '../done-with-filter-button';
 
 export class DisclosureFilterByDate extends DisclosureFilter {
   constructor() {

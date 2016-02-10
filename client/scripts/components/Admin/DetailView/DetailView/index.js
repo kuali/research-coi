@@ -18,19 +18,19 @@
 
 import styles from './style';
 import React from 'react';
-import {AdminStore} from '../../../../stores/AdminStore';
-import ConfigStore from '../../../../stores/ConfigStore';
-import {DisclosureDetail} from '../DisclosureDetail';
-import {DisclosureList} from '../DisclosureList';
-import {AdminActions} from '../../../../actions/AdminActions';
-import CommentingPanel from '../CommentingPanel';
-import AdditionalReviewPanel from '../AdditionalReviewPanel';
-import CommentSummary from '../CommentSummary';
-import GeneralAttachmentsPanel from '../GeneralAttachmentsPanel';
-import UploadAttachmentsPanel from '../UploadAttachmentsPanel';
-import {COIConstants} from '../../../../../../COIConstants';
-import {AppHeader} from '../../../AppHeader';
-import UserInfoStore from '../../../../stores/UserInfoStore';
+import {AdminStore} from '../../../../stores/admin-store';
+import ConfigStore from '../../../../stores/config-store';
+import {DisclosureDetail} from '../disclosure-detail';
+import {DisclosureList} from '../disclosure-list';
+import {AdminActions} from '../../../../actions/admin-actions';
+import CommentingPanel from '../commenting-panel';
+import AdditionalReviewPanel from '../additional-review-panel';
+import CommentSummary from '../comment-summary';
+import GeneralAttachmentsPanel from '../general-attachments-panel';
+import UploadAttachmentsPanel from '../upload-attachments-panel';
+import {COIConstants} from '../../../../../../coi-constants';
+import {AppHeader} from '../../../app-header';
+import UserInfoStore from '../../../../stores/user-info-store';
 import classNames from 'classnames';
 
 export class DetailView extends React.Component {

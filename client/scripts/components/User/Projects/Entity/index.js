@@ -18,11 +18,11 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {EntityRelationDialog} from '../EntityRelationDialog';
-import {GreyButton} from '../../../GreyButton';
-import {undefinedRelationExists} from '../../undefinedRelationExists';
-import ConfigStore from '../../../../stores/ConfigStore';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {EntityRelationDialog} from '../entity-relation-dialog';
+import {GreyButton} from '../../../grey-button';
+import {undefinedRelationExists} from '../../undefined-relation-exists';
+import ConfigStore from '../../../../stores/config-store';
 
 export class Entity extends React.Component {
   constructor() {

@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
-import {COIConstants} from '../../../../../../COIConstants';
+import {formatDate} from '../../../../format-date';
+import {COIConstants} from '../../../../../../coi-constants';
 
 export default function QuestionSummary(props) {
   return (

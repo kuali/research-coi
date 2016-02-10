@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import { ROLES } from '../../../../COIConstants';
+import { ROLES } from '../../../../coi-constants';
 
 export default class AdminMenu extends React.Component {
   constructor() {

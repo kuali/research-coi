@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react'; // eslint-disable-line no-unused-vars
-import RelationshipType from '../RelationshipType';
-import {BlueButton} from '../../../BlueButton';
-import {GreyButton} from '../../../GreyButton';
+import RelationshipType from '../relationship-type';
+import {BlueButton} from '../../../blue-button';
+import {GreyButton} from '../../../grey-button';
 
 export default class TravelRelationshipType extends RelationshipType {
   constructor() {

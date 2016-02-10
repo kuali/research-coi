@@ -19,10 +19,10 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {GreyButton} from '../../../GreyButton';
-import {formatDate} from '../../../../formatDate';
-import ConfigStore from '../../../../stores/ConfigStore';
-import {COIConstants} from '../../../../../../COIConstants';
+import {GreyButton} from '../../../grey-button';
+import {formatDate} from '../../../../format-date';
+import ConfigStore from '../../../../stores/config-store';
+import {COIConstants} from '../../../../../../coi-constants';
 import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {

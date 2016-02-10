@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import {Toggle} from '../Toggle';
+import {Toggle} from '../toggle';
 
 export class ToggleSet extends React.Component {
   constructor(props) {

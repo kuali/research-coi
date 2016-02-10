@@ -16,6 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+import createBrowserHistory from 'history/lib/create-browser-history';
 
 export default createBrowserHistory();

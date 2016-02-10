@@ -19,11 +19,11 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigActions from '../../../../actions/ConfigActions';
-import EditLink from '../../EditLink';
-import DoneLink from '../../DoneLink';
-import DeleteLink from '../../DeleteLink';
-import {COIConstants} from '../../../../../../COIConstants';
+import ConfigActions from '../../../../actions/config-actions';
+import EditLink from '../../edit-link';
+import DoneLink from '../../done-link';
+import DeleteLink from '../../delete-link';
+import {COIConstants} from '../../../../../../coi-constants';
 
 export default class DeclarationType extends React.Component {
   constructor() {

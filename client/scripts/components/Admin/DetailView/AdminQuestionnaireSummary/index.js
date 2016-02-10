@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import QuestionSummary from '../QuestionSummary';
+import QuestionSummary from '../question-summary';
 import classNames from 'classnames';
 
 export class AdminQuestionnaireSummary extends React.Component {

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {COIConstants} from '../../../COIConstants';
+import {COIConstants} from '../../../coi-constants';
 import hashCode from '../../../hash';
 
 export function authView(req, res) {

@@ -20,7 +20,7 @@ import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import ShallowTestUtils from 'react-shallow-testutils';
 import assert from 'assert';
-import AutoApproveDisclosure from '../../../../../../client/scripts/components/Config/General/AutoApproveDisclosure';
+import AutoApproveDisclosure from '../../../../../../client/scripts/components/config/general/auto-approve-disclosure';
 
 /*global describe, it */
 

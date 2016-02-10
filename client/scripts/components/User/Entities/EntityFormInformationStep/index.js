@@ -18,10 +18,10 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
-import {Question} from '../Question';
-import {COIConstants} from '../../../../../../COIConstants';
-import {FileUpload} from '../../../FileUpload';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
+import {Question} from '../question';
+import {COIConstants} from '../../../../../../coi-constants';
+import {FileUpload} from '../../../file-upload';
 
 export class EntityFormInformationStep extends React.Component {
   constructor() {

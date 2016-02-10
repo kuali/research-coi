@@ -18,12 +18,12 @@
 
 import styles from './style';
 import React from 'react';
-import {BlueButton} from '../../../BlueButton';
-import {TravelLogActions} from '../../../../actions/TravelLogActions';
-import {TravelLogStore} from '../../../../stores/TravelLogStore';
-import TextField from '../../TextField';
-import CurrencyField from '../../CurrencyField';
-import DateRangeField from '../../DateRangeField';
+import {BlueButton} from '../../../blue-button';
+import {TravelLogActions} from '../../../../actions/travel-log-actions';
+import {TravelLogStore} from '../../../../stores/travel-log-store';
+import TextField from '../../text-field';
+import CurrencyField from '../../currency-field';
+import DateRangeField from '../../date-range-field';
 
 export default class TravelLogForm extends React.Component {
     constructor() {

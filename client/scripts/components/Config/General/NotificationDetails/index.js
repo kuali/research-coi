@@ -19,10 +19,10 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigActions from '../../../../actions/ConfigActions';
-import DateOptions from '../DateOptions';
-import Notification from '../Notification';
-import DueDateDetails from '../DueDateDetails';
+import ConfigActions from '../../../../actions/config-actions';
+import DateOptions from '../date-options';
+import Notification from '../notification';
+import DueDateDetails from '../due-date-details';
 
 export default class NotificationDetails extends React.Component {
   constructor() {

@@ -19,11 +19,11 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigActions from '../../../../actions/ConfigActions';
-import EditLink from '../../EditLink';
-import DeleteLink from '../../DeleteLink';
-import DoneLink from '../../DoneLink';
-import DateOptions from '../DateOptions';
+import ConfigActions from '../../../../actions/config-actions';
+import EditLink from '../../edit-link';
+import DeleteLink from '../../delete-link';
+import DoneLink from '../../done-link';
+import DateOptions from '../date-options';
 
 export default class Notification extends React.Component {
   constructor() {

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from '../Log';
-import {INTERNAL_SERVER_ERROR} from '../../HTTPStatusCodes';
+import Log from '../log';
+import {INTERNAL_SERVER_ERROR} from '../../http-status-codes';
 
 export default function(err, req, res, next) {
   Log.error(err.stack);

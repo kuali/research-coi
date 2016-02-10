@@ -19,7 +19,7 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import ManagementPlan from '../../../../../../client/scripts/components/User/Archive/ManagementPlan';
+import ManagementPlan from '../../../../../../client/scripts/components/user/archive/management-plan';
 
 /*global describe, it */
 

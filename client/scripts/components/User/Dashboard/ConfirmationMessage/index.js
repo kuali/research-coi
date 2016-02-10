@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
 
 export class ConfirmationMessage extends React.Component {
   render() {

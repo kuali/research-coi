@@ -18,19 +18,19 @@
 
 import styles from './style';
 import React from 'react';
-import {AppHeader} from '../../AppHeader';
-import {Sidebar} from '../Sidebar';
-import {DisclosureHeader} from '../DisclosureHeader';
-import {DisclosureStore} from '../../../stores/DisclosureStore';
-import {DisclosureActions} from '../../../actions/DisclosureActions';
-import {COIConstants} from '../../../../../COIConstants';
-import {Questionnaire} from '../Questionnaire/Questionnaire';
-import {QuestionnaireSummary} from '../QuestionnaireSummary/QuestionnaireSummary';
-import {ManualEvent} from '../Manual/ManualEvent';
-import {Relationships} from '../Projects/Relationships';
-import {Entities} from '../Entities/Entities';
-import {Certify} from '../Certification/Certify';
-import {NavSidebar} from '../NavSidebar';
+import {AppHeader} from '../../app-header';
+import {Sidebar} from '../sidebar';
+import {DisclosureHeader} from '../disclosure-header';
+import {DisclosureStore} from '../../../stores/disclosure-store';
+import {DisclosureActions} from '../../../actions/disclosure-actions';
+import {COIConstants} from '../../../../../coi-constants';
+import {Questionnaire} from '../questionnaire/questionnaire';
+import {QuestionnaireSummary} from '../questionnaire-summary/questionnaire-summary';
+import {ManualEvent} from '../manual/manual-event';
+import {Relationships} from '../projects/relationships';
+import {Entities} from '../entities/entities';
+import {Certify} from '../certification/certify';
+import {NavSidebar} from '../nav-sidebar';
 const STEP = COIConstants.DISCLOSURE_STEP;
 
 export class Disclosure extends React.Component {

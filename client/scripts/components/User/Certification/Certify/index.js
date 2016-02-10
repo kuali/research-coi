@@ -19,10 +19,10 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../../COIConstants';
-import {Instructions} from '../../Instructions';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {FileUpload} from '../../../FileUpload';
+import {COIConstants} from '../../../../../../coi-constants';
+import {Instructions} from '../../instructions';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {FileUpload} from '../../../file-upload';
 
 export class Certify extends React.Component {
   constructor() {

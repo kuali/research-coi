@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureTableRow} from '../DisclosureTableRow';
-import {TableHeading} from '../TableHeading';
-import {AdminActions} from '../../../../actions/AdminActions';
+import {DisclosureTableRow} from '../disclosure-table-row';
+import {TableHeading} from '../table-heading';
+import {AdminActions} from '../../../../actions/admin-actions';
 
 export class DisclosureTable extends React.Component {
   constructor() {

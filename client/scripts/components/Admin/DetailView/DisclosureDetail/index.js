@@ -18,14 +18,14 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureDetailHeading} from '../DisclosureDetailHeading';
-import ActionButtons from '../ActionButtons';
-import {AdminQuestionnaireSummary} from '../AdminQuestionnaireSummary';
-import {AdminEntitiesSummary} from '../AdminEntitiesSummary';
-import {AdminDeclarationsSummary} from '../AdminDeclarationsSummary';
-import ApprovalConfirmation from '../ApprovalConfirmation';
-import RejectionConfirmation from '../RejectionConfirmation';
-import {COIConstants} from '../../../../../../COIConstants';
+import {DisclosureDetailHeading} from '../disclosure-detail-heading';
+import ActionButtons from '../action-buttons';
+import {AdminQuestionnaireSummary} from '../admin-questionnaire-summary';
+import {AdminEntitiesSummary} from '../admin-entities-summary';
+import {AdminDeclarationsSummary} from '../admin-declarations-summary';
+import ApprovalConfirmation from '../approval-confirmation';
+import RejectionConfirmation from '../rejection-confirmation';
+import {COIConstants} from '../../../../../../coi-constants';
 import classNames from 'classnames';
 
 export class DisclosureDetail extends React.Component {

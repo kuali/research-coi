@@ -18,13 +18,13 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {Project} from '../Project';
-import {Entity} from '../Entity';
-import {Toggle} from '../../Toggle';
-import {Instructions} from '../../Instructions';
-import {COIConstants} from '../../../../../../COIConstants';
-import ConfigStore from '../../../../stores/ConfigStore';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {Project} from '../project';
+import {Entity} from '../entity';
+import {Toggle} from '../../toggle';
+import {Instructions} from '../../instructions';
+import {COIConstants} from '../../../../../../coi-constants';
+import ConfigStore from '../../../../stores/config-store';
 
 export class Relationships extends React.Component {
   constructor() {

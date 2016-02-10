@@ -17,10 +17,10 @@
 */
 
 import React from 'react';
-import {AdminActions} from '../../../../actions/AdminActions';
+import {AdminActions} from '../../../../actions/admin-actions';
 import styles from './style';
 import classNames from 'classnames';
-import { ROLES } from '../../../../../../COIConstants';
+import { ROLES } from '../../../../../../coi-constants';
 
 export default function ActionButtons(props) {
   let generalAttachmentButton;

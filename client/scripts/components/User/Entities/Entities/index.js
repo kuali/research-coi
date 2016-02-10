@@ -18,15 +18,15 @@
 
 import styles from './style';
 import React from 'react';
-import {NewEntityButton} from '../NewEntityButton';
-import {FEPlaceHolder} from '../../../DynamicIcons/FEPlaceHolder';
-import {Entity} from '../Entity';
-import {EntityForm} from '../EntityForm';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {Instructions} from '../../Instructions';
-import {COIConstants} from '../../../../../../COIConstants';
-import {Toggle} from '../../Toggle';
-import {BlueButton} from '../../../BlueButton';
+import {NewEntityButton} from '../new-entity-button';
+import {FEPlaceHolder} from '../../../dynamic-icons/fe-place-holder';
+import {Entity} from '../entity';
+import {EntityForm} from '../entity-form';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {Instructions} from '../../instructions';
+import {COIConstants} from '../../../../../../coi-constants';
+import {Toggle} from '../../toggle';
+import {BlueButton} from '../../../blue-button';
 
 export class Entities extends React.Component {
   shouldComponentUpdate() { return true; }

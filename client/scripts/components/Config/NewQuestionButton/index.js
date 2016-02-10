@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {PlusIcon} from '../../DynamicIcons/PlusIcon';
+import {PlusIcon} from '../../dynamic-icons/plus-icon';
 
 export default function NewQuestionButton(props) {
   return (

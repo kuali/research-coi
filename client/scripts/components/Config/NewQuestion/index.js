@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import Badge from '../Badge';
-import ConfigActions from '../../../actions/ConfigActions';
-import {COIConstants} from '../../../../../COIConstants';
+import Badge from '../badge';
+import ConfigActions from '../../../actions/config-actions';
+import {COIConstants} from '../../../../../coi-constants';
 
 export default class NewQuestion extends React.Component {
   constructor() {

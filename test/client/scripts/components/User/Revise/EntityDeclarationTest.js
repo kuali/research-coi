@@ -19,9 +19,9 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import {MockPIReviewActions} from './mocks/MockPIReviewActions';
-import {MockPIReviewStore} from './mocks/MockPIReviewStore';
-import EntityDeclaration from '../../../../../../client/scripts/components/User/Revise/EntityDeclaration';
+import {MockPIReviewActions} from './mocks/mock-pi-review-actions';
+import {MockPIReviewStore} from './mocks/mock-pi-review-store';
+import EntityDeclaration from '../../../../../../client/scripts/components/user/revise/entity-declaration';
 EntityDeclaration.__Rewire__('PIReviewActions', MockPIReviewActions); //eslint-disable-line no-underscore-dangle
 
 /*global describe, it, before, after */

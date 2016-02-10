@@ -21,12 +21,12 @@ import classNames from 'classnames';
 import React from 'react';
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import NewQuestion from '../NewQuestion';
-import Question from '../Question';
-import NewQuestionButton from '../NewQuestionButton';
-import {COIConstants} from '../../../../../COIConstants';
-import PanelWithButtons from '../PanelWithButtons';
-import ConfigActions from '../../../actions/ConfigActions';
+import NewQuestion from '../new-question';
+import Question from '../question';
+import NewQuestionButton from '../new-question-button';
+import {COIConstants} from '../../../../../coi-constants';
+import PanelWithButtons from '../panel-with-buttons';
+import ConfigActions from '../../../actions/config-actions';
 
 class QuestionnaireConfig extends React.Component {
   constructor() {

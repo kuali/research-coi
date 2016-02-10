@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../../COIConstants';
-import {formatDate} from '../../../../formatDate';
-import EntityRelationshipSummary from '../../../EntityRelationshipSummary';
+import {COIConstants} from '../../../../../../coi-constants';
+import {formatDate} from '../../../../format-date';
+import EntityRelationshipSummary from '../../../entity-relationship-summary';
 
 export default class EntitySummary extends React.Component {
   getQuestionAnswer(questionId, entity, type) {

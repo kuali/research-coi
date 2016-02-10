@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import DeclarationsSummary from '../DeclarationsSummary';
-import EntitiesSummary from '../EntitiesSummary';
-import QuestionnaireSummary from '../QuestionnaireSummary';
+import DeclarationsSummary from '../declarations-summary';
+import EntitiesSummary from '../entities-summary';
+import QuestionnaireSummary from '../questionnaire-summary';
 
 export default class extends React.Component {
   getAnswerMap(answers) {

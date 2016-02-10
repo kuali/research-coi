@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import ConfigActions from '../../../../actions/ConfigActions';
+import ConfigActions from '../../../../actions/config-actions';
 
 export default function AutoApproveDisclosure(props) {
   return (

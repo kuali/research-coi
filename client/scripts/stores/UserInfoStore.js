@@ -17,7 +17,7 @@
 */
 
 import alt from '../alt';
-import {processResponse, createRequest} from '../HttpUtils';
+import {processResponse, createRequest} from '../http-utils';
 
 class _UserInfoStore {
   constructor() {

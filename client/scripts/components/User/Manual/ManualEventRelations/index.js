@@ -18,10 +18,10 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {ManualRelationDialog} from '../ManualRelationDialog';
-import {GreyButton} from '../../../GreyButton';
-import {undefinedRelationExists} from '../../undefinedRelationExists';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {ManualRelationDialog} from '../manual-relation-dialog';
+import {GreyButton} from '../../../grey-button';
+import {undefinedRelationExists} from '../../undefined-relation-exists';
 
 export class ManualEventRelations extends React.Component {
   constructor() {

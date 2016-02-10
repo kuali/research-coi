@@ -17,9 +17,9 @@
 */
 
 /*eslint camelcase:0 */
-import {COIConstants} from '../../COIConstants';
-import {isDisclosureUsers, verifyRelationshipIsUsers} from './CommonDB';
-import * as DisclosureDB from './DisclosureDB';
+import {COIConstants} from '../../coi-constants';
+import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-d-b';
+import * as DisclosureDB from './disclosure-d-b';
 
 let getKnex;
 try {
@@ -27,7 +27,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 
 export const verifyReviewIsForUser = (dbInfo, reviewId, userId) => {

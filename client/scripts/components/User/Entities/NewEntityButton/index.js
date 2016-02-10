@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import {PlusIcon} from '../../../DynamicIcons/PlusIcon';
+import {PlusIcon} from '../../../dynamic-icons/plus-icon';
 
 export function NewEntityButton(props) {
   return (

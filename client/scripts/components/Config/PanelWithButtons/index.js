@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {GreyButton} from '../../GreyButton';
+import {GreyButton} from '../../grey-button';
 
 export default function PanelWithButtons(props) {
   let buttons;

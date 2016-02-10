@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {COIConstants} from '../../../../../../COIConstants';
-import {formatDate} from '../../../../../scripts/formatDate';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {COIConstants} from '../../../../../../coi-constants';
+import {formatDate} from '../../../../../scripts/format-date';
 
 export class QuestionSummary extends React.Component {
   constructor() {

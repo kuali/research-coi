@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-import { getReviewers } from '../services/AuthService/AuthService';
-import Log from '../Log';
+import { getReviewers } from '../services/auth-service/auth-service';
+import Log from '../log';
 
 export const init = app => {
   /**

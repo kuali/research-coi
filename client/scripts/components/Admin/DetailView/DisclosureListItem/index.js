@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
-import ConfigStore from '../../../../stores/ConfigStore';
+import {formatDate} from '../../../../format-date';
+import ConfigStore from '../../../../stores/config-store';
 import {Link} from 'react-router';
 
 export class DisclosureListItem extends React.Component {

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 /* eslint-disable no-console */
-import {COIConstants} from '../COIConstants';
+import {COIConstants} from '../coi-constants';
 
 class Log {
   info(message) {

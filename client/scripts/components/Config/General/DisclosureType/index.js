@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import EditLink from '../../EditLink';
-import DoneLink from '../../DoneLink';
-import ConfigActions from '../../../../actions/ConfigActions';
+import EditLink from '../../edit-link';
+import DoneLink from '../../done-link';
+import ConfigActions from '../../../../actions/config-actions';
 
 export default class DisclosureType extends React.Component {
   constructor() {

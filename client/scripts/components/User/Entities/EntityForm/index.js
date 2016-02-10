@@ -18,13 +18,13 @@
 
 import styles from './style';
 import React from 'react';
-import {GreyButton} from '../../../GreyButton';
+import {GreyButton} from '../../../grey-button';
 import classNames from 'classnames';
-import {EntityFormNameStep} from '../EntityFormNameStep';
-import {EntityFormInformationStep} from '../EntityFormInformationStep';
-import {EntityFormRelationshipStep} from '../EntityFormRelationshipStep';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
+import {EntityFormNameStep} from '../entity-form-name-step';
+import {EntityFormInformationStep} from '../entity-form-information-step';
+import {EntityFormRelationshipStep} from '../entity-form-relationship-step';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
 
 export class EntityForm extends React.Component {
   constructor() {

@@ -18,15 +18,15 @@
 
 import styles from './style';
 import React from 'react';
-import {GreyButton} from '../../../GreyButton';
-import {BlueButton} from '../../../BlueButton';
-import {formatDate} from '../../../../formatDate';
-import {COIConstants} from '../../../../../../COIConstants';
-import {TravelLogActions} from '../../../../actions/TravelLogActions';
-import {TravelLogStore} from '../../../../stores/TravelLogStore';
-import TextField from '../../TextField';
-import CurrencyField from '../../CurrencyField';
-import DateRangeField from '../../DateRangeField';
+import {GreyButton} from '../../../grey-button';
+import {BlueButton} from '../../../blue-button';
+import {formatDate} from '../../../../format-date';
+import {COIConstants} from '../../../../../../coi-constants';
+import {TravelLogActions} from '../../../../actions/travel-log-actions';
+import {TravelLogStore} from '../../../../stores/travel-log-store';
+import TextField from '../../text-field';
+import CurrencyField from '../../currency-field';
+import DateRangeField from '../../date-range-field';
 import numeral from 'numeral';
 
 export default class Entry extends React.Component {

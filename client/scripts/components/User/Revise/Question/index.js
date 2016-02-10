@@ -18,15 +18,15 @@
 
 import styles from './style';
 import React from 'react';
-import CheckLink from '../CheckLink';
-import PIReviewActions from '../../../../actions/PIReviewActions';
-import {COIConstants} from '../../../../../../COIConstants';
-import {RadioControl} from '../../RadioControl';
-import {TextAreaControl} from '../../TextAreaControl';
-import {CheckboxControl} from '../../CheckboxControl';
-import {NumericControl} from '../../NumericControl';
-import {DateControl} from '../../DateControl';
-import {formatDate} from '../../../../formatDate';
+import CheckLink from '../check-link';
+import PIReviewActions from '../../../../actions/pi-review-actions';
+import {COIConstants} from '../../../../../../coi-constants';
+import {RadioControl} from '../../radio-control';
+import {TextAreaControl} from '../../text-area-control';
+import {CheckboxControl} from '../../checkbox-control';
+import {NumericControl} from '../../numeric-control';
+import {DateControl} from '../../date-control';
+import {formatDate} from '../../../../format-date';
 
 export default class Question extends React.Component {
   constructor(props) {

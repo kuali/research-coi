@@ -19,14 +19,14 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureListItem} from '../DisclosureListItem';
-import {DisclosureFilterSearch} from '../../DisclosureFilterSearch';
-import SearchFilterGroup from '../../SearchFilterGroup';
-import {AdminActions} from '../../../../actions/AdminActions';
-import UserInfoStore from '../../../../stores/UserInfoStore';
-import {BlueButton} from '../../../BlueButton';
-import ConfigStore from '../../../../stores/ConfigStore';
-import AdminMenu from '../../../AdminMenu';
+import {DisclosureListItem} from '../disclosure-list-item';
+import {DisclosureFilterSearch} from '../../disclosure-filter-search';
+import SearchFilterGroup from '../../search-filter-group';
+import {AdminActions} from '../../../../actions/admin-actions';
+import UserInfoStore from '../../../../stores/user-info-store';
+import {BlueButton} from '../../../blue-button';
+import ConfigStore from '../../../../stores/config-store';
+import AdminMenu from '../../../admin-menu';
 
 export class DisclosureList extends React.Component {
   constructor() {

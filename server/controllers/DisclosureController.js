@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as DisclosureDB from '../db/DisclosureDB';
-import * as PIReviewDB from '../db/PIReviewDB';
-import { getDisclosuresForReviewer } from '../db/AdditionalReviewerDb';
+import * as DisclosureDB from '../db/disclosure-d-b';
+import * as PIReviewDB from '../db/pi-review-d-b';
+import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
-import Log from '../Log';
-import {COIConstants} from '../../COIConstants';
-import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../HTTPStatusCodes';
+import Log from '../log';
+import {COIConstants} from '../../coi-constants';
+import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../http-status-codes';
 
 let upload;
 try {

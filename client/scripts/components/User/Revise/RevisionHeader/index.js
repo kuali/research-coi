@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
-import ConfigStore from '../../../../stores/ConfigStore';
+import {formatDate} from '../../../../format-date';
+import ConfigStore from '../../../../stores/config-store';
 
 export default function RevisionHeader(props) {
   return (

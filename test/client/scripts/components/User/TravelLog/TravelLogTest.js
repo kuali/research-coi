@@ -19,9 +19,9 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import {MockTravelLogActions} from './mocks/MockTravelLogAction';
-import {MockTravelLogStore} from './mocks/MockTravelLogStore';
-import TravelLog from '../../../../../../client/scripts/components/User/TravelLog/TravelLog';
+import {MockTravelLogActions} from './mocks/mock-travel-log-action';
+import {MockTravelLogStore} from './mocks/mock-travel-log-store';
+import TravelLog from '../../../../../../client/scripts/components/user/travel-log/travel-log';
 TravelLog.__Rewire__('TravelLogActions', MockTravelLogActions); //eslint-disable-line no-underscore-dangle
 TravelLog.__Rewire__('TravelLogStore', MockTravelLogStore); //eslint-disable-line no-underscore-dangle
 

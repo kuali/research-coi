@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import SortArrow from '../SortArrow';
+import SortArrow from '../sort-arrow';
 
 export class TableHeading extends React.Component {
   render() {

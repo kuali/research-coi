@@ -18,9 +18,9 @@
 
 import styles from './style';
 import React from 'react';
-import ConfigStore from '../../../../stores/ConfigStore';
-import {AdminActions} from '../../../../actions/AdminActions';
-import {COIConstants} from '../../../../../../COIConstants';
+import ConfigStore from '../../../../stores/config-store';
+import {AdminActions} from '../../../../actions/admin-actions';
+import {COIConstants} from '../../../../../../coi-constants';
 import classNames from 'classnames';
 
 export default class DeclarationSummary extends React.Component {

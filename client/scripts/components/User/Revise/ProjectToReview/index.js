@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import EntityDeclaration from '../EntityDeclaration';
+import EntityDeclaration from '../entity-declaration';
 
 export default function ProjectToReview(props) {
   let entityDeclarations;

@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {getUserInfo, getAuthToken} from '../services/AuthService/AuthService';
-import Log from '../Log';
-import {UNAUTHORIZED} from '../../HTTPStatusCodes';
+import {getUserInfo, getAuthToken} from '../services/auth-service/auth-service';
+import Log from '../log';
+import {UNAUTHORIZED} from '../../http-status-codes';
 
 export default function authentication(req, res, next) {
   let authToken = getAuthToken(req.headers.authorization);

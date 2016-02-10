@@ -20,8 +20,8 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router';
-import { ROLES } from '../../../../../COIConstants';
-import AdminMenu from '../../AdminMenu';
+import { ROLES } from '../../../../../coi-constants';
+import AdminMenu from '../../admin-menu';
 
 export default function Sidebar(props) {
   const steps = [

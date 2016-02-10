@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {merge} from '../../merge';
 import DayPicker from 'react-day-picker';
-import {formatDate} from '../../formatDate';
+import {formatDate} from '../../format-date';
 
 export class DatePicker extends React.Component {
   constructor() {

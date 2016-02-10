@@ -19,16 +19,16 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {AdminStore} from '../../../../stores/AdminStore';
-import {AdminActions} from '../../../../actions/AdminActions';
-import SearchFilterGroup from '../../SearchFilterGroup';
-import {DisclosureTable} from '../DisclosureTable';
-import {DisclosureFilterSearch} from '../../DisclosureFilterSearch';
-import {BlueButton} from '../../../BlueButton';
-import ConfigStore from '../../../../stores/ConfigStore';
-import AdminMenu from '../../../AdminMenu';
-import {AppHeader} from '../../../AppHeader';
-import UserInfoStore from '../../../../stores/UserInfoStore';
+import {AdminStore} from '../../../../stores/admin-store';
+import {AdminActions} from '../../../../actions/admin-actions';
+import SearchFilterGroup from '../../search-filter-group';
+import {DisclosureTable} from '../disclosure-table';
+import {DisclosureFilterSearch} from '../../disclosure-filter-search';
+import {BlueButton} from '../../../blue-button';
+import ConfigStore from '../../../../stores/config-store';
+import AdminMenu from '../../../admin-menu';
+import {AppHeader} from '../../../app-header';
+import UserInfoStore from '../../../../stores/user-info-store';
 
 export class ListView extends React.Component {
   constructor() {

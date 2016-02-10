@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import cache from '../../LruCache';
-import { ROLES } from '../../../COIConstants';
-import {OK} from '../../../HTTPStatusCodes';
+import cache from '../../lru-cache';
+import { ROLES } from '../../../coi-constants';
+import {OK} from '../../../http-status-codes';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const http = useSSL ? require('https') : require('http');
 const REVIEWER_CACHE_KEY = 'reviewers';

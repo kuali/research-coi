@@ -18,9 +18,9 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {EntityRelation} from '../../EntityRelation';
-import {BlueButton} from '../../../BlueButton';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {EntityRelation} from '../../entity-relation';
+import {BlueButton} from '../../../blue-button';
 
 export class ManualRelationDialog extends React.Component {
   constructor() {

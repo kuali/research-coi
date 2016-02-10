@@ -18,10 +18,10 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../../../formatDate';
-import CheckLink from '../CheckLink';
-import PIReviewActions from '../../../../actions/PIReviewActions';
-import ConfigStore from '../../../../stores/ConfigStore';
+import {formatDate} from '../../../../format-date';
+import CheckLink from '../check-link';
+import PIReviewActions from '../../../../actions/pi-review-actions';
+import ConfigStore from '../../../../stores/config-store';
 
 export default class EntityDeclaration extends React.Component {
   constructor(props) {

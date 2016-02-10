@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigActions from '../../../../actions/ConfigActions';
+import ConfigActions from '../../../../actions/config-actions';
 
 export default class DateOptions extends React.Component {
   constructor() {

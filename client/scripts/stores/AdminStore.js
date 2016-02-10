@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {AdminActions} from '../actions/AdminActions';
-import {COIConstants} from '../../../COIConstants';
+import {AdminActions} from '../actions/admin-actions';
+import {COIConstants} from '../../../coi-constants';
 import alt from '../alt';
-import {processResponse, createRequest} from '../HttpUtils';
-import ConfigActions from '../actions/ConfigActions';
+import {processResponse, createRequest} from '../http-utils';
+import ConfigActions from '../actions/config-actions';
 const PAGE_SIZE = 40;
 
 function defaultStatusFilters() {

@@ -18,10 +18,10 @@
 
 import ReactDOM from 'react-dom';
 import React from 'react';
-import {SizeAwareComponent} from '../SizeAwareComponent';
-import ColorStore from '../../stores/ColorStore';
-import aboutStyles from './aboutStyle';
-import {AppHeader} from '../AppHeader';
+import {SizeAwareComponent} from '../size-aware-component';
+import ColorStore from '../../stores/color-store';
+import aboutStyles from './about-style';
+import {AppHeader} from '../app-header';
 import AboutContent from './index';
 
 class App extends SizeAwareComponent {

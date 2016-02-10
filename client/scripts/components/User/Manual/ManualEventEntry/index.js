@@ -18,9 +18,9 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {ManualPlaceholder} from '../../../DynamicIcons/ManualPlaceholder';
-import {BlueButton} from '../../../BlueButton';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {ManualPlaceholder} from '../../../dynamic-icons/manual-placeholder';
+import {BlueButton} from '../../../blue-button';
 
 export class ManualEventEntry extends React.Component {
   constructor() {

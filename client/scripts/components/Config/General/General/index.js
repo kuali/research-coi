@@ -19,15 +19,15 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import Sidebar from '../../Sidebar';
-import Panel from '../../Panel';
-import ActionPanel from '../../ActionPanel';
-import DisclosureTypes from '../DisclosureTypes';
-import ConfigStore from '../../../../stores/ConfigStore';
-import {AppHeader} from '../../../AppHeader';
-import AutoApproveDisclosure from '../AutoApproveDisclosure';
-import NotificationDetails from '../NotificationDetails';
-import ExpandInstructionsToggle from '../ExpandInstructionsToggle';
+import Sidebar from '../../sidebar';
+import Panel from '../../panel';
+import ActionPanel from '../../action-panel';
+import DisclosureTypes from '../disclosure-types';
+import ConfigStore from '../../../../stores/config-store';
+import {AppHeader} from '../../../app-header';
+import AutoApproveDisclosure from '../auto-approve-disclosure';
+import NotificationDetails from '../notification-details';
+import ExpandInstructionsToggle from '../expand-instructions-toggle';
 
 export default class General extends React.Component {
   constructor() {

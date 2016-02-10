@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import {AdminActions} from '../../../../actions/AdminActions';
-import {FileUpload} from '../../../FileUpload';
+import {AdminActions} from '../../../../actions/admin-actions';
+import {FileUpload} from '../../../file-upload';
 import classNames from 'classnames';
 
 export default function UploadAttachmentsPanel(props) {

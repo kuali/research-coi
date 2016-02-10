@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as FileService from '../services/fileService/FileService';
-import * as FileDb from '../db/FileDB';
+import * as FileService from '../services/file-service/file-service';
+import * as FileDb from '../db/file-d-b';
 import multer from 'multer';
-import Log from '../Log';
-import {FORBIDDEN, ACCEPTED} from '../../HTTPStatusCodes';
+import Log from '../log';
+import {FORBIDDEN, ACCEPTED} from '../../http-status-codes';
 
 let upload;
 try {

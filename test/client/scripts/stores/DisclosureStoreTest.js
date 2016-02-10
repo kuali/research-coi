@@ -20,7 +20,7 @@ import assert from 'assert';
 import {
   unSubmittedRelationshipStarted,
   entityRelationshipStepErrors
-} from '../../../../client/scripts/stores/DisclosureStore';
+} from '../../../../client/scripts/stores/disclosure-store';
 
 
 describe('DisclosureStore', () => {

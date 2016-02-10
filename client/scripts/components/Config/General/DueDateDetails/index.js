@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DatePicker} from '../../../DatePicker';
-import ConfigActions from '../../../../actions/ConfigActions';
+import {DatePicker} from '../../../date-picker';
+import ConfigActions from '../../../../actions/config-actions';
 
 export default class DueDateDetails extends React.Component {
   constructor() {

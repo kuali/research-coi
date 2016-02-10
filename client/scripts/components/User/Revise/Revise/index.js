@@ -18,15 +18,15 @@
 
 import styles from './style';
 import React from 'react';
-import {AppHeader} from '../../../AppHeader';
-import {PIReviewStore} from '../../../../stores/PIReviewStore';
-import RevisionHeader from '../RevisionHeader';
-import QuestionnaireSection from '../QuestionnaireSection';
-import EntitySection from '../EntitySection';
-import DeclarationSection from '../DeclarationSection';
-import SidePanel from '../SidePanel';
-import PIReviewActions from '../../../../actions/PIReviewActions';
-import ConfigStore from '../../../../stores/ConfigStore';
+import {AppHeader} from '../../../app-header';
+import {PIReviewStore} from '../../../../stores/pi-review-store';
+import RevisionHeader from '../revision-header';
+import QuestionnaireSection from '../questionnaire-section';
+import EntitySection from '../entity-section';
+import DeclarationSection from '../declaration-section';
+import SidePanel from '../side-panel';
+import PIReviewActions from '../../../../actions/pi-review-actions';
+import ConfigStore from '../../../../stores/config-store';
 
 export class Revise extends React.Component {
   constructor() {

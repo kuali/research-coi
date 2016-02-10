@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import ProjectToReview from '../ProjectToReview';
+import ProjectToReview from '../project-to-review';
 
 export default function DeclarationSection(props) {
   const projects = props.declarationsToReview;

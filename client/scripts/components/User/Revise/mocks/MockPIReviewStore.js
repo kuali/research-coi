@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import {MockPIReviewActions} from './MockPIReviewActions';
+import {MockPIReviewActions} from './mock-pi-review-actions';
 import alt from '../../../../../../../client/scripts/alt';
 
 class _MockPIReviewStore {

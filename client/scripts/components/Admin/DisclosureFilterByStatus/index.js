@@ -19,11 +19,11 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {GreyButton} from '../../GreyButton';
-import {AdminActions} from '../../../actions/AdminActions';
-import DisclosureFilter from '../DisclosureFilter';
-import DoneWithFilterButton from '../DoneWithFilterButton';
-import {COIConstants} from '../../../../../COIConstants';
+import {GreyButton} from '../../grey-button';
+import {AdminActions} from '../../../actions/admin-actions';
+import DisclosureFilter from '../disclosure-filter';
+import DoneWithFilterButton from '../done-with-filter-button';
+import {COIConstants} from '../../../../../coi-constants';
 const APPROVED = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
 
 export class DisclosureFilterByStatus extends DisclosureFilter {

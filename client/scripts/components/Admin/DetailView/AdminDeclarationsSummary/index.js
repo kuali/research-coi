@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import DeclarationSummary from '../DeclarationSummary';
-import ConfigStore from '../../../../stores/ConfigStore';
+import DeclarationSummary from '../declaration-summary';
+import ConfigStore from '../../../../stores/config-store';
 import classNames from 'classnames';
 
 export class AdminDeclarationsSummary extends React.Component {

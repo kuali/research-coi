@@ -17,7 +17,7 @@
 */
 
 /*eslint camelcase:0 */
-import {COIConstants} from '../../COIConstants';
+import {COIConstants} from '../../coi-constants';
 
 let getKnex;
 try {
@@ -25,7 +25,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 
 export const getProjects = (dbInfo, userId) => {

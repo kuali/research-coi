@@ -18,12 +18,12 @@
 
 import styles from './style';
 import React from 'react';
-import {KualiLogo} from '../DynamicIcons/KualiLogo';
-import ToggleSwitch from '../ToggleSwitch';
-import ColorActions from '../../actions/ColorActions';
+import {KualiLogo} from '../dynamic-icons/kuali-logo';
+import ToggleSwitch from '../toggle-switch';
+import ColorActions from '../../actions/color-actions';
 import cookies from 'cookies-js';
-import UserInfoStore from '../../stores/UserInfoStore';
-import Menu from '../Menu';
+import UserInfoStore from '../../stores/user-info-store';
+import Menu from '../menu';
 
 export class AppHeader extends React.Component {
   constructor() {

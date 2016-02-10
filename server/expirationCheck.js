@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from './Log';
-import {COIConstants} from '../COIConstants';
+import Log from './log';
+import {COIConstants} from '../coi-constants';
 let getKnex;
 
 const MILLIS_IN_A_DAY = 86400000;
@@ -46,7 +46,7 @@ try {
   expirationCheck = extensions.expirationCheck;
 }
 catch (err) {
-  getKnex = require('./db/ConnectionManager').default;
+  getKnex = require('./db/connection-manager').default;
   expirationCheck = checkForExpiredDisclosures;
 }
 

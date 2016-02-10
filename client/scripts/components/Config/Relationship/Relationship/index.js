@@ -19,15 +19,15 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import Sidebar from '../../Sidebar';
-import Panel from '../../Panel';
-import ActionPanel from '../../ActionPanel';
-import EditableList from '../../EditableList';
-import ConfigActions from '../../../../actions/ConfigActions';
-import ConfigStore from '../../../../stores/ConfigStore';
-import RelationshipType from '../RelationshipType';
-import TravelRelationshipType from '../TravelRelationshipType';
-import {AppHeader} from '../../../AppHeader';
+import Sidebar from '../../sidebar';
+import Panel from '../../panel';
+import ActionPanel from '../../action-panel';
+import EditableList from '../../editable-list';
+import ConfigActions from '../../../../actions/config-actions';
+import ConfigStore from '../../../../stores/config-store';
+import RelationshipType from '../relationship-type';
+import TravelRelationshipType from '../travel-relationship-type';
+import {AppHeader} from '../../../app-header';
 
 export default class Relationship extends React.Component {
   constructor() {

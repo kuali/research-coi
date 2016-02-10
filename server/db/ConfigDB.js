@@ -17,7 +17,7 @@
 */
 
 /*eslint camelcase:0 */
-import {camelizeJson, snakeizeJson} from './JsonUtils';
+import {camelizeJson, snakeizeJson} from './json-utils';
 
 let getKnex;
 try {
@@ -25,7 +25,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 const mockDB = {
   'UIT': {

@@ -18,11 +18,11 @@
 
 import styles from './style';
 import React from 'react';
-import {AdminActions} from '../../../../actions/AdminActions';
-import {FileUpload} from '../../../FileUpload';
-import AutoSuggest from '../../../AutoSuggest';
-import Suggestion from '../ReviewerSuggestion';
-import AdditionalReviewer from '../AdditionalReviewer';
+import {AdminActions} from '../../../../actions/admin-actions';
+import {FileUpload} from '../../../file-upload';
+import AutoSuggest from '../../../auto-suggest';
+import Suggestion from '../reviewer-suggestion';
+import AdditionalReviewer from '../additional-reviewer';
 
 import classNames from 'classnames';
 

@@ -19,14 +19,14 @@
 import ReactDOM from 'react-dom';
 import React from 'react'; // eslint-disable-line no-unused-vars
 import {Router, Route} from 'react-router';
-import {Dashboard} from './Dashboard/Dashboard';
-import {Disclosure} from './Disclosure';
-import TravelLog from './TravelLog/TravelLog';
-import {Archive} from './Archive/Archive';
-import {Revise} from './Revise/Revise';
-import {SizeAwareComponent} from '../SizeAwareComponent';
-import {processResponse, createRequest} from '../../HttpUtils';
-import ColorStore from '../../stores/ColorStore';
+import {Dashboard} from './dashboard/dashboard';
+import {Disclosure} from './disclosure';
+import TravelLog from './travel-log/travel-log';
+import {Archive} from './archive/archive';
+import {Revise} from './revise/revise';
+import {SizeAwareComponent} from '../size-aware-component';
+import {processResponse, createRequest} from '../../http-utils';
+import ColorStore from '../../stores/color-store';
 import history from '../../history';
 
 class App extends SizeAwareComponent {

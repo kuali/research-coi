@@ -21,10 +21,10 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import {MockTravelLogActions} from './mocks/MockTravelLogAction';
-import {MockTravelLogStore} from './mocks/MockTravelLogStore';
-import {COIConstants} from '../../../../../../COIConstants';
-import Entry from '../../../../../../client/scripts/components/User/TravelLog/Entry';
+import {MockTravelLogActions} from './mocks/mock-travel-log-action';
+import {MockTravelLogStore} from './mocks/mock-travel-log-store';
+import {COIConstants} from '../../../../../../coi-constants';
+import Entry from '../../../../../../client/scripts/components/user/travel-log/entry';
 Entry.__Rewire__('TravelLogActions', MockTravelLogActions); //eslint-disable-line no-underscore-dangle
 Entry.__Rewire__('TravelLogStore', MockTravelLogStore); //eslint-disable-line no-underscore-dangle
 

@@ -17,8 +17,8 @@
 */
 
 import React from 'react';
-import AutoSuggest from '../../AutoSuggest';
-import Suggestion from '../../Suggestion';
+import AutoSuggest from '../../auto-suggest';
+import Suggestion from '../../suggestion';
 
 export default class PISearchBox extends React.Component {
   constructor() {

@@ -18,10 +18,10 @@
 
 import styles from './style';
 import React from 'react';
-import TopicCommentSummary from '../TopicCommentSummary';
-import {AdminActions} from '../../../../actions/AdminActions';
-import ConfigStore from '../../../../stores/ConfigStore';
-import {COIConstants} from '../../../../../../COIConstants';
+import TopicCommentSummary from '../topic-comment-summary';
+import {AdminActions} from '../../../../actions/admin-actions';
+import ConfigStore from '../../../../stores/config-store';
+import {COIConstants} from '../../../../../../coi-constants';
 import classNames from 'classnames';
 
 export default class CommentSummary extends React.Component {

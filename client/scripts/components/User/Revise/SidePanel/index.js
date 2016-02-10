@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {BlueButton} from '../../../BlueButton';
+import {BlueButton} from '../../../blue-button';
 import {Link} from 'react-router';
-import PIReviewActions from '../../../../actions/PIReviewActions';
+import PIReviewActions from '../../../../actions/pi-review-actions';
 
 export default class SidePanel extends React.Component {
   constructor() {

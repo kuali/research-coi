@@ -19,18 +19,18 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {AppHeader} from '../../../AppHeader';
-import {NewDisclosureButton} from '../NewDisclosureButton';
-import {DisclosureArchiveButton} from '../DisclosureArchiveButton';
-import {ConfirmationMessage} from '../ConfirmationMessage';
-import {DisclosureTable} from '../DisclosureTable';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
-import {TravelLogButton} from '../TravelLogButton';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {COIConstants} from '../../../../../../COIConstants';
-import ConfigStore from '../../../../stores/ConfigStore';
-import UserInfoStore from '../../../../stores/UserInfoStore';
-import AdminMenu from '../../../AdminMenu';
+import {AppHeader} from '../../../app-header';
+import {NewDisclosureButton} from '../new-disclosure-button';
+import {DisclosureArchiveButton} from '../disclosure-archive-button';
+import {ConfirmationMessage} from '../confirmation-message';
+import {DisclosureTable} from '../disclosure-table';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
+import {TravelLogButton} from '../travel-log-button';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {COIConstants} from '../../../../../../coi-constants';
+import ConfigStore from '../../../../stores/config-store';
+import UserInfoStore from '../../../../stores/user-info-store';
+import AdminMenu from '../../../admin-menu';
 
 export class Dashboard extends React.Component {
   constructor() {

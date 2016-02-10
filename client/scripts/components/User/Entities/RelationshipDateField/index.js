@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import RelationshipTextField from '../RelationshipTextField';
-import {DatePicker} from '../../../DatePicker';
+import RelationshipTextField from '../relationship-text-field';
+import {DatePicker} from '../../../date-picker';
 
 export default class RelationshipDateField extends RelationshipTextField {
   constructor() {

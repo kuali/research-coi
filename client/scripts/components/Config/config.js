@@ -19,14 +19,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route} from 'react-router';
-import {processResponse, createRequest} from '../../HttpUtils';
-import GeneralConfiguration from './General/General';
-import QuestionnaireCustomization from './Questionnaire/Questionnaire';
-import EntitiesQuestionnaire from './Entities/Questionnaire';
-import RelationshipCustomization from './Relationship/Relationship';
-import DeclarationsCustomization from './Declarations/Declarations';
-import CertificationCustomization from './Certification/Certification';
-import ColorStore from '../../stores/ColorStore';
+import {processResponse, createRequest} from '../../http-utils';
+import GeneralConfiguration from './general/general';
+import QuestionnaireCustomization from './questionnaire/questionnaire';
+import EntitiesQuestionnaire from './entities/questionnaire';
+import RelationshipCustomization from './relationship/relationship';
+import DeclarationsCustomization from './declarations/declarations';
+import CertificationCustomization from './certification/certification';
+import ColorStore from '../../stores/color-store';
 import history from '../../history';
 
 class App extends React.Component {

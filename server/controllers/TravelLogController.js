@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as TravelLogDB from '../db/TravelLogDB';
-import Log from '../Log';
-import {OK} from '../../HTTPStatusCodes';
+import * as TravelLogDB from '../db/travel-log-d-b';
+import Log from '../log';
+import {OK} from '../../http-status-codes';
 
 export const init = app => {
   /**

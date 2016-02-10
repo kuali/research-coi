@@ -19,7 +19,7 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import {DetailView} from '../../../../../../client/scripts/components/Admin/DetailView/DetailView';
+import {DetailView} from '../../../../../../client/scripts/components/admin/detail-view/detail-view';
 
 /*global describe, it */
 

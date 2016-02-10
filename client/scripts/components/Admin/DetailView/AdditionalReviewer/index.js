@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import { AdminActions } from '../../../../actions/AdminActions';
+import { AdminActions } from '../../../../actions/admin-actions';
 
 export default class AdditionalReviewer extends React.Component {
   constructor() {

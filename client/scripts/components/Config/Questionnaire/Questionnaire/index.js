@@ -19,13 +19,13 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import Sidebar from '../../Sidebar';
-import ActionPanel from '../../ActionPanel';
-import InstructionEditor from '../../InstructionEditor';
-import ConfigStore from '../../../../stores/ConfigStore';
-import QuestionnaireConfig from '../../QuestionnaireConfig';
-import {COIConstants} from '../../../../../../COIConstants';
-import {AppHeader} from '../../../AppHeader';
+import Sidebar from '../../sidebar';
+import ActionPanel from '../../action-panel';
+import InstructionEditor from '../../instruction-editor';
+import ConfigStore from '../../../../stores/config-store';
+import QuestionnaireConfig from '../../questionnaire-config';
+import {COIConstants} from '../../../../../../coi-constants';
+import {AppHeader} from '../../../app-header';
 
 export default class Questionnaire extends React.Component {
   constructor() {

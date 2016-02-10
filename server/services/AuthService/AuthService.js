@@ -19,12 +19,12 @@ let client;
 try {
   const extensions = require('research-extensions').default; // eslint-disable-line no-unused-vars
   if (process.env.NODE_ENV === 'test') {
-    client = require('./mockAuthClient');
+    client = require('./mock-auth-client');
   } else {
-    client = require('./authClient');
+    client = require('./auth-client');
   }
 } catch (e) {
-  client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? require('./authClient') : require('./mockAuthClient');
+  client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? require('./auth-client') : require('./mock-auth-client');
 }
 
 

@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {SidebarStep} from '../SidebarStep';
-import BackToDashboard from '../BackToDashboard';
+import {SidebarStep} from '../sidebar-step';
+import BackToDashboard from '../back-to-dashboard';
 
 export class Sidebar extends React.Component {
   constructor(props) {

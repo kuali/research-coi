@@ -18,8 +18,8 @@
 
 import styles from './style';
 import React from 'react';
-import {DatePicker} from '../../../DatePicker';
-import {formatDate} from '../../../../formatDate';
+import {DatePicker} from '../../../date-picker';
+import {formatDate} from '../../../../format-date';
 
 export class DateControl extends React.Component {
   constructor() {

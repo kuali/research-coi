@@ -19,8 +19,8 @@
 import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
-import { ROLES } from '../../../../../../COIConstants';
-import ActionButtons from '../../../../../../client/scripts/components/Admin/DetailView/ActionButtons';
+import { ROLES } from '../../../../../../coi-constants';
+import ActionButtons from '../../../../../../client/scripts/components/admin/detail-view/action-buttons';
 
 /*global describe, it */
 

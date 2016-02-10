@@ -19,12 +19,12 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../../COIConstants';
-import {RadioControl} from '../RadioControl';
-import {TextAreaControl} from '../TextAreaControl';
-import {NumericControl} from '../NumericControl';
-import {DateControl} from '../DateControl';
-import {CheckboxControl} from '../CheckboxControl';
+import {COIConstants} from '../../../../../../coi-constants';
+import {RadioControl} from '../radio-control';
+import {TextAreaControl} from '../text-area-control';
+import {NumericControl} from '../numeric-control';
+import {DateControl} from '../date-control';
+import {CheckboxControl} from '../checkbox-control';
 
 export class Question extends React.Component {
   constructor() {

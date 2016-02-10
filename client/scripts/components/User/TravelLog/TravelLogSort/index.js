@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import {TravelLogActions} from '../../../../actions/TravelLogActions';
+import {TravelLogActions} from '../../../../actions/travel-log-actions';
 
 export default class TravelLogSort extends React.Component {
   constructor() {

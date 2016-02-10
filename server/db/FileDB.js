@@ -17,9 +17,9 @@
 */
 
 /*eslint camelcase:0 */
-import * as FileService from '../services/fileService/FileService';
-import {COIConstants} from '../../COIConstants';
-import {isDisclosureUsers} from './CommonDB';
+import * as FileService from '../services/file-service/file-service';
+import {COIConstants} from '../../coi-constants';
+import {isDisclosureUsers} from './common-d-b';
 
 let getKnex;
 try {
@@ -27,7 +27,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 
 export const getFile = (dbInfo, userInfo, id) => {

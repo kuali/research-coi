@@ -18,10 +18,10 @@
 
 import styles from './style';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {ProjectRelationDialog} from '../ProjectRelationDialog';
-import {GreyButton} from '../../../GreyButton';
-import {undefinedRelationExists} from '../../undefinedRelationExists';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {ProjectRelationDialog} from '../project-relation-dialog';
+import {GreyButton} from '../../../grey-button';
+import {undefinedRelationExists} from '../../undefined-relation-exists';
 
 export class Project extends React.Component {
   constructor() {

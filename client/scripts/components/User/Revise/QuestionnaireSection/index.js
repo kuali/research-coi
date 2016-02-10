@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import QuestionToReview from '../QuestionToReview';
+import QuestionToReview from '../question-to-review';
 
 export default function QuestionnaireSection(props) {
   const questions = props.questions.map((question, index) => {

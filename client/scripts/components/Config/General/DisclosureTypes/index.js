@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import DisclosureType from '../DisclosureType';
+import DisclosureType from '../disclosure-type';
 
 export default function DisclosureTypes(props) {
   let rows;

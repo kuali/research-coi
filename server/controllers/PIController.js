@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as PIDB from '../db/PIDB';
-import * as PIReviewDB from '../db/PIReviewDB';
-import Log from '../Log';
-import {COIConstants} from '../../COIConstants';
-import {FORBIDDEN, NO_CONTENT} from '../../HTTPStatusCodes';
-import { getDisclosuresForReviewer } from '../db/AdditionalReviewerDb';
+import * as PIDB from '../db/pid-b';
+import * as PIReviewDB from '../db/pi-review-d-b';
+import Log from '../log';
+import {COIConstants} from '../../coi-constants';
+import {FORBIDDEN, NO_CONTENT} from '../../http-status-codes';
+import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
 
 export const init = app => {
   /**

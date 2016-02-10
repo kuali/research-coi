@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import ColorActions from '../actions/ColorActions';
+import ColorActions from '../actions/color-actions';
 import alt from '../alt';
 
 class _ColorStore {

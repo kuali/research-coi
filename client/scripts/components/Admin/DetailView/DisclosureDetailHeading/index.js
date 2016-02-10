@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigStore from '../../../../stores/ConfigStore';
-import {formatDate, formatDateTime} from '../../../../formatDate';
-import {DISCLOSURE_STATUS} from '../../../../../../COIConstants';
+import ConfigStore from '../../../../stores/config-store';
+import {formatDate, formatDateTime} from '../../../../format-date';
+import {DISCLOSURE_STATUS} from '../../../../../../coi-constants';
 
 export function DisclosureDetailHeading(props) {
   const disclosure = props.disclosure;

@@ -18,7 +18,7 @@
 
 import styles from './style';
 import React from 'react';
-import {DatePicker} from '../../DatePicker';
+import {DatePicker} from '../../date-picker';
 
 export class DateControl extends React.Component {
   constructor(props) {

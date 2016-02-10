@@ -19,10 +19,10 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../../COIConstants';
-import {formatDate} from '../../../../formatDate';
-import {AdminActions} from '../../../../actions/AdminActions';
-import EntityRelationshipSummary from '../../../EntityRelationshipSummary';
+import {COIConstants} from '../../../../../../coi-constants';
+import {formatDate} from '../../../../format-date';
+import {AdminActions} from '../../../../actions/admin-actions';
+import EntityRelationshipSummary from '../../../entity-relationship-summary';
 
 export default class EntitySummary extends React.Component {
   constructor() {

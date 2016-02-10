@@ -17,10 +17,10 @@
 */
 
 /*eslint camelcase:0 */
-import {isDisclosureUsers} from './CommonDB';
-import * as FileService from '../services/fileService/FileService';
-import {camelizeJson} from './JsonUtils';
-import {COIConstants} from '../../COIConstants';
+import {isDisclosureUsers} from './common-d-b';
+import * as FileService from '../services/file-service/file-service';
+import {camelizeJson} from './json-utils';
+import {COIConstants} from '../../coi-constants';
 
 const MILLIS = 1000;
 const SECONDS = 60;
@@ -34,7 +34,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 
 export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEntity, files) => {

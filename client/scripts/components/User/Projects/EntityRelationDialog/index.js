@@ -19,10 +19,10 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {ProjectRelation} from '../ProjectRelation';
-import {BlueButton} from '../../../BlueButton';
-import {GreyButton} from '../../../GreyButton';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {ProjectRelation} from '../project-relation';
+import {BlueButton} from '../../../blue-button';
+import {GreyButton} from '../../../grey-button';
 
 export class EntityRelationDialog extends React.Component {
   constructor() {

@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import EditableList from '../../EditableList';
-import {BlueButton} from '../../../BlueButton';
-import {GreyButton} from '../../../GreyButton';
+import EditableList from '../../editable-list';
+import {BlueButton} from '../../../blue-button';
+import {GreyButton} from '../../../grey-button';
 
 export default class RelationshipType extends React.Component {
   constructor() {

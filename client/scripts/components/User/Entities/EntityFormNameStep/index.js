@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
 
 export class EntityFormNameStep extends React.Component {
   constructor() {

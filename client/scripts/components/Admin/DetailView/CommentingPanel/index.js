@@ -18,9 +18,9 @@
 
 import styles from './style';
 import React from 'react';
-import CommentBubble from '../CommentBubble';
-import {AdminActions} from '../../../../actions/AdminActions';
-import {BlueButton} from '../../../BlueButton';
+import CommentBubble from '../comment-bubble';
+import {AdminActions} from '../../../../actions/admin-actions';
+import {BlueButton} from '../../../blue-button';
 import classNames from 'classnames';
 
 export default class CommentingPanel extends React.Component {

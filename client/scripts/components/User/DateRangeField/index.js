@@ -19,7 +19,7 @@
 import styles from './style';
 import React from 'react';
 import {merge} from '../../../merge';
-import {DatePicker} from '../../DatePicker';
+import {DatePicker} from '../../date-picker';
 
 export default class TextField extends React.Component {
   constructor() {

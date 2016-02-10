@@ -24,7 +24,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager').default;
+  getKnex = require('./connection-manager').default;
 }
 
 export async function getDisclosuresForReviewer(dbInfo, schoolId) {

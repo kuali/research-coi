@@ -19,14 +19,14 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {AppHeader} from '../../../AppHeader';
-import {DisclosureStore} from '../../../../stores/DisclosureStore';
-import {DisclosureActions} from '../../../../actions/DisclosureActions';
+import {AppHeader} from '../../../app-header';
+import {DisclosureStore} from '../../../../stores/disclosure-store';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {Link} from 'react-router';
-import ArchiveDetail from '../ArchiveDetail';
-import {formatDate, formatDateTime} from '../../../../formatDate';
-import {COIConstants} from '../../../../../../COIConstants';
-import ManagementPlan from '../ManagementPlan';
+import ArchiveDetail from '../archive-detail';
+import {formatDate, formatDateTime} from '../../../../format-date';
+import {COIConstants} from '../../../../../../coi-constants';
+import ManagementPlan from '../management-plan';
 
 export class Archive extends React.Component {
   constructor() {

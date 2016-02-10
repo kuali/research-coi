@@ -18,14 +18,14 @@
 
 import styles from './style';
 import React from 'react';
-import {AppHeader} from '../../../AppHeader';
-import {TravelLogHeader} from '../TravelLogHeader';
-import TravelLogForm from '../TravelLogForm';
-import TravelLogSort from '../TravelLogSort';
-import {BackToDashBoardButton} from '../BackToDashBoardButton';
-import {TravelLogStore} from '../../../../stores/TravelLogStore';
-import {TravelLogActions} from '../../../../actions/TravelLogActions';
-import Entry from '../Entry';
+import {AppHeader} from '../../../app-header';
+import {TravelLogHeader} from '../travel-log-header';
+import TravelLogForm from '../travel-log-form';
+import TravelLogSort from '../travel-log-sort';
+import {BackToDashBoardButton} from '../back-to-dash-board-button';
+import {TravelLogStore} from '../../../../stores/travel-log-store';
+import {TravelLogActions} from '../../../../actions/travel-log-actions';
+import Entry from '../entry';
 
 export default class TravelLog extends React.Component {
   constructor() {
