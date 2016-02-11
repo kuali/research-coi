@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from '../Log';
+import Log from '../log';
 
 export default function unauthorized(req, res) {
   Log.error(`Unauthorized page request by ${req.userInfo.username}`);

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as authService from '../services/AuthService/AuthService';
-import Log from '../Log';
+import * as authService from '../services/auth-service/auth-service';
+import Log from '../log';
 
 export default function authentication(req, res, next) {
   authService.getUserInfo(req.dbInfo, req.hostname, req.cookies.authToken)

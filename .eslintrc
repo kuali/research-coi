@@ -70,7 +70,8 @@
         "react/prefer-es6-class": 2,
         "react/require-extension": [2, { "extensions": [".js", ".jsx"] }],
         "react/self-closing-comp": 2,
-        "contains/contains": [2, { "toFind": "GNU Affero General Public License", "errorMessage": "No license found"} ]
+        "contains/contains": [2, { "toFind": "GNU Affero General Public License", "errorMessage": "No license found"} ],
+        "module-name/kebab-case": 2
     },
     "env": {
         "es6": true,
@@ -86,6 +87,7 @@
     },
     "plugins": [
         "react",
-        "contains"
+        "contains",
+        "module-name"
     ]
 }
