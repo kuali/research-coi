@@ -20,10 +20,10 @@ var path = require('path'); // eslint-disable-line no-var
 
 module.exports = {
   entry: {
-    user: './client/scripts/components/User/app.js',
-    admin: './client/scripts/components/Admin/admin.js',
-    config: './client/scripts/components/Config/config.js',
-    about: './client/scripts/components/About/about.js'
+    user: './client/scripts/components/user/app.js',
+    admin: './client/scripts/components/admin/admin.js',
+    config: './client/scripts/components/config/config.js',
+    about: './client/scripts/components/about/about.js'
   },
   output: {
     path: path.join(__dirname, 'client/build'),
