@@ -16,25 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import styles from './style';
-import classNames from 'classnames';
-import React from 'react';
-
-export default function Panel(props) {
-  let title;
-  if (props.title) {
-    title = (
-      <div className={styles.title}>
-        {props.title}
-      </div>
-    );
-  }
-  return (
-    <div className={classNames(styles.container, props.className)}>
-      {title}
-      <div className={styles.content}>
-        {props.children}
-      </div>
-    </div>
-  );
+.container {
+  display: inline-block;
+  width: 33%;
+  padding: 20px;
 }
+

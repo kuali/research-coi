@@ -72,5 +72,10 @@ export default alt.generateActions(
   'destinationEnabledChanged',
   'dateEnabledChanged',
   'reasonEnabledChanged',
-  'setInstructions'
+  'setInstructions',
+  'toggleProjectTypeRequired',
+  'toggleProjectRoleRequired',
+  'toggleProjectStatusRequired',
+  'toggleSelectingProjectTypes',
+  'configureProjectType'
 );

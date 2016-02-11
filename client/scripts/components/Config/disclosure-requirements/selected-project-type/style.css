@@ -16,25 +16,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import styles from './style';
-import classNames from 'classnames';
-import React from 'react';
+.container {
+  display: inline-block;
+  margin: 10px 10px;
+}
 
-export default function Panel(props) {
-  let title;
-  if (props.title) {
-    title = (
-      <div className={styles.title}>
-        {props.title}
-      </div>
-    );
-  }
-  return (
-    <div className={classNames(styles.container, props.className)}>
-      {title}
-      <div className={styles.content}>
-        {props.children}
-      </div>
-    </div>
-  );
+.icon {
+  color: #0095A0;
+  font-size: 50px;
+  display: inline-block;
+
+}
+
+:global(.color-blind) .icon {
+  color: black;
+}
+
+.content {
+  font-weight: 600;
+  padding-left: 10px;
+  display: inline-block;
+
+}
+
+.link {
+  padding: 0;
+  font-weight: bold;
+  background-color: transparent;
+  color: #0095A0;
+  border: none;
+  border-bottom: 2px dotted #0095A0;
+}
+
+:global(.color-blind) .link {
+  color: black;
+  border-bottom: 2px dotted black;
 }

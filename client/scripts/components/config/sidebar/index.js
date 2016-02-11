@@ -31,6 +31,10 @@ export default function Sidebar(props) {
       active: true
     },
     {
+      label: 'Disclosure Requirements',
+      link: '/coi/config/disclosure-requirements'
+    },
+    {
       label: 'Screening Questionnaire',
       link: '/coi/config/questionnaire'
     },

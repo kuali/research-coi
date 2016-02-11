@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/*  eslint-disable
+ no-console
+ */
 import defaults from 'superagent-defaults';
 import cookies from 'cookies-js';
 import {UNAUTHORIZED} from '../../http-status-codes';
@@ -28,10 +31,14 @@ export function processResponse(callback) {
       window.location = '/auth/';
     }
     else {
-      alert(
-        `An error has occurred
+      try {
+        alert(
+          `An error has occurred
         ${res.error.message}`
-      );
+        );
+      } catch(error) {
+        console.log(error);
+      }
     }
   };
 }
