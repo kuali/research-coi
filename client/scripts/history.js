@@ -16,6 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import createBrowserHistory from 'history/lib/create-browser-history';
+import createBrowserHistory from 'history/lib/createBrowserHistory'; // eslint-disable-line module-name/kebab-case
 
 export default createBrowserHistory();

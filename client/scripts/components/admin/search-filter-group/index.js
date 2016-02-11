@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {DisclosureFilterByStatus} from '../disclosure-filter-by-status';
 import {DisclosureFilterByDate} from '../disclosure-filter-by-date';
-import {DisclosureFilterByPI} from '../disclosure-filter-by-p-i';
+import {DisclosureFilterByPI} from '../disclosure-filter-by-pi';
 
 export default function SearchFilterGroup(props) {
   const classes = classNames(
