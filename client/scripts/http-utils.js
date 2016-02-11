@@ -27,6 +27,12 @@ export function processResponse(callback) {
     } else if (err.status === UNAUTHORIZED) {
       window.location = '/auth/';
     }
+    else {
+      alert(
+        `An error has occurred
+        ${res.error.message}`
+      );
+    }
   };
 }
 
