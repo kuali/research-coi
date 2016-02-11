@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as PIDB from '../db/pid-b';
-import * as PIReviewDB from '../db/pi-review-d-b';
+import * as PIDB from '../db/pi-db';
+import * as PIReviewDB from '../db/pi-review-db';
 import Log from '../log';
 import {COIConstants} from '../../coi-constants';
 import {FORBIDDEN, NO_CONTENT} from '../../http-status-codes';

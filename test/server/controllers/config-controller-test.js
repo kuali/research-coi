@@ -19,7 +19,7 @@
 import assert from 'assert';
 import {saveConfig} from '../../../server/controllers/config-controller';
 import sinon from 'sinon';
-import * as ConfigDB from '../../../server/db/config-d-b';
+import * as ConfigDB from '../../../server/db/config-db';
 import Log from '../../../server/log';
 
 let req;

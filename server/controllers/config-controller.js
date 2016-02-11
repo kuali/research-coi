@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as ConfigDB from '../db/config-d-b';
+import * as ConfigDB from '../db/config-db';
 import {COIConstants} from '../../coi-constants';
 import {FORBIDDEN} from '../../http-status-codes';
 import Log from '../log';

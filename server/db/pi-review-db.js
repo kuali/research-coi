@@ -18,8 +18,8 @@
 
 /*eslint camelcase:0 */
 import {COIConstants} from '../../coi-constants';
-import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-d-b';
-import * as DisclosureDB from './disclosure-d-b';
+import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
+import * as DisclosureDB from './disclosure-db';
 
 let getKnex;
 try {

@@ -55,7 +55,7 @@ describe('FileController', () => {
   it('successfully uploads mulitiple files', async function() {
     const response = await request(app.run())
       .post('/api/coi/files')
-      .attach('attachments','COIConstants.js')
+      .attach('attachments','coi-constants.js')
       .attach('attachments','README.md')
       .field('data', JSON.stringify({
         refId: disclosureId,
@@ -73,7 +73,7 @@ describe('FileController', () => {
   it('successfully uploads one file', async function() {
     const response = await request(app.run())
       .post('/api/coi/files')
-      .attach('attachments','COIConstants.js')
+      .attach('attachments','coi-constants.js')
       .field('data', JSON.stringify({
         refId: disclosureId,
         type: COIConstants.FILE_TYPE.DISCLOSURE,
@@ -106,7 +106,7 @@ describe('FileController', () => {
       .set('Authorization',`Bearer ${user}`)
       .expect(200);
 
-    assert.equal(response.header['content-disposition'], 'attachment; filename="COIConstants.js"');
+    assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
   });
 
   it('should allow admin to retrieve all files', async function() {
@@ -115,7 +115,7 @@ describe('FileController', () => {
       .set('Authorization','Bearer admin')
       .expect(200);
 
-    assert.equal(response.header['content-disposition'], 'attachment; filename="COIConstants.js"');
+    assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
   });
 
   it('successfully retrieve files', async function() {
@@ -124,7 +124,7 @@ describe('FileController', () => {
       .set('Authorization',`Bearer ${user}`)
       .expect(200);
 
-    assert.equal(response.header['content-disposition'], 'attachment; filename="COIConstants.js"');
+    assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
   });
 
   it('successfully delete files', async function() {

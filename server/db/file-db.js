@@ -19,7 +19,7 @@
 /*eslint camelcase:0 */
 import * as FileService from '../services/file-service/file-service';
 import {COIConstants} from '../../coi-constants';
-import {isDisclosureUsers} from './common-d-b';
+import {isDisclosureUsers} from './common-db';
 
 let getKnex;
 try {

@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2015 Kuali, Inc.
@@ -21,14 +20,14 @@
 
 import React from 'react';
 
-export function PlusIcon(props: Object): React.Element {
+export function PlusIcon(props) {
   return (
-    <svg style={props.style} version="1.1" id="Layer_1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 500 500" enable-background="new 0 0 100 100" aria-label="Plus Icon">
+    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 500 500" enable-background="new 0 0 100 100" aria-label="Plus Icon">
       <path opacity="0.2" d="M-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2C-351.7,342.2-351.7,342.1-351.7,342.2c-0.1,0-0.1-0.1-0.1-0.1c0,0,0,0,0,0c0,0,0,0-0.1-0.1c0,0,0,0,0,0c0,0,0,0,0.1,0.1C-351.8,342.1-351.8,342.1-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2z"/>
       <path opacity="0.2" d="M-351.7,342.2L-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2z"/>
       <polygon opacity="0.2" points="-351.7,342.2 -351.7,342.2 -351.7,342.2 "/>
       <g>
-        <circle fill={props.style.color} cx="250" cy="250" r="236"/>
+        <circle fill={props.color} cx="250" cy="250" r="236"/>
         <path opacity="0.33" d="M486,250c0,130.3-105.7,236-236,236V14C380.3,14,486,119.7,486,250z"/>
         <g>
           <path opacity="0.2" d="M472.1,328c0.2,0.2,0.4,0.4,0.6,0.5c-23.7,67.2-76.9,120.4-144.1,144.1c-0.8-0.8-1.6-1.6-2.5-2.4
@@ -59,7 +58,5 @@ export function PlusIcon(props: Object): React.Element {
 }
 
 PlusIcon.defaultProps = {
-  style: {
-    color: '#00bcd4'
-  }
+  color: '#00bcd4'
 };

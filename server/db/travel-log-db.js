@@ -18,7 +18,7 @@
 
 /*eslint camelcase:0 */
 import {COIConstants} from '../../coi-constants';
-import {verifyRelationshipIsUsers} from './common-d-b';
+import {verifyRelationshipIsUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';
 
 let getKnex;

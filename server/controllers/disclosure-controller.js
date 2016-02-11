@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as DisclosureDB from '../db/disclosure-d-b';
-import * as PIReviewDB from '../db/pi-review-d-b';
+import * as DisclosureDB from '../db/disclosure-db';
+import * as PIReviewDB from '../db/pi-review-db';
 import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
 import Log from '../log';

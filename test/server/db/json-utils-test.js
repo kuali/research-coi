@@ -21,7 +21,7 @@ import assert from 'assert';
 import _ from 'lodash';
 
 const rewire = require('rewire');
-const JsonUtils = rewire('../../../server/db/JsonUtils.js');
+const JsonUtils = rewire('../../../server/db/json-utils.js');
 
 //everything deletegates to izeJson.  Only testing that. It's not exported so I have to use rewire
 const izeJson = JsonUtils.__get__('izeJson'); //eslint-disable-line no-underscore-dangle

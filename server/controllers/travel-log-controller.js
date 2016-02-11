@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as TravelLogDB from '../db/travel-log-d-b';
+import * as TravelLogDB from '../db/travel-log-db';
 import Log from '../log';
 import {OK} from '../../http-status-codes';
 

@@ -17,7 +17,7 @@
 */
 
 import * as FileService from '../services/file-service/file-service';
-import * as FileDb from '../db/file-d-b';
+import * as FileDb from '../db/file-db';
 import multer from 'multer';
 import Log from '../log';
 import {FORBIDDEN, ACCEPTED} from '../../http-status-codes';

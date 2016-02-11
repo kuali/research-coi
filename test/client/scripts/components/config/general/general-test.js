@@ -28,8 +28,6 @@ import AutoApproveDisclosure from '../../../../../../client/scripts/components/c
 import ActionPanel from '../../../../../../client/scripts/components/config/action-panel';
 import assert from 'assert';
 
-/*global describe, it */
-
 describe('General', () => {
   it('should render ', () => {
     const renderer = TestUtils.createRenderer();
@@ -42,7 +40,7 @@ describe('General', () => {
     assert(ShallowTestUtils.findWithType(component,AutoApproveDisclosure));
     assert(ShallowTestUtils.findWithType(component,ActionPanel));
     const title = ShallowTestUtils.findWithClass(component,
-      '_client_scripts_components_Config_General_General_style__stepTitle');
+      '_client_scripts_components_config_general_general_style__stepTitle');
     assert.equal(title.props.children, 'General Configuration');
   });
 });

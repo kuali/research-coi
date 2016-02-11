@@ -20,7 +20,7 @@
 /* eslint-disable no-magic-numbers */
 
 import assert from 'assert';
-import * as DisclosureDB from '../../../server/db/disclosure-d-b';
+import * as DisclosureDB from '../../../server/db/disclosure-db';
 
 describe('Disclosure', () => {
   it('expiration date year should equal approval year when approval month day is before expiration month day', () => {

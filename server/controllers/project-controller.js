@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as ProjectDB from '../db/project-d-b';
+import * as ProjectDB from '../db/project-db';
 import Log from '../log';
 import { FORBIDDEN } from '../../http-status-codes';
 import {COIConstants} from '../../coi-constants';

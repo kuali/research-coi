@@ -17,7 +17,7 @@
 */
 
 /*eslint camelcase:0 */
-import {isDisclosureUsers} from './common-d-b';
+import {isDisclosureUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';
 import {camelizeJson} from './json-utils';
 import {COIConstants} from '../../coi-constants';
