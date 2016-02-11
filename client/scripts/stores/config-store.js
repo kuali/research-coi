@@ -57,7 +57,9 @@ class _ConfigStore {
       questionsBeingEdited: {
         screening: {},
         entities: {}
-      }
+      },
+      selectingProjectTypes: true,
+      configuringProjectType: undefined
     };
 
     this.dirty = false;
@@ -91,6 +93,7 @@ class _ConfigStore {
 
     this.instructions = {
     };
+
 
     this.loadAllConfigData();
   }
@@ -604,6 +607,14 @@ class _ConfigStore {
           this.config.general.instructionsExpanded = true;
         }
 
+        const projectsRequiringDisclosure = this.config.projectTypes.filter(projectType => {
+          return projectType.reqDisclosure === 1;
+        });
+
+        if (projectsRequiringDisclosure.length > 0) {
+          this.applicationState.selectingProjectTypes = false;
+        }
+
         this.mapCodes();
 
         this.emitChange();
@@ -794,6 +805,40 @@ class _ConfigStore {
       this.config.general.autoApprove = !this.config.general.autoApprove;
     }
     this.dirty = true;
+  }
+
+  toggleProjectTypeRequired(typeCd) {
+    const projectType = this.config.projectTypes.find(type => {
+      return type.typeCd === typeCd;
+    });
+    projectType.reqDisclosure = projectType.reqDisclosure === 0 ? 1 : 0;
+    this.dirty = true;
+  }
+
+  toggleProjectRoleRequired(typeCd) {
+    const projectRole = this.config.projectRoles.find(role => {
+      return role.typeCd === typeCd;
+    });
+    projectRole.reqDisclosure = projectRole.reqDisclosure === 0 ? 1 : 0;
+    this.dirty = true;
+  }
+
+  toggleProjectStatusRequired(typeCd) {
+    const projectStatus = this.config.projectStatuses.find(status => {
+      return status.typeCd === typeCd;
+    });
+    projectStatus.reqDisclosure = projectStatus.reqDisclosure === 0 ? 1 : 0;
+    this.dirty = true;
+  }
+
+  toggleSelectingProjectTypes() {
+    this.applicationState.selectingProjectTypes = !this.applicationState.selectingProjectTypes;
+  }
+
+  configureProjectType(typeCd) {
+    this.applicationState.configuringProjectType = this.config.projectTypes.find(projectType => {
+      return projectType.typeCd === typeCd;
+    });
   }
 
   setStateForTest(data) {

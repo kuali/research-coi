@@ -79,4 +79,147 @@ describe('ConfigStore', () => {
       testToggleAutoApprove(true, false);
     });
   });
+
+
+  describe('toggleProjectTypeRequired', () => {
+    it('should toggle the value of reqDisclosure for the project type with the typeCd of the value passed in', () => {
+      setState({
+        key: 'config',
+        value: {
+          projectTypes: [
+            {
+              typeCd: 1,
+              description: 'test',
+              reqDisclosure: 0
+            }
+          ]
+        }
+      });
+      let state = ConfigStore.getState();
+      assert.equal(state.config.projectTypes[0].reqDisclosure, 0);
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.TOGGLE_PROJECT_TYPE_REQUIRED,
+        data: 1
+      });
+
+      state = ConfigStore.getState();
+      assert.equal(state.config.projectTypes[0].reqDisclosure, 1);
+      assert.equal(state.dirty, true);
+
+    });
+  });
+
+  describe('toggleProjectRoleRequired', () => {
+    it('should toggle the value of reqDisclosure for the project role with the typeCd of the value passed in', () => {
+      setState({
+        key: 'config',
+        value: {
+          projectRoles: [
+            {
+              typeCd: 1,
+              description: 'test',
+              reqDisclosure: 0
+            }
+          ]
+        }
+      });
+      let state = ConfigStore.getState();
+      assert.equal(state.config.projectRoles[0].reqDisclosure, 0);
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.TOGGLE_PROJECT_ROLE_REQUIRED,
+        data: 1
+      });
+
+      state = ConfigStore.getState();
+      assert.equal(state.config.projectRoles[0].reqDisclosure, 1);
+      assert.equal(state.dirty, true);
+
+    });
+  });
+
+  describe('toggleProjectStatusRequired', () => {
+    it('should toggle the value of reqDisclosure for the project status with the typeCd of the value passed in', () => {
+      setState({
+        key: 'config',
+        value: {
+          projectStatuses: [
+            {
+              typeCd: 1,
+              description: 'test',
+              reqDisclosure: 0
+            }
+          ]
+        }
+      });
+      let state = ConfigStore.getState();
+      assert.equal(state.config.projectStatuses[0].reqDisclosure, 0);
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.TOGGLE_PROJECT_STATUS_REQUIRED,
+        data: 1
+      });
+
+      state = ConfigStore.getState();
+      assert.equal(state.config.projectStatuses[0].reqDisclosure, 1);
+      assert.equal(state.dirty, true);
+
+    });
+  });
+
+  describe('toggleEditingProjectTypes', () => {
+    it('should toggle the value of editingProjectTypes', () => {
+      setState({
+        key: 'applicationState',
+        value: {
+          selectingProjectTypes: false
+        }
+      });
+      let selectingProjectTypes = ConfigStore.getState().applicationState.selectingProjectTypes;
+      assert.equal(selectingProjectTypes, false);
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.TOGGLE_SELECTING_PROJECT_TYPES
+      });
+
+      selectingProjectTypes = ConfigStore.getState().applicationState.selectingProjectTypes;
+      assert.equal(selectingProjectTypes, true);
+
+    });
+  });
+
+  describe('configureProjectType', () => {
+    it('should toggle the value of editingProjectTypes', () => {
+      setState({
+        key: 'config',
+        value: {
+          projectTypes: [
+            {
+              typeCd: 1,
+              description: 'test',
+              reqDisclosure: 0
+            }
+          ]
+        }
+      });
+
+      setState({
+        key: 'applicationState',
+        value: {}
+      });
+
+      let configuringProjectType = ConfigStore.getState().applicationState.configuringProjectType;
+      assert.equal(configuringProjectType, undefined);
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.CONFIGURE_PROJECT_TYPE,
+        data: 1
+      });
+
+      configuringProjectType = ConfigStore.getState().applicationState.configuringProjectType;
+      assert.equal(configuringProjectType.typeCd, 1);
+
+    });
+  });
 });

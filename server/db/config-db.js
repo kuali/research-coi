@@ -142,7 +142,9 @@ export const getConfig = (dbInfo, userId, optionalTrx) => {
     }),
     query('config').select('config').limit(1).orderBy('id', 'desc'),
     query.select('*').from('disclosure_status'),
-    query.select('*').from('project_type')
+    query.select('*').from('project_type'),
+    query.select('*').from('project_role'),
+    query.select('*').from('project_status')
   ])
   .then(result => {
     config.matrixTypes = result[0];
@@ -171,7 +173,8 @@ export const getConfig = (dbInfo, userId, optionalTrx) => {
 
     config.disclosureStatus = result[10];
     config.projectTypes = result[11];
-
+    config.projectRoles = result[12];
+    config.projectStatuses = result[13];
     config = camelizeJson(config);
     config.general = JSON.parse(result[9][0].config).general;
     return config;
@@ -230,6 +233,18 @@ export const setConfig = (dbInfo, userId, body, optionalTrx) => {
 
   queries.push(
     createCollectionQueries(query, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'})
+  );
+
+  queries.push(
+    createCollectionQueries(query, config.project_types, {pk: 'type_cd', table: 'project_type'})
+  );
+
+  queries.push(
+    createCollectionQueries(query, config.project_roles, {pk: 'type_cd', table: 'project_role'})
+  );
+
+  queries.push(
+    createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
   );
 
   queries.push(
