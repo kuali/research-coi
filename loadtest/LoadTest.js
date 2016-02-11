@@ -19,7 +19,7 @@
 /* eslint-disable no-magic-numbers */
 
 import http from 'http';
-import {OK} from '../HTTPStatusCodes';
+import {OK} from '../http-status-codes';
 
 export default class LoadTest {
   constructor() {

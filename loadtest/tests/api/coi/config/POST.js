@@ -17,7 +17,7 @@
 */
 
 /* eslint-disable quotes, max-len */
-import LoadTest from '../../../../LoadTest';
+import LoadTest from '../../../../load-test';
 
 export class Test extends LoadTest {
   constructor() {

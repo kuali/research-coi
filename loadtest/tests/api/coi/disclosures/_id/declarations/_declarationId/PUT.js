@@ -18,10 +18,10 @@
 
 /* eslint-disable no-magic-numbers */
 
-import LoadTest from '../../../../../../../LoadTest';
+import LoadTest from '../../../../../../../load-test';
 import hashCode from '../../../../../../../../hash';
-import {getDBConnection} from '../../../../../../../DB';
-import {ACCEPTED} from './HTTPStatusCodes';
+import {getDBConnection} from '../../../../../../../db';
+import {ACCEPTED} from './http-status-codes';
 
 export class Test extends LoadTest {
   constructor() {

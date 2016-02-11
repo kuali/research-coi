@@ -18,9 +18,9 @@
 
 /* eslint-disable no-magic-numbers */
 
-import LoadTest from '../../../../../../LoadTest';
+import LoadTest from '../../../../../../load-test';
 import hashCode from '../../../../../../../hash';
-import {getDBConnection} from '../../../../../../DB';
+import {getDBConnection} from '../../../../../../db';
 
 export class Test extends LoadTest {
   constructor() {

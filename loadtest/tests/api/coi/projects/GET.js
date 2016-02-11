@@ -18,7 +18,7 @@
 
 /* eslint-disable no-magic-numbers */
 
-import LoadTest from '../../../../LoadTest';
+import LoadTest from '../../../../load-test';
 
 export class Test extends LoadTest {
   constructor() {

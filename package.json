@@ -8,7 +8,7 @@
     "test_unit": "BABEL_ENV=test NODE_ENV=test mocha",
     "start": "node server/bootstrap.js",
     "lint": "npm run eslint && npm run stylelint",
-    "eslint": "eslint client db server test",
+    "eslint": "eslint client db server test loadtest",
     "stylelint": "stylelint client/**/**/*.css",
     "webpack": "webpack -p",
     "watch": "webpack -w",
