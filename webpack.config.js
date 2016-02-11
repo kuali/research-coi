@@ -31,7 +31,7 @@ module.exports = {
     sourceMapFilename: '[file].map'
   },
   resolve: {
-    extensions: ['', '.jsx', '.css', '.js']
+    extensions: ['', '.js', 'index.js', '.css', 'style.css']
   },
   module: {
     loaders: [
