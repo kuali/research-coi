@@ -18,14 +18,14 @@
 
 .container {
   display: inline-block;
-  margin: 10px 10px;
+  padding: 10px 10px;
 }
 
 .icon {
-  color: #0095A0;
+  color: #048EAF;
   font-size: 50px;
   display: inline-block;
-
+  vertical-align: middle;
 }
 
 :global(.color-blind) .icon {
@@ -36,16 +36,19 @@
   font-weight: 600;
   padding-left: 10px;
   display: inline-block;
-
+  font-size: 20px;
+  margin-top: 20px;
+  vertical-align: middle;
 }
 
 .link {
+  font-size: 12px;
   padding: 0;
   font-weight: bold;
   background-color: transparent;
-  color: #0095A0;
+  color: #32A0BB;
   border: none;
-  border-bottom: 2px dotted #0095A0;
+  border-bottom: 2px dotted #32A0BB;
 }
 
 :global(.color-blind) .link {

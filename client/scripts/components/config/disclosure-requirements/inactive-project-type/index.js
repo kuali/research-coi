@@ -19,28 +19,15 @@
 import styles from './style';
 import React from 'react';
 
-export default class SelectedProjectType extends React.Component {
-  constructor() {
-    super();
-
-    this.configure = this.configure.bind(this);
-  }
-
-  configure() {
-    this.props.configure(this.props.typeCd);
-  }
-
-  render() {
-    return (
-      <div className={styles.container}>
-        <i className={`fa fa-check-circle-o ${styles.icon}`}></i>
-        <div className={styles.content}>
-          <div className={styles.description}>
-            {this.props.description}
-          </div>
-          <button className={styles.link} onClick={this.configure}>Configure Roles & Statuses</button>
+export default function Panel(props) {
+  return (
+    <div className={styles.container}>
+      <i className={`fa fa-times-circle-o ${styles.icon}`}></i>
+      <div className={styles.content}>
+        <div className={styles.description}>
+          {props.description}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
