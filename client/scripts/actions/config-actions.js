@@ -77,5 +77,6 @@ export default alt.generateActions(
   'toggleProjectRoleRequired',
   'toggleProjectStatusRequired',
   'toggleSelectingProjectTypes',
-  'configureProjectType'
+  'configureProjectType',
+  'configureProjectTypeState'
 );
