@@ -189,8 +189,8 @@ describe('ConfigStore', () => {
     });
   });
 
-  describe('configureProjectType', () => {
-    it('should toggle the value of editingProjectTypes', () => {
+  describe('configureProjectTypeState', () => {
+    it('should set the value of configuringProjectType', () => {
       setState({
         key: 'config',
         value: {
@@ -213,13 +213,99 @@ describe('ConfigStore', () => {
       assert.equal(configuringProjectType, undefined);
 
       alt.dispatcher.dispatch({
-        action: ConfigActions.CONFIGURE_PROJECT_TYPE,
+        action: ConfigActions.CONFIGURE_PROJECT_TYPE_STATE,
         data: 1
       });
 
       configuringProjectType = ConfigStore.getState().applicationState.configuringProjectType;
       assert.equal(configuringProjectType.typeCd, 1);
 
+    });
+  });
+
+  describe('getNewRoles', () => {
+    it('should only return roles that exist in newRoles but not existingRoles', () => {
+      const newRoles = [
+        {
+          projectTypeCd: '1',
+          sourceRoleCd: 'KP'
+        },
+        {
+          projectTypeCd: '1',
+          sourceRoleCd: 'COI'
+        },
+        {
+          projectTypeCd: '1',
+          sourceRoleCd: 'PI'
+        },
+        {
+          projectTypeCd: '2',
+          sourceRoleCd: 'KP'
+        }
+      ];
+
+      const existingRoles = [
+        {
+          projectTypeCd: '1',
+          sourceRoleCd: 'COI'
+        },
+        {
+          projectTypeCd: '1',
+          sourceRoleCd: 'PI'
+        },
+        {
+          projectTypeCd: '2',
+          sourceRoleCd: 'KP'
+        }
+      ];
+
+      const roles = ConfigStore.getNewRoles(existingRoles, newRoles, '1');
+
+      assert.equal(1,roles.length);
+      assert.equal('KP', roles[0].sourceRoleCd);
+    });
+  });
+
+  describe('getNewStatuses', () => {
+    it('should only return statuses that exist in newStatuses but not existingStatuses', () => {
+      const newStatuses = [
+        {
+          projectTypeCd: '1',
+          sourceStatusCd: 'In Progress'
+        },
+        {
+          projectTypeCd: '1',
+          sourceStatusCd: 'Submitted'
+        },
+        {
+          projectTypeCd: '1',
+          sourceStatusCd: 'Approved'
+        },
+        {
+          projectTypeCd: '2',
+          sourceStatusCd: 'Approved'
+        }
+      ];
+
+      const existingStatuses = [
+        {
+          projectTypeCd: '1',
+          sourceStatusCd: 'In Progress'
+        },
+        {
+          projectTypeCd: '1',
+          sourceStatusCd: 'Submitted'
+        },
+        {
+          projectTypeCd: '2',
+          sourceStatusCd: 'Approved'
+        }
+      ];
+
+      const statuses = ConfigStore.getNewStatuses(existingStatuses, newStatuses, '1');
+
+      assert.equal(1,statuses.length);
+      assert.equal('Approved', statuses[0].sourceStatusCd);
     });
   });
 });

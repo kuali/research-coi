@@ -21,6 +21,7 @@ import {COIConstants} from '../../coi-constants';
 import {FORBIDDEN} from '../../http-status-codes';
 import Log from '../log';
 import wrapAsync from './wrap-async';
+import { getProjectData } from '../services/project-service/project-service';
 
 export async function saveConfig(req, res, next) {
   try {
@@ -75,4 +76,16 @@ export const init = app => {
     @Role: admin
   */
   app.post('/api/coi/config/', wrapAsync(saveConfig));
+
+  app.get('/api/coi/new-project-data/:projectTypeCd', async (req, res, next) => {
+    try {
+      const result = await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);
+      res.send(result);
+    } catch(err) {
+      Log.error(err);
+      next(err);
+    }
+
+  });
+
 };

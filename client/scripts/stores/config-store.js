@@ -37,7 +37,9 @@ class _ConfigStore {
       getRelationshipTypeString: this.getRelationshipTypeString,
       getRelationshipAmountString: this.getRelationshipAmountString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
-      getQuestionNumberToShow: this.getQuestionNumberToShow
+      getQuestionNumberToShow: this.getQuestionNumberToShow,
+      getNewRoles: this.getNewRoles,
+      getNewStatuses: this.getNewStatuses
     });
 
     this.applicationState = {
@@ -835,10 +837,65 @@ class _ConfigStore {
     this.applicationState.selectingProjectTypes = !this.applicationState.selectingProjectTypes;
   }
 
-  configureProjectType(typeCd) {
+  getNewRoles(existingRoles, newRoles, projectTypeCd) {
+    const existingSourceRoleCds = existingRoles.filter(existingRole => {
+      return existingRole.projectTypeCd == projectTypeCd;
+    })
+    .map(existingRole => {
+      return existingRole.sourceRoleCd;
+    });
+
+    return newRoles.filter(newRole => {
+      return newRole.projectTypeCd == projectTypeCd &&
+        !existingSourceRoleCds.includes(newRole.sourceRoleCd);
+    });
+  }
+
+  getNewStatuses(existingStatuses, newStatuses, projectTypeCd) {
+    const existingSourceStatusCds = existingStatuses.filter(existingStatus => {
+      return existingStatus.projectTypeCd == projectTypeCd;
+    })
+    .map(existingStatus => {
+      return existingStatus.sourceStatusCd;
+    });
+
+    return newStatuses.filter(newStatus => {
+      return newStatus.projectTypeCd == projectTypeCd &&
+        !existingSourceStatusCds.includes(newStatus.sourceStatusCd);
+    });
+  }
+
+  configureProjectTypeState(typeCd) {
     this.applicationState.configuringProjectType = this.config.projectTypes.find(projectType => {
       return projectType.typeCd === typeCd;
     });
+  }
+  configureProjectType(typeCd) {
+    this.configureProjectTypeState(typeCd);
+
+    createRequest().get(`/api/coi/new-project-data/${typeCd}`)
+      .end(processResponse((err, data) => {
+        if (!err) {
+          const newRoles = this.getNewRoles(this.config.projectRoles, data.body.roles, typeCd);
+          if (newRoles.length > 0) {
+            this.config.projectRoles = [
+              ...this.config.projectRoles,
+              ...newRoles
+            ];
+            this.dirty = true;
+          }
+
+          const newStatuses = this.getNewStatuses(this.config.projectStatuses, data.body.statuses, typeCd);
+          if (newStatuses.length > 0) {
+            this.config.projectStatuses = [
+              ...this.config.projectStatuses,
+              ...newStatuses
+            ];
+            this.dirty = true;
+          }
+          this.emitChange();
+        }
+      }));
   }
 
   setStateForTest(data) {
