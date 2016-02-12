@@ -315,3 +315,24 @@ export const getArchivedConfig = (dbInfo, id) => {
   const knex = getKnex(dbInfo);
   return knex('config').select('config').where('id', id);
 };
+
+export function getRequiredProjectRoles(dbInfo) {
+  const knex = getKnex(dbInfo);
+  return knex('project_role')
+    .select('source_role_cd as sourceRoleCd','project_type_cd as projectTypeCd')
+    .where({req_disclosure: true});
+}
+
+export function getRequiredProjectStatuses(dbInfo) {
+  const knex = getKnex(dbInfo);
+  return knex('project_status')
+    .select('source_status_cd as sourceStatusCd','project_type_cd as projectTypeCd')
+    .where({req_disclosure: true});
+}
+
+export function getRequiredProjectTypes(dbInfo) {
+  const knex = getKnex(dbInfo);
+  return knex('project_type')
+    .select('type_cd as typeCd')
+    .where({req_disclosure: true});
+}

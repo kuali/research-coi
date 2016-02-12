@@ -20,6 +20,7 @@ import * as ProjectDB from '../db/project-db';
 import Log from '../log';
 import { FORBIDDEN } from '../../http-status-codes';
 import {COIConstants} from '../../coi-constants';
+import { filterProjects } from '../services/project-service/project-service';
 
 export const init = app => {
   app.post('/api/coi/projects', (req, res, next) => {
@@ -37,15 +38,19 @@ export const init = app => {
     @Role: user
     Should only return projects associated with the given user
   */
-  app.get('/api/coi/projects', (req, res, next) => {
-    ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId)
-      .then(projects => {
+  app.get('/api/coi/projects', async (req, res, next) => {
+    try {
+      const projects = await ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId);
+      if (req.query.filter) {
+        const result = await filterProjects(req.dbInfo, projects);
+        res.send(result);
+      } else {
         res.send(projects);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
+      }
+    } catch(err) {
+      Log.error(err);
+      next(err);
+    }
   });
 
   /**
