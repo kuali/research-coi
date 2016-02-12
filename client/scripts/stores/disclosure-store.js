@@ -194,6 +194,7 @@ class _DisclosureStore {
   loadProjects() {
     createRequest()
       .get('/api/coi/projects')
+      .query({filter: true})
       .end(processResponse((err, projects) => {
         if (!err) {
           this.projects = projects.body;

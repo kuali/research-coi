@@ -20,6 +20,7 @@ import { getAuthToken } from '../auth-service/auth-service';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const http = useSSL ? require('https') : require('http');
 import {OK} from '../../../http-status-codes';
+import { getRequiredProjectTypes, getRequiredProjectStatuses, getRequiredProjectRoles} from '../../db/config-db';
 
 let getAuthorizationInfo;
 try {
@@ -186,6 +187,30 @@ export async function getProjectData(dbInfo, authHeader, projectTypeCd) {
       default:
         return Promise.resolve({roles: [], statuses: []});
     }
+  } catch(err) {
+    return Promise.reject(err);
+  }
+}
+
+export async function filterProjects(dbInfo, projects) {
+  try {
+    const requiredProjectTypes = await getRequiredProjectTypes(dbInfo);
+    const requiredProjectRoles = await getRequiredProjectRoles(dbInfo);
+    const requiredProjectStatuses = await getRequiredProjectStatuses(dbInfo);
+
+    const result = projects.filter(project => {
+      const isProjectTypeRequired = requiredProjectTypes.findIndex(projectType => projectType.typeCd == project.typeCd) > -1;
+      const isProjectProjectRoleRequired = requiredProjectRoles.findIndex(projectRole => {
+        return projectRole.projectTypeCd == project.typeCd && projectRole.sourceRoleCd == project.roleCd;
+      }) > -1;
+      const isProjectStatusRequired = requiredProjectStatuses.findIndex(projectStatus => {
+        return projectStatus.projectTypeCd == project.typeCd && projectStatus.sourceStatusCd == project.statusCd;
+      }) > -1;
+
+      return isProjectTypeRequired && isProjectProjectRoleRequired && isProjectStatusRequired;
+    });
+
+    return Promise.resolve(result);
   } catch(err) {
     return Promise.reject(err);
   }
