@@ -26,7 +26,8 @@ import ConfigStore from '../../../../stores/config-store';
 import ConfigActions from '../../../../actions/config-actions';
 import {AppHeader} from '../../../app-header';
 import CheckBox from '../check-box';
-import SelectedProjectType from '../selected-project-type';
+import ActiveProjectType from '../active-project-type';
+import InactiveProjectType from '../inactive-project-type';
 import {BlueButton} from '../../../blue-button';
 import ConfiguringPanel from '../configuring-panel';
 export default class DisclosureRequirements extends React.Component {
@@ -100,9 +101,9 @@ export default class DisclosureRequirements extends React.Component {
           </div>
         );
       } else {
-        const projectTypes = projectsRequiringDisclosure.map(projectType => {
+        const activeProjectTypes = projectsRequiringDisclosure.map(projectType => {
           return (
-            <SelectedProjectType
+            <ActiveProjectType
               {...projectType}
               key={projectType.typeCd}
               configure={ConfigActions.configureProjectType}
@@ -110,14 +111,38 @@ export default class DisclosureRequirements extends React.Component {
           );
         });
 
+        const inactiveProjectTypes = this.state.config.projectTypes.filter(projectType => {
+          return projectType.reqDisclosure == 0;
+        })
+        .map(projectType => {
+          return (
+            <InactiveProjectType
+              {...projectType}
+              key={projectType.typeCd}
+            />
+          );
+        });
+
         projectTypesPanel = (
           <div>
             <div className={styles.title}>
-              The project types below require the completion of a COI disclosure<br/>
+              The project types below require the completion of a COI disclosure.<br/>
               <a className={styles.link} onClick={ConfigActions.toggleSelectingProjectTypes}>Click here to edit these project types</a>
             </div>
             <div>
-              {projectTypes}
+              <div style={{marginBottom: '50px'}}>
+                <div className={styles.activeHeader}>
+                  ACTIVE
+                </div>
+                {activeProjectTypes}
+              </div>
+              <div>
+                <div className={styles.activeHeader} style={{marginBottom: '15px'}}>
+                  NOT ACTIVE
+                </div>
+                {inactiveProjectTypes}
+              </div>
+
             </div>
           </div>
         );

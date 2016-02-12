@@ -19,35 +19,27 @@
 import styles from './style';
 import React from 'react';
 
-export default class CheckBox extends React.Component {
+export default class ActiveProjectType extends React.Component {
   constructor() {
     super();
 
-    this.toggle = this.toggle.bind(this);
+    this.configure = this.configure.bind(this);
   }
 
-  toggle() {
-    this.props.toggle(this.props.typeCd);
+  configure() {
+    this.props.configure(this.props.typeCd);
   }
 
   render() {
     return (
       <div className={styles.container}>
-        <span style={{height: '100%', verticalAlign: 'top'}}>
-          <input
-            id={`${this.props.description}_${this.props.type}`}
-            type="checkbox"
-            checked={this.props.reqDisclosure === 1}
-            onChange={this.toggle}
-          />
-        </span>
-        <span style={{height: '100%', whiteSpace: 'normal', minWidth: '233px'}}>
-          <label
-            htmlFor={`${this.props.description}_${this.props.type}`}
-          >
+        <i className={`fa fa-check-circle-o ${styles.icon}`}></i>
+        <div className={styles.content}>
+          <div className={styles.description}>
             {this.props.description}
-          </label>
-        </span>
+          </div>
+          <button className={styles.link} onClick={this.configure}>Configure Roles & Statuses</button>
+        </div>
       </div>
     );
   }

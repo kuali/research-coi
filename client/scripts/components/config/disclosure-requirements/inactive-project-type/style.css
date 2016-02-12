@@ -18,8 +18,28 @@
 
 .container {
   display: inline-block;
-  padding: 20px;
-  white-space: nowrap;
-  vertical-align: top;
+  padding: 10px 10px;
+  min-width: 270px;
+}
+
+.icon {
+  color: #808080;
+  font-size: 50px;
+  display: inline-block;
+  vertical-align: middle;
+
+}
+
+:global(.color-blind) .icon {
+  color: black;
+}
+
+.content {
+  color: #808080;
+  font-weight: 600;
+  padding-left: 10px;
+  display: inline-block;
+  font-size: 20px;
+  vertical-align: middle;
 }
 
