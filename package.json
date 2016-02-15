@@ -65,6 +65,7 @@
     "babel-plugin-rewire": "1.0.0-beta-5",
     "css-loader": "0.23.0",
     "css-modules-require-hook": "2.1.0",
+    "enzyme": "2.0.0",
     "eslint": "1.10.3",
     "eslint-plugin-contains": "0.0.1",
     "eslint-plugin-module-name": "0.0.4",

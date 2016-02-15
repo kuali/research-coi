@@ -22,6 +22,7 @@ import CommentBubble from '../comment-bubble';
 import {AdminActions} from '../../../../actions/admin-actions';
 import {BlueButton} from '../../../blue-button';
 import classNames from 'classnames';
+import { ROLES } from '../../../../../../coi-constants';
 
 export default class CommentingPanel extends React.Component {
   constructor() {
@@ -32,7 +33,13 @@ export default class CommentingPanel extends React.Component {
 
   makeComment() {
     const piCheck = this.refs.piCheck;
+    const reviewerCheck = this.refs.reviewerCheck;
     const visibleToPI = piCheck.checked;
+    let visibleToReviewer = false;
+    if (reviewerCheck) {
+      visibleToReviewer = reviewerCheck.checked;
+      reviewerCheck.checked = false;
+    }
     piCheck.checked = false;
     const textarea = this.refs.commentText;
     const commentText = textarea.value;
@@ -42,7 +49,7 @@ export default class CommentingPanel extends React.Component {
       this.props.topicSection,
       this.props.topicId,
       visibleToPI,
-      false,
+      visibleToReviewer,
       commentText
     );
   }
@@ -53,41 +60,50 @@ export default class CommentingPanel extends React.Component {
       comments = this.props.comments.map(comment => {
         return (
           <CommentBubble
+            {...comment}
             key={comment.id}
-            isUser={comment.isCurrentUser}
-            date={comment.date}
-            author={comment.author}
-            text={comment.text}
             className={`${styles.override} ${styles.comment}`}
-            new={comment.new}
           />
         );
       });
+    }
+
+    let reviewerCheck;
+
+    if (this.props.role === ROLES.ADMIN) {
+      reviewerCheck = (
+        <div>
+          <input type="checkbox" id="reviewerCheck" ref="reviewerCheck" className={styles.checkBox} />
+          <label htmlFor="reviewerCheck" className={styles.checkLabel}>Reviewer</label>
+        </div>
+      );
     }
 
     let commentForm;
     if (!this.props.readonly) {
       commentForm = (
         <div className={styles.controls}>
-          <span className={styles.commentText}>
-            <div>COMMENT:</div>
+          <span className={styles.left}>
+            <div style={{color:'#737373'}}>RECIPIENT</div>
             <div>
-              <textarea className={styles.textbox} ref="commentText" />
+              <input type="checkbox" id="piCheck" ref="piCheck" className={styles.checkBox}/>
+              <label htmlFor="piCheck" className={styles.checkLabel}>Reporter</label>
             </div>
+
+            {reviewerCheck}
           </span>
-          <span className={styles.right}>
-            <div>RECIPIENT:</div>
-            <div>
-              <input type="checkbox" id="piCheck" ref="piCheck" />
-              <label htmlFor="piCheck" className={styles.checkLabel}>PRINCIPAL INVESTIGATOR</label>
-            </div>
-            <div>
-              <BlueButton
-                className={`${styles.override} ${styles.submitButton}`}
-                onClick={this.makeComment}
-              >
-                Submit
-              </BlueButton>
+          <span className={styles.commentText}>
+            <div style={{color:'#737373'}}>COMMENT</div>
+            <div style={{marginTop: '5px'}}>
+              <textarea className={styles.textbox} ref="commentText" />
+              <div>
+                <BlueButton
+                  className={`${styles.override} ${styles.submitButton}`}
+                  onClick={this.makeComment}
+                >
+                  COMMENT
+                </BlueButton>
+              </div>
             </div>
           </span>
         </div>

@@ -28,12 +28,8 @@ export default function TopicCommentSummary(props) {
       return (
         <CommentBubble
           key={comment.id}
-          isUser={comment.isCurrentUser}
-          date={comment.date}
-          author={comment.author}
-          text={comment.text}
+          {...comment}
           className={`${styles.override} ${styles.comment}`}
-          new={false}
         />
       );
     });

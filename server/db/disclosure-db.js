@@ -422,6 +422,7 @@ const retrieveComments = (dbInfo, userId, disclosureId) => {
       'topic_id as topicId',
       'text',
       'author',
+      'user_role as userRole',
       'user_id as userId',
       'date',
       'pi_visible as piVisible',
@@ -477,6 +478,7 @@ export const addComment = (dbInfo, userInfo, comment) => {
       text: comment.text,
       user_id: userInfo.schoolId,
       author: `${userInfo.firstName} ${userInfo.lastName}`,
+      user_role: userInfo.coiRole,
       date: new Date(),
       pi_visible: comment.visibleToPI,
       reviewer_visible: comment.visibleToReviewers
