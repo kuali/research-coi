@@ -228,41 +228,57 @@ describe('ConfigStore', () => {
       const newRoles = [
         {
           projectTypeCd: '1',
-          sourceRoleCd: 'KP'
+          sourceRoleCd: 'KP',
+          description: 'Key Person'
         },
         {
           projectTypeCd: '1',
-          sourceRoleCd: 'COI'
+          sourceRoleCd: 'COI',
+          description: 'Co-Investigator'
         },
         {
           projectTypeCd: '1',
-          sourceRoleCd: 'PI'
+          sourceRoleCd: 'PI',
+          description: 'Principle Investigator'
         },
         {
           projectTypeCd: '2',
-          sourceRoleCd: 'KP'
+          sourceRoleCd: 'KP',
+          description: 'Key Person'
         }
       ];
 
       const existingRoles = [
         {
           projectTypeCd: '1',
-          sourceRoleCd: 'COI'
+          sourceRoleCd: 'COI',
+          description: 'Co-Investigator'
         },
         {
           projectTypeCd: '1',
-          sourceRoleCd: 'PI'
+          sourceRoleCd: 'PI',
+          description: 'CAT DOG'
         },
         {
           projectTypeCd: '2',
-          sourceRoleCd: 'KP'
+          sourceRoleCd: 'KP',
+          description: 'Key Person'
         }
       ];
 
-      const roles = ConfigStore.getNewRoles(existingRoles, newRoles, '1');
+      alt.dispatcher.dispatch({
+        action: ConfigActions.UPDATE_ROLES,
+        data: {
+          existingRoles,
+          newRoles,
+          projectTypeCd: '1'
+        }
+      });
 
-      assert.equal(1,roles.length);
-      assert.equal('KP', roles[0].sourceRoleCd);
+      const roles = ConfigStore.getState().config.projectRoles;
+      assert.equal(4, roles.length);
+      assert.equal(2, roles.filter(role => role.sourceRoleCd == 'KP').length);
+      assert.equal('Principle Investigator', roles.find(role => role.sourceRoleCd == 'PI').description);
     });
   });
 
@@ -271,41 +287,58 @@ describe('ConfigStore', () => {
       const newStatuses = [
         {
           projectTypeCd: '1',
-          sourceStatusCd: 'In Progress'
+          sourceStatusCd: '1',
+          description: 'In Progress'
         },
         {
           projectTypeCd: '1',
-          sourceStatusCd: 'Submitted'
+          sourceStatusCd: '2',
+          description: 'Submitted'
         },
         {
           projectTypeCd: '1',
-          sourceStatusCd: 'Approved'
+          sourceStatusCd: '3',
+          description: 'Approved'
         },
         {
           projectTypeCd: '2',
-          sourceStatusCd: 'Approved'
+          sourceStatusCd: '3',
+          description: 'Approved'
         }
       ];
 
       const existingStatuses = [
         {
           projectTypeCd: '1',
-          sourceStatusCd: 'In Progress'
+          sourceStatusCd: '1',
+          description: 'IN_PROGRESS'
         },
         {
           projectTypeCd: '1',
-          sourceStatusCd: 'Submitted'
+          sourceStatusCd: '2',
+          description: 'Submitted'
         },
         {
           projectTypeCd: '2',
-          sourceStatusCd: 'Approved'
+          sourceStatusCd: '3',
+          description: 'Approved'
         }
       ];
 
-      const statuses = ConfigStore.getNewStatuses(existingStatuses, newStatuses, '1');
 
-      assert.equal(1,statuses.length);
-      assert.equal('Approved', statuses[0].sourceStatusCd);
+      alt.dispatcher.dispatch({
+        action: ConfigActions.UPDATE_STATUSES,
+        data: {
+          existingStatuses,
+          newStatuses,
+          projectTypeCd: '1'
+        }
+      });
+
+      const statuses = ConfigStore.getState().config.projectStatuses;
+      assert.equal(4, statuses.length);
+      assert.equal(2, statuses.filter(status => status.sourceStatusCd == '3').length);
+      assert.equal('In Progress', statuses.find(status => status.sourceStatusCd == '1').description);
     });
   });
 });

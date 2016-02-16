@@ -37,9 +37,7 @@ class _ConfigStore {
       getRelationshipTypeString: this.getRelationshipTypeString,
       getRelationshipAmountString: this.getRelationshipAmountString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
-      getQuestionNumberToShow: this.getQuestionNumberToShow,
-      getNewRoles: this.getNewRoles,
-      getNewStatuses: this.getNewStatuses
+      getQuestionNumberToShow: this.getQuestionNumberToShow
     });
 
     this.applicationState = {
@@ -78,7 +76,9 @@ class _ConfigStore {
       relationshipAmountTypes: [],
       declarationTypes: [],
       notifications: [],
-      general: []
+      general: [],
+      projectRoles: [],
+      projectStatues: []
     };
 
     this.sponsorLookup = true;
@@ -837,32 +837,49 @@ class _ConfigStore {
     this.applicationState.selectingProjectTypes = !this.applicationState.selectingProjectTypes;
   }
 
-  getNewRoles(existingRoles, newRoles, projectTypeCd) {
-    const existingSourceRoleCds = existingRoles.filter(existingRole => {
-      return existingRole.projectTypeCd == projectTypeCd;
-    })
-    .map(existingRole => {
-      return existingRole.sourceRoleCd;
-    });
+  updateRoles(data) {
+    const roles = data.existingRoles;
+    data.newRoles.forEach(role => {
+      const existingRole = data.existingRoles.find(eRole => {
+        return eRole.projectTypeCd == data.projectTypeCd &&
+        eRole.sourceRoleCd == role.sourceRoleCd;
+      });
 
-    return newRoles.filter(newRole => {
-      return newRole.projectTypeCd == projectTypeCd &&
-        !existingSourceRoleCds.includes(newRole.sourceRoleCd);
+      if (existingRole) {
+        if (existingRole.description != role.description) {
+          existingRole.description = role.description;
+          this.dirty = true;
+        }
+      } else {
+        roles.push(role);
+        this.dirty = true;
+      }
     });
+    this.config.projectRoles = roles;
+    this.emitChange();
   }
 
-  getNewStatuses(existingStatuses, newStatuses, projectTypeCd) {
-    const existingSourceStatusCds = existingStatuses.filter(existingStatus => {
-      return existingStatus.projectTypeCd == projectTypeCd;
-    })
-    .map(existingStatus => {
-      return existingStatus.sourceStatusCd;
+  updateStatuses(data) {
+    const statuses = data.existingStatuses;
+    data.newStatuses.forEach(status => {
+      const existingStatus = data.existingStatuses.find(eStatus => {
+        return eStatus.projectTypeCd == data.projectTypeCd &&
+        eStatus.sourceStatusCd == status.sourceStatusCd;
+      });
+
+      if (existingStatus) {
+        if (existingStatus.description != status.description) {
+          existingStatus.description = status.description;
+          this.dirty = true;
+        }
+      } else {
+        statuses.push(status);
+        this.dirty = true;
+      }
     });
 
-    return newStatuses.filter(newStatus => {
-      return newStatus.projectTypeCd == projectTypeCd &&
-        !existingSourceStatusCds.includes(newStatus.sourceStatusCd);
-    });
+    this.config.projectStatuses = statuses;
+    this.emitChange();
   }
 
   configureProjectTypeState(typeCd) {
@@ -876,24 +893,17 @@ class _ConfigStore {
     createRequest().get(`/api/coi/new-project-data/${typeCd}`)
       .end(processResponse((err, data) => {
         if (!err) {
-          const newRoles = this.getNewRoles(this.config.projectRoles, data.body.roles, typeCd);
-          if (newRoles.length > 0) {
-            this.config.projectRoles = [
-              ...this.config.projectRoles,
-              ...newRoles
-            ];
-            this.dirty = true;
-          }
+          this.updateRoles({
+            existingRoles : this.config.projectRoles,
+            newRoles: data.body.roles,
+            projectTypeCd: typeCd
+          });
 
-          const newStatuses = this.getNewStatuses(this.config.projectStatuses, data.body.statuses, typeCd);
-          if (newStatuses.length > 0) {
-            this.config.projectStatuses = [
-              ...this.config.projectStatuses,
-              ...newStatuses
-            ];
-            this.dirty = true;
-          }
-          this.emitChange();
+          this.updateStatuses({
+            existingStatuses: this.config.projectStatuses,
+            newStatuses: data.body.statuses,
+            projectTypeCd: typeCd
+          });
         }
       }));
   }
