@@ -202,4 +202,223 @@ describe('AdminStore', () => {
       assert.equal(reviewers.length, 0);
     });
   });
+
+  describe('toggleReviewer', () => {
+    it('should toggle value of reviewerVisible', () => {
+      setApplicationState({
+        comment: {
+          reviewerVisible: 0
+        }
+      });
+
+      let reviewerVisible = AdminStore.getState().applicationState.comment.reviewerVisible;
+
+      assert.equal(0, reviewerVisible);
+
+      alt.dispatcher.dispatch({
+        action: AdminActions.TOGGLE_REVIEWER
+      });
+
+      reviewerVisible = AdminStore.getState().applicationState.comment.reviewerVisible;
+
+      assert.equal(1, reviewerVisible);
+    });
+  });
+
+  describe('toggleReporter', () => {
+    it('should toggle value of piVisible', () => {
+      setApplicationState({
+        comment: {
+          piVisible: 0
+        }
+      });
+
+      let piVisible = AdminStore.getState().applicationState.comment.piVisible;
+
+      assert.equal(0, piVisible);
+
+      alt.dispatcher.dispatch({
+        action: AdminActions.TOGGLE_REPORTER
+      });
+
+      piVisible = AdminStore.getState().applicationState.comment.piVisible;
+
+      assert.equal(1, piVisible);
+    });
+  });
+
+  describe('updateCommentText', () => {
+    it('should update comment text to value passed in', () => {
+      setApplicationState({
+        comment: {
+          text: ''
+        }
+      });
+
+      let text = AdminStore.getState().applicationState.comment.text;
+
+      assert.equal('', text);
+
+      const value = 'test';
+      alt.dispatcher.dispatch({
+        action: AdminActions.UPDATE_COMMENT_TEXT,
+        data: {target: {value}}
+      });
+
+      text = AdminStore.getState().applicationState.comment.text;
+
+      assert.equal(value, text);
+    });
+  });
+
+  describe('editComment', () => {
+    it('should pull value from comments array and insert it into comment', () => {
+      setApplicationState({
+        currentComments: [
+          {
+            id: 1,
+            text: 'test',
+            piVisible: 1,
+            reviewerVisible: 1
+          }
+        ],
+        comment: {
+          text: '',
+          piVisible: 0,
+          reviewerVisible: 0
+        }
+      });
+
+      let applicationState = AdminStore.getState().applicationState;
+
+      assert.equal('', applicationState.comment.text);
+      assert.equal(0, applicationState.comment.piVisible);
+      assert.equal(0, applicationState.comment.reviewerVisible);
+
+      assert.equal(undefined, applicationState.commentSnapShot);
+      assert.equal(1, applicationState.currentComments.length);
+      alt.dispatcher.dispatch({
+        action: AdminActions.EDIT_COMMENT,
+        data: 1
+      });
+
+      applicationState = AdminStore.getState().applicationState;
+      assert.equal('test', applicationState.comment.text);
+      assert.equal(1, applicationState.comment.piVisible);
+      assert.equal(1, applicationState.comment.reviewerVisible);
+
+      assert.equal('test', applicationState.commentSnapShot.text);
+      assert.equal(1, applicationState.commentSnapShot.piVisible);
+      assert.equal(1, applicationState.commentSnapShot.reviewerVisible);
+
+      assert.equal(0, applicationState.currentComments.length);
+    });
+  });
+
+  describe('updateCommentState', () => {
+    it('should pull value from comments array and insert it into comment', () => {
+      setApplicationState({
+        selectedDisclosure: {
+          comments: []
+        },
+        comment: {
+          text: 'dsdfsd',
+          piVisible: 1,
+          reviewerVisible: 1,
+          topicSection: 'test',
+          topicId: 'test',
+          title: 'test'
+        },
+        commentSnapShot: {
+          text: 'dsdfsd',
+          piVisible: 1,
+          reviewerVisible: 1
+        },
+        editingComment: true
+      });
+
+      let applicationState = AdminStore.getState().applicationState;
+
+      alt.dispatcher.dispatch({
+        action: AdminActions.UPDATE_COMMENT_STATE,
+        data: [
+          {
+            text: 'dsdfsd',
+            piVisible: 1,
+            reviewerVisible: 1
+          }
+        ]
+      });
+
+      applicationState = AdminStore.getState().applicationState;
+
+      //reset comment state
+      assert.equal('', applicationState.comment.text);
+      assert.equal(0, applicationState.comment.piVisible);
+      assert.equal(0, applicationState.comment.reviewerVisible);
+      assert.equal('test', applicationState.comment.topicSection);
+      assert.equal('test', applicationState.comment.topicId);
+      assert.equal('test', applicationState.comment.title);
+
+      //clear comment snapshot
+      assert.equal(undefined, applicationState.commentSnapShot);
+
+      //add comment to comments
+      assert.equal(1, applicationState.selectedDisclosure.comments.length);
+
+      //set editting to false
+      assert.equal(false, applicationState.editingComment);
+
+    });
+  });
+
+  describe('showCommentingPanel', () => {
+    let applicationState;
+
+    before(() => {
+      setApplicationState({
+        listShowing: true,
+        commentingPanelShowing: false,
+        comment: {},
+        commentSnapShot: {
+          text: 'dsdfsd',
+          piVisible: 1,
+          reviewerVisible: 1
+        },
+        editingComment: undefined
+      });
+
+      alt.dispatcher.dispatch({
+        action: AdminActions.SHOW_COMMENTING_PANEL,
+        data: ['test','test','test']
+      });
+
+      applicationState = AdminStore.getState().applicationState;
+    });
+
+    it('should set list showing to false', () => {
+      assert.equal(false, applicationState.listShowing);
+    });
+
+    it('should set commentingPanelSHowing to true', () => {
+      assert.equal(true, applicationState.commentingPanelShowing);
+    });
+
+    it('should populate comment', () => {
+      assert.equal('', applicationState.comment.text);
+      assert.equal(0, applicationState.comment.piVisible);
+      assert.equal(0, applicationState.comment.reviewerVisible);
+      assert.equal('test', applicationState.comment.topicId);
+      assert.equal('test', applicationState.comment.topicSection);
+      assert.equal('test', applicationState.comment.title);
+    });
+
+    it('should set commentSnapShot to undefined', () => {
+      assert.equal(undefined, applicationState.commentSnapShot);
+    });
+
+    it('should set editingComment to undefined', () => {
+      assert.equal(false, applicationState.editingComment);
+    });
+  });
 });

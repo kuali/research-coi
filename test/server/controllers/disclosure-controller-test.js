@@ -79,8 +79,8 @@ function createComment(disclosureId, user) {
     userId: hashCode(user),
     author: user,
     date: new Date(),
-    visibleToPI: true,
-    visibleToReviewers: true
+    piVisible: true,
+    reviewerVisible: true
   };
 }
 

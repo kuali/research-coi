@@ -59,7 +59,8 @@
   background-color: #F2F2F2;
   width: 100%;
   padding: 10px 20px;
-  border-top: 1px solid #333;
+  z-index: 3;
+  position: relative;
 }
 
 .commentText {
@@ -104,15 +105,41 @@
   margin-bottom: 10px;
 }
 
-.override.submitButton {
+.override.button {
   margin-top: 5px;
-  background-color: #00BBD3;
+  margin-left: 10px;
   color: white;
   font-size: 11px;
   border-bottom: 3px solid #797979;
   float: right;
 }
 
+.submit {
+  background-color: #00BBD3;
+}
+
+.cancel {
+  background-color: #999999;
+}
+
 :global(.color-blind) .override.submitButton {
   background-color: black;
 }
+
+.adminWarning {
+  text-align: center;
+  padding: 10px;
+  background-color: #F57B00;
+  color: white;
+  transition: margin-bottom 0.2s ease-in-out;
+  margin-bottom: -41px;
+}
+
+.showing {
+  margin-bottom: 0;
+}
+
+:global(.color-blind) .adminWarning {
+  background-color: black;
+}
+

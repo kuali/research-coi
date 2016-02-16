@@ -65,5 +65,11 @@ export const AdminActions = alt.generateActions(
   'removeAdditionalReviewer',
   'addReviewerToState',
   'removeReviewerFromState',
-  'completeReview'
+  'completeReview',
+  'toggleReporter',
+  'toggleReviewer',
+  'updateCommentText',
+  'editComment',
+  'cancelComment',
+  'updateCommentState'
 );

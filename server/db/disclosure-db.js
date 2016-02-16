@@ -422,6 +422,7 @@ const retrieveComments = (dbInfo, userId, disclosureId) => {
       'topic_id as topicId',
       'text',
       'author',
+      'editable',
       'user_role as userRole',
       'user_id as userId',
       'date',
@@ -442,7 +443,6 @@ const retrieveComments = (dbInfo, userId, disclosureId) => {
 
 const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
   const knex = getKnex(dbInfo);
-
   return knex.select('*')
     .from('pi_review')
     .where({
@@ -469,7 +469,6 @@ const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
 
 export const addComment = (dbInfo, userInfo, comment) => {
   const knex = getKnex(dbInfo);
-
   return knex('comment')
     .insert({
       disclosure_id: comment.disclosureId,
@@ -480,18 +479,38 @@ export const addComment = (dbInfo, userInfo, comment) => {
       author: `${userInfo.firstName} ${userInfo.lastName}`,
       user_role: userInfo.coiRole,
       date: new Date(),
-      pi_visible: comment.visibleToPI,
-      reviewer_visible: comment.visibleToReviewers
+      pi_visible: comment.piVisible,
+      reviewer_visible: comment.reviewerVisible
     }, 'id').then(() => {
       const statements = [
         retrieveComments(dbInfo, userInfo.schoolId, comment.disclosureId)
       ];
-      if (comment.visibleToPI) {
+      if (comment.piVisible) {
         statements.push(
           flagPIReviewNeeded(dbInfo, comment.disclosureId, comment.topicSection, comment.topicId)
         );
       }
       return Promise.all(statements);
+    });
+};
+
+export const updateComment = (dbInfo, userInfo, comment) => {
+  const knex = getKnex(dbInfo);
+  return knex('comment')
+    .update({
+      text: comment.text,
+      user_id: userInfo.schoolId,
+      author: `${userInfo.firstName} ${userInfo.lastName}`,
+      user_role: userInfo.coiRole,
+      date: new Date(),
+      pi_visible: comment.piVisible,
+      reviewer_visible: comment.reviewerVisible
+    })
+    .where({
+      id: comment.id
+    })
+    .then(() => {
+      return retrieveComments(dbInfo, userInfo.schoolId, comment.disclosureId);
     });
 };
 
@@ -1007,14 +1026,25 @@ export const submit = (dbInfo, userInfo, disclosureId) => {
     });
 };
 
-export const reject = (dbInfo, displayName, disclosureId) => {
+async function updateEditableComments(trx, disclosureId) {
+  await trx('comment')
+    .update({editable: false})
+    .where({disclosure_id: disclosureId});
+}
+
+export const reject = (dbInfo, userInfo, disclosureId) => {
   const knex = getKnex(dbInfo);
-  return knex('disclosure')
-  .update({
-    status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED,
-    last_review_date: new Date()
-  })
-  .where('id', disclosureId);
+  return knex.transaction(trx => {
+    return trx('disclosure')
+      .update({
+        status_cd: COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED,
+        last_review_date: new Date()
+      })
+      .where('id', disclosureId).then(() => {
+        return updateEditableComments(trx, disclosureId);
+      });
+  });
+
 };
 
 export const getArchivedDisclosures = (dbInfo, userId) => {

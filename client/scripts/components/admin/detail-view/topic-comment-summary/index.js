@@ -27,6 +27,7 @@ export default function TopicCommentSummary(props) {
     comments = props.comments.map(comment => {
       return (
         <CommentBubble
+          readOnly={true}
           key={comment.id}
           {...comment}
           className={`${styles.override} ${styles.comment}`}

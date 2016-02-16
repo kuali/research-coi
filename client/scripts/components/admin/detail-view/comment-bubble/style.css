@@ -24,7 +24,6 @@
   color: black;
   display: inline-block;
   margin-left: 0;
-  padding: 8px 25px 15px 25px;
   transform: translateY(0%);
   transition: transform 0.2s ease-out;
   width: 60%;
@@ -38,6 +37,11 @@
   background-color: #D0E3E5;
 
   margin-left: 35%;
+}
+
+.comment {
+  padding: 8px 25px 15px 25px;
+  width: 100%;
 }
 
 :global(.color-blind) .container {
@@ -88,4 +92,20 @@
 :global(.color-blind) .bubble {
   background-color: black;
   border: 1px solid black;
+}
+
+.editSection {
+  border-top: 1px solid #CCCCCC;
+}
+
+.editButton {
+
+  font-size: 13px;
+  margin: 7px 20px;
+  padding: 0;
+  color: #189EA8;
+  float: right;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px dotted #189EA8;
 }
