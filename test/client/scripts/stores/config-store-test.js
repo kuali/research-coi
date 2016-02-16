@@ -100,7 +100,10 @@ describe('ConfigStore', () => {
 
       alt.dispatcher.dispatch({
         action: ConfigActions.TOGGLE_PROJECT_TYPE_REQUIRED,
-        data: 1
+        data: {
+          sourceCd: 'test',
+          projectTypeCd: 1
+        }
       });
 
       state = ConfigStore.getState();
@@ -117,7 +120,8 @@ describe('ConfigStore', () => {
         value: {
           projectRoles: [
             {
-              typeCd: 1,
+              projectTypeCd: 1,
+              sourceRoleCd: 'test',
               description: 'test',
               reqDisclosure: 0
             }
@@ -129,7 +133,10 @@ describe('ConfigStore', () => {
 
       alt.dispatcher.dispatch({
         action: ConfigActions.TOGGLE_PROJECT_ROLE_REQUIRED,
-        data: 1
+        data: {
+          sourceCd: 'test',
+          projectTypeCd: 1
+        }
       });
 
       state = ConfigStore.getState();
@@ -146,7 +153,8 @@ describe('ConfigStore', () => {
         value: {
           projectStatuses: [
             {
-              typeCd: 1,
+              projectTypeCd: 1,
+              sourceStatusCd: 'test',
               description: 'test',
               reqDisclosure: 0
             }
@@ -158,7 +166,10 @@ describe('ConfigStore', () => {
 
       alt.dispatcher.dispatch({
         action: ConfigActions.TOGGLE_PROJECT_STATUS_REQUIRED,
-        data: 1
+        data: {
+          sourceCd: 'test',
+          projectTypeCd: 1
+        }
       });
 
       state = ConfigStore.getState();

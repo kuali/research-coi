@@ -27,7 +27,10 @@ export default class CheckBox extends React.Component {
   }
 
   toggle() {
-    this.props.toggle(this.props.typeCd);
+    this.props.toggle({
+      sourceCd: this.props.sourceCd,
+      projectTypeCd: this.props.projectTypeCd
+    });
   }
 
   render() {
