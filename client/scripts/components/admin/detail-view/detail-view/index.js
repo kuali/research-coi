@@ -121,6 +121,7 @@ export class DetailView extends React.Component {
           topicId={this.state.applicationState.commentId}
           comments={comments}
           disclosureId={this.state.applicationState.selectedDisclosure.id}
+          role={this.state.userInfo.coiRole}
           readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
            || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED}
         />
