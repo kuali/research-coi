@@ -42,6 +42,7 @@ export default class ConfiguringPanel extends React.Component {
         <CheckBox
           {...role}
           type="projectRole"
+          sourceCd={role.sourceRoleCd}
           key={index}
           toggle={ConfigActions.toggleProjectRoleRequired}
         />
@@ -56,6 +57,7 @@ export default class ConfiguringPanel extends React.Component {
         <CheckBox
           {...status}
           type="projectStatus"
+          sourceCd={status.sourceStatusCd}
           key={index}
           toggle={ConfigActions.toggleProjectStatusRequired}
         />

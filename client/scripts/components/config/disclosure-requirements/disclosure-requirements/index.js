@@ -72,6 +72,7 @@ export default class DisclosureRequirements extends React.Component {
             <CheckBox
               {...projectType}
               type="projectType"
+              projectTypeCd={projectType.typeCd}
               key={projectType.typeCd}
               toggle={ConfigActions.toggleProjectTypeRequired}
             />

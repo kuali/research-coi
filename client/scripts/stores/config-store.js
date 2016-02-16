@@ -809,25 +809,25 @@ class _ConfigStore {
     this.dirty = true;
   }
 
-  toggleProjectTypeRequired(typeCd) {
+  toggleProjectTypeRequired(data) {
     const projectType = this.config.projectTypes.find(type => {
-      return type.typeCd === typeCd;
+      return type.typeCd == data.projectTypeCd;
     });
     projectType.reqDisclosure = projectType.reqDisclosure === 0 ? 1 : 0;
     this.dirty = true;
   }
 
-  toggleProjectRoleRequired(typeCd) {
+  toggleProjectRoleRequired(data) {
     const projectRole = this.config.projectRoles.find(role => {
-      return role.typeCd === typeCd;
+      return role.sourceRoleCd == data.sourceCd && role.projectTypeCd == data.projectTypeCd;
     });
     projectRole.reqDisclosure = projectRole.reqDisclosure === 0 ? 1 : 0;
     this.dirty = true;
   }
 
-  toggleProjectStatusRequired(typeCd) {
+  toggleProjectStatusRequired(data) {
     const projectStatus = this.config.projectStatuses.find(status => {
-      return status.typeCd === typeCd;
+      return status.sourceStatusCd == data.sourceCd && status.projectTypeCd == data.projectTypeCd;
     });
     projectStatus.reqDisclosure = projectStatus.reqDisclosure === 0 ? 1 : 0;
     this.dirty = true;
