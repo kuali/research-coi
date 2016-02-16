@@ -51,7 +51,7 @@ export default class CommentingPanel extends React.Component {
     let reviewerBubble;
     let reporterBubble;
 
-    if (this.props.piVisible == 1 && this.props.userRole != ROLES.USER) {
+    if (Number(this.props.piVisible) === 1 && String(this.props.userRole) !== ROLES.USER) {
       reporterBubble = (
         <div id='reporterBubble' className={classNames(styles.blue, styles.bubble)}>
           Reporter
@@ -59,7 +59,7 @@ export default class CommentingPanel extends React.Component {
       );
     }
 
-    if (this.props.reviewerVisible == 1 && this.props.userRole != ROLES.USER) {
+    if (Number(this.props.reviewerVisible) === 1 && String(this.props.userRole) !== ROLES.USER) {
       reviewerBubble = (
         <div id='reviewerBubble' className={classNames(styles.blue, styles.bubble)}>
           Reviewer
@@ -67,7 +67,7 @@ export default class CommentingPanel extends React.Component {
       );
     }
 
-    if (this.props.userRole == ROLES.USER || this.props.reviewerVisible == 0 && this.props.piVisible == 0) {
+    if (String(this.props.userRole) === ROLES.USER || Number(this.props.reviewerVisible) === 0 && Number(this.props.piVisible) === 0) {
       adminBubble = (
         <div id='adminBubble' className={classNames(styles.orange, styles.bubble)}>
           Admin

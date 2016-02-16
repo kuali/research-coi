@@ -35,7 +35,7 @@ export default class ConfiguringPanel extends React.Component {
 
   render() {
     const projectRoles = this.props.roles.filter(role => {
-      return role.projectTypeCd == this.props.projectType.typeCd;
+      return role.projectTypeCd == this.props.projectType.typeCd; // eslint-disable-line eqeqeq
     })
     .map((role, index) => {
       return (
@@ -50,7 +50,7 @@ export default class ConfiguringPanel extends React.Component {
     });
 
     const projectStatuses = this.props.statuses.filter(status => {
-      return status.projectTypeCd == this.props.projectType.typeCd;
+      return status.projectTypeCd == this.props.projectType.typeCd; // eslint-disable-line eqeqeq
     })
     .map((status, index) => {
       return (

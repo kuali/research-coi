@@ -619,13 +619,13 @@ class _AdminStore {
   editComment(id) {
     this.applicationState.editingComment = true;
     const commentToEdit = this.applicationState.currentComments.find(comment => {
-      return comment.id == id;
+      return comment.id == id; // eslint-disable-line eqeqeq
     });
 
     this.applicationState.comment = JSON.parse(JSON.stringify(commentToEdit));
     this.applicationState.commentSnapShot = JSON.parse(JSON.stringify(commentToEdit));
     this.applicationState.currentComments = this.applicationState.currentComments.filter(comment => {
-      return comment.id != id;
+      return comment.id != id; // eslint-disable-line eqeqeq
     });
   }
 

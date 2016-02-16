@@ -116,8 +116,8 @@ describe('ProjectService', () => {
 
       const filteredRoles = ProjectService.filterProposalRoles(roles);
       assert.equal(2, filteredRoles.length);
-      assert.equal('Principle Investigator, PI/Contact', roles.find(role => role.sourceRoleCd == 'PI').description);
-      assert.equal('Co-Investigator', roles.find(role => role.sourceRoleCd == 'COI').description);
+      assert.equal('Principle Investigator, PI/Contact', roles.find(role => String(role.sourceRoleCd) === 'PI').description);
+      assert.equal('Co-Investigator', roles.find(role => String(role.sourceRoleCd) === 'COI').description);
     });
   });
 });
