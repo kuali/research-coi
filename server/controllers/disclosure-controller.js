@@ -18,6 +18,7 @@
 
 import * as DisclosureDB from '../db/disclosure-db';
 import * as PIReviewDB from '../db/pi-review-db';
+import wrapAsync from './wrap-async';
 import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
 import Log from '../log';
@@ -33,6 +34,14 @@ catch (err) {
   upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 }
 
+function validateComment(comment) {
+  return (comment.topicSection &&
+    comment.topicId &&
+    comment.text &&
+    comment.piVisible !== undefined &&
+    comment.reviewerVisible !== undefined &&
+    !isNaN(comment.disclosureId)) ? true : false;
+}
 
 export const init = app => {
 
@@ -105,7 +114,7 @@ export const init = app => {
     @Role: admin (can see any) or user (can only see their own)
     or reviewer (can only see ones where they are a reviewer)
   */
-  app.get('/api/coi/disclosures/:id', async (req, res, next) => {
+  app.get('/api/coi/disclosures/:id', wrapAsync(async (req, res, next) => { //eslint-disable-line no-unused-vars
     if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
       const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.id)) {
@@ -114,20 +123,14 @@ export const init = app => {
       }
     }
 
-    DisclosureDB.get(req.dbInfo, req.userInfo, req.params.id)
-      .then(disclosure => {
-        res.send(disclosure);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    const disclosure = await DisclosureDB.get(req.dbInfo, req.userInfo, req.params.id);
+    res.send(disclosure);
+  }));
 
   /**
     @Role: admin (can see any) or reviewer (can only see ones where they are a reviewer)
   */
-  app.get('/api/coi/disclosure-summaries', async (req, res, next) => {
+  app.get('/api/coi/disclosure-summaries', wrapAsync(async (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
       req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
       res.sendStatus(FORBIDDEN);
@@ -166,15 +169,9 @@ export const init = app => {
     if (req.query.start && !isNaN(req.query.start)) {
       start = req.query.start;
     }
-    DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosureIds)
-      .then(summaries => {
-        res.send(summaries);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    const summaries = await DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosureIds);
+    res.send(summaries);
+  }));
 
   /**
     @Role: admin
@@ -343,7 +340,7 @@ export const init = app => {
       return;
     }
 
-    DisclosureDB.reject(req.dbInfo, req.userInfo.name, req.params.id)
+    DisclosureDB.reject(req.dbInfo, req.userInfo, req.params.id)
       .then(() => {
         res.sendStatus(ACCEPTED);
       })
@@ -354,9 +351,38 @@ export const init = app => {
   });
 
   /**
-   @Role: admin (can see any) or reviewer (can only see ones where they are a reviewer)
+   @Role: admin (can add any) or reviewer (can only add ones where they are a reviewer)
    */
-  app.post('/api/coi/disclosures/:id/comments', async (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/comments', wrapAsync(async (req, res, next) => {
+    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
+      req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
+      res.sendStatus(FORBIDDEN);
+      return;
+    }
+
+    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+      const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      if (!reviewerDisclosures.includes(req.params.id)) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+    }
+
+    const comment = req.body;
+    comment.disclosureId = req.params.id;
+
+    if (validateComment(comment)) {
+      const result = await DisclosureDB.addComment(req.dbInfo, req.userInfo, comment);
+      res.send(result[0]);
+    } else {
+      next(new Error('invalid comment body'));
+    }
+  }));
+
+  /**
+   @Role: admin (can add any) or reviewer (can only add ones where they are a reviewer)
+   */
+  app.put('/api/coi/disclosures/:id/comments/:id', wrapAsync(async (req, res, next) => {
     if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
       req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
       res.sendStatus(FORBIDDEN);
@@ -373,33 +399,13 @@ export const init = app => {
 
     const comment = req.body;
 
-    if (!comment.topicSection ||
-        !comment.topicId ||
-        comment.visibleToPI === undefined ||
-        comment.visibleToReviewers === undefined ||
-        !comment.text ||
-        isNaN(req.params.id)
-       ) {
+    if (validateComment(comment)) {
+      const result = await DisclosureDB.updateComment(req.dbInfo, req.userInfo, comment);
+      res.send(result);
+    } else {
       next(new Error('invalid comment body'));
     }
-    else {
-      DisclosureDB.addComment(req.dbInfo, req.userInfo, {
-        topicSection: comment.topicSection,
-        topicId: comment.topicId,
-        visibleToPI: comment.visibleToPI,
-        visibleToReviewers: comment.visibleToReviewers,
-        text: comment.text,
-        disclosureId: req.params.id
-      })
-        .then(result => {
-          res.send(result[0]);
-        })
-        .catch(err => {
-          Log.error(err);
-          next(err);
-        });
-    }
-  });
+  }));
 
   /**
     @Role: user

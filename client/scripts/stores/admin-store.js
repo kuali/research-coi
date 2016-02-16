@@ -27,6 +27,17 @@ function defaultStatusFilters() {
   return [2, 4, 5, 6];
 }
 
+function resetComment(comment) {
+  return {
+    text: '',
+    piVisible: 0,
+    reviewerVisible: 0,
+    topicId: comment.topicId,
+    topicSection: comment.topicSection,
+    title: comment.title
+  };
+}
+
 class _AdminStore {
   constructor() {
     this.exportPublicMethods({
@@ -63,7 +74,12 @@ class _AdminStore {
       commentSummaryShowing: false,
       uploadAttachmentsShowing: false,
       loadingDisclosure: false,
-      reviewerSearchValue: ''
+      reviewerSearchValue: '',
+      comment: {
+        text: '',
+        piVisible: 0,
+        reviewerVisible: 0
+      }
     };
 
     this.disclosureSummaries = [];
@@ -247,8 +263,12 @@ class _AdminStore {
 
   rejectDisclosure() {
     createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/reject`)
-    .end(processResponse(err => {
+    .end(processResponse((err) => {
       if (!err) {
+        this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
+          comment.editable = false;
+          return comment;
+        });
         this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
         this.applicationState.showingRejection = !this.applicationState.showingRejection;
         this.emitChange();
@@ -320,7 +340,7 @@ class _AdminStore {
 
   updateCurrentComments(transitionLast) {
     this.applicationState.currentComments = this.applicationState.selectedDisclosure.comments.filter(comment => {
-      return comment.topicSection === this.applicationState.commentTopic && comment.topicId === this.applicationState.commentId;
+      return comment.topicSection === this.applicationState.comment.topicSection && comment.topicId === this.applicationState.comment.topicId;
     });
 
     if (transitionLast && this.applicationState.currentComments.length > 0) {
@@ -332,12 +352,20 @@ class _AdminStore {
     }
   }
 
-  showCommentingPanel([topic, id, title]) {
+  showCommentingPanel([topicSection, topicId, title]) {
     this.applicationState.listShowing = false;
     this.applicationState.commentingPanelShowing = true;
-    this.applicationState.commentTopic = topic;
-    this.applicationState.commentId = id;
-    this.applicationState.commentTitle = title;
+    this.applicationState.comment = {
+      text: '',
+      piVisible: 0,
+      reviewerVisible: 0,
+      title,
+      topicSection,
+      topicId
+    };
+    this.applicationState.commentSnapShot = undefined;
+    this.applicationState.editingComment = false;
+
 
     this.updateCurrentComments(false);
   }
@@ -403,22 +431,36 @@ class _AdminStore {
     }, 400);
   }
 
-  makeComment([topicSection, topicId, visibleToPI, visibleToReviewers, text]) {
-    createRequest().post(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments`)
-           .send({
-             topicSection,
-             topicId,
-             visibleToPI,
-             visibleToReviewers,
-             text
-           })
-           .end(processResponse((err, updatedComments) => {
-             if (!err) {
-               this.applicationState.selectedDisclosure.comments = updatedComments.body;
-               this.updateCurrentComments(true);
-               this.emitChange();
-             }
-           }));
+  updateCommentState(comments) {
+    this.applicationState.selectedDisclosure.comments = comments;
+    this.applicationState.comment = resetComment(this.applicationState.comment);
+    this.applicationState.commentSnapShot = undefined;
+    this.applicationState.editingComment = false;
+  }
+
+  makeComment(comment) {
+    if (comment.id) {
+      createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments/${comment.id}`)
+        .send(comment)
+        .end(processResponse((err, updatedComments) => {
+          if (!err) {
+            this.updateCommentState(updatedComments.body);
+            this.updateCurrentComments(true);
+            this.emitChange();
+          }
+        }));
+    } else {
+      createRequest().post(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments`)
+        .send(comment)
+        .end(processResponse((err, updatedComments) => {
+          if (!err) {
+            this.updateCommentState(updatedComments.body);
+            this.updateCurrentComments(true);
+            this.emitChange();
+          }
+        }));
+    }
+
   }
 
   addManagementPlan(files) {
@@ -560,6 +602,40 @@ class _AdminStore {
           window.location = '/coi/admin';
         }
       }));
+  }
+
+  toggleReviewer() {
+    this.applicationState.comment.reviewerVisible = this.applicationState.comment.reviewerVisible === 0 ? 1 : 0;
+  }
+
+  toggleReporter() {
+    this.applicationState.comment.piVisible = this.applicationState.comment.piVisible === 0 ? 1 : 0;
+  }
+
+  updateCommentText(evt) {
+    this.applicationState.comment.text = evt.target.value;
+  }
+
+  editComment(id) {
+    this.applicationState.editingComment = true;
+    const commentToEdit = this.applicationState.currentComments.find(comment => {
+      return comment.id == id;
+    });
+
+    this.applicationState.comment = JSON.parse(JSON.stringify(commentToEdit));
+    this.applicationState.commentSnapShot = JSON.parse(JSON.stringify(commentToEdit));
+    this.applicationState.currentComments = this.applicationState.currentComments.filter(comment => {
+      return comment.id != id;
+    });
+  }
+
+  cancelComment() {
+    if (this.applicationState.commentSnapShot) {
+      this.applicationState.currentComments.push(this.applicationState.commentSnapShot);
+    }
+
+    this.applicationState.comment = resetComment(this.applicationState.comment);
+    this.applicationState.editingComment = false;
   }
 }
 

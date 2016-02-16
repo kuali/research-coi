@@ -78,6 +78,7 @@ const updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, tar
         'user_id': userInfo.schoolId,
         'author': `${userInfo.firstName} ${userInfo.lastName}`,
         'user_role' : COIConstants.ROLES.USER,
+        'editable' : false,
         'date': new Date(),
         'pi_visible': true,
         'reviewer_visible': true

@@ -32,25 +32,8 @@ export default class CommentingPanel extends React.Component {
   }
 
   makeComment() {
-    const piCheck = this.refs.piCheck;
-    const reviewerCheck = this.refs.reviewerCheck;
-    const visibleToPI = piCheck.checked;
-    let visibleToReviewer = false;
-    if (reviewerCheck) {
-      visibleToReviewer = reviewerCheck.checked;
-      reviewerCheck.checked = false;
-    }
-    piCheck.checked = false;
-    const textarea = this.refs.commentText;
-    const commentText = textarea.value;
-    textarea.value = '';
-
     AdminActions.makeComment(
-      this.props.topicSection,
-      this.props.topicId,
-      visibleToPI,
-      visibleToReviewer,
-      commentText
+      this.props.comment
     );
   }
 
@@ -61,6 +44,7 @@ export default class CommentingPanel extends React.Component {
         return (
           <CommentBubble
             {...comment}
+            readOnly={this.props.editingComment}
             key={comment.id}
             className={`${styles.override} ${styles.comment}`}
           />
@@ -73,7 +57,13 @@ export default class CommentingPanel extends React.Component {
     if (this.props.role === ROLES.ADMIN) {
       reviewerCheck = (
         <div>
-          <input type="checkbox" id="reviewerCheck" ref="reviewerCheck" className={styles.checkBox} />
+          <input
+            type="checkbox"
+            id="reviewerCheck"
+            onChange={AdminActions.toggleReviewer}
+            checked={this.props.comment.reviewerVisible === 1}
+            className={styles.checkBox}
+          />
           <label htmlFor="reviewerCheck" className={styles.checkLabel}>Reviewer</label>
         </div>
       );
@@ -81,31 +71,73 @@ export default class CommentingPanel extends React.Component {
 
     let commentForm;
     if (!this.props.readonly) {
-      commentForm = (
-        <div className={styles.controls}>
-          <span className={styles.left}>
-            <div style={{color:'#737373'}}>RECIPIENT</div>
-            <div>
-              <input type="checkbox" id="piCheck" ref="piCheck" className={styles.checkBox}/>
-              <label htmlFor="piCheck" className={styles.checkLabel}>Reporter</label>
-            </div>
+      let cancelButton;
+      if (this.props.editingComment) {
+        cancelButton = (
+          <BlueButton
+            className={`${styles.override} ${styles.button} ${styles.cancel}`}
+            onClick={AdminActions.cancelComment}
+          >
+            CANCEL
+          </BlueButton>
+        );
+      }
 
-            {reviewerCheck}
-          </span>
-          <span className={styles.commentText}>
-            <div style={{color:'#737373'}}>COMMENT</div>
-            <div style={{marginTop: '5px'}}>
-              <textarea className={styles.textbox} ref="commentText" />
+      let commentButton;
+
+      if (this.props.comment.text.length > 0) {
+        commentButton = (
+          <BlueButton
+            className={`${styles.override} ${styles.button} ${styles.submit}`}
+            onClick={this.makeComment}
+          >
+            COMMENT
+          </BlueButton>
+        );
+      }
+
+      const adminWarningClasses = classNames(
+        styles.adminWarning,
+        {[styles.showing]: this.props.comment.piVisible === 0 && this.props.comment.reviewerVisible === 0}
+      );
+
+      commentForm = (
+        <div>
+          <div id='adminWarning' className={adminWarningClasses}>
+            If no recipients are selected, only admins can see this comment.
+          </div>
+          <div className={styles.controls}>
+
+            <span className={styles.left}>
+              <div style={{color:'#737373'}}>RECIPIENT</div>
               <div>
-                <BlueButton
-                  className={`${styles.override} ${styles.submitButton}`}
-                  onClick={this.makeComment}
-                >
-                  COMMENT
-                </BlueButton>
+                <input
+                  type="checkbox"
+                  id="piCheck"
+                  onChange={AdminActions.toggleReporter}
+                  checked={this.props.comment.piVisible === 1}
+                  className={styles.checkBox}
+                />
+                <label htmlFor="piCheck" className={styles.checkLabel}>Reporter</label>
               </div>
-            </div>
-          </span>
+
+              {reviewerCheck}
+            </span>
+            <span className={styles.commentText}>
+              <div style={{color:'#737373'}}>COMMENT</div>
+              <div style={{marginTop: '5px'}}>
+                <textarea
+                  className={styles.textbox}
+                  onChange={AdminActions.updateCommentText}
+                  value={this.props.comment.text}
+                />
+                <div>
+                  {commentButton}
+                  {cancelButton}
+                </div>
+              </div>
+            </span>
+          </div>
         </div>
       );
     }
@@ -116,7 +148,7 @@ export default class CommentingPanel extends React.Component {
           <span className={styles.close} onClick={AdminActions.hideCommentingPanel}>
             <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
           </span>
-          <span className={styles.topic}>{this.props.topic}</span>
+          <span className={styles.topic}>{this.props.comment.topicSection}</span>
         </div>
 
         <div className={`fill flexbox ${styles.comments}`}>
@@ -124,7 +156,6 @@ export default class CommentingPanel extends React.Component {
             {comments}
           </div>
         </div>
-
         {commentForm}
       </div>
     );

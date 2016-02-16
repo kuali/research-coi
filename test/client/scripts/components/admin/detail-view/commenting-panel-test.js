@@ -22,11 +22,22 @@ import { ROLES } from '../../../../../../coi-constants';
 import CommentingPanel from '../../../../../../client/scripts/components/admin/detail-view/commenting-panel';
 import assert from 'assert';
 
+function createComment(userRole, piVisible, reviewerVisible) {
+  return {
+    text: 'test',
+    userRole,
+    date: new Date(),
+    piVisible,
+    reviewerVisible
+  };
+}
+
 describe('CommentingPanel', () => {
   it('should only render reporter check when user is reviewer', () => {
     const wrapper = shallow(
       <CommentingPanel
         role={ROLES.REVIEWER}
+        comment={createComment(ROLES.ADMIN, 0, 0)}
       />
     );
 
@@ -38,6 +49,7 @@ describe('CommentingPanel', () => {
     const wrapper = shallow(
       <CommentingPanel
         role={ROLES.ADMIN}
+        comment={createComment(ROLES.ADMIN, 1, 1)}
       />
     );
 

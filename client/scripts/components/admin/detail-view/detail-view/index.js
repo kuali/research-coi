@@ -113,13 +113,11 @@ export class DetailView extends React.Component {
     let sidePanel;
     if (this.state.applicationState.commentingPanelShowing) {
       const comments = this.state.applicationState.currentComments;
-
       sidePanel = (
         <CommentingPanel
-          topic={this.state.applicationState.commentTitle}
-          topicSection={this.state.applicationState.commentTopic}
-          topicId={this.state.applicationState.commentId}
           comments={comments}
+          comment={this.state.applicationState.comment}
+          editingComment={this.state.applicationState.editingComment}
           disclosureId={this.state.applicationState.selectedDisclosure.id}
           role={this.state.userInfo.coiRole}
           readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
