@@ -15,61 +15,49 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
+
 import * as AdditionalReviewerDB from '../db/additional-reviewer-db';
-import Log from '../log';
-import { COIConstants } from '../../coi-constants';
+import { ROLES } from '../../coi-constants';
 import { OK, FORBIDDEN } from '../../http-status-codes';
+import wrapAsync from './wrap-async';
 
 export const init = app => {
   /**
    @Role: admin
    */
-  app.post('/api/coi/additional-reviewers', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+  app.post('/api/coi/additional-reviewers', wrapAsync(async (req, res) => {
+    if (req.userInfo.coiRole !== ROLES.ADMIN) {
       res.sendStatus(FORBIDDEN);
-      return;
+      return undefined;
     }
 
-    AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body).then(result => {
-      res.send(result);
-    })
-    .catch(err => {
-      Log.error(err);
-      next(err);
-    });
-  });
+    return await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body);
+  }));
 
   /**
    @Role: admin
    */
-  app.delete('/api/coi/additional-reviewers/:id', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+  app.delete('/api/coi/additional-reviewers/:id', wrapAsync(async (req, res) => {
+    if (req.userInfo.coiRole !== ROLES.ADMIN) {
       res.sendStatus(FORBIDDEN);
       return;
     }
 
-    AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, req.params.id).then(() => {
-      res.sendStatus(OK);
-    })
-    .catch(err => {
-      Log.error(err);
-      next(err);
-    });
-  });
+    await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, req.params.id);
+    res.sendStatus(OK);
+  }));
 
-  app.delete('/api/coi/additional-reviewers/current/:disclosureId', async (req, res, next) => {
-    try {
-      if (req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
-        res.sendStatus(FORBIDDEN);
-        return;
-      }
-
-      const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, req.userInfo.schoolId, req.params.disclosureId);
-      await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, additionalReviewer[0].id);
-      res.sendStatus(OK);
-    } catch(err) {
-      Log.error(err);
-      next(err);
+  /**
+   @Role: reviewer
+   */
+  app.delete('/api/coi/additional-reviewers/current/:disclosureId', wrapAsync(async (req, res) => {
+    if (req.userInfo.coiRole !== ROLES.REVIEWER) {
+      res.sendStatus(FORBIDDEN);
+      return;
     }
-  });
+
+    const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, req.userInfo.schoolId, req.params.disclosureId);
+    await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, additionalReviewer[0].id);
+    res.sendStatus(OK);
+  }));
 };
