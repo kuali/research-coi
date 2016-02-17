@@ -23,6 +23,7 @@
             { "skipBlankLines": true }
         ],
         "dot-notation": 2,
+        "eqeqeq": [2, "smart"],
         "max-len": [1, 160, 2],
         "no-unexpected-multiline": 2,
         "block-scoped-var": 2,

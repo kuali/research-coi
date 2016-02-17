@@ -288,8 +288,8 @@ describe('ConfigStore', () => {
 
       const roles = ConfigStore.getState().config.projectRoles;
       assert.equal(4, roles.length);
-      assert.equal(2, roles.filter(role => role.sourceRoleCd == 'KP').length);
-      assert.equal('Principle Investigator', roles.find(role => role.sourceRoleCd == 'PI').description);
+      assert.equal(2, roles.filter(role => String(role.sourceRoleCd) === 'KP').length);
+      assert.equal('Principle Investigator', roles.find(role => String(role.sourceRoleCd) === 'PI').description);
     });
   });
 
@@ -348,8 +348,8 @@ describe('ConfigStore', () => {
 
       const statuses = ConfigStore.getState().config.projectStatuses;
       assert.equal(4, statuses.length);
-      assert.equal(2, statuses.filter(status => status.sourceStatusCd == '3').length);
-      assert.equal('In Progress', statuses.find(status => status.sourceStatusCd == '1').description);
+      assert.equal(2, statuses.filter(status => String(status.sourceStatusCd) === '3').length);
+      assert.equal('In Progress', statuses.find(status => String(status.sourceStatusCd) === '1').description);
     });
   });
 });

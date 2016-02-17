@@ -199,12 +199,12 @@ export async function filterProjects(dbInfo, projects) {
     const requiredProjectStatuses = await getRequiredProjectStatuses(dbInfo);
 
     const result = projects.filter(project => {
-      const isProjectTypeRequired = requiredProjectTypes.findIndex(projectType => projectType.typeCd == project.typeCd) > -1;
+      const isProjectTypeRequired = requiredProjectTypes.findIndex(projectType => projectType.typeCd == project.typeCd) > -1; // eslint-disable-line eqeqeq
       const isProjectProjectRoleRequired = requiredProjectRoles.findIndex(projectRole => {
-        return projectRole.projectTypeCd == project.typeCd && projectRole.sourceRoleCd == project.roleCd;
+        return projectRole.projectTypeCd == project.typeCd && projectRole.sourceRoleCd == project.roleCd; // eslint-disable-line eqeqeq
       }) > -1;
       const isProjectStatusRequired = requiredProjectStatuses.findIndex(projectStatus => {
-        return projectStatus.projectTypeCd == project.typeCd && projectStatus.sourceStatusCd == project.statusCd;
+        return projectStatus.projectTypeCd == project.typeCd && projectStatus.sourceStatusCd == project.statusCd; // eslint-disable-line eqeqeq
       }) > -1;
 
       return isProjectTypeRequired && isProjectProjectRoleRequired && isProjectStatusRequired;

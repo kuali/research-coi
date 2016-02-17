@@ -113,7 +113,7 @@ export default class DisclosureRequirements extends React.Component {
         });
 
         const inactiveProjectTypes = this.state.config.projectTypes.filter(projectType => {
-          return projectType.reqDisclosure == 0;
+          return Number(projectType.reqDisclosure) === 0;
         })
         .map(projectType => {
           return (

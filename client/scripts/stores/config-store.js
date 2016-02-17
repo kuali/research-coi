@@ -811,7 +811,7 @@ class _ConfigStore {
 
   toggleProjectTypeRequired(data) {
     const projectType = this.config.projectTypes.find(type => {
-      return type.typeCd == data.projectTypeCd;
+      return type.typeCd == data.projectTypeCd; // eslint-disable-line eqeqeq
     });
     projectType.reqDisclosure = projectType.reqDisclosure === 0 ? 1 : 0;
     this.dirty = true;
@@ -819,7 +819,7 @@ class _ConfigStore {
 
   toggleProjectRoleRequired(data) {
     const projectRole = this.config.projectRoles.find(role => {
-      return role.sourceRoleCd == data.sourceCd && role.projectTypeCd == data.projectTypeCd;
+      return role.sourceRoleCd == data.sourceCd && role.projectTypeCd == data.projectTypeCd; // eslint-disable-line eqeqeq
     });
     projectRole.reqDisclosure = projectRole.reqDisclosure === 0 ? 1 : 0;
     this.dirty = true;
@@ -827,7 +827,7 @@ class _ConfigStore {
 
   toggleProjectStatusRequired(data) {
     const projectStatus = this.config.projectStatuses.find(status => {
-      return status.sourceStatusCd == data.sourceCd && status.projectTypeCd == data.projectTypeCd;
+      return status.sourceStatusCd == data.sourceCd && status.projectTypeCd == data.projectTypeCd; // eslint-disable-line eqeqeq
     });
     projectStatus.reqDisclosure = projectStatus.reqDisclosure === 0 ? 1 : 0;
     this.dirty = true;
@@ -841,12 +841,12 @@ class _ConfigStore {
     const roles = data.existingRoles;
     data.newRoles.forEach(role => {
       const existingRole = data.existingRoles.find(eRole => {
-        return eRole.projectTypeCd == data.projectTypeCd &&
-        eRole.sourceRoleCd == role.sourceRoleCd;
+        return eRole.projectTypeCd == data.projectTypeCd && // eslint-disable-line eqeqeq
+        eRole.sourceRoleCd == role.sourceRoleCd; // eslint-disable-line eqeqeq
       });
 
       if (existingRole) {
-        if (existingRole.description != role.description) {
+        if (existingRole.description != role.description) { // eslint-disable-line eqeqeq
           existingRole.description = role.description;
           this.dirty = true;
         }
@@ -863,12 +863,12 @@ class _ConfigStore {
     const statuses = data.existingStatuses;
     data.newStatuses.forEach(status => {
       const existingStatus = data.existingStatuses.find(eStatus => {
-        return eStatus.projectTypeCd == data.projectTypeCd &&
-        eStatus.sourceStatusCd == status.sourceStatusCd;
+        return eStatus.projectTypeCd == data.projectTypeCd && // eslint-disable-line eqeqeq
+        eStatus.sourceStatusCd == status.sourceStatusCd; // eslint-disable-line eqeqeq
       });
 
       if (existingStatus) {
-        if (existingStatus.description != status.description) {
+        if (existingStatus.description != status.description) { // eslint-disable-line eqeqeq
           existingStatus.description = status.description;
           this.dirty = true;
         }
