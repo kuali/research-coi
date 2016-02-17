@@ -112,21 +112,5 @@ describe('ConfigController', () => {
       assert.equal(res.status, 403);
       req.userInfo.coiRole = 'admin';
     });
-
-    it('When error occurs it calls the next middleware with the error', done => {
-      ConfigDB.getConfig.restore();
-      sinon.stub(ConfigDB, 'getConfig', () => {
-        return new Promise((resolve, reject) => {
-          reject(new Error('really bad thing happened'));
-        });
-      });
-
-      saveConfig(req, res, err => {
-        ConfigDB.getConfig.restore();
-        assert.equal(err.message, 'really bad thing happened');
-        stubGetConfig();
-        done();
-      });
-    });
   });
 });

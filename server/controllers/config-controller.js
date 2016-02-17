@@ -19,73 +19,48 @@
 import * as ConfigDB from '../db/config-db';
 import {COIConstants} from '../../coi-constants';
 import {FORBIDDEN} from '../../http-status-codes';
-import Log from '../log';
 import wrapAsync from './wrap-async';
 import { getProjectData } from '../services/project-service/project-service';
 
-export async function saveConfig(req, res, next) {
-  try {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
-    await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body);
-    const config = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
-    config.general = req.body.general;
-    await ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config);
-
-    res.send(config);
+export async function saveConfig(req, res) {
+  if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+    res.sendStatus(FORBIDDEN);
+    return;
   }
-  catch(err) {
-    Log.error(err);
-    next(err);
-  }
+
+  await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body);
+  const config = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
+  config.general = req.body.general;
+  await ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config);
+
+  res.send(config);
 }
 
 export const init = app => {
   /**
     @Role: any
   */
-  app.get('/api/coi/config', (req, res, next) => {
-    ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId)
-      .then(config => {
-        res.send(config);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.get('/api/coi/config', wrapAsync(async req => {
+    return await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
+  }));
 
   /**
     @Role: any
    */
-  app.get('/api/coi/archived-config/:id', (req, res, next) => {
-    ConfigDB.getArchivedConfig(req.dbInfo, req.params.id)
-    .then((result) => {
-      res.send(JSON.parse(result[0].config));
-    })
-    .catch(err => {
-      Log.error(err);
-      next(err);
-    });
-  });
+  app.get('/api/coi/archived-config/:id', wrapAsync(async (req, res) => {
+    const result = await ConfigDB.getArchivedConfig(req.dbInfo, req.params.id);
+    res.send(JSON.parse(result[0].config));
+  }));
 
   /**
     @Role: admin
   */
   app.post('/api/coi/config/', wrapAsync(saveConfig));
 
-  app.get('/api/coi/new-project-data/:projectTypeCd', async (req, res, next) => {
-    try {
-      const result = await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);
-      res.send(result);
-    } catch(err) {
-      Log.error(err);
-      next(err);
-    }
-
-  });
-
+  /**
+    @Role: ????????????
+  */
+  app.get('/api/coi/new-project-data/:projectTypeCd', wrapAsync(async req => {
+    return await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);
+  }));
 };
