@@ -17,12 +17,16 @@
 */
 
 import * as FileService from '../services/file-service/file-service';
+import { isDisclosureUsers, isFinancialEntityUsers, getDisclosureForFinancialEntity } from '../db/common-db';
+import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
+import { ROLES, FILE_TYPE } from '../../coi-constants';
 import * as FileDb from '../db/file-db';
 import multer from 'multer';
 import Log from '../log';
 import {FORBIDDEN, ACCEPTED} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
+import archiver from 'archiver';
 
 let upload;
 try {
@@ -31,6 +35,49 @@ try {
 }
 catch (err) {
   upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
+}
+
+function handleDuplicateFileName(name, count) {
+  const array = name.split('.');
+  return `${array[0]} (${count}).${array[1]}`;
+}
+
+async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
+  try {
+    if (fileType === FILE_TYPE.FINANCIAL_ENTITY) {
+      if (req.userInfo.coiRole === ROLES.USER) {
+        const permitted = await isFinancialEntityUsers(req.dbInfo, refId, req.userInfo.schoolId);
+        if (!permitted) {
+          return Promise.resolve(false);
+        }
+      }
+
+      if (req.userInfo.coiRole === ROLES.REVIEWER) {
+        const disclosureId = await getDisclosureForFinancialEntity(req.dbInfo, refId);
+        const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+        if (!reviewerDisclosures.includes(String(disclosureId))) {
+          return Promise.resolve(false);
+        }
+      }
+    } else {
+      if (req.userInfo.coiRole === ROLES.USER) {
+        const permitted = await isDisclosureUsers(req.dbInfo, refId, req.userInfo.schoolId);
+        if (!permitted) {
+          return Promise.resolve(false);
+        }
+      }
+
+      if (req.userInfo.coiRole === ROLES.REVIEWER) {
+        const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+        if (!reviewerDisclosures.includes(String(refId))) {
+          return Promise.resolve(false);
+        }
+      }
+    }
+    return Promise.resolve(true);
+  } catch(err) {
+    Promise.reject(err);
+  }
 }
 
 export const init = app => {
@@ -51,6 +98,44 @@ export const init = app => {
         next(error);
       }
     }).pipe(res);
+  }));
+
+  app.get('/api/coi/files/:fileType/:refId', allowedRoles('ANY'), wrapAsync(async (req, res, next) => {
+    const fileType = req.params.fileType;
+    const refId = req.params.refId;
+
+    const hasPermission = await userHasPermissionForMultiFileUpload(req, fileType, refId);
+    if (!hasPermission) {
+      res.sendStatus(FORBIDDEN);
+      return;
+    }
+    const files = await FileDb.getFiles(req.dbInfo, req.userInfo, refId, fileType);
+
+    res.setHeader('Content-disposition', `attachment; filename="${fileType}.zip"`);
+
+    const archive = archiver('zip');
+
+    const names = {};
+    files.forEach(file => {
+      const stream = FileService.getFile(req.dbInfo, file.key, error => {
+        if (error) {
+          Log.error(error);
+          next(error);
+        }
+      });
+
+      let name = file.name;
+      if (!names[name]) {
+        names[name] = 1;
+      } else {
+        const count = names[name];
+        names[name] = count + 1;
+        name = handleDuplicateFileName(name, count);
+      }
+      archive.append(stream, {name});
+    });
+    archive.finalize();
+    archive.pipe(res);
   }));
 
   /**

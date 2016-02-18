@@ -32,12 +32,11 @@ catch (err) {
 
 export const getFile = (dbInfo, userInfo, id) => {
   const knex = getKnex(dbInfo);
-
   const criteria = {
     id
   };
   const query = knex.select('name', 'key', 'file_type').from('file').where(criteria);
-  if (userInfo.coiRole === COIConstants.ROLES.ADMIN) {
+  if (userInfo.coiRole === COIConstants.ROLES.ADMIN || userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
     return query;
   }
 
@@ -54,8 +53,37 @@ export const getFile = (dbInfo, userInfo, id) => {
     }
     return query.andWhere({'user_id': userInfo.schoolId});
   });
-
 };
+
+
+
+export async function getFiles(dbInfo, userInfo, refId, fileType) {
+  const knex = getKnex(dbInfo);
+  const criteria = {
+    file_type: fileType,
+    ref_id: refId
+  };
+
+  const query = knex.select('name', 'key').from('file').where(criteria);
+  if (userInfo.coiRole === COIConstants.ROLES.ADMIN || userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+    return query;
+  }
+
+  if (fileType === COIConstants.FILE_TYPE.MANAGEMENT_PLAN) {
+    return knex.select('f.name', 'f.key')
+      .from('file as f')
+      .innerJoin('disclosure as d', 'd.id', 'f.ref_id')
+      .where(function() {
+        this.where({'f.user_id': userInfo.schoolId})
+          .orWhere({'d.user_id': userInfo.schoolId});
+      })
+      .andWhere({
+        'f.file_type': fileType,
+        'f.ref_id': refId
+      });
+  }
+  return query.andWhere({'user_id': userInfo.schoolId});
+}
 
 export const saveNewFiles = (dbInfo, body, files, userInfo) => {
   if (body.type !== COIConstants.FILE_TYPE.DISCLOSURE &&

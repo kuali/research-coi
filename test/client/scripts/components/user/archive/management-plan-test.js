@@ -20,19 +20,17 @@ import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
 import ManagementPlan from '../../../../../../client/scripts/components/user/archive/management-plan';
-
-/*global describe, it */
-
+import { FILE_TYPE } from '../../../../../../coi-constants';
 
 describe('DeclarationSection', () => {
   it('render colorblind mode off', () => {
     const tree = sd.shallowRender(
       <ManagementPlan
-        fileId='1234'
+        disclosureId='1234'
       />
     );
 
     const vdom = tree.getRenderOutput();
-    assert.equal('/api/coi/files/1234', vdom.props.children[1].props.href);
+    assert.equal(`/api/coi/files/${FILE_TYPE.MANAGEMENT_PLAN}/1234`, vdom.props.children[1].props.href);
   });
 });
