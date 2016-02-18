@@ -21,6 +21,7 @@ import * as FileDb from '../db/file-db';
 import multer from 'multer';
 import Log from '../log';
 import {FORBIDDEN, ACCEPTED} from '../../http-status-codes';
+import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 
 let upload;
@@ -34,9 +35,9 @@ catch (err) {
 
 export const init = app => {
   /**
-    @Role: admin or user for their own files
+    Admin or user for their own files
   */
-  app.get('/api/coi/files/:id', wrapAsync(async (req, res, next) => {
+  app.get('/api/coi/files/:id', allowedRoles('ANY'), wrapAsync(async (req, res, next) => {
     const result = await FileDb.getFile(req.dbInfo, req.userInfo, req.params.id);
     if (result.length < 1) {
       res.sendStatus(FORBIDDEN);
@@ -55,7 +56,7 @@ export const init = app => {
   /**
     @Role: Admin or user for their own disclosures
   */
-  app.post('/api/coi/files', upload.array('attachments'), wrapAsync(async req => {
+  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async req => {
     return await FileDb.saveNewFiles(
       req.dbInfo,
       JSON.parse(req.body.data),
@@ -67,7 +68,7 @@ export const init = app => {
   /**
     @Role: admin or user for their own files
   */
-  app.delete('/api/coi/files/:id', wrapAsync(async (req, res) => {
+  app.delete('/api/coi/files/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     await FileDb.deleteFiles(req.dbInfo, req.userInfo, req.params.id);
     res.sendStatus(ACCEPTED);
   }));

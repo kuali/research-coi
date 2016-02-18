@@ -105,12 +105,5 @@ describe('ConfigController', () => {
 
       saveConfig(req, res);
     });
-
-    it('only admins can access', () => {
-      req.userInfo.coiRole = 'user';
-      saveConfig(req, res);
-      assert.equal(res.status, 403);
-      req.userInfo.coiRole = 'admin';
-    });
   });
 });

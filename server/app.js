@@ -34,8 +34,8 @@ import renderView from './middleware/render-view';
 import Log from './log';
 import methodChecker from './middleware/method-checker';
 import ErrorLogger from './middleware/error-logger';
-import {COIConstants} from '../coi-constants';
-import {NOT_FOUND} from '../http-status-codes';
+import { LOG_LEVEL } from '../coi-constants';
+import { NOT_FOUND } from '../http-status-codes';
 import { configCheck, adminCheck } from './middleware/role-check';
 import unauthorized from './middleware/unauthorized';
 import scheduleExpirationCheck from './expiration-check';
@@ -43,7 +43,7 @@ import scheduleExpirationCheck from './expiration-check';
 const DEFAULT_PORT = 8090;
 
 function conditionallyLogRequests(app) {
-  if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
+  if (process.env.LOG_LEVEL <= LOG_LEVEL.INFO) {
     app.use((req, res, next) => {
       const startTime = new Date().getTime();
       res.on('finish', () => {
@@ -97,7 +97,7 @@ export function run() {
   app.use(cookieParser());
 
   app.use('/coi/auth', renderView('auth'));
-  app.get('/coi/health', healthReport);
+  app.use('/coi/health', healthReport);
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
   app.use('/coi$', renderView('index'));

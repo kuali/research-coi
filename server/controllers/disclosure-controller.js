@@ -22,7 +22,9 @@ import wrapAsync from './wrap-async';
 import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
 import Log from '../log';
-import {COIConstants} from '../../coi-constants';
+import { ROLES } from '../../coi-constants';
+const { ADMIN, REVIEWER } = ROLES;
+import { allowedRoles } from '../middleware/role-check';
 import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../http-status-codes';
 
 let upload;
@@ -44,15 +46,14 @@ function validateComment(comment) {
 }
 
 export const init = app => {
-
   /**
-   @Role: admin (can see any) or user (can only see their own)
-   */
-  app.get('/api/coi/archived-disclosures/:id/latest', (req, res, next) => {
+    user can only see their own
+  */
+  app.get('/api/coi/archived-disclosures/:id/latest', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id)
     .then(results => {
       const disclosure = JSON.parse(results[0].disclosure);
-      if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
+      if (req.userInfo.coiRole !== ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
         res.sendStatus(FORBIDDEN);
         return;
       }
@@ -65,10 +66,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only see disclosures which they submitted
+    User can only see disclosures which they submitted
   */
-  app.get('/api/coi/archived-disclosures', (req, res, next) => {
+  app.get('/api/coi/archived-disclosures', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.getArchivedDisclosures(req.dbInfo, req.userInfo.schoolId)
       .then(disclosures => {
         res.send(disclosures);
@@ -80,10 +80,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only see disclosures which they submitted
+    User can only see disclosures which they submitted
   */
-  app.get('/api/coi/disclosure-user-summaries', (req, res, next) => {
+  app.get('/api/coi/disclosure-user-summaries', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.getSummariesForUser(req.dbInfo, req.userInfo.schoolId)
       .then(disclosures => {
         res.send(disclosures);
@@ -95,10 +94,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only see their own annual disclosure
+    User can only see their own annual disclosure
   */
-  app.get('/api/coi/disclosures/annual', (req, res, next) => {
+  app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.getAnnualDisclosure(req.dbInfo, req.userInfo, req.userInfo.name)
     .then(disclosure => {
       res.send(disclosure);
@@ -109,13 +107,12 @@ export const init = app => {
     });
   });
 
-
   /**
-    @Role: admin (can see any) or user (can only see their own)
-    or reviewer (can only see ones where they are a reviewer)
+    Admin can see any, User can only see their own,
+    Reviewer can only see ones where they are a reviewer
   */
-  app.get('/api/coi/disclosures/:id', wrapAsync(async (req, res, next) => { //eslint-disable-line no-unused-vars
-    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+  app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), wrapAsync(async (req, res, next) => { //eslint-disable-line no-unused-vars
+    if (req.userInfo.coiRole === ROLES.REVIEWER) {
       const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
@@ -128,17 +125,11 @@ export const init = app => {
   }));
 
   /**
-    @Role: admin (can see any) or reviewer (can only see ones where they are a reviewer)
+    Admin can see any, Reviewer can only see ones where they are a reviewer
   */
-  app.get('/api/coi/disclosure-summaries', wrapAsync(async (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
-      req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.get('/api/coi/disclosure-summaries', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
     let reviewerDisclosureIds;
-    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+    if (req.userInfo.coiRole === ROLES.REVIEWER) {
       reviewerDisclosureIds = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
     }
 
@@ -173,15 +164,7 @@ export const init = app => {
     res.send(summaries);
   }));
 
-  /**
-    @Role: admin
-  */
-  app.get('/api/coi/disclosure-summaries/count', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.get('/api/coi/disclosure-summaries/count', allowedRoles(ADMIN), (req, res, next) => {
     let filters = {};
     if (req.query.filters) {
       try {
@@ -207,10 +190,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only edit entities which are associated with their disclosure
+    User can only edit entities which are associated with their disclosure
   */
-  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', upload.array('attachments'), (req, res, next) => {
+  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', allowedRoles('ANY'), upload.array('attachments'), (req, res, next) => {
     DisclosureDB.saveExistingFinancialEntity(req.dbInfo, req.userInfo, req.params.entityId, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
         res.send(financialEntity);
@@ -222,10 +204,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only add entities to disclosures which are theirs
+    User can only add entities to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/financial-entities', upload.array('attachments'), (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/financial-entities', allowedRoles('ANY'), upload.array('attachments'), (req, res, next) => {
     DisclosureDB.saveNewFinancialEntity(req.dbInfo, req.userInfo, req.params.id, JSON.parse(req.body.entity), req.files)
       .then(financialEntity => {
         res.send(financialEntity);
@@ -237,10 +218,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only add declarations to disclosures which are theirs
+    User can only add declarations to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/declarations', (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/declarations', allowedRoles('ANY'), (req, res, next) => {
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
     DisclosureDB.saveDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body)
       .then(declaration => {
@@ -253,10 +233,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only edit declarations on disclosures which are theirs
+    User can only edit declarations on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/declarations/:declarationId', (req, res, next) => {
+  app.put('/api/coi/disclosures/:id/declarations/:declarationId', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.declarationId, req.body)
       .then(() => {
         res.sendStatus(ACCEPTED);
@@ -268,10 +247,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only answer questions on disclosures which are theirs
+    User can only answer questions on disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/question-answers', (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.saveNewQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body)
       .then(answer => {
         res.send(answer);
@@ -283,10 +261,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only answer questions on disclosures which are theirs
+    User can only answer questions on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/question-answers/:questionId', (req, res, next) => {
+  app.put('/api/coi/disclosures/:id/question-answers/:questionId', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.questionId, req.body)
       .then(answer => {
         res.send(answer);
@@ -298,10 +275,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
-    Can only submit disclosures which are theirs
+    User can only submit disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/submit', (req, res, next) => {
+  app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id)
       .then(() => {
         res.sendStatus(ACCEPTED);
@@ -312,15 +288,7 @@ export const init = app => {
       });
   });
 
-  /**
-    @Role: admin
-  */
-  app.put('/api/coi/disclosures/:id/approve', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), (req, res, next) => {
     DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id)
       .then(() => {
         res.sendStatus(ACCEPTED);
@@ -331,15 +299,7 @@ export const init = app => {
       });
   });
 
-  /**
-    @Role: admin
-  */
-  app.put('/api/coi/disclosures/:id/reject', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), (req, res, next) => {
     DisclosureDB.reject(req.dbInfo, req.userInfo, req.params.id)
       .then(() => {
         res.sendStatus(ACCEPTED);
@@ -351,16 +311,10 @@ export const init = app => {
   });
 
   /**
-   @Role: admin (can add any) or reviewer (can only add ones where they are a reviewer)
-   */
-  app.post('/api/coi/disclosures/:id/comments', wrapAsync(async (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
-      req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
-    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+    Admin can add any, Reviewer can only add ones where they are a reviewer
+  */
+  app.post('/api/coi/disclosures/:id/comments', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
+    if (req.userInfo.coiRole === ROLES.REVIEWER) {
       const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
@@ -380,16 +334,10 @@ export const init = app => {
   }));
 
   /**
-   @Role: admin (can add any) or reviewer (can only add ones where they are a reviewer)
-   */
-  app.put('/api/coi/disclosures/:id/comments/:id', wrapAsync(async (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
-      req.userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
-    if (req.userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+    Admin can add any, Reviewer can only add ones where they are a reviewer
+  */
+  app.put('/api/coi/disclosures/:id/comments/:id', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
+    if (req.userInfo.coiRole === ROLES.REVIEWER) {
       const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
@@ -408,10 +356,9 @@ export const init = app => {
   }));
 
   /**
-    @Role: user
-    Can only retrieve items if this disclosure is theirs
+    User can only retrieve items if this disclosure is theirs
   */
-  app.get('/api/coi/disclosures/:id/pi-review-items', (req, res, next) => {
+  app.get('/api/coi/disclosures/:id/pi-review-items', allowedRoles('ANY'), (req, res, next) => {
     PIReviewDB.getPIReviewItems(req.dbInfo, req.userInfo, req.params.id)
       .then(result => {
         res.send(result);
@@ -423,10 +370,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
     Can only delete answers if this disclosure is theirs
   */
-  app.delete('/api/coi/disclosures/:id/question-answers', (req, res, next) => {
+  app.delete('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), (req, res, next) => {
     const toDelete = [];
     const proposedDeletions = req.body.toDelete !== undefined ? req.body.toDelete : [];
 
@@ -454,10 +400,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
     Can only retrieve state of their disclosure
   */
-  app.get('/api/coi/disclosures/:id/state', (req, res, next) => {
+  app.get('/api/coi/disclosures/:id/state', allowedRoles('ANY'), (req, res, next) => {
     DisclosureDB.getCurrentState(req.dbInfo, req.userInfo, req.params.id)
       .then(result => {
         res.send(result);
@@ -469,10 +414,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
     Can only save the state of their disclosure
   */
-  app.post('/api/coi/disclosures/:id/state', (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/state', allowedRoles('ANY'), (req, res, next) => {
     res.status(ACCEPTED).end();
 
     DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body)
