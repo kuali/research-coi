@@ -19,12 +19,13 @@
 import styles from './style';
 import React from 'react';
 import {BlueButton} from '../../../blue-button';
+import { FILE_TYPE } from '../../../../../../coi-constants';
 
 export default function ManagementPlan(props) {
   return (
     <div className={styles.container}>
       <span className={styles.header}>MANAGEMENT PLAN ATTACHED</span>
-      <a className={styles.downloadButtonLink} href={`/api/coi/files/${encodeURIComponent(props.fileId)}`}>
+      <a className={styles.downloadButtonLink} href={`/api/coi/files/${FILE_TYPE.MANAGEMENT_PLAN}/${props.disclosureId}`}>
         <span>
           <BlueButton className={styles.button}>DOWNLOAD</BlueButton>
         </span>

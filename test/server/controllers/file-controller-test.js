@@ -24,6 +24,8 @@ import * as app from '../../../server/app';
 import request from 'supertest';
 import {COIConstants} from '../../../coi-constants';
 import hashCode from '../../../hash';
+import { OK, FORBIDDEN, ACCEPTED } from '../../../http-status-codes';
+
 let getKnex;
 try {
   const extensions = require('research-extensions').default;
@@ -34,9 +36,18 @@ catch (err) {
 }
 const knex = getKnex({});
 
+async function addReviewer(disclosureId, user) {
+  await knex('additional_reviewer').insert({
+    disclosure_id: disclosureId,
+    user_id: hashCode(user),
+    name: user,
+    email: 'test@test.com'
+  },'id');
+}
 
 describe('FileController', () => {
   let disclosureId;
+  let finEntityId;
   const user = 'FileControllerTest';
   const userId = hashCode(user);
   const today = new Date();
@@ -50,105 +61,255 @@ describe('FileController', () => {
       config_id: 1}, 'id');
 
     disclosureId = disclosure[0];
+
+    const finEntity = await knex('fin_entity').insert({
+      disclosure_id: disclosureId,
+      status: COIConstants.RELATIONSHIP_STATUS.PENDING,
+      active: true
+    }, 'id');
+
+    finEntityId = finEntity[0];
   });
 
-  it('successfully uploads mulitiple files', async function() {
-    const response = await request(app.run())
-      .post('/api/coi/files')
-      .attach('attachments','coi-constants.js')
-      .attach('attachments','README.md')
-      .field('data', JSON.stringify({
-        refId: disclosureId,
-        type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN,
-        disclosureId
-      }))
-      .set('Authorization','Bearer admin')
-      .expect(200);
+  describe('/api/coi/files', () => {
+    it('successfully uploads mulitiple files', async function() {
+      const response = await request(app.run())
+        .post('/api/coi/files')
+        .attach('attachments','coi-constants.js')
+        .attach('attachments','README.md')
+        .field('data', JSON.stringify({
+          refId: disclosureId,
+          type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN,
+          disclosureId
+        }))
+        .set('Authorization','Bearer admin')
+        .expect(OK);
 
-    assert.equal(response.body.length, 2);
-    assert.equal(response.body[0].user_id,hashCode('admin'));
+      assert.equal(response.body.length, 2);
+      assert.equal(response.body[0].user_id,hashCode('admin'));
 
+    });
+
+    it('successfully uploads one file', async function() {
+      const response = await request(app.run())
+        .post('/api/coi/files')
+        .attach('attachments','coi-constants.js')
+        .field('data', JSON.stringify({
+          refId: disclosureId,
+          type: COIConstants.FILE_TYPE.DISCLOSURE,
+          disclosureId
+        }))
+        .set('Authorization',`Bearer ${user}`)
+        .expect(OK);
+
+      assert.equal(response.body.length, 1);
+      assert.equal(response.body[0].user_id,userId);
+    });
+
+    it('should not allow user retrieve files that are not theirs', async function() {
+      await request(app.run())
+        .get('/api/coi/files/1')
+        .set('Authorization','Bearer cate')
+        .expect(FORBIDDEN);
+    });
+
+    it('should not allow user to retrieve file not in db', async function() {
+      await request(app.run())
+        .get('/api/coi/files/abc')
+        .set('Authorization',`Bearer ${user}`)
+        .expect(FORBIDDEN);
+    });
+
+    it('should allow user to retrieve files created by and admin if they are attached to there disclosure', async function() {
+      const response = await request(app.run())
+        .get('/api/coi/files/1')
+        .set('Authorization',`Bearer ${user}`)
+        .expect(OK);
+
+      assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
+    });
+
+    it('should allow admin to retrieve all files', async function() {
+      const response = await request(app.run())
+        .get('/api/coi/files/3')
+        .set('Authorization','Bearer admin')
+        .expect(OK);
+
+      assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
+    });
+
+    it('successfully retrieve files', async function() {
+      const response = await request(app.run())
+        .get('/api/coi/files/3')
+        .set('Authorization',`Bearer ${user}`)
+        .expect(OK);
+
+      assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
+    });
+
+    it('successfully delete files', async function() {
+      await request(app.run())
+        .delete('/api/coi/files/1')
+        .send({})
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+
+      await request(app.run())
+        .delete('/api/coi/files/2')
+        .send({})
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+
+      await request(app.run())
+        .delete('/api/coi/files/3')
+        .send({})
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+    });
+
+    after(async function() {
+      await knex('file').truncate();
+    });
   });
 
-  it('successfully uploads one file', async function() {
-    const response = await request(app.run())
-      .post('/api/coi/files')
-      .attach('attachments','coi-constants.js')
-      .field('data', JSON.stringify({
-        refId: disclosureId,
-        type: COIConstants.FILE_TYPE.DISCLOSURE,
-        disclosureId
-      }))
-      .set('Authorization',`Bearer ${user}`)
-      .expect(200);
+  describe('/api/coi/files/:fileType/:refId', () => {
+    before(async function(){
+      await request(app.run())
+        .post('/api/coi/files')
+        .attach('attachments','coi-constants.js')
+        .attach('attachments','README.md')
+        .field('data', JSON.stringify({
+          refId: disclosureId,
+          type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN,
+          disclosureId
+        }))
+        .set('Authorization','Bearer admin')
+        .expect(OK);
 
-    assert.equal(response.body.length, 1);
-    assert.equal(response.body[0].user_id,userId);
-  });
+      await request(app.run())
+        .post('/api/coi/files')
+        .attach('attachments','coi-constants.js')
+        .attach('attachments','README.md')
+        .field('data', JSON.stringify({
+          refId: finEntityId,
+          type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+          disclosureId
+        }))
+        .set('Authorization','Bearer admin')
+        .expect(OK);
+    });
 
-  it('should not allow user retrieve files that are not theirs', async function() {
-    await request(app.run())
-      .get('/api/coi/files/1')
-      .set('Authorization','Bearer cate')
-      .expect(403);
-  });
+    it('admin should successfully get management plan zip file', async function() {
+      const response = await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
+        .set('Authorization',`Bearer admin`)
+        .expect(OK);
 
-  it('should not allow user to retrieve file not in db', async function() {
-    await request(app.run())
-      .get('/api/coi/files/abc')
-      .set('Authorization',`Bearer ${user}`)
-      .expect(403);
-  });
+      assert.equal(response.header['content-disposition'], `attachment; filename="${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}.zip"`);
+    });
 
-  it('should allow user to retrieve files created by and admin if they are attached to there disclosure', async function() {
-    const response = await request(app.run())
-      .get('/api/coi/files/1')
-      .set('Authorization',`Bearer ${user}`)
-      .expect(200);
+    it('reviewer should not get management plan files if not assigned as reviewer', async function() {
+      await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
+        .set('Authorization',`Bearer reviewer`)
+        .expect(FORBIDDEN);
+    });
 
-    assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
-  });
+    it('user should not get management plan files if they are not the user of the disclsoure', async function() {
+      await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
+        .set('Authorization',`Bearer cate`)
+        .expect(FORBIDDEN);
 
-  it('should allow admin to retrieve all files', async function() {
-    const response = await request(app.run())
-      .get('/api/coi/files/3')
-      .set('Authorization','Bearer admin')
-      .expect(200);
+    });
 
-    assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
-  });
+    it('user should get management plan files if they are the user of the disclsoure', async function() {
+      const response = await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
+        .set('Authorization',`Bearer ${user}`)
+        .expect(OK);
 
-  it('successfully retrieve files', async function() {
-    const response = await request(app.run())
-      .get('/api/coi/files/3')
-      .set('Authorization',`Bearer ${user}`)
-      .expect(200);
+      assert.equal(response.header['content-disposition'], `attachment; filename="${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}.zip"`);
+    });
 
-    assert.equal(response.header['content-disposition'], 'attachment; filename="coi-constants.js"');
-  });
+    it('admin should successfully get fin entity zip file', async function() {
+      const response = await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
+        .set('Authorization',`Bearer admin`)
+        .expect(OK);
 
-  it('successfully delete files', async function() {
-    await request(app.run())
-      .delete('/api/coi/files/1')
-      .send({})
-      .set('Authorization','Bearer admin')
-      .expect(202);
+      assert.equal(response.header['content-disposition'], `attachment; filename="${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}.zip"`);
+    });
 
-    await request(app.run())
-      .delete('/api/coi/files/2')
-      .send({})
-      .set('Authorization','Bearer admin')
-      .expect(202);
+    it('reviewer should not get fin entity files if not assigned as reviewer', async function() {
+      await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
+        .set('Authorization',`Bearer reviewer`)
+        .expect(FORBIDDEN);
+    });
 
-    await request(app.run())
-      .delete('/api/coi/files/3')
-      .send({})
-      .set('Authorization','Bearer admin')
-      .expect(202);
+    it('user should not get fin entity files if they are not the user of the disclsoure', async function() {
+      await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
+        .set('Authorization',`Bearer cate`)
+        .expect(FORBIDDEN);
+
+    });
+
+    it('user should get fin entity files if they are the user of the disclsoure', async function() {
+      const response = await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
+        .set('Authorization',`Bearer ${user}`)
+        .expect(OK);
+
+      assert.equal(response.header['content-disposition'], `attachment; filename="${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}.zip"`);
+    });
+
+    it('reviewer should get fin entity files if they are assigned as reviewer', async function() {
+      await addReviewer(disclosureId, 'reviewer');
+      await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
+        .set('Authorization',`Bearer reviewer`)
+        .expect(OK);
+    });
+
+    it('reviewer should get fin entity files they are  assigned as reviewer', async function() {
+      await request(app.run())
+        .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
+        .set('Authorization',`Bearer reviewer`)
+        .expect(OK);
+    });
+    after(async function() {
+      await request(app.run())
+        .delete('/api/coi/files/1')
+        .send({})
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+
+      await request(app.run())
+        .delete('/api/coi/files/2')
+        .send({})
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+
+      await request(app.run())
+        .delete('/api/coi/files/3')
+        .send({})
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+
+      await request(app.run())
+        .delete('/api/coi/files/4')
+        .send({})
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+    });
   });
 
   after(async function() {
     await knex('file').truncate();
+    await knex('additional_reviewer').del();
+    await knex('fin_entity').del().where({disclosure_id: disclosureId});
     await knex('disclosure').del().where({id: disclosureId});
   });
 });

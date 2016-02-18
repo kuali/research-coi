@@ -132,6 +132,31 @@ export const isDisclosureUsers = (dbInfo, disclosureId, userId) => {
     });
 };
 
+export const isFinancialEntityUsers = (dbInfo, id, userId) => {
+  const knex = getKnex(dbInfo);
+  return knex.select('d.user_id')
+    .from('fin_entity as fe')
+    .innerJoin('disclosure as d', 'd.id', 'fe.disclosure_id')
+    .where({
+      'fe.id': id,
+      'd.user_id': userId
+    })
+    .then(result => {
+      return result.length > 0;
+    });
+};
+
+export function getDisclosureForFinancialEntity(dbInfo, id) {
+  const knex = getKnex(dbInfo);
+  return knex('fin_entity')
+    .select('disclosure_id as disclosureId')
+    .where({id})
+    .then(entity => {
+      return entity[0].disclosureId;
+    });
+}
+
+
 export const verifyRelationshipIsUsers = (dbInfo, userId, relationshipId) => {
   const knex = getKnex(dbInfo);
 

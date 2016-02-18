@@ -141,10 +141,9 @@ export class Archive extends React.Component {
           />
         );
         if (this.state.disclosure.managementPlan.length > 0) {
-          const file = this.state.disclosure.managementPlan[0];
           managementPlan = (
             <ManagementPlan
-              fileId={file.id}
+              disclosureId={this.state.disclosure.id}
             />
           );
         }
