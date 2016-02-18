@@ -18,230 +18,138 @@
 
 import * as PIDB from '../db/pi-db';
 import * as PIReviewDB from '../db/pi-review-db';
-import Log from '../log';
 import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { FORBIDDEN, NO_CONTENT } from '../../http-status-codes';
 import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
+import wrapAsync from './wrap-async';
 
 export const init = app => {
-  app.get('/api/coi/pi', allowedRoles(ADMIN), (req, res, next) => {
-    PIDB.getSuggestions(req.dbInfo, req.query.term)
-      .then(suggestions => {
-        res.send(suggestions);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.get('/api/coi/pi', allowedRoles(ADMIN), wrapAsync(async req => {
+    return await PIDB.getSuggestions(req.dbInfo, req.query.term);
+  }));
 
   /**
     User can only respond to review items which are associated with their disclosures
   */
-  app.post('/api/coi/pi-response/:reviewId', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.recordPIResponse(req.dbInfo, req.userInfo, req.params.reviewId, req.body.comment)
-            .then(response => {
-              res.send(response);
-            });
-        }
+  app.post('/api/coi/pi-response/:reviewId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      return await PIReviewDB.recordPIResponse(req.dbInfo, req.userInfo, req.params.reviewId, req.body.comment);
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only revise questions which are associated with their disclosures
   */
-  app.put('/api/coi/pi-revise/:reviewId', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.reviseQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.body.answer)
-            .then(response => {
-              res.send(response);
-            });
-        }
+  app.put('/api/coi/pi-revise/:reviewId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      return await PIReviewDB.reviseQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.body.answer);
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only revise questions which are associated with their disclosures
   */
-  app.put('/api/coi/pi-revise/:reviewId/entity-question/:questionId', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.reviseEntityQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.params.questionId, req.body.answer)
-            .then(response => {
-              res.send(response);
-            });
-        }
+  app.put('/api/coi/pi-revise/:reviewId/entity-question/:questionId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      return await PIReviewDB.reviseEntityQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.params.questionId, req.body.answer);
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only add relationships for entities which are associated with their disclosures
   */
-  app.post('/api/coi/pi-revise/:reviewId/entity-relationship', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.addRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.body)
-            .then(response => {
-              res.send(response);
-            });
-        }
+  app.post('/api/coi/pi-revise/:reviewId/entity-relationship', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      return await PIReviewDB.addRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.body);
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only remove relationships for entities which are associated with their disclosures
   */
-  app.delete('/api/coi/pi-revise/:reviewId/entity-relationship/:relationshipId', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.removeRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.params.relationshipId)
-            .then(() => {
-              res.status(NO_CONTENT).end();
-            });
-        }
+  app.delete('/api/coi/pi-revise/:reviewId/entity-relationship/:relationshipId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      await PIReviewDB.removeRelationship(req.dbInfo, req.userInfo, req.params.reviewId, req.params.relationshipId);
+      res.status(NO_CONTENT).end();
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only revise declarations which are associated with their disclosures
   */
-  app.put('/api/coi/pi-revise/:reviewId/declaration', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.reviseDeclaration(req.dbInfo, req.userInfo, req.params.reviewId, req.body)
-            .then(() => {
-              res.status(NO_CONTENT).end();
-            });
-        }
+  app.put('/api/coi/pi-revise/:reviewId/declaration', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      await PIReviewDB.reviseDeclaration(req.dbInfo, req.userInfo, req.params.reviewId, req.body);
+      res.status(NO_CONTENT).end();
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only revise subquestions which are associated with their disclosures
   */
-  app.put('/api/coi/pi-revise/:reviewId/subquestion-answer/:subQuestionId', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.reviseSubQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.params.subQuestionId, req.body)
-            .then(() => {
-              res.status(NO_CONTENT).end();
-            });
-        }
+  app.put('/api/coi/pi-revise/:reviewId/subquestion-answer/:subQuestionId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      await PIReviewDB.reviseSubQuestion(req.dbInfo, req.userInfo, req.params.reviewId, req.params.subQuestionId, req.body);
+      res.status(NO_CONTENT).end();
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only remove answers for questions which are associated with their disclosures
   */
-  app.delete('/api/coi/pi-revise/:reviewId/question-answers', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId)
-      .then(isAllowed => {
-        if (isAllowed) {
-          return PIReviewDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.reviewId, req.body.toDelete)
-            .then(() => {
-              res.status(NO_CONTENT).end();
-            })
-            .catch(err => {
-              Log.error(err);
-              next(err);
-            });
-        }
+  app.delete('/api/coi/pi-revise/:reviewId/question-answers', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const isAllowed = await PIReviewDB.verifyReviewIsForUser(req.dbInfo, req.params.reviewId, req.userInfo.schoolId);
+    if (isAllowed) {
+      await PIReviewDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.reviewId, req.body.toDelete);
+      res.status(NO_CONTENT).end();
+    }
 
-        res.status(FORBIDDEN).end();
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    res.status(FORBIDDEN).end();
+  }));
 
   /**
     User can only resubmit their own disclosures
   */
-  app.put('/api/coi/pi-revise/:disclosureId/submit', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.reSubmitDisclosure(req.dbInfo, req.userInfo, req.params.disclosureId)
-      .then(() => {
-        res.send({success: true});
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.put('/api/coi/pi-revise/:disclosureId/submit', allowedRoles('ANY'), wrapAsync(async req => {
+    await PIReviewDB.reSubmitDisclosure(req.dbInfo, req.userInfo, req.params.disclosureId);
+    return {success: true};
+  }));
 
   /**
    Reviewer can only see ones where they are a reviewer
    */
-  app.get('/api/coi/disclosures/:id/pi-responses', allowedRoles([ADMIN, REVIEWER]), async (req, res, next) => {
+  app.get('/api/coi/disclosures/:id/pi-responses', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
       const reviewerDisclosureIds = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosureIds.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
-        return;
+        return undefined;
       }
     }
 
-    PIReviewDB.getPIResponseInfo(req.dbInfo, req.params.id)
-      .then(responses => {
-        res.send(responses);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    return await PIReviewDB.getPIResponseInfo(req.dbInfo, req.params.id);
+  }));
 };

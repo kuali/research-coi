@@ -17,15 +17,15 @@
 */
 
 import * as TravelLogDB from '../db/travel-log-db';
-import Log from '../log';
 import {OK} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
+import wrapAsync from './wrap-async';
 
 export const init = app => {
   /**
     User can only see travel logs associated with their entities
   */
-  app.get('/api/coi/travel-log-entries', allowedRoles('ANY'), (req, res, next) => {
+  app.get('/api/coi/travel-log-entries', allowedRoles('ANY'), wrapAsync(async req => {
     let sortColumn = 'name';
     if (req.query.sortColumn) {
       sortColumn = req.query.sortColumn;
@@ -38,56 +38,28 @@ export const init = app => {
     if (req.query.filter) {
       filter = req.query.filter;
     }
-    TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId, sortColumn, sortDirection, filter)
-      .then(travelLog => {
-        res.send(travelLog);
-      })
-    .catch(err => {
-      Log.error(err);
-      next(err);
-    });
-
-  });
+    return await TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId, sortColumn, sortDirection, filter);
+  }));
 
   /**
    User can only add travel logs associated with their entities
    */
-  app.post('/api/coi/travel-log-entries', allowedRoles('ANY'), (req, res, next) => {
-    TravelLogDB.createTravelLogEntry(req.dbInfo, req.body, req.userInfo)
-      .then(travelLog => {
-        res.send(travelLog);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.post('/api/coi/travel-log-entries', allowedRoles('ANY'), wrapAsync(async req => {
+    return await TravelLogDB.createTravelLogEntry(req.dbInfo, req.body, req.userInfo);
+  }));
 
   /**
    User can only delete travel logs associated with their entities
    */
-  app.delete('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), (req, res, next) => {
-    TravelLogDB.deleteTravelLogEntry(req.dbInfo, req.params.id, req.userInfo)
-      .then(() => {
-        res.sendStatus(OK);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.delete('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    await TravelLogDB.deleteTravelLogEntry(req.dbInfo, req.params.id, req.userInfo);
+    res.sendStatus(OK);
+  }));
 
   /**
    User can only update travel logs associated with their entities
    */
-  app.put('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), (req, res, next) => {
-    TravelLogDB.updateTravelLogEntry(req.dbInfo, req.body, req.params.id, req.userInfo)
-    .then(travelLog => {
-      res.send(travelLog);
-    })
-    .catch(err => {
-      Log.error(err);
-      next(err);
-    });
-  });
+  app.put('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), wrapAsync(async req => {
+    return await TravelLogDB.updateTravelLogEntry(req.dbInfo, req.body, req.params.id, req.userInfo);
+  }));
 };
