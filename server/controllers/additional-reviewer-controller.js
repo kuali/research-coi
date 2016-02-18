@@ -18,44 +18,22 @@
 
 import * as AdditionalReviewerDB from '../db/additional-reviewer-db';
 import { ROLES } from '../../coi-constants';
-import { OK, FORBIDDEN } from '../../http-status-codes';
+const { ADMIN, REVIEWER } = ROLES;
+import { allowedRoles } from '../middleware/role-check';
+import { OK } from '../../http-status-codes';
 import wrapAsync from './wrap-async';
 
 export const init = app => {
-  /**
-   @Role: admin
-   */
-  app.post('/api/coi/additional-reviewers', wrapAsync(async (req, res) => {
-    if (req.userInfo.coiRole !== ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return undefined;
-    }
-
+  app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), wrapAsync(async req => {
     return await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body);
   }));
 
-  /**
-   @Role: admin
-   */
-  app.delete('/api/coi/additional-reviewers/:id', wrapAsync(async (req, res) => {
-    if (req.userInfo.coiRole !== ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, req.params.id);
     res.sendStatus(OK);
   }));
 
-  /**
-   @Role: reviewer
-   */
-  app.delete('/api/coi/additional-reviewers/current/:disclosureId', wrapAsync(async (req, res) => {
-    if (req.userInfo.coiRole !== ROLES.REVIEWER) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.delete('/api/coi/additional-reviewers/current/:disclosureId', allowedRoles(REVIEWER), wrapAsync(async (req, res) => {
     const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, req.userInfo.schoolId, req.params.disclosureId);
     await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, additionalReviewer[0].id);
     res.sendStatus(OK);

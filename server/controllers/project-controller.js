@@ -18,12 +18,13 @@
 
 import * as ProjectDB from '../db/project-db';
 import Log from '../log';
-import { FORBIDDEN } from '../../http-status-codes';
-import {COIConstants} from '../../coi-constants';
+import { ROLES } from '../../coi-constants';
+const { ADMIN } = ROLES;
+import { allowedRoles } from '../middleware/role-check';
 import { filterProjects } from '../services/project-service/project-service';
 
 export const init = app => {
-  app.post('/api/coi/projects', (req, res, next) => {
+  app.post('/api/coi/projects', allowedRoles(ADMIN), (req, res, next) => {
     ProjectDB.saveProjects(req.dbInfo, req.body)
       .then(projects => {
         res.send(projects);
@@ -35,10 +36,9 @@ export const init = app => {
   });
 
   /**
-    @Role: user
     Should only return projects associated with the given user
   */
-  app.get('/api/coi/projects', async (req, res, next) => {
+  app.get('/api/coi/projects', allowedRoles('ANY'), async (req, res, next) => {
     try {
       const projects = await ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId);
       if (req.query.filter) {
@@ -53,15 +53,7 @@ export const init = app => {
     }
   });
 
-  /**
-    @Role: admin
-  */
-  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', allowedRoles(ADMIN), (req, res, next) => {
     ProjectDB.getProjectStatuses(req.dbInfo, req.params.sourceId, req.params.projectId)
       .then(statuses => {
         res.send(statuses);
@@ -72,15 +64,7 @@ export const init = app => {
       });
   });
 
-  /**
-   @Role: admin
-   */
-  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', (req, res, next) => {
-    if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-
+  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', allowedRoles(ADMIN), (req, res, next) => {
     ProjectDB.getProjectStatus(req.dbInfo, req.params.sourceId, req.params.projectId, req.params.personId)
       .then(status => {
         res.send(status);

@@ -15,7 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-import { ROLES } from '../../coi-constants';
+
+import {ROLES} from '../../coi-constants';
+import {FORBIDDEN} from '../../http-status-codes';
+import Log from '../log';
+
 export function configCheck(req, res, next) {
   roleCheck([ROLES.ADMIN], req.userInfo.coiRole, res, next);
 }
@@ -30,4 +34,34 @@ function roleCheck(roles, role, res, next) {
     return;
   }
   next();
+}
+
+const ANY_ROLE = 'ANY';
+
+export function allowedRoles(rolesToAllow) {
+  let valid;
+  if (Array.isArray(rolesToAllow)) {
+    valid = req => rolesToAllow.includes(req.userInfo.coiRole);
+  }
+  else if (typeof rolesToAllow === 'string') {
+    if (rolesToAllow === ANY_ROLE) {
+      valid = () => true;
+    }
+    else {
+      valid = req => rolesToAllow === req.userInfo.coiRole;
+    }
+  }
+  else {
+    throw new Error('Invalid list of roles');
+  }
+
+  return (req, res, next) => {
+    if (!valid(req)) {
+      Log.error(`Unauthorized attempt to access ${req.originalUrl} by ${req.userInfo.username}`);
+      res.sendStatus(FORBIDDEN);
+      return;
+    }
+
+    next();
+  };
 }

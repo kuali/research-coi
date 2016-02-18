@@ -17,12 +17,12 @@
 */
 import { getReviewers } from '../services/auth-service/auth-service';
 import Log from '../log';
+import { ROLES } from '../../coi-constants';
+const { ADMIN } = ROLES;
+import { allowedRoles } from '../middleware/role-check';
 
 export const init = app => {
-  /**
-    @Role: any
-  */
-  app.get('/api/coi/userinfo', (req, res) => {
+  app.get('/api/coi/userinfo', allowedRoles('ANY'), (req, res) => {
     res.send({
       firstName: req.userInfo.firstName,
       lastName: req.userInfo.lastName,
@@ -31,10 +31,7 @@ export const init = app => {
     });
   });
 
-  /**
-   @Role: any
-   */
-  app.get('/api/coi/reviewers', (req, res, next) => {
+  app.get('/api/coi/reviewers', allowedRoles(ADMIN), (req, res, next) => {
     if (!req.query.term) {
       res.send([]);
       return;

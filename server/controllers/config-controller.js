@@ -17,17 +17,13 @@
 */
 
 import * as ConfigDB from '../db/config-db';
-import {COIConstants} from '../../coi-constants';
-import {FORBIDDEN} from '../../http-status-codes';
+import { ROLES } from '../../coi-constants';
+const { ADMIN } = ROLES;
+import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import { getProjectData } from '../services/project-service/project-service';
 
 export async function saveConfig(req, res) {
-  if (req.userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
-    res.sendStatus(FORBIDDEN);
-    return;
-  }
-
   await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body);
   const config = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
   config.general = req.body.general;
@@ -37,30 +33,18 @@ export async function saveConfig(req, res) {
 }
 
 export const init = app => {
-  /**
-    @Role: any
-  */
-  app.get('/api/coi/config', wrapAsync(async req => {
+  app.get('/api/coi/config', allowedRoles('ANY'), wrapAsync(async req => {
     return await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
   }));
 
-  /**
-    @Role: any
-   */
-  app.get('/api/coi/archived-config/:id', wrapAsync(async (req, res) => {
+  app.get('/api/coi/archived-config/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     const result = await ConfigDB.getArchivedConfig(req.dbInfo, req.params.id);
     res.send(JSON.parse(result[0].config));
   }));
 
-  /**
-    @Role: admin
-  */
-  app.post('/api/coi/config/', wrapAsync(saveConfig));
+  app.post('/api/coi/config/', allowedRoles(ADMIN), wrapAsync(saveConfig));
 
-  /**
-    @Role: ????????????
-  */
-  app.get('/api/coi/new-project-data/:projectTypeCd', wrapAsync(async req => {
+  app.get('/api/coi/new-project-data/:projectTypeCd', allowedRoles(ADMIN), wrapAsync(async req => {
     return await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);
   }));
 };

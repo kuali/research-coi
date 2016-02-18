@@ -68,6 +68,7 @@
     "enzyme": "2.0.0",
     "eslint": "1.10.3",
     "eslint-plugin-contains": "0.0.1",
+    "eslint-plugin-custom": "file:eslint-plugin-custom",
     "eslint-plugin-module-name": "0.0.4",
     "eslint-plugin-react": "3.16.1",
     "file": "0.2.2",
