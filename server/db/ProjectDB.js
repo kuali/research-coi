@@ -23,7 +23,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager');
+  getKnex = require('./ConnectionManager').default;
 }
 
 export const getProjects = (dbInfo, userId) => {
@@ -120,7 +120,7 @@ const saveProjectPersons = (dbInfo, persons, projectId) => {
 
         return Promise.all(queries);
       }
-      
+
       if (personIdResult.length > 0) {
         return disableAllPersonsForProject(dbInfo, projectId);
       }
