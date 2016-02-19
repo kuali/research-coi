@@ -4,6 +4,8 @@ engines:
     config:
       languages:
         - javascript
+    exclude_paths:
+    - client/scripts/components/**/*.js
   csslint:
     enabled: true
 exclude_paths:
