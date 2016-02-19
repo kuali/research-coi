@@ -8,6 +8,10 @@ engines:
     - client/scripts/components/**/*.js
   csslint:
     enabled: true
+ratings:
+  paths:
+  - "**.js"
+  - "**.css"
 exclude_paths:
   - db/
   - /node_modules/
