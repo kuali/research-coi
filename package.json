@@ -43,7 +43,7 @@
     "knex": "0.9.0",
     "lodash": "4.1.0",
     "lru-cache": "4.0.0",
-    "moment": "2.11.1",
+    "moment": "2.11.2",
     "multer": "1.1.0",
     "mysql": "2.10.2",
     "numeral": "1.5.3",
