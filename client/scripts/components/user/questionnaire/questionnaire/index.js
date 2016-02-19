@@ -90,7 +90,7 @@ export class Questionnaire extends React.Component {
       <div className={`${styles.container} ${this.props.className}`}>
         <Instructions
           text={instructionText}
-          collapsed={!this.props.instructionsShowing}
+          collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]}
         />
 
         <div className={styles.questionArea}>

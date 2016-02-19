@@ -37,6 +37,23 @@ function provided(value) {
   );
 }
 
+function mapDisclosureToInstructionStep(step) {
+  switch(step) {
+    case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE:
+      return COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
+    case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
+      return COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
+    case COIConstants.DISCLOSURE_STEP.ENTITIES:
+      return COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES;
+    case COIConstants.DISCLOSURE_STEP.PROJECTS:
+      return COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS;
+    case COIConstants.DISCLOSURE_STEP.CERTIFY:
+      return COIConstants.INSTRUCTION_STEP.CERTIFICATION;
+    default:
+      return '';
+  }
+}
+
 export function unSubmittedRelationshipStarted(potentialRelationship) {
   if (
     !potentialRelationship
@@ -149,7 +166,7 @@ class _DisclosureStore {
       archiveQuery: '',
       archiveSortField: COIConstants.ARCHIVE_SORT_FIELD.START,
       archiveSortDirection: COIConstants.SORT_DIRECTION.DESCENDING,
-      instructionsShowing: false,
+      instructionsShowing: {},
       currentDisclosureState: {
         step: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
         question: 1,
@@ -266,12 +283,12 @@ class _DisclosureStore {
 
   loadDisclosureState(disclosureId) {
     const hideInstructions = window.config.general.instructionsExpanded === false;
-    if (hideInstructions) {
-      this.applicationState.instructionsShowing = !hideInstructions;
-    }
-    else {
-      this.applicationState.instructionsShowing = true;
-    }
+    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] = hideInstructions ? false : true;
+    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES] = hideInstructions ? false : true;
+    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] = hideInstructions ? false : true;
+    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.CERTIFICATION] = hideInstructions ? false : true;
+
+
 
     return new Promise((resolve, reject) => {
       createRequest()
@@ -350,7 +367,8 @@ class _DisclosureStore {
   }
 
   toggleInstructions() {
-    this.applicationState.instructionsShowing = !this.applicationState.instructionsShowing;
+    const instructionStep = mapDisclosureToInstructionStep(this.applicationState.currentDisclosureState.step);
+    this.applicationState.instructionsShowing[instructionStep] = !this.applicationState.instructionsShowing[instructionStep];
   }
 
   submitQuestion(question) {
