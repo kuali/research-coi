@@ -1,7 +1,7 @@
 INSTRUCTIONS
 ================
 
-**Step 1**: download and install [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node) version 0.12.7 or newer.
+**Step 1**: download and install [Node.js and npm](https://docs.npmjs.com/getting-started/installing-node) version 4.2.6 or newer. This is the current LTS version of Node.
 
 ----------
 **Step 2**: clone [research-coi project](https://github.com/kuali/research-coi)
@@ -181,7 +181,7 @@ This may take a few minutes. There will likely be some warnings, but there shoul
 
 **Step 10**: Start Up Node
 ```
-DB_NAME=coi node server/bootstrap
+DB_NAME=coi node server/bootstrap.js
 ```
 
 **Step 11**: Navigate to hostname:port/coi/
