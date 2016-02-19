@@ -67,7 +67,7 @@ export class ManualEvent extends React.Component {
     const instructions = (
       <Instructions
         text={instructionText}
-        collapsed={!this.props.instructionsShowing}
+        collapsed={!this.props.instructionsShowing[COIConstants.DISCLOSURE_STEP.MANUAL]}
       />
     );
 

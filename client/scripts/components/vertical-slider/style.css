@@ -28,7 +28,7 @@
 }
 
 .collapsed .content {
-  transform: translateY(-100%);
+  transform: translateY(-101%);
 }
 
 .spacer {

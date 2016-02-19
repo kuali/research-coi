@@ -181,7 +181,7 @@ export class Relationships extends React.Component {
     const instructions = (
       <Instructions
         text={instructionText}
-        collapsed={!this.props.instructionsShowing}
+        collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS]}
       />
     );
 
