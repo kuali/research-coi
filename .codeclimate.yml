@@ -4,12 +4,8 @@ engines:
     config:
       languages:
         - javascript
-    exclude_paths:
-    - client/scripts/components/
   csslint:
     enabled: true
-  eslint:
-    enabled: false
 exclude_paths:
   - db/
   - /node_modules/
