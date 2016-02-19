@@ -16,9 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-var path = require('path'); // eslint-disable-line no-var
+var path = require('path');
 
 module.exports = {
+  stats: {
+    hash: false,
+    version: false,
+    timings: false,
+    assets: true,
+    chunks: false,
+    modules: false,
+    reasons: false,
+    children: false,
+    source: false,
+    errors: true,
+    errorDetails: true,
+    warnings: false,
+    publicPath: false
+  },
   entry: {
     user: './client/scripts/components/user/app.js',
     admin: './client/scripts/components/admin/admin.js',

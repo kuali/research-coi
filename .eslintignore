@@ -4,3 +4,4 @@ npm-debug.log
 **/*.mwb
 **/*.png
 node_modules
+**/webpack.config.js
