@@ -3,9 +3,8 @@ engines:
     enabled: true
     config:
       languages:
-        - javascript
-    exclude_paths:
-    - client/scripts/components/**/*.js
+        javascript:
+          mass_threshold: 100
   csslint:
     enabled: true
 ratings:
