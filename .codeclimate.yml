@@ -5,14 +5,15 @@ engines:
       languages:
         - javascript
     exclude_paths:
-    - client/scripts/components/**/*
+    - client/scripts/components/
   csslint:
     enabled: true
   eslint:
     enabled: false
 exclude_paths:
-  - /node_modules/**/*
-  - /client/build/**/*
-  - scripts/lib/**/*
+  - db/
+  - /node_modules/
+  - /client/build/
+  - scripts/lib/
   - webpack.config.js
-  - test/**/*
+  - test/
