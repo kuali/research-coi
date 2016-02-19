@@ -3,7 +3,8 @@
     "**/node_modules/**",
     "**/client/build",
     "scripts/lib/",
-    "webpack.config.js"
+    "webpack.config.js",
+    "db/migration/seeds/**"
   ],
   "test": [
     "test/**"
