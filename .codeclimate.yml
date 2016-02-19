@@ -1,0 +1,17 @@
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+        - javascript
+    exclude_paths:
+    - client/scripts/components/**/*.js
+  csslint:
+    enabled: true
+exclude_paths:
+  - db/
+  - /node_modules/
+  - /client/build/
+  - scripts/lib/
+  - webpack.config.js
+  - test/
