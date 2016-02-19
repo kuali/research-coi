@@ -30,7 +30,7 @@ async function checkForExpiredDisclosures(expiredCode) {
       .whereNot('status_cd', expiredCode)
       .andWhere('expired_date', '<', new Date())
       .update({
-        status_cd: expiredCode
+        status_cd: expiredCode // eslint-disable-line camelcase
       });
 
     Log.info(`${numberExpired} disclosures expired`);

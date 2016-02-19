@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint camelcase:0 */
+/* eslint-disable camelcase */
+
 import {COIConstants} from '../../coi-constants';
 import {verifyRelationshipIsUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';

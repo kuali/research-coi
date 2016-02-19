@@ -16,8 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/*global describe, it, before, after */
-/* eslint-disable no-magic-numbers */
+/* eslint-disable no-magic-numbers, camelcase */
 
 import assert from 'assert';
 import * as app from '../../../server/app';

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint camelcase:0 */
+/* eslint-disable camelcase */
 
 const MAX_ROWS = 10;
 
