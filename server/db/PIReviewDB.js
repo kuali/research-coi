@@ -27,7 +27,7 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  getKnex = require('./ConnectionManager');
+  getKnex = require('./ConnectionManager').default;
 }
 
 export const verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
