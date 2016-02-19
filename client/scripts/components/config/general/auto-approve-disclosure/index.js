@@ -34,7 +34,7 @@ export default function AutoApproveDisclosure(props) {
         htmlFor='autoApproveDisclosure'
         className={styles.label}
       >
-        Automatically approve annual disclosure that do not have any Financial Entities
+        Automatically approve annual disclosures that do not have any Financial Entities
       </label>
     </div>
   );
