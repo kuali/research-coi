@@ -16,31 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 import { getReviewers } from '../services/auth-service/auth-service';
-import Log from '../log';
 import { ROLES } from '../../coi-constants';
 const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
+import wrapAsync from './wrap-async';
 
 export const init = app => {
-  app.get('/api/coi/userinfo', allowedRoles('ANY'), (req, res) => {
-    res.send({
+  app.get('/api/coi/userinfo', allowedRoles('ANY'), wrapAsync(async req => {
+    return {
       firstName: req.userInfo.firstName,
       lastName: req.userInfo.lastName,
       coiRole: req.userInfo.coiRole,
       mock: req.userInfo.mock
-    });
-  });
+    };
+  }));
 
-  app.get('/api/coi/reviewers', allowedRoles(ADMIN), (req, res, next) => {
+  app.get('/api/coi/reviewers', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     if (!req.query.term) {
       res.send([]);
       return;
     }
-    getReviewers(req.dbInfo, req.headers.authorization).then(results => {
-      res.send(results.filter(result => result.value.toLowerCase().indexOf(req.query.term.toLowerCase()) >= 0 ));
-    }).catch(err => {
-      Log.error(err);
-      next(err);
-    });
-  });
+    const results = await getReviewers(req.dbInfo, req.headers.authorization);
+    res.send(results.filter(result => result.value.toLowerCase().indexOf(req.query.term.toLowerCase()) >= 0 ));
+  }));
 };

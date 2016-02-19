@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable no-magic-numbers */
+/* eslint-disable no-magic-numbers, camelcase */
 
 import LoadTest from '../../../../../../../load-test';
 import hashCode from '../../../../../../../../hash';

@@ -49,79 +49,51 @@ export const init = app => {
   /**
     user can only see their own
   */
-  app.get('/api/coi/archived-disclosures/:id/latest', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id)
-    .then(results => {
-      const disclosure = JSON.parse(results[0].disclosure);
-      if (req.userInfo.coiRole !== ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
-        res.sendStatus(FORBIDDEN);
-        return;
-      }
-      res.send(disclosure);
-    })
-    .catch(err => {
-      Log.error(err);
-      next(err);
-    });
-  });
+  app.get('/api/coi/archived-disclosures/:id/latest', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const results = await DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id);
+    const disclosure = JSON.parse(results[0].disclosure);
+    if (req.userInfo.coiRole !== ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
+      res.sendStatus(FORBIDDEN);
+      return;
+    }
+    res.send(disclosure);
+  }));
 
   /**
     User can only see disclosures which they submitted
   */
-  app.get('/api/coi/archived-disclosures', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.getArchivedDisclosures(req.dbInfo, req.userInfo.schoolId)
-      .then(disclosures => {
-        res.send(disclosures);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.get('/api/coi/archived-disclosures', allowedRoles('ANY'), wrapAsync(async req => {
+    return await DisclosureDB.getArchivedDisclosures(req.dbInfo, req.userInfo.schoolId);
+  }));
 
   /**
     User can only see disclosures which they submitted
   */
-  app.get('/api/coi/disclosure-user-summaries', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.getSummariesForUser(req.dbInfo, req.userInfo.schoolId)
-      .then(disclosures => {
-        res.send(disclosures);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.get('/api/coi/disclosure-user-summaries', allowedRoles('ANY'), wrapAsync(async req => {
+    return await DisclosureDB.getSummariesForUser(req.dbInfo, req.userInfo.schoolId);
+  }));
 
   /**
     User can only see their own annual disclosure
   */
-  app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.getAnnualDisclosure(req.dbInfo, req.userInfo, req.userInfo.name)
-    .then(disclosure => {
-      res.send(disclosure);
-    })
-    .catch(err => {
-      Log.error(err);
-      next(err);
-    });
-  });
+  app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), wrapAsync(async req => {
+    return await DisclosureDB.getAnnualDisclosure(req.dbInfo, req.userInfo, req.userInfo.name);
+  }));
 
   /**
     Admin can see any, User can only see their own,
     Reviewer can only see ones where they are a reviewer
   */
-  app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), wrapAsync(async (req, res, next) => { //eslint-disable-line no-unused-vars
+  app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
       const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
-        return;
+        return undefined;
       }
     }
 
-    const disclosure = await DisclosureDB.get(req.dbInfo, req.userInfo, req.params.id);
-    res.send(disclosure);
+    return await DisclosureDB.get(req.dbInfo, req.userInfo, req.params.id);
   }));
 
   /**
@@ -160,11 +132,10 @@ export const init = app => {
     if (req.query.start && !isNaN(req.query.start)) {
       start = req.query.start;
     }
-    const summaries = await DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosureIds);
-    res.send(summaries);
+    return await DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosureIds);
   }));
 
-  app.get('/api/coi/disclosure-summaries/count', allowedRoles(ADMIN), (req, res, next) => {
+  app.get('/api/coi/disclosure-summaries/count', allowedRoles(ADMIN), wrapAsync(async (req, res, next) => {
     let filters = {};
     if (req.query.filters) {
       try {
@@ -179,136 +150,70 @@ export const init = app => {
       }
     }
 
-    DisclosureDB.getSummariesForReviewCount(req.dbInfo, filters)
-      .then(count => {
-        res.send(count);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    return await DisclosureDB.getSummariesForReviewCount(req.dbInfo, filters);
+  }));
 
   /**
     User can only edit entities which are associated with their disclosure
   */
-  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', allowedRoles('ANY'), upload.array('attachments'), (req, res, next) => {
-    DisclosureDB.saveExistingFinancialEntity(req.dbInfo, req.userInfo, req.params.entityId, JSON.parse(req.body.entity), req.files)
-      .then(financialEntity => {
-        res.send(financialEntity);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async req => {
+    return await DisclosureDB.saveExistingFinancialEntity(req.dbInfo, req.userInfo, req.params.entityId, JSON.parse(req.body.entity), req.files);
+  }));
 
   /**
     User can only add entities to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/financial-entities', allowedRoles('ANY'), upload.array('attachments'), (req, res, next) => {
-    DisclosureDB.saveNewFinancialEntity(req.dbInfo, req.userInfo, req.params.id, JSON.parse(req.body.entity), req.files)
-      .then(financialEntity => {
-        res.send(financialEntity);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.post('/api/coi/disclosures/:id/financial-entities', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async req => {
+    return await DisclosureDB.saveNewFinancialEntity(req.dbInfo, req.userInfo, req.params.id, JSON.parse(req.body.entity), req.files);
+  }));
 
   /**
     User can only add declarations to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/declarations', allowedRoles('ANY'), (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/declarations', allowedRoles('ANY'), wrapAsync(async req => {
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
-    DisclosureDB.saveDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body)
-      .then(declaration => {
-        res.send(declaration);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    return await DisclosureDB.saveDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body);
+  }));
 
   /**
     User can only edit declarations on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/declarations/:declarationId', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.declarationId, req.body)
-      .then(() => {
-        res.sendStatus(ACCEPTED);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.put('/api/coi/disclosures/:id/declarations/:declarationId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    await DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.declarationId, req.body);
+    res.sendStatus(ACCEPTED);
+  }));
 
   /**
     User can only answer questions on disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.saveNewQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body)
-      .then(answer => {
-        res.send(answer);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.post('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), wrapAsync(async req => {
+    return await DisclosureDB.saveNewQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body);
+  }));
 
   /**
     User can only answer questions on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/question-answers/:questionId', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.questionId, req.body)
-      .then(answer => {
-        res.send(answer);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.put('/api/coi/disclosures/:id/question-answers/:questionId', allowedRoles('ANY'), wrapAsync(async req => {
+    return await DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.questionId, req.body);
+  }));
 
   /**
     User can only submit disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id)
-      .then(() => {
-        res.sendStatus(ACCEPTED);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    await DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id);
+    res.sendStatus(ACCEPTED);
+  }));
 
-  app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), (req, res, next) => {
-    DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id)
-      .then(() => {
-        res.sendStatus(ACCEPTED);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id);
+    res.sendStatus(ACCEPTED);
+  }));
 
-  app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), (req, res, next) => {
-    DisclosureDB.reject(req.dbInfo, req.userInfo, req.params.id)
-      .then(() => {
-        res.sendStatus(ACCEPTED);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    await DisclosureDB.reject(req.dbInfo, req.userInfo, req.params.id);
+    res.sendStatus(ACCEPTED);
+  }));
 
   /**
     Admin can add any, Reviewer can only add ones where they are a reviewer
@@ -358,21 +263,14 @@ export const init = app => {
   /**
     User can only retrieve items if this disclosure is theirs
   */
-  app.get('/api/coi/disclosures/:id/pi-review-items', allowedRoles('ANY'), (req, res, next) => {
-    PIReviewDB.getPIReviewItems(req.dbInfo, req.userInfo, req.params.id)
-      .then(result => {
-        res.send(result);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.get('/api/coi/disclosures/:id/pi-review-items', allowedRoles('ANY'), wrapAsync(async req => {
+    return await PIReviewDB.getPIReviewItems(req.dbInfo, req.userInfo, req.params.id);
+  }));
 
   /**
     Can only delete answers if this disclosure is theirs
   */
-  app.delete('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), (req, res, next) => {
+  app.delete('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     const toDelete = [];
     const proposedDeletions = req.body.toDelete !== undefined ? req.body.toDelete : [];
 
@@ -385,46 +283,26 @@ export const init = app => {
     }
 
     if (toDelete.length > 0) {
-      DisclosureDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.id, toDelete)
-        .then(() => {
-          res.status(NO_CONTENT).end();
-        })
-        .catch(err => {
-          Log.error(err);
-          next(err);
-        });
+      await DisclosureDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.id, toDelete);
+      res.status(NO_CONTENT).end();
     }
     else {
       res.status(BAD_REQUEST).end();
     }
-  });
+  }));
 
   /**
     Can only retrieve state of their disclosure
   */
-  app.get('/api/coi/disclosures/:id/state', allowedRoles('ANY'), (req, res, next) => {
-    DisclosureDB.getCurrentState(req.dbInfo, req.userInfo, req.params.id)
-      .then(result => {
-        res.send(result);
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+  app.get('/api/coi/disclosures/:id/state', allowedRoles('ANY'), wrapAsync(async req => {
+    return await DisclosureDB.getCurrentState(req.dbInfo, req.userInfo, req.params.id);
+  }));
 
   /**
     Can only save the state of their disclosure
   */
-  app.post('/api/coi/disclosures/:id/state', allowedRoles('ANY'), (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/state', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     res.status(ACCEPTED).end();
-
-    DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body)
-      .then(() => {
-      })
-      .catch(err => {
-        Log.error(err);
-        next(err);
-      });
-  });
+    await DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body);
+  }));
 };

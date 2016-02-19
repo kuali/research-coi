@@ -17,7 +17,7 @@
 */
 
 import os from 'os';
-// import v8 from 'v8';
+import v8 from 'v8';
 
 const MEGABYTE = 1048576;
 
@@ -27,10 +27,10 @@ export default function healthReport(req, res) {
       return res.status(204).end();
     }
 
-    // const heapStats = v8.getHeapStatistics();
-    // for (const stat in heapStats) {
-    //   heapStats[stat] = Math.round(heapStats[stat] / MEGABYTE);
-    // }
+    const heapStats = v8.getHeapStatistics();
+    for (const stat in heapStats) {
+      heapStats[stat] = Math.round(heapStats[stat] / MEGABYTE);
+    }
 
     const processMemory = process.memoryUsage();
     for (const stat in processMemory) {
@@ -55,11 +55,11 @@ export default function healthReport(req, res) {
           metric: 'MB',
           value: processMemory
         },
-        // {
-        //   measurement: 'Heap Statistics',
-        //   metric: 'MB',
-        //   value: heapStats
-        // },
+        {
+          measurement: 'Heap Statistics',
+          metric: 'MB',
+          value: heapStats
+        },
         {
           measurement: 'Load Average',
           metric: '1, 5, and 15 minute values',
