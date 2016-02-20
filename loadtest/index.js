@@ -24,5 +24,4 @@
         * All load tests are run against localhost
 */
 
-require('babel-register');
 require('./driver')();
