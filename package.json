@@ -1,9 +1,11 @@
 {
-  "name": "kc-coi",
+  "name": "research-coi",
   "version": "1.0.0",
   "description": "KualiCo Research Conflict of Interest",
   "main": "server/app.js",
   "scripts": {
+    "build": "npm run build_babel",
+    "build_babel": "babel . --ignore \"**/node_modules\" -d .",
     "test": "npm run lint && npm run test_unit",
     "test_unit": "BABEL_ENV=test NODE_ENV=test mocha",
     "start": "node server/bootstrap.js",
@@ -16,14 +18,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kualico/kc-coi"
+    "url": "https://github.com/kuali/research-coi"
   },
   "author": "Kuali",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/kualico/kc-coi/issues"
+    "url": "https://github.com/kuali/research-coi/issues"
   },
-  "homepage": "https://github.com/kualico/kc-coi",
+  "engines": {
+    "node": ">=4.2.6"
+  },
+  "homepage": "https://github.com/kuali/research-coi",
   "dependencies": {
     "alt": "0.18.2",
     "archiver": "0.21.0",
