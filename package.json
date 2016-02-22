@@ -1,12 +1,15 @@
 {
-  "name": "kc-coi",
+  "name": "research-coi",
   "version": "1.0.0",
   "description": "KualiCo Research Conflict of Interest",
   "main": "server/app.js",
   "scripts": {
+    "build": "npm run build_babel",
+    "build_babel": "babel . --ignore \"./client/,./node_modules,./loadtest,./webpack.config.js,./test\" -d .",
     "test": "npm run lint && npm run test_unit",
     "test_unit": "BABEL_ENV=test NODE_ENV=test mocha",
-    "start": "node server/bootstrap.js",
+    "start": "babel-node server/bootstrap.js",
+    "start_prod": "node server/bootstrap.js",
     "lint": "npm run eslint && npm run stylelint",
     "eslint": "eslint client db server test loadtest",
     "stylelint": "stylelint client/**/**/*.css",
@@ -16,22 +19,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kualico/kc-coi"
+    "url": "https://github.com/kuali/research-coi"
   },
   "author": "Kuali",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/kualico/kc-coi/issues"
+    "url": "https://github.com/kuali/research-coi/issues"
   },
-  "homepage": "https://github.com/kualico/kc-coi",
+  "engines": {
+    "node": ">=4.2.6"
+  },
+  "homepage": "https://github.com/kuali/research-coi",
   "dependencies": {
     "alt": "0.18.2",
     "archiver": "0.21.0",
-    "babel-core": "6.3.26",
-    "babel-polyfill": "6.3.14",
-    "babel-preset-es2015": "6.3.13",
-    "babel-preset-react": "6.3.13",
-    "babel-preset-stage-1": "6.3.13",
+    "babel-core": "6.5.1",
+    "babel-polyfill": "6.5.0",
+    "babel-preset-es2015": "6.5.0",
+    "babel-preset-react": "6.5.0",
+    "babel-preset-stage-1": "6.5.0",
     "babel-register": "6.3.13",
     "body-parser": "1.14.2",
     "classnames": "2.2.1",
@@ -61,6 +67,7 @@
   },
   "devDependencies": {
     "autoprefixer": "6.1.2",
+    "babel-cli": "6.5.1",
     "babel-eslint": "5.0.0-beta10",
     "babel-loader": "6.2.0",
     "babel-plugin-rewire": "1.0.0-beta-5",

@@ -18,7 +18,6 @@
 
 /* eslint-disable no-var, prefer-arrow-callback, prefer-template, no-console */
 
-require('babel-register');
 require('babel-polyfill');
 var app = require('./app');
 var Log = require('./log').default;
