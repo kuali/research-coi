@@ -25,7 +25,7 @@ export default class About extends React.Component {
       <div className={styles.content}>
         <h1 className={styles.heading}>Acknowledgements</h1>
         <p className={styles.paragraph}>
-          Copyright 2005-2015 Kuali, Inc. All rights reserved. Kuali Research is licensed for use
+          Copyright 2005-2016 Kuali, Inc. All rights reserved. Kuali Research is licensed for use
           pursuant to the Affero General Public License, version 3. Portions of this software are
           copyrighted by other parties, including the parties listed below. Questions about licensing
           should be directed to legal@kuali.co.
