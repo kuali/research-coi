@@ -39,9 +39,6 @@ export default alt.generateActions(
   'deleteNotification',
   'relationshipPeopleChanged',
   'relationshipPeopleEnabled',
-  'setCertificationText',
-  'setCertificationRequired',
-  'toggleInstructionsExpanded',
   'loadConfig',
   'saveAll',
   'undoAll',
@@ -72,13 +69,10 @@ export default alt.generateActions(
   'destinationEnabledChanged',
   'dateEnabledChanged',
   'reasonEnabledChanged',
-  'setInstructions',
-  'toggleProjectTypeRequired',
-  'toggleProjectRoleRequired',
-  'toggleProjectStatusRequired',
-  'toggleSelectingProjectTypes',
   'configureProjectType',
   'configureProjectTypeState',
   'updateRoles',
-  'updateStatuses'
+  'updateStatuses',
+  'toggle',
+  'set'
 );

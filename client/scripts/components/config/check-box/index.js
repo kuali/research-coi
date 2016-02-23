@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import ConfigAction from '../../../actions/config-actions';
 
 export default class CheckBox extends React.Component {
   constructor() {
@@ -27,10 +28,7 @@ export default class CheckBox extends React.Component {
   }
 
   toggle() {
-    this.props.toggle({
-      sourceCd: this.props.sourceCd,
-      projectTypeCd: this.props.projectTypeCd
-    });
+    ConfigAction.toggle(this.props.path);
   }
 
   render() {
@@ -38,17 +36,19 @@ export default class CheckBox extends React.Component {
       <div className={styles.container}>
         <span style={{height: '100%', verticalAlign: 'top'}}>
           <input
-            id={`${this.props.description}_${this.props.type}`}
+            id={this.props.path}
             type="checkbox"
-            checked={this.props.reqDisclosure === 1}
+            className={this.props.className}
+            checked={this.props.checked}
             onChange={this.toggle}
           />
         </span>
         <span style={{height: '100%', whiteSpace: 'normal', minWidth: '233px'}}>
           <label
-            htmlFor={`${this.props.description}_${this.props.type}`}
+            htmlFor={this.props.path}
+            className={this.props.labelClassName}
           >
-            {this.props.description}
+            {this.props.label}
           </label>
         </span>
       </div>

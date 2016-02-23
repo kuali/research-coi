@@ -23,10 +23,11 @@ import Sidebar from '../../sidebar';
 import Panel from '../../panel';
 import ActionPanel from '../../action-panel';
 import InstructionEditor from '../../instruction-editor';
-import ConfigActions from '../../../../actions/config-actions';
 import ConfigStore from '../../../../stores/config-store';
 import {COIConstants} from '../../../../../../coi-constants';
 import {AppHeader} from '../../../app-header';
+import Textarea from '../../textarea';
+import CheckBox from '../../check-box';
 
 export default class Certification extends React.Component {
   constructor() {
@@ -35,8 +36,6 @@ export default class Certification extends React.Component {
     this.state = {};
 
     this.onChange = this.onChange.bind(this);
-    this.textChanged = this.textChanged.bind(this);
-    this.requiredChanged = this.requiredChanged.bind(this);
   }
 
   componentDidMount() {
@@ -57,27 +56,23 @@ export default class Certification extends React.Component {
     });
   }
 
-  textChanged() {
-    const textarea = this.refs.textarea;
-    ConfigActions.setCertificationText(textarea.value);
-  }
-
-  requiredChanged() {
-    const checkbox = this.refs.checkbox;
-    ConfigActions.setCertificationRequired(checkbox.checked);
-  }
-
   render() {
     let details;
     if (this.state.certificationOptions) {
       details = (
         <div>
-          <label htmlFor="certText" className={styles.textLabel}>CERTIFICATION TEXT</label>
-          <textarea id="certText" ref="textarea" className={styles.textarea} value={this.state.certificationOptions.text} onChange={this.textChanged} />
-          <div>
-            <input type="checkbox" ref="checkbox" id="requiredagreement" checked={this.state.certificationOptions.required} onChange={this.requiredChanged} />
-            <label className={styles.requireLabel} htmlFor="requiredagreement">Require checkbox agreement</label>
-          </div>
+          <Textarea
+            path='config.general.certificationOptions.text'
+            label="CERTIFICATION TEXT"
+            value={this.state.certificationOptions.text}
+            className={styles.textarea}
+          />
+          <CheckBox
+            path="config.general.certificationOptions.required"
+            label="Require checkbox agreement"
+            labelClassName={styles.requireLabel}
+            checked={this.state.certificationOptions.required}
+          />
         </div>
       );
     }

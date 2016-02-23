@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigActions from '../../../actions/config-actions';
+import Textarea from '../textarea';
 
 export default class InstructionEditor extends React.Component {
   constructor(props) {
@@ -30,18 +30,12 @@ export default class InstructionEditor extends React.Component {
     };
 
     this.toggle = this.toggle.bind(this);
-    this.textChanged = this.textChanged.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
       open: nextProps.value && nextProps.value.length > 0
     });
-  }
-
-  textChanged() {
-    const textarea = this.refs.textarea;
-    ConfigActions.setInstructions(this.props.step, textarea.value);
   }
 
   toggle() {
@@ -68,18 +62,13 @@ export default class InstructionEditor extends React.Component {
         </div>
         <div style={{overflow: 'hidden'}}>
           <div className={styles.bottom}>
-            <label htmlFor="instructionText" className={styles.label}>INSTRUCTION TEXT</label>
-            <div>
-              <textarea
-                id="instructionText"
-                className={styles.textarea}
-                placeholder="Type instructions here"
-                onChange={this.textChanged}
-                ref="textarea"
-                value={this.props.value}
-              >
-              </textarea>
-            </div>
+            <Textarea
+              label='INSTRUCTION TEXT'
+              labelClassName={styles.label}
+              path={`config.general.instructions[${this.props.step}]`}
+              className={styles.textarea}
+              value={this.props.value}
+            />
           </div>
         </div>
       </div>

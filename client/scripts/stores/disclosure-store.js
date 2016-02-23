@@ -144,6 +144,18 @@ export function entityRelationshipStepErrors(potentialRelationship, matrixTypes)
   return errors;
 }
 
+export function canSkipEntities(disclosure, skipFinancialEntities) {
+  const noActiveFinancialEnities = disclosure.entities
+    .filter(entity => entity.active === 1)
+    .length === 0;
+
+  const allYesNoQuestionsAreNo = disclosure.answers.filter(answer => {
+    return answer.question.question.type = COIConstants.QUESTION_TYPE.YESNO && answer.answer.value === 'Yes';
+  }).length === 0;
+
+  return noActiveFinancialEnities && allYesNoQuestionsAreNo && skipFinancialEntities;
+}
+
 class _DisclosureStore {
   constructor() {
     this.bindActions(DisclosureActions);
@@ -584,6 +596,10 @@ class _DisclosureStore {
   nextStep() {
     switch (this.applicationState.currentDisclosureState.step) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
+        if (canSkipEntities(this.applicationState.currentDisclosureState.disclosure, window.config.general.skipFinancialEntities)) {
+          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
+          break;
+        }
         this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
         this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.ENTITIES] = true;
         break;

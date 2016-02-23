@@ -24,7 +24,7 @@ import {AppHeader} from '../../../../../../client/scripts/components/app-header'
 import Sidebar from '../../../../../../client/scripts/components/config/sidebar';
 import Panel from '../../../../../../client/scripts/components/config/panel';
 import DisclosureTypes from '../../../../../../client/scripts/components/config/general/disclosure-types';
-import AutoApproveDisclosure from '../../../../../../client/scripts/components/config/general/auto-approve-disclosure';
+import Checkbox from '../../../../../../client/scripts/components/config/check-box';
 import ActionPanel from '../../../../../../client/scripts/components/config/action-panel';
 import assert from 'assert';
 
@@ -37,7 +37,7 @@ describe('General', () => {
     assert(ShallowTestUtils.findWithType(component,Sidebar));
     assert(ShallowTestUtils.findWithType(component,DisclosureTypes));
     assert.equal(ShallowTestUtils.findAllWithType(component,Panel).length,3);
-    assert(ShallowTestUtils.findWithType(component,AutoApproveDisclosure));
+    assert.equal(ShallowTestUtils.findAllWithType(component,Checkbox).length,3);
     assert(ShallowTestUtils.findWithType(component,ActionPanel));
     const title = ShallowTestUtils.findWithClass(component,
       '_client_scripts_components_config_general_general_style__stepTitle');

@@ -25,11 +25,12 @@ import ActionPanel from '../../action-panel';
 import ConfigStore from '../../../../stores/config-store';
 import ConfigActions from '../../../../actions/config-actions';
 import {AppHeader} from '../../../app-header';
-import CheckBox from '../check-box';
+import CheckBox from '../../check-box';
 import ActiveProjectType from '../active-project-type';
 import InactiveProjectType from '../inactive-project-type';
 import {BlueButton} from '../../../blue-button';
 import ConfiguringPanel from '../configuring-panel';
+
 export default class DisclosureRequirements extends React.Component {
   constructor() {
     super();
@@ -38,6 +39,7 @@ export default class DisclosureRequirements extends React.Component {
       applicationState: {}
     };
     this.onChange = this.onChange.bind(this);
+    this.toggleSelectingProjectTypes = this.toggleSelectingProjectTypes.bind(this);
   }
 
   componentDidMount() {
@@ -59,6 +61,10 @@ export default class DisclosureRequirements extends React.Component {
     });
   }
 
+  toggleSelectingProjectTypes() {
+    ConfigActions.toggle('applicationState.selectingProjectTypes');
+  }
+
   render() {
     let projectTypesPanel;
     if (this.state.config && this.state.config.projectTypes && !this.state.applicationState.configuringProjectType) {
@@ -67,14 +73,13 @@ export default class DisclosureRequirements extends React.Component {
       });
 
       if (this.state.selectingProjectType) {
-        const projectTypes = this.state.config.projectTypes.map(projectType => {
+        const projectTypes = this.state.config.projectTypes.map((projectType, index) => {
           return (
             <CheckBox
-              {...projectType}
-              type="projectType"
-              projectTypeCd={projectType.typeCd}
+              path={`config.projectTypes[${index}].reqDisclosure`}
+              checked={projectType.reqDisclosure === 1}
+              label={projectType.description}
               key={projectType.typeCd}
-              toggle={ConfigActions.toggleProjectTypeRequired}
             />
           );
         });
@@ -83,7 +88,7 @@ export default class DisclosureRequirements extends React.Component {
 
         if (projectsRequiringDisclosure.length > 0) {
           doneButton = (
-            <BlueButton onClick={ConfigActions.toggleSelectingProjectTypes}>DONE</BlueButton>
+            <BlueButton onClick={this.toggleSelectingProjectTypes}>DONE</BlueButton>
           );
         }
         projectTypesPanel = (
@@ -128,7 +133,7 @@ export default class DisclosureRequirements extends React.Component {
           <div>
             <div className={styles.title}>
               The project types below require the completion of a COI disclosure.<br/>
-              <a className={styles.link} onClick={ConfigActions.toggleSelectingProjectTypes}>Click here to edit these project types</a>
+              <a className={styles.link} onClick={this.toggleSelectingProjectTypes}>Click here to edit these project types</a>
             </div>
             <div>
               <div style={{marginBottom: '50px'}}>
