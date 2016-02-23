@@ -20,6 +20,22 @@ import ConfigActions from '../actions/config-actions';
 import alt from '../alt';
 import {COIConstants} from '../../../coi-constants';
 import {processResponse, createRequest} from '../http-utils';
+import _ from 'lodash';
+
+function convertToggleValue(value) {
+  if (value === undefined) {
+    return true;
+  }
+  if (typeof value === 'boolean') {
+    return !value;
+  }
+
+  if (typeof value === 'number' && (value === 0 || value === 1)) {
+    return value === 0 ? 1 : 0;
+  }
+
+  throw new Error('unknown toggle value');
+}
 
 class _ConfigStore {
   constructor() {
@@ -545,23 +561,13 @@ class _ConfigStore {
     this.dirty = true;
   }
 
-  setCertificationText(newText) {
-    this.config.general.certificationOptions.text = newText;
+  set(data) {
+    _.set(this, data.path, data.value);
     this.dirty = true;
   }
 
-  setCertificationRequired(newValue) {
-    this.config.general.certificationOptions.required = newValue;
-    this.dirty = true;
-  }
-
-  setInstructions([step, newValue]) {
-    this.config.general.instructions[step] = newValue;
-    this.dirty = true;
-  }
-
-  toggleInstructionsExpanded() {
-    this.config.general.instructionsExpanded = !this.config.general.instructionsExpanded;
+  toggle(path) {
+    _.set(this, path, convertToggleValue(_.result(this, path)));
     this.dirty = true;
   }
 
@@ -653,7 +659,6 @@ class _ConfigStore {
 
   saveAll() {
     this.clearTemporaryIds();
-
     createRequest().post('/api/coi/config')
     .send(this.config)
     .type('application/json')
@@ -798,43 +803,6 @@ class _ConfigStore {
       return theQuestion.question.numberToShow;
     }
     return undefined;
-  }
-
-  toggleAutoApprove() {
-    if (this.config.general.autoApprove === undefined) {
-      this.config.general.autoApprove = true;
-    } else {
-      this.config.general.autoApprove = !this.config.general.autoApprove;
-    }
-    this.dirty = true;
-  }
-
-  toggleProjectTypeRequired(data) {
-    const projectType = this.config.projectTypes.find(type => {
-      return type.typeCd == data.projectTypeCd; // eslint-disable-line eqeqeq
-    });
-    projectType.reqDisclosure = projectType.reqDisclosure === 0 ? 1 : 0;
-    this.dirty = true;
-  }
-
-  toggleProjectRoleRequired(data) {
-    const projectRole = this.config.projectRoles.find(role => {
-      return role.sourceRoleCd == data.sourceCd && role.projectTypeCd == data.projectTypeCd; // eslint-disable-line eqeqeq
-    });
-    projectRole.reqDisclosure = projectRole.reqDisclosure === 0 ? 1 : 0;
-    this.dirty = true;
-  }
-
-  toggleProjectStatusRequired(data) {
-    const projectStatus = this.config.projectStatuses.find(status => {
-      return status.sourceStatusCd == data.sourceCd && status.projectTypeCd == data.projectTypeCd; // eslint-disable-line eqeqeq
-    });
-    projectStatus.reqDisclosure = projectStatus.reqDisclosure === 0 ? 1 : 0;
-    this.dirty = true;
-  }
-
-  toggleSelectingProjectTypes() {
-    this.applicationState.selectingProjectTypes = !this.applicationState.selectingProjectTypes;
   }
 
   updateRoles(data) {

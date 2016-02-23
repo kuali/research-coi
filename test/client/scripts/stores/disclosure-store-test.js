@@ -19,9 +19,18 @@
 import assert from 'assert';
 import {
   unSubmittedRelationshipStarted,
-  entityRelationshipStepErrors
+  entityRelationshipStepErrors,
+  canSkipEntities
 } from '../../../../client/scripts/stores/disclosure-store';
+import _ from 'lodash';
 
+function createDisclosure(active, answer, questionType) {
+  const disclosure = {};
+  _.set(disclosure,'entities[0].active',active);
+  _.set(disclosure,'answers[0].answer.value', answer);
+  _.set(disclosure,'answers[0].question.question.type', questionType);
+  return disclosure;
+}
 
 describe('DisclosureStore', () => {
   describe('unsubmittedRelationshipStarted', () => {
@@ -211,4 +220,32 @@ describe('DisclosureStore', () => {
       assert.equal(errors.travelReason, undefined);
     });
   });
+
+  describe('canSkipEntities', () => {
+    it('should return false if skipFinancialEntities is false', () => {
+      const value = canSkipEntities(createDisclosure(0,'No','Yes/No'), false);
+      assert.equal(false, value);
+    });
+
+    it('should return false if an active financial entity exists', () => {
+      const value = canSkipEntities(createDisclosure(1,'No','Yes/No'), true);
+      assert.equal(false, value);
+    });
+
+    it('should return false if a yes/no question is answered yes', () => {
+      const value = canSkipEntities(createDisclosure(0,'Yes','Yes/No'), true);
+      assert.equal(false, value);
+    });
+
+    it('should return true if yes/no questions are no and no active entities exists', () => {
+      const value = canSkipEntities(createDisclosure(0,'No','Yes/No'), true);
+      assert.equal(true, value);
+    });
+
+    it('should return true if no yes/no questions are provided', () => {
+      const value = canSkipEntities(createDisclosure(0,'Dragon Cat','Text'), true);
+      assert.equal(true, value);
+    });
+  });
+
 });

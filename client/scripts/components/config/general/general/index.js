@@ -25,15 +25,18 @@ import ActionPanel from '../../action-panel';
 import DisclosureTypes from '../disclosure-types';
 import ConfigStore from '../../../../stores/config-store';
 import {AppHeader} from '../../../app-header';
-import AutoApproveDisclosure from '../auto-approve-disclosure';
+import CheckBox from '../../check-box';
 import NotificationDetails from '../notification-details';
-import ExpandInstructionsToggle from '../expand-instructions-toggle';
 
 export default class General extends React.Component {
   constructor() {
     super();
-
-    this.state = {};
+    const storeState = ConfigStore.getState();
+    this.state = {
+      applicationState: storeState.applicationState,
+      config: storeState.config,
+      dirty: storeState.dirty
+    };
     this.onChange = this.onChange.bind(this);
   }
 
@@ -50,13 +53,7 @@ export default class General extends React.Component {
     const storeState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
-      disclosureTypes: storeState.config.disclosureTypes,
-      dueDate: storeState.config.general.dueDate,
-      isRollingDueDate: storeState.config.general.isRollingDueDate,
-      notifications: storeState.config.notifications,
-      sponsorLookup: storeState.config.general.sponsorLookup,
-      autoApprove: storeState.config.general.autoApprove,
-      instructionsExpanded: storeState.config.general.instructionsExpanded,
+      config: storeState.config,
       dirty: storeState.dirty
     });
   }
@@ -78,23 +75,39 @@ export default class General extends React.Component {
                   style={{overflow: 'visible'}}
                 >
                   <DisclosureTypes
-                    types={this.state.disclosureTypes}
+                    types={this.state.config.disclosureTypes}
                     appState={this.state.applicationState}
                   />
                 </Panel>
 
                 <Panel title="Expiration Notifications">
                   <NotificationDetails
-                    dueDate={this.state.dueDate}
-                    isRollingDueDate={this.state.isRollingDueDate}
-                    notifications={this.state.notifications}
+                    dueDate={this.state.config.general.dueDate}
+                    isRollingDueDate={this.state.config.general.isRollingDueDate}
+                    notifications={this.state.config.notifications}
                     appState={this.state.applicationState}
                   />
                 </Panel>
 
                 <Panel title="General Configuration Options">
-                  <ExpandInstructionsToggle checked={this.state.instructionsExpanded} />
-                  <AutoApproveDisclosure checked={this.state.autoApprove} />
+                  <CheckBox
+                    path='config.general.instructionsExpanded'
+                    label='Expand instructions by default'
+                    labelClassName={styles.label}
+                    checked={this.state.config.general.instructionsExpanded}
+                  />
+                  <CheckBox
+                    path='config.general.autoApprove'
+                    label='Automatically approve annual disclosures that do not have any Financial Entities'
+                    labelClassName={styles.label}
+                    checked={this.state.config.general.autoApprove === undefined ? false : this.state.config.general.autoApprove}
+                  />
+                  <CheckBox
+                    path='config.general.skipFinancialEntities'
+                    label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the cerfication step.'
+                    labelClassName={styles.label}
+                    checked={this.state.config.general.skipFinancialEntities === undefined ? false : this.state.config.general.skipFinancialEntities}
+                  />
                 </Panel>
               </span>
               <ActionPanel visible={this.state.dirty} />

@@ -19,7 +19,7 @@
 import styles from './style';
 import React from 'react';
 import ConfigActions from '../../../../actions/config-actions';
-import CheckBox from '../check-box';
+import CheckBox from '../../check-box';
 import Panel from '../../panel';
 
 export default class ConfiguringPanel extends React.Component {
@@ -34,32 +34,40 @@ export default class ConfiguringPanel extends React.Component {
   }
 
   render() {
-    const projectRoles = this.props.roles.filter(role => {
+    const projectRoles = this.props.roles.map((role,index) => {
+      const tmpRole = JSON.parse(JSON.stringify(role));
+      tmpRole.index = index;
+      return tmpRole;
+    })
+    .filter(role => {
       return role.projectTypeCd == this.props.projectType.typeCd; // eslint-disable-line eqeqeq
     })
     .map((role, index) => {
       return (
         <CheckBox
-          {...role}
-          type="projectRole"
-          sourceCd={role.sourceRoleCd}
+          path={`config.projectRoles[${role.index}].reqDisclosure`}
+          checked={role.reqDisclosure === 1}
+          label={role.description}
           key={index}
-          toggle={ConfigActions.toggleProjectRoleRequired}
         />
       );
     });
 
-    const projectStatuses = this.props.statuses.filter(status => {
+    const projectStatuses = this.props.statuses.map((status,index) => {
+      const tmpStatus = JSON.parse(JSON.stringify(status));
+      tmpStatus.index = index;
+      return tmpStatus;
+    })
+    .filter(status => {
       return status.projectTypeCd == this.props.projectType.typeCd; // eslint-disable-line eqeqeq
     })
     .map((status, index) => {
       return (
         <CheckBox
-          {...status}
-          type="projectStatus"
-          sourceCd={status.sourceStatusCd}
+          path={`config.projectStatuses[${status.index}].reqDisclosure`}
+          checked={status.reqDisclosure === 1}
+          label={status.description}
           key={index}
-          toggle={ConfigActions.toggleProjectStatusRequired}
         />
       );
     });

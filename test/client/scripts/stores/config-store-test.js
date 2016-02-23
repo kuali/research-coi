@@ -43,161 +43,152 @@ describe('ConfigStore', () => {
     });
   });
 
-  describe('toggleAutoApprove', () => {
-    const testToggleAutoApprove = (intial, expected) => {
+  describe('toggle', () => {
+    it('should toggle boolean value', () => {
       setState({
         key: 'config',
         value: {
           general: {
-            autoApprove: intial
+            autoApprove: true
           }
         }
       });
-      let state = ConfigStore.getState();
 
-      assert.equal(state.config.general.autoApprove, intial);
-      assert.equal(state.dirty, false);
       alt.dispatcher.dispatch({
-        action: ConfigActions.TOGGLE_AUTO_APPROVE,
-        data: {}
+        action: ConfigActions.TOGGLE,
+        data: 'config.general.autoApprove'
       });
 
-      state = ConfigStore.getState();
-      assert.equal(state.config.general.autoApprove, expected);
-      assert.equal(state.dirty, true);
-    };
-
-    it('should toggle value of autoApprove to true if undefined', () => {
-      testToggleAutoApprove(undefined, true);
+      const autoApprove = ConfigStore.getState().config.general.autoApprove;
+      assert.equal(false, autoApprove);
     });
 
-    it('should toggle value of autoApprove to true if false', () => {
-      testToggleAutoApprove(false, true);
-    });
-
-    it('should toggle value of autoApprove to false if true', () => {
-      testToggleAutoApprove(true, false);
-    });
-  });
-
-
-  describe('toggleProjectTypeRequired', () => {
-    it('should toggle the value of reqDisclosure for the project type with the typeCd of the value passed in', () => {
+    it('should toggle numeric value', () => {
       setState({
         key: 'config',
         value: {
-          projectTypes: [
-            {
-              typeCd: 1,
-              description: 'test',
-              reqDisclosure: 0
-            }
-          ]
+          general: {
+            autoApprove: 1
+          }
         }
       });
-      let state = ConfigStore.getState();
-      assert.equal(state.config.projectTypes[0].reqDisclosure, 0);
 
       alt.dispatcher.dispatch({
-        action: ConfigActions.TOGGLE_PROJECT_TYPE_REQUIRED,
-        data: {
-          sourceCd: 'test',
-          projectTypeCd: 1
-        }
+        action: ConfigActions.TOGGLE,
+        data: 'config.general.autoApprove'
       });
 
-      state = ConfigStore.getState();
-      assert.equal(state.config.projectTypes[0].reqDisclosure, 1);
-      assert.equal(state.dirty, true);
-
+      const autoApprove = ConfigStore.getState().config.general.autoApprove;
+      assert.equal(0, autoApprove);
     });
-  });
 
-  describe('toggleProjectRoleRequired', () => {
-    it('should toggle the value of reqDisclosure for the project role with the typeCd of the value passed in', () => {
+    it('should toggle values in arrays', () => {
       setState({
         key: 'config',
         value: {
-          projectRoles: [
-            {
-              projectTypeCd: 1,
-              sourceRoleCd: 'test',
-              description: 'test',
-              reqDisclosure: 0
-            }
-          ]
+          general: [{
+            autoApprove: 1
+          }]
         }
       });
-      let state = ConfigStore.getState();
-      assert.equal(state.config.projectRoles[0].reqDisclosure, 0);
 
       alt.dispatcher.dispatch({
-        action: ConfigActions.TOGGLE_PROJECT_ROLE_REQUIRED,
-        data: {
-          sourceCd: 'test',
-          projectTypeCd: 1
-        }
+        action: ConfigActions.TOGGLE,
+        data: 'config.general[0].autoApprove'
       });
 
-      state = ConfigStore.getState();
-      assert.equal(state.config.projectRoles[0].reqDisclosure, 1);
-      assert.equal(state.dirty, true);
-
+      const autoApprove = ConfigStore.getState().config.general[0].autoApprove;
+      assert.equal(0, autoApprove);
     });
-  });
 
-  describe('toggleProjectStatusRequired', () => {
-    it('should toggle the value of reqDisclosure for the project status with the typeCd of the value passed in', () => {
+    it('should toggle values in map', () => {
       setState({
         key: 'config',
         value: {
-          projectStatuses: [
-            {
-              projectTypeCd: 1,
-              sourceStatusCd: 'test',
-              description: 'test',
-              reqDisclosure: 0
-            }
-          ]
+          general: {
+            autoApprove: 1
+          }
         }
       });
-      let state = ConfigStore.getState();
-      assert.equal(state.config.projectStatuses[0].reqDisclosure, 0);
 
       alt.dispatcher.dispatch({
-        action: ConfigActions.TOGGLE_PROJECT_STATUS_REQUIRED,
-        data: {
-          sourceCd: 'test',
-          projectTypeCd: 1
-        }
+        action: ConfigActions.TOGGLE,
+        data: 'config.general[\'autoApprove\']'
       });
 
-      state = ConfigStore.getState();
-      assert.equal(state.config.projectStatuses[0].reqDisclosure, 1);
-      assert.equal(state.dirty, true);
-
+      const autoApprove = ConfigStore.getState().config.general.autoApprove;
+      assert.equal(0, autoApprove);
     });
+
   });
 
-  describe('toggleEditingProjectTypes', () => {
-    it('should toggle the value of editingProjectTypes', () => {
+  describe('set', () => {
+    it('should set values', () => {
       setState({
-        key: 'applicationState',
+        key: 'config',
         value: {
-          selectingProjectTypes: false
+          general: {
+            text: 'Panda Dogs'
+          }
         }
       });
-      let selectingProjectTypes = ConfigStore.getState().applicationState.selectingProjectTypes;
-      assert.equal(selectingProjectTypes, false);
 
       alt.dispatcher.dispatch({
-        action: ConfigActions.TOGGLE_SELECTING_PROJECT_TYPES
+        action: ConfigActions.SET,
+        data: {
+          path: 'config.general.text',
+          value: 'Dragon Cats'
+        }
       });
 
-      selectingProjectTypes = ConfigStore.getState().applicationState.selectingProjectTypes;
-      assert.equal(selectingProjectTypes, true);
-
+      const text = ConfigStore.getState().config.general.text;
+      assert.equal('Dragon Cats', text);
     });
+
+    it('should set values in arrays', () => {
+      setState({
+        key: 'config',
+        value: {
+          general: [{
+            text: 'Panda Dogs'
+          }]
+        }
+      });
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.SET,
+        data: {
+          path: 'config.general[0].text',
+          value: 'Dragon Cats'
+        }
+      });
+
+      const text = ConfigStore.getState().config.general[0].text;
+      assert.equal('Dragon Cats', text);
+    });
+
+    it('should set values as map', () => {
+      setState({
+        key: 'config',
+        value: {
+          general: [{
+            text: 'Panda Dogs'
+          }]
+        }
+      });
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.SET,
+        data: {
+          path: 'config.general[\'text\']',
+          value: 'Dragon Cats'
+        }
+      });
+
+      const text = ConfigStore.getState().config.general.text;
+      assert.equal('Dragon Cats', text);
+    });
+
   });
 
   describe('configureProjectTypeState', () => {
