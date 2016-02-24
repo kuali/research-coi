@@ -21,7 +21,11 @@
 exports.up = function(knex) {
   return knex.schema.table('config', function(table) {
     table.string('user_id', 40);
+  })
+  .table('config', function(table) {
     table.string('user_name', 100);
+  })
+  .table('config', function(table) {
     table.dateTime('updated_date');
   });
 };
