@@ -88,7 +88,7 @@ export class AppHeader extends React.Component {
     return (
       <header className={`${styles.container} ${this.props.className}`}>
         <span style={{margin: '6px 0', display: 'inline-block'}}>
-          <a href="/kc-dev">
+          <a href={this.state.userInfo.researchCoreUrl}>
             <KualiLogo className={`${styles.override} ${styles.logo}`} />
             <span className={styles.product}>
               Kuali

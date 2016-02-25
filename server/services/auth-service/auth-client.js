@@ -18,11 +18,10 @@
 
 import cache from '../../lru-cache';
 import { ROLES } from '../../../coi-constants';
-import {OK} from '../../../http-status-codes';
+import request from 'superagent';
+import LOG from '../../log';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
-const http = useSSL ? require('https') : require('http');
 const REVIEWER_CACHE_KEY = 'reviewers';
-const rejectUnauthorized = process.env.VERIFY_HTTPS_CERTIFICATE !== 'false';
 
 let getAuthorizationInfo;
 try {
@@ -31,47 +30,38 @@ try {
 } catch (e) {
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
-      host: process.env.AUTHZ_HOST || 'uit.kuali.dev',
       adminRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator',
-      reviewerRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Reviewer'
+      reviewerRole: process.env.AUTHZ_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Reviewer',
+      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res'
     };
   };
 }
 
-function isUserInRole(host, role, schoolId, authToken) {
-  return new Promise((resolve) => {
-    const options = {
-      host,
-      path: `/kc-dev/kc-sys-krad/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`,
-      headers: {
-        'Authorization': `Bearer ${authToken}`
-      },
-      rejectUnauthorized
-    };
+async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
+  try {
+    const response = await request.get(`${researchCoreUrl}/kc-sys-krad/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`)
+      .set('Authorization', `Bearer ${authToken}`);
 
-    http.get(options, response => {
-      if (response.statusCode === OK) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
-      response.on('error', () => {
-        resolve(false);
-      });
-    }).on('error', () => {
-      resolve(false);
-    });
-  });
+    if (response.ok) {
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(false);
+  } catch(err) {
+    LOG.error(err);
+    return Promise.resolve(false);
+  }
+
+
 }
 
 async function getUserRoles(dbInfo, schoolId, authToken) {
   const authInfo = getAuthorizationInfo(dbInfo);
-  const isAdmin = await isUserInRole(authInfo.host, authInfo.adminRole, schoolId, authToken);
+  const isAdmin = await isUserInRole(authInfo.researchCoreUrl, authInfo.adminRole, schoolId, authToken);
   if (isAdmin) {
     return ROLES.ADMIN;
   }
 
-  const isReviewer = await isUserInRole(authInfo.host, authInfo.reviewerRole, schoolId, authToken);
+  const isReviewer = await isUserInRole(authInfo.researchCoreUrl, authInfo.reviewerRole, schoolId, authToken);
   if (isReviewer) {
     return ROLES.REVIEWER;
   }
@@ -79,102 +69,62 @@ async function getUserRoles(dbInfo, schoolId, authToken) {
   return ROLES.USER;
 }
 
-export function getUserInfo(dbInfo, hostname, authToken) {
-  return new Promise((resolve, reject) => {
+export async function getUserInfo(dbInfo, hostname, authToken) {
+  try {
     const cachedUserInfo = authToken ? cache.get(authToken) : undefined;
     if (cachedUserInfo) {
-      resolve(cachedUserInfo);
-    } else {
-      const options = {
-        host: hostname,
-        path: '/api/v1/users/current',
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        },
-        rejectUnauthorized
-      };
-
-      http.get(options, response => {
-        if (response.statusCode !== OK) {
-          resolve();
-        } else {
-          let body = '';
-          response.on('data', (chunk) => {
-            body += chunk;
-          });
-          response.on('end', async () => {
-            try {
-              const userInfo = JSON.parse(body);
-              const role = await getUserRoles(dbInfo, userInfo.schoolId, authToken);
-              if (!role) {
-                userInfo.coiRole = ROLES.USER;
-              } else {
-                userInfo.coiRole = role;
-              }
-
-              cache.set(authToken, userInfo);
-              resolve(userInfo);
-            } catch(err) {
-              reject(err);
-            }
-          });
-          response.on('error', (err) => {
-            reject(err);
-          });
-        }
-      }).on('error', err => {
-        reject(err);
-      });
+      return Promise.resolve(cachedUserInfo);
     }
-  });
+    const url = process.env.AUTHN_URL || (useSSL ? 'https://' : 'http://') + hostname;
+    const response = await request.get(`${url}/api/v1/users/current`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+    const userInfo = response.body;
+    const role = await getUserRoles(dbInfo, userInfo.schoolId, authToken);
+
+    if (!role) {
+      userInfo.coiRole = ROLES.USER;
+    } else {
+      userInfo.coiRole = role;
+    }
+    cache.set(authToken, userInfo);
+    return Promise.resolve(userInfo);
+  } catch (err) {
+    return Promise.resolve();
+  }
 }
 
 export function getAuthLink(req) {
-  return `/auth?return_to=${encodeURIComponent(req.originalUrl)}`;
+  const url = process.env.AUTHN_URL || '';
+  return `${url}/auth?return_to=${encodeURIComponent(req.originalUrl)}`;
 }
 
 export async function getReviewers(dbInfo, authToken) {
-  return new Promise((resolve) => {
+  try {
     const cachedReviewers = cache.get(REVIEWER_CACHE_KEY);
     if (cachedReviewers) {
-      return resolve(cachedReviewers);
+      return Promise.resolve(cachedReviewers);
     }
     const authInfo = getAuthorizationInfo(dbInfo);
-    const options = {
-      host: authInfo.host,
-      path: `/kc-dev/kc-sys-krad/v1/roles/${authInfo.reviewerRole}/principals`,
-      headers: {
-        'Authorization': `Bearer ${authToken}`
-      },
-      rejectUnauthorized
-    };
+    const response = await request.get(`${authInfo.researchCoreUrl}/kc-sys-krad/v1/roles/${authInfo.reviewerRole}/principals`)
+      .set('Authorization', `Bearer ${authToken}`);
 
-    http.get(options, response => {
-      let body = '';
-      response.on('data', (chunk) => {
-        body += chunk;
-      });
-      response.on('end', () => {
-        if (response.statusCode === OK) {
-          const results = JSON.parse(body);
-          const reviewers = results.map(result => {
-            return {
-              userId: result.memberId,
-              value: result.fullName,
-              email: result.email
-            };
-          });
-          cache.set(REVIEWER_CACHE_KEY, reviewers);
-          resolve(reviewers);
-        }
-        resolve();
-      });
-      response.on('error', () => {
-        resolve();
-      });
-    }).on('error', () => {
-      resolve();
+    if (!response.ok) {
+      return Promise.resolve();
+    }
+    const reviewers = response.body;
+    const results = reviewers.map(reviewer => {
+      return {
+        userId: reviewer.memberId,
+        value: reviewer.fullName,
+        email: reviewer.email
+      };
     });
-  });
+    cache.set(REVIEWER_CACHE_KEY, results);
+    return Promise.resolve(results);
+  } catch(err) {
+    return Promise.reject(err);
+  }
 }
+
 
