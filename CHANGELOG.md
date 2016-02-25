@@ -1,5 +1,17 @@
 ##coi-1602
 * Fixed bug on the pi-revise screen which prevented adding a new relation to an existing entity while reviewing.
+* Added ability to retrieve all management plan uploads as a zip file from an archived disclosure.
+* Added ability to expand/collapse instructions by step.
+* Added ability to add additional reviewers to disclosures that have been submitted for approval.
+* Added reviewer role that can view and make comments on disclosures submitted for approval where they have been added as an
+  additional reviewer.
+* Added the approval date of annual disclosures in the admin detail view.
+* Added ability to skip to the certification step if all screening questions are answered 'No' and there
+  are no financial entities on an Annual Disclosure.
+* Disclosures that have passed their expiration date are automatically set to an "Expired" status.
+* Added ability to edit comments that have not yet been sent back to the reporter.
+* Added ability to configure which projects, roles, and statuses require disclosure.
+
 
 ##coi-1601
 * Now tracks the user id, user name, and time of change when a config modification is made.  DB MIGRATION REQUIRED!
