@@ -80,8 +80,7 @@ export default class CommentingPanel extends React.Component {
     }
 
     let visibleTo;
-
-    if (reporterBubble || reviewerBubble) {
+    if ((reporterBubble || reviewerBubble) && this.props.userRole !== ROLES.USER) {
       visibleTo = (
         <div>
           <span className={styles.from}>
