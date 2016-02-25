@@ -21,13 +21,26 @@ const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 
+let getAuthorizationInfo;
+try {
+  const extensions = require('research-extensions').default;
+  getAuthorizationInfo = extensions.getAuthorizationInfo;
+} catch (e) {
+  getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
+    return {
+      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res'
+    };
+  };
+}
+
 export const init = app => {
   app.get('/api/coi/userinfo', allowedRoles('ANY'), wrapAsync(async req => {
     return {
       firstName: req.userInfo.firstName,
       lastName: req.userInfo.lastName,
       coiRole: req.userInfo.coiRole,
-      mock: req.userInfo.mock
+      mock: req.userInfo.mock,
+      researchCoreUrl: getAuthorizationInfo(req.dbInfo).researchCoreUrl
     };
   }));
 
