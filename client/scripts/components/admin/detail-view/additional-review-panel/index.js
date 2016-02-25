@@ -23,6 +23,7 @@ import {FileUpload} from '../../../file-upload';
 import AutoSuggest from '../../../auto-suggest';
 import Suggestion from '../reviewer-suggestion';
 import AdditionalReviewer from '../additional-reviewer';
+import { DISCLOSURE_STATUS } from '../../../../../../coi-constants';
 
 import classNames from 'classnames';
 
@@ -52,6 +53,23 @@ export default function AdditionalReviewPanel(props) {
         Search for reviewers above to add here.
       </div>
     );
+  }
+
+  let reviewerSearch;
+  if ([DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL, DISCLOSURE_STATUS.RESUBMITTED].includes(props.statusCd)) {
+    reviewerSearch = (
+      <div>
+        <label style={{fontSize: '12px', paddingBottom: '5px', color: '#777'}}>SEARCH REVIEWERS</label>
+        <AutoSuggest
+          suggestion={Suggestion}
+          endpoint='/api/coi/reviewers'
+          value={props.reviewerSearchValue}
+          onSuggestionSelected={AdminActions.addAdditionalReviewer}
+          className={styles.autoSuggest}
+          inline={false}
+        />
+      </div>
+  );
   }
 
   return (
@@ -84,16 +102,7 @@ export default function AdditionalReviewPanel(props) {
         <div style={{paddingTop: 12, marginBottom: 15}}>
           <span className={styles.subLabel}>ADDITIONAL REVIEWERS</span>
         </div>
-        <label style={{fontSize: '12px', paddingBottom: '5px', color: '#777'}}>SEARCH REVIEWERS</label>
-        <AutoSuggest
-          suggestion={Suggestion}
-          endpoint='/api/coi/reviewers'
-          value={props.reviewerSearchValue}
-          onSuggestionSelected={AdminActions.addAdditionalReviewer}
-          className={styles.autoSuggest}
-          inline={false}
-        />
-
+        {reviewerSearch}
         {additionalReview}
       </div>
 
