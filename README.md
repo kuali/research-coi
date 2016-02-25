@@ -172,11 +172,6 @@ System configuration for COI is done with environment variables. Environment var
 > : If your are sure you want to use the auth service over http set this to false.
 > *Default*:  true
 
->**VERIFY_HTTPS_CERTIFICATE**
-> : Set this to false to disable certificate verification on https call. Allows the use of self-signed certificates for development environments. Should never be used in a production environment.
-> *Default*: true
-
-
 **Step 9**: Run Webpack
 ```
 npm run webpack
@@ -185,7 +180,7 @@ This may take a few minutes. There will likely be some warnings, but there shoul
 
 **Step 10**: Start Up Node
 ```
-DB_NAME=coi node server/bootstrap.js
+DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm start
 ```
 
 **Step 11**: Navigate to hostname:port/coi/
