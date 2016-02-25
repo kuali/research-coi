@@ -33,7 +33,7 @@ function createComment(userRole, piVisible, reviewerVisible) {
 }
 
 describe('CommentingPanel', () => {
-  it('should only render reporter check when user is reviewer', () => {
+  it('should not display any visible to options if viewing as reviewer', () => {
     const wrapper = shallow(
       <CommentingPanel
         role={ROLES.REVIEWER}
@@ -42,10 +42,10 @@ describe('CommentingPanel', () => {
     );
 
     assert.equal(0, wrapper.find('#reviewerCheck').length);
-    assert.equal(1, wrapper.find('#piCheck').length);
+    assert.equal(0, wrapper.find('#piCheck').length);
   });
 
-  it('should only render both checks when user is admin', () => {
+  it('should render visible to check if viewing as admin', () => {
     const wrapper = shallow(
       <CommentingPanel
         role={ROLES.ADMIN}

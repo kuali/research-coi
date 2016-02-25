@@ -64,9 +64,13 @@
 }
 
 .commentText {
-  width: 63%;
+  width: 100%;
   display: inline-block;
   vertical-align: top;
+}
+
+.adminCommentText {
+  width: 63%;
 }
 
 .left {

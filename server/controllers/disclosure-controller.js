@@ -241,10 +241,10 @@ export const init = app => {
   /**
     Admin can add any, Reviewer can only add ones where they are a reviewer
   */
-  app.put('/api/coi/disclosures/:id/comments/:id', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
+  app.put('/api/coi/disclosures/:disclosureId/comments/:id', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
       const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
-      if (!reviewerDisclosures.includes(req.params.id)) {
+      if (!reviewerDisclosures.includes(req.params.disclosureId)) {
         res.sendStatus(FORBIDDEN);
         return;
       }
