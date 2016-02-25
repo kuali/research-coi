@@ -22,6 +22,7 @@ import {OK} from '../../../http-status-codes';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const http = useSSL ? require('https') : require('http');
 const REVIEWER_CACHE_KEY = 'reviewers';
+const rejectUnauthorized = process.env.VERIFY_HTTPS_CERTIFICATE !== 'false';
 
 let getAuthorizationInfo;
 try {
@@ -44,7 +45,8 @@ function isUserInRole(host, role, schoolId, authToken) {
       path: `/kc-dev/kc-sys-krad/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`,
       headers: {
         'Authorization': `Bearer ${authToken}`
-      }
+      },
+      rejectUnauthorized
     };
 
     http.get(options, response => {
@@ -88,7 +90,8 @@ export function getUserInfo(dbInfo, hostname, authToken) {
         path: '/api/v1/users/current',
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        rejectUnauthorized
       };
 
       http.get(options, response => {
@@ -142,7 +145,8 @@ export async function getReviewers(dbInfo, authToken) {
       path: `/kc-dev/kc-sys-krad/v1/roles/${authInfo.reviewerRole}/principals`,
       headers: {
         'Authorization': `Bearer ${authToken}`
-      }
+      },
+      rejectUnauthorized
     };
 
     http.get(options, response => {
