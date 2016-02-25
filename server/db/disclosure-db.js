@@ -412,8 +412,20 @@ export const saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questio
     });
 };
 
-const retrieveComments = (dbInfo, userId, disclosureId) => {
+const retrieveComments = (dbInfo, userInfo, disclosureId) => {
   const knex = getKnex(dbInfo);
+
+  const criteria = {
+    'disclosure_id': disclosureId
+  };
+
+  if (userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+    criteria.reviewer_visible = true;
+  }
+
+  if (userInfo.coiRole === COIConstants.ROLES.USER) {
+    criteria.pi_visible = true;
+  }
 
   return knex('comment')
     .select(
@@ -430,10 +442,10 @@ const retrieveComments = (dbInfo, userId, disclosureId) => {
       'pi_visible as piVisible',
       'reviewer_visible as reviewerVisible'
     )
-    .where('disclosure_id', disclosureId)
+    .where(criteria)
     .then(comments => {
       comments.forEach(comment => {
-        comment.isCurrentUser = comment.userId == userId; // eslint-disable-line eqeqeq
+        comment.isCurrentUser = comment.userId == userInfo.schoolId; // eslint-disable-line eqeqeq
       });
       return comments;
     })
@@ -481,10 +493,10 @@ export const addComment = (dbInfo, userInfo, comment) => {
       user_role: userInfo.coiRole,
       date: new Date(),
       pi_visible: comment.piVisible,
-      reviewer_visible: comment.reviewerVisible
+      reviewer_visible: userInfo.coiRole === COIConstants.ROLES.REVIEWER ? true : comment.reviewerVisible
     }, 'id').then(() => {
       const statements = [
-        retrieveComments(dbInfo, userInfo.schoolId, comment.disclosureId)
+        retrieveComments(dbInfo, userInfo, comment.disclosureId)
       ];
       if (comment.piVisible) {
         statements.push(
@@ -511,7 +523,7 @@ export const updateComment = (dbInfo, userInfo, comment) => {
       id: comment.id
     })
     .then(() => {
-      return retrieveComments(dbInfo, userInfo.schoolId, comment.disclosureId);
+      return retrieveComments(dbInfo, userInfo, comment.disclosureId);
     });
 };
 
@@ -583,7 +595,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
       .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
       .where('d.disclosure_id', disclosureId),
-    retrieveComments(dbInfo, userInfo.schoolId, disclosureId),
+    retrieveComments(dbInfo, userInfo, disclosureId),
     knex.select('id', 'name', 'key', 'file_type')
       .from('file')
       .whereIn('file_type', [COIConstants.FILE_TYPE.DISCLOSURE, COIConstants.FILE_TYPE.ADMIN])

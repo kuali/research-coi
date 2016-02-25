@@ -47,11 +47,10 @@ export default class CommentingPanel extends React.Component {
       this.props.className
     );
 
-    let adminBubble;
     let reviewerBubble;
     let reporterBubble;
 
-    if (Number(this.props.piVisible) === 1 && String(this.props.userRole) !== ROLES.USER) {
+    if (Number(this.props.piVisible) === 1 && [ROLES.ADMIN, ROLES.REVIEWER].includes(String(this.props.role))) {
       reporterBubble = (
         <div id='reporterBubble' className={classNames(styles.blue, styles.bubble)}>
           Reporter
@@ -59,7 +58,7 @@ export default class CommentingPanel extends React.Component {
       );
     }
 
-    if (Number(this.props.reviewerVisible) === 1 && String(this.props.userRole) !== ROLES.USER) {
+    if (Number(this.props.reviewerVisible) === 1 && String(this.props.role) === ROLES.ADMIN) {
       reviewerBubble = (
         <div id='reviewerBubble' className={classNames(styles.blue, styles.bubble)}>
           Reviewer
@@ -67,16 +66,8 @@ export default class CommentingPanel extends React.Component {
       );
     }
 
-    if (String(this.props.userRole) === ROLES.USER || Number(this.props.reviewerVisible) === 0 && Number(this.props.piVisible) === 0) {
-      adminBubble = (
-        <div id='adminBubble' className={classNames(styles.orange, styles.bubble)}>
-          Admin
-        </div>
-      );
-    }
-
     let editButton;
-    if (this.props.editable && !this.props.readOnly) {
+    if (this.props.editable && !this.props.readOnly && this.props.isCurrentUser) {
       editButton = (
         <div className={styles.editSection}>
 
@@ -86,6 +77,21 @@ export default class CommentingPanel extends React.Component {
           </button>
         </div>
       );
+    }
+
+    let visibleTo;
+
+    if (reporterBubble || reviewerBubble) {
+      visibleTo = (
+        <div>
+          <span className={styles.from}>
+                  VISIBLE TO:
+          </span>
+          {reporterBubble}
+          {reviewerBubble}
+        </div>
+      );
+
     }
 
     return (
@@ -101,12 +107,7 @@ export default class CommentingPanel extends React.Component {
             </span>
           </div>
           <div>
-            <span className={styles.from}>
-                TO:
-            </span>
-            {reporterBubble}
-            {reviewerBubble}
-            {adminBubble}
+            {visibleTo}
           </div>
           <div className={styles.text}>
             {this.props.text}

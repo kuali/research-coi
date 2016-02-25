@@ -33,64 +33,76 @@ function createComment(userRole, piVisible, reviewerVisible) {
 }
 
 describe('CommentBubble', () => {
-  it('should render admin bubble if from user', () => {
+  it('should display reporter and reviewer if viewing as admin and is visible to reporter and reviewer', () => {
     const wrapper = shallow(
       <CommentBubble
+        role={ROLES.ADMIN}
         {...createComment(ROLES.USER,1,1)}
       />
     );
 
-    assert.equal(wrapper.find('#adminBubble').length, 1);
-    assert.equal(wrapper.find('#reporterBubble').length, 0);
-    assert.equal(wrapper.find('#reviewerBubble').length, 0);
+    assert.equal(wrapper.find('#reporterBubble').length, 1);
+    assert.equal(wrapper.find('#reviewerBubble').length, 1);
   });
 
-  it('should render admin bubble if piVisible and reviewerVisible are false', () => {
+  it('should not render any bubbles if only visible to admin', () => {
     const wrapper = shallow(
       <CommentBubble
+        role={ROLES.ADMIN}
         {...createComment(ROLES.ADMIN,0,0)}
       />
     );
 
-    assert.equal(wrapper.find('#adminBubble').length, 1);
     assert.equal(wrapper.find('#reporterBubble').length, 0);
     assert.equal(wrapper.find('#reviewerBubble').length, 0);
   });
 
-  it('should render reporter bubble if piVisible is true and reviewerVisible is false', () => {
+  it('should render reporter bubble if visible to reporter and viewing as admin', () => {
     const wrapper = shallow(
       <CommentBubble
+        role={ROLES.ADMIN}
         {...createComment(ROLES.ADMIN,1,0)}
       />
     );
 
-    assert.equal(wrapper.find('#adminBubble').length, 0);
     assert.equal(wrapper.find('#reporterBubble').length, 1);
     assert.equal(wrapper.find('#reviewerBubble').length, 0);
   });
 
-  it('should render reviewer bubble if piVisible is false and reviewerVisible is true', () => {
+  it('should render reviewer bubble if visible to reviewer and viewing as admin', () => {
     const wrapper = shallow(
       <CommentBubble
+        role={ROLES.ADMIN}
         {...createComment(ROLES.ADMIN,0,1)}
       />
     );
 
-    assert.equal(wrapper.find('#adminBubble').length, 0);
     assert.equal(wrapper.find('#reporterBubble').length, 0);
     assert.equal(wrapper.find('#reviewerBubble').length, 1);
   });
 
-  it('should render reviewer and reporter bubble if piVisible is true and reviewerVisible is true', () => {
+  it('should render no render anything if visible to reviewer and viewing as reviewer', () => {
     const wrapper = shallow(
       <CommentBubble
+        role={ROLES.REVIEWER}
+        {...createComment(ROLES.ADMIN,0,1)}
+      />
+    );
+
+    assert.equal(wrapper.find('#reporterBubble').length, 0);
+    assert.equal(wrapper.find('#reviewerBubble').length, 0);
+  });
+
+  it('should render reporter bubble if visible to reporter and viewing as reviewer', () => {
+    const wrapper = shallow(
+      <CommentBubble
+        role={ROLES.REVIEWER}
         {...createComment(ROLES.ADMIN,1,1)}
       />
     );
 
-    assert.equal(wrapper.find('#adminBubble').length, 0);
     assert.equal(wrapper.find('#reporterBubble').length, 1);
-    assert.equal(wrapper.find('#reviewerBubble').length, 1);
+    assert.equal(wrapper.find('#reviewerBubble').length, 0);
   });
 
 });

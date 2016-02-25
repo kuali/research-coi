@@ -44,6 +44,7 @@ export default class CommentingPanel extends React.Component {
         return (
           <CommentBubble
             {...comment}
+            role={this.props.role}
             readOnly={this.props.editingComment}
             key={comment.id}
             className={`${styles.override} ${styles.comment}`}
@@ -52,20 +53,35 @@ export default class CommentingPanel extends React.Component {
       });
     }
 
-    let reviewerCheck;
+    let visibleChecks;
 
     if (this.props.role === ROLES.ADMIN) {
-      reviewerCheck = (
-        <div>
-          <input
-            type="checkbox"
-            id="reviewerCheck"
-            onChange={AdminActions.toggleReviewer}
-            checked={this.props.comment.reviewerVisible === 1}
-            className={styles.checkBox}
-          />
-          <label htmlFor="reviewerCheck" className={styles.checkLabel}>Reviewer</label>
-        </div>
+      visibleChecks = (
+        <span className={styles.left}>
+          <div>
+            <div style={{color:'#737373'}}>VISIBLE TO</div>
+            <div>
+              <input
+                type="checkbox"
+                id="piCheck"
+                onChange={AdminActions.toggleReporter}
+                checked={this.props.comment.piVisible === 1}
+                className={styles.checkBox}
+              />
+              <label htmlFor="piCheck" className={styles.checkLabel}>Reporter</label>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                id="reviewerCheck"
+                onChange={AdminActions.toggleReviewer}
+                checked={this.props.comment.reviewerVisible === 1}
+                className={styles.checkBox}
+              />
+              <label htmlFor="reviewerCheck" className={styles.checkLabel}>Reviewer</label>
+            </div>
+          </div>
+        </span>
       );
     }
 
@@ -98,7 +114,12 @@ export default class CommentingPanel extends React.Component {
 
       const adminWarningClasses = classNames(
         styles.adminWarning,
-        {[styles.showing]: this.props.comment.piVisible === 0 && this.props.comment.reviewerVisible === 0}
+        {[styles.showing]: this.props.comment.piVisible === 0 && this.props.comment.reviewerVisible === 0 && this.props.role === ROLES.ADMIN}
+      );
+
+      const commentClasses = classNames(
+        styles.commentText,
+        {[styles.adminCommentText]: this.props.role === ROLES.ADMIN}
       );
 
       commentForm = (
@@ -107,23 +128,8 @@ export default class CommentingPanel extends React.Component {
             If no recipients are selected, only admins can see this comment.
           </div>
           <div className={styles.controls}>
-
-            <span className={styles.left}>
-              <div style={{color:'#737373'}}>RECIPIENT</div>
-              <div>
-                <input
-                  type="checkbox"
-                  id="piCheck"
-                  onChange={AdminActions.toggleReporter}
-                  checked={this.props.comment.piVisible === 1}
-                  className={styles.checkBox}
-                />
-                <label htmlFor="piCheck" className={styles.checkLabel}>Reporter</label>
-              </div>
-
-              {reviewerCheck}
-            </span>
-            <span className={styles.commentText}>
+            {visibleChecks}
+            <span className={commentClasses}>
               <div style={{color:'#737373'}}>COMMENT</div>
               <div style={{marginTop: '5px'}}>
                 <textarea
