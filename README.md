@@ -137,6 +137,10 @@ System configuration for COI is done with environment variables. Environment var
 >**TRUST_PROXY**
 >: The value to pass to app.set('trust_proxy', <YOUR STRING HERE>)
 >*Default*:  None
+>
+>**RESEARCH_CORE_URL**
+>: The absolute path to the research core application. Used when linking to or calling services from research core.
+>  *Default*: https://uit.kuali.dev/res
 
 -------
 
@@ -152,6 +156,10 @@ System configuration for COI is done with environment variables. Environment var
 >: Flag as true if you have an auth service instance you can work with, if not present or false app will use a mock auth service.
 >*Default*: false
 >
+>**AUTH_URL**
+>: The the absolute path to the authentication service
+>*Default*: false
+>
 >**CACHE_MAX**
 >: The maximum number of items in the cache. Used by the auth service.
 >*Default*: 500
@@ -160,14 +168,14 @@ System configuration for COI is done with environment variables. Environment var
 >: The maximum age in milliseconds for an item to be valid in the cache. Used by the auth service.
 >*Default*: 60000
 >
->**AUTHZ_HOST**
->  : The host name for the authorization service end points.  This should be the host name of your KC monolith application.
->  *Default*: uit.kuali.co
-
->**AUTHZ_ADMIN_ROLE**
-> : The role name space and name separated by a colon.
+>**COI_ADMIN_ROLE**
+>: The research core coi admin role name space and name separated by a colon.
 > *Default*:  KC-COIDISCLOSURE:COI%20Administrator
-
+>
+>**COI_REVIEWER_ROLE**
+>: The research core coi reviewer role name space and name separated by a colon.
+> *Default*:  KC-COIDISCLOSURE:COI%20Reviewer
+>
 >**AUTH_OVER_SSL**
 > : If your are sure you want to use the auth service over http set this to false.
 > *Default*:  true

@@ -17,11 +17,9 @@
  */
 
 import { getAuthToken } from '../auth-service/auth-service';
-const useSSL = process.env.AUTH_OVER_SSL !== 'false';
-const http = useSSL ? require('https') : require('http');
-import {OK} from '../../../http-status-codes';
+import request from 'superagent';
 import { getRequiredProjectTypes, getRequiredProjectStatuses, getRequiredProjectRoles} from '../../db/config-db';
-
+import Log from '../../log';
 let getAuthorizationInfo;
 try {
   const extensions = require('research-extensions').default;
@@ -29,51 +27,37 @@ try {
 } catch (e) {
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
-      host: process.env.AUTHZ_HOST || 'uit.kuali.dev'
+      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res'
     };
   };
 }
 
 const END_POINTS = {
-  PROPOSAL_AWARD_IP_ROLES: '/kc-dev/research-common/api/v1/prop-award-person-roles/',
-  PROPOSAL_STATUS: '/kc-dev/propdev/api/v1/proposal-states/',
-  AWARD_STATUS: '/kc-dev/award/api/v1/award-statuses/',
-  IP_STATUS: '/kc-dev/instprop/api/v1/proposal-statuses/',
-  IRB_ROLES: '/kc-dev/protocol/api/v1/protocol-person-roles/',
-  IRB_STATUS: '/kc-dev/protocol/api/v1/protocol-statuses/',
-  IACUC_ROLES: '/kc-dev/protocol/api/v1/iacuc-protocol-person-roles/',
-  IACUC_STATUS: '/kc-dev/protocol/api/v1/iacuc-protocol-statuses/'
+  PROPOSAL_AWARD_IP_ROLES: '/research-common/api/v1/prop-award-person-roles/',
+  PROPOSAL_STATUS: '/propdev/api/v1/proposal-states/',
+  AWARD_STATUS: '/award/api/v1/award-statuses/',
+  IP_STATUS: '/instprop/api/v1/proposal-statuses/',
+  IRB_ROLES: '/protocol/api/v1/protocol-person-roles/',
+  IRB_STATUS: '/protocol/api/v1/protocol-statuses/',
+  IACUC_ROLES: '/protocol/api/v1/iacuc-protocol-person-roles/',
+  IACUC_STATUS: '/protocol/api/v1/iacuc-protocol-statuses/'
 };
 
 async function callEndPoint(dbInfo, authHeader, endPoint) {
-  return new Promise((resolve) => {
+  try {
     const authInfo = getAuthorizationInfo(dbInfo);
-    const options = {
-      host: authInfo.host,
-      path: endPoint,
-      headers: {
-        'Authorization': `Bearer ${getAuthToken(authHeader)}`
-      }
-    };
+    const response = await request.get(`${authInfo.researchCoreUrl}${endPoint}`)
+      .set('Authorization', `Bearer ${getAuthToken(authHeader)}`);
 
-    http.get(options, response => {
-      let body = '';
-      response.on('data', (chunk) => {
-        body += chunk;
-      });
-      response.on('end', () => {
-        if (response.statusCode === OK) {
-          resolve(body);
-        }
-        resolve();
-      });
-      response.on('error', () => {
-        resolve();
-      });
-    }).on('error', () => {
-      resolve();
-    });
-  });
+    if (response.ok) {
+      return Promise.resolve(response.body);
+    }
+    Log.error(res.body.message);
+    return Promise.resolve([]);
+  } catch(err) {
+    Log.error(err);
+    return Promise.resolve([]);
+  }
 }
 
 export function getSourceRoleCd(projectTypeCd, role) {
@@ -144,7 +128,7 @@ function filterRoles(roles, projectTypeCd) {
 async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoint, statusEndPoint) {
   try {
     const monolithProjectRoles = await callEndPoint(dbInfo, authHeader, roleEndPoint);
-    const unfilteredRoles = JSON.parse(monolithProjectRoles).map(monolithRole => {
+    const unfilteredRoles = monolithProjectRoles.map(monolithRole => {
       return {
         projectTypeCd,
         sourceRoleCd: String(getSourceRoleCd(projectTypeCd, monolithRole)),
@@ -156,15 +140,14 @@ async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoin
     const roles = filterRoles(unfilteredRoles, projectTypeCd);
 
     const monolithStatuses = await callEndPoint(dbInfo, authHeader, statusEndPoint);
-    const statuses = JSON.parse(monolithStatuses)
-      .map(monolithStatus => {
-        return {
-          projectTypeCd,
-          sourceStatusCd: String(getSourceStatusCd(projectTypeCd, monolithStatus)),
-          description: monolithStatus.description,
-          reqDisclosure: 0
-        };
-      });
+    const statuses = monolithStatuses.map(monolithStatus => {
+      return {
+        projectTypeCd,
+        sourceStatusCd: String(getSourceStatusCd(projectTypeCd, monolithStatus)),
+        description: monolithStatus.description,
+        reqDisclosure: 0
+      };
+    });
     return Promise.resolve({roles, statuses});
   } catch(err) {
     return Promise.reject(err);
