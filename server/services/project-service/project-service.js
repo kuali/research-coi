@@ -52,7 +52,7 @@ async function callEndPoint(dbInfo, authHeader, endPoint) {
     if (response.ok) {
       return Promise.resolve(response.body);
     }
-    Log.error(res.body.message);
+    Log.error(response.body.message);
     return Promise.resolve([]);
   } catch(err) {
     Log.error(err);
