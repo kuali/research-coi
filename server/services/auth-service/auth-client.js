@@ -32,7 +32,8 @@ try {
     return {
       adminRole: process.env.COI_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator',
       reviewerRole: process.env.COI_REVIEWER_ROLE || 'KC-COIDISCLOSURE:COI%20Reviewer',
-      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res'
+      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res',
+      authUrl: process.env.AUTHN_URL
     };
   };
 }
@@ -75,7 +76,8 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
     if (cachedUserInfo) {
       return Promise.resolve(cachedUserInfo);
     }
-    const url = process.env.AUTHN_URL || (useSSL ? 'https://' : 'http://') + hostname;
+    const authInfo = getAuthorizationInfo(dbInfo);
+    const url = authInfo.authUrl || (useSSL ? 'https://' : 'http://') + hostname;
     const response = await request.get(`${url}/api/v1/users/current`)
       .set('Authorization', `Bearer ${authToken}`);
 
@@ -95,8 +97,10 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
 }
 
 export function getAuthLink(req) {
-  const url = process.env.AUTHN_URL || '';
-  return `${url}/auth?return_to=${encodeURIComponent(req.originalUrl)}`;
+  const authInfo = getAuthorizationInfo(req.dbInfo);
+  const url = authInfo.authUrl || '';
+  const returnLink = (useSSL ? 'https://' : 'http://') + req.hostname + req.originalUrl;
+  return `${url}/auth?return_to=${encodeURIComponent(returnLink)}`;
 }
 
 export async function getReviewers(dbInfo, authToken) {
