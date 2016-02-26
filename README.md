@@ -76,17 +76,17 @@ module.exports = {
 
 **Step 6**: Apply Migrations:
 ```
-node ~/workspace/research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
+node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
 ```
 ----------
 **Step 7**: Apply Seed Data:
 ```
-node ~/workspace/research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi
+node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi
 ```
 
 Alternatively you can add some demonstration data to play with:
 ```
-node ~/workspace/research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo
+node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo
 ```
 
 **Step 8**: Configuration Environment Variables:
