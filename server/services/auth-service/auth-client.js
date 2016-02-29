@@ -17,12 +17,12 @@
 */
 
 import cache from '../../lru-cache';
-import { ROLES } from '../../../coi-constants';
+import { ROLES, SYSTEM_USER } from '../../../coi-constants';
 import request from 'superagent';
 import LOG from '../../log';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const REVIEWER_CACHE_KEY = 'reviewers';
-
+const SERVICE_ROLE = 'service';
 let getAuthorizationInfo;
 try {
   const extensions = require('research-extensions').default;
@@ -82,12 +82,17 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
       .set('Authorization', `Bearer ${authToken}`);
 
     const userInfo = response.body;
-    const role = await getUserRoles(dbInfo, userInfo.schoolId, authToken);
-
-    if (!role) {
-      userInfo.coiRole = ROLES.USER;
+    if (userInfo.role === SERVICE_ROLE) {
+      userInfo.coiRole = ROLES.ADMIN;
+      userInfo.schoolId = SYSTEM_USER;
     } else {
-      userInfo.coiRole = role;
+      const role = await getUserRoles(dbInfo, userInfo.schoolId, authToken);
+
+      if (!role) {
+        userInfo.coiRole = ROLES.USER;
+      } else {
+        userInfo.coiRole = role;
+      }
     }
     cache.set(authToken, userInfo);
     return Promise.resolve(userInfo);
