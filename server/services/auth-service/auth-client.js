@@ -94,7 +94,6 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
         userInfo.coiRole = role;
       }
     }
-    LOG.error(userInfo);
     cache.set(authToken, userInfo);
     return Promise.resolve(userInfo);
   } catch (err) {

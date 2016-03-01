@@ -105,3 +105,11 @@
   font-size: 20px;
   vertical-align: middle;
 }
+
+:global(.color-blind) .infoBanner {
+  background-color: black;
+}
+
+:global(.color-blind) .expiresBanner {
+  background-color: black;
+}
