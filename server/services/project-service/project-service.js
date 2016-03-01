@@ -18,8 +18,10 @@
 
 import { getAuthToken } from '../auth-service/auth-service';
 import request from 'superagent';
-import { getRequiredProjectTypes, getRequiredProjectStatuses, getRequiredProjectRoles} from '../../db/config-db';
+import { getRequiredProjectTypes, getRequiredProjectStatuses, getRequiredProjectRoles } from '../../db/config-db';
 import Log from '../../log';
+import cache from '../../lru-cache';
+
 let getAuthorizationInfo;
 try {
   const extensions = require('research-extensions').default;
@@ -27,7 +29,8 @@ try {
 } catch (e) {
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
-      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res'
+      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res',
+      coiHierarchy: process.env.COI_HIERARCHY
     };
   };
 }
@@ -40,8 +43,11 @@ const END_POINTS = {
   IRB_ROLES: '/protocol/api/v1/protocol-person-roles/',
   IRB_STATUS: '/protocol/api/v1/protocol-statuses/',
   IACUC_ROLES: '/protocol/api/v1/iacuc-protocol-person-roles/',
-  IACUC_STATUS: '/protocol/api/v1/iacuc-protocol-statuses/'
+  IACUC_STATUS: '/protocol/api/v1/iacuc-protocol-statuses/',
+  SPONSOR_HIERARCHY: '/research-common/api/v1/sponsor-hierarchies/?hierarchyName='
 };
+
+const REQUIRED_SPONSORS_KEY = 'requiredSponsors';
 
 async function callEndPoint(dbInfo, authHeader, endPoint) {
   try {
@@ -175,24 +181,59 @@ export async function getProjectData(dbInfo, authHeader, projectTypeCd) {
   }
 }
 
-export async function filterProjects(dbInfo, projects) {
+async function getRequiredSponsors(dbInfo, authHeader) {
   try {
-    const requiredProjectTypes = await getRequiredProjectTypes(dbInfo);
-    const requiredProjectRoles = await getRequiredProjectRoles(dbInfo);
-    const requiredProjectStatuses = await getRequiredProjectStatuses(dbInfo);
+    const authInfo = getAuthorizationInfo(dbInfo);
 
-    const result = projects.filter(project => {
-      const isProjectTypeRequired = requiredProjectTypes.findIndex(projectType => projectType.typeCd == project.typeCd) > -1; // eslint-disable-line eqeqeq
-      const isProjectProjectRoleRequired = requiredProjectRoles.findIndex(projectRole => {
-        return projectRole.projectTypeCd == project.typeCd && projectRole.sourceRoleCd == project.roleCd; // eslint-disable-line eqeqeq
-      }) > -1;
-      const isProjectStatusRequired = requiredProjectStatuses.findIndex(projectStatus => {
-        return projectStatus.projectTypeCd == project.typeCd && projectStatus.sourceStatusCd == project.statusCd; // eslint-disable-line eqeqeq
-      }) > -1;
+    if (!authInfo.coiHierarchy) {
+      return Promise.resolve();
+    }
 
-      return isProjectTypeRequired && isProjectProjectRoleRequired && isProjectStatusRequired;
+    let requiredSponsors = cache.get(REQUIRED_SPONSORS_KEY);
+
+    if (requiredSponsors) {
+      return Promise.resolve(requiredSponsors);
+    }
+    const response = await request.get(`${authInfo.researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${authInfo.coiHierarchy}`)
+      .set('Authorization', `Bearer ${getAuthToken(authHeader)}`);
+
+    requiredSponsors = response.body.map(sponsor => {
+      return sponsor.sponsorCode;
     });
 
+    cache.set(REQUIRED_SPONSORS_KEY, requiredSponsors);
+
+    return Promise.resolve(requiredSponsors);
+  } catch(err) {
+    return Promise.reject(err);
+  }
+}
+
+export function filter(types, roles, statuses, sponsors, projects) {
+  return projects.filter(project => {
+    const isTypeRequired = types.findIndex(type => type.typeCd == project.typeCd) > -1; // eslint-disable-line eqeqeq
+    const isRoleRequired = roles.findIndex(role => {
+      return role.projectTypeCd == project.typeCd && role.sourceRoleCd == project.roleCd; // eslint-disable-line eqeqeq
+    }) > -1;
+    const isStatusRequired = statuses.findIndex(status => {
+      return status.projectTypeCd == project.typeCd && status.sourceStatusCd == project.statusCd; // eslint-disable-line eqeqeq
+    }) > -1;
+    const isSponsorRequired = sponsors ? sponsors.includes(project.sponsorCd) : true;
+
+    return isTypeRequired && isRoleRequired && isStatusRequired & isSponsorRequired;
+  });
+}
+
+export async function filterProjects(dbInfo, projects, authHeader) {
+  try {
+
+    const result = filter(
+      await getRequiredProjectTypes(dbInfo),
+      await getRequiredProjectRoles(dbInfo),
+      await getRequiredProjectStatuses(dbInfo),
+      await getRequiredSponsors(dbInfo, authHeader),
+      projects
+    );
     return Promise.resolve(result);
   } catch(err) {
     return Promise.reject(err);

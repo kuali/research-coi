@@ -120,4 +120,70 @@ describe('ProjectService', () => {
       assert.equal('Co-Investigator', roles.find(role => String(role.sourceRoleCd) === 'COI').description);
     });
   });
+
+  describe('filter', () => {
+    const requiredRoles = [
+      {
+        projectTypeCd: 1,
+        sourceRoleCd: 'PI'
+      },
+      {
+        projectTypeCd: 1,
+        sourceRoleCd: 'COI'
+      }
+    ];
+    const requiredTypes = [
+      {typeCd: 1}
+    ];
+    const requiredStatuses = [
+      {
+        projectTypeCd: 1,
+        sourceStatusCd: '1'
+      },
+      {
+        projectTypeCd: 1,
+        sourceStatusCd: '2'
+      }
+    ];
+    const requiredSponsors = ['000340','000500'];
+
+    const projects = [
+      {
+        title: 'good project',
+        typeCd: 1,
+        roleCd: 'PI',
+        statusCd: '1',
+        sponsorCd : '000340'
+      },
+      {
+        typeCd: 3,
+        roleCd: 'PI',
+        statusCd: '1',
+        sponsorCd : '000340'
+      },
+      {
+        typeCd: 1,
+        roleCd: 'KP',
+        statusCd: '1',
+        sponsorCd : '000340'
+      },
+      {
+        typeCd: 1,
+        roleCd: 'PI',
+        statusCd: '4',
+        sponsorCd : '000340'
+      },
+      {
+        typeCd: 1,
+        roleCd: 'PI',
+        statusCd: '1',
+        sponsorCd : '000100'
+      }
+    ];
+
+    const requiredProjects = ProjectService.filter(requiredTypes, requiredRoles, requiredStatuses, requiredSponsors, projects);
+
+    assert.equal(1,requiredProjects.length);
+    assert.equal('good project', requiredProjects[0].title);
+  });
 });
