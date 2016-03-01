@@ -34,7 +34,7 @@ export const init = app => {
   app.get('/api/coi/projects', allowedRoles('ANY'), wrapAsync(async req => {
     const projects = await ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId);
     if (req.query.filter) {
-      return await filterProjects(req.dbInfo, projects);
+      return await filterProjects(req.dbInfo, projects, req.headers.authorization);
     }
 
     return projects;

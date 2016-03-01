@@ -217,19 +217,6 @@ describe('ProjectControllerTest', async () => {
       const projects = response.body;
       assert.equal(6,projects.length);
     });
-
-    it('get projects with filter returns only projects that require disclosure', async function () {
-      const response = await request(app.run())
-        .get(`/api/coi/projects`)
-        .query({filter: true})
-        .set('Authorization',`Bearer ${user}`)
-        .expect(OK);
-
-      const projects = response.body;
-      assert.equal(2,projects.length);
-      assert.equal('test project1', projects[0].name);
-      assert.equal('test project2', projects[1].name);
-    });
   });
 
   after(async function() {
