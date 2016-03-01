@@ -1009,6 +1009,16 @@ const updateStatus = (knex, name, disclosureId) => {
   .where('id', disclosureId);
 };
 
+function updateProjects(trx, schoolId) {
+  return trx('project_person')
+    .update({
+      new: false
+    })
+    .where({
+      person_id: schoolId
+    });
+}
+
 export const submit = (dbInfo, userInfo, disclosureId) => {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
@@ -1020,7 +1030,8 @@ export const submit = (dbInfo, userInfo, disclosureId) => {
       return knex.transaction(trx => {
         return Promise.all([
           updateStatus(trx, userInfo.name, disclosureId),
-          updateEntitiesAndRelationshipsStatuses(trx, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED)
+          updateEntitiesAndRelationshipsStatuses(trx, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED),
+          updateProjects(trx, userInfo.schoolId)
         ]).then(() => {
           return get(dbInfo, userInfo, disclosureId, trx).then(disclosure => {
             return trx('config').select('config').where({id: disclosure.configId}).then(config => {

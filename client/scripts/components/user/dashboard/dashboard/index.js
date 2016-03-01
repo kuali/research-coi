@@ -31,6 +31,7 @@ import {COIConstants} from '../../../../../../coi-constants';
 import ConfigStore from '../../../../stores/config-store';
 import UserInfoStore from '../../../../stores/user-info-store';
 import AdminMenu from '../../../admin-menu';
+import moment from 'moment';
 
 export class Dashboard extends React.Component {
   constructor() {
@@ -42,6 +43,8 @@ export class Dashboard extends React.Component {
     this.state = {
       applicationState: storeState.applicationState,
       disclosureSummaries: storeState.disclosureSummariesForUser,
+      projects: storeState.projects,
+      annualDisclosure: storeState.annualDisclosure,
       configLoaded: configState.isLoaded,
       userInfo: UserInfoStore.getState().userInfo
     };
@@ -68,6 +71,8 @@ export class Dashboard extends React.Component {
     this.setState({
       applicationState: storeState.applicationState,
       disclosureSummaries: storeState.disclosureSummariesForUser,
+      projects: storeState.projects,
+      annualDisclosure: storeState.annualDisclosure,
       configLoaded: configState.isLoaded,
       userInfo: UserInfoStore.getState().userInfo
     });
@@ -84,6 +89,7 @@ export class Dashboard extends React.Component {
         <ConfirmationMessage />
       );
     }
+
 
     let annualDisclosureButton;
     let travelLogButton;
@@ -147,6 +153,30 @@ export class Dashboard extends React.Component {
       );
     }
 
+    let newProjectBanner;
+    if (Array.isArray(this.state.projects) && this.state.projects.filter(project => project.new === 1).length > 0) {
+      newProjectBanner = (
+        <div className={styles.infoBanner}>
+          Your annual disclosure needs updates due to new projects to disclose.
+        </div>
+      );
+    }
+
+    let expirationBanner;
+    if (this.state.disclosureSummaries.length > 0) {
+      const expirationDate = this.state.disclosureSummaries.find(summary => String(summary.type) === COIConstants.DISCLOSURE_TYPE.ANNUAL).expired_date;
+      if (expirationDate) {
+        const days = moment(expirationDate).diff(moment(new Date()), 'days');
+        expirationBanner = (
+          <div className={styles.expiresBanner}>
+            <span style={{paddingTop: '5px'}}>Your disclosure expires in:</span>
+            <span className={styles.days}>{days}</span>
+            <span style={{color: 'white', verticalAlign: 'bottom', marginBottom: '5px'}}>Days</span>
+          </div>
+        );
+      }
+    }
+
     const classes = classNames(
       'flexbox',
       'column',
@@ -171,7 +201,12 @@ export class Dashboard extends React.Component {
               <h2 className={styles.heading}>MY COI DASHBOARD</h2>
             </div>
             {confirmationMessage}
-
+            <div>
+              <div className={styles.bannerContainer}>
+                {expirationBanner}
+                {newProjectBanner}
+              </div>
+            </div>
             <DisclosureTable disclosures={this.state.disclosureSummaries} />
           </span>
         </span>

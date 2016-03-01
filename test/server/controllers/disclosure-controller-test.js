@@ -120,6 +120,25 @@ describe('DisclosureController',async () => {
       config_id: 1}, 'id');
 
     disclosure1Id = disclosure1[0];
+
+    const projectType = await knex('project_type').min('type_cd as typeCd');
+
+    const projectId = await knex('project')
+      .insert({
+        title: 'project test',
+        type_cd: projectType[0].typeCd,
+        source_system: 'propdev',
+        source_identifier: 1
+      }, 'id');
+
+    await knex('project_person')
+      .insert({
+        project_id: projectId[0],
+        person_id: userId,
+        source_person_type: 'person',
+        role_cd: 'PI',
+        active: true
+      }, 'id');
   });
 
   describe('/api/coi/disclosure/:id', async () => {
@@ -261,6 +280,11 @@ describe('DisclosureController',async () => {
         .select('status_cd','submitted_by', 'submitted_date')
         .where({id: disclosure.id});
 
+      const projectPersons = await knex('project_person')
+        .select('new')
+        .where({person_id: userId});
+
+      assert.equal(false, projectPersons[0].new);
       assert.equal(submittedDisclosure[0].status_cd, COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
       assert.equal(submittedDisclosure[0].submitted_by, `User ${user}`);
       assert.equal(formatDate(submittedDisclosure[0].submitted_date), formatDate(today));
@@ -333,6 +357,8 @@ describe('DisclosureController',async () => {
   });
 
   after(async function() {
+    await knex('project_person').del();
+    await knex('project').del();
     await knex('comment').del().whereIn('disclosure_id', [disclosureId, disclosure1Id]);
     await knex('additional_reviewer').del().where({id: additionalReviewerId});
     await knex('disclosure_archive').del().whereIn('disclosure_id', [disclosureId, disclosure1Id]);

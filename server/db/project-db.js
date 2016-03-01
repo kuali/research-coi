@@ -32,7 +32,7 @@ catch (err) {
 export const getProjects = (dbInfo, userId) => {
   const knex = getKnex(dbInfo);
   return knex.select('p.id as id', 'p.title as name', 'p.type_cd as typeCd', 'person.role_cd as roleCd',
-    'p.sponsor_name as sponsorName', 'p.source_status as statusCd')
+    'p.sponsor_name as sponsorName', 'p.source_status as statusCd', 'person.new as new')
     .from('project as p')
     .innerJoin('project_person as person', 'p.id', 'person.project_id')
     .where({
@@ -63,6 +63,7 @@ const saveNewProjects = (dbInfo, projects) => {
             person_id: person.personId,
             source_person_type: person.sourcePersonType,
             role_cd: person.roleCode,
+            new: true,
             active: true
           }, 'id');
         });

@@ -68,3 +68,40 @@
 .override.adminMenu {
   margin-bottom: 45px;
 }
+
+.bannerContainer {
+  margin: 15px 0 0 50px;
+  display: inline-block;
+  width: 100%;
+}
+
+.expiresBanner {
+  float: left;
+  background-color: #00949F;
+  color: #E0E0E0;
+  height: 75px;
+  border-radius: 5px;
+  padding: 5px 25px;
+  font-size: 20px;
+  min-width: 433px;
+  vertical-align: middle;
+}
+
+.days {
+  font-size: 50px;
+  color: white;
+  margin: 0 7px 0 15px;
+  vertical-align: top;
+}
+
+.infoBanner {
+  float: right;
+  background-color: #F57C00;
+  color: white;
+  height: 75px;
+  border-radius: 5px;
+  margin-right: 100px;
+  padding: 25px 35px;
+  font-size: 20px;
+  vertical-align: middle;
+}
