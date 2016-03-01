@@ -1152,6 +1152,7 @@ class _DisclosureStore {
       answers: []
     };
     this.applicationState.entityStates = {};
+    this.projects.forEach(project => project.new = false);
     this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
   }
 
