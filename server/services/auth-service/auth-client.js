@@ -48,7 +48,7 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
     }
     return Promise.resolve(false);
   } catch(err) {
-    LOG.error(err);
+    LOG.warn(`user ${schoolId} is not a member of the ${role} role`);
     return Promise.resolve(false);
   }
 

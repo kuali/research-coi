@@ -20,7 +20,7 @@ import Log from '../log';
 import {INTERNAL_SERVER_ERROR} from '../../http-status-codes';
 
 export default function(err, req, res, next) {
-  Log.error(err.stack);
+  Log.error(err, req);
 
   if (res.headersSent) {
     return next(err);

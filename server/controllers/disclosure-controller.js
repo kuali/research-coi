@@ -122,8 +122,8 @@ export const init = app => {
         filters = potentialFilter;
       }
       catch (parseErr) {
-        Log.error('invalid filters supplied to disclosure-summaries');
-        Log.error(parseErr);
+        Log.error('invalid filters supplied to disclosure-summaries', req);
+        Log.error(parseErr, req);
         next('invalid filters supplied to disclosure-summaries');
       }
     }
@@ -144,8 +144,8 @@ export const init = app => {
         filters = potentialFilter;
       }
       catch (parseErr) {
-        Log.error('invalid filters supplied to disclosure-summaries/count');
-        Log.error(parseErr);
+        Log.error('invalid filters supplied to disclosure-summaries/count', req);
+        Log.error(parseErr, req);
         next('invalid filters supplied to disclosure-summaries/count');
       }
     }

@@ -49,19 +49,17 @@ const END_POINTS = {
 
 const REQUIRED_SPONSORS_KEY = 'requiredSponsors';
 
-async function callEndPoint(dbInfo, authHeader, endPoint) {
+async function callEndPoint(researchCoreUrl, authHeader, endPoint) {
   try {
-    const authInfo = getAuthorizationInfo(dbInfo);
-    const response = await request.get(`${authInfo.researchCoreUrl}${endPoint}`)
+    const response = await request.get(`${researchCoreUrl}${endPoint}`)
       .set('Authorization', `Bearer ${getAuthToken(authHeader)}`);
 
     if (response.ok) {
       return Promise.resolve(response.body);
     }
-    Log.error(response.body.message);
     return Promise.resolve([]);
   } catch(err) {
-    Log.error(err);
+    Log.error(`cannot access ${researchCoreUrl}${endPoint}`);
     return Promise.resolve([]);
   }
 }
@@ -133,7 +131,8 @@ function filterRoles(roles, projectTypeCd) {
 
 async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoint, statusEndPoint) {
   try {
-    const monolithProjectRoles = await callEndPoint(dbInfo, authHeader, roleEndPoint);
+    const authInfo = getAuthorizationInfo(dbInfo);
+    const monolithProjectRoles = await callEndPoint(authInfo.researchCoreUrl, authHeader, roleEndPoint);
     const unfilteredRoles = monolithProjectRoles.map(monolithRole => {
       return {
         projectTypeCd,
@@ -145,7 +144,7 @@ async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoin
 
     const roles = filterRoles(unfilteredRoles, projectTypeCd);
 
-    const monolithStatuses = await callEndPoint(dbInfo, authHeader, statusEndPoint);
+    const monolithStatuses = await callEndPoint(authInfo.researchCoreUrl, authHeader, statusEndPoint);
     const statuses = monolithStatuses.map(monolithStatus => {
       return {
         projectTypeCd,
@@ -181,11 +180,9 @@ export async function getProjectData(dbInfo, authHeader, projectTypeCd) {
   }
 }
 
-async function getRequiredSponsors(dbInfo, authHeader) {
+async function getRequiredSponsors(researchCoreUrl, coiHierarchy, authHeader) {
   try {
-    const authInfo = getAuthorizationInfo(dbInfo);
-
-    if (!authInfo.coiHierarchy) {
+    if (!coiHierarchy) {
       return Promise.resolve();
     }
 
@@ -194,7 +191,7 @@ async function getRequiredSponsors(dbInfo, authHeader) {
     if (requiredSponsors) {
       return Promise.resolve(requiredSponsors);
     }
-    const response = await request.get(`${authInfo.researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${authInfo.coiHierarchy}`)
+    const response = await request.get(`${researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${coiHierarchy}`)
       .set('Authorization', `Bearer ${getAuthToken(authHeader)}`);
 
     requiredSponsors = response.body.map(sponsor => {
@@ -205,7 +202,7 @@ async function getRequiredSponsors(dbInfo, authHeader) {
 
     return Promise.resolve(requiredSponsors);
   } catch(err) {
-    return Promise.reject(err);
+    return Promise.reject(`cannot access ${researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${coiHierarchy}`);
   }
 }
 
@@ -226,12 +223,13 @@ export function filter(types, roles, statuses, sponsors, projects) {
 
 export async function filterProjects(dbInfo, projects, authHeader) {
   try {
+    const authInfo = getAuthorizationInfo(dbInfo);
 
     const result = filter(
       await getRequiredProjectTypes(dbInfo),
       await getRequiredProjectRoles(dbInfo),
       await getRequiredProjectStatuses(dbInfo),
-      await getRequiredSponsors(dbInfo, authHeader),
+      await getRequiredSponsors(authInfo.researchCoreUrl, authInfo.coiHierarchy, authHeader),
       projects
     );
     return Promise.resolve(result);

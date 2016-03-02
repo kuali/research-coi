@@ -18,24 +18,32 @@
 /* eslint-disable no-console */
 import {COIConstants} from '../coi-constants';
 
+
 class Log {
-  info(message) {
+  info(message, req) {
     if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
       const date = new Date().toISOString();
-      console.info(`${date} INFO  ${message}`);
+      console.info(`${date} INFO  ${this.getRequestInfo(req)} ${message}`);
     }
   }
 
-  warn(message) {
+  warn(message, req) {
     if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.WARN) {
       const date = new Date().toISOString();
-      console.warn(`${date} WARN  ${message}`);
+      console.warn(`${date} WARN  ${this.getRequestInfo(req)} ${message}`);
     }
   }
 
-  error(message) {
+  error(message, req) {
     const date = new Date().toISOString();
-    console.error(`${date} ERROR ${message}`);
+    console.error(`${date} ERROR ${this.getRequestInfo(req)} ${message}`);
+  }
+
+  getRequestInfo(req) {
+    if (req) {
+      return `${req.hostname}${req.url} - ${req.userInfo ? req.userInfo.username : ''} - `;
+    }
+    return '';
   }
 }
 

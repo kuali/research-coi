@@ -19,6 +19,6 @@
 import Log from '../log';
 
 export default function unauthorized(req, res) {
-  Log.error(`Unauthorized page request by ${req.userInfo.username}`);
+  Log.error(`Unauthorized page request by ${req.userInfo.username}`, req);
   res.render('unauthorized');
 }
