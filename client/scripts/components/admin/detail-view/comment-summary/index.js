@@ -62,6 +62,7 @@ export default class CommentSummary extends React.Component {
       const topicName = `QUESTION ${ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, topicId)}`;
       return (
         <TopicCommentSummary
+          role={this.props.role}
           key={`qt${topicId}`}
           topicName={topicName}
           comments={comments}
@@ -113,6 +114,7 @@ export default class CommentSummary extends React.Component {
       const topicName = `ENTITY: ${this.getEntityName(topicId)}`;
       return (
         <TopicCommentSummary
+          role={this.props.role}
           key={`et${topicId}`}
           topicName={topicName}
           comments={comments}
@@ -140,6 +142,7 @@ export default class CommentSummary extends React.Component {
       const topicName = this.getDeclarationName(topicId);
       return (
         <TopicCommentSummary
+          role={this.props.role}
           key={`et${topicId}`}
           topicName={topicName}
           comments={comments}
