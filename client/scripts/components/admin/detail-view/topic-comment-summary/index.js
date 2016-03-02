@@ -27,6 +27,7 @@ export default function TopicCommentSummary(props) {
     comments = props.comments.map(comment => {
       return (
         <CommentBubble
+          role={props.role}
           readOnly={true}
           key={comment.id}
           {...comment}

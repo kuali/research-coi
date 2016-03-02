@@ -147,6 +147,7 @@ export class DetailView extends React.Component {
     else if (this.state.applicationState.commentSummaryShowing) {
       sidePanel = (
         <CommentSummary
+          role={this.state.userInfo.coiRole}
           disclosure={this.state.applicationState.selectedDisclosure}
         />
       );
