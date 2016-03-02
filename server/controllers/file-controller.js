@@ -94,7 +94,7 @@ export const init = app => {
     res.setHeader('Content-disposition', `attachment; filename="${result[0].name}"`);
     FileService.getFile(req.dbInfo, result[0].key, error => {
       if (error) {
-        Log.error(error);
+        Log.error(error, req);
         next(error);
       }
     }).pipe(res);
@@ -119,7 +119,7 @@ export const init = app => {
     files.forEach(file => {
       const stream = FileService.getFile(req.dbInfo, file.key, error => {
         if (error) {
-          Log.error(error);
+          Log.error(error, req);
           next(error);
         }
       });

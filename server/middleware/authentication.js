@@ -29,7 +29,7 @@ export default function authentication(req, res, next) {
         next();
       }
     }).catch(err => {
-      Log.error(err);
+      Log.error(err, req);
       next(err);
     });
 }

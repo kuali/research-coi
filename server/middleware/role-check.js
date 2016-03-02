@@ -57,7 +57,7 @@ export function allowedRoles(rolesToAllow) {
 
   return (req, res, next) => {
     if (!valid(req)) {
-      Log.error(`Unauthorized attempt to access ${req.originalUrl} by ${req.userInfo.username} with role ${req.userInfo.coiRole}`);
+      Log.error(`Unauthorized to access`, req);
       res.sendStatus(FORBIDDEN);
       return;
     }

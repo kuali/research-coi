@@ -29,6 +29,7 @@ export default function authentication(req, res, next) {
   getUserInfo(req.dbInfo, req.hostname, authToken)
     .then(userInfo => {
       if (!userInfo) {
+        Log.error('unauthenticated request', req);
         res.sendStatus(UNAUTHORIZED);
       } else {
         req.userInfo = userInfo;
