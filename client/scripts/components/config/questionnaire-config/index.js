@@ -187,7 +187,7 @@ class QuestionnaireConfig extends React.Component {
   makeMainQuestion(subQuestionId) {
     const question = this.findQuestion(subQuestionId);
     const parent = this.findQuestion(question.parent);
-    if (question && parent && question.question.type === COIConstants.QUESTION_TYPE.YESNO) {
+    if (question && parent) {
       question.parent = null;
 
       this.props.questions.filter(toTest => {

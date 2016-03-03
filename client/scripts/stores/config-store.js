@@ -335,10 +335,7 @@ class _ConfigStore {
   }
 
   saveNewQuestion(category) {
-    if (category === COIConstants.QUESTIONNAIRE_TYPE.SCREENING) {
-      this.applicationState.newQuestion[category].question.type = COIConstants.QUESTION_TYPE.YESNO;
-    }
-    else if (!this.applicationState.newQuestion[category].question.type) {
+    if (!this.applicationState.newQuestion[category].question.type) {
       return;
     }
 
