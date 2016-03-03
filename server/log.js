@@ -18,28 +18,39 @@
 /* eslint-disable no-console */
 import {COIConstants} from '../coi-constants';
 
+let logLevel;
+try {
+  const extensions = require('research-extensions').default;
+  logLevel = extensions.config.logLevel;
+} catch (e) {
+  logLevel = process.env.LOG_LEVEL;
+}
 
 class Log {
   info(message, req) {
-    const date = new Date().toISOString();
-    console.info(`${date} INFO  ${this.getRequestInfo(req)} ${message}`);
+    if (logLevel <= COIConstants.LOG_LEVEL.INFO) {
+      console.info(this.create(message, 'INFO', req));
+    }
   }
 
   warn(message, req) {
-    if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.WARN) {
-      const date = new Date().toISOString();
-      console.warn(`${date} WARN  ${this.getRequestInfo(req)} ${message}`);
+    if (logLevel <= COIConstants.LOG_LEVEL.WARN) {
+      console.warn(this.create(message, 'WARN', req));
     }
   }
 
   error(message, req) {
+    console.error(this.create(message, 'ERROR', req));
+  }
+
+  create(message, type, req) {
     const date = new Date().toISOString();
-    console.error(`${date} ERROR ${this.getRequestInfo(req)} ${message}`);
+    return `${date} ${type} ${this.getRequestInfo(req)} ${message}`;
   }
 
   getRequestInfo(req) {
     if (req) {
-      return `${req.method} ${req.hostname}${req.url} - ${req.userInfo ? req.userInfo.username : ''} - `;
+      return `host=${req.hostname}, path=${req.url}, method=${req.method}, userName=${req.userInfo ? req.userInfo.username : ''} - `;
     }
     return '';
   }

@@ -34,6 +34,7 @@ import renderView from './middleware/render-view';
 import Log from './log';
 import methodChecker from './middleware/method-checker';
 import ErrorLogger from './middleware/error-logger';
+import { LOG_LEVEL } from '../coi-constants';
 import { NOT_FOUND } from '../http-status-codes';
 import { configCheck, adminCheck } from './middleware/role-check';
 import unauthorized from './middleware/unauthorized';
@@ -41,20 +42,22 @@ import scheduleExpirationCheck from './expiration-check';
 
 const DEFAULT_PORT = 8090;
 
-function conditionallyLogRequests(app) {
-  app.use((req, res, next) => {
-    const startTime = new Date().getTime();
-    Log.info('request received',req);
-    res.on('finish', () => {
-      const elapsedTime = new Date().getTime() - startTime;
-      Log.info(`request finished - ${elapsedTime}ms`, req);
+function conditionallyLogRequests(app, logLevel) {
+  if (logLevel <= LOG_LEVEL.INFO) {
+    app.use((req, res, next) => {
+      const startTime = new Date().getTime();
+      Log.info('request received', req);
+      res.on('finish', () => {
+        const elapsedTime = new Date().getTime() - startTime;
+        Log.info(`request finished - ${elapsedTime}ms`, req);
+      });
+      res.on('close', () => {
+        const elapsedTime = new Date().getTime() - startTime;
+        Log.info(`request closed - ${elapsedTime}ms`, req);
+      });
+      next();
     });
-    res.on('close', () => {
-      const elapsedTime = new Date().getTime() - startTime;
-      Log.info(`request closed - ${elapsedTime}ms`, req);
-    });
-    next();
-  });
+  }
 }
 
 function configureProxy(app) {
@@ -82,15 +85,18 @@ export function run() {
   configureProxy(app);
 
   let config;
+  let logLevel;
   try {
     const extensions = require('research-extensions').default;
     extensions.express(app);
     config = extensions.config;
+    logLevel = config.logLevel;
   } catch (e) {
+    logLevel = process.env.LOG_LEVEL;
     Log.info('extensions not found');
   }
 
-  conditionallyLogRequests(app);
+  conditionallyLogRequests(app, logLevel);
 
   app.use('/coi', express.static('client'));
   app.use('/coi/build', (req, res) => { res.sendStatus(NOT_FOUND); }); // Static files that weren't found
