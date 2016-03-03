@@ -21,10 +21,8 @@ import {COIConstants} from '../coi-constants';
 
 class Log {
   info(message, req) {
-    if (process.env.LOG_LEVEL <= COIConstants.LOG_LEVEL.INFO) {
-      const date = new Date().toISOString();
-      console.info(`${date} INFO  ${this.getRequestInfo(req)} ${message}`);
-    }
+    const date = new Date().toISOString();
+    console.info(`${date} INFO  ${this.getRequestInfo(req)} ${message}`);
   }
 
   warn(message, req) {
@@ -41,7 +39,7 @@ class Log {
 
   getRequestInfo(req) {
     if (req) {
-      return `${req.hostname}${req.url} - ${req.userInfo ? req.userInfo.username : ''} - `;
+      return `${req.method} ${req.hostname}${req.url} - ${req.userInfo ? req.userInfo.username : ''} - `;
     }
     return '';
   }
