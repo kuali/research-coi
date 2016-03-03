@@ -18,14 +18,16 @@
 
 import * as ProjectDB from '../db/project-db';
 import { ROLES } from '../../coi-constants';
+import { OK } from '../../http-status-codes';
 const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { filterProjects } from '../services/project-service/project-service';
 import wrapAsync from './wrap-async';
 
 export const init = app => {
-  app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async req => {
-    return await ProjectDB.saveProjects(req.dbInfo, req.body);
+  app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async (req,res) => {
+    await ProjectDB.saveProjects(req.dbInfo, req.body);
+    res.sendStatus(OK);
   }));
 
   /**
