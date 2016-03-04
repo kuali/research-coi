@@ -25,7 +25,7 @@ export const init = app => {
   /**
     User can only see travel logs associated with their entities
   */
-  app.get('/api/coi/travel-log-entries', allowedRoles('ANY'), wrapAsync(async req => {
+  app.get('/api/coi/travel-log-entries', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     let sortColumn = 'name';
     if (req.query.sortColumn) {
       sortColumn = req.query.sortColumn;
@@ -38,14 +38,16 @@ export const init = app => {
     if (req.query.filter) {
       filter = req.query.filter;
     }
-    return await TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId, sortColumn, sortDirection, filter);
+    const result = await TravelLogDB.getTravelLogEntries(req.dbInfo, req.userInfo.schoolId, sortColumn, sortDirection, filter);
+    res.send(result);
   }));
 
   /**
    User can only add travel logs associated with their entities
    */
-  app.post('/api/coi/travel-log-entries', allowedRoles('ANY'), wrapAsync(async req => {
-    return await TravelLogDB.createTravelLogEntry(req.dbInfo, req.body, req.userInfo);
+  app.post('/api/coi/travel-log-entries', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const result = await TravelLogDB.createTravelLogEntry(req.dbInfo, req.body, req.userInfo);
+    res.send(result);
   }));
 
   /**
@@ -59,7 +61,8 @@ export const init = app => {
   /**
    User can only update travel logs associated with their entities
    */
-  app.put('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), wrapAsync(async req => {
-    return await TravelLogDB.updateTravelLogEntry(req.dbInfo, req.body, req.params.id, req.userInfo);
+  app.put('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const result = await TravelLogDB.updateTravelLogEntry(req.dbInfo, req.body, req.params.id, req.userInfo);
+    res.send(result);
   }));
 };

@@ -141,13 +141,14 @@ export const init = app => {
   /**
     @Role: Admin or user for their own disclosures
   */
-  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async req => {
-    return await FileDb.saveNewFiles(
+  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async (req, res) => {
+    const result = await FileDb.saveNewFiles(
       req.dbInfo,
       JSON.parse(req.body.data),
       req.files,
       req.userInfo
     );
+    res.send(result);
   }));
 
   /**

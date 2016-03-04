@@ -25,7 +25,7 @@ import { filterProjects } from '../services/project-service/project-service';
 import wrapAsync from './wrap-async';
 
 export const init = app => {
-  app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async (req,res) => {
+  app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     await ProjectDB.saveProjects(req.dbInfo, req.body);
     res.sendStatus(OK);
   }));
@@ -33,20 +33,24 @@ export const init = app => {
   /**
     Should only return projects associated with the given user
   */
-  app.get('/api/coi/projects', allowedRoles('ANY'), wrapAsync(async req => {
+  app.get('/api/coi/projects', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     const projects = await ProjectDB.getProjects(req.dbInfo, req.userInfo.schoolId);
     if (req.query.filter) {
-      return await filterProjects(req.dbInfo, projects, req.headers.authorization);
+      const result = await filterProjects(req.dbInfo, projects, req.headers.authorization);
+      res.send(result);
+      return;
     }
 
-    return projects;
+    res.send(projects);
   }));
 
-  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', allowedRoles(ADMIN), wrapAsync(async req => {
-    return await ProjectDB.getProjectStatuses(req.dbInfo, req.params.sourceId, req.params.projectId);
+  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    const result = await ProjectDB.getProjectStatuses(req.dbInfo, req.params.sourceId, req.params.projectId);
+    res.send(result);
   }));
 
-  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', allowedRoles(ADMIN), wrapAsync(async req => {
-    return await ProjectDB.getProjectStatus(req.dbInfo, req.params.sourceId, req.params.projectId, req.params.personId);
+  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    const result = await ProjectDB.getProjectStatus(req.dbInfo, req.params.sourceId, req.params.projectId, req.params.personId);
+    res.send(result);
   }));
 };
