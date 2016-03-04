@@ -107,7 +107,12 @@ describe('DisclosureController',async () => {
       disclosure_id: disclosureId,
       user_id: reviewerId,
       name: reviewer,
-      email: 'test@test.com'
+      email: 'test@test.com',
+      active: true,
+      dates: JSON.stringify([{
+        type: COIConstants.DATE_TYPE.ASSIGNED,
+        date: new Date(2016,0,0)
+      }])
     },'id');
 
     additionalReviewerId = additionalReviewer[0];
@@ -153,6 +158,9 @@ describe('DisclosureController',async () => {
       assert.equal(disclosure.typeCd, COIConstants.DISCLOSURE_TYPE.ANNUAL);
       assert.equal(disclosure.statusCd, COIConstants.DISCLOSURE_STATUS.IN_PROGRESS);
       assert.equal(formatDate(disclosure.startDate), formatDate(today));
+      assert.equal(1, disclosure.reviewers.length);
+      assert.equal(1, disclosure.reviewers[0].dates.length);
+      assert.equal(COIConstants.DATE_TYPE.ASSIGNED, disclosure.reviewers[0].dates[0].type);
     });
 
     it('user should not be able to retrieve others disclosures', async function () {

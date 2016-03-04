@@ -26,13 +26,14 @@
 }
 
 .content {
-  padding: 10px 0 5px 15px;
+  padding: 10px 0 5px 35px;
   font-size: 14px;
   min-height: 60px;
-  border-bottom: 2px solid lightgray;
+  display: inline-block;
 }
 
 .buttons {
+  border-top: 2px solid lightgray;
   min-height: 20px;
 }
 
@@ -41,8 +42,13 @@
   font-weight: bold;
 }
 
+.check {
+  margin-left: -35px;
+}
+
 .button {
   float: right;
+  padding: 5px 10px;
   margin-right: 10px;
   border: none;
   color: #0095A0;
@@ -52,4 +58,26 @@
 
 :global(.color-blind) .button {
   color: black;
+}
+
+.dates {
+  font-size: 11px;
+  padding: 3px 10px;
+  color: #666666;
+  display: block;
+}
+
+.icon {
+  display: inline-block;
+  color: white;
+  font-size: 10px;
+  padding: 2px;
+  display: inline-block;
+  border-radius: 60px;
+  margin: 0 10px;
+  background-color: #21B573;
+}
+
+:global(.color-blind) .icon {
+  background-color: black;
 }

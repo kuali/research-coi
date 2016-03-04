@@ -51,7 +51,12 @@ async function addReviewer(disclosureId, user) {
     disclosure_id: disclosureId,
     user_id: hashCode(user),
     name: user,
-    email: 'test@test.com'
+    email: 'test@test.com',
+    active: true,
+    dates: JSON.stringify([{
+      type: COIConstants.DATE_TYPE.ASSIGNED,
+      date: new Date(2016,0,0)
+    }])
   },'id');
   return id[0];
 }
@@ -69,7 +74,7 @@ describe('AdditionalReviewerControllerTest', () => {
     disclosureId = disclosure[0];
   });
 
-  describe('/api/coi/additional-reviewers', () => {
+  describe('GET /api/coi/additional-reviewers', () => {
 
     it('should only allow admins to add reviewers', async () => {
       await request(app.run())
@@ -99,7 +104,7 @@ describe('AdditionalReviewerControllerTest', () => {
     });
   });
 
-  describe('/api/coi/additional-reviewers/:id', async () => {
+  describe('DELETE /api/coi/additional-reviewers/:id', async () => {
     it('should not allow users to remove reviewers', async () => {
       const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest2');
       await request(app.run())
@@ -131,35 +136,41 @@ describe('AdditionalReviewerControllerTest', () => {
     });
   });
 
-  describe('/api/coi/additional-reviewers/current/:disclosureId', async () => {
-    it('should not allow users to remove current reviewer', async () => {
-      await addReviewer(disclosureId,'reviewerDeleteTest5');
+  describe('PUT /api/coi/additional-reviewers/complete-review/:disclosureId', async () => {
+    it('should not allow users to update current reviewer', async () => {
+      await addReviewer(disclosureId,'reviewerUpdate1');
       await request(app.run())
-        .del(`/api/coi/additional-reviewers/current/${disclosureId}`)
+        .put(`/api/coi/additional-reviewers/complete-review/${disclosureId}`)
         .set('Authorization',`Bearer cate`)
         .expect(FORBIDDEN);
     });
 
-    it('should not allow users to remove current reviewer', async () => {
-      await addReviewer(disclosureId,'reviewerDeleteTest6');
+    it('should not allow admin to update current reviewer', async () => {
+      await addReviewer(disclosureId,'reviewerUpdate2');
       await request(app.run())
-        .del(`/api/coi/additional-reviewers/current/${disclosureId}`)
+        .put(`/api/coi/additional-reviewers/complete-review/${disclosureId}`)
         .set('Authorization',`Bearer admin`)
         .expect(FORBIDDEN);
     });
 
-    it('should allow reviewers to remove themselves', async () => {
-      const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest7');
+    it('should allow reviewers to update themselves', async () => {
+      const reviewerId = await addReviewer(disclosureId,'reviewerUpdate3');
       await request(app.run())
-        .del(`/api/coi/additional-reviewers/current/${disclosureId}`)
-        .set('Authorization',`Bearer reviewerDeleteTest7`)
+        .put(`/api/coi/additional-reviewers/complete-review/${disclosureId}`)
+        .set('Authorization',`Bearer reviewerUpdate3`)
         .expect(OK);
 
       const reviewers = await knex('additional_reviewer')
-        .select('id')
+        .select('*')
         .where({id: reviewerId});
 
-      assert.equal(reviewers.length,0);
+      const dates = JSON.parse(reviewers[0].dates);
+
+      assert.equal(1,reviewers.length);
+      assert.equal(0,reviewers[0].active);
+      assert.equal(2,dates.length);
+      assert.equal(COIConstants.DATE_TYPE.ASSIGNED,dates[0].type);
+      assert.equal(COIConstants.DATE_TYPE.COMPLETED,dates[1].type);
     });
   });
 

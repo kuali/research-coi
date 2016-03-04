@@ -35,6 +35,7 @@ export default function AdditionalReviewPanel(props) {
         <AdditionalReviewer
           index={index}
           key={reviewer.userId}
+          readOnly={props.readonly}
           {...reviewer}
         />
       );
@@ -62,7 +63,7 @@ export default function AdditionalReviewPanel(props) {
         <label style={{fontSize: '12px', paddingBottom: '5px', color: '#777'}}>SEARCH REVIEWERS</label>
         <AutoSuggest
           suggestion={Suggestion}
-          endpoint='/api/coi/reviewers'
+          endpoint={`/api/coi/reviewers/${props.disclosureId}/`}
           value={props.reviewerSearchValue}
           onSuggestionSelected={AdminActions.addAdditionalReviewer}
           className={styles.autoSuggest}
