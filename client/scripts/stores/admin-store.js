@@ -596,7 +596,7 @@ class _AdminStore {
   }
 
   completeReview() {
-    createRequest().del(`/api/coi/additional-reviewers/current/${this.applicationState.selectedDisclosure.id}`)
+    createRequest().put(`/api/coi/additional-reviewers/complete-review/${this.applicationState.selectedDisclosure.id}`)
       .end(processResponse(err => {
         if (!err) {
           window.location = '/coi/admin';

@@ -17,6 +17,7 @@
  */
 
 /* eslint-disable camelcase */
+import { DATE_TYPE } from '../../coi-constants';
 
 let getKnex;
 try {
@@ -32,38 +33,53 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
   try {
     const reviewers = await knex('additional_reviewer')
       .select('disclosure_id as disclosureId')
-      .where({user_id: schoolId});
+      .where({
+        user_id: schoolId,
+        active: true
+      });
     return reviewers.map(reviewer => {
       return reviewer.disclosureId.toString();
     });
   } catch(err) {
     return Promise.reject(err);
   }
-
 }
 
 export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) {
   const knex = getKnex(dbInfo);
+  const criteria = {
+    active : true,
+    disclosure_id : disclosureId
+  };
+
+  if (schoolId) {
+    criteria.user_id = schoolId;
+  }
+
   return knex('additional_reviewer')
-    .select('id')
-    .where({
-      user_id: schoolId,
-      disclosure_id: disclosureId
-    });
-
-
+    .select('id','dates', 'user_id as userId')
+    .where(criteria);
 }
 
 export async function createAdditionalReviewer(dbInfo, reviewer) {
   const knex = getKnex(dbInfo);
   try {
+    reviewer.dates = [
+      {
+        type: DATE_TYPE.ASSIGNED,
+        date: new Date()
+      }
+    ];
+
     const id = await knex('additional_reviewer').insert({
       disclosure_id: reviewer.disclosureId,
       user_id: reviewer.userId,
       name: reviewer.name,
       email: reviewer.email,
       title: reviewer.title,
-      unit_name: reviewer.unitName
+      unit_name: reviewer.unitName,
+      active: true,
+      dates: JSON.stringify(reviewer.dates)
     },'id');
     reviewer.id = id[0];
     return Promise.resolve(reviewer);
@@ -76,3 +92,15 @@ export const deleteAdditionalReviewer = (dbInfo, id) => {
   const knex = getKnex(dbInfo);
   return knex('additional_reviewer').del().where({id});
 };
+
+export function updateAdditionalReviewer(dbInfo, id, updates) {
+  const knex = getKnex(dbInfo);
+
+  if (updates.dates) {
+    updates.dates = JSON.stringify(updates.dates);
+  }
+
+  return knex('additional_reviewer')
+    .update(updates)
+    .where({id});
+}

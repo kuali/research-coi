@@ -104,7 +104,9 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
 export function getAuthLink(req) {
   const authInfo = getAuthorizationInfo(req.dbInfo);
   const url = authInfo.authUrl || '';
-  const returnLink = (useSSL ? 'https://' : 'http://') + req.hostname + req.originalUrl;
+  const returnLink = url ?
+  (useSSL ? 'https://' : 'http://') + req.hostname + req.url :
+    '/coi';
   return `${url}/auth?return_to=${encodeURIComponent(returnLink)}`;
 }
 

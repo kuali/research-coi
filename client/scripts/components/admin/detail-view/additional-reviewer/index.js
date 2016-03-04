@@ -19,6 +19,9 @@
 import styles from './style';
 import React from 'react';
 import { AdminActions } from '../../../../actions/admin-actions';
+import { formatDate } from '../../../../format-date';
+import classNames from 'classnames';
+import { DATE_TYPE } from '../../../../../../coi-constants';
 
 export default class AdditionalReviewer extends React.Component {
   constructor() {
@@ -32,24 +35,61 @@ export default class AdditionalReviewer extends React.Component {
   }
 
   render() {
+    const dates = this.props.dates.map((date,index) => {
+      const message = date.type === DATE_TYPE.COMPLETED ?
+        'Review Completed on ' :
+        'Reviewer Assigned on ';
+
+      return (
+        <div key={index} className={styles.dates}>
+          {`${message}${formatDate(date.date)}`}
+        </div>
+      );
+    });
+
+    const completedReview = this.props.dates.filter(date => date.type === DATE_TYPE.COMPLETED).length > 0;
+
+    let removeButton;
+    if (!completedReview && !this.props.readOnly) {
+      removeButton = (
+        <button
+          id="remove_button"
+          className={styles.button}
+          onClick={this.removeAdditionalReviewer}
+        >
+          <i className={`fa fa-times`} style={{marginRight:'5px'}}></i>
+          Remove Reviewer
+        </button>
+      );
+    }
+
+    let check;
+    if (completedReview) {
+      check = (
+        <i id='check_icon' className={`fa fa-check ${styles.icon}`}></i>
+      );
+    }
+
+    const nameClasses = classNames(styles.name,
+      {[styles.check]: completedReview});
+
     return (
       <div className={styles.container}>
         <div className={styles.content}>
-          <div className={styles.name}>
-            {this.props.name}
+
+          <div className={nameClasses}>
+            {check}{this.props.name}
           </div>
           <div className={styles.email}>
             {this.props.email}
           </div>
         </div>
         <div className={styles.buttons}>
-          <button
-            className={styles.button}
-            onClick={this.removeAdditionalReviewer}
-          >
-            <i className={`fa fa-times`} style={{marginRight:'5px'}}></i>
-            Remove Reviewer
-          </button>
+          <div style={{display: 'inline-block'}}>
+            {dates}
+          </div>
+
+          {removeButton}
         </div>
       </div>
     );

@@ -17,7 +17,8 @@
  */
 
 import * as AdditionalReviewerDB from '../db/additional-reviewer-db';
-import { ROLES } from '../../coi-constants';
+import { getReviewers } from '../services/auth-service/auth-service';
+import { ROLES, DATE_TYPE } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { OK } from '../../http-status-codes';
@@ -33,9 +34,35 @@ export const init = app => {
     res.sendStatus(OK);
   }));
 
-  app.delete('/api/coi/additional-reviewers/current/:disclosureId', allowedRoles(REVIEWER), wrapAsync(async (req, res) => {
-    const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, req.userInfo.schoolId, req.params.disclosureId);
-    await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, additionalReviewer[0].id);
+  app.put('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    await AdditionalReviewerDB.updateAdditionalReviewer(req.dbInfo, req.params.id, req.body);
     res.sendStatus(OK);
+  }));
+
+  app.put('/api/coi/additional-reviewers/complete-review/:disclosureId', allowedRoles(REVIEWER), wrapAsync(async (req, res) => {
+    const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, req.userInfo.schoolId, req.params.disclosureId);
+    const dates = JSON.parse(additionalReviewer[0].dates);
+    dates.push({type: DATE_TYPE.COMPLETED, date: new Date()});
+    const updates = {
+      active: false,
+      dates
+    };
+    await AdditionalReviewerDB.updateAdditionalReviewer(req.dbInfo, additionalReviewer[0].id, updates);
+    res.sendStatus(OK);
+  }));
+
+  app.get('/api/coi/reviewers/:disclosureId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    if (!req.query.term) {
+      res.send([]);
+      return;
+    }
+    const results = await getReviewers(req.dbInfo, req.headers.authorization);
+    const existingReviewers = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, undefined, req.params.disclosureId);
+    res.send(results.filter(result => {
+      return result.value.toLowerCase().indexOf(req.query.term.toLowerCase()) >= 0 &&
+          !existingReviewers.map(reviewer => {
+            return reviewer.userId;
+          }).includes(result.userId);
+    }));
   }));
 };

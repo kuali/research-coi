@@ -41,6 +41,11 @@ export const DISCLOSURE_STATUS = {
   RESUBMITTED: 6
 };
 
+export const DATE_TYPE = {
+  ASSIGNED: 'Assigned',
+  COMPLETED: 'Completed'
+};
+
 export const FILE_TYPE = {
   FINANCIAL_ENTITY: 'financialEntity',
   DISCLOSURE: 'disclosure',
@@ -139,5 +144,6 @@ export const COIConstants = {
   LOG_LEVEL,
   STATE_TYPE,
   NOT_YET_DISCLOSED,
-  SYSTEM_USER
+  SYSTEM_USER,
+  DATE_TYPE
 };

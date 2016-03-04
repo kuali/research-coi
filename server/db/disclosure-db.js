@@ -609,8 +609,14 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         file_type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN
       }),
     knex('additional_reviewer')
-      .select('id', 'disclosure_id as disclosureId', 'user_id as userId', 'name', 'email', 'title', 'unit_name as unitName')
-      .where({disclosure_id: disclosureId}),
+      .select('id', 'disclosure_id as disclosureId', 'user_id as userId', 'name', 'email', 'title', 'unit_name as unitName', 'active', 'dates')
+      .where({disclosure_id: disclosureId})
+      .then(reviewers => {
+        return reviewers.map(reviewer => {
+          reviewer.dates = JSON.parse(reviewer.dates);
+          return reviewer;
+        });
+      }),
     isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
   ]).then(([
     disclosureRecords,
@@ -972,6 +978,12 @@ const deletePIReviewsForDisclsoure = (knex, disclosureId) => {
     .where('disclosure_id', disclosureId);
 };
 
+function deleteAdditionalReviewers(knex, disclosureId) {
+  return knex('additional_reviewer')
+    .del()
+    .where('disclosure_id', disclosureId);
+}
+
 export const approve = (dbInfo, disclosure, displayName, disclosureId, trx) => {
   let knex;
   if (trx) {
@@ -990,6 +1002,7 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, trx) => {
     deleteComments(knex, disclosureId),
     deleteAnswersForDisclosure(knex, disclosureId),
     deletePIReviewsForDisclsoure(knex, disclosureId),
+    deleteAdditionalReviewers(knex, disclosureId),
     updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS)
   ])
   .then(([config]) => {

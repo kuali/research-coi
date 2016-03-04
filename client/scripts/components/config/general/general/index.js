@@ -104,7 +104,7 @@ export default class General extends React.Component {
                   />
                   <CheckBox
                     path='config.general.skipFinancialEntities'
-                    label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the cerfication step.'
+                    label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the certification step.'
                     labelClassName={styles.label}
                     checked={this.state.config.general.skipFinancialEntities === undefined ? false : this.state.config.general.skipFinancialEntities}
                   />

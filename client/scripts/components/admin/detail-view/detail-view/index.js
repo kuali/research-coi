@@ -137,6 +137,7 @@ export class DetailView extends React.Component {
       sidePanel = (
         <AdditionalReviewPanel
           statusCd={this.state.applicationState.selectedDisclosure.statusCd}
+          disclosureId={this.state.applicationState.selectedDisclosure.id}
           reviewerSearchValue={this.state.applicationState.reviewerSearchValue}
           reviewers={reviewers}
           managementPlan={managementPlan}
