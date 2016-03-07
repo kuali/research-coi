@@ -596,7 +596,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
       .where('d.disclosure_id', disclosureId),
     retrieveComments(dbInfo, userInfo, disclosureId),
-    knex.select('id', 'name', 'key', 'file_type')
+    knex.select('id', 'name', 'key', 'file_type as fileType')
       .from('file')
       .whereIn('file_type', [COIConstants.FILE_TYPE.DISCLOSURE, COIConstants.FILE_TYPE.ADMIN])
       .andWhere({
