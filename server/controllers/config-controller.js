@@ -33,8 +33,9 @@ export async function saveConfig(req, res) {
 }
 
 export const init = app => {
-  app.get('/api/coi/config', allowedRoles('ANY'), wrapAsync(async req => {
-    return await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
+  app.get('/api/coi/config', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const result = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
+    res.send(result);
   }));
 
   app.get('/api/coi/archived-config/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
@@ -44,7 +45,8 @@ export const init = app => {
 
   app.post('/api/coi/config/', allowedRoles(ADMIN), wrapAsync(saveConfig));
 
-  app.get('/api/coi/new-project-data/:projectTypeCd', allowedRoles(ADMIN), wrapAsync(async req => {
-    return await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);
+  app.get('/api/coi/new-project-data/:projectTypeCd', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    const result = await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);
+    res.send(result);
   }));
 };

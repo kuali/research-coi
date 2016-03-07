@@ -25,8 +25,9 @@ import { OK } from '../../http-status-codes';
 import wrapAsync from './wrap-async';
 
 export const init = app => {
-  app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), wrapAsync(async req => {
-    return await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body);
+  app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    const result = await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body);
+    res.send(result);
   }));
 
   app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {

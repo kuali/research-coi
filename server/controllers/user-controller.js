@@ -32,13 +32,13 @@ try {
 }
 
 export const init = app => {
-  app.get('/api/coi/userinfo', allowedRoles('ANY'), wrapAsync(async req => {
-    return {
+  app.get('/api/coi/userinfo', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    res.send({
       firstName: req.userInfo.firstName,
       lastName: req.userInfo.lastName,
       coiRole: req.userInfo.coiRole,
       mock: req.userInfo.mock,
       researchCoreUrl: getAuthorizationInfo(req.dbInfo).researchCoreUrl
-    };
+    });
   }));
 };

@@ -21,11 +21,6 @@
 export default function(fn) {
   return (req, res, next) => {
     fn(req, res, next)
-      .then(returnValue => {
-        if (returnValue !== undefined) {
-          res.send(returnValue);
-        }
-      })
       .catch(err => {
         next(err);
       });
