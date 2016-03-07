@@ -250,9 +250,7 @@ class _AdminStore {
     .type('application/json')
     .end(processResponse(err => {
       if (!err) {
-        this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
-        this.applicationState.showingApproval = !this.applicationState.showingApproval;
-        this.emitChange();
+        window.location = `/coi/admin/detailview/${this.applicationState.selectedDisclosure.id}/${COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}`
       }
     }));
   }
