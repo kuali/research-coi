@@ -9,7 +9,7 @@
 >update knex_migrations set name = '000000_007.js' where name = '7.js';
 >update knex_migrations set name = '000000_008.js' where name = '8.js';
 >update knex_migrations set name = '000000_009.js' where name = '9.js';
-
+* Fixed bug where general attachments were not displaying on the admin view
 
 ##coi-1602
 * Fixed bug on the pi-revise screen which prevented adding a new relation to an existing entity while reviewing.
