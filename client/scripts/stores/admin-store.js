@@ -250,7 +250,7 @@ class _AdminStore {
     .type('application/json')
     .end(processResponse(err => {
       if (!err) {
-        window.location = `/coi/admin/detailview/${this.applicationState.selectedDisclosure.id}/${COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}`
+        window.location = `/coi/admin/detailview/${this.applicationState.selectedDisclosure.id}/${COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}`;
       }
     }));
   }

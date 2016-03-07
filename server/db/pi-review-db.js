@@ -235,7 +235,7 @@ const getDeclarationComments = (knex, disclosureId, topicIDs) => {
   return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.PROJECTS);
 };
 
-const setAdminCommentsForTopics = (topics, comments, currentUserId) => {
+const setAdminCommentsForTopics = (topics, comments) => {
   comments.filter(comment => {
     return comment.userRole !== COIConstants.ROLES.USER;
   }).forEach(comment => {
@@ -307,7 +307,7 @@ const getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
   .then(([questions, comments, subQuestions]) => {
     associateSubQuestions(questions, subQuestions);
     setPIResponseForTopics(questions, comments, userId);
-    setAdminCommentsForTopics(questions, comments, userId);
+    setAdminCommentsForTopics(questions, comments);
     setPIReviewDataForTopics(questions, reviewItems);
     return questions;
   });
@@ -490,7 +490,7 @@ const getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
     setQuestionAnswersForEntities(entities, entityQuestionAnswers);
     setPIResponseForTopics(entities, comments, userId);
     setRelationshipsForEntities(entities, relationships);
-    setAdminCommentsForTopics(entities, comments, userId);
+    setAdminCommentsForTopics(entities, comments);
     setPIReviewDataForTopics(entities, reviewItems);
     setFilesForEntities(entities, files);
     return entities;
