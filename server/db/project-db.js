@@ -41,127 +41,151 @@ export const getProjects = (dbInfo, userId) => {
     });
 };
 
-const saveNewProjects = (dbInfo, projects) => {
-  const knex = getKnex(dbInfo);
-  return knex('project').insert({
-    title: projects.title,
-    type_cd: projects.typeCode,
-    source_system: projects.sourceSystem,
-    source_identifier: projects.sourceIdentifier,
-    source_status: projects.sourceStatus,
-    sponsor_cd: projects.sponsorCode,
-    sponsor_name: projects.sponsorName,
-    start_date: projects.startDate,
-    end_date: projects.endDate
-  }, 'id')
-    .then(insertResult => {
-      if (projects.persons) {
-        const projectId = insertResult[0];
-        const inserts = projects.persons.map(person => {
-          return knex('project_person').insert({
-            project_id: projectId,
-            person_id: person.personId,
-            source_person_type: person.sourcePersonType,
-            role_cd: person.roleCode,
-            new: true,
-            active: true
-          }, 'id');
-        });
-        return Promise.all(inserts);
-      }
+async function disableAllPersonsForProject(trx, projectId) {
+  await trx('project_person')
+    .update('active', false)
+    .where('project_id', projectId);
+}
+
+async function updateProjectPerson(trx, person, projectId ) {
+  await trx('project_person')
+    .update({'active': true, 'role_cd': person.roleCode})
+    .where({
+      'person_id': person.personId,
+      'source_person_type': person.sourcePersonType,
+      'project_id': projectId
     });
-};
+}
 
-const disableAllPersonsForProject = (dbInfo, projectId) => {
-  const knex = getKnex(dbInfo);
-  return knex('project_person').update('active', false).where('project_id', projectId);
-};
+async function insertProjectPerson(trx, person, projectId) {
+  const id = await trx('project_person')
+    .insert({
+      'active': true,
+      'role_cd': person.roleCode,
+      'person_id': person.personId,
+      'source_person_type': person.sourcePersonType,
+      'project_id': projectId
+    }, 'id');
+  return id[0];
+}
 
-const saveProjectPersons = (dbInfo, persons, projectId) => {
-  const knex = getKnex(dbInfo);
-  return knex.select('person_id', 'source_person_type').from('project_person').where('project_id', projectId)
-    .then(personIdResult => {
-      if (persons && persons.length > 0) {
-        let queries = persons.map(person => {
-          if (personIdResult.find(pr => {
-            return pr.person_id === person.personId && pr.source_person_type === person.sourcePersonType;
-          })) {
-            return knex('project_person')
-              .update({'active': true, 'role_cd': person.roleCode})
-              .where({
-                'person_id': person.personId,
-                'source_person_type': person.sourcePersonType,
-                'project_id': projectId
-              });
-          }
-
-          return knex('project_person')
-            .insert({
-              'active': true,
-              'role_cd': person.roleCode,
-              'person_id': person.personId,
-              'source_person_type': person.sourcePersonType,
-              'project_id': projectId
-            }, 'id');
-        });
-
-        const deactiveQueries = personIdResult.filter(pr => {
-          return persons.find(person => {
-            return person.personId === pr.person_id && person.sourcePersonType === pr.source_person_type;
-          }) === undefined;
-        }).map(result => {
-          return knex('project_person')
-            .update('active', false)
-            .where({
-              'person_id': result.person_id,
-              'source_person_type': result.source_person_type,
-              'project_id': projectId
-            });
-        });
-
-        if (deactiveQueries.length > 0) {
-          queries = queries.concat(deactiveQueries);
-        }
-
-        return Promise.all(queries);
-      }
-      
-      if (personIdResult.length > 0) {
-        return disableAllPersonsForProject(dbInfo, projectId);
-      }
+async function deactivateProjectPerson(trx, person, projectId) {
+  await trx('project_person')
+    .update('active', false)
+    .where({
+      'person_id': person.person_id,
+      'source_person_type': person.source_person_type,
+      'project_id': projectId
     });
-};
+}
 
-const saveExistingProjects = (dbInfo, projects, projectId) => {
-  const knex = getKnex(dbInfo);
-  return knex('project').update({
-    title: projects.title,
-    type_cd: projects.typeCode,
-    source_status: projects.sourceStatus,
-    sponsor_cd: projects.sponsorCode,
-    sponsor_name: projects.sponsorName,
-    start_date: projects.startDate,
-    end_date: projects.endDate
-  }).where('id', projects.id)
-    .then(() => {
-      return saveProjectPersons(dbInfo, projects.persons, projectId);
+async function deactivateProjectPersons(trx, existingPersons, persons, projectId) {
+  existingPersons.filter(pr => {
+    return persons.find(person => {
+      return person.personId === pr.person_id && person.sourcePersonType === pr.source_person_type;
+    }) === undefined;
+  }).map(async result => {
+    await deactivateProjectPerson(trx, result, projectId);
+  });
+}
+
+async function saveProjectPersons(trx, persons, projectId) {
+  const existingPersons = await trx('project_person')
+    .select('person_id', 'source_person_type')
+    .where('project_id', projectId);
+
+  if (persons && persons.length > 0) {
+    let queries = persons.map(async person => {
+      if (existingPersons.find(pr => {
+        return pr.person_id === person.personId && pr.source_person_type === person.sourcePersonType;
+      })) {
+        return await updateProjectPerson(trx, person, projectId);
+      }
+      return await insertProjectPerson(trx, person, projectId);
     });
-};
 
-export const saveProjects = (dbInfo, projects) => {
-  const knex = getKnex(dbInfo);
-  return knex.select('id').from('project').where({
-    source_system: projects.sourceSystem,
-    source_identifier: projects.sourceIdentifier
-  }).then(projectIdResult => {
-    if (projectIdResult.length > 0) {
-      const projectId = projectIdResult[0].id;
-      return saveExistingProjects(dbInfo, projects, projectId);
+    const deactiveQueries = await deactivateProjectPersons(trx, existingPersons, persons, projectId);
+
+    if (deactiveQueries && deactiveQueries.length > 0) {
+      queries = queries.concat(deactiveQueries);
     }
 
-    return saveNewProjects(dbInfo, projects);
+    await Promise.all(queries);
+    return;
+  }
+
+  if (existingPersons.length > 0) {
+    await disableAllPersonsForProject(trx, projectId);
+  }
+}
+
+async function insertProject(trx, project) {
+  const id = await trx('project').insert({
+    title: project.title,
+    type_cd: project.typeCode,
+    source_system: project.sourceSystem,
+    source_identifier: project.sourceIdentifier,
+    source_status: project.sourceStatus,
+    sponsor_cd: project.sponsorCode,
+    sponsor_name: project.sponsorName,
+    start_date: project.startDate,
+    end_date: project.endDate
+  }, 'id');
+
+  return id[0];
+}
+
+async function saveNewProjects(trx, project) {
+  project.id = await insertProject(trx, project);
+
+  if (project.persons) {
+    const inserts = project.persons.map( async person => {
+      const id = await insertProjectPerson(trx, person, project.id);
+      person.id = id;
+    });
+    await Promise.all(inserts);
+  }
+  return project;
+}
+
+
+async function saveExistingProjects(trx, project, projectId) {
+  await trx('project').update({
+    title: project.title,
+    type_cd: project.typeCode,
+    source_status: project.sourceStatus,
+    sponsor_cd: project.sponsorCode,
+    sponsor_name: project.sponsorName,
+    start_date: project.startDate,
+    end_date: project.endDate
+  }).where('id', projectId);
+
+  await saveProjectPersons(trx, project.persons, projectId);
+}
+
+async function getExistingProjectId(trx, project) {
+  const existingProject = await trx.select('id')
+    .from('project')
+    .where({
+      source_system: project.sourceSystem,
+      source_identifier: project.sourceIdentifier
+    });
+  if (existingProject && existingProject.length > 0) {
+    return existingProject[0].id;
+  }
+}
+
+export async function saveProjects(dbInfo, project) {
+  const knex = getKnex(dbInfo);
+
+  return knex.transaction(async function(trx) {
+    const existingProjectId = await getExistingProjectId(trx, project);
+    if (existingProjectId) {
+      return await saveExistingProjects(trx, project, existingProjectId);
+    }
+    return await saveNewProjects(trx, project);
   });
-};
+}
 
 function getStatus(trx, projectPerson) {
   const result = {

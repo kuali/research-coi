@@ -26,8 +26,12 @@ import wrapAsync from './wrap-async';
 
 export const init = app => {
   app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    await ProjectDB.saveProjects(req.dbInfo, req.body);
-    res.sendStatus(OK);
+    const result = await ProjectDB.saveProjects(req.dbInfo, req.body);
+    if (!result) {
+      res.sendStatus(OK);
+      return;
+    }
+    res.send(result);
   }));
 
   /**
