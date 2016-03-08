@@ -16,7 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable prefer-arrow-callback */
+/*  eslint-disable
+ camelcase,
+ no-console,
+ no-magic-numbers,
+ no-var,
+ object-shorthand,
+ prefer-template,
+ prefer-arrow-callback,
+ max-len
+ */
+
+var migrationUtils = require('../migration-utils');
 
 exports.up = function(knex) {
   return knex.schema.createTable('disclosure_type', function(table) {
@@ -244,6 +255,185 @@ exports.up = function(knex) {
     table.dateTime('reviewed_on');
     table.boolean('revised');
     table.boolean('responded_to');
+  }).then(function() {
+    return Promise.all([
+      knex('disclosure_status').insert({status_cd: 1, description: 'In Progress'}),
+      knex('disclosure_status').insert({status_cd: 2, description: 'Submitted for Approval'}),
+      knex('disclosure_status').insert({status_cd: 3, description: 'Up to Date'}),
+      knex('disclosure_status').insert({status_cd: 4, description: 'Updates Required'}),
+      knex('disclosure_status').insert({status_cd: 5, description: 'Expired'}),
+      knex('disclosure_status').insert({status_cd: 6, description: 'Resubmitted'})
+    ]);
+  }).then(function() {
+    return Promise.all([
+      knex('disclosure_type').insert({type_cd: 1, description: 'Manual Disclosure', enabled: false}),
+      knex('disclosure_type').insert({type_cd: 2, description: 'Annual Disclosure', enabled: true}),
+      knex('disclosure_type').insert({type_cd: 3, description: 'Project Disclosure', enabled: false}),
+      knex('disclosure_type').insert({type_cd: 4, description: 'Travel Log', enabled: false})
+    ]);
+  }).then(function() {
+    return Promise.all([
+      knex('disposition_type').insert({type_cd: 1, description: '222'})
+    ]);
+  }).then(function() {
+    return Promise.all([
+      knex('project_type').insert({type_cd: 1, description: 'Proposal'}),
+      knex('project_type').insert({type_cd: 2, description: 'Institutional Proposal'}),
+      knex('project_type').insert({type_cd: 3, description: 'IRB Protocol'}),
+      knex('project_type').insert({type_cd: 4, description: 'IACUC Protocol'}),
+      knex('project_type').insert({type_cd: 5, description: 'Award'})
+    ]);
+  }).then(function() {
+    return Promise.all([
+      knex('relationship_person_type').insert({description: 'Self', active: true}),
+      knex('relationship_person_type').insert({description: 'Spouse', active: true}),
+      knex('relationship_person_type').insert({description: 'Other', active: true}),
+      knex('relationship_person_type').insert({description: 'Entity', active: true})
+    ]);
+  }).then(function() {
+    return Promise.all([
+      knex('declaration_type').insert({type_cd: 1, description: 'No Conflict', enabled: true, custom: false, active: true}),
+      knex('declaration_type').insert({type_cd: 2, description: 'Managed Relationship', enabled: true, custom: false, active: true}),
+      knex('declaration_type').insert({type_cd: 3, description: 'Potential Relationship', enabled: true, custom: true, active: true})
+    ]);
+  }).then(function() {
+    return Promise.all([
+      knex('relationship_category_type')
+        .insert({
+          type_cd: 1,
+          description: 'Ownership',
+          enabled: true,
+          type_enabled: true,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
+        .then(function(){
+          return Promise.all([
+            knex('relationship_type').insert({relationship_cd: 1, description: 'Stock', active: true})
+              .then(function() {return knex('relationship_type').insert({relationship_cd: 1, description: 'Stock Options', active: true});})
+              .then(function() {return knex('relationship_type').insert({relationship_cd: 1, description: 'Other Ownership', active: true});}),
+            knex('relationship_amount_type').insert({relationship_cd: 1, description: '$1 - $5,000', active: true})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 1, description: '$5,001 - $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Over $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Privately Held, no valuation', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 1, description: 'Does not apply', active: true});})
+          ]);
+        }),
+      knex('relationship_category_type')
+        .insert({
+          type_cd: 2,
+          description: 'Offices/Positions',
+          enabled: true,
+          type_enabled: true,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
+        .then(function() {
+          return Promise.all([
+            knex('relationship_type').insert({relationship_cd: 2, description: 'Board Member', active: true})
+              .then(function() {return knex('relationship_type').insert({relationship_cd: 2, description: 'Partner', active: true});})
+              .then(function() {return knex('relationship_type').insert({relationship_cd: 2, description: 'Other Managerial Positions', active: true});})
+              .then(function() {return knex('relationship_type').insert({relationship_cd: 2, description: 'Founder', active: true});}),
+            knex('relationship_amount_type').insert({relationship_cd: 2, description: '$1 - $5,000', active: true})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 2, description: '$5,001 - $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Over $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Privately Held, no valuation', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 2, description: 'Does not apply', active: true});})
+          ]);
+        }),
+      knex('relationship_category_type')
+        .insert({
+          type_cd: 3,
+          description: 'Paid Activities',
+          enabled: true,
+          type_enabled: false,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
+        .then(function() {
+          return knex('relationship_amount_type').insert({relationship_cd: 3, description: '$1 - $5,000', active: true})
+            .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 3, description: '$5,001 - $10,000', active: true});})
+            .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Over $10,000', active: true});})
+            .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Privately Held, no valuation', active: true});})
+            .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 3, description: 'Does not apply', active: true});});
+        }),
+      knex('relationship_category_type')
+        .insert({
+          type_cd: 4,
+          description: 'Intellectual Property',
+          enabled: true,
+          type_enabled: true,
+          amount_enabled: true,
+          destination_enabled: false,
+          date_enabled: false,
+          reason_enabled: false
+        })
+        .then(function() {
+          return Promise.all([
+            knex('relationship_type').insert({relationship_cd: 4, description: 'Royalty Income', active: true})
+              .then(function() {return knex('relationship_type').insert({relationship_cd: 4, description: 'Intellectual Property Rights', active: true});}),
+            knex('relationship_amount_type').insert({relationship_cd: 4, description: '$1 - $5,000', active: true})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 4, description: '$5,001 - $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Over $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Privately Held, no valuation', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 4, description: 'Does not apply', active: true});})
+          ]);
+        }),
+      knex('relationship_category_type')
+        .insert({type_cd: 5, description: 'Other', enabled: true, type_enabled: true, amount_enabled: true, destination_enabled: false, date_enabled: false, reason_enabled: false})
+        .then(function() {
+          return Promise.all([
+            knex('relationship_type').insert({relationship_cd: 5, description: 'Contract', active: true})
+              .then(function() {return knex('relationship_type').insert({relationship_cd: 5, description: 'Other Transactions', active: true});}),
+            knex('relationship_amount_type').insert({relationship_cd: 5, description: '$1 - $5,000', active: true})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 5, description: '$5,001 - $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Over $10,000', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Privately Held, no valuation', active: true});})
+              .then(function() {return knex('relationship_amount_type').insert({relationship_cd: 5, description: 'Does not apply', active: true});})
+          ]);
+        }),
+      knex('relationship_category_type')
+        .insert({type_cd: 6, description: 'Travel', enabled: false, type_enabled: false, amount_enabled: true, destination_enabled: true, date_enabled: true, reason_enabled: true})
+    ]);
+  }).then(function() {
+    return Promise.all([
+      knex('questionnaire_type').insert({type_cd: 1, description: 'Screening'}),
+      knex('questionnaire_type').insert({type_cd: 2, description: 'Entity'})
+    ]);
+  }).then(function() {
+    return knex('questionnaire').insert({
+      version: 1,
+      type_cd: 1
+    }, 'id').options({rowMode: 'array'})
+      .then(function(questionnaireId) {
+        return Promise.all([
+          migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'From any for-profit organization, did you receive in the last 12 months, or do you expect to receive in the next 12 months, salary, director\'s fees, consulting payments, honoraria, royalties; or other payments for patents, copyrights or other intellectual property; or other direct payments exceeding $5,000?', 1, undefined, undefined, true),
+          migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'From any privately held organization, do you have stock, stock options, or other equity interest of any value?', 2),
+          migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'Some publicly traded stock must be disclosed, but only in specific circumstances. Do you own stock, which in aggregate exceeds $5,000, in a company that provides funds to this institution in support of your Institutional Responsibilities (e.g. teaching, research, committee, or other administrative responsibilities)? When aggregating, please consider stock, stock options, warrants and other existing or contingent ownership interests in the publicly held company. Do not consider investments where you do not directly influence investment decisions, such as mutual funds and retirement accounts.', 3),
+          migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'From US educational institutions, US teaching hospitals or US research institutions affiliated with US educational institutions: Did you receive in the last 12 months, or do you expect to receive in the next 12 months, payments for services, which in aggregate exceed $5,000 (e.g. payments for consulting, board positions, patents, copyrights or other intellectual property)? Exclude payments for scholarly or academic works (i.e. peer-reviewed (vs. editorial reviewed) articles or books based on original research or experimentation, published by an academic association or a university/academic press).', 4)
+        ]);
+      });
+  }).then(function() {
+    return knex('questionnaire').insert({
+      version: 1,
+      type_cd: 2
+    }, 'id')
+    .then(function(questionnaireId) {
+      return Promise.all([
+        migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'Type:', 1, 'Multiselect', ['State Government', 'County Government', 'Small Business'], false, 1),
+        migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'Is this entity public?', 2, 'Yes/No'),
+        migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'Does this entity sponsor any of your research?', 3),
+        migrationUtils.insertQuestionnaireQuestion(knex, questionnaireId[0], 'Describe the entity\'s area of business and your relationship to it:', 4, 'Text area')
+      ]);
+    });
+  }).then(function() {
+    return migrationUtils.insertInitialArchiveConfig(knex);
   });
 };
 
