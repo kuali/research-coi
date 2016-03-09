@@ -351,10 +351,7 @@ class _DisclosureStore {
         .get('/api/coi/disclosures/annual')
         .end(processResponse((err, disclosure) => {
           if (!err) {
-            if ([COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
-              COIConstants.DISCLOSURE_STATUS.UP_TO_DATE,
-              COIConstants.DISCLOSURE_STATUS.EXPIRED]
-              .includes(disclosure.body.statusCd)) {
+            if (COIConstants.EDITABLE_STATUSES.includes(disclosure.body.statusCd)) {
               Promise.all([
                 this.loadDisclosureState(disclosure.body.id),
                 this.loadArchivedConfig(disclosure.body.configId)

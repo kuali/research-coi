@@ -213,12 +213,12 @@ export const init = app => {
     User can only submit disclosures which are theirs
   */
   app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    await DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id);
+    await DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id, req.headers.authorization);
     res.sendStatus(ACCEPTED);
   }));
 
   app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id);
+    await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id, req.headers.authorization);
     res.sendStatus(ACCEPTED);
   }));
 

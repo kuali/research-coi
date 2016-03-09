@@ -267,7 +267,7 @@ class _AdminStore {
           comment.editable = false;
           return comment;
         });
-        this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
+        this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS._REQUIRED;
         this.applicationState.showingRejection = !this.applicationState.showingRejection;
         this.emitChange();
       }

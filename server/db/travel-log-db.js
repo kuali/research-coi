@@ -136,7 +136,7 @@ const createNewRelationship = (knex, entityId, entry, status) => {
 };
 
 const isSubmitted = (status) => {
-  if (status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS || status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+  if (COIConstants.EDITABLE_STATUSES.includes(status)) {
     return false;
   }
 

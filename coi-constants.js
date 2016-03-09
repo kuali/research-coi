@@ -36,9 +36,10 @@ export const DISCLOSURE_STATUS = {
   IN_PROGRESS: 1,            // Admin: <not shown>
   SUBMITTED_FOR_APPROVAL: 2,
   UP_TO_DATE: 3,             // Admin: Approved
-  UPDATES_REQUIRED: 4,       // Admin: Sent back
+  REVISION_REQUIRED: 4,       // Admin: Sent back
   EXPIRED: 5,
-  RESUBMITTED: 6
+  RESUBMITTED: 6,
+  UPDATE_REQUIRED: 7
 };
 
 export const DATE_TYPE = {
@@ -126,6 +127,19 @@ export const NOT_YET_DISCLOSED = 'Not Yet Disclosed';
 
 export const SYSTEM_USER = 'system';
 
+export const EDITABLE_STATUSES = [
+  DISCLOSURE_STATUS.EXPIRED,
+  DISCLOSURE_STATUS.IN_PROGRESS,
+  DISCLOSURE_STATUS.UP_TO_DATE,
+  DISCLOSURE_STATUS.UPDATE_REQUIRED
+];
+
+export const APPROVED_STATUSES = [
+  DISCLOSURE_STATUS.EXPIRED,
+  DISCLOSURE_STATUS.UP_TO_DATE,
+  DISCLOSURE_STATUS.UPDATE_REQUIRED
+];
+
 export const COIConstants = {
   DISCLOSURE_STEP,
   INSTRUCTION_STEP,
@@ -145,5 +159,7 @@ export const COIConstants = {
   STATE_TYPE,
   NOT_YET_DISCLOSED,
   SYSTEM_USER,
-  DATE_TYPE
+  DATE_TYPE,
+  EDITABLE_STATUSES,
+  APPROVED_STATUSES
 };

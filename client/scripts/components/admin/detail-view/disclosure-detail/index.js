@@ -199,7 +199,9 @@ export class DisclosureDetail extends React.Component {
               role={this.props.role}
               readonly={
                 this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED
+                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED ||
+                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED ||
+                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED
               }
             />
           </span>

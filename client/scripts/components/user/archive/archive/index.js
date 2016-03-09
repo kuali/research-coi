@@ -161,9 +161,7 @@ export class Archive extends React.Component {
 
     let isEditable = false;
     if (this.state.currentAnnualDisclosureStatus && (
-          this.state.currentAnnualDisclosureStatus === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
-          this.state.currentAnnualDisclosureStatus === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-          this.state.currentAnnualDisclosureStatus === COIConstants.DISCLOSURE_STATUS.EXPIRED
+          COIConstants.EDITABLE_STATUSES.includes(this.state.currentAnnualDisclosureStatus)
        )) {
       isEditable = true;
     }

@@ -53,7 +53,8 @@ export class DetailView extends React.Component {
   componentDidMount() {
     AdminStore.listen(this.onChange);
     if (this.props.params !== undefined && this.props.params.id !== undefined && this.props.params.statusCd !== undefined) {
-      if (this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString()) {
+      if (this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString() ||
+      this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED.toString()) {
         AdminActions.loadArchivedDisclosure(this.props.params.id);
       } else {
         AdminActions.loadDisclosure(this.props.params.id);
@@ -68,7 +69,8 @@ export class DetailView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString()) {
+    if (nextProps.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString() ||
+      this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED.toString()) {
       AdminActions.loadArchivedDisclosure(nextProps.params.id);
     } else {
       AdminActions.loadDisclosure(nextProps.params.id);
@@ -121,7 +123,8 @@ export class DetailView extends React.Component {
           disclosureId={this.state.applicationState.selectedDisclosure.id}
           role={this.state.userInfo.coiRole}
           readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
-           || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED}
+           || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED
+           || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED}
         />
       );
     }
@@ -132,7 +135,9 @@ export class DetailView extends React.Component {
       if (this.state.applicationState.selectedDisclosure) {
         reviewers = this.state.applicationState.selectedDisclosure.reviewers;
         managementPlan = this.state.applicationState.selectedDisclosure.managementPlan;
-        readOnly = this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+        readOnly = this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
+          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED
+          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED;
       }
       sidePanel = (
         <AdditionalReviewPanel
@@ -166,7 +171,9 @@ export class DetailView extends React.Component {
       sidePanel = (
         <UploadAttachmentsPanel
           files={adminFiles}
-          readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}
+          readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
+          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED
+          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED}
         />
       );
     }

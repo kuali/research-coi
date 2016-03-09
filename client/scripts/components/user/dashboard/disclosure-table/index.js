@@ -29,10 +29,8 @@ export class DisclosureTable extends React.Component {
     }
 
     return disclosures.some(disclosure => {
-      return (disclosure.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
-              disclosure.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-              disclosure.status === COIConstants.DISCLOSURE_STATUS.EXPIRED ||
-              disclosure.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED);
+      return (COIConstants.EDITABLE_STATUSES.includes(disclosure.status) ||
+      disclosure.status === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED);
     });
   }
 
