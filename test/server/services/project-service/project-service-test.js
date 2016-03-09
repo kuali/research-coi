@@ -121,8 +121,10 @@ describe('ProjectService', () => {
     });
   });
 
-  describe('filter', () => {
-    const requiredRoles = [
+  describe('isRequired', () => {
+
+    const requirements = {};
+    requirements.roles = [
       {
         projectTypeCd: 1,
         sourceRoleCd: 'PI'
@@ -132,10 +134,10 @@ describe('ProjectService', () => {
         sourceRoleCd: 'COI'
       }
     ];
-    const requiredTypes = [
+    requirements.types = [
       {typeCd: 1}
     ];
-    const requiredStatuses = [
+    requirements.statuses = [
       {
         projectTypeCd: 1,
         sourceStatusCd: '1'
@@ -145,7 +147,7 @@ describe('ProjectService', () => {
         sourceStatusCd: '2'
       }
     ];
-    const requiredSponsors = ['000340','000500'];
+    requirements.sponsors = ['000340','000500'];
 
     const projects = [
       {
@@ -181,9 +183,29 @@ describe('ProjectService', () => {
       }
     ];
 
-    const requiredProjects = ProjectService.filter(requiredTypes, requiredRoles, requiredStatuses, requiredSponsors, projects);
+    it('should return true if type, role, status, and sponsor are required', () => {
+      const isRequired = ProjectService.isRequired(requirements, projects[0]);
+      assert.equal(true, isRequired);
+    });
 
-    assert.equal(1,requiredProjects.length);
-    assert.equal('good project', requiredProjects[0].title);
+    it('should return false if type is not required', () => {
+      const isRequired = ProjectService.isRequired(requirements, projects[1]);
+      assert.equal(false, isRequired);
+    });
+
+    it('should return false if role is not required', () => {
+      const isRequired = ProjectService.isRequired(requirements, projects[2]);
+      assert.equal(false, isRequired);
+    });
+
+    it('should return false if status is not required', () => {
+      const isRequired = ProjectService.isRequired(requirements, projects[3]);
+      assert.equal(false, isRequired);
+    });
+
+    it('should return false if sponsor is not required', () => {
+      const isRequired = ProjectService.isRequired(requirements, projects[4]);
+      assert.equal(false, isRequired);
+    });
   });
 });

@@ -50,11 +50,9 @@ export class DisclosureTableRow extends React.Component {
   }
 
   render() {
-    const updateable = this.props.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
-      this.props.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-      this.props.status === COIConstants.DISCLOSURE_STATUS.EXPIRED;
+    const updateable = COIConstants.EDITABLE_STATUSES.includes(this.props.status);
 
-    const revisable = this.props.status === COIConstants.DISCLOSURE_STATUS.UPDATES_REQUIRED;
+    const revisable = this.props.status === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED;
 
     let extraInfo;
     if (this.props.expiresOn) {

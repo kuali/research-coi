@@ -125,7 +125,8 @@ export class ListView extends React.Component {
       {code: 3, label: ConfigStore.getAdminDisclosureStatusString(3)},
       {code: 4, label: ConfigStore.getAdminDisclosureStatusString(4)},
       {code: 5, label: ConfigStore.getAdminDisclosureStatusString(5)},
-      {code: 6, label: ConfigStore.getAdminDisclosureStatusString(6)}
+      {code: 6, label: ConfigStore.getAdminDisclosureStatusString(6)},
+      {code: 7, label: ConfigStore.getAdminDisclosureStatusString(7)}
     ];
 
     const possibleTypes = [];

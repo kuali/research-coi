@@ -118,7 +118,8 @@ export class Dashboard extends React.Component {
         return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL;
       });
       if (!annualDisclosure || annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
-          annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+          annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
+          annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED) {
         annualDisclosureButton = (
           <div>
             <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.ANNUAL}/>

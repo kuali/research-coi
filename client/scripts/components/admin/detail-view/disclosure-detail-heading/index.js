@@ -54,7 +54,8 @@ export function DisclosureDetailHeading(props) {
 
   let approvedDate;
   if (
-    disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE &&
+    (disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE ||
+    disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED) &&
     disclosure.lastReviewDate
   ) {
     approvedDate = (
