@@ -102,9 +102,12 @@ export default class General extends React.Component {
                     labelClassName={styles.label}
                     checked={this.state.config.general.autoApprove === undefined ? false : this.state.config.general.autoApprove}
                   />
+                </Panel>
+
+                <Panel title="Screening Validations">
                   <CheckBox
                     path='config.general.skipFinancialEntities'
-                    label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the certification step.'
+                    label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the certification step.' //eslint-disable-line max-len
                     labelClassName={styles.label}
                     checked={this.state.config.general.skipFinancialEntities === undefined ? false : this.state.config.general.skipFinancialEntities}
                   />
