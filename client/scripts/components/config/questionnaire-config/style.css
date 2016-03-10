@@ -18,3 +18,36 @@
 
 .container {
 }
+
+.message {
+  background-color: #F57C00;
+  border-radius: 5px;
+  color: white;
+  padding: 0 20px;
+  height: 145px;
+  font-size: 21px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+:global(.color-blind) .message {
+  background-color: black;
+}
+
+.top {
+  width: 100%;
+}
+
+.left {
+  float: left;
+  height: 200px;
+  width: 200px;
+}
+
+.right {
+  width: auto;
+  height: 200px;
+  overflow: hidden;
+}

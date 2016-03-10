@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/*eslint-disable max-len*/
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
@@ -270,7 +271,7 @@ class QuestionnaireConfig extends React.Component {
     ];
 
     let newQuestion;
-    let newQuestionButton;
+    let newQuestionSection;
     let nextQuestionYPosition = 0;
     const questionsJSX = [];
 
@@ -285,8 +286,18 @@ class QuestionnaireConfig extends React.Component {
       );
     }
     else {
-      newQuestionButton = (
-        <NewQuestionButton onClick={this.newQuestionStarted} />
+      newQuestionSection = (
+        <div className={styles.top}>
+          <div className={styles.left}>
+            <NewQuestionButton onClick={this.newQuestionStarted} />
+          </div>
+          <div className={styles.right}>
+            <div className={styles.message}>
+              Only parent-level, Yes/No questions can be used in screening questionnaire validations as configured in Screening Validations in General Configuration.
+            </div>
+
+          </div>
+        </div>
       );
     }
 
@@ -367,7 +378,7 @@ class QuestionnaireConfig extends React.Component {
 
     return (
       <div className={classNames(styles.container, this.props.className)}>
-        {newQuestionButton}
+        {newQuestionSection}
         {newQuestion}
 
         <div style={{position: 'relative', marginTop: 16, minHeight: nextQuestionYPosition}}>
