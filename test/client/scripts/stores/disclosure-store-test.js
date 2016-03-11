@@ -20,16 +20,38 @@ import assert from 'assert';
 import {
   unSubmittedRelationshipStarted,
   entityRelationshipStepErrors,
-  canSkipEntities
+  canSkipEntities,
+  DisclosureStore
 } from '../../../../client/scripts/stores/disclosure-store';
+import { QUESTION_TYPE } from '../../../../coi-constants';
+
 import _ from 'lodash';
 
-function createDisclosure(active, answer, questionType) {
+function createDisclosure(active, answer, questionId) {
   const disclosure = {};
   _.set(disclosure,'entities[0].active',active);
   _.set(disclosure,'answers[0].answer.value', answer);
-  _.set(disclosure,'answers[0].question.question.type', questionType);
+  _.set(disclosure,'answers[0].questionId', questionId);
   return disclosure;
+}
+
+function createConfig() {
+  return {
+    questions: {
+      screening: [
+        {
+          id: 1,
+          question: {
+            type: QUESTION_TYPE.YESNO
+          }
+        }
+      ]
+    },
+    general: {
+      enforceFinancialEntities: true,
+      skipFinancialEntities: true
+    }
+  };
 }
 
 describe('DisclosureStore', () => {
@@ -223,28 +245,68 @@ describe('DisclosureStore', () => {
 
   describe('canSkipEntities', () => {
     it('should return false if skipFinancialEntities is false', () => {
-      const value = canSkipEntities(createDisclosure(0,'No','Yes/No'), false);
+      const config = createConfig();
+      config.general.skipFinancialEntities = false;
+      const value = canSkipEntities(createDisclosure(0,'No',1), config);
       assert.equal(false, value);
     });
 
     it('should return false if an active financial entity exists', () => {
-      const value = canSkipEntities(createDisclosure(1,'No','Yes/No'), true);
+      const value = canSkipEntities(createDisclosure(1,'No',1), createConfig());
       assert.equal(false, value);
     });
 
     it('should return false if a yes/no question is answered yes', () => {
-      const value = canSkipEntities(createDisclosure(0,'Yes','Yes/No'), true);
+      const value = canSkipEntities(createDisclosure(0,'Yes',1), createConfig());
       assert.equal(false, value);
     });
 
     it('should return true if yes/no questions are no and no active entities exists', () => {
-      const value = canSkipEntities(createDisclosure(0,'No','Yes/No'), true);
+      const value = canSkipEntities(createDisclosure(0,'No',1), createConfig());
       assert.equal(true, value);
     });
 
     it('should return true if no yes/no questions are provided', () => {
-      const value = canSkipEntities(createDisclosure(0,'Dragon Cat','Text'), true);
+      const config = createConfig();
+      config.questions.screening.push({
+        id: 2,
+        question: {
+          type: QUESTION_TYPE.TEXTAREA
+        }
+      });
+      const value = canSkipEntities(createDisclosure(0,'Dragon Cat',2), config);
       assert.equal(true, value);
+    });
+  });
+
+  describe('enforceEntities', () => {
+    it('should return true enforceFinancialEntities is true, a question is answered yes, and no active entities exist', () => {
+      const enforceEntities = DisclosureStore.enforceEntities(createDisclosure(0, 'Yes', 1), createConfig());
+      assert.equal(true, enforceEntities);
+    });
+
+    it('should return false an active entity exists', () => {
+      const enforceEntities = DisclosureStore.enforceEntities(createDisclosure(1, 'Yes', 1), createConfig());
+      assert.equal(false, enforceEntities);
+    });
+
+    it('should return false if all questions are answered no', () => {
+      const enforceEntities = DisclosureStore.enforceEntities(createDisclosure(1, 'No', 1), createConfig());
+      assert.equal(false, enforceEntities);
+    });
+
+    it('should return false if enforceFinancialEntities is false', () => {
+      const config = createConfig();
+      config.general.enforceFinancialEntities = false;
+      const enforceEntities = DisclosureStore.enforceEntities(createDisclosure(0, 'Yes', 1), config);
+      assert.equal(false, enforceEntities);
+    });
+
+    it('should return false if question type is not yes no but answered yes', () => {
+      const config = createConfig();
+      config.questions.screening[0].question.type = QUESTION_TYPE.YESNONA;
+      const enforceEntities = DisclosureStore.enforceEntities(createDisclosure(0, 'Yes', 1), config);
+      assert.equal(false, enforceEntities);
     });
   });
 

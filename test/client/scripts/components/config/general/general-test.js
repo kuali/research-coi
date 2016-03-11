@@ -37,7 +37,7 @@ describe('General', () => {
     assert(ShallowTestUtils.findWithType(component,Sidebar));
     assert(ShallowTestUtils.findWithType(component,DisclosureTypes));
     assert.equal(ShallowTestUtils.findAllWithType(component,Panel).length,4);
-    assert.equal(ShallowTestUtils.findAllWithType(component,Checkbox).length,3);
+    assert.equal(ShallowTestUtils.findAllWithType(component,Checkbox).length,4);
     assert(ShallowTestUtils.findWithType(component,ActionPanel));
     const title = ShallowTestUtils.findWithClass(component,
       '_client_scripts_components_config_general_general_style__stepTitle');

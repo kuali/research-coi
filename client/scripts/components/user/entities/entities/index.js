@@ -27,6 +27,7 @@ import {Instructions} from '../../instructions';
 import {COIConstants} from '../../../../../../coi-constants';
 import {Toggle} from '../../toggle';
 import {BlueButton} from '../../../blue-button';
+import AddSection from '../../../add-section';
 
 export class Entities extends React.Component {
   shouldComponentUpdate() { return true; }
@@ -73,17 +74,32 @@ export class Entities extends React.Component {
       }
     }
 
-    let newEntityButton;
+    let newEntitySection;
     let entityForm;
     let placeholder;
     if (this.props.applicationState.newEntityFormStep < 0) {
-      newEntityButton = (
+      const newEntityButton = (
         <NewEntityButton
           onClick={DisclosureActions.newEntityInitiated}
           className={`${styles.override} ${styles.newentitybutton}`}
         />
       );
 
+      let message;
+
+      if (this.props.nextDisabled) {
+        message = 'You have answered "Yes" to a screening question, but do not have an active Financial Entity. Please add an active Financial Entity or edit your screening questionnaire in order to submit your disclosure.'; //eslint-disable-line max-len
+      }
+
+      newEntitySection = (
+        <AddSection
+          button={newEntityButton}
+          message={message}
+        />
+      );
+
+      const nextStep = this.props.nextDisabled ? '' : DisclosureActions.nextStep;
+      const nextButtonStyle = this.props.nextDisabled ? {backgroundColor: '#AAA', cursor: 'default'} : {};
       if (entities.length === 0) {
         let text;
         if (this.props.applicationState.activeEntityView) {
@@ -92,7 +108,7 @@ export class Entities extends React.Component {
               <div>You currently have no active financial entities.</div>
               <div>Add new financial entities to view them here.</div>
               <div style={{marginTop: 20}}>
-                <BlueButton onClick={DisclosureActions.nextStep}>
+                <BlueButton style={nextButtonStyle} onClick={nextStep}>
                   I have no entities to disclose
                 </BlueButton>
               </div>
@@ -142,7 +158,7 @@ export class Entities extends React.Component {
         <div className={styles.content}>
           <div>
             <div>
-              {newEntityButton}
+              {newEntitySection}
               {viewToggle}
             </div>
             {entityForm}
