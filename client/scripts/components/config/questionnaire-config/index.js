@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint-disable max-len*/
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
@@ -28,6 +27,7 @@ import NewQuestionButton from '../new-question-button';
 import {COIConstants} from '../../../../../coi-constants';
 import PanelWithButtons from '../panel-with-buttons';
 import ConfigActions from '../../../actions/config-actions';
+import AddSection from '../../add-section';
 
 class QuestionnaireConfig extends React.Component {
   constructor() {
@@ -286,18 +286,15 @@ class QuestionnaireConfig extends React.Component {
       );
     }
     else {
+      let message;
+      if (this.props.questionnaireCategory === COIConstants.QUESTIONNAIRE_TYPE.SCREENING) {
+        message = 'Only parent-level, Yes/No questions can be used in screening questionnaire validations as configured in Screening Validations in General Configuration.'; //eslint-disable-line max-len
+      }
       newQuestionSection = (
-        <div className={styles.top}>
-          <div className={styles.left}>
-            <NewQuestionButton onClick={this.newQuestionStarted} />
-          </div>
-          <div className={styles.right}>
-            <div className={styles.message}>
-              Only parent-level, Yes/No questions can be used in screening questionnaire validations as configured in Screening Validations in General Configuration.
-            </div>
-
-          </div>
-        </div>
+        <AddSection
+          button={<NewQuestionButton onClick={this.newQuestionStarted} />}
+          message={message}
+        />
       );
     }
 

@@ -111,6 +111,12 @@ export default class General extends React.Component {
                     labelClassName={styles.label}
                     checked={this.state.config.general.skipFinancialEntities === undefined ? false : this.state.config.general.skipFinancialEntities}
                   />
+                  <CheckBox
+                    path='config.general.enforceFinancialEntities'
+                    label='Enforce that a "Yes" answer to any screening question will require the reporter to include an active financial entity in their disclosure.' //eslint-disable-line max-len
+                    labelClassName={styles.label}
+                    checked={this.state.config.general.enforceFinancialEntities === undefined ? false : this.state.config.general.enforceFinancialEntities}
+                  />
                 </Panel>
               </span>
               <ActionPanel visible={this.state.dirty} />
