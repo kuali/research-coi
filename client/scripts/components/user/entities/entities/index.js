@@ -23,6 +23,7 @@ import {FEPlaceHolder} from '../../../dynamic-icons/fe-place-holder';
 import {Entity} from '../entity';
 import {EntityForm} from '../entity-form';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import { DisclosureStore } from '../../../../stores/disclosure-store';
 import {Instructions} from '../../instructions';
 import {COIConstants} from '../../../../../../coi-constants';
 import {Toggle} from '../../toggle';
@@ -89,6 +90,8 @@ export class Entities extends React.Component {
 
       if (this.props.nextDisabled) {
         message = 'You have answered "Yes" to a screening question, but do not have an active Financial Entity. Please add an active Financial Entity or edit your screening questionnaire in order to submit your disclosure.'; //eslint-disable-line max-len
+      } else if (DisclosureStore.warnActiveEntity(this.props.applicationState.currentDisclosureState.disclosure, window.config)) {
+        message = 'You have answered "No" to all screening questions; however, you have an active financial entity. Please consider reviewing the questions or deactivating your Financial Entity.'; //eslint-disable-line max-len
       }
 
       newEntitySection = (

@@ -144,17 +144,17 @@ export function entityRelationshipStepErrors(potentialRelationship, matrixTypes)
   return errors;
 }
 
-export function canSkipEntities(disclosure, config) {
-  const noActiveFinancialEnities = disclosure.entities
-    .filter(entity => entity.active === 1)
-    .length === 0;
+export function areNoActiveEntities(entities) {
+  return entities
+      .filter(entity => entity.active === 1)
+      .length === 0;
+}
 
-  const allYesNoQuestionsAreNo = disclosure.answers.filter(answer => {
-    return config.questions.screening.find(question => question.id === answer.questionId).question.type === COIConstants.QUESTION_TYPE.YESNO
+export function getYesNoYeses(answers, questions) {
+  return answers.filter(answer => {
+    return questions.find(question => question.id === answer.questionId).question.type === COIConstants.QUESTION_TYPE.YESNO
       && answer.answer.value === 'Yes';
-  }).length === 0;
-
-  return noActiveFinancialEnities && allYesNoQuestionsAreNo && config.general.skipFinancialEntities;
+  });
 }
 
 class _DisclosureStore {
@@ -170,7 +170,9 @@ class _DisclosureStore {
       entityRelationshipStepErrors: this.entityRelationshipStepErrors,
       entityRelationshipStepComplete: this.entityRelationshipStepComplete,
       entityRelationshipsAreSubmittable: this.entityRelationshipsAreSubmittable,
-      enforceEntities: this.enforceEntities
+      enforceEntities: this.enforceEntities,
+      canSkipEntities: this.canSkipEntities,
+      warnActiveEntity: this.warnActiveEntity
     });
 
     // initialize state here
@@ -602,7 +604,7 @@ class _DisclosureStore {
   nextStep() {
     switch (this.applicationState.currentDisclosureState.step) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
-        if (canSkipEntities(this.applicationState.currentDisclosureState.disclosure, window.config)) {
+        if (this.canSkipEntities(this.applicationState.currentDisclosureState.disclosure, window.config)) {
           this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
           break;
         }
@@ -1423,17 +1425,21 @@ class _DisclosureStore {
   }
 
   enforceEntities(disclosure, config) {
-    const anyYesNoQuestionIsYes = disclosure.answers.filter(answer => {
-      return config.questions.screening
-          .find(question => question.id === answer.questionId).question.type === COIConstants.QUESTION_TYPE.YESNO &&
-            answer.answer.value === 'Yes';
-    }).length > 0;
+    return getYesNoYeses(disclosure.answers, config.questions.screening).length > 0 &&
+      areNoActiveEntities(disclosure.entities) &&
+      config.general.enforceFinancialEntities;
+  }
 
-    const isNoActiveEntity = disclosure.entities.filter(entity => {
-      return entity.active;
-    }).length === 0;
+  canSkipEntities(disclosure, config) {
+    return areNoActiveEntities(disclosure.entities) &&
+      getYesNoYeses(disclosure.answers, config.questions.screening).length === 0 &&
+      config.general.skipFinancialEntities;
+  }
 
-    return anyYesNoQuestionIsYes && isNoActiveEntity && config.general.enforceFinancialEntities;
+  warnActiveEntity(disclosure, config) {
+    return !areNoActiveEntities(disclosure.entities) &&
+        getYesNoYeses(disclosure.answers, config.questions.screening).length === 0 &&
+        config.general.skipFinancialEntities;
   }
 }
 
