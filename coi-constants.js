@@ -129,6 +129,8 @@ export const DISCLOSURE_NOT_REQUIRED = 'Disclosure Not Required';
 
 export const SYSTEM_USER = 'system';
 
+export const COI_ADMIN = 'COI Admin';
+
 export const EDITABLE_STATUSES = [
   DISCLOSURE_STATUS.EXPIRED,
   DISCLOSURE_STATUS.IN_PROGRESS,
@@ -164,5 +166,6 @@ export const COIConstants = {
   SYSTEM_USER,
   DATE_TYPE,
   EDITABLE_STATUSES,
-  APPROVED_STATUSES
+  APPROVED_STATUSES,
+  COI_ADMIN
 };

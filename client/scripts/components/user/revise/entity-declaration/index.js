@@ -22,6 +22,7 @@ import {formatDate} from '../../../../format-date';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import ConfigStore from '../../../../stores/config-store';
+import { COI_ADMIN } from '../../../../../../coi-constants';
 
 export default class EntityDeclaration extends React.Component {
   constructor(props) {
@@ -93,7 +94,7 @@ export default class EntityDeclaration extends React.Component {
       return (
         <div className={styles.comment} key={comment.id}>
           <div className={styles.commentTitle}>Comment from
-            <span style={{marginLeft: 3}}>{comment.author}</span>:
+            <span style={{marginLeft: 3}}>{COI_ADMIN}</span>:
           </div>
           <div className={styles.commentText}>{comment.text}</div>
           <div className={styles.commentDate}>{formatDate(comment.date)}</div>

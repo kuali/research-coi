@@ -20,13 +20,14 @@ import styles from './style';
 import React from 'react';
 import {formatDate} from '../../../../format-date';
 import Question from '../question';
+import { COI_ADMIN } from '../../../../../../coi-constants';
 
 export default function QuestionToReview(props) {
   const comments = props.question.comments.map(comment => {
     return (
       <div className={styles.comment} key={comment.id}>
         <div className={styles.commentTitle}>Comment from
-          <span style={{marginLeft: 3}}>{comment.author}</span>:
+          <span style={{marginLeft: 3}}>{COI_ADMIN}</span>:
         </div>
         <div className={styles.commentText}>{comment.text}</div>
         <div className={styles.commentDate}>{formatDate(comment.date)}</div>
