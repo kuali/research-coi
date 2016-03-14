@@ -397,7 +397,7 @@ class _AdminStore {
   hideGeneralAttachmentsPanel() {
     this.applicationState.listShowing = true;
     setTimeout(() => {
-      this.applicationState.generalAttachmentShowing = false;
+      this.applicationState.generalAttachmentsShowing = false;
       this.emitChange();
     }, 400);
   }

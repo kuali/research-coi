@@ -159,15 +159,17 @@ export class DetailView extends React.Component {
       );
     }
     else if (this.state.applicationState.generalAttachmentsShowing) {
+      const files = this.state.applicationState.selectedDisclosure.files
+        .filter(file => file.fileType === COIConstants.FILE_TYPE.DISCLOSURE );
       sidePanel = (
         <GeneralAttachmentsPanel
-          files={this.state.applicationState.selectedDisclosure.files}
+          files={files}
         />
       );
     }
     else if (this.state.applicationState.uploadAttachmentsShowing) {
       const adminFiles = this.state.applicationState.selectedDisclosure.files
-        .filter(file => file.file_type === COIConstants.FILE_TYPE.ADMIN );
+        .filter(file => file.fileType === COIConstants.FILE_TYPE.ADMIN );
       sidePanel = (
         <UploadAttachmentsPanel
           files={adminFiles}
