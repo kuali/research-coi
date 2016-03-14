@@ -85,7 +85,7 @@ describe('FileController', () => {
         .expect(OK);
 
       assert.equal(response.body.length, 2);
-      assert.equal(response.body[0].user_id,hashCode('admin'));
+      assert.equal(response.body[0].userId,hashCode('admin'));
 
     });
 
@@ -102,7 +102,7 @@ describe('FileController', () => {
         .expect(OK);
 
       assert.equal(response.body.length, 1);
-      assert.equal(response.body[0].user_id,userId);
+      assert.equal(response.body[0].userId,userId);
     });
 
     it('should not allow user retrieve files that are not theirs', async function() {

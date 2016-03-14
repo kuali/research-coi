@@ -105,17 +105,26 @@ export const saveNewFiles = (dbInfo, body, files, userInfo) => {
       return Promise.all(
         files.map(file => {
           const fileDatum = {
-            file_type: body.type,
-            ref_id: body.refId,
+            fileType: body.type,
+            refId: body.refId,
             type: file.mimetype,
             key: file.filename,
             name: file.originalname,
-            user_id: userInfo.schoolId,
-            uploaded_by: userInfo.name,
-            upload_date: new Date()
+            userId: userInfo.schoolId,
+            uploadedBy: userInfo.name,
+            uploadDate: new Date()
           };
           return knex('file')
-            .insert(fileDatum, 'id')
+            .insert({
+              file_type: fileDatum.fileType,
+              ref_id: fileDatum.refId,
+              type: fileDatum.type,
+              key: fileDatum.key,
+              name: fileDatum.name,
+              user_id: fileDatum.userId,
+              uploaded_by: fileDatum.uploadedBy,
+              upload_date: fileDatum.uploadDate
+            }, 'id')
             .then(fileId => {
               fileDatum.id = fileId[0];
               fileData.push(fileDatum);
