@@ -18,28 +18,3 @@
 
 .container {
 }
-
-.title {
-  text-align: center;
-  margin-bottom: 50px;
-  font-size: 18px;
-}
-
-.link {
-  color: #0095A0;
-  border-bottom: 2px dotted #0095A0;
-  cursor: pointer;
-}
-
-:global(.color-blind) .link {
-  color: black;
-  border-bottom: 2px dotted black;
-}
-
-.activeHeader {
-  font-size: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #A7A7A7;
-  width: 33%;
-  color: #666666;
-}

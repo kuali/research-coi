@@ -30,6 +30,10 @@ export default function Sidebar(props) {
       link: '/coi/config/general',
       active: true
     },
+    /*{
+      label: 'Customize Notifications',
+      link: '/coi/config/customize-notifications'
+    },*/
     {
       label: 'Disclosure Requirements',
       link: '/coi/config/disclosure-requirements'

@@ -16,49 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import styles from './style';
 import React from 'react';
-import ConfigAction from '../../../actions/config-actions';
-import classNames from 'classnames';
+import { BlueButton } from '../../../blue-button';
 
 export default class Textarea extends React.Component {
   constructor() {
     super();
-
-    this.set = this.set.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
-  set(evt) {
-    ConfigAction.set({
-      path: this.props.path,
-      value: evt.target.value
-    });
+  onClick() {
+    this.props.onClick(this.props.path);
   }
 
   render() {
-    let content;
-    if (this.props.readOnly) {
-      content = (
-        <div className={classNames(styles.readOnly)}>
-          {this.props.value}
-        </div>
-      );
-    } else {
-      content = (
-        <textarea
-          id={this.props.path}
-          name={this.props.path}
-          className={this.props.className}
-          value={this.props.value}
-          onChange={this.set}
-        />
-      );
-    }
     return (
-      <div>
-        <label htmlFor={this.props.path} className={classNames(styles.textLabel, this.props.labelStyle)}>{this.props.label}</label>
-        {content}
-      </div>
+      <BlueButton
+        onClick={this.onClick}
+        style={{marginLeft: '10px'}}
+      >
+        {this.props.children}
+      </BlueButton>
     );
   }
+
 }

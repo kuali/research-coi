@@ -145,7 +145,8 @@ export const getConfig = (dbInfo, userId, optionalTrx) => {
     query.select('*').from('disclosure_status'),
     query.select('*').from('project_type'),
     query.select('*').from('project_role'),
-    query.select('*').from('project_status')
+    query.select('*').from('project_status'),
+    query.select('*').from('notification_template')
   ])
   .then(result => {
     config.matrixTypes = result[0];
@@ -176,6 +177,7 @@ export const getConfig = (dbInfo, userId, optionalTrx) => {
     config.projectTypes = result[11];
     config.projectRoles = result[12];
     config.projectStatuses = result[13];
+    config.notificationTemplates = result[14];
     config = camelizeJson(config);
     config.general = JSON.parse(result[9][0].config).general;
     return config;
@@ -246,6 +248,10 @@ export const setConfig = (dbInfo, userId, body, optionalTrx) => {
 
   queries.push(
     createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
+  );
+
+  queries.push(
+    createCollectionQueries(query, config.notification_templates, {pk: 'template_id', table: 'notification_template'})
   );
 
   queries.push(

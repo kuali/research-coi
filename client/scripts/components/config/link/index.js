@@ -18,47 +18,32 @@
 
 import styles from './style';
 import React from 'react';
-import ConfigAction from '../../../actions/config-actions';
 import classNames from 'classnames';
 
-export default class Textarea extends React.Component {
+export default class Link extends React.Component {
   constructor() {
     super();
 
-    this.set = this.set.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
-  set(evt) {
-    ConfigAction.set({
-      path: this.props.path,
-      value: evt.target.value
-    });
+  onClick(evt) {
+    this.props.onClick(
+      {
+        path: this.props.path,
+        value: evt.target.value
+      }
+    );
   }
 
   render() {
-    let content;
-    if (this.props.readOnly) {
-      content = (
-        <div className={classNames(styles.readOnly)}>
-          {this.props.value}
-        </div>
-      );
-    } else {
-      content = (
-        <textarea
-          id={this.props.path}
-          name={this.props.path}
-          className={this.props.className}
-          value={this.props.value}
-          onChange={this.set}
-        />
-      );
-    }
     return (
-      <div>
-        <label htmlFor={this.props.path} className={classNames(styles.textLabel, this.props.labelStyle)}>{this.props.label}</label>
-        {content}
-      </div>
+      <button
+        className={classNames(styles.link, this.props.className)}
+        onClick={this.onClick}
+      >
+        {this.props.value}
+      </button>
     );
   }
 }

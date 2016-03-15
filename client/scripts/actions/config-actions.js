@@ -74,5 +74,8 @@ export default alt.generateActions(
   'updateRoles',
   'updateStatuses',
   'toggle',
-  'set'
+  'set',
+  'editNotificationTemplate',
+  'doneNotificationTemplate',
+  'cancelNotificationTemplate'
 );

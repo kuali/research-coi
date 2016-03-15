@@ -19,27 +19,37 @@
 .container {
 }
 
+.override.header {
+  box-shadow: 0 1px 6px #D1D1D1;
+  z-index: 10;
+  position: relative;
+}
+
+.content {
+  background-color: #F2F2F2;
+  box-shadow: 2px 8px 8px #ccc inset;
+  min-height: 0;
+}
+
+.stepTitle {
+  box-shadow: 0 2px 8px #D5D5D5;
+  font-size: 33px;
+  text-transform: uppercase;
+  padding: 15px 15px 15px 35px;
+  color: #525252;
+  font-weight: 300;
+  background-color: white;
+  min-height: 70px;
+}
+
+.configurationArea {
+  padding: 35px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
 .title {
   text-align: center;
   margin-bottom: 50px;
   font-size: 18px;
-}
-
-.link {
-  color: #0095A0;
-  border-bottom: 2px dotted #0095A0;
-  cursor: pointer;
-}
-
-:global(.color-blind) .link {
-  color: black;
-  border-bottom: 2px dotted black;
-}
-
-.activeHeader {
-  font-size: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #A7A7A7;
-  width: 33%;
-  color: #666666;
 }

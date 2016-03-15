@@ -19,35 +19,6 @@
 .container {
 }
 
-.override.header {
-  box-shadow: 0 1px 6px #D1D1D1;
-  z-index: 10;
-  position: relative;
-}
-
-.content {
-  background-color: #F2F2F2;
-  box-shadow: 2px 8px 8px #ccc inset;
-  min-height: 0;
-}
-
-.stepTitle {
-  box-shadow: 0 2px 8px #D5D5D5;
-  font-size: 33px;
-  text-transform: uppercase;
-  padding: 15px 15px 15px 35px;
-  color: #525252;
-  font-weight: 300;
-  background-color: white;
-  min-height: 70px;
-}
-
-.configurationArea {
-  padding: 35px;
-  overflow-y: auto;
-  min-height: 0;
-}
-
 .label {
   font-size: 17px;
 }

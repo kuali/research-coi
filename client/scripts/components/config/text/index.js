@@ -21,7 +21,7 @@ import React from 'react';
 import ConfigAction from '../../../actions/config-actions';
 import classNames from 'classnames';
 
-export default class Textarea extends React.Component {
+export default class Text extends React.Component {
   constructor() {
     super();
 
@@ -39,16 +39,17 @@ export default class Textarea extends React.Component {
     let content;
     if (this.props.readOnly) {
       content = (
-        <div className={classNames(styles.readOnly)}>
+        <div className={classNames(styles.readOnly, this.props.className)}>
           {this.props.value}
         </div>
       );
     } else {
       content = (
-        <textarea
+        <input
+          type='text'
           id={this.props.path}
           name={this.props.path}
-          className={this.props.className}
+          className={classNames(styles.text, this.props.className)}
           value={this.props.value}
           onChange={this.set}
         />
@@ -56,7 +57,7 @@ export default class Textarea extends React.Component {
     }
     return (
       <div>
-        <label htmlFor={this.props.path} className={classNames(styles.textLabel, this.props.labelStyle)}>{this.props.label}</label>
+        <label htmlFor={this.props.path} className={classNames(styles.label, this.props.labelStyle)}>{this.props.label}</label>
         {content}
       </div>
     );
