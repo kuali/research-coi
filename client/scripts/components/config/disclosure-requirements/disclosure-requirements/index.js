@@ -17,19 +17,16 @@
  */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
-import Sidebar from '../../sidebar';
 import Panel from '../../panel';
-import ActionPanel from '../../action-panel';
 import ConfigStore from '../../../../stores/config-store';
 import ConfigActions from '../../../../actions/config-actions';
-import {AppHeader} from '../../../app-header';
 import CheckBox from '../../check-box';
 import ActiveProjectType from '../active-project-type';
 import InactiveProjectType from '../inactive-project-type';
 import {BlueButton} from '../../../blue-button';
 import ConfiguringPanel from '../configuring-panel';
+import ConfigPage from '../../config-page';
 
 export default class DisclosureRequirements extends React.Component {
   constructor() {
@@ -167,24 +164,15 @@ export default class DisclosureRequirements extends React.Component {
     }
 
     return (
-      <div className={`flexbox column`} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
-        <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
-          <Sidebar active="disclosure-requirements" />
-          <span className={`inline-flexbox column fill ${styles.content}`}>
-            <div className={styles.stepTitle}>
-              Disclosure Requirements
-            </div>
-            <div className={`fill flexbox row ${styles.configurationArea}`}>
-              <span className={`fill`} style={{display: 'inline-block'}}>
-                {projectTypesPanel}
-                {configuringPanel}
-              </span>
-              <ActionPanel visible={this.state.dirty} />
-            </div>
-          </span>
-        </span>
-      </div>
+      <ConfigPage
+        title='Disclosure Requirements'
+        routeName='disclosure-requirements'
+        dirty={this.state.dirty}
+        className={this.props.className}
+      >
+        {projectTypesPanel}
+        {configuringPanel}
+      </ConfigPage>
     );
   }
 }

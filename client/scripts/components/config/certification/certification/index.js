@@ -17,17 +17,14 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
-import Sidebar from '../../sidebar';
 import Panel from '../../panel';
-import ActionPanel from '../../action-panel';
 import InstructionEditor from '../../instruction-editor';
 import ConfigStore from '../../../../stores/config-store';
 import {COIConstants} from '../../../../../../coi-constants';
-import {AppHeader} from '../../../app-header';
 import Textarea from '../../textarea';
 import CheckBox from '../../check-box';
+import ConfigPage from '../../config-page';
 
 export default class Certification extends React.Component {
   constructor() {
@@ -83,31 +80,22 @@ export default class Certification extends React.Component {
     }
 
     return (
-      <div className={`flexbox column`} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
-        <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
-          <Sidebar active="certification" />
-          <span className={classNames('inline-flexbox', 'column', 'fill', styles.content)}>
-            <div className={styles.stepTitle}>
-              Customize Certification
-            </div>
-            <div className={classNames('fill', 'flexbox', 'row', styles.configurationArea)}>
-              <span className={`fill`} style={{display: 'inline-block'}}>
-                <InstructionEditor
-                  step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
-                  value={instructionText}
-                />
-                <Panel title="Certification">
-                  <div className={styles.details}>
-                    {details}
-                  </div>
-                </Panel>
-              </span>
-              <ActionPanel visible={this.state.dirty} />
-            </div>
-          </span>
-        </span>
-      </div>
+      <ConfigPage
+        title='Customize Certification'
+        routeName='certification'
+        dirty={this.state.dirty}
+        className={this.props.className}
+      >
+        <InstructionEditor
+          step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
+          value={instructionText}
+        />
+        <Panel title="Certification">
+          <div className={styles.details}>
+            {details}
+          </div>
+        </Panel>
+      </ConfigPage>
     );
   }
 }

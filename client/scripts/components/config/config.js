@@ -28,6 +28,7 @@ import DeclarationsCustomization from './declarations/declarations';
 import CertificationCustomization from './certification/certification';
 import ColorStore from '../../stores/color-store';
 import DisclosureRequirements from './disclosure-requirements/disclosure-requirements';
+import CustomizeNotifications from './customize-notifications/customize-notifications';
 import history from '../../history';
 
 class App extends React.Component {
@@ -53,6 +54,7 @@ class App extends React.Component {
     return (
       <Router history={history}>
         <Route path="/coi/config/general" component={GeneralConfiguration} />
+        <Route path="/coi/config/customize-notifications" component={CustomizeNotifications} />
         <Route path="/coi/config/disclosure-requirements" component={DisclosureRequirements} />
         <Route path="/coi/config/questionnaire" component={QuestionnaireCustomization} />
         <Route path="/coi/config/entities" component={EntitiesQuestionnaire} />

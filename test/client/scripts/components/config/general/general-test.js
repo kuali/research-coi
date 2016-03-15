@@ -20,12 +20,9 @@ import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import ShallowTestUtils from 'react-shallow-testutils';
 import General from '../../../../../../client/scripts/components/config/general/general';
-import {AppHeader} from '../../../../../../client/scripts/components/app-header';
-import Sidebar from '../../../../../../client/scripts/components/config/sidebar';
 import Panel from '../../../../../../client/scripts/components/config/panel';
 import DisclosureTypes from '../../../../../../client/scripts/components/config/general/disclosure-types';
 import Checkbox from '../../../../../../client/scripts/components/config/check-box';
-import ActionPanel from '../../../../../../client/scripts/components/config/action-panel';
 import assert from 'assert';
 
 describe('General', () => {
@@ -33,14 +30,8 @@ describe('General', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(<General/>);
     const component = renderer.getRenderOutput();
-    assert(ShallowTestUtils.findWithType(component,AppHeader));
-    assert(ShallowTestUtils.findWithType(component,Sidebar));
     assert(ShallowTestUtils.findWithType(component,DisclosureTypes));
     assert.equal(ShallowTestUtils.findAllWithType(component,Panel).length,4);
     assert.equal(ShallowTestUtils.findAllWithType(component,Checkbox).length,4);
-    assert(ShallowTestUtils.findWithType(component,ActionPanel));
-    const title = ShallowTestUtils.findWithClass(component,
-      '_client_scripts_components_config_general_general_style__stepTitle');
-    assert.equal(title.props.children, 'General Configuration');
   });
 });

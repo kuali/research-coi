@@ -879,6 +879,30 @@ class _ConfigStore {
   setStateForTest(data) {
     this[data.key] = data.value;
   }
+
+  editNotificationTemplate(data) {
+    if (!this.applicationState.notificationSnapshots) {
+      this.applicationState.notificationSnapshots = {};
+    }
+    const notificationTemplate = _.result(this, data.path);
+    this.applicationState.notificationSnapshots[notificationTemplate.templateId] = JSON.parse(JSON.stringify(notificationTemplate));
+    notificationTemplate.editing = true;
+  }
+
+  cancelNotificationTemplate(data) {
+    const notificationTemplate = this.applicationState.notificationSnapshots[data.value];
+    this.set(
+      {
+        path: data.path,
+        value: notificationTemplate
+      }
+    );
+  }
+
+  doneNotificationTemplate(path) {
+    const notificationTemplate = _.result(this, path);
+    notificationTemplate.editing = false;
+  }
 }
 
 export default alt.createStore(_ConfigStore, 'ConfigStore');

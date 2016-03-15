@@ -31,3 +31,8 @@
   font-weight: bold;
   padding-bottom: 2px;
 }
+
+.readOnly {
+  color: grey;
+  margin: 2px 0 30px 20px;
+}

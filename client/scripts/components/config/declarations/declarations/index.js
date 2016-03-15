@@ -17,18 +17,15 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
-import Sidebar from '../../sidebar';
 import Panel from '../../panel';
-import ActionPanel from '../../action-panel';
 import InstructionEditor from '../../instruction-editor';
 import ConfigStore from '../../../../stores/config-store';
 import DeclarationType from '../declaration-type';
 import DoneLink from '../../done-link';
 import ConfigActions from '../../../../actions/config-actions';
 import {COIConstants} from '../../../../../../coi-constants';
-import {AppHeader} from '../../../app-header';
+import ConfigPage from '../../config-page';
 
 export default class Declarations extends React.Component {
   constructor() {
@@ -132,38 +129,28 @@ export default class Declarations extends React.Component {
     }
 
     return (
-      <div className={`flexbox column`} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
-        <div className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
-          <Sidebar active="declarations" />
-          <span className={classNames(styles.content, 'inline-flexbox', 'column', 'fill')}>
-            <div className={styles.stepTitle}>
-              Customize Project Declarations
-            </div>
-            <div className={classNames('fill', 'flexbox', 'row', styles.configurationArea)}>
-              <span className={`fill`} style={{display: 'inline-block'}}>
-                <InstructionEditor
-                  step={COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS}
-                  value={instructionText}
-                />
-                <Panel title="Declaration Types">
-                  <div className={styles.types}>
-                    {typesJsx}
+      <ConfigPage
+        title='Customize Project Declarations'
+        routeName='declarations'
+        dirty={this.state.dirty}
+        className={this.props.className}
+      >
+        <InstructionEditor
+          step={COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS}
+          value={instructionText}
+        />
+        <Panel title="Declaration Types">
+          <div className={styles.types}>
+            {typesJsx}
+            {customTypes}
+            {newType}
+            <div className={styles.add} onClick={ConfigActions.startEnteringNewDeclarationType}>+ Add Another</div>
+          </div>
 
-                    {customTypes}
-                    {newType}
-                    <div className={styles.add} onClick={ConfigActions.startEnteringNewDeclarationType}>+ Add Another</div>
-                  </div>
-
-                  <div style={{paddingBottom: 10}}>
-                  </div>
-                </Panel>
-              </span>
-              <ActionPanel visible={this.state.dirty} />
-            </div>
-          </span>
-        </div>
-      </div>
+          <div style={{paddingBottom: 10}}>
+          </div>
+        </Panel>
+      </ConfigPage>
     );
   }
 }
