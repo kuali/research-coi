@@ -24,8 +24,8 @@ import wrapAsync from './wrap-async';
 import { getProjectData } from '../services/project-service/project-service';
 
 export async function saveConfig(req, res) {
-  await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body);
-  const config = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
+  await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body, req.hostname);
+  const config = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId, req.hostname);
   config.general = req.body.general;
   await ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config);
 
@@ -34,7 +34,7 @@ export async function saveConfig(req, res) {
 
 export const init = app => {
   app.get('/api/coi/config', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId);
+    const result = await ConfigDB.getConfig(req.dbInfo, req.userInfo.schoolId, req.hostname);
     res.send(result);
   }));
 

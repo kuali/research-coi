@@ -115,6 +115,7 @@ export default class NotificationPanels extends React.Component {
               <NotificationToggle
                 onChange={ConfigActions.toggle}
                 propertyPath={`config.notificationTemplates[${template.index}].active`}
+                defaultValue={template.active === 1 ? true : false}
               />
               <div style={{width: '75%', display: 'inline-block'}}>
                 <div className={styles.description}>

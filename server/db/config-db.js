@@ -19,6 +19,7 @@
 /* eslint-disable camelcase */
 
 import {camelizeJson, snakeizeJson} from './json-utils';
+import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
 
 let getKnex;
 try {
@@ -112,7 +113,7 @@ const convertQuestionFormat = (questions) => {
   });
 };
 
-export const getConfig = (dbInfo, userId, optionalTrx) => {
+export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
   let config = mockDB.UIT;
   const knex = getKnex(dbInfo);
 
@@ -146,7 +147,11 @@ export const getConfig = (dbInfo, userId, optionalTrx) => {
     query.select('*').from('project_type'),
     query.select('*').from('project_role'),
     query.select('*').from('project_status'),
-    query.select('*').from('notification_template')
+    query.select('*').from('notification_template').then(templates => {
+      return populateTemplateData(dbInfo, hostname, templates).then(results => {
+        return results;
+      });
+    })
   ])
   .then(result => {
     config.matrixTypes = result[0];
@@ -184,7 +189,7 @@ export const getConfig = (dbInfo, userId, optionalTrx) => {
   });
 };
 
-export const setConfig = (dbInfo, userId, body, optionalTrx) => {
+export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
   const config = snakeizeJson(body);
   const knex = getKnex(dbInfo);
   let query;
@@ -250,9 +255,12 @@ export const setConfig = (dbInfo, userId, body, optionalTrx) => {
     createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
   );
 
-  queries.push(
-    createCollectionQueries(query, config.notification_templates, {pk: 'template_id', table: 'notification_template'})
-  );
+  Promise.all(handleTemplates(dbInfo, hostname, config.notification_templates)).then(results => {
+    queries.push(
+      createCollectionQueries(query, results, {pk: 'template_id', table: 'notification_template'})
+    );
+  });
+
 
   queries.push(
     createCollectionQueries(query, config.notifications, {pk: 'id', table: 'notification'})
