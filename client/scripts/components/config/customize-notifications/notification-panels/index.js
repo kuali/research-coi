@@ -60,22 +60,30 @@ export default class NotificationPanels extends React.Component {
           let templateContent;
 
           if (template.active === 1) {
-
-
+            let path;
+            let subject;
+            let body;
             if (!template.editing && !template.error) {
+
+              path = `config.notificationTemplates[${template.index}]`;
+              subject = this.props.notificationTemplates[template.index].subject;
+              body = this.props.notificationTemplates[template.index].body;
               link = (
                 <Link
-                  path={`config.notificationTemplates[${template.index}]`}
+                  path={path}
                   onClick={ConfigActions.editNotificationTemplate}
                   value="EDIT"
                   className={styles.editLink}
                 />
               );
             } else if (!template.error) {
+              path = `applicationState.notificationEdits[${template.templateId}]`;
+              subject = this.props.notificationEdits[template.templateId].subject;
+              body = this.props.notificationEdits[template.templateId].body;
               buttons = (
                 <div style={{float: 'right'}}>
                   <CancelButton
-                    path={`config.notificationTemplates[${template.index}]`}
+                    path={`config.notificationTemplates[${template.index}].editing`}
                     onClick={ConfigActions.cancelNotificationTemplate}
                     templateId={template.templateId}
                   >
@@ -84,6 +92,7 @@ export default class NotificationPanels extends React.Component {
                   <DoneButton
                     path={`config.notificationTemplates[${template.index}]`}
                     onClick={ConfigActions.doneNotificationTemplate}
+                    templateId={template.templateId}
                   >
                     DONE
                   </DoneButton>
@@ -101,19 +110,21 @@ export default class NotificationPanels extends React.Component {
               templateContent = (
                 <div className={styles.template}>
                   <Text
-                    path={`config.notificationTemplates[${template.index}].subject`}
+                    path={`${path}.subject`}
                     label="SUBJECT"
-                    value={this.props.notificationTemplates[template.index].subject}
+                    value={subject}
                     labelStyle={styles.label}
                     readOnly={!template.editing}
+                    dirty={false}
                   />
                   <Textarea
-                    path={`config.notificationTemplates[${template.index}].body`}
+                    path={`${path}.body`}
                     label="BODY"
-                    value={this.props.notificationTemplates[template.index].body}
+                    value={body}
                     className={styles.textarea}
                     labelStyle={styles.label}
                     readOnly={!template.editing}
+                    dirty={false}
                   />
                 </div>
               );

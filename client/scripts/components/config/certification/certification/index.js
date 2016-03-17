@@ -63,6 +63,7 @@ export default class Certification extends React.Component {
             label="CERTIFICATION TEXT"
             value={this.state.certificationOptions.text}
             className={styles.textarea}
+            dirty={true}
           />
           <CheckBox
             path="config.general.certificationOptions.required"

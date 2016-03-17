@@ -68,6 +68,7 @@ export default class InstructionEditor extends React.Component {
               path={`config.general.instructions[${this.props.step}]`}
               className={styles.textarea}
               value={this.props.value}
+              dirty={true}
             />
           </div>
         </div>

@@ -30,6 +30,7 @@ export default class Text extends React.Component {
 
   set(evt) {
     ConfigAction.set({
+      dirty: this.props.dirty,
       path: this.props.path,
       value: evt.target.value
     });

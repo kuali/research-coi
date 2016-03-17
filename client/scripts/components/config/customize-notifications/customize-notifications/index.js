@@ -60,6 +60,7 @@ export default class CustomizeNotifications extends React.Component {
       >
         <NotificationPanels
           notificationTemplates ={this.state.config ? this.state.config.notificationTemplates : []}
+          notificationEdits = {this.state.applicationState.notificationEdits}
         />
       </ConfigPage>
     );
