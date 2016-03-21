@@ -115,7 +115,7 @@ export async function populateTemplateData(dbInfo, hostname, notificationTemplat
       });
 
       if (!template) {
-        return Promise.resolve(getDefaults(notificationTemplate));
+        return getDefaults(notificationTemplate);
       }
       notificationTemplate.subject = template.subject;
       notificationTemplate.body = template.templates.email.text;
