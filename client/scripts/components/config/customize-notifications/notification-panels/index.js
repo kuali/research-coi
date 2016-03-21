@@ -61,7 +61,8 @@ export default class NotificationPanels extends React.Component {
 
           if (template.active === 1) {
 
-            if (!template.editing) {
+
+            if (!template.editing && !template.error) {
               link = (
                 <Link
                   path={`config.notificationTemplates[${template.index}]`}
@@ -70,7 +71,7 @@ export default class NotificationPanels extends React.Component {
                   className={styles.editLink}
                 />
               );
-            } else {
+            } else if (!template.error) {
               buttons = (
                 <div style={{float: 'right'}}>
                   <CancelButton
@@ -90,31 +91,40 @@ export default class NotificationPanels extends React.Component {
               );
             }
 
-            templateContent = (
-              <div className={styles.template}>
-                <Text
-                  path={`config.notificationTemplates[${template.index}].subject`}
-                  label="SUBJECT"
-                  value={this.props.notificationTemplates[template.index].subject}
-                  labelStyle={styles.label}
-                  readOnly={!template.editing}
-                />
-                <Textarea
-                  path={`config.notificationTemplates[${template.index}].body`}
-                  label="BODY"
-                  value={this.props.notificationTemplates[template.index].body}
-                  className={styles.textarea}
-                  labelStyle={styles.label}
-                  readOnly={!template.editing}
-                />
-              </div>
-            );
+            if (template.error) {
+              templateContent = (
+                <div style={{color: 'red'}}>
+                  Notification Service is down please contanct system admin
+                </div>
+              );
+            } else {
+              templateContent = (
+                <div className={styles.template}>
+                  <Text
+                    path={`config.notificationTemplates[${template.index}].subject`}
+                    label="SUBJECT"
+                    value={this.props.notificationTemplates[template.index].subject}
+                    labelStyle={styles.label}
+                    readOnly={!template.editing}
+                  />
+                  <Textarea
+                    path={`config.notificationTemplates[${template.index}].body`}
+                    label="BODY"
+                    value={this.props.notificationTemplates[template.index].body}
+                    className={styles.textarea}
+                    labelStyle={styles.label}
+                    readOnly={!template.editing}
+                  />
+                </div>
+              );
+            }
           }
           return (
             <div key={template.index} className={styles.container}>
               <NotificationToggle
                 onChange={ConfigActions.toggle}
                 propertyPath={`config.notificationTemplates[${template.index}].active`}
+                defaultValue={template.active === 1 ? true : false}
               />
               <div style={{width: '75%', display: 'inline-block'}}>
                 <div className={styles.description}>
