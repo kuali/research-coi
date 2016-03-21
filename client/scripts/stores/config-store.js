@@ -563,7 +563,8 @@ class _ConfigStore {
 
   set(data) {
     _.set(this, data.path, data.value);
-    this.dirty = true;
+
+    this.dirty = data.dirty === false ? false : true;
   }
 
   toggle(path) {
@@ -881,27 +882,35 @@ class _ConfigStore {
   }
 
   editNotificationTemplate(data) {
-    if (!this.applicationState.notificationSnapshots) {
-      this.applicationState.notificationSnapshots = {};
+    if (!this.applicationState.notificationEdits) {
+      this.applicationState.notificationEdits = {};
     }
     const notificationTemplate = _.result(this, data.path);
-    this.applicationState.notificationSnapshots[notificationTemplate.templateId] = JSON.parse(JSON.stringify(notificationTemplate));
+    this.applicationState.notificationEdits[notificationTemplate.templateId] = JSON.parse(JSON.stringify(notificationTemplate));
     notificationTemplate.editing = true;
   }
 
   cancelNotificationTemplate(data) {
-    const notificationTemplate = this.applicationState.notificationSnapshots[data.value];
+    delete this.applicationState.notificationEdits[data.value];
+    this.set(
+      {
+        dirty: false,
+        path: data.path,
+        value: false
+      }
+    );
+  }
+
+  doneNotificationTemplate(data) {
+    const notificationTemplate = this.applicationState.notificationEdits[data.templateId];
+    notificationTemplate.editing = false;
     this.set(
       {
         path: data.path,
         value: notificationTemplate
       }
     );
-  }
-
-  doneNotificationTemplate(path) {
-    const notificationTemplate = _.result(this, path);
-    notificationTemplate.editing = false;
+    this.dirty = true;
   }
 }
 

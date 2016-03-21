@@ -26,7 +26,10 @@ export default class Textarea extends React.Component {
   }
 
   onClick() {
-    this.props.onClick(this.props.path);
+    this.props.onClick({
+      path: this.props.path,
+      templateId: this.props.templateId
+    });
   }
 
   render() {
