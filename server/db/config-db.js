@@ -22,9 +22,11 @@ import {camelizeJson, snakeizeJson} from './json-utils';
 import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
 
 let getKnex;
+let getNotificationsInfo;
 try {
   const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
+  getNotificationsInfo = extensions.getNotificationsInfo;
 }
 catch (err) {
   getKnex = require('./connection-manager').default;
@@ -113,10 +115,27 @@ const convertQuestionFormat = (questions) => {
   });
 };
 
+const getNotificationTemplates = (query, dbInfo, hostname, notificationsEnabled) => {
+
+  if (!notificationsEnabled) {
+    return Promise.resolve([]);
+  }
+  return query.select('*').from('notification_template').then(templates => {
+    return populateTemplateData(dbInfo, hostname, templates).then(results => {
+      return results;
+    }).catch(() => {
+      return Promise.resolve(templates.map(template => {
+        template.error = true;
+        return template;
+      }));
+    });
+  });
+};
+
 export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
   let config = mockDB.UIT;
   const knex = getKnex(dbInfo);
-
+  const notificationsEnabled = getNotificationsInfo(dbInfo).notificationsEnabled;
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -147,11 +166,7 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
     query.select('*').from('project_type'),
     query.select('*').from('project_role'),
     query.select('*').from('project_status'),
-    query.select('*').from('notification_template').then(templates => {
-      return populateTemplateData(dbInfo, hostname, templates).then(results => {
-        return results;
-      });
-    })
+    getNotificationTemplates(query, dbInfo, hostname, notificationsEnabled)
   ])
   .then(result => {
     config.matrixTypes = result[0];
@@ -192,6 +207,7 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
 export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
   const config = snakeizeJson(body);
   const knex = getKnex(dbInfo);
+  const notificationsEnabled = getNotificationsInfo(dbInfo).notificationsEnabled;
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -255,12 +271,13 @@ export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
     createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
   );
 
-  Promise.all(handleTemplates(dbInfo, hostname, config.notification_templates)).then(results => {
-    queries.push(
-      createCollectionQueries(query, results, {pk: 'template_id', table: 'notification_template'})
-    );
-  });
-
+  if (notificationsEnabled) {
+    Promise.all(handleTemplates(dbInfo, hostname, config.notification_templates)).then(results => {
+      queries.push(
+        createCollectionQueries(query, results, {pk: 'template_id', table: 'notification_template'})
+      );
+    });
+  }
 
   queries.push(
     createCollectionQueries(query, config.notifications, {pk: 'id', table: 'notification'})

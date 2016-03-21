@@ -91,7 +91,7 @@ export async function handleTemplates(dbInfo, hostname, templates) {
     return templates.map(async template => {
       if (template.active === 1) {
         if (!template.core_template_id) { //eslint-disable-line camelcase
-          const coreTemplateId = await createNewTemplate(dbInfo, hostname, templates);
+          const coreTemplateId = await createNewTemplate(dbInfo, hostname, template);
           template.core_template_id = coreTemplateId; //eslint-disable-line camelcase
           return cleanTemplate(template);
         }

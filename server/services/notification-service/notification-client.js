@@ -47,7 +47,7 @@ export async function getTemplates(dbInfo, hostname) {
     const response = await request.get(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
       .set('Authorization',`Bearer ${notificationsInfo.systemAuthToken}`);
 
-    return response.body.result;
+    return response.body;
   } catch(err) {
     Promise.reject(err);
   }
