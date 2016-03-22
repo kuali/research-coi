@@ -22,6 +22,18 @@ eslint-disable camelcase
 
 import assert from 'assert';
 import * as NotificationService from '../../../../server/services/notification-service/notification-service';
+import { COIConstants } from '../../../../coi-constants';
+import { formatDate } from '../../../../server/date-utils';
+
+let getKnex;
+try {
+  const extensions = require('research-extensions').default;
+  getKnex = extensions.getKnex;
+}
+catch (err) {
+  getKnex = require('../../../server/db/connection-manager').default;
+}
+const knex = getKnex({});
 
 const populatedTemplates = [
   { template_id: 1,
@@ -137,6 +149,61 @@ describe('NotificationService', () => {
       assert.equal('REPLACE WITH DEFAULT', results[2].body);
       assert.equal('REPLACE WITH DEFAULT', results[2].subject);
     });
+  });
 
+  describe('createAndSendSubmitNotification', () => {
+    let results;
+    let disclosureId;
+    const now = new Date();
+
+    before(async () => {
+      await knex('notification_template')
+        .update({core_template_id: '1234'})
+        .where({template_id: 1});
+
+      const dislcosureIds = await knex('disclosure').insert({
+        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
+        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        user_id: '1234',
+        start_date: now,
+        expired_date: now,
+        submitted_date: now,
+        config_id: 1}, 'id');
+
+      disclosureId = dislcosureIds[0];
+      results = await NotificationService.createAndSendSubmitNotification({},'test.com','Bearer 1234', {id: '5678'}, disclosureId);
+    });
+
+    it('should pull the correct core template id from the db', () => {
+      assert.equal('1234', results.templateId);
+    });
+
+    it('should get the creator id from the request', () => {
+      assert.equal('5678', results.creatorId);
+    });
+
+    it('should get the correct recipients', () => {
+      assert.equal(2, results.addresses.length);
+      assert.equal('admin1@email.com', results.addresses[0]);
+      assert.equal('admin2@email.com', results.addresses[1]);
+    });
+
+    it('should populate the variables', () => {
+      assert.equal( 'test.com/coi/admin',results.variables['{{ADMIN_DASHBOARD}}']);
+      assert.equal( 'test.com/coi',results.variables['{{REPORTER_DASHBOARD}}']);
+      assert.equal( 'User',results.variables['{{REPORTER_FIRST_NAME}}']);
+      assert.equal( '1234',results.variables['{{REPORTER_LAST_NAME}}']);
+      assert.equal( formatDate(now),results.variables['{{NOW}}']);
+      assert.equal( formatDate(now),results.variables['{{SUBMISSION_DATE}}']);
+      assert.equal( formatDate(now),results.variables['{{EXPIRATION_DATE}}']);
+    });
+
+    after(async () => {
+      await knex('notification_template')
+        .update({core_template_id: null})
+        .where({template_id: 1});
+
+      await knex('disclosure').del();
+    });
   });
 });

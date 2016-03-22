@@ -32,6 +32,9 @@ export function getUserInfo(dbInfo, hostname, authToken) {
   return client.getUserInfo(dbInfo, hostname, authToken);
 }
 
+export function getUserInfosByQuery(dbInfo, hostname, authToken, queryValue) {
+  return client.getUserInfosByQuery(dbInfo, hostname, authToken, queryValue);
+}
 export function getAuthLink(req) {
   return client.getAuthLink(req);
 }
@@ -42,6 +45,10 @@ export function authView(req, res) {
 
 export function getReviewers(dbInfo, authHeader) {
   return client.getReviewers(dbInfo, getAuthToken(authHeader));
+}
+
+export function getAdmins(dbInfo, authHeader) {
+  return client.getAdmins(dbInfo, getAuthToken(authHeader));
 }
 
 export function getAuthToken(header) {

@@ -36,7 +36,6 @@ export default class NotificationPanels extends React.Component {
 
   createTemplateMap() {
     const templateMap = {};
-
     this.props.notificationTemplates.forEach((template, index) => {
       template.index = index;
       if (!templateMap[template.type]) {

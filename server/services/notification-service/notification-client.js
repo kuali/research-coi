@@ -17,6 +17,8 @@
  */
 
 import request from 'superagent';
+import { getUserInfosByQuery, getAdmins } from '../auth-service/auth-service';
+import { NOTIFICATIONS_MODE } from '../../../coi-constants';
 
 let getNotificationsInfo;
 try {
@@ -27,17 +29,23 @@ try {
     return {
       notificationsUrl: process.env.NOTIFICATIONS_URL || 'https://uit.kuali.dev/res',
       applicationId: process.env.APPLICATION_ID,
-      systemAuthToken: process.env.SYSTEM_AUTH_TOKEN
+      systemAuthToken: process.env.SYSTEM_AUTH_TOKEN,
+      notificationsMode: process.env.NOTIFICATION_MODE,
+      testEmail: process.env.TEST_EMAIL
     };
   };
 }
 
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 
-
 const END_POINTS = {
-  NOTIFICATION_TEMPLATES: '/api/v1/notification-templates'
+  NOTIFICATION_TEMPLATES: '/api/v1/notification-templates',
+  NOTIFICATIONS: '/api/v1/notifications'
 };
+
+export function areNotificationsEnabled(dbInfo) {
+  return getNotificationsInfo(dbInfo).notificationsMode > NOTIFICATIONS_MODE.OFF;
+}
 
 export async function getTemplates(dbInfo, hostname) {
   try {
@@ -55,6 +63,15 @@ export async function getTemplates(dbInfo, hostname) {
 
 export function createDisplayName(hostname, description) {
   return `COI-${hostname}-${description}`;
+}
+
+export function getRequestInfo(dbInfo, hostname) {
+  const notificationsInfo = getNotificationsInfo(dbInfo);
+  return {
+    url: notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname,
+    applicationId: notificationsInfo.applicationId,
+    systemAuthToken: notificationsInfo.systemAuthToken
+  };
 }
 
 function createCoreTemplate(notificationTemplate, hostname, applicationId) {
@@ -77,12 +94,10 @@ function createCoreTemplate(notificationTemplate, hostname, applicationId) {
 export async function updateTemplateData(dbInfo, hostname, notificationTemplate) {
   try {
 
-    const notificationsInfo = getNotificationsInfo(dbInfo);
-
-    const template = createCoreTemplate(notificationTemplate, hostname, notificationsInfo.applicationId);
-    const url = notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname;
-    await request.put(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}/${notificationTemplate.core_template_id}`)
-      .set('Authorization', `Bearer ${notificationsInfo.systemAuthToken}`)
+    const requestInfo = getRequestInfo(dbInfo, hostname);
+    const template = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
+    await request.put(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}/${notificationTemplate.core_template_id}`)
+      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
       .send(template);
 
     return Promise.resolve();
@@ -93,11 +108,10 @@ export async function updateTemplateData(dbInfo, hostname, notificationTemplate)
 
 export async function createNewTemplate(dbInfo, hostname, notificationTemplate) {
   try {
-    const notificationsInfo = getNotificationsInfo(dbInfo);
-    const coreTemplate = createCoreTemplate(notificationTemplate, hostname, notificationsInfo.applicationId);
-    const url = notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname;
-    const response = await request.post(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
-      .set('Authorization', `Bearer ${notificationsInfo.systemAuthToken}`)
+    const requestInfo = getRequestInfo(dbInfo, hostname);
+    const coreTemplate = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
+    const response = await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
+      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
       .send(coreTemplate);
 
     return response.body.id;
@@ -107,3 +121,33 @@ export async function createNewTemplate(dbInfo, hostname, notificationTemplate) 
   }
 }
 
+export async function getUserInfo(dbInfo, hostname, userId) {
+  const notificationsInfo = getNotificationsInfo(dbInfo);
+  const userInfos = await getUserInfosByQuery(dbInfo, hostname, notificationsInfo.systemAuthToken, userId);
+  //user info query can bring back multiple results we want the one that has the userId
+  return userInfos.find(user => user.schoolId === userId);
+}
+
+export async function getAdminRecipients(dbInfo, authHeader) {
+  const notificationsInfo = getNotificationsInfo(dbInfo);
+  if (notificationsInfo.notificationsMode > NOTIFICATIONS_MODE.TEST) {
+    const admins = await getAdmins(dbInfo, authHeader);
+    return admins.map(admin => admin.email);
+  }
+  return [notificationsInfo.testEmail];
+}
+
+export async function sendNotification(dbInfo, hostname, notification) {
+  try {
+    const requestInfo = getRequestInfo(dbInfo, hostname);
+
+    await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}`)
+      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
+      .send(notification);
+
+  } catch (err) {
+    Promise.reject(err);
+  }
+
+
+}

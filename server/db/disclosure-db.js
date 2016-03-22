@@ -1225,4 +1225,14 @@ export const saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
     });
 };
 
+export async function getDisclosureInfoForNotifications(dbInfo, id) {
+  const knex = getKnex(dbInfo);
+
+  const disclosure = await knex('disclosure')
+    .select('id', 'status_cd as statusCd', 'submitted_date as submittedDate', 'expired_date as expiredDate', 'user_id as userId')
+    .where({id});
+
+  return disclosure[0];
+}
+
 

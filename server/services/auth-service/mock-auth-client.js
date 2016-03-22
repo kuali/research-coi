@@ -84,9 +84,29 @@ export function getUserInfo(dbInfo, hostname, token) {
   });
 }
 
+export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValue) {
+  return [await getUserInfo(dbInfo, hostname, queryValue)];
+}
+
 export function getAuthLink(req) {
   const returnToValue = encodeURIComponent(req.originalUrl);
   return `/coi/auth?return_to=${returnToValue}`;
+}
+
+
+export async function getAdmins(dbInfo, authToken) {//eslint-disable-line no-unused-vars
+  return Promise.resolve([
+    {
+      userId: hashCode('admin1'),
+      displayName: 'Admin 1',
+      email: 'admin1@email.com'
+    },
+    {
+      userId: hashCode('admin2'),
+      displayName: 'Admin 2',
+      email: 'admin2@email.com'
+    }
+  ]);
 }
 
 export function getReviewers(dbInfo, authToken) { //eslint-disable-line no-unused-vars

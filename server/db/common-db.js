@@ -120,7 +120,6 @@ export const deleteExistingSingleRecord = (dbInfo, recordId, tableProps, optiona
 
 export const isDisclosureUsers = (dbInfo, disclosureId, userId) => {
   const knex = getKnex(dbInfo);
-
   return knex.select('user_id')
     .from('disclosure')
     .where({
