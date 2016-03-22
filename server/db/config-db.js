@@ -20,6 +20,7 @@
 
 import {camelizeJson, snakeizeJson} from './json-utils';
 import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
+import { NOTIFICATIONS_MODE } from '../../coi-constants';
 
 let getKnex;
 let getNotificationsInfo;
@@ -115,27 +116,27 @@ const convertQuestionFormat = (questions) => {
   });
 };
 
-const getNotificationTemplates = (query, dbInfo, hostname, notificationsEnabled) => {
+const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) => {
 
-  if (!notificationsEnabled) {
-    return Promise.resolve([]);
-  }
-  return query.select('*').from('notification_template').then(templates => {
-    return populateTemplateData(dbInfo, hostname, templates).then(results => {
-      return results;
-    }).catch(() => {
-      return Promise.resolve(templates.map(template => {
-        template.error = true;
-        return template;
-      }));
+  if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
+    return query.select('*').from('notification_template').then(templates => {
+      return populateTemplateData(dbInfo, hostname, templates).then(results => {
+        return results;
+      }).catch(() => {
+        return Promise.resolve(templates.map(template => {
+          template.error = true;
+          return template;
+        }));
+      });
     });
-  });
+  }
+  return Promise.resolve([]);
 };
 
 export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
   let config = mockDB.UIT;
   const knex = getKnex(dbInfo);
-  const notificationsEnabled = getNotificationsInfo(dbInfo).notificationsEnabled;
+  const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -166,7 +167,7 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
     query.select('*').from('project_type'),
     query.select('*').from('project_role'),
     query.select('*').from('project_status'),
-    getNotificationTemplates(query, dbInfo, hostname, notificationsEnabled)
+    getNotificationTemplates(query, dbInfo, hostname, notificationsMode)
   ])
   .then(result => {
     config.matrixTypes = result[0];
@@ -207,7 +208,7 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
 export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
   const config = snakeizeJson(body);
   const knex = getKnex(dbInfo);
-  const notificationsEnabled = getNotificationsInfo(dbInfo).notificationsEnabled;
+  const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -271,11 +272,13 @@ export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
     createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
   );
 
-  if (notificationsEnabled) {
-    Promise.all(handleTemplates(dbInfo, hostname, config.notification_templates)).then(results => {
-      queries.push(
-        createCollectionQueries(query, results, {pk: 'template_id', table: 'notification_template'})
-      );
+  if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
+    handleTemplates(dbInfo, hostname, config.notification_templates).then(results => {
+      Promise.all(results).then(templates => {
+        queries.push(
+          createCollectionQueries(query, templates, {pk: 'template_id', table: 'notification_template'})
+        );
+      });
     });
   }
 
@@ -367,4 +370,13 @@ export function getRequiredProjectTypes(dbInfo) {
   return knex('project_type')
     .select('type_cd as typeCd')
     .where({req_disclosure: true});
+}
+
+export async function getCoreTemplateIdByTemplateId(dbInfo, templateId) {
+  const knex = getKnex(dbInfo);
+  const template = await knex('notification_template')
+    .select('core_template_id as coreTemplateId')
+    .where({template_id: templateId});
+
+  return template[0].coreTemplateId;
 }

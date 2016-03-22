@@ -144,6 +144,13 @@ export const APPROVED_STATUSES = [
   DISCLOSURE_STATUS.UPDATE_REQUIRED
 ];
 
+export const NOTIFICATIONS_MODE = {
+  OFF: 0,
+  TEST: 1,
+  PROD: 2
+
+}
+
 export const COIConstants = {
   DISCLOSURE_STEP,
   INSTRUCTION_STEP,
@@ -167,5 +174,6 @@ export const COIConstants = {
   DATE_TYPE,
   EDITABLE_STATUSES,
   APPROVED_STATUSES,
-  COI_ADMIN
+  COI_ADMIN,
+  NOTIFICATIONS_MODE
 };

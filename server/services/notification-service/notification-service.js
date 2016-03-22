@@ -15,11 +15,27 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
+
+import { getCoreTemplateIdByTemplateId } from '../../db/config-db';
+import { getDisclosureInfoForNotifications } from '../../db/disclosure-db';
+
+import * as VariableService from './variables-service';
+
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
   require('./notification-client') ;
 
-const { createDisplayName, createNewTemplate, updateTemplateData, getTemplates } = client;
+const {
+  createDisplayName,
+  createNewTemplate,
+  updateTemplateData,
+  getTemplates,
+  getUserInfo,
+  sendNotification,
+  getAdminRecipients,
+  getRequestInfo,
+  areNotificationsEnabled
+} = client;
 
 const NOTIFICATION_TEMPLATES = {
   SUBMITTED: {
@@ -97,6 +113,7 @@ export async function handleTemplates(dbInfo, hostname, templates) {
         }
         await updateTemplateData(dbInfo, hostname, template);
       }
+
       return cleanTemplate(template);
     });
   } catch(err) {
@@ -108,14 +125,13 @@ export async function populateTemplateData(dbInfo, hostname, notificationTemplat
   try {
     const templates = await getTemplates(dbInfo, hostname);
     return notificationTemplates.map(notificationTemplate => {
-
       const template = templates.find(t => {
         return String(t.id) === String(notificationTemplate.coreTemplateId) ||
           t.displayName === createDisplayName(hostname, notificationTemplate.description);
       });
 
       if (!template) {
-        return Promise.resolve(getDefaults(notificationTemplate));
+        return getDefaults(notificationTemplate);
       }
       notificationTemplate.subject = template.subject;
       notificationTemplate.body = template.templates.email.text;
@@ -124,5 +140,41 @@ export async function populateTemplateData(dbInfo, hostname, notificationTemplat
     });
   } catch(err) {
     return Promise.reject(err);
+  }
+}
+
+function createCoreNotification(templateId, variables, creatorId, addresses) {
+  return {
+    templateId,
+    creatorId,
+    addresses,
+    variables
+  };
+}
+
+async function getVariablesForSubmitNotification(dbInfo, hostname, disclosureId) {
+  const disclosure = await getDisclosureInfoForNotifications(dbInfo, disclosureId);
+  disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+  const url = getRequestInfo(dbInfo, hostname).url;
+
+  let variables = VariableService.getDefaultVariables(url);
+
+  variables = VariableService.getDisclosureVariables(disclosure, url, variables);
+  return variables;
+}
+
+export async function createAndSendSubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
+  try {
+    if (!areNotificationsEnabled(dbInfo)) {
+      return Promise.resolve();
+    }
+    const coreTemplateId = await getCoreTemplateIdByTemplateId(dbInfo, NOTIFICATION_TEMPLATES.SUBMITTED.ID);
+    const variables = await getVariablesForSubmitNotification(dbInfo, hostname, disclosureId);
+    const adminEmails = await getAdminRecipients(dbInfo, authHeader);
+    const notification = createCoreNotification(coreTemplateId, variables, userInfo.id, adminEmails);
+
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch (err) {
+    Promise.reject(err);
   }
 }

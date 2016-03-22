@@ -20,6 +20,9 @@
  no-unused-vars,
 
  */
+
+import { getAdmins, getUserInfosByQuery } from '../auth-service/mock-auth-client';
+
 export function createDisplayName(hostname, description) {
   return `COI-${hostname}-${description}`;
 }
@@ -59,6 +62,11 @@ export async function getTemplates(dbInfo, hostname) {
   ];
 }
 
+export async function getUserInfo(dbInfo, hostname, userId) {
+  const userInfos = await getUserInfosByQuery(dbInfo, hostname, '1234', userId);
+  return userInfos.find(user => user.username === userId);
+}
+
 export async function updateTemplateData(dbInfo, hostname, notificationTemplate) {
   // no-op
 }
@@ -67,3 +75,22 @@ export async function createNewTemplate(dbInfo, hostname, notificationTemplate) 
   return Math.ceil(Math.random() * 50);
 }
 
+export async function sendNotification(dbInfo, hostname, notification) {
+  return notification;
+}
+export async function getAdminRecipients(dbInfo, authHeader) {
+  const admins = await getAdmins(dbInfo, authHeader);
+  return admins.map(admin => admin.email);
+}
+
+export function getRequestInfo() {
+  return {
+    url: 'test.com',
+    applicationId: '1234',
+    systemAuthToken: '5678'
+  };
+}
+
+export function areNotificationsEnabled() {
+  return true;
+}

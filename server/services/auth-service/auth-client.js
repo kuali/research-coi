@@ -22,6 +22,7 @@ import request from 'superagent';
 import LOG from '../../log';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const REVIEWER_CACHE_KEY = 'reviewers';
+const ADMIN_CACHE_KEY = 'admins';
 const SERVICE_ROLE = 'service';
 let getAuthorizationInfo;
 try {
@@ -101,6 +102,31 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
   }
 }
 
+/*
+  request will return an array with possible multiple userInfos
+  will need to further filter once returned.
+ */
+export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValue) {
+  try {
+
+    const cachedUserInfo = queryValue ? cache.get(queryValue) : undefined;
+    if (cachedUserInfo) {
+      return Promise.resolve(cachedUserInfo);
+    }
+    const authInfo = getAuthorizationInfo(dbInfo);
+    const url = authInfo.authUrl || (useSSL ? 'https://' : 'http://') + hostname;
+    const response = await request.get(`${url}/api/v1/users/`)
+      .query({q:queryValue.trim()})
+      .set('Authorization', `Bearer ${authToken}`);
+
+    const userInfo = response.body;
+    cache.set(queryValue, userInfo);
+    return Promise.resolve(userInfo);
+  } catch (err) {
+    return Promise.resolve();
+  }
+}
+
 export function getAuthLink(req) {
   const authInfo = getAuthorizationInfo(req.dbInfo);
   const url = authInfo.authUrl || '';
@@ -111,13 +137,22 @@ export function getAuthLink(req) {
 }
 
 export async function getReviewers(dbInfo, authToken) {
+  const authInfo = getAuthorizationInfo(dbInfo);
+  return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.reviewerRole, REVIEWER_CACHE_KEY);
+}
+
+export async function getAdmins(dbInfo, authToken) {
+  const authInfo = getAuthorizationInfo(dbInfo);
+  return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.adminRole, ADMIN_CACHE_KEY);
+}
+
+export async function getUsersInRole(url, authToken, role, cacheKey) {
   try {
-    const cachedReviewers = cache.get(REVIEWER_CACHE_KEY);
+    const cachedReviewers = cache.get(cacheKey);
     if (cachedReviewers) {
       return Promise.resolve(cachedReviewers);
     }
-    const authInfo = getAuthorizationInfo(dbInfo);
-    const response = await request.get(`${authInfo.researchCoreUrl}/kc-sys-krad/v1/roles/${authInfo.reviewerRole}/principals`)
+    const response = await request.get(`${url}/kc-sys-krad/v1/roles/${role}/principals`)
       .set('Authorization', `Bearer ${authToken}`);
 
     if (!response.ok) {
