@@ -1021,10 +1021,12 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
     deleteAdditionalReviewers(knex, disclosureId),
     updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS)
   ])
-  .then(([config]) => {
+  .then(([config, archivedDisclosure]) => {
     const generalConfig = JSON.parse(config[0].config).general;
     const expiredDate = getExpirationDate(new Date(disclosure.submittedDate), generalConfig.isRollingDueDate, new Date(generalConfig.dueDate));
-    return approveDisclosure(knex, disclosureId, expiredDate, disclosure.userId, dbInfo, authHeader);
+    return approveDisclosure(knex, disclosureId, expiredDate, disclosure.userId, dbInfo, authHeader).then(() => {
+      return archivedDisclosure[0];
+    });
   });
 };
 
@@ -1235,4 +1237,17 @@ export async function getDisclosureInfoForNotifications(dbInfo, id) {
   return disclosure[0];
 }
 
+export async function getArchivedDisclosureInfoForNotifications(dbInfo, id) {
+  const knex = getKnex(dbInfo);
 
+  const results = await knex('disclosure_archive as da')
+    .select('d.user_id as userId', 'da.approved_date as approvedDate', 'da.approved_by as approvedBy', 'da.disclosure')
+    .innerJoin('disclosure as d', 'da.disclosure_id', 'd.id')
+    .where({'da.id': id});
+
+  const disclosure = JSON.parse(results[0].disclosure);
+  disclosure.approvedDate = results[0].approvedDate;
+  disclosure.approvedBy = results[0].approvedBy;
+  disclosure.userId = results[0].userId;
+  return disclosure;
+}

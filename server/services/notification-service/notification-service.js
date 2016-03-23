@@ -17,7 +17,7 @@
  */
 
 import { getCoreTemplateIdByTemplateId } from '../../db/config-db';
-import { getDisclosureInfoForNotifications } from '../../db/disclosure-db';
+import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
 
 import * as VariableService from './variables-service';
 
@@ -33,6 +33,7 @@ const {
   getUserInfo,
   sendNotification,
   getAdminRecipients,
+  getRecipients,
   getRequestInfo,
   areNotificationsEnabled
 } = client;
@@ -62,6 +63,11 @@ const NOTIFICATION_TEMPLATES = {
     ID: 5,
     SUBJECT: 'REPLACE WITH DEFAULT',
     BODY: 'REPLACE WITH DEFAULT'
+  },
+  APPROVED: {
+    ID: 6,
+    SUBJECT: 'Annual COI Disclosure is Approved',
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was approved on {{APPROVAL_DATE}}. To view your disclosure, login to your COI Dashboard at {{REPORTER_DASHBOARD}} and go to Disclosure Archives.' //eslint-disable-line max-len
   }
 };
 
@@ -86,6 +92,11 @@ export function getDefaults(notificationTemplate) {
     case NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.ID:
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.BODY;
+      return notificationTemplate;
+    case NOTIFICATION_TEMPLATES.APPROVED.ID:
+
+      notificationTemplate.subject = NOTIFICATION_TEMPLATES.APPROVED.SUBJECT;
+      notificationTemplate.body = NOTIFICATION_TEMPLATES.APPROVED.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';
@@ -152,29 +163,66 @@ function createCoreNotification(templateId, variables, creatorId, addresses) {
   };
 }
 
-async function getVariablesForSubmitNotification(dbInfo, hostname, disclosureId) {
+async function getTemplate(dbInfo, templateId) {
+  if (!areNotificationsEnabled(dbInfo)) {
+    return Promise.resolve();
+  }
+  const template = await getCoreTemplateIdByTemplateId(dbInfo, templateId);
+
+  if (template.active === 0) {
+    return Promise.resolve();
+  }
+
+  return template;
+}
+
+async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
+  const disclosure = await getArchivedDisclosureInfoForNotifications(dbInfo, archiveId);
+  disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+  return disclosure;
+}
+
+async function getDisclosure(dbInfo, hostname, disclosureId) {
   const disclosure = await getDisclosureInfoForNotifications(dbInfo, disclosureId);
   disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+  return disclosure;
+}
+
+async function getVariables(dbInfo, hostname, disclosure) {
   const url = getRequestInfo(dbInfo, hostname).url;
-
   let variables = VariableService.getDefaultVariables(url);
-
   variables = VariableService.getDisclosureVariables(disclosure, url, variables);
   return variables;
 }
 
 export async function createAndSendSubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
   try {
-    if (!areNotificationsEnabled(dbInfo)) {
+    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.SUBMITTED.ID);
+    if (!template) {
       return Promise.resolve();
     }
-    const coreTemplateId = await getCoreTemplateIdByTemplateId(dbInfo, NOTIFICATION_TEMPLATES.SUBMITTED.ID);
-    const variables = await getVariablesForSubmitNotification(dbInfo, hostname, disclosureId);
+    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+    const variables = await getVariables(dbInfo, hostname, disclosure);
     const adminEmails = await getAdminRecipients(dbInfo, authHeader);
-    const notification = createCoreNotification(coreTemplateId, variables, userInfo.id, adminEmails);
-
+    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, adminEmails);
     return await sendNotification(dbInfo, hostname, notification);
   } catch (err) {
+    Promise.reject(err);
+  }
+}
+
+export async function createAndSendApproveNotification(dbInfo, hostname, userInfo, archiveId) {
+  try {
+    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.APPROVED.ID);
+    if (!template) {
+      return Promise.resolve();
+    }
+    const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
+    const variables = await getVariables(dbInfo, hostname, disclosure);
+    const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch(err) {
     Promise.reject(err);
   }
 }

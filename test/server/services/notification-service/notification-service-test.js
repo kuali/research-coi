@@ -158,7 +158,10 @@ describe('NotificationService', () => {
 
     before(async () => {
       await knex('notification_template')
-        .update({core_template_id: '1234'})
+        .update({
+          core_template_id: '1234',
+          active: 1
+        })
         .where({template_id: 1});
 
       const dislcosureIds = await knex('disclosure').insert({
@@ -193,6 +196,8 @@ describe('NotificationService', () => {
       assert.equal( 'test.com/coi',results.variables['{{REPORTER_DASHBOARD}}']);
       assert.equal( 'User',results.variables['{{REPORTER_FIRST_NAME}}']);
       assert.equal( '1234',results.variables['{{REPORTER_LAST_NAME}}']);
+      assert.equal( undefined, results.variables['{{APPROVER_FIRST_NAME}}']);
+      assert.equal( undefined, results.variables['{{APPROVER_LAST_NAME}}']);
       assert.equal( formatDate(now),results.variables['{{NOW}}']);
       assert.equal( formatDate(now),results.variables['{{SUBMISSION_DATE}}']);
       assert.equal( formatDate(now),results.variables['{{EXPIRATION_DATE}}']);
@@ -200,10 +205,96 @@ describe('NotificationService', () => {
 
     after(async () => {
       await knex('notification_template')
-        .update({core_template_id: null})
+        .update({
+          core_template_id: null,
+          active: 0
+        })
         .where({template_id: 1});
 
       await knex('disclosure').del();
     });
+  });
+
+  describe('createAndSendApproveNotification', () => {
+    let results;
+    let disclosureId;
+    let archiveId;
+    const now = new Date();
+
+    before(async () => {
+      await knex('notification_template')
+        .update({core_template_id: '1234'})
+        .where({template_id: 6});
+
+      const dislcosureIds = await knex('disclosure').insert({
+        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
+        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        user_id: '1234',
+        start_date: now,
+        expired_date: now,
+        submitted_date: now,
+        config_id: 1}, 'id');
+
+      disclosureId = dislcosureIds[0];
+
+      const disclosure = JSON.stringify({
+        typeCd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
+        statusCd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        userId: '1234',
+        startDate: now,
+        expiredDate: now,
+        submittedDate: now,
+        configId: 1
+      });
+
+      const archiveIds = await knex('disclosure_archive').insert({
+        disclosure_id: disclosureId,
+        approved_by: 'Admin, COI',
+        approved_date: now,
+        disclosure
+      }, 'id');
+
+      archiveId = archiveIds[0];
+
+      results = await NotificationService.createAndSendApproveNotification({},'test.com', {id: '5678'}, archiveId);
+    });
+
+    it('should pull the correct core template id from the db', () => {
+      assert.equal('1234', results.templateId);
+    });
+
+    it('should get the creator id from the request', () => {
+      assert.equal('5678', results.creatorId);
+    });
+
+    it('should get the correct recipients', () => {
+      assert.equal(1, results.addresses.length);
+      assert.equal('1234@email.com', results.addresses[0]);
+    });
+
+    it('should populate the variables', () => {
+      assert.equal( 'test.com/coi/admin',results.variables['{{ADMIN_DASHBOARD}}']);
+      assert.equal( 'test.com/coi',results.variables['{{REPORTER_DASHBOARD}}']);
+      assert.equal( 'User',results.variables['{{REPORTER_FIRST_NAME}}']);
+      assert.equal( '1234',results.variables['{{REPORTER_LAST_NAME}}']);
+      assert.equal( 'COI',results.variables['{{APPROVER_FIRST_NAME}}']);
+      assert.equal( 'Admin',results.variables['{{APPROVER_LAST_NAME}}']);
+      assert.equal( formatDate(now),results.variables['{{NOW}}']);
+      assert.equal( formatDate(now),results.variables['{{SUBMISSION_DATE}}']);
+      assert.equal( formatDate(now),results.variables['{{EXPIRATION_DATE}}']);
+      assert.equal( formatDate(now),results.variables['{{APPROVAL_DATE}}']);
+    });
+
+    after(async () => {
+      await knex('notification_template')
+        .update({
+          core_template_id: null,
+          active: 0
+        })
+        .where({template_id: 1});
+      await knex('disclosure_archive').del();
+      await knex('disclosure').del();
+    });
+
   });
 });

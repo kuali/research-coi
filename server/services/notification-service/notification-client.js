@@ -47,6 +47,15 @@ export function areNotificationsEnabled(dbInfo) {
   return getNotificationsInfo(dbInfo).notificationsMode > NOTIFICATIONS_MODE.OFF;
 }
 
+export function getRecipients(dbInfo, recipients) {
+  const notificationsInfo = getNotificationsInfo(dbInfo);
+  if (notificationsInfo.notificationsMode > NOTIFICATIONS_MODE.TEST) {
+    return [recipients];
+  }
+
+  return [notificationsInfo.testEmail];
+}
+
 export async function getTemplates(dbInfo, hostname) {
   try {
     const notificationsInfo = getNotificationsInfo(dbInfo);
@@ -140,7 +149,6 @@ export async function getAdminRecipients(dbInfo, authHeader) {
 export async function sendNotification(dbInfo, hostname, notification) {
   try {
     const requestInfo = getRequestInfo(dbInfo, hostname);
-
     await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}`)
       .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
       .send(notification);
@@ -148,6 +156,4 @@ export async function sendNotification(dbInfo, hostname, notification) {
   } catch (err) {
     Promise.reject(err);
   }
-
-
 }
