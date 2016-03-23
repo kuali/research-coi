@@ -26,7 +26,7 @@ import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../http-status-codes';
-import { createAndSendSubmitNotification } from '../services/notification-service/notification-service';
+import { createAndSendSubmitNotification, createAndSendApproveNotification } from '../services/notification-service/notification-service';
 let upload;
 try {
   const extensions = require('research-extensions').default;
@@ -224,7 +224,12 @@ export const init = app => {
   }));
 
   app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id, req.headers.authorization);
+    const archiveId = await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id, req.headers.authorization);
+    try {
+      await createAndSendApproveNotification(req.dbInfo, req.hostname, req.userInfo, archiveId);
+    } catch (err) {
+      Log.error(err, req);
+    }
     res.sendStatus(ACCEPTED);
   }));
 

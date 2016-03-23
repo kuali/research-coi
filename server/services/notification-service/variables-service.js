@@ -32,6 +32,16 @@ export function getDefaultVariables(url) {
   return variables;
 }
 
+function getApprover(approver) {
+  if (approver && approver.indexOf(',') > -1) {
+    const array = approver.split(',');
+    return {
+      firstName: array[1].trim(),
+      lastName: array[0].trim()
+    };
+  }
+  return {};
+}
 export function getDisclosureVariables(disclosure, url, variables) {
   variables[`${LEFT}ADMIN_DETAIL_VIEW${RIGHT}`] = `${url}/coi/admin/detailview/${disclosure.id}/${disclosure.statusCd}`;
   variables[`${LEFT}SUBMISSION_DATE${RIGHT}`] = formatDateIfAvailable(disclosure.submittedDate);
@@ -39,6 +49,10 @@ export function getDisclosureVariables(disclosure, url, variables) {
   variables[`${LEFT}EXPIRATION_DATE${RIGHT}`] = formatDateIfAvailable(disclosure.expiredDate);
   variables[`${LEFT}REPORTER_FIRST_NAME${RIGHT}`] = disclosure.reporterInfo.firstName;
   variables[`${LEFT}REPORTER_LAST_NAME${RIGHT}`] = disclosure.reporterInfo.lastName;
+  const approver = getApprover(disclosure.approvedBy);
+  variables[`${LEFT}APPROVER_FIRST_NAME${RIGHT}`] = approver.firstName;
+  variables[`${LEFT}APPROVER_LAST_NAME${RIGHT}`] = approver.lastName;
+
   return variables;
 }
 

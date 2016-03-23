@@ -78,9 +78,14 @@ export async function createNewTemplate(dbInfo, hostname, notificationTemplate) 
 export async function sendNotification(dbInfo, hostname, notification) {
   return notification;
 }
+
 export async function getAdminRecipients(dbInfo, authHeader) {
   const admins = await getAdmins(dbInfo, authHeader);
   return admins.map(admin => admin.email);
+}
+
+export function getRecipients(dbInfo, recipients) {
+  return [recipients];
 }
 
 export function getRequestInfo() {

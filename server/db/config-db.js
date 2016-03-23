@@ -119,16 +119,18 @@ const convertQuestionFormat = (questions) => {
 const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) => {
 
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-    return query.select('*').from('notification_template').then(templates => {
-      return populateTemplateData(dbInfo, hostname, templates).then(results => {
-        return results;
-      }).catch(() => {
-        return Promise.resolve(templates.map(template => {
-          template.error = true;
-          return template;
-        }));
+    return query.select('template_id as templateId', 'description', 'type', 'active', 'core_template_id as coreTemplateId')
+      .from('notification_template')
+      .then(templates => {
+        return populateTemplateData(dbInfo, hostname, templates).then(results => {
+          return results;
+        }).catch(() => {
+          return Promise.resolve(templates.map(template => {
+            template.error = true;
+            return template;
+          }));
+        });
       });
-    });
   }
   return Promise.resolve([]);
 };
@@ -375,8 +377,8 @@ export function getRequiredProjectTypes(dbInfo) {
 export async function getCoreTemplateIdByTemplateId(dbInfo, templateId) {
   const knex = getKnex(dbInfo);
   const template = await knex('notification_template')
-    .select('core_template_id as coreTemplateId')
+    .select('core_template_id as coreTemplateId', 'active')
     .where({template_id: templateId});
 
-  return template[0].coreTemplateId;
+  return template[0];
 }
