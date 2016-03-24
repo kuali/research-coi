@@ -18,7 +18,7 @@
 
 import { getCoreTemplateIdByTemplateId } from '../../db/config-db';
 import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
-
+import Log from '../../log';
 import * as VariableService from './variables-service';
 
 const client = process.env.NODE_ENV === 'test' ?
@@ -68,6 +68,11 @@ const NOTIFICATION_TEMPLATES = {
     ID: 6,
     SUBJECT: 'Annual COI Disclosure is Approved',
     BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was approved on {{APPROVAL_DATE}}. To view your disclosure, login to your COI Dashboard at {{REPORTER_DASHBOARD}} and go to Disclosure Archives.' //eslint-disable-line max-len
+  },
+  EXPIRED: {
+    ID: 7,
+    SUBJECT: 'Annual COI Disclosure is Expired',
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} has expired' //eslint-disable-line max-len
   }
 };
 
@@ -198,6 +203,7 @@ async function getVariables(dbInfo, hostname, disclosure) {
 export async function createAndSendSubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
   try {
     const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.SUBMITTED.ID);
+
     if (!template) {
       return Promise.resolve();
     }
@@ -225,4 +231,22 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
   } catch(err) {
     Promise.reject(err);
   }
+}
+
+export async function createAndSendExpireNotification(dbInfo, hostname, disclosureId) {
+  try {
+    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.EXPIRED.ID);
+    if (!template) {
+
+      return Promise.resolve();
+    }
+    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+    const variables = await getVariables(dbInfo, hostname, disclosure);
+    const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+    const notification = createCoreNotification(template.coreTemplateId, variables, disclosure.reporterInfo.id, recipients);
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch(err) {
+    Log.error(err);
+  }
+
 }

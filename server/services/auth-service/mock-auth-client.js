@@ -85,7 +85,8 @@ export function getUserInfo(dbInfo, hostname, token) {
 }
 
 export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValue) {
-  return [await getUserInfo(dbInfo, hostname, queryValue)];
+  const result = await getUserInfo(dbInfo, hostname, queryValue);
+  return [result];
 }
 
 export function getAuthLink(req) {

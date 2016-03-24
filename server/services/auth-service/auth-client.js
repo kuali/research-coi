@@ -34,7 +34,7 @@ try {
       adminRole: process.env.COI_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator',
       reviewerRole: process.env.COI_REVIEWER_ROLE || 'KC-COIDISCLOSURE:COI%20Reviewer',
       researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res',
-      authUrl: process.env.AUTHN_URL
+      authUrl: process.env.AUTH_URL
     };
   };
 }
