@@ -40,10 +40,10 @@ const END_POINTS = {
   PROPOSAL_STATUS: '/propdev/api/v1/proposal-states/',
   AWARD_STATUS: '/award/api/v1/award-statuses/',
   IP_STATUS: '/instprop/api/v1/proposal-statuses/',
-  IRB_ROLES: '/protocol/api/v1/protocol-person-roles/',
-  IRB_STATUS: '/protocol/api/v1/protocol-statuses/',
-  IACUC_ROLES: '/protocol/api/v1/iacuc-protocol-person-roles/',
-  IACUC_STATUS: '/protocol/api/v1/iacuc-protocol-statuses/',
+  IRB_ROLES: '/irb/api/v1/protocol-person-roles/',
+  IRB_STATUS: '/irb/api/v1/protocol-statuses/',
+  IACUC_ROLES: '/iacuc/api/v1/iacuc-protocol-person-roles/',
+  IACUC_STATUS: '/iacuc/api/v1/iacuc-protocol-statuses/',
   SPONSOR_HIERARCHY: '/research-common/api/v1/sponsor-hierarchies/?hierarchyName='
 };
 
