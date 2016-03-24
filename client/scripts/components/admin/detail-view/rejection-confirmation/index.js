@@ -42,9 +42,6 @@ export default class RejectionConfirmation extends React.Component {
             Are you sure you want to send this disclosure back for further review?
           </div>
 
-          <div className={styles.generalComments}>NOTIFICATION TO USER</div>
-          <textarea ref="comments" className={styles.commentText} />
-
           <BlueButton
             onClick={this.reject}
             className={`${styles.override} ${styles.yesButton}`}
