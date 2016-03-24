@@ -22,11 +22,20 @@ import { ROLES, DATE_TYPE } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { OK } from '../../http-status-codes';
+import Log from '../log';
 import wrapAsync from './wrap-async';
+import {
+  createAndSendReviewerAssignedNotification
+} from '../services/notification-service/notification-service';
 
 export const init = app => {
   app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     const result = await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body);
+    try {
+      await createAndSendReviewerAssignedNotification(req.dbInfo, req.hostname, req.userInfo, result.id);
+    } catch(err) {
+      Log.error(err,req);
+    }
     res.send(result);
   }));
 

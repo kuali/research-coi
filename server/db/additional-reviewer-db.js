@@ -28,6 +28,19 @@ catch (err) {
   getKnex = require('./connection-manager').default;
 }
 
+export async function getAdditionalReviewer(dbInfo, id) {
+  try {
+    const knex = getKnex(dbInfo);
+    const reviewer = await knex('additional_reviewer').select('name', 'user_id as userId', 'email', 'disclosure_id as disclosureId',
+      'dates', 'title', 'unit_name as unitName', 'active')
+      .where({id});
+    reviewer[0].dates = JSON.parse(reviewer[0].dates);
+    return reviewer[0];
+  } catch(err) {
+    return Promise.reject(err);
+  }
+}
+
 export async function getDisclosuresForReviewer(dbInfo, schoolId) {
   const knex = getKnex(dbInfo);
   try {
