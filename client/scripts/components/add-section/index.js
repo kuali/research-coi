@@ -25,6 +25,13 @@ export default function AddSection (props) {
   const messageClasses = classNames(styles.messageContainer,
     {[styles.hideWarning]: !props.message});
 
+  let level;
+  if (props.level) {
+    level = (
+      <div className={styles.level}>{props.level}</div>
+    );
+  }
+
   return(
     <div className={styles.container}>
       <div className={styles.left}>
@@ -34,7 +41,7 @@ export default function AddSection (props) {
         <div id='message' className={messageClasses}>
           <div className={styles.message}>
             <span>
-              <div className={styles.level}>Warning:</div>
+              {level}
               <span className={styles.text}>{props.message}</span>
             </span>
           </div>

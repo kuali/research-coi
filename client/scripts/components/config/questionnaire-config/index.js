@@ -292,6 +292,7 @@ class QuestionnaireConfig extends React.Component {
       }
       newQuestionSection = (
         <AddSection
+          level="Warning"
           button={<NewQuestionButton onClick={this.newQuestionStarted} />}
           message={message}
         />
