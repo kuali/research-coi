@@ -16,8 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/*eslint-disable
+ camelcase,
+ no-console
+ */
 import Log from './log';
 import {COIConstants} from '../coi-constants';
+import { createAndSendExpireNotification } from './services/notification-service/notification-service';
 let getKnex;
 
 const MILLIS_IN_A_DAY = 86400000;
@@ -26,14 +31,29 @@ async function checkForExpiredDisclosures(expiredCode) {
   try {
     Log.info('Checking for disclosures which have expired');
     const knex = getKnex();
+
+    const expiredDisclosures = await knex('disclosure')
+      .select('id')
+      .whereNot('status_cd', expiredCode)
+      .andWhere('expired_date', '<', new Date());
+
+
     const numberExpired = await knex('disclosure')
       .whereNot('status_cd', expiredCode)
       .andWhere('expired_date', '<', new Date())
       .update({
-        status_cd: expiredCode // eslint-disable-line camelcase
+        status_cd: expiredCode
       });
 
-    Log.info(`${numberExpired} disclosures expired`);
+    console.log(`${numberExpired} disclosures expired`);
+
+    return expiredDisclosures.map(disclosure => {
+      return {
+        dbInfo: {},
+        hostname: process.env.HOST_NAME,
+        disclosureId: disclosure.id
+      };
+    });
   }
   catch(err) {
     Log.error(err);
@@ -50,13 +70,23 @@ catch (err) {
   expirationCheck = checkForExpiredDisclosures;
 }
 
-export default function scheduleExpirationCheck() {
+async function handleNotifications() {
+  const disclosures = await expirationCheck(COIConstants.DISCLOSURE_STATUS.EXPIRED);
+  await disclosures.map(async disclosure => {
+    try {
+      return await createAndSendExpireNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
+    } catch(err) {
+      Log.error(err);
+    }
+  });
+}
+export default async function scheduleExpirationCheck() {
   const waitUntilToRun = Math.random() * MILLIS_IN_A_DAY;
-  setTimeout(() => {
+  setTimeout(async () => {
     Log.info('Scheduled the expired disclosures check to run every 24 hours from now');
-    expirationCheck(COIConstants.DISCLOSURE_STATUS.EXPIRED);
-    setInterval(() => {
-      expirationCheck(COIConstants.DISCLOSURE_STATUS.EXPIRED);
+    handleNotifications();
+    setInterval(async () => {
+      handleNotifications();
     }, MILLIS_IN_A_DAY);
   }, waitUntilToRun);
 }
