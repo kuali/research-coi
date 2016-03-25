@@ -1,7 +1,7 @@
 ##coi-1603
 * Renamed migration files to facilitate migrations being ran in alphabetic order. New migration files will follow the YYYYMM_xxx.js naming convention. The following sql script will fix your existing knex_migrations table if needed.
 
-    update knex_migrations set name = '000000_001.js' where name = '1.js';
+    ```update knex_migrations set name = '000000_001.js' where name = '1.js';
     update knex_migrations set name = '000000_002.js' where name = '2.js';
     update knex_migrations set name = '000000_003.js' where name = '3.js';
     update knex_migrations set name = '000000_004.js' where name = '4.js';
@@ -9,7 +9,7 @@
     update knex_migrations set name = '000000_006.js' where name = '6.js';
     update knex_migrations set name = '000000_007.js' where name = '7.js';
     update knex_migrations set name = '000000_008.js' where name = '8.js';
-    update knex_migrations set name = '000000_009.js' where name = '9.js';
+    update knex_migrations set name = '000000_009.js' where name = '9.js';```
 
 * Moved bootstrap data needed for the application to run from the seed file into the migrations.  This will make it easier to keep this data up-to-date.
 * Fixed bug where general attachments were not displaying on the admin view.
