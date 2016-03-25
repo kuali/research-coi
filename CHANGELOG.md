@@ -1,20 +1,38 @@
 ##coi-1603
-* Renamed migration files to facilitate migrations being ran in alphabetic order.  The following sql script will fix your existing knex_migrations table if needed.
->update knex_migrations set name = '000000_001.js' where name = '1.js';
->update knex_migrations set name = '000000_002.js' where name = '2.js';
->update knex_migrations set name = '000000_003.js' where name = '3.js';
->update knex_migrations set name = '000000_004.js' where name = '4.js';
->update knex_migrations set name = '000000_005.js' where name = '5.js';
->update knex_migrations set name = '000000_006.js' where name = '6.js';
->update knex_migrations set name = '000000_007.js' where name = '7.js';
->update knex_migrations set name = '000000_008.js' where name = '8.js';
->update knex_migrations set name = '000000_009.js' where name = '9.js';
+* Renamed migration files to facilitate migrations being ran in alphabetic order. New migration files will follow the YYYYMM_xxx.js naming convention. The following sql script will fix your existing knex_migrations table if needed.
+
+    > update knex_migrations set name = '000000_001.js' where name = '1.js'; 
+    
+    > update knex_migrations set name = '000000_002.js' where name = '2.js';
+    
+    > update knex_migrations set name = '000000_003.js' where name = '3.js';
+    
+    > update knex_migrations set name = '000000_004.js' where name = '4.js';
+    
+    > update knex_migrations set name = '000000_005.js' where name = '5.js';
+    
+    > update knex_migrations set name = '000000_006.js' where name = '6.js';
+    
+    > update knex_migrations set name = '000000_007.js' where name = '7.js';
+    
+    > update knex_migrations set name = '000000_008.js' where name = '8.js';
+    
+    > update knex_migrations set name = '000000_009.js' where name = '9.js';
+    >
+
+* Moved bootstrap data needed for the application to run from the seed file into the migrations.  This will make it easier to keep this data up-to-date.
 * Fixed bug where general attachments were not displaying on the admin view.
 * Fixed bug where occasionally questions were not being displayed on the admin detail view.
 * Fixed bug where revise/response screen would work for admins when they had commented on their own disclosure.
 * Added ability to display a warning message if a user answers no to all 'Yes/No' type parent screening questions and an active entity exists.
-* Added ability to display a warning message and block progress if a user answers yes to one or more 'Yes/No' type parent screening questions and no active entity exists
+* Added ability to display a message and block progress if a user answers yes to one or more 'Yes/No' type parent screening questions and no active entity exists
 * Added functionality to update a users disclosure's status from 'Up to Date' to 'Update Needed' if a new project is added for that user, or update a user's disclosure from 'Update Needed' to 'Up to Date' if a user is removed from a project.
+* Added ability for COI Admin to view Additional reviewers who have completed their reviews and the date their review was assigned.
+* Fixed bug where submitted disclosure was editable if user types in URL.
+* Added ability in Review Comments Aggregate view for reviewer and COI admin to see to whom a comments are visible.
+* Fixed issue where the reporter could see the name of COI Admin who made review comment.
+* Made some minor UI adjustments.
+* Began work on notifications, documentation will be provided upon completion.
 
 ##coi-1602
 * Fixed bug on the pi-revise screen which prevented adding a new relation to an existing entity while reviewing.

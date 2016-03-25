@@ -75,21 +75,22 @@ module.exports = {
 ----------
 
 **Step 6**: Apply Migrations:
+
+This will create the tables and insert bootstrap data needed for the application to run.
 ```
 node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
 ```
+
+
+
+>######**Step 6.5: Optionally Apply Demo Data**
+> ```node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo```
+>
+> This will add some demonstration data to play with.
+
 ----------
-**Step 7**: Apply Seed Data:
-```
-node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi
-```
 
-Alternatively you can add some demonstration data to play with:
-```
-node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo
-```
-
-**Step 8**: Configuration Environment Variables:
+**Step 7**: Configuration Environment Variables:
 
 System configuration for COI is done with environment variables. Environment variables can either be set in the system or added on the command line when starting the application. Below is a list of configuration environment variables
 
@@ -180,15 +181,22 @@ System configuration for COI is done with environment variables. Environment var
 > : If your are sure you want to use the auth service over http set this to false.
 > *Default*:  true
 
-**Step 9**: Run Webpack
+-------
+
+>###**Notification Service**
+>
+>In Development
+>
+
+**Step 8**: Run Webpack
 ```
 npm run webpack
 ```
 This may take a few minutes. There will likely be some warnings, but there should no errors.
 
-**Step 10**: Start Up Node
+**Step 9**: Start Up Node
 ```
 DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm start
 ```
 
-**Step 11**: Navigate to hostname:port/coi/
+**Step 10**: Navigate to hostname:port/coi/
