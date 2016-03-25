@@ -26,11 +26,7 @@ import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../http-status-codes';
-import {
-  createAndSendSubmitNotification,
-  createAndSendApproveNotification,
-  createAndSendSentBackNotification
-} from '../services/notification-service/notification-service';
+import { createAndSendSubmitNotification, createAndSendApproveNotification } from '../services/notification-service/notification-service';
 let upload;
 try {
   const extensions = require('research-extensions').default;
@@ -239,11 +235,6 @@ export const init = app => {
 
   app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     await DisclosureDB.reject(req.dbInfo, req.userInfo, req.params.id);
-    try {
-      await createAndSendSentBackNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
-    } catch (err) {
-      Log.error(err, req);
-    }
     res.sendStatus(ACCEPTED);
   }));
 
