@@ -152,7 +152,6 @@ export async function sendNotification(dbInfo, hostname, notification) {
     await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}`)
       .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
       .send(notification);
-
   } catch (err) {
     Promise.reject(err);
   }
