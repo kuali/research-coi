@@ -32,7 +32,7 @@ export async function getAdditionalReviewer(dbInfo, id) {
   try {
     const knex = getKnex(dbInfo);
     const reviewer = await knex('additional_reviewer').select('name', 'user_id as userId', 'email', 'disclosure_id as disclosureId',
-      'dates', 'title', 'unit_name as unitName', 'active')
+      'dates', 'title', 'unit_name as unitName', 'active', 'assigned_by as assignedBy')
       .where({id});
     reviewer[0].dates = JSON.parse(reviewer[0].dates);
     return reviewer[0];
@@ -74,7 +74,7 @@ export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) 
     .where(criteria);
 }
 
-export async function createAdditionalReviewer(dbInfo, reviewer) {
+export async function createAdditionalReviewer(dbInfo, reviewer, userInfo) {
   const knex = getKnex(dbInfo);
   try {
     reviewer.dates = [
@@ -92,7 +92,8 @@ export async function createAdditionalReviewer(dbInfo, reviewer) {
       title: reviewer.title,
       unit_name: reviewer.unitName,
       active: true,
-      dates: JSON.stringify(reviewer.dates)
+      dates: JSON.stringify(reviewer.dates),
+      assigned_by: userInfo.name
     },'id');
     reviewer.id = id[0];
     return Promise.resolve(reviewer);

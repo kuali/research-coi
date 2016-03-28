@@ -32,7 +32,7 @@ export function getDefaultVariables(url) {
   return variables;
 }
 
-function getApprover(approver) {
+function getNamePartsFromString(approver) {
   if (approver && approver.indexOf(',') > -1) {
     const array = approver.split(',');
     return {
@@ -50,7 +50,7 @@ export function getDisclosureVariables(disclosure, url, variables) {
   variables[`${LEFT}EXPIRATION_DATE${RIGHT}`] = formatDateIfAvailable(disclosure.expiredDate);
   variables[`${LEFT}REPORTER_FIRST_NAME${RIGHT}`] = disclosure.reporterInfo.firstName;
   variables[`${LEFT}REPORTER_LAST_NAME${RIGHT}`] = disclosure.reporterInfo.lastName;
-  const approver = getApprover(disclosure.approvedBy);
+  const approver = getNamePartsFromString(disclosure.approvedBy);
   variables[`${LEFT}APPROVER_FIRST_NAME${RIGHT}`] = approver.firstName;
   variables[`${LEFT}APPROVER_LAST_NAME${RIGHT}`] = approver.lastName;
 
@@ -62,7 +62,12 @@ function getDate(dates, type) {
   return date ? date.date : undefined;
 }
 export function getReviewerVariables(reviewer, variables) {
+  const assigner = getNamePartsFromString(reviewer.assignedBy);
   variables[`${LEFT}REVIEW_ASSIGNED${RIGHT}`] = formatDateIfAvailable(getDate(reviewer.dates, DATE_TYPE.ASSIGNED));
   variables[`${LEFT}REVIEW_COMPLETED${RIGHT}`] = formatDateIfAvailable(getDate(reviewer.dates, DATE_TYPE.COMPLETED));
+  variables[`${LEFT}ASSIGNER_FIRST_NAME${RIGHT}`] = assigner.firstName;
+  variables[`${LEFT}ASSIGNER_LAST_NAME${RIGHT}`] = assigner.lastName;
+  variables[`${LEFT}REVIEWER_FIRST_NAME${RIGHT}`] = reviewer.reviewerInfo.firstName;
+  variables[`${LEFT}REVIEWER_LAST_NAME${RIGHT}`] = reviewer.reviewerInfo.lastName;
   return variables;
 }

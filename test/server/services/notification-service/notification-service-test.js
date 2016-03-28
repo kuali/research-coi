@@ -464,7 +464,8 @@ describe('NotificationService', () => {
         name: 'tester',
         email: 'tester@email.com',
         active: true,
-        dates
+        dates,
+        assigned_by: 'Admin, COI'
       });
 
       reviewerId = reviewerIds[0];
@@ -496,6 +497,108 @@ describe('NotificationService', () => {
       assert.equal( formatDate(now),results.variables['{{NOW}}']);
       assert.equal( formatDate(now),results.variables['{{SUBMISSION_DATE}}']);
       assert.equal( formatDate(now),results.variables['{{EXPIRATION_DATE}}']);
+      assert.equal( formatDate(now),results.variables['{{REVIEW_ASSIGNED}}']);
+      assert.equal( '',results.variables['{{REVIEW_COMPLETED}}']);
+      assert.equal( 'COI',results.variables['{{ASSIGNER_FIRST_NAME}}']);
+      assert.equal( 'Admin',results.variables['{{ASSIGNER_LAST_NAME}}']);
+      assert.equal( 'User',results.variables['{{REVIEWER_FIRST_NAME}}']);
+      assert.equal( '1',results.variables['{{REVIEWER_LAST_NAME}}']);
+    });
+
+    after(async () => {
+      await knex('notification_template')
+        .update({
+          core_template_id: null,
+          active: 0
+        })
+        .where({template_id: 1});
+
+      await knex('additional_reviewer').del();
+      await knex('disclosure').del();
+    });
+  });
+
+  describe('createAndSendReviewCompleteNotification', () => {
+    let results;
+    let disclosureId;
+    let reviewerId;
+    const now = new Date();
+
+    before(async () => {
+      await knex('notification_template')
+        .update({
+          core_template_id: '1234',
+          active: 1
+        })
+        .where({template_id: 2});
+
+      const dislcosureIds = await knex('disclosure').insert({
+        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
+        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        user_id: '1234',
+        start_date: now,
+        expired_date: now,
+        submitted_date: now,
+        config_id: 1}, 'id');
+
+      disclosureId = dislcosureIds[0];
+
+      const dates = JSON.stringify([
+        {
+          type: COIConstants.DATE_TYPE.ASSIGNED,
+          date: now
+        },
+        {
+          type: COIConstants.DATE_TYPE.COMPLETED,
+          date: now
+        }
+      ]);
+      const reviewerIds = await knex('additional_reviewer').insert({
+        user_id: 1,
+        disclosure_id: disclosureId,
+        name: 'tester',
+        email: 'tester@email.com',
+        active: true,
+        dates,
+        assigned_by: 'Admin, COI'
+      });
+
+      reviewerId = reviewerIds[0];
+
+
+      results = await NotificationService.createAndSendReviewCompleteNotification({},'test.com', 'Bearer 1234', {id: '5678'}, reviewerId);
+    });
+
+    it('should pull the correct core template id from the db', () => {
+      assert.equal('1234', results.templateId);
+    });
+
+    it('should get the creator id from the request', () => {
+      assert.equal('5678', results.creatorId);
+    });
+
+    it('should get the correct recipients', () => {
+      assert.equal(2, results.addresses.length);
+      assert.equal('admin1@email.com', results.addresses[0]);
+      assert.equal('admin2@email.com', results.addresses[1]);
+    });
+
+    it('should populate the variables', () => {
+      assert.equal( 'test.com/coi/admin',results.variables['{{ADMIN_DASHBOARD}}']);
+      assert.equal( 'test.com/coi',results.variables['{{REPORTER_DASHBOARD}}']);
+      assert.equal( 'User',results.variables['{{REPORTER_FIRST_NAME}}']);
+      assert.equal( '1234',results.variables['{{REPORTER_LAST_NAME}}']);
+      assert.equal( undefined, results.variables['{{APPROVER_FIRST_NAME}}']);
+      assert.equal( undefined, results.variables['{{APPROVER_LAST_NAME}}']);
+      assert.equal( formatDate(now),results.variables['{{NOW}}']);
+      assert.equal( formatDate(now),results.variables['{{SUBMISSION_DATE}}']);
+      assert.equal( formatDate(now),results.variables['{{EXPIRATION_DATE}}']);
+      assert.equal( formatDate(now),results.variables['{{REVIEW_ASSIGNED}}']);
+      assert.equal( formatDate(now),results.variables['{{REVIEW_COMPLETED}}']);
+      assert.equal( 'COI',results.variables['{{ASSIGNER_FIRST_NAME}}']);
+      assert.equal( 'Admin',results.variables['{{ASSIGNER_LAST_NAME}}']);
+      assert.equal( 'User',results.variables['{{REVIEWER_FIRST_NAME}}']);
+      assert.equal( '1',results.variables['{{REVIEWER_LAST_NAME}}']);
     });
 
     after(async () => {

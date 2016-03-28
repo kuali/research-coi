@@ -25,12 +25,13 @@ import { OK } from '../../http-status-codes';
 import Log from '../log';
 import wrapAsync from './wrap-async';
 import {
-  createAndSendReviewerAssignedNotification
+  createAndSendReviewerAssignedNotification,
+  createAndSendReviewCompleteNotification
 } from '../services/notification-service/notification-service';
 
 export const init = app => {
   app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    const result = await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body);
+    const result = await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body, req.userInfo);
     try {
       await createAndSendReviewerAssignedNotification(req.dbInfo, req.hostname, req.userInfo, result.id);
     } catch(err) {
@@ -58,6 +59,11 @@ export const init = app => {
       dates
     };
     await AdditionalReviewerDB.updateAdditionalReviewer(req.dbInfo, additionalReviewer[0].id, updates);
+    try {
+      await createAndSendReviewCompleteNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, additionalReviewer[0].id);
+    } catch(err) {
+      Log.error(err,req);
+    }
     res.sendStatus(OK);
   }));
 

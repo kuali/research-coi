@@ -42,7 +42,8 @@ function getReviewer(disclosureId, user) {
     name: user,
     email: 'test@test.com',
     title: 'Dean',
-    unitName: 'Department of Psychology'
+    unitName: 'Department of Psychology',
+    assignedBy: 'Admin, COI'
   };
 }
 
@@ -56,7 +57,8 @@ async function addReviewer(disclosureId, user) {
     dates: JSON.stringify([{
       type: COIConstants.DATE_TYPE.ASSIGNED,
       date: new Date(2016,0,0)
-    }])
+    }]),
+    assigned_by: 'Admin, COI'
   },'id');
   return id[0];
 }
@@ -74,7 +76,7 @@ describe('AdditionalReviewerControllerTest', () => {
     disclosureId = disclosure[0];
   });
 
-  describe('GET /api/coi/additional-reviewers', () => {
+  describe('POST /api/coi/additional-reviewers', () => {
 
     it('should only allow admins to add reviewers', async () => {
       await request(app.run())
