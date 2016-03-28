@@ -248,5 +248,21 @@ export async function createAndSendExpireNotification(dbInfo, hostname, disclosu
   } catch(err) {
     Log.error(err);
   }
+}
 
+
+export async function createAndSendSentBackNotification(dbInfo, hostname, userInfo, disclosureId) {
+  try {
+    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.SENT_BACK.ID);
+    if (!template) {
+      return Promise.resolve();
+    }
+    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+    const variables = await getVariables(dbInfo, hostname, disclosure);
+    const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch(err) {
+    Promise.reject(err);
+  }
 }
