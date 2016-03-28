@@ -17,7 +17,7 @@
  */
 
 import { formatDate } from '../../date-utils';
-
+import { DATE_TYPE } from '../../../coi-constants';
 const LEFT = '{{';
 const RIGHT = '}}';
 
@@ -42,6 +42,7 @@ function getApprover(approver) {
   }
   return {};
 }
+
 export function getDisclosureVariables(disclosure, url, variables) {
   variables[`${LEFT}ADMIN_DETAIL_VIEW${RIGHT}`] = `${url}/coi/admin/detailview/${disclosure.id}/${disclosure.statusCd}`;
   variables[`${LEFT}SUBMISSION_DATE${RIGHT}`] = formatDateIfAvailable(disclosure.submittedDate);
@@ -56,3 +57,12 @@ export function getDisclosureVariables(disclosure, url, variables) {
   return variables;
 }
 
+function getDate(dates, type) {
+  const date = dates.find(d => d.type === type);
+  return date ? date.date : undefined;
+}
+export function getReviewerVariables(reviewer, variables) {
+  variables[`${LEFT}REVIEW_ASSIGNED${RIGHT}`] = formatDateIfAvailable(getDate(reviewer.dates, DATE_TYPE.ASSIGNED));
+  variables[`${LEFT}REVIEW_COMPLETED${RIGHT}`] = formatDateIfAvailable(getDate(reviewer.dates, DATE_TYPE.COMPLETED));
+  return variables;
+}

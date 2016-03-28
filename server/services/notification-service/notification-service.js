@@ -18,6 +18,7 @@
 
 import { getCoreTemplateIdByTemplateId } from '../../db/config-db';
 import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
+import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
 import Log from '../../log';
 import * as VariableService from './variables-service';
 
@@ -193,10 +194,11 @@ async function getDisclosure(dbInfo, hostname, disclosureId) {
   return disclosure;
 }
 
-async function getVariables(dbInfo, hostname, disclosure) {
+async function getVariables(dbInfo, hostname, disclosure, reviewer) {
   const url = getRequestInfo(dbInfo, hostname).url;
   let variables = VariableService.getDefaultVariables(url);
   variables = VariableService.getDisclosureVariables(disclosure, url, variables);
+  variables = reviewer ? VariableService.getReviewerVariables(reviewer, variables) : variables;
   return variables;
 }
 
@@ -260,6 +262,25 @@ export async function createAndSendSentBackNotification(dbInfo, hostname, userIn
     const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
     const variables = await getVariables(dbInfo, hostname, disclosure);
     const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch(err) {
+    Promise.reject(err);
+  }
+}
+
+export async function createAndSendReviewerAssignedNotification(dbInfo, hostname, userInfo, reviewerId) {
+  try {
+    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.ID);
+    if (!template) {
+      return Promise.resolve();
+    }
+
+    const reviewer = await getAdditionalReviewer(dbInfo, reviewerId);
+
+    const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
+    const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
+    const recipients = getRecipients(dbInfo, reviewer.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
   } catch(err) {
