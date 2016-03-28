@@ -74,6 +74,11 @@ const NOTIFICATION_TEMPLATES = {
     ID: 7,
     SUBJECT: 'Annual COI Disclosure is Expired',
     BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} has expired' //eslint-disable-line max-len
+  },
+  REVIEW_UNASSIGNED: {
+    ID: 8,
+    SUBJECT: 'REPLACE WITH DEFAULT',
+    BODY: 'REPLACE WITH DEFAULT' //eslint-disable-line max-len
   }
 };
 
@@ -100,9 +105,12 @@ export function getDefaults(notificationTemplate) {
       notificationTemplate.body = NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.BODY;
       return notificationTemplate;
     case NOTIFICATION_TEMPLATES.APPROVED.ID:
-
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.APPROVED.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.APPROVED.BODY;
+      return notificationTemplate;
+    case NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.ID:
+      notificationTemplate.subject = NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.SUBJECT;
+      notificationTemplate.body = NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';
@@ -274,9 +282,9 @@ export async function createAndSendSentBackNotification(dbInfo, hostname, userIn
   }
 }
 
-export async function createAndSendReviewerAssignedNotification(dbInfo, hostname, userInfo, reviewerId) {
+export async function createAndSendReviewerNotification(dbInfo, hostname, userInfo, reviewerId, templateId) {
   try {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.ID);
+    const template = await getTemplate(dbInfo, templateId);
     if (!template) {
       return Promise.resolve();
     }
@@ -291,6 +299,14 @@ export async function createAndSendReviewerAssignedNotification(dbInfo, hostname
   } catch(err) {
     Promise.reject(err);
   }
+}
+
+export async function createAndSendReviewerAssignedNotification(dbInfo, hostname, userInfo, reviewerId) {
+  return await createAndSendReviewerNotification(dbInfo, hostname, userInfo, reviewerId, NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.ID);
+}
+
+export async function createAndSendReviewerUnassignNotification(dbInfo, hostname, userInfo, reviewerId) {
+  return await createAndSendReviewerNotification(dbInfo, hostname, userInfo, reviewerId, NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.ID);
 }
 
 export async function createAndSendReviewCompleteNotification(dbInfo, hostname, authHeader, userInfo, reviewerId) {

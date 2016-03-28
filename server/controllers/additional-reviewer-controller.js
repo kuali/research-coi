@@ -26,7 +26,8 @@ import Log from '../log';
 import wrapAsync from './wrap-async';
 import {
   createAndSendReviewerAssignedNotification,
-  createAndSendReviewCompleteNotification
+  createAndSendReviewCompleteNotification,
+  createAndSendReviewerUnassignNotification
 } from '../services/notification-service/notification-service';
 
 export const init = app => {
@@ -41,6 +42,11 @@ export const init = app => {
   }));
 
   app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    try {
+      await createAndSendReviewerUnassignNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
+    } catch(err) {
+      Log.error(err,req);
+    }
     await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, req.params.id);
     res.sendStatus(OK);
   }));
