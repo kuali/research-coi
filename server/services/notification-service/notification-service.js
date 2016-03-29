@@ -18,7 +18,9 @@
 
 import { getCoreTemplateIdByTemplateId } from '../../db/config-db';
 import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
+import { getProjectTypeDescription } from '../../db/config-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
+import { PI_ROLE_CODE } from '../../../coi-constants';
 import Log from '../../log';
 import * as VariableService from './variables-service';
 
@@ -207,11 +209,23 @@ async function getReviewer(dbInfo, hostname, reviewerId) {
   reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
   return reviewer;
 }
-async function getVariables(dbInfo, hostname, disclosure, reviewer) {
+
+async function getProject(dbInfo, hostname, project, person) {
+  const projectInfo = JSON.parse(JSON.stringify(project));
+  projectInfo.type = await getProjectTypeDescription(dbInfo, project.typeCode);
+  projectInfo.person = JSON.parse(JSON.stringify(person));
+  projectInfo.person.info = await getUserInfo(dbInfo, hostname, person.personId);
+  const pi = projectInfo.persons.find(p => p.roleCode === PI_ROLE_CODE);
+  projectInfo.piInfo = await getUserInfo(dbInfo, hostname, pi.personId);
+  return projectInfo;
+}
+
+async function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
   const url = getRequestInfo(dbInfo, hostname).url;
   let variables = VariableService.getDefaultVariables(url);
   variables = VariableService.getDisclosureVariables(disclosure, url, variables);
   variables = reviewer ? VariableService.getReviewerVariables(reviewer, variables) : variables;
+  variables = project ? VariableService.getProjectVariables(project, variables) : variables;
   return variables;
 }
 
@@ -322,6 +336,23 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
     const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
     const recipients = await getAdminRecipients(dbInfo, authHeader);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch(err) {
+    Promise.reject(err);
+  }
+}
+
+export async function createAndSendNewProjectNotification(dbInfo, hostname, userInfo, disclosureId, project, person) {
+  try {
+    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.NEW_PROJECT.ID);
+    if (!template) {
+      return Promise.resolve();
+    }
+    const projectInfo = await getProject(dbInfo, hostname, project, person);
+    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+    const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
+    const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
+    const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
   } catch(err) {
     Promise.reject(err);

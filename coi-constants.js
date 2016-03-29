@@ -131,6 +131,8 @@ export const SYSTEM_USER = 'system';
 
 export const COI_ADMIN = 'COI Admin';
 
+export const PI_ROLE_CODE = 'PI';
+
 export const EDITABLE_STATUSES = [
   DISCLOSURE_STATUS.EXPIRED,
   DISCLOSURE_STATUS.IN_PROGRESS,
@@ -175,5 +177,6 @@ export const COIConstants = {
   EDITABLE_STATUSES,
   APPROVED_STATUSES,
   COI_ADMIN,
-  NOTIFICATIONS_MODE
+  NOTIFICATIONS_MODE,
+  PI_ROLE_CODE
 };

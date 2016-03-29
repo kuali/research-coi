@@ -374,6 +374,16 @@ export function getRequiredProjectTypes(dbInfo) {
     .where({req_disclosure: true});
 }
 
+export async function getProjectTypeDescription(dbInfo, typeCd) {
+  const knex = getKnex(dbInfo);
+
+  const projectType = await knex('project_type')
+    .select('description')
+    .where({type_cd: typeCd});
+
+  return projectType[0].description;
+}
+
 export async function getCoreTemplateIdByTemplateId(dbInfo, templateId) {
   const knex = getKnex(dbInfo);
   const template = await knex('notification_template')
