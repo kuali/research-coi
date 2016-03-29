@@ -704,4 +704,112 @@ describe('NotificationService', () => {
       await knex('disclosure').del();
     });
   });
+
+  describe('createAndSendNewProjectNotification', () => {
+    let results;
+    let disclosureId;
+    const now = new Date();
+
+    before(async () => {
+      await knex('notification_template')
+        .update({
+          core_template_id: '1234',
+          active: 1
+        })
+        .where({template_id: 3});
+
+      const dislcosureIds = await knex('disclosure').insert({
+        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
+        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        user_id: '1234',
+        start_date: now,
+        expired_date: now,
+        submitted_date: now,
+        config_id: 1
+      }, 'id');
+
+      disclosureId = dislcosureIds[0];
+
+      const person = {
+        'sourceSystem':'KC-PD',
+        'sourceIdentifier':'1239',
+        'personId':'1234',
+        'sourcePersonType':'EMPLOYEE',
+        'roleCode':'PI'
+      };
+      
+      const project = {
+        'title':'TEST',
+        'typeCode':1,
+        'sourceSystem':'KC-PD',
+        'sourceIdentifier':'1239',
+        'sourceStatus':'1',
+        'persons':[
+          {
+            'sourceSystem':'KC-PD',
+            'sourceIdentifier':'1239',
+            'personId':'PI',
+            'sourcePersonType':'EMPLOYEE',
+            'roleCode':'PI'}
+        ],
+        'sponsorCode':'000340',
+        'sponsorName':'NIH',
+        'startDate':'2016-07-01',
+        'endDate':'2018-06-30'
+      };
+
+      results = await NotificationService.createAndSendNewProjectNotification({}, 'test.com', {id: '5678'}, disclosureId, project, person );
+    });
+
+    it('should pull the correct core template id from the db', () => {
+      assert.equal('1234', results.templateId);
+    });
+
+    it('should get the creator id from the request', () => {
+      assert.equal('1509442', results.creatorId);
+    });
+
+    it('should get the correct recipients', () => {
+      assert.equal(1, results.addresses.length);
+      assert.equal('1234@email.com', results.addresses[0]);
+    });
+
+    it('should populate the variables', () => {
+      assert.equal('test.com/coi/admin', results.variables['{{ADMIN_DASHBOARD}}']);
+      assert.equal('test.com/coi', results.variables['{{REPORTER_DASHBOARD}}']);
+      assert.equal('User', results.variables['{{REPORTER_FIRST_NAME}}']);
+      assert.equal('1234', results.variables['{{REPORTER_LAST_NAME}}']);
+      assert.equal(undefined, results.variables['{{APPROVER_FIRST_NAME}}']);
+      assert.equal(undefined, results.variables['{{APPROVER_LAST_NAME}}']);
+      assert.equal(formatDate(now), results.variables['{{NOW}}']);
+      assert.equal(formatDate(now), results.variables['{{SUBMISSION_DATE}}']);
+      assert.equal(formatDate(now), results.variables['{{EXPIRATION_DATE}}']);
+      assert.equal(undefined, results.variables['{{REVIEW_ASSIGNED}}']);
+      assert.equal(undefined, results.variables['{{REVIEW_COMPLETED}}']);
+      assert.equal(undefined, results.variables['{{ASSIGNER_FIRST_NAME}}']);
+      assert.equal(undefined, results.variables['{{ASSIGNER_LAST_NAME}}']);
+      assert.equal(undefined, results.variables['{{REVIEWER_FIRST_NAME}}']);
+      assert.equal(undefined, results.variables['{{REVIEWER_LAST_NAME}}']);
+      assert.equal('User', results.variables['{{PI_FIRST_NAME}}']);
+      assert.equal('PI', results.variables['{{PI_LAST_NAME}}']);
+      assert.equal('TEST', results.variables['{{PROJECT_TITLE}}']);
+      assert.equal('Proposal', results.variables['{{PROJECT_TYPE}}']);
+      assert.equal('NIH', results.variables['{{PROJECT_SPONSOR}}']);
+      assert.equal('1239', results.variables['{{PROJECT_NUMBER}}']);
+      assert.equal('User', results.variables['{{PROJECT_PERSON_FIRST_NAME}}']);
+      assert.equal('1234', results.variables['{{PROJECT_PERSON_LAST_NAME}}']);
+    });
+
+    after(async () => {
+      await knex('notification_template')
+        .update({
+          core_template_id: null,
+          active: 0
+        })
+        .where({template_id: 1});
+
+      await knex('additional_reviewer').del();
+      await knex('disclosure').del();
+    });
+  });
 });

@@ -20,7 +20,8 @@
 
 import {COIConstants} from '../../coi-constants';
 import * as ProjectService from '../services/project-service/project-service';
-
+import Log from '../log';
+import { createAndSendNewProjectNotification } from '../services/notification-service/notification-service';
 let getKnex;
 try {
   const extensions = require('research-extensions').default;
@@ -48,7 +49,7 @@ export const getProjects = (dbInfo, userId, trx) => {
     });
 };
 
-async function updateDisclosureStatus(trx, person) {
+async function updateDisclosureStatus(trx, person, project, req) {
   const disclosure = await trx('disclosure')
     .select('status_cd as statusCd', 'id')
     .where({
@@ -60,6 +61,12 @@ async function updateDisclosureStatus(trx, person) {
     await trx('disclosure')
       .update({status_cd: COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED})
       .where({id: disclosure[0].id});
+
+    try {
+      await createAndSendNewProjectNotification(req.dbInfo, req.hostname, req.userInfo, disclosure[0].id, project, person);
+    } catch(err) {
+      Log.error(err);
+    }
   }
 }
 
@@ -112,33 +119,33 @@ async function disableAllPersonsForProject(trx, projectId, req) {
   await Promise.all(reverts);
 }
 
-async function updateProjectPerson(trx, person, projectId, isRequired, req) {
+async function updateProjectPerson(trx, person, project, isRequired, req) {
   await trx('project_person')
     .update({'active': true, 'role_cd': person.roleCode})
     .where({
       'person_id': person.personId,
       'source_person_type': person.sourcePersonType,
-      'project_id': projectId
+      'project_id': project.id
     });
   if (isRequired) {
-    await updateDisclosureStatus(trx, person);
+    await updateDisclosureStatus(trx, person, project, req);
   } else {
     await revertDisclosureStatus(trx, person, req);
   }
 }
 
-async function insertProjectPerson(trx, person, projectId, isRequired) {
+async function insertProjectPerson(trx, person, project, isRequired, req) {
   const id = await trx('project_person')
     .insert({
       'active': true,
       'role_cd': person.roleCode,
       'person_id': person.personId,
       'source_person_type': person.sourcePersonType,
-      'project_id': projectId
+      'project_id': project.id
     }, 'id');
 
   if (isRequired) {
-    await updateDisclosureStatus(trx, person);
+    await updateDisclosureStatus(trx, person, project, req);
   }
   return id[0];
 }
@@ -164,22 +171,22 @@ async function deactivateProjectPersons(trx, existingPersons, persons, projectId
   });
 }
 
-async function saveProjectPersons(trx, project, projectId, req) {
+async function saveProjectPersons(trx, project, req) {
   const existingPersons = await trx('project_person')
     .select('person_id as personId', 'source_person_type')
-    .where('project_id', projectId);
+    .where('project_id', project.id);
   if (project.persons && project.persons.length > 0) {
     let queries = project.persons.map(async person => {
       const isRequired = await isProjectRequired(req, project, person);
       if (existingPersons.find(pr => {
         return pr.personId === person.personId && pr.source_person_type === person.sourcePersonType;
       })) {
-        return await updateProjectPerson(trx, person, projectId, isRequired, req);
+        return await updateProjectPerson(trx, person, project, isRequired, req);
       }
-      return await insertProjectPerson(trx, person, projectId, isRequired);
+      return await insertProjectPerson(trx, person, project, isRequired, req);
     });
 
-    const deactiveQueries = await deactivateProjectPersons(trx, existingPersons, project.persons, projectId, req);
+    const deactiveQueries = await deactivateProjectPersons(trx, existingPersons, project.persons, project.id, req);
     if (deactiveQueries && deactiveQueries.length > 0) {
       queries = queries.concat(deactiveQueries);
     }
@@ -189,7 +196,7 @@ async function saveProjectPersons(trx, project, projectId, req) {
   }
 
   if (existingPersons.length > 0) {
-    await disableAllPersonsForProject(trx, projectId, req);
+    await disableAllPersonsForProject(trx, project.id, req);
   }
 }
 
@@ -215,7 +222,7 @@ async function saveNewProjects(trx, project, req) {
   if (project.persons) {
     const inserts = project.persons.map( async person => {
       const isRequired = await isProjectRequired(req, project, person);
-      const id = await insertProjectPerson(trx, person, project.id, isRequired);
+      const id = await insertProjectPerson(trx, person, project, isRequired, req);
       person.id = id;
     });
     await Promise.all(inserts);
@@ -224,7 +231,7 @@ async function saveNewProjects(trx, project, req) {
 }
 
 
-async function saveExistingProjects(trx, project, projectId, authHeader) {
+async function saveExistingProjects(trx, project, authHeader) {
   await trx('project').update({
     title: project.title,
     type_cd: project.typeCode,
@@ -233,9 +240,9 @@ async function saveExistingProjects(trx, project, projectId, authHeader) {
     sponsor_name: project.sponsorName,
     start_date: project.startDate,
     end_date: project.endDate
-  }).where('id', projectId);
+  }).where('id', project.id);
 
-  await saveProjectPersons(trx, project, projectId, authHeader);
+  await saveProjectPersons(trx, project, authHeader);
 }
 
 async function getExistingProjectId(trx, project) {
@@ -256,7 +263,8 @@ export async function saveProjects(req, project) {
   return knex.transaction(async function(trx) {
     const existingProjectId = await getExistingProjectId(trx, project);
     if (existingProjectId) {
-      return await saveExistingProjects(trx, project, existingProjectId, req);
+      project.id = existingProjectId;
+      return await saveExistingProjects(trx, project, req);
     }
     return await saveNewProjects(trx, project, req);
   });
