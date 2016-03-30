@@ -17,17 +17,37 @@
 */
 
 .container {
+  color: grey;
 }
 
-.edit {
-  float: right;
+.warningValue {
+  margin: 0 5px;
+  border: 1px solid #aaa;
+  height: 24px;
+  width: 80px;
 }
 
-.expirationMessage {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  margin-top: 10px;
-  border-radius: 5px;
+.warningPeriod {
+  margin-right: 5px;
+  border: 1px solid #aaa;
+  height: 24px;
+  width: 80px;
+}
+
+.send {
+  vertical-align: middle;
+}
+
+.before {
+  vertical-align: middle;
+}
+
+.value {
+  vertical-align: bottom;
+  padding: 0 5px;
+}
+
+.period {
+  vertical-align: bottom;
+  padding-right: 5px;
 }

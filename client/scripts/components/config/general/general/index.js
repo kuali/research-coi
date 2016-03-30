@@ -23,7 +23,7 @@ import Panel from '../../panel';
 import DisclosureTypes from '../disclosure-types';
 import ConfigStore from '../../../../stores/config-store';
 import CheckBox from '../../check-box';
-import NotificationDetails from '../notification-details';
+import DueDateDetails from '../due-date-details';
 
 export default class General extends React.Component {
   constructor() {
@@ -73,12 +73,10 @@ export default class General extends React.Component {
           />
         </Panel>
 
-        <Panel title="Expiration Notifications">
-          <NotificationDetails
-            dueDate={this.state.config.general.dueDate}
+        <Panel title="Due Date">
+          <DueDateDetails
             isRollingDueDate={this.state.config.general.isRollingDueDate}
-            notifications={this.state.config.notifications}
-            appState={this.state.applicationState}
+            dueDate={this.state.config.general.dueDate}
           />
         </Panel>
 

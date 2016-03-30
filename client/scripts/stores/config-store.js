@@ -53,7 +53,8 @@ class _ConfigStore {
       getRelationshipTypeString: this.getRelationshipTypeString,
       getRelationshipAmountString: this.getRelationshipAmountString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
-      getQuestionNumberToShow: this.getQuestionNumberToShow
+      getQuestionNumberToShow: this.getQuestionNumberToShow,
+      getNotificationsMode: this.getNotificationsMode
     });
 
     this.applicationState = {
@@ -213,70 +214,6 @@ class _ConfigStore {
 
   setIsRollingDueDate(value) {
     this.config.general.isRollingDueDate = value;
-    this.dirty = true;
-  }
-
-  setWarningValueOnNotification([id, newValue]) {
-    let targetNote;
-    if (id) {
-      targetNote = this.config.notifications.find(notification => { return notification.id === id; });
-    }
-    else {
-      targetNote = this.applicationState.newNotification;
-    }
-
-    if (targetNote) {
-      targetNote.warningValue = newValue;
-    }
-    this.dirty = true;
-  }
-
-  setWarningPeriodOnNotification([id, newValue]) {
-    let targetNote;
-    if (id) {
-      targetNote = this.config.notifications.find(notification => { return notification.id === id; });
-    }
-    else {
-      targetNote = this.applicationState.newNotification;
-    }
-
-    if (targetNote) {
-      targetNote.warningPeriod = newValue;
-    }
-    this.dirty = true;
-  }
-
-  setReminderTextOnNotification([id, newValue]) {
-    let targetNote;
-    if (id) {
-      targetNote = this.config.notifications.find(notification => { return notification.id === id; });
-    }
-    else {
-      targetNote = this.applicationState.newNotification;
-    }
-
-    if (targetNote) {
-      targetNote.reminderText = newValue;
-    }
-    this.dirty = true;
-  }
-
-  saveNewNotification() {
-    this.config.notifications.push(this.applicationState.newNotification);
-    this.applicationState.newNotification = {
-      reminderText: '',
-      warningPeriod: 'Days',
-      warningValue: 1,
-      active: true,
-      id: `new${new Date().getTime()}`
-    };
-    this.dirty = true;
-  }
-
-  deleteNotification(id) {
-    this.config.notifications = this.config.notifications.filter(notification => {
-      return notification.id !== id;
-    });
     this.dirty = true;
   }
 
@@ -911,6 +848,11 @@ class _ConfigStore {
       }
     );
     this.dirty = true;
+  }
+
+  getNotificationsMode() {
+    const configState = this.getState();
+    return configState.config.notificationsMode;
   }
 }
 
