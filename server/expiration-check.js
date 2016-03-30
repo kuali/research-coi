@@ -22,15 +22,24 @@
  */
 import Log from './log';
 import {COIConstants} from '../coi-constants';
-import { createAndSendExpireNotification } from './services/notification-service/notification-service';
+import moment from 'moment';
+import { createAndSendExpirationNotification, createAndSendExpirationReminderNotification } from './services/notification-service/notification-service';
 let getKnex;
 
 const MILLIS_IN_A_DAY = 86400000;
-
+const REMINDER_TEMPLATE_ID = 9;
 async function checkForExpiredDisclosures(expiredCode) {
   try {
     Log.info('Checking for disclosures which have expired');
     const knex = getKnex();
+
+    const reminderNotification = await knex('notification_template')
+      .select('value', 'period')
+      .where({template_id: REMINDER_TEMPLATE_ID});
+
+    const remindersDisclosures = await knex('disclosure')
+      .select('id')
+      .where('expired_date','=',moment().add(reminderNotification[0].value,reminderNotification[0].period).format('YYYY-MM-DD'));
 
     const expiredDisclosures = await knex('disclosure')
       .select('id')
@@ -47,13 +56,23 @@ async function checkForExpiredDisclosures(expiredCode) {
 
     console.log(`${numberExpired} disclosures expired`);
 
-    return expiredDisclosures.map(disclosure => {
-      return {
-        dbInfo: {},
-        hostname: process.env.HOST_NAME,
-        disclosureId: disclosure.id
-      };
-    });
+    return {
+      expirationNotifications: expiredDisclosures.map(disclosure => {
+        return {
+          dbInfo: {},
+          hostname: process.env.HOST_NAME,
+          disclosureId: disclosure.id
+        };
+      }),
+      expirationReminders: remindersDisclosures.map(disclosure => {
+        return {
+          dbInfo: {},
+          hostname: process.env.HOST_NAME,
+          disclosureId: disclosure.id
+        };
+      })
+    };
+
   }
   catch(err) {
     Log.error(err);
@@ -71,10 +90,18 @@ catch (err) {
 }
 
 async function handleNotifications() {
-  const disclosures = await expirationCheck(COIConstants.DISCLOSURE_STATUS.EXPIRED);
-  await disclosures.map(async disclosure => {
+  const notifications = await expirationCheck(COIConstants.DISCLOSURE_STATUS.EXPIRED);
+  await notifications.expirationNotifications.map(async disclosure => {
     try {
-      return await createAndSendExpireNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
+      return await createAndSendExpirationNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
+    } catch(err) {
+      Log.error(err);
+    }
+  });
+
+  await notifications.expirationReminders.map(async disclosure => {
+    try {
+      return await createAndSendExpirationReminderNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
     } catch(err) {
       Log.error(err);
     }

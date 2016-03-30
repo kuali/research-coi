@@ -271,9 +271,16 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
   }
 }
 
-export async function createAndSendExpireNotification(dbInfo, hostname, disclosureId) {
+export async function createAndSendExpirationNotification(dbInfo, hostname, disclosureId) {
+  return await createAndSendExpireNotification(dbInfo, hostname, disclosureId, NOTIFICATION_TEMPLATES.EXPIRED.ID);
+}
+export async function createAndSendExpirationReminderNotification(dbInfo, hostname, disclosureId) {
+  return await createAndSendExpireNotification(dbInfo, hostname, disclosureId, NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.ID);
+}
+
+export async function createAndSendExpireNotification(dbInfo, hostname, disclosureId, templateId) {
   try {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.EXPIRED.ID);
+    const template = await getTemplate(dbInfo, templateId);
     if (!template) {
 
       return Promise.resolve();
