@@ -119,7 +119,7 @@ const convertQuestionFormat = (questions) => {
 const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) => {
 
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-    return query.select('template_id as templateId', 'description', 'type', 'active', 'core_template_id as coreTemplateId')
+    return query.select('template_id as templateId', 'description', 'type', 'active', 'core_template_id as coreTemplateId', 'value', 'period')
       .from('notification_template')
       .then(templates => {
         return populateTemplateData(dbInfo, hostname, templates).then(results => {
@@ -201,6 +201,7 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
     config.projectRoles = result[12];
     config.projectStatuses = result[13];
     config.notificationTemplates = result[14];
+    config.notificationsMode = notificationsMode;
     config = camelizeJson(config);
     config.general = JSON.parse(result[9][0].config).general;
     return config;

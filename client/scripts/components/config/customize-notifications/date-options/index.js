@@ -25,18 +25,24 @@ export default class DateOptions extends React.Component {
   constructor() {
     super();
 
-    this.setWarningValue = this.setWarningValue.bind(this);
-    this.setWarningPeriod = this.setWarningPeriod.bind(this);
+    this.setValue = this.setValue.bind(this);
+    this.setPeriod = this.setPeriod.bind(this);
   }
 
-  setWarningValue() {
-    const warningValueSelect = this.refs.warningValue;
-    ConfigActions.setWarningValueOnNotification(this.props.id, warningValueSelect.value);
+  setValue(evt) {
+    ConfigActions.set({
+      dirty: false,
+      path: `${this.props.path}.value`,
+      value: evt.target.value
+    });
   }
 
-  setWarningPeriod() {
-    const warningPeriodSelect = this.refs.warningPeriod;
-    ConfigActions.setWarningPeriodOnNotification(this.props.id, warningPeriodSelect.value);
+  setPeriod(evt) {
+    ConfigActions.set({
+      dirty: false,
+      path: `${this.props.path}.period`,
+      value: evt.target.value
+    });
   }
 
   render() {
@@ -44,22 +50,39 @@ export default class DateOptions extends React.Component {
     let i = 1;
     while (i <= 31) {
       warningValue.push(
-        <option key={i}>{i}</option>
+        <option key={i} value={i}>{i}</option>
       );
       i++;
     }
 
+    let value;
+    let period;
+    if (this.props.readOnly) {
+      value = (
+        <span className={styles.value}>{this.props.value}</span>
+      );
+      period = (
+        <span className={styles.period}>{this.props.period}</span>
+      );
+    } else {
+      value = (
+        <select value={this.props.value} className={styles.warningValue} onChange={this.setValue}>
+          {warningValue}
+        </select>
+      );
+      period = (
+        <select value={this.props.period} className={styles.warningPeriod} onChange={this.setPeriod}>
+          <option value="days">Days</option>
+          <option value="weeks">Weeks</option>
+          <option value="months">Months</option>
+        </select>
+      );
+    }
     return (
       <span className={classNames(styles.container, this.props.className)}>
         <span className={styles.send}>Send</span>
-        <select ref="warningValue" value={this.props.warningValue} className={styles.warningValue} onChange={this.setWarningValue}>
-          {warningValue}
-        </select>
-        <select ref="warningPeriod" value={this.props.warningPeriod} className={styles.warningPeriod} onChange={this.setWarningPeriod}>
-          <option>Days</option>
-          <option>Weeks</option>
-          <option>Months</option>
-        </select>
+        {value}
+        {period}
         <span className={styles.before}>before expiration</span>
       </span>
     );

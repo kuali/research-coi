@@ -81,6 +81,11 @@ const NOTIFICATION_TEMPLATES = {
     ID: 8,
     SUBJECT: 'REPLACE WITH DEFAULT',
     BODY: 'REPLACE WITH DEFAULT' //eslint-disable-line max-len
+  },
+  EXPIRATION_REMINDER: {
+    ID: 9,
+    SUBJECT: 'REPLACE WITH DEFAULT',
+    BODY: 'REPLACE WITH DEFAULT' //eslint-disable-line max-len
   }
 };
 
@@ -113,6 +118,10 @@ export function getDefaults(notificationTemplate) {
     case NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.ID:
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.BODY;
+      return notificationTemplate;
+    case NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.ID:
+      notificationTemplate.subject = NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.SUBJECT;
+      notificationTemplate.body = NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';

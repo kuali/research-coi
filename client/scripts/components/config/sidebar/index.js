@@ -20,7 +20,9 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router';
-import { ROLES } from '../../../../../coi-constants';
+import { ROLES, NOTIFICATIONS_MODE } from '../../../../../coi-constants';
+import ConfigStore from '../../../stores/config-store';
+
 import AdminMenu from '../../admin-menu';
 
 export default function Sidebar(props) {
@@ -30,10 +32,6 @@ export default function Sidebar(props) {
       link: '/coi/config/general',
       active: true
     },
-    /*{
-      label: 'Customize Notifications',
-      link: '/coi/config/customize-notifications'
-    },*/
     {
       label: 'Disclosure Requirements',
       link: '/coi/config/disclosure-requirements'
@@ -59,6 +57,17 @@ export default function Sidebar(props) {
       link: '/coi/config/certification'
     }
   ];
+
+  if (ConfigStore.getNotificationsMode() > NOTIFICATIONS_MODE.OFF) {
+    steps.splice(2,0,
+      {
+        label: 'Customize Notifications',
+        link: '/coi/config/customize-notifications'
+      }
+    );
+  }
+
+
 
   const stepsJsx = steps.map((step, index) => {
     const parts = step.label.split(' ');

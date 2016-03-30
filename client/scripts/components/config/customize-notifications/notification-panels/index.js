@@ -26,7 +26,7 @@ import Text from '../../text';
 import Link from '../../link';
 import CancelButton from '../cancel-button';
 import DoneButton from '../done-button';
-
+import DateOptions from '../date-options';
 export default class NotificationPanels extends React.Component {
   constructor() {
     super();
@@ -62,11 +62,15 @@ export default class NotificationPanels extends React.Component {
             let path;
             let subject;
             let body;
+            let value;
+            let period;
             if (!template.editing && !template.error) {
 
               path = `config.notificationTemplates[${template.index}]`;
               subject = this.props.notificationTemplates[template.index].subject;
               body = this.props.notificationTemplates[template.index].body;
+              value = this.props.notificationTemplates[template.index].value;
+              period = this.props.notificationTemplates[template.index].period;
               link = (
                 <Link
                   path={path}
@@ -79,6 +83,8 @@ export default class NotificationPanels extends React.Component {
               path = `applicationState.notificationEdits[${template.templateId}]`;
               subject = this.props.notificationEdits[template.templateId].subject;
               body = this.props.notificationEdits[template.templateId].body;
+              value = this.props.notificationEdits[template.templateId].value;
+              period = this.props.notificationEdits[template.templateId].period;
               buttons = (
                 <div style={{float: 'right'}}>
                   <CancelButton
@@ -106,6 +112,18 @@ export default class NotificationPanels extends React.Component {
                 </div>
               );
             } else {
+              let dateOptions;
+              if (template.value && template.period) {
+                dateOptions = (
+                  <DateOptions
+                    path={path}
+                    value={value}
+                    period={period}
+                    id={template.templateId}
+                    readOnly={!template.editing}
+                  />
+                );
+              }
               templateContent = (
                 <div className={styles.template}>
                   <Text
@@ -125,6 +143,7 @@ export default class NotificationPanels extends React.Component {
                     readOnly={!template.editing}
                     dirty={false}
                   />
+                  {dateOptions}
                 </div>
               );
             }
