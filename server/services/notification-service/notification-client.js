@@ -94,7 +94,8 @@ function createCoreTemplate(notificationTemplate, hostname, applicationId) {
     },
     templates: {
       email: {
-        text: notificationTemplate.body
+        text: notificationTemplate.body,
+        html: notificationTemplate.body
       }
     }
   };

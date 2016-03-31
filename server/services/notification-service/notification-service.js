@@ -44,13 +44,13 @@ const {
 const NOTIFICATION_TEMPLATES = {
   SUBMITTED: {
     ID: 1,
-    SUBJECT: 'REPLACE WITH DEFAULT',
-    BODY: 'REPLACE WITH DEFAULT'
+    SUBJECT: 'Annual Disclosure Submitted for Review',
+    BODY: 'Hello COI Admin, An Annual Disclosure was submitted by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}} on {{SUBMISSION_DATE}}. You can review this disclosure at {{ADMIN_DETAIL_VIEW}}. You can access the Kuali Research COI Admin Dashboard at {{ADMIN_DASHBOARD}}. Have a nice day.'
   },
   REVIEW_COMPLETE: {
     ID: 2,
-    SUBJECT: 'REPLACE WITH DEFAULT',
-    BODY: 'REPLACE WITH DEFAULT'
+    SUBJECT: 'Additional Reviewer Completed their COI Disclosure Review',
+    BODY: 'Hello {{ASSIGNER_FIRST_NAME}} {{ASSIGNER_LAST_NAME}}, COI Additional Reviewer {{REVIEWER_FIRST_NAME}} {{REVIEWER_LAST_NAME}} has completed their review of the COI Annual Disclosure submitted on {{SUBMISSION_DATE}} by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}. You can review this disclosure and the reviewer\'s comments at {{ADMIN_DETAIL_VIEW}}. Have a nice day.'
   },
   NEW_PROJECT: {
     ID: 3,
@@ -59,13 +59,13 @@ const NOTIFICATION_TEMPLATES = {
   },
   SENT_BACK: {
     ID: 4,
-    SUBJECT: 'REPLACE WITH DEFAULT',
-    BODY: 'REPLACE WITH DEFAULT'
+    SUBJECT: 'Annual COI Disclosure was Sent Back for Revisions',
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was sent back for revisions on {{NOW}}. Please login to Kuali Research COI and access your disclosure at {{REPORTER_DASHBOARD}} to revise and resubmit your disclosure.'
   },
   REVIEW_ASSIGNED: {
     ID: 5,
-    SUBJECT: 'REPLACE WITH DEFAULT',
-    BODY: 'REPLACE WITH DEFAULT'
+    SUBJECT: 'COI Disclosure Assigned for your Review',
+    BODY: 'Hello {{REVIEWER_FIRST_NAME}} {{REVIEWER_LAST_NAME}}, On {{REVIEW_ASSIGNED}}, the COI Administrator {{ASSIGNER_FIRST_NAME}} {{ASSIGNER_LAST_NAME}} assigned you to review the COI Annual Disclosure submitted on {{SUBMISSION_DATE}} by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}. Please review this disclosure at {{ADMIN_DETAIL_VIEW}}. Thanks for your helping in reviewing this disclosure.'
   },
   APPROVED: {
     ID: 6,
@@ -79,8 +79,8 @@ const NOTIFICATION_TEMPLATES = {
   },
   REVIEW_UNASSIGNED: {
     ID: 8,
-    SUBJECT: 'REPLACE WITH DEFAULT',
-    BODY: 'REPLACE WITH DEFAULT' //eslint-disable-line max-len
+    SUBJECT: 'COI Disclosure Review Unassigned',
+    BODY: 'Hello {{REVIEWER_FIRST_NAME}} {{REVIEWER_LAST_NAME}}, On {{REVIEW_ASSIGNED}}, the COI Administrator {{ASSIGNER_FIRST_NAME}} {{ASSIGNER_LAST_NAME}} removed you as a reviewer for the COI Annual Disclosure submitted on {{SUBMISSION_DATE}} by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}. You are no longer responsible for reviewing this disclosure. Thank you.' //eslint-disable-line max-len
   },
   EXPIRATION_REMINDER: {
     ID: 9,
@@ -122,6 +122,10 @@ export function getDefaults(notificationTemplate) {
     case NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.ID:
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.BODY;
+      return notificationTemplate;
+    case NOTIFICATION_TEMPLATES.EXPIRED.ID:
+      notificationTemplate.subject = NOTIFICATION_TEMPLATES.EXPIRED.SUBJECT;
+      notificationTemplate.body = NOTIFICATION_TEMPLATES.EXPIRED.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';
@@ -251,7 +255,7 @@ export async function createAndSendSubmitNotification(dbInfo, hostname, authHead
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, adminEmails);
     return await sendNotification(dbInfo, hostname, notification);
   } catch (err) {
-    Promise.reject(err);
+    return Promise.reject(err);
   }
 }
 
@@ -267,7 +271,7 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
   } catch(err) {
-    Promise.reject(err);
+    return Promise.reject(err);
   }
 }
 
@@ -308,7 +312,7 @@ export async function createAndSendSentBackNotification(dbInfo, hostname, userIn
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
   } catch(err) {
-    Promise.reject(err);
+    return Promise.reject(err);
   }
 }
 
@@ -327,7 +331,7 @@ export async function createAndSendReviewerNotification(dbInfo, hostname, userIn
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
   } catch(err) {
-    Promise.reject(err);
+    return Promise.reject(err);
   }
 }
 
@@ -354,7 +358,7 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
   } catch(err) {
-    Promise.reject(err);
+    return Promise.reject(err);
   }
 }
 
@@ -371,6 +375,6 @@ export async function createAndSendNewProjectNotification(dbInfo, hostname, user
     const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
   } catch(err) {
-    Promise.reject(err);
+    return Promise.reject(err);
   }
 }
