@@ -993,6 +993,7 @@ class _DisclosureStore {
     if (targetIndex >= 0) {
       this.entities[targetIndex] = snapshot;
     }
+    delete this.applicationState.potentialRelationships[snapshot.id];
     this.applicationState.entityStates[snapshot.id].editing = false;
   }
 
