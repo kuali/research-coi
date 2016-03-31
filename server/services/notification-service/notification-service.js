@@ -45,12 +45,12 @@ const NOTIFICATION_TEMPLATES = {
   SUBMITTED: {
     ID: 1,
     SUBJECT: 'Annual Disclosure Submitted for Review',
-    BODY: 'Hello COI Admin, An Annual Disclosure was submitted by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}} on {{SUBMISSION_DATE}}. You can review this disclosure at {{ADMIN_DETAIL_VIEW}}. You can access the Kuali Research COI Admin Dashboard at {{ADMIN_DASHBOARD}}. Have a nice day.'
+    BODY: 'Hello COI Admin, An Annual Disclosure was submitted by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}} on {{SUBMISSION_DATE}}. You can review this disclosure at {{ADMIN_DETAIL_VIEW}}. You can access the Kuali Research COI Admin Dashboard at {{ADMIN_DASHBOARD}}. Have a nice day.'//eslint-disable-line max-len
   },
   REVIEW_COMPLETE: {
     ID: 2,
     SUBJECT: 'Additional Reviewer Completed their COI Disclosure Review',
-    BODY: 'Hello {{ASSIGNER_FIRST_NAME}} {{ASSIGNER_LAST_NAME}}, COI Additional Reviewer {{REVIEWER_FIRST_NAME}} {{REVIEWER_LAST_NAME}} has completed their review of the COI Annual Disclosure submitted on {{SUBMISSION_DATE}} by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}. You can review this disclosure and the reviewer\'s comments at {{ADMIN_DETAIL_VIEW}}. Have a nice day.'
+    BODY: 'Hello {{ASSIGNER_FIRST_NAME}} {{ASSIGNER_LAST_NAME}}, COI Additional Reviewer {{REVIEWER_FIRST_NAME}} {{REVIEWER_LAST_NAME}} has completed their review of the COI Annual Disclosure submitted on {{SUBMISSION_DATE}} by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}. You can review this disclosure and the reviewer\'s comments at {{ADMIN_DETAIL_VIEW}}. Have a nice day.'//eslint-disable-line max-len
   },
   NEW_PROJECT: {
     ID: 3,
@@ -60,12 +60,12 @@ const NOTIFICATION_TEMPLATES = {
   SENT_BACK: {
     ID: 4,
     SUBJECT: 'Annual COI Disclosure was Sent Back for Revisions',
-    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was sent back for revisions on {{NOW}}. Please login to Kuali Research COI and access your disclosure at {{REPORTER_DASHBOARD}} to revise and resubmit your disclosure.'
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was sent back for revisions on {{NOW}}. Please login to Kuali Research COI and access your disclosure at {{REPORTER_DASHBOARD}} to revise and resubmit your disclosure.'//eslint-disable-line max-len
   },
   REVIEW_ASSIGNED: {
     ID: 5,
     SUBJECT: 'COI Disclosure Assigned for your Review',
-    BODY: 'Hello {{REVIEWER_FIRST_NAME}} {{REVIEWER_LAST_NAME}}, On {{REVIEW_ASSIGNED}}, the COI Administrator {{ASSIGNER_FIRST_NAME}} {{ASSIGNER_LAST_NAME}} assigned you to review the COI Annual Disclosure submitted on {{SUBMISSION_DATE}} by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}. Please review this disclosure at {{ADMIN_DETAIL_VIEW}}. Thanks for your helping in reviewing this disclosure.'
+    BODY: 'Hello {{REVIEWER_FIRST_NAME}} {{REVIEWER_LAST_NAME}}, On {{REVIEW_ASSIGNED}}, the COI Administrator {{ASSIGNER_FIRST_NAME}} {{ASSIGNER_LAST_NAME}} assigned you to review the COI Annual Disclosure submitted on {{SUBMISSION_DATE}} by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}. Please review this disclosure at {{ADMIN_DETAIL_VIEW}}. Thanks for your helping in reviewing this disclosure.' //eslint-disable-line max-len
   },
   APPROVED: {
     ID: 6,
@@ -75,7 +75,7 @@ const NOTIFICATION_TEMPLATES = {
   EXPIRED: {
     ID: 7,
     SUBJECT: 'Annual COI Disclosure is Expired',
-    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} has expired' //eslint-disable-line max-len
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual Conflict of Interest (COI) disclosure expired on {{EXPIRATION_DATE}}. Please update your annual disclosure as soon as possible. Login to Kuali Research COI and access your annual disclosure at {{REPORTER_DASHBOARD}}.' //eslint-disable-line max-len
   },
   REVIEW_UNASSIGNED: {
     ID: 8,
@@ -84,8 +84,8 @@ const NOTIFICATION_TEMPLATES = {
   },
   EXPIRATION_REMINDER: {
     ID: 9,
-    SUBJECT: 'REPLACE WITH DEFAULT',
-    BODY: 'REPLACE WITH DEFAULT' //eslint-disable-line max-len
+    SUBJECT: 'Annual COI Disclosure is Due',
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual Conflict of Interest (COI) disclosure will expire on {{EXPIRATION_DATE}}. Please update your annual disclosure prior to this date. Login to Kuali Research COI and access your annual disclosure at {{REPORTER_DASHBOARD}}.' //eslint-disable-line max-len
   }
 };
 
