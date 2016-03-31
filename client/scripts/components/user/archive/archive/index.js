@@ -22,6 +22,7 @@ import React from 'react';
 import {AppHeader} from '../../../app-header';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import ConfigStore from '../../../../stores/config-store';
 import {Link} from 'react-router';
 import ArchiveDetail from '../archive-detail';
 import {formatDate, formatDateTime} from '../../../../format-date';
@@ -121,7 +122,7 @@ export class Archive extends React.Component {
             </div>
           </span>
 
-          <div className={styles.heading}>Annual Disclosure</div>
+          <div className={styles.heading}>{ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.ANNUAL)}</div>
           <div className={styles.dateRow}>
             Submited On:
             <span className={styles.dateValue}>{this.getSubmittedDate()}</span>
