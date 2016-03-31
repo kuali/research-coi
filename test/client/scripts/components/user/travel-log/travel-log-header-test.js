@@ -27,6 +27,6 @@ describe('TravelLogHeader', () => {
   it('should render h2 element with Travel Log text', () => {
     const travelLogHeader = sd.shallowRender(<TravelLogHeader/>);
     const dom = travelLogHeader.getRenderOutput();
-    assert.equal('Travel Log', dom.props.children.props.children);
+    assert.equal('h2', dom.props.children.type);
   });
 });

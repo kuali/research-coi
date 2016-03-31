@@ -18,13 +18,14 @@
 
 import styles from './style';
 import React from 'react';
-
+import ConfigStore from '../../../../stores/config-store';
+import { DISCLOSURE_TYPE } from '../../../../../../coi-constants';
 export class TravelLogHeader extends React.Component {
   render() {
     return (
       <div className={`${styles.container} ${this.props.className}`}>
         <h2 className={styles.heading}>
-         Travel Log
+          {ConfigStore.getDisclosureTypeString(DISCLOSURE_TYPE.TRAVEL)}
         </h2>
       </div>
     );
