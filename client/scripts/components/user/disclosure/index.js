@@ -221,11 +221,12 @@ export class Disclosure extends React.Component {
         stepNumber = 1;
         const ENTITIES_PERCENTAGE = 50;
         percent = ENTITIES_PERCENTAGE;
+        const enforceEntities = DisclosureStore.enforceEntities(this.state.applicationState.currentDisclosureState.disclosure, window.config);
         nextDisabled = this.incompleteEntityExists(this.state.entities) ||
-          DisclosureStore.enforceEntities(this.state.applicationState.currentDisclosureState.disclosure, window.config);
+          enforceEntities;
         currentStep = (
           <Entities
-            nextDisabled = {nextDisabled}
+            enforceEntities = {enforceEntities}
             applicationState={this.state.applicationState}
             entities={this.state.entities}
             inProgress={this.state.applicationState.entityInProgress}

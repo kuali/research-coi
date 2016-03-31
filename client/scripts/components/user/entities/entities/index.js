@@ -88,7 +88,7 @@ export class Entities extends React.Component {
 
       let message;
       let level;
-      if (this.props.nextDisabled) {
+      if (this.props.enforceEntities) {
         message = 'You have answered "Yes" to a screening question, but do not have an active Financial Entity. Please add an active Financial Entity or edit your screening questionnaire in order to submit your disclosure.'; //eslint-disable-line max-len
       } else if (DisclosureStore.warnActiveEntity(this.props.applicationState.currentDisclosureState.disclosure, window.config)) {
         message = 'You have answered "No" to all screening questions; however, you have an active financial entity. Please consider reviewing the questions or deactivating your Financial Entity.'; //eslint-disable-line max-len
@@ -103,8 +103,8 @@ export class Entities extends React.Component {
         />
       );
 
-      const nextStep = this.props.nextDisabled ? '' : DisclosureActions.nextStep;
-      const nextButtonStyle = this.props.nextDisabled ? {backgroundColor: '#AAA', cursor: 'default'} : {};
+      const nextStep = this.props.enforceEntities ? '' : DisclosureActions.nextStep;
+      const nextButtonStyle = this.props.enforceEntities ? {backgroundColor: '#AAA', cursor: 'default'} : {};
       if (entities.length === 0) {
         let text;
         if (this.props.applicationState.activeEntityView) {
