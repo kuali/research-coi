@@ -45,3 +45,15 @@
   height: 300px;
   margin-top: -61px;
 }
+
+.noEntitiesButton {
+  border-radius: 20px;
+  font-size: 14px;
+  margin-bottom: 25px;
+  padding: 7px 30px;
+}
+
+.disabled {
+  background-color: #AAA;
+  cursor: default;
+}
