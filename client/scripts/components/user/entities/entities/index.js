@@ -17,6 +17,7 @@
 */
 
 import styles from './style';
+import classNames from 'classnames';
 import React from 'react';
 import {NewEntityButton} from '../new-entity-button';
 import {FEPlaceHolder} from '../../../dynamic-icons/fe-place-holder';
@@ -104,7 +105,10 @@ export class Entities extends React.Component {
       );
 
       const nextStep = this.props.enforceEntities ? '' : DisclosureActions.nextStep;
-      const nextButtonStyle = this.props.enforceEntities ? {backgroundColor: '#AAA', cursor: 'default'} : {};
+      const nextButtonClasses =
+        classNames(styles.noEntitiesButton,
+          {[styles.disabled]: this.props.enforceEntities});
+
       if (entities.length === 0) {
         let text;
         if (this.props.applicationState.activeEntityView) {
@@ -113,7 +117,7 @@ export class Entities extends React.Component {
               <div>You currently have no active financial entities.</div>
               <div>Add new financial entities to view them here.</div>
               <div style={{marginTop: 20}}>
-                <BlueButton style={nextButtonStyle} onClick={nextStep}>
+                <BlueButton className={nextButtonClasses} onClick={nextStep}>
                   I have no entities to disclose
                 </BlueButton>
               </div>
