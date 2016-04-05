@@ -41,7 +41,7 @@ export class Toggle extends React.Component {
     );
 
     return (
-      <button onClick={this.toggle} className={classes}>
+      <button name={this.props.text} onClick={this.toggle} className={classes}>
         {this.props.text}
       </button>
     );

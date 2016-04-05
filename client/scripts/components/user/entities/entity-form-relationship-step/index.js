@@ -174,7 +174,7 @@ export class EntityFormRelationshipStep extends React.Component {
 
       const typeOptions = this.state.matrixType.typeOptions.map(typeOption => {
         return (
-          <option key={typeOption.typeCd} value={typeOption.typeCd}>{typeOption.description}</option>
+          <option key={typeOption.typeCd} value={typeOption.typeCd} id={`type_option_${typeOption.typeCd}`}>{typeOption.description}</option>
         );
       });
 
@@ -182,6 +182,7 @@ export class EntityFormRelationshipStep extends React.Component {
         <div className={styles.typeSection}>
           <div className={labelStyle}>TYPE</div>
           <select
+            id="relationType"
             onChange={this.typeSelected}
             ref="typeSelect"
             value={potentialRelationship.typeCd}
@@ -204,7 +205,7 @@ export class EntityFormRelationshipStep extends React.Component {
       }
 
       const amountTypeOptions = this.state.matrixType.amountOptions.map(type => {
-        return <option key={type.typeCd} value={type.typeCd}>{type.description}</option>;
+        return <option key={type.typeCd} value={type.typeCd} id={`amount_option_${type.typeCd}`}>{type.description}</option>;
       });
 
       if (this.state.matrixType.description === 'Travel') {
@@ -221,6 +222,7 @@ export class EntityFormRelationshipStep extends React.Component {
           <div className={styles.amountSection}>
             <div className={labelStyle}>AMOUNT</div>
             <select
+              id="amountType"
               onChange={this.amountSelected}
               ref="amountSelect"
               value={potentialRelationship.amountCd}
@@ -332,7 +334,7 @@ export class EntityFormRelationshipStep extends React.Component {
 
       const relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(personType => {
         return (
-          <option key={personType.typeCd} value={personType.typeCd}>
+          <option key={personType.typeCd} value={personType.typeCd} id={`person_type_option_${personType.typeCd}`}>
             {personType.description}
           </option>
         );
@@ -353,6 +355,7 @@ export class EntityFormRelationshipStep extends React.Component {
                 <div className={personLabelStyle}>PERSON</div>
                 <div>
                   <select
+                    id="personType"
                     onChange={this.personSelected}
                     ref="personSelect"
                     value={potentialRelationship.personCd}
@@ -401,6 +404,7 @@ export class EntityFormRelationshipStep extends React.Component {
               </div>
               <div className={styles.addButtonSection}>
                 <BlueButton
+                  id='addAdditionalRelationship'
                   onClick={this.addRelation}
                   title={this.props.validating && !isValid ? 'Please correct the highlighted fields' : ''}
                   className={`${styles.override} ${styles.addButton}`}

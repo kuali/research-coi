@@ -22,7 +22,7 @@ import {PlusIcon} from '../../../dynamic-icons/plus-icon';
 
 export function NewEntityButton(props) {
   return (
-    <span onClick={props.onClick} className={`${styles.container} ${props.className}`}>
+    <span id='newEntityButton' onClick={props.onClick} className={`${styles.container} ${props.className}`}>
       <div className={styles.text}>
         <div className={styles.newText}>New</div>
         <div className={styles.financialText}>Financial</div>
