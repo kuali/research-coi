@@ -28,7 +28,7 @@ export default function SubmitLink(props) {
   );
 
   return (
-    <div onClick={props.onClick} className={classes}>
+    <div id='submit' onClick={props.onClick} className={classes}>
       <i className={`fa fa-arrow-circle-right ${styles.icon}`}></i>
       <span className={styles.stepLabel}>
         SUBMIT

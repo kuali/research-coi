@@ -174,7 +174,7 @@ export class EntityForm extends React.Component {
     }
     else {
       nextButton = (
-        <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.next}>
+        <GreyButton id='nextButton' className={`${styles.override} ${styles.button}`} onClick={this.next}>
           Next &gt;
         </GreyButton>
       );
@@ -286,6 +286,7 @@ export class EntityForm extends React.Component {
           if (this.isStepValidating() && !this.isCurrentStepValid()) {
             submitButton = (
               <GreyButton
+                id="submitButton"
                 title="Please correct the marked fields"
                 className={`${styles.override} ${styles.button} ${styles.disabled}`}
                 onClick={this.submit}
@@ -296,7 +297,7 @@ export class EntityForm extends React.Component {
           }
           else {
             submitButton = (
-              <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.submit}>Submit</GreyButton>
+              <GreyButton id='submitButton' className={`${styles.override} ${styles.button}`} onClick={this.submit}>Submit</GreyButton>
             );
           }
 
