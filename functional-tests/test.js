@@ -65,6 +65,7 @@ module.exports = {
   },
 
   'after' : async function(browser, done) {
+    await knex('state').del();
     await knex('relationship').del();
     await knex('disclosure_answer ').del();
     await knex('fin_entity_answer').del();
