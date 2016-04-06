@@ -82,6 +82,7 @@
     "file": "0.2.2",
     "jsdom": "8.0.1",
     "mocha": "2.4.5",
+    "nightwatch": "0.8.18",
     "postcss": "5.0.13",
     "postcss-loader": "0.8.0",
     "postcss-modules-extract-imports": "1.0.0",
