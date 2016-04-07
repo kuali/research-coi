@@ -1,30 +1,27 @@
 {
   "src_folders" : ["functional-tests"],
   "output_folder" : "",
-  "custom_commands_path" : "",
+  "custom_commands_path" : "functional-tests/commands",
   "custom_assertions_path" : "",
   "page_objects_path" : "",
   "globals_path" : "",
 
   "selenium" : {
-    "start_process" : true,
-    "server_path" : "bin/selenium-server-standalone-2.52.0.jar",
-    "log_path" : "",
-    "host" : "127.0.0.1",
-    "port" : 4444,
-    "cli_args" : {
-      "webdriver.chrome.driver" : "bin/chromedriver"
-    }
+    "start_process" : false,
+    "server_path" : "hub.browserstack.com",
+    "port" : 80
   },
 
   "test_settings" : {
     "default" : {
-      "launch_url" : "http://localhost",
-      "selenium_port"  : 4444,
-      "selenium_host"  : "localhost",
+      "end_session_on_fail": true,
+      "skip_testcases_on_fail": true,
+      "exclude": [""],
       "silent": true,
-      "screenshots" : {
-        "enabled" : false,
+      "screenshots": {
+        "enabled": false,
+        "on_failure": true,
+        "on_error": true,
         "path" : ""
       },
       "desiredCapabilities": {
@@ -40,6 +37,94 @@
         "javascriptEnabled": true,
         "acceptSslCerts": true
       }
+    },
+
+    "browserstack-firefox" : {
+      "launch_url" : "http://hub.browserstack",
+      "selenium_host": "hub.browserstack.com",
+      "selenium_port": 80,
+      "silent" : true,
+      "desiredCapabilities" : {
+        "os" : "Windows",
+        "os_version" : "10",
+        "browser" : "Firefox",
+        "browser_version" : "42.0",
+        "resolution" : "1280x1024",
+        "browserstack.user" : "${BROWSER_STACK_USER}",
+        "browserstack.key" : "${BROWSER_STACK_KEY}",
+        "browserstack.debug" : false,
+        "test_workers" : true
+      }
+    },
+
+    "browserstack-chrome" : {
+      "launch_url" : "http://hub.browserstack",
+      "selenium_host": "hub.browserstack.com",
+      "selenium_port": 80,
+      "silent" : true,
+      "desiredCapabilities" : {
+        "os" : "Windows",
+        "os_version" : "10",
+        "browser" : "Chrome",
+        "browser_version" : "49.0",
+        "resolution" : "1280x1024",
+        "browserstack.user" : "${BROWSER_STACK_USER}",
+        "browserstack.key" : "${BROWSER_STACK_KEY}",
+        "browserstack.debug" : false,
+        "test_workers" : true
+      }
+    },
+
+    "browserstack-ie" : {
+      "launch_url" : "http://hub.browserstack",
+      "selenium_host": "hub.browserstack.com",
+      "selenium_port": 80,
+      "silent" : true,
+      "desiredCapabilities" : {
+        "os" : "Windows",
+        "os_version" : "10",
+        "browser" : "IE",
+        "browser_version" : "11.0",
+        "resolution" : "1280x1024",
+        "browserstack.user" : "${BROWSER_STACK_USER}",
+        "browserstack.key" : "${BROWSER_STACK_KEY}",
+        "browserstack.debug" : true
+      }
+    },
+
+    "browserstack-safari" : {
+      "launch_url" : "http://hub.browserstack",
+      "selenium_host": "hub.browserstack.com",
+      "selenium_port": 80,
+      "silent" : false,
+      "desiredCapabilities" : {
+        "os" : "OS X",
+        "os_version" : "Mavericks",
+        "browser" : "Safari",
+        "browser_version" : "7.1",
+        "resolution" : "1280x1024",
+        "browserstack.user" : "${BROWSER_STACK_USER}",
+        "browserstack.key" : "${BROWSER_STACK_KEY}",
+        "browserstack.debug" : true
+      }
+    },
+
+    "browserstack-ipad" : {
+      "launch_url" : "http://hub.browserstack",
+      "selenium_host": "hub.browserstack.com",
+      "selenium_port": 80,
+      "silent" : true,
+      "desiredCapabilities" : {
+        "device" : "iPad Air",
+        "os" : "ios",
+        "os_version" : "8.3",
+        "browser" : "iPhone",
+        "browserstack.user" : "${BROWSER_STACK_USER}",
+        "browserstack.key" : "${BROWSER_STACK_KEY}",
+        "deviceOrientation" : "landscape",
+        "browserstack.debug" : false
+      }
     }
   }
 }
+
