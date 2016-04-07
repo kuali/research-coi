@@ -1,7 +1,7 @@
 {
   "src_folders" : ["functional-tests"],
   "output_folder" : "",
-  "custom_commands_path" : "functional-tests/commands",
+  "custom_commands_path" : "${CUSTOM_COMMANDS}",
   "custom_assertions_path" : "",
   "page_objects_path" : "",
   "globals_path" : "",
