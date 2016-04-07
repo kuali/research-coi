@@ -619,7 +619,8 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
           return reviewer;
         });
       }),
-    isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
+    isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId),
+    knex('config').select('id').limit(1).orderBy('id', 'desc')
   ]).then(([
     disclosureRecords,
     entityRecords,
@@ -629,7 +630,8 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     fileRecords,
     managementPlans,
     additionalReviewers,
-    isOwner
+    isOwner,
+    latestConfig
   ]) => {
     if (userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
       userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
@@ -650,6 +652,9 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       answer.answer = JSON.parse(answer.answer);
     });
 
+    if (disclosure.answers.length < 1) {
+      disclosure.configId = latestConfig[0].id;
+    }
     return Promise.all([
       knex
         .select(
@@ -706,7 +711,8 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
               return file.ref_id === entity.id;
             });
           });
-        })
+        }),
+      knex('disclosure').update({config_id: disclosure.configId}).where({id: disclosure.id})
     ]).then(() => {
       return disclosure;
     });
