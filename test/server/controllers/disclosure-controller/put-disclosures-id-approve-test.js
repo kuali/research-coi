@@ -39,7 +39,8 @@ async function insertDisclosure(disclosure, user_id) {
     status_cd: disclosure.statusCd,
     user_id,
     start_date: disclosure.startDate,
-    config_id: disclosure.configId
+    config_id: disclosure.configId,
+    submitted_date: disclosure.submittedDate
   }, 'id');
   return id[0];
 }
@@ -81,7 +82,7 @@ function createProject(sourceIdentifier) {
     sponsorCode: '000340',
     sponsorName: 'NIH',
     startDate: '2017-01-01',
-    endDate: '2017-21-31'
+    endDate: '2017-1-31'
   };
 }
 
@@ -99,7 +100,8 @@ function createDisclosure(statusCd) {
     typeCd: DISCLOSURE_TYPE.ANNUAL,
     statusCd,
     startDate: new Date(),
-    configId: 1
+    configId: 1,
+    submittedDate: new Date()
   };
 }
 
@@ -120,12 +122,14 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
     await knex('project_role').insert({
       project_type_cd: 1,
       source_role_cd: 'PI',
-      req_disclosure: true
+      req_disclosure: true,
+      description: 'Principal Investigator'
     });
     await knex('project_status').insert({
       project_type_cd: 1,
       source_status_cd: 1,
-      req_disclosure: true
+      req_disclosure: true,
+      description: 'the status'
     });
   });
 

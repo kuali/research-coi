@@ -44,7 +44,7 @@ function createProject(sourceIdentifier) {
     sponsorCode: '000340',
     sponsorName: 'NIH',
     startDate: '2017-01-01',
-    endDate: '2017-21-31'
+    endDate: '2017-1-31'
   };
 }
 
@@ -136,12 +136,14 @@ describe('POST api/coi/projects', () => {
     await knex('project_role').insert({
       project_type_cd: 1,
       source_role_cd: 'PI',
-      req_disclosure: true
+      req_disclosure: true,
+      description: 'Principal investigator'
     });
     await knex('project_status').insert({
       project_type_cd: 1,
       source_status_cd: 1,
-      req_disclosure: true
+      req_disclosure: true,
+      description: 'the status'
     });
   });
 

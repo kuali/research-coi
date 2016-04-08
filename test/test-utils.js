@@ -30,7 +30,7 @@ export function createProject(sourceIdentifier) {
     sponsorCode: '000340',
     sponsorName: 'NIH',
     startDate: '2017-01-01',
-    endDate: '2017-21-31'
+    endDate: '2017-1-31'
   };
 }
 
