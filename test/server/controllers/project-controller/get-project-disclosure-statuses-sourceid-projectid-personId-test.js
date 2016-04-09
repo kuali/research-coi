@@ -55,12 +55,14 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     await knex('project_role').insert({
       project_type_cd: 1,
       source_role_cd: 'PI',
-      req_disclosure: true
+      req_disclosure: true,
+      description: 'Principal Investigator'
     });
     await knex('project_status').insert({
       project_type_cd: 1,
       source_status_cd: 1,
-      req_disclosure: true
+      req_disclosure: true,
+      description: 'the status'
     });
   });
 
@@ -163,5 +165,3 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     await knex('disclosure').del();
   });
 });
-
-

@@ -73,7 +73,7 @@ async function getUserRoles(dbInfo, schoolId, authToken) {
 
 export async function getUserInfo(dbInfo, hostname, authToken) {
   try {
-    const cachedUserInfo = authToken ? cache.get(authToken) : undefined;
+    const cachedUserInfo = authToken ? cache.get(`${authToken}:${hostname}`) : undefined;
     if (cachedUserInfo) {
       return Promise.resolve(cachedUserInfo);
     }
@@ -95,7 +95,7 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
         userInfo.coiRole = role;
       }
     }
-    cache.set(authToken, userInfo);
+    cache.set(`${authToken}:${hostname}`, userInfo);
     return Promise.resolve(userInfo);
   } catch (err) {
     return Promise.resolve();
@@ -172,5 +172,3 @@ export async function getUsersInRole(url, authToken, role, cacheKey) {
     return Promise.reject(err);
   }
 }
-
-
