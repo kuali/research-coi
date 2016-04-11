@@ -67,6 +67,7 @@ export class Question extends React.Component {
       return question.id;
     });
 
+    delete this.state.controlValid[toDelete];
     DisclosureActions.deleteAnswersTo(toDelete);
   }
 
