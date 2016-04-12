@@ -81,5 +81,7 @@ export const DisclosureActions = alt.generateActions(
   'saveManualEvent',
   'setArchiveSort',
   'addEntityAttachments',
-  'deleteEntityAttachment'
+  'deleteEntityAttachment',
+  'resetPotentialRelationship',
+  'setStateForTest'
 );
