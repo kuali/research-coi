@@ -50,6 +50,7 @@ export class EntityFormRelationshipStep extends React.Component {
     this.endDateSelected = this.endDateSelected.bind(this);
     this.reasonChanged = this.reasonChanged.bind(this);
     this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
+    this.resetPotentialRelationship = this.resetPotentialRelationship.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -73,6 +74,11 @@ export class EntityFormRelationshipStep extends React.Component {
     else {
       DisclosureActions.turnOnValidation(stepNumber);
     }
+  }
+
+  resetPotentialRelationship() {
+    const id = this.props.id ? this.props.id : 'new';
+    DisclosureActions.resetPotentialRelationship(id);
   }
 
   typeSelected() {
@@ -410,6 +416,15 @@ export class EntityFormRelationshipStep extends React.Component {
                   className={`${styles.override} ${styles.addButton}`}
                 >
                   + Add Additional Relationship
+                </BlueButton>
+
+                <BlueButton
+                  id='resetAdditionalRelationship'
+                  onClick={this.resetPotentialRelationship}
+                  style={{marginLeft: '10px'}}
+                  className={styles.removeButton}
+                >
+                  Remove Additional Relationship
                 </BlueButton>
               </div>
             </span>

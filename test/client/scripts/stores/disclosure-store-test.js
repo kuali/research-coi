@@ -23,6 +23,8 @@ import {
   DisclosureStore
 } from '../../../../client/scripts/stores/disclosure-store';
 import { QUESTION_TYPE } from '../../../../coi-constants';
+import alt from '../../../../client/scripts/alt';
+import { DisclosureActions } from '../../../../client/scripts/actions/disclosure-actions';
 
 import _ from 'lodash';
 
@@ -330,6 +332,33 @@ describe('DisclosureStore', () => {
     it('should return false if a question is answered yes', () => {
       const warnActiveEntity = DisclosureStore.warnActiveEntity(createDisclosure(0, 'Yes', 1), createConfig());
       assert.equal(false, warnActiveEntity);
+    });
+  });
+
+  describe('resetPotentialEntity', () => {
+    before(() => {
+      const data = {
+        key: 'applicationState',
+        value: {
+          potentialRelationships: {
+            new: {},
+            '1' : {}
+          }
+        }
+      };
+
+      alt.dispatcher.dispatch({
+        action: DisclosureActions.SET_STATE_FOR_TEST, data
+      });
+    });
+
+    it('should delete potential relationship', () => {
+      alt.dispatcher.dispatch({
+        action: DisclosureActions.RESET_POTENTIAL_RELATIONSHIP, data: 'new'
+      });
+      const potentialRelationships = DisclosureStore.getState().applicationState.potentialRelationships;
+      assert(potentialRelationships.new === undefined);
+      assert(potentialRelationships['1'] !== undefined);
     });
   });
 

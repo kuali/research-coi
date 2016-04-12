@@ -997,6 +997,11 @@ class _DisclosureStore {
     this.applicationState.entityStates[snapshot.id].editing = false;
   }
 
+
+  resetPotentialRelationship(id) {
+    delete this.applicationState.potentialRelationships[id];
+  }
+
   getDisclosure(id) {
     if (this.disclosures) {
       return this.disclosures.find(element => {
@@ -1441,6 +1446,10 @@ class _DisclosureStore {
     return !areNoActiveEntities(disclosure.entities) &&
         getYesNoYeses(disclosure.answers, config.questions.screening).length === 0 &&
         config.general.skipFinancialEntities;
+  }
+
+  setStateForTest(data) {
+    this[data.key] = data.value;
   }
 }
 
