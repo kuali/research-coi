@@ -5,7 +5,8 @@
   "main": "server/app.js",
   "scripts": {
     "build": "npm run build_babel",
-    "build_babel": "babel . --ignore \"./client/,./node_modules,./loadtest,./webpack.config.js,./test\" -d .",
+    "build_babel": "npm run build_babel_to -- .",
+    "build_babel_to": "babel . --ignore \"./client/,./node_modules,./loadtest,./webpack.config.js,./test\" -d ",
     "test": "npm run lint && npm run test_unit",
     "test_unit": "BABEL_ENV=test NODE_ENV=test mocha",
     "start": "babel-node server/bootstrap.js",
