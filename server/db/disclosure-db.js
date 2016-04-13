@@ -544,7 +544,6 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
       'de.id',
       'de.type_cd as typeCd',
       'de.title',
-      'de.disposition_type_cd as dispositionTypeCd',
       'de.status_cd as statusCd',
       'de.submitted_by as submittedBy',
       'de.submitted_date as submittedDate',

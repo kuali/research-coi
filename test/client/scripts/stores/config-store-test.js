@@ -343,4 +343,176 @@ describe('ConfigStore', () => {
       assert.equal('In Progress', statuses.find(status => String(status.sourceStatusCd) === '1').description);
     });
   });
+
+  describe('startEditing', () => {
+    it('should create a key in the edits object for the id passed in', () => {
+      alt.dispatcher.dispatch({
+        action: ConfigActions.START_EDITING,
+        data: 'disclosureType'
+
+      });
+
+      const edits = ConfigStore.getState().applicationState.edits;
+      assert(edits.disclosureType !== undefined);
+    });
+
+  });
+
+  describe('saveNewDispositionType', () => {
+    it('should add new disposition to config', () => {
+      setState({
+        key: 'applicationState',
+        value: {
+          edits: {
+            'dispositionType': {
+              description: 'test'
+            }
+          }
+        }
+      });
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.SAVE_NEW_DISPOSITION_TYPE,
+        data: {}
+      });
+
+      const state = ConfigStore.getState();
+      assert.equal(1, state.config.dispositionTypes.length);
+      assert.equal('test', state.config.dispositionTypes[0].description);
+      assert.equal(true, state.dirty);
+      assert.equal(undefined, state.applicationState.edits.dispositionType);
+    });
+  });
+
+  describe('saveNewDeclarationType', () => {
+    it('should add new declaration to config', () => {
+      setState({
+        key: 'applicationState',
+        value: {
+          edits: {
+            'declarationType': {
+              description: 'test'
+            }
+          }
+        }
+      });
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.SAVE_NEW_DECLARATION_TYPE,
+        data: {}
+      });
+
+      const state = ConfigStore.getState();
+      assert.equal(1, state.config.declarationTypes.length);
+      assert.equal('test', state.config.declarationTypes[0].description);
+      assert.equal(true, state.dirty);
+      assert.equal(undefined, state.applicationState.edits.declarationType);
+    });
+  });
+
+  describe('moveArrayElement down', () => {
+    it('should move item in the direction specfied', () => {
+      setState({
+        key: 'config',
+        value: {
+          dispositionTypes: [
+            {
+              name: 'one'
+            },
+            {
+              name: 'two'
+            },
+            {
+              name: 'three'
+            }
+          ]
+        }
+      });
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.MOVE_ARRAY_ELEMENT,
+        data: {
+          path: 'config.dispositionTypes',
+          index: 1,
+          direction: 1
+        }
+      });
+
+      const dispositionTypes = ConfigStore.getState().config.dispositionTypes;
+
+      assert.equal(3, dispositionTypes.length);
+      assert.equal('two', dispositionTypes[2].name);
+      assert.equal('three', dispositionTypes[1].name);
+    });
+  });
+
+  describe('moveArrayElement down', () => {
+    it('should move item in the direction specfied', () => {
+      setState({
+        key: 'config',
+        value: {
+          dispositionTypes: [
+            {
+              name: 'one'
+            },
+            {
+              name: 'two'
+            },
+            {
+              name: 'three'
+            }
+          ]
+        }
+      });
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.MOVE_ARRAY_ELEMENT,
+        data: {
+          path: 'config.dispositionTypes',
+          index: 1,
+          direction: -1
+        }
+      });
+
+      const dispositionTypes = ConfigStore.getState().config.dispositionTypes;
+
+      assert.equal(3, dispositionTypes.length);
+      assert.equal('two', dispositionTypes[0].name);
+      assert.equal('one', dispositionTypes[1].name);
+    });
+  });
+  describe('removeFromArray', () => {
+    it('should remove the element from the array', () => {
+      setState({
+        key: 'config',
+        value: {
+          dispositionTypes: [
+            {
+              name: 'one'
+            },
+            {
+              name: 'two'
+            },
+            {
+              name: 'three'
+            }
+          ]
+        }
+      });
+
+      alt.dispatcher.dispatch({
+        action: ConfigActions.REMOVE_FROM_ARRAY,
+        data: {
+          path: 'config.dispositionTypes',
+          index: 0
+        }
+      });
+
+      const dispositionTypes = ConfigStore.getState().config.dispositionTypes;
+
+      assert.equal(2, dispositionTypes.length);
+      assert.equal('two', dispositionTypes[0].name);
+      assert.equal('three', dispositionTypes[1].name);
+    });
+  });
 });

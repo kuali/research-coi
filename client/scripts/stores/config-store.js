@@ -58,7 +58,9 @@ class _ConfigStore {
     });
 
     this.applicationState = {
+      edits: {},
       declarationsTypesBeingEdited: {},
+      dispositionTypesBeingEdited: {},
       enteringNewType: false,
       newNotification: {
         warningPeriod: 'Days',
@@ -82,6 +84,7 @@ class _ConfigStore {
     this.dirty = false;
 
     this.config = {
+      dispositionTypes: [],
       disclosureTypes: [],
       questions: {
         screening: [],
@@ -144,8 +147,8 @@ class _ConfigStore {
     this.dirty = true;
   }
 
-  startEnteringNewDeclarationType() {
-    this.applicationState.enteringNewType = true;
+  startEditing(id) {
+    this.applicationState.edits[id] = {};
     this.dirty = true;
   }
 
@@ -156,18 +159,28 @@ class _ConfigStore {
 
   saveNewDeclarationType() {
     // Eventually get id from server
-    if (this.applicationState.newTypeText) {
+    if (this.applicationState.edits.declarationType) {
       this.config.declarationTypes.push({
         enabled: true,
-        description: this.applicationState.newTypeText,
+        description: this.applicationState.edits.declarationType.description,
         custom: true,
         typeCd: `new${new Date().getTime()}`
       });
     }
-    this.applicationState.enteringNewType = false;
-    this.applicationState.newTypeText = '';
+    delete this.applicationState.edits.declarationType;
     this.dirty = true;
+  }
 
+  saveNewDispositionType() {
+    // Eventually get id from server
+    if (this.applicationState.edits.dispositionType) {
+      this.config.dispositionTypes.push({
+        description: this.applicationState.edits.dispositionType.description,
+        typeCd: `new${new Date().getTime()}`
+      });
+    }
+    delete this.applicationState.edits.dispositionType;
+    this.dirty = true;
   }
 
   setNewDeclarationTypeText(newValue) {
@@ -509,6 +522,21 @@ class _ConfigStore {
     this.dirty = true;
   }
 
+  moveArrayElement(data) {
+    const array = _.result(this, data.path);
+    const o = JSON.parse(JSON.stringify(array[data.index + data.direction]));
+    array[data.index + data.direction] = array[data.index];
+    array[data.index] = o;
+    _.set(data.path, array);
+    this.dirty = true;
+  }
+
+  removeFromArray(data) {
+    const array = _.result(this, data.path);
+    array.splice(data.index,1);
+    this.dirty = true;
+  }
+
   mapCodes() {
     this.codeMaps.declarationType = {};
     this.config.declarationTypes.forEach(typeRecord => {
@@ -588,6 +616,12 @@ class _ConfigStore {
       }
     });
 
+    this.config.dispositionTypes.forEach(dispositionType => {
+      if (typeof dispositionType.typeCd === 'string' && dispositionType.typeCd.indexOf('new') === 0) {
+        delete dispositionType.typeCd;
+      }
+    });
+
     this.config.notifications.forEach(notification => {
       if (typeof notification.id === 'string' && notification.id.indexOf('new') === 0) {
         delete notification.id;
@@ -595,8 +629,16 @@ class _ConfigStore {
     });
   }
 
+  updateOrder() {
+    this.config.dispositionTypes = this.config.dispositionTypes.map((type,index) => {
+      type.order = index;
+      return type;
+    });
+  }
+
   saveAll() {
     this.clearTemporaryIds();
+    this.updateOrder();
     createRequest().post('/api/coi/config')
     .send(this.config)
     .type('application/json')
