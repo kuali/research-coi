@@ -36,8 +36,13 @@ catch (err) {
   getConfiguration = () => {
     return {
       featureFlag: {
-        dispositionTypes: process.env.DISPOSITION_TYPE_FEATURE_FLAG
+        dispositionTypes: process.env.DISPOSITION_TYPE_FEATURE_FLAG || false
       }
+    };
+  };
+  getNotificationsInfo = () => {
+    return {
+      notificationsMode: process.env.NOTIFICATIONS_MODE || NOTIFICATIONS_MODE.OFF
     };
   };
 }
