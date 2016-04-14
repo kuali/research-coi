@@ -24,13 +24,22 @@ import { NOTIFICATIONS_MODE } from '../../coi-constants';
 
 let getKnex;
 let getNotificationsInfo;
+let getConfiguration;
 try {
   const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
+  getConfiguration = extensions.getConfig;
   getNotificationsInfo = extensions.getNotificationsInfo;
 }
 catch (err) {
   getKnex = require('./connection-manager').default;
+  getConfiguration = () => {
+    return {
+      featureFlag: {
+        dispositionTypes: process.env.DISPOSITION_TYPE_FEATURE_FLAG
+      }
+    };
+  };
 }
 const mockDB = {
   'UIT': {
@@ -139,6 +148,7 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
   let config = mockDB.UIT;
   const knex = getKnex(dbInfo);
   const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
+  const featureFlags = getConfiguration(dbInfo).featureFlags;
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -169,7 +179,8 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
     query.select('*').from('project_type'),
     query.select('*').from('project_role'),
     query.select('*').from('project_status'),
-    getNotificationTemplates(query, dbInfo, hostname, notificationsMode)
+    getNotificationTemplates(query, dbInfo, hostname, notificationsMode),
+    query.select('*').from('disposition_type').where({active: true}).orderBy('order')
   ])
   .then(result => {
     config.matrixTypes = result[0];
@@ -202,6 +213,13 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
     config.projectStatuses = result[13];
     config.notificationTemplates = result[14];
     config.notificationsMode = notificationsMode;
+
+    //sets feature flag for in progress disposition work
+    config.dispositionTypesFeatureFlag = featureFlags && featureFlags.dispositionTypes ?
+      featureFlags.dispositionTypes :
+      false;
+
+    config.dispositionTypes = result[15];
     config = camelizeJson(config);
     config.general = JSON.parse(result[9][0].config).general;
     return config;
@@ -253,6 +271,10 @@ export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
 
   queries.push(
     createCollectionQueries(query, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})
+  );
+
+  queries.push(
+    createCollectionQueries(query, config.disposition_types, {pk: 'type_cd', table: 'disposition_type'})
   );
 
   queries.push(

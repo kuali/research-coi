@@ -208,7 +208,6 @@ function insertDisclosure(knex) {
     title: 'Title - what is this?' + randomNumberBetween(1, 2000),
     submitted_date: submittedDate,
     revised_date: revisedDate,
-    disposition_type_cd: 1,
     start_date: new Date(),
     expired_date: new Date(),
     status_cd: 1,
