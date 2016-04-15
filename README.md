@@ -194,9 +194,27 @@ npm run webpack
 ```
 This may take a few minutes. There will likely be some warnings, but there should no errors.
 
-**Step 9**: Start Up Node
+**Step 9**: Pre-transpile
+
+If you are ok transpiling the code in place run
 ```
-DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm start
+npm run build
+```
+If you would prefer to transpile to another directory, leaving the existing code intact, run this command instead
+```
+npm run build_babel_to <the target directory>
 ```
 
-**Step 10**: Navigate to hostname:port/coi/
+**Step 10**: Start Up Node
+
+If you've transpiled in place run
+```
+DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm start_prod
+```
+
+If you've transpiled to a different directory run
+```
+DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm start_prod <the directory>
+```
+
+**Step 11**: Navigate to hostname:port/coi/
