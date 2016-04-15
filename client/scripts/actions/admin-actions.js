@@ -71,5 +71,6 @@ export const AdminActions = alt.generateActions(
   'updateCommentText',
   'editComment',
   'cancelComment',
-  'updateCommentState'
+  'updateCommentState',
+  'updateProjectDisposition'
 );

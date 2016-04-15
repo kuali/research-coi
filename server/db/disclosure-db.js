@@ -588,7 +588,9 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         'p.type_cd as projectTypeCd',
         'p.sponsor_name as sponsorName',
         'pp.role_cd as roleCd',
-        'fe.active as finEntityActive'
+        'fe.active as finEntityActive',
+        'pp.id as projectPersonId',
+        'pp.disposition_type_cd as dispositionTypeCd'
       )
       .from('declaration as d')
       .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
