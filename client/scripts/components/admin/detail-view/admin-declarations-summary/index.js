@@ -104,13 +104,22 @@ export class AdminDeclarationsSummary extends React.Component {
 
         let dispositionTypeSelector;
         if (this.props.config.general.dispositionsEnabled) {
-          dispositionTypeSelector = (
-            <ProjectDispositionSelector
-              projectPersonId={project.projectPersonId}
-              value={project.dispositionTypeCd}
-              options={dispositionTypeOptions}
-            />
-          );
+          if (this.props.readonly) {
+            dispositionTypeSelector = (
+              <div className={styles.field}>
+                <label className={styles.label}>Project Disposition:</label>
+                <span style={{fontWeight: 'bold'}}>{ConfigStore.getDispositionTypeString(project.dispositionTypeCd)}</span>
+              </div>
+            );
+          } else {
+            dispositionTypeSelector = (
+              <ProjectDispositionSelector
+                projectPersonId={project.projectPersonId}
+                value={project.dispositionTypeCd}
+                options={dispositionTypeOptions}
+              />
+            );
+          }
         }
 
         return (

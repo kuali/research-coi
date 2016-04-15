@@ -1008,6 +1008,16 @@ function deleteAdditionalReviewers(knex, disclosureId) {
     .where('disclosure_id', disclosureId);
 }
 
+async function resetProjectDispositions(knex, id) {
+  const disclosure = await knex('disclosure')
+    .select('user_id')
+    .where({id});
+
+  return knex('project_person')
+    .update({disposition_type_cd: null})
+    .where({person_id: disclosure[0].user_id});
+}
+
 export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeader, trx) => {
   let knex;
   if (trx) {
@@ -1026,7 +1036,8 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
     deleteAnswersForDisclosure(knex, disclosureId),
     deletePIReviewsForDisclsoure(knex, disclosureId),
     deleteAdditionalReviewers(knex, disclosureId),
-    updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS)
+    updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS),
+    resetProjectDispositions(knex, disclosureId)
   ])
   .then(([config, archivedDisclosure]) => {
     const generalConfig = JSON.parse(config[0].config).general;

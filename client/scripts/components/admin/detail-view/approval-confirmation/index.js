@@ -24,10 +24,16 @@ import {AdminActions} from '../../../../actions/admin-actions';
 import classNames from 'classnames';
 
 export default function ApprovalConfirmation(props) {
+  let dispositionWarning = '';
+
+  if (props.showDispositionWarning) {
+    dispositionWarning = 'A disposition has not been set for every project. ';
+  }
   return (
     <div className={classNames(styles.container, props.className)} >
       <div className={styles.question}>
-        Are you sure you want to approve this disclosure?
+        {`${dispositionWarning}Are you sure you want to approve this disclosure?`}
+
       </div>
 
       <BlueButton
