@@ -48,6 +48,10 @@ export default class DeclarationType extends React.Component {
     this.props.done();
   }
 
+  componentDidMount() {
+    this.refs.newType.focus();
+  }
+
   render() {
     return (
       <div style={{margin: '0 20px 0 10px'}}>

@@ -20,6 +20,7 @@ import styles from './style';
 import React from 'react';
 import DeclarationSummary from '../declaration-summary';
 import ConfigStore from '../../../../stores/config-store';
+import ProjectDispositionSelector from '../project-disposition-selector';
 import classNames from 'classnames';
 
 export class AdminDeclarationsSummary extends React.Component {
@@ -56,7 +57,9 @@ export class AdminDeclarationsSummary extends React.Component {
           name: declaration.projectTitle,
           type: ConfigStore.getProjectTypeString(declaration.projectTypeCd),
           role: declaration.roleCd,
-          sponsor: declaration.sponsorName
+          sponsor: declaration.sponsorName,
+          dispositionTypeCd: declaration.dispositionTypeCd,
+          projectPersonId: declaration.projectPersonId
         });
         alreadyAdded[declaration.projectId] = true;
       }
@@ -75,6 +78,16 @@ export class AdminDeclarationsSummary extends React.Component {
 
       const uniqueProjects = this.getUniqueProjects(this.props.declarations);
 
+      let dispositionTypeOptions;
+      if(this.props.config.general.dispositionsEnabled) {
+        dispositionTypeOptions = this.props.config.dispositionTypes.map(type => {
+          return (
+            <option key={type.typeCd} value={type.typeCd}>{type.description}</option>
+          );
+        });
+
+      }
+
       projects = uniqueProjects.map((project, index) => {
         const declarations = this.props.declarations.filter(declaration => {
           return declaration.projectId === project.id && declaration.finEntityActive === 1;
@@ -89,22 +102,40 @@ export class AdminDeclarationsSummary extends React.Component {
           );
         });
 
+        let dispositionTypeSelector;
+        if (this.props.config.general.dispositionsEnabled) {
+          dispositionTypeSelector = (
+            <ProjectDispositionSelector
+              projectPersonId={project.projectPersonId}
+              value={project.dispositionTypeCd}
+              options={dispositionTypeOptions}
+            />
+          );
+        }
+
         return (
           <div key={`proj${project.id}`}
             className={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}
           >
-            <div className={styles.name}>{project.name}</div>
-            <div className={styles.field}>
-              <label className={styles.label}>Project Type:</label>
-              <span style={{fontWeight: 'bold'}}>{project.type}</span>
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>Project Role:</label>
-              <span style={{fontWeight: 'bold'}}>{project.role}</span>
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>Sponsor:</label>
-              <span style={{fontWeight: 'bold'}}>{project.sponsor}</span>
+            <div>
+              <div className={styles.name}>{project.name}</div>
+              <div style={{display: 'inline-block', width: '50%'}}>
+                <div className={styles.field}>
+                  <label className={styles.label}>Project Type:</label>
+                  <span style={{fontWeight: 'bold'}}>{project.type}</span>
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>Project Role:</label>
+                  <span style={{fontWeight: 'bold'}}>{project.role}</span>
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>Sponsor:</label>
+                  <span style={{fontWeight: 'bold'}}>{project.sponsor}</span>
+                </div>
+              </div>
+              <div style={{display: 'inline-block', width: '50%', verticalAlign: 'top'}}>
+                {dispositionTypeSelector}
+              </div>
             </div>
             <div className={styles.titles}>
               <span className={styles.entityName}>FINANCIAL ENTITY</span>

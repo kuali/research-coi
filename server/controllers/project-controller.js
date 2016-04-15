@@ -48,6 +48,11 @@ export const init = app => {
     res.send(projects);
   }));
 
+  app.put('/api/coi/project-persons-disposition-types/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    await ProjectDB.updateProjectPersonDispositionType(req.dbInfo, req.body, req.params.id);
+    res.sendStatus(OK);
+  }));
+
   app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     const result = await ProjectDB.getProjectStatuses(req.dbInfo, req.params.sourceId, req.params.projectId);
     res.send(result);

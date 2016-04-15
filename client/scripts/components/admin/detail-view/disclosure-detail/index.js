@@ -181,6 +181,7 @@ export class DisclosureDetail extends React.Component {
               id={this.props.disclosure.id}
               className={`${styles.override} ${styles.declarations}`}
               piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.PROJECTS)}
+              config={this.props.config}
             />
           </span>
           <span style={{display: 'inline-block'}}>

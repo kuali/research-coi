@@ -635,6 +635,21 @@ class _AdminStore {
     this.applicationState.comment = resetComment(this.applicationState.comment);
     this.applicationState.editingComment = false;
   }
+
+  updateProjectDisposition(data) {
+    createRequest().put(`/api/coi/project-persons-disposition-types/${data.projectPersonId}`)
+      .send({dispositionTypeCd: data.dispositionTypeCd})
+      .end(processResponse(err => {
+        if (!err) {
+          this.applicationState.selectedDisclosure.declarations.filter(declaration => {
+            return declaration.projectPersonId === data.projectPersonId;
+          }).forEach(declaration => {
+            declaration.dispositionTypeCd = data.dispositionTypeCd;
+          });
+          this.emitChange();
+        }
+      }));
+  }
 }
 
 export const AdminStore = alt.createStore(_AdminStore, 'AdminStore');

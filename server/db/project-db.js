@@ -357,3 +357,14 @@ export async function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, p
     return Promise.reject(err);
   }
 }
+
+export async function updateProjectPersonDispositionType(dbInfo, projectPerson, id) {
+  try {
+    const knex = getKnex(dbInfo);
+    return knex('project_person').update({
+      disposition_type_cd: projectPerson.dispositionTypeCd ? projectPerson.dispositionTypeCd : null
+    }).where({id});
+  } catch(err) {
+    return Promise.reject(err);
+  }
+}

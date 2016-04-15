@@ -113,13 +113,16 @@ export default class DeclarationType extends React.Component {
     }
     else {
       jsx = (
-        <span>
-          <label className={styles.typeLabel} htmlFor={`type_${type.typeCd}`}>
+
+        <div>
+          <div className={styles.typeLabel}>
             {type.description}
-          </label>
-          <DeleteLink className={`${styles.override} ${styles.deleteLink}`} onClick={this.deleteType} />
-          <EditLink className={`${styles.override} ${styles.editLink}`} onClick={this.startEditing} />
-        </span>
+          </div>
+          <div style={{verticalAlign: 'top', display: 'inline-block'}}>
+            <DeleteLink className={`${styles.override} ${styles.deleteLink}`} onClick={this.deleteType} />
+            <EditLink className={`${styles.override} ${styles.editLink}`} onClick={this.startEditing} />
+          </div>
+        </div>
       );
     }
 
@@ -143,7 +146,7 @@ export default class DeclarationType extends React.Component {
 
     return (
       <div className={classes}>
-        <div style={{display: 'inline-block', width:'50px'}}>
+        <div style={{width: '50px', float: 'left'}}>
           <div style={{display: 'inline-block', width: '45%'}}>
             <button className={styles.button} style={upSytle} onClick={this.moveUp}> <i className={`fa fa-arrow-up`}></i></button>
           </div>
@@ -151,8 +154,11 @@ export default class DeclarationType extends React.Component {
             <button className={styles.button} style={downStyle} onClick={this.moveDown}><i className={`fa fa-arrow-down`}></i></button>
           </div>
         </div>
-        {jsx}
+        <div style={{width: 'auto', overflow: 'hidden'}}>
+          {jsx}
+        </div>
       </div>
+
     );
   }
 }
