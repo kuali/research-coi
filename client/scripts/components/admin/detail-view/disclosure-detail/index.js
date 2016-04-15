@@ -153,6 +153,15 @@ export class DisclosureDetail extends React.Component {
         .filter(file => file.fileType === COIConstants.FILE_TYPE.DISCLOSURE)
         .length > 0;
 
+    const readonly = this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
+      this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED ||
+      this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED ||
+      this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED;
+
+    const declarationsWithoutDispositions = this.props.disclosure.declarations.filter(declaration => {
+      return !declaration.dispositionTypeCd;
+    });
+    const showDispositionWarning = declarationsWithoutDispositions.length > 0 && this.props.config.general.dispositionsEnabled;
     return (
       <div
         className={classes}
@@ -182,11 +191,13 @@ export class DisclosureDetail extends React.Component {
               className={`${styles.override} ${styles.declarations}`}
               piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.PROJECTS)}
               config={this.props.config}
+              readonly={readonly}
             />
           </span>
           <span style={{display: 'inline-block'}}>
             <ApprovalConfirmation
               id={this.props.disclosure.id}
+              showDispositionWarning={showDispositionWarning}
               className={`${styles.override} ${styles.confirmation}`}
             />
             <RejectionConfirmation
@@ -198,12 +209,7 @@ export class DisclosureDetail extends React.Component {
               className={`${styles.override} ${styles.actionButtons}`}
               showAttachments={showAttachments}
               role={this.props.role}
-              readonly={
-                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED ||
-                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED ||
-                this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED
-              }
+              readonly={readonly}
             />
           </span>
         </div>

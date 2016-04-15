@@ -45,6 +45,7 @@ class _ConfigStore {
 
     this.exportPublicMethods({
       getDeclarationTypeString: this.getDeclarationTypeString,
+      getDispositionTypeString: this.getDispositionTypeString,
       getDisclosureStatusString: this.getDisclosureStatusString,
       getAdminDisclosureStatusString: this.getAdminDisclosureStatusString,
       getDisclosureTypeString: this.getDisclosureTypeString,
@@ -568,6 +569,11 @@ class _ConfigStore {
       this.codeMaps.relationshipPersonType[typeRecord.typeCd] = typeRecord;
     });
 
+    this.codeMaps.dispositionType = {};
+    this.config.dispositionTypes.forEach(typeRecord => {
+      this.codeMaps.dispositionType[typeRecord.typeCd] = typeRecord;
+    });
+
     this.isLoaded = true;
   }
 
@@ -659,6 +665,17 @@ class _ConfigStore {
     const configState = this.getState();
     if (configState.codeMaps.declarationType) {
       const typeRecord = configState.codeMaps.declarationType[code];
+      if (typeRecord) {
+        return typeRecord.description;
+      }
+    }
+    return '';
+  }
+
+  getDispositionTypeString(code) {
+    const configState = this.getState();
+    if (configState.codeMaps.dispositionType) {
+      const typeRecord = configState.codeMaps.dispositionType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
