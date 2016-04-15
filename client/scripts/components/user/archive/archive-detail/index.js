@@ -53,8 +53,7 @@ export default class extends React.Component {
           />
           <DeclarationsSummary
             declarations={disclosure.declarations}
-            projectTypes={this.props.config.projectTypes}
-            declarationTypes={this.props.config.declarationTypes}
+            config={this.props.config}
             id={disclosure.id}
           />
         </div>
