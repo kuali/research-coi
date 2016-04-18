@@ -137,9 +137,7 @@ export class ProjectRelationDialog extends React.Component {
       <div className={classes} >
         <div className={styles.content}>
           <div className={styles.instructions}>
-            Indicate how each Financial Entity is related to project #
-            <span style={{marginRight: 3}}>{this.props.projectId}</span>
-            -
+            Indicate how each Financial Entity is related to project
             <span style={{marginLeft: 3}}>{this.props.title}</span>:
           </div>
           <div>
