@@ -111,6 +111,18 @@ export class Archive extends React.Component {
         );
       });
 
+      let dispostion;
+
+      if (ConfigStore.getDispostionsEnabled() && this.state.disclosure && this.state.disclosure.disposition) {
+        dispostion = (
+          <span>
+            <span style={{padding: '0 3px'}}>•</span>
+            <span style={{fontWeight: 'normal'}}>{this.state.disclosure.disposition}</span>
+          </span>
+
+        );
+      }
+
       header = (
         <div>
           <span className={styles.versionPicker}>
@@ -122,9 +134,12 @@ export class Archive extends React.Component {
             </div>
           </span>
 
-          <div className={styles.heading}>{ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.ANNUAL)}</div>
+          <div className={styles.heading}>
+            {ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.ANNUAL)}
+            {dispostion}
+          </div>
           <div className={styles.dateRow}>
-            Submited On:
+            Submitted On:
             <span className={styles.dateValue}>{this.getSubmittedDate()}</span>
           </div>
           <div className={styles.dateRow}>
