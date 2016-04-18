@@ -37,6 +37,11 @@ export default class About extends React.Component {
           The Apache Software Foundation (http://www.apache.org), licensed under the Apache
           Software License versions 1.0, and 2.0
         </p>
+
+        <h1 className={styles.heading}>Version</h1>
+        <p className={styles.paragraph}>
+          {this.props.version}
+        </p>
       </div>
     );
   }
