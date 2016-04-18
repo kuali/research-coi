@@ -66,6 +66,17 @@ export function DisclosureDetailHeading(props) {
     );
   }
 
+  let disposition;
+  if (ConfigStore.getDispostionsEnabled() && disclosure.disposition) {
+    disposition = (
+      <span>
+        <span style={{margin: '0 3px'}}>•</span>
+        {disclosure.disposition}
+      </span>
+    );
+  }
+
+
   return (
     <div className={classNames(styles.container, props.className)} >
       <span>
@@ -78,6 +89,7 @@ export function DisclosureDetailHeading(props) {
           </span>
           <span>ID</span>
           <span className={styles.id}>#{disclosure.id}</span>
+          {disposition}
         </div>
         <div className={styles.details}>
           <span className={styles.label}>Submitted By:</span>

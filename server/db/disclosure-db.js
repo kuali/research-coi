@@ -967,7 +967,44 @@ const approveDisclosure = (knex, disclosureId, expiredDate, userId, dbInfo, auth
   });
 };
 
-const archiveDisclosure = (knex, disclosureId, approverName, disclosure) => {
+async function getDisclosureDisposition(knex, declarations, id) {
+  const config = await knex('config')
+    .select('config')
+    .where({id});
+
+  const dispositionTypes = JSON.parse(config[0].config).dispositionTypes;
+  if (dispositionTypes && dispositionTypes.length > 0) {
+    dispositionTypes.sort((a,b) => {
+      return b.order - a.order;
+    });
+
+    const dispositions = declarations.map(declaration => {
+      const dispostion = dispositionTypes.find(dispositionType => {
+        return String(dispositionType.typeCd) === String(declaration.dispositionTypeCd);
+      });
+      return dispostion;
+    });
+
+    dispositions.sort((a,b) => {
+      return a.order - b.order;
+    });
+
+    if (dispositions[0]) {
+      return dispositions[0].description;
+    }
+
+    if (dispositionTypes[0]) {
+      return dispositionTypes[0].description;
+    }
+  }
+
+  return undefined;
+}
+
+async function archiveDisclosure(knex, disclosureId, approverName, disclosure) {
+
+  disclosure.disposition = await getDisclosureDisposition(knex, disclosure.declarations, disclosure.configId);
+
   return knex('disclosure_archive')
     .insert({
       disclosure_id: disclosureId,
@@ -975,7 +1012,7 @@ const archiveDisclosure = (knex, disclosureId, approverName, disclosure) => {
       approved_by: approverName,
       disclosure: JSON.stringify(disclosure)
     }, 'id');
-};
+}
 
 const deleteComments = (knex, disclosureId) => {
   return knex('comment')

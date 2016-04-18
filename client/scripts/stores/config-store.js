@@ -55,7 +55,8 @@ class _ConfigStore {
       getRelationshipAmountString: this.getRelationshipAmountString,
       getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
       getQuestionNumberToShow: this.getQuestionNumberToShow,
-      getNotificationsMode: this.getNotificationsMode
+      getNotificationsMode: this.getNotificationsMode,
+      getDispostionsEnabled: this.getDispostionsEnabled
     });
 
     this.applicationState = {
@@ -912,6 +913,11 @@ class _ConfigStore {
   getNotificationsMode() {
     const configState = this.getState();
     return configState.config.notificationsMode;
+  }
+
+  getDispostionsEnabled() {
+    const configState = this.getState();
+    return configState.config.general.dispositionsEnabled;
   }
 }
 
