@@ -172,7 +172,8 @@ class _DisclosureStore {
       entityRelationshipsAreSubmittable: this.entityRelationshipsAreSubmittable,
       enforceEntities: this.enforceEntities,
       canSkipEntities: this.canSkipEntities,
-      warnActiveEntity: this.warnActiveEntity
+      warnActiveEntity: this.warnActiveEntity,
+      getWorstDeclaration: this.getWorstDeclaration
     });
 
     // initialize state here
@@ -1450,6 +1451,24 @@ class _DisclosureStore {
 
   setStateForTest(data) {
     this[data.key] = data.value;
+  }
+
+  getWorstDeclaration(declarations, declarationTypes) {
+    const usedDeclarationType = declarations.map(declaration => {
+      const declarationType = declarationTypes.find(type => {
+        return String(type.typeCd) === String(declaration.typeCd);
+      });
+      return declarationType;
+    });
+
+    usedDeclarationType.sort((a,b) => {
+      return a.order - b.order;
+    });
+
+    if (usedDeclarationType[0]) {
+      return usedDeclarationType[0].description;
+    }
+    return undefined;
   }
 }
 
