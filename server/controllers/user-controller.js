@@ -18,6 +18,7 @@
 
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
+import pjson from '../../package.json';
 
 let getAuthorizationInfo;
 try {
@@ -38,7 +39,8 @@ export const init = app => {
       lastName: req.userInfo.lastName,
       coiRole: req.userInfo.coiRole,
       mock: req.userInfo.mock,
-      researchCoreUrl: getAuthorizationInfo(req.dbInfo).researchCoreUrl
+      researchCoreUrl: getAuthorizationInfo(req.dbInfo).researchCoreUrl,
+      version: pjson.version
     });
   }));
 };
