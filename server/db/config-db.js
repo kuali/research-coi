@@ -166,7 +166,7 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
     query.select('*').from('relationship_type').where('active', true),
     query.select('*').from('relationship_amount_type').where('active', true),
     query.select('*').from('relationship_person_type').where('active', true),
-    query.select('*').from('declaration_type').where('active', true),
+    query.select('*').from('declaration_type').where('active', true).orderBy('order'),
     query.select('*').from('disclosure_type'),
     query.select('*').from('notification').where('active', true),
     query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(result => {

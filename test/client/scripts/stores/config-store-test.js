@@ -358,13 +358,13 @@ describe('ConfigStore', () => {
 
   });
 
-  describe('saveNewDispositionType', () => {
+  describe('saveNewType', () => {
     it('should add new disposition to config', () => {
       setState({
         key: 'applicationState',
         value: {
           edits: {
-            'dispositionType': {
+            'dispositionTypes': {
               description: 'test'
             }
           }
@@ -372,8 +372,8 @@ describe('ConfigStore', () => {
       });
 
       alt.dispatcher.dispatch({
-        action: ConfigActions.SAVE_NEW_DISPOSITION_TYPE,
-        data: {}
+        action: ConfigActions.SAVE_NEW_TYPE,
+        data: 'dispositionTypes'
       });
 
       const state = ConfigStore.getState();
@@ -381,32 +381,6 @@ describe('ConfigStore', () => {
       assert.equal('test', state.config.dispositionTypes[0].description);
       assert.equal(true, state.dirty);
       assert.equal(undefined, state.applicationState.edits.dispositionType);
-    });
-  });
-
-  describe('saveNewDeclarationType', () => {
-    it('should add new declaration to config', () => {
-      setState({
-        key: 'applicationState',
-        value: {
-          edits: {
-            'declarationType': {
-              description: 'test'
-            }
-          }
-        }
-      });
-
-      alt.dispatcher.dispatch({
-        action: ConfigActions.SAVE_NEW_DECLARATION_TYPE,
-        data: {}
-      });
-
-      const state = ConfigStore.getState();
-      assert.equal(1, state.config.declarationTypes.length);
-      assert.equal('test', state.config.declarationTypes[0].description);
-      assert.equal(true, state.dirty);
-      assert.equal(undefined, state.applicationState.edits.declarationType);
     });
   });
 

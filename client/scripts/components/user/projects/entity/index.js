@@ -19,6 +19,7 @@
 import styles from './style';
 import React from 'react';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
+import { DisclosureStore } from '../../../../stores/disclosure-store';
 import {EntityRelationDialog} from '../entity-relation-dialog';
 import {GreyButton} from '../../../grey-button';
 import {undefinedRelationExists} from '../../undefined-relation-exists';
@@ -30,7 +31,6 @@ export class Entity extends React.Component {
 
     this.toggleDialog = this.toggleDialog.bind(this);
     this.getDisplayStatus = this.getDisplayStatus.bind(this);
-    this.getDeclarationDescription = this.getDeclarationDescription.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -44,27 +44,8 @@ export class Entity extends React.Component {
       return 'Action Required';
     }
 
-    let worstDeclaration = 1;
+    return DisclosureStore.getWorstDeclaration(this.props.declarations, window.config.declarationTypes);
 
-    this.props.declarations.forEach(element => {
-      if (worstDeclaration !== 2 && element.typeCd > 1) {
-        worstDeclaration = element.typeCd;
-      }
-    });
-
-    return this.getDeclarationDescription(worstDeclaration);
-  }
-
-  getDeclarationDescription(typeCd) {
-    const declarationType = window.config.declarationTypes.find(type => {
-      return type.typeCd === typeCd;
-    });
-
-    if (declarationType) {
-      return declarationType.description;
-    }
-
-    return null;
   }
 
   render() {

@@ -26,7 +26,6 @@ export default alt.generateActions(
   'toggleDeclarationType',
   'startEditing',
   'deleteInProgressCustomDeclarationType',
-  'saveNewDeclarationType',
   'setNewDeclarationTypeText',
   'deleteDeclarationType',
   'enableDisclosureType',
@@ -77,5 +76,5 @@ export default alt.generateActions(
   'cancelNotificationTemplate',
   'moveArrayElement',
   'removeFromArray',
-  'saveNewDispositionType'
+  'saveNewType'
 );

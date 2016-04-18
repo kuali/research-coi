@@ -72,41 +72,26 @@ export default class Declarations extends React.Component {
   }
 
   createNewDeclaration() {
-    ConfigActions.startEditing('declarationType');
+    ConfigActions.startEditing('declarationTypes');
   }
 
   createNewDisposition() {
-    ConfigActions.startEditing('dispositionType');
+    ConfigActions.startEditing('dispositionTypes');
   }
 
 
   render() {
-    let typesJsx;
-    let customTypes;
+    let declarationTypes;
     if (this.state.declarationTypes) {
-      typesJsx = this.state.declarationTypes.filter(type => {
-        return !type.custom;
-      }).map(type => {
-        return (
-          <DeclarationType
-            type={type}
-            key={type.typeCd}
-            applicationState={this.state.applicationState}
-            toggle={true}
-          />
-        );
-      });
 
-      customTypes = this.state.declarationTypes.filter(type => {
-        return type.custom;
-      }).map((type, index) => {
+      declarationTypes = this.state.declarationTypes.map((type, index) => {
         return (
           <DeclarationType
+            index={index}
+            last={index === this.state.declarationTypes.length - 1}
             type={type}
             key={`custom${index}`}
             applicationState={this.state.applicationState}
-            delete={true}
-            toggle={false}
           />
         );
       });
@@ -125,12 +110,12 @@ export default class Declarations extends React.Component {
     });
 
     let newDeclarationType;
-    if (this.state.edits.declarationType) {
+    if (this.state.edits.declarationTypes) {
       newDeclarationType = (
         <NewType
-          path="applicationState.edits.declarationType.description"
-          value={this.state.edits.declarationType.value}
-          done={ConfigActions.saveNewDeclarationType}
+          path="applicationState.edits.declarationTypes.description"
+          value={this.state.edits.declarationTypes.value}
+          type='declarationTypes'
         />
       );
 
@@ -138,12 +123,12 @@ export default class Declarations extends React.Component {
     }
 
     let newDispositionType;
-    if (this.state.edits.dispositionType) {
+    if (this.state.edits.dispositionTypes) {
       newDispositionType = (
         <NewType
-          path="applicationState.edits.dispositionType.description"
-          value={this.state.edits.dispositionType.value}
-          done={ConfigActions.saveNewDispositionType}
+          path="applicationState.edits.dispositionTypes.description"
+          value={this.state.edits.dispositionTypes.value}
+          type='dispositionTypes'
         />
       );
     }
@@ -159,7 +144,6 @@ export default class Declarations extends React.Component {
         </div>
       );
     }
-
     let dispositionPanel;
     if(this.state.dispositionTypesFeatureFlag) {
       dispositionPanel = (
@@ -194,8 +178,7 @@ export default class Declarations extends React.Component {
         />
         <Panel title="Declaration Types Set by Reporter">
           <div className={styles.types}>
-            {typesJsx}
-            {customTypes}
+            {declarationTypes}
             {newDeclarationType}
             <div className={styles.add} onClick={this.createNewDeclaration}>+ Add Another</div>
           </div>

@@ -45,7 +45,7 @@ export default class DeclarationType extends React.Component {
   }
 
   done() {
-    this.props.done();
+    ConfigActions.saveNewType(this.props.type);
   }
 
   componentDidMount() {

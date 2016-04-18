@@ -362,4 +362,37 @@ describe('DisclosureStore', () => {
     });
   });
 
+  describe('getWorstDeclaration', () => {
+    it('should return the highest ordered declarationType description', () => {
+      const declarations = [
+        {
+          typeCd: 1
+        },
+        {
+          typeCd: 2
+        }
+      ];
+
+      const declarationTypes = [
+        {
+          typeCd: 3,
+          order: 0,
+          description: 'Three'
+        },
+        {
+          typeCd:1,
+          order:2,
+          description: 'Two'
+        },
+        {
+          typeCd:1,
+          order:1,
+          description: 'One'
+        }
+      ];
+
+      const worstDeclaration = DisclosureStore.getWorstDeclaration(declarations, declarationTypes);
+      assert.equal('Two',worstDeclaration);
+    });
+  });
 });

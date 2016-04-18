@@ -159,29 +159,15 @@ class _ConfigStore {
     this.dirty = true;
   }
 
-  saveNewDeclarationType() {
+  saveNewType(type) {
     // Eventually get id from server
-    if (this.applicationState.edits.declarationType) {
-      this.config.declarationTypes.push({
-        enabled: true,
-        description: this.applicationState.edits.declarationType.description,
-        custom: true,
+    if (this.applicationState.edits[type]) {
+      this.config[type].push({
+        description: this.applicationState.edits[type].description,
         typeCd: `new${new Date().getTime()}`
       });
     }
-    delete this.applicationState.edits.declarationType;
-    this.dirty = true;
-  }
-
-  saveNewDispositionType() {
-    // Eventually get id from server
-    if (this.applicationState.edits.dispositionType) {
-      this.config.dispositionTypes.push({
-        description: this.applicationState.edits.dispositionType.description,
-        typeCd: `new${new Date().getTime()}`
-      });
-    }
-    delete this.applicationState.edits.dispositionType;
+    delete this.applicationState.edits[type];
     this.dirty = true;
   }
 
@@ -638,6 +624,11 @@ class _ConfigStore {
 
   updateOrder() {
     this.config.dispositionTypes = this.config.dispositionTypes.map((type,index) => {
+      type.order = index;
+      return type;
+    });
+
+    this.config.declarationTypes = this.config.declarationTypes.map((type,index) => {
       type.order = index;
       return type;
     });
