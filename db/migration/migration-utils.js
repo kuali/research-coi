@@ -85,7 +85,7 @@ module.exports = {
       query.select('type_cd as typeCd', 'relationship_cd as relationshipCd', 'description', 'active').from('relationship_type').where('active', true),
       query.select('type_cd as typeCd', 'relationship_cd as relationshipCd', 'description', 'active').from('relationship_amount_type').where('active', true),
       query.select('type_cd as typeCd', 'description', 'active').from('relationship_person_type').where('active', true),
-      query.select('type_cd as typeCd', 'description', 'enabled', 'custom', 'active').from('declaration_type').where('active', true),
+      query.select('type_cd as typeCd', 'description', 'active').from('declaration_type').where('active', true),
       query.select('type_cd as typeCd', 'description', 'enabled').from('disclosure_type'),
       query.select('id', 'reminder_text as reminderText', 'warning_value as warningValue', 'warning_period as warningPeriod', 'active').from('notification'),
       query.select('id', 'type_cd as typeCd', 'version').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(function (result) {
