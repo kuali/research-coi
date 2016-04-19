@@ -32,6 +32,27 @@ export default class NewQuestion extends React.Component {
     this.optionTextChanged = this.optionTextChanged.bind(this);
     this.optionDeleted = this.optionDeleted.bind(this);
     this.requiredSelectionsChanged = this.requiredSelectionsChanged.bind(this);
+    this.heightChanged = this.heightChanged.bind(this);
+
+    this.state = {
+      textareaHeight: 70
+    };
+  }
+
+  componentDidMount() {
+    const textarea = this.refs.questionText;
+
+    if (textarea !== undefined && textarea.scrollHeight > textarea.clientHeight) {
+      this.setState({ // eslint-disable-line react/no-did-mount-set-state
+        textareaHeight: textarea.scrollHeight
+      });
+    }
+  }
+
+  heightChanged() {
+    if (this.props.heightChanged !== undefined) {
+      this.props.heightChanged();
+    }
   }
 
   typeChosen() {
@@ -45,6 +66,13 @@ export default class NewQuestion extends React.Component {
 
   textChanged() {
     const textarea = this.refs.questionText;
+
+    if (textarea !== undefined && textarea.scrollHeight > textarea.clientHeight) {
+      this.setState({
+        textareaHeight: textarea.scrollHeight
+      });
+    }
+
     ConfigActions.questionTextChanged(
       this.props.questionnaireCategory,
       this.props.id,
@@ -162,7 +190,14 @@ export default class NewQuestion extends React.Component {
         <div className={styles.questionTextSection}>
           <label className={styles.label}>QUESTION TEXT</label>
           <div>
-            <textarea ref="questionText" value={this.props.question.question.text} onChange={this.textChanged} className={styles.textarea} />
+            <textarea
+              style={{height: this.state.textareaHeight}}
+              ref="questionText"
+              value={this.props.question.question.text}
+              onChange={this.textChanged}
+              onMouseUp={this.heightChanged}
+              className={styles.textarea}
+            />
           </div>
         </div>
       </div>
@@ -173,4 +208,3 @@ export default class NewQuestion extends React.Component {
 NewQuestion.defaultProps = {
   question: {}
 };
-

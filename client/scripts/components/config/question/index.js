@@ -88,6 +88,13 @@ class Question extends React.Component {
     this.edit = this.edit.bind(this);
     this.cancel = this.cancel.bind(this);
     this.criteriaChanged = this.criteriaChanged.bind(this);
+    this.heightChanged = this.heightChanged.bind(this);
+  }
+
+  heightChanged() {
+    if (this.props.heightChanged !== undefined) {
+      this.props.heightChanged(this.props.id);
+    }
   }
 
   deleteQuestion() {
@@ -135,6 +142,7 @@ class Question extends React.Component {
             id={this.props.id}
             question={this.props.editState}
             questionnaireCategory={this.props.questionnaireCategory}
+            heightChanged={this.heightChanged}
           />
         </div>
       );
@@ -186,7 +194,11 @@ class Question extends React.Component {
 
     return this.props.connectDragSource(
       this.props.connectDropTarget(
-        <div style={{position: 'absolute', width: '100%', top: this.props.top, transition: 'all .2s ease-in-out'}}>
+        <div
+          style={{position: 'absolute', width: '100%', top: this.props.top, transition: 'all .2s ease-in-out'}}
+          id={`qstn${this.props.id}`}
+          className="qstn"
+        >
           <div className={classes}>
             <span className={styles.gripper}>
               <Gripper className={`${styles.override} ${styles.gripperIcon}`} color="rgba(0, 0, 0, .4)" />
