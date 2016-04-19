@@ -73,8 +73,7 @@
 }
 
 .text {
-  overflow: hidden;
-  height: 3em;
+  min-height: 3em;
   line-height: 1.5em;
   margin-top: 5px;
   font-size: 12px;

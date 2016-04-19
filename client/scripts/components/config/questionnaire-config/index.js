@@ -41,6 +41,46 @@ class QuestionnaireConfig extends React.Component {
     this.newQuestionStarted = this.newQuestionStarted.bind(this);
     this.addNewQuestion = this.addNewQuestion.bind(this);
     this.newQuestionCancelled = this.newQuestionCancelled.bind(this);
+    this.heightChanged = this.heightChanged.bind(this);
+    this.updateHeights = this.updateHeights.bind(this);
+
+    this.state = {
+      questionHeights: {}
+    };
+  }
+
+  componentDidMount() {
+    this.updateHeights();
+  }
+
+  componentDidUpdate() {
+    this.updateHeights();
+  }
+
+  updateHeights() {
+    let questionDomElements = document.querySelectorAll('.qstn');
+    if (questionDomElements.length <= 0) {
+      return;
+    }
+
+    questionDomElements = Array.from(questionDomElements);
+    const questionHeights = this.state.questionHeights;
+    let shouldRefresh = false;
+    questionDomElements.forEach(question => {
+      if (!question.id) {
+        return;
+      }
+
+      const questionId = question.id.replace('qstn', '');
+      if (question.clientHeight !== questionHeights[questionId]) {
+        questionHeights[questionId] = question.clientHeight;
+        shouldRefresh = true;
+      }
+    });
+
+    if (shouldRefresh) {
+      this.setState({ questionHeights });
+    }
   }
 
   subQuestionMoved(draggedQuestionId, targetId) {
@@ -169,6 +209,8 @@ class QuestionnaireConfig extends React.Component {
       question.question.displayCriteria = 'Yes';
 
       ConfigActions.updateQuestions(this.props.questionnaireCategory, this.props.questions);
+
+      setTimeout(this.updateHeights, 200);
     }
   }
 
@@ -200,27 +242,30 @@ class QuestionnaireConfig extends React.Component {
       question.question.order = parent.question.order + 1;
 
       ConfigActions.updateQuestions(this.props.questionnaireCategory, this.props.questions);
+
+      setTimeout(this.updateHeights, 200);
     }
   }
 
   findQuestionHeight(question) {
-    const heightOfAQuestion = 139;
-    const heightOfExpandedQuestion = 285;
-    const heightOfExpandedMultiSelect = 390;
-    let height;
+    if (this.state.questionHeights[question.id] !== undefined) {
+      return this.state.questionHeights[question.id] + 24;
+    }
+
+    const initHeightOfAQuestion = 139;
+    const initHeightOfExpandedQuestion = 285;
+    const initHeightOfExpandedMultiSelect = 390;
+
     if (this.isOpen(question.id)) {
       const editState = this.props.questionsBeingEdited[question.id];
       if (editState.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
-        height = heightOfExpandedMultiSelect;
+        return initHeightOfExpandedMultiSelect;
       }
-      else {
-        height = heightOfExpandedQuestion;
-      }
-    } else {
-      height = heightOfAQuestion;
+
+      return initHeightOfExpandedQuestion;
     }
 
-    return height;
+    return initHeightOfAQuestion;
   }
 
   isOpen(id) {
@@ -256,6 +301,13 @@ class QuestionnaireConfig extends React.Component {
 
   newQuestionStarted() {
     ConfigActions.startNewQuestion(this.props.questionnaireCategory);
+  }
+
+  heightChanged(questionId) {
+    const domElement = document.querySelector(`#qstn${questionId}`);
+    const questionHeights = this.state.questionHeights;
+    questionHeights[questionId] = domElement.clientHeight;
+    this.setState({ questionHeights });
   }
 
   render() {
@@ -348,6 +400,7 @@ class QuestionnaireConfig extends React.Component {
           isSubQuestion={false}
           top={question.question.top}
           style={questionStyle}
+          heightChanged={this.heightChanged}
         />
       );
 
@@ -369,6 +422,7 @@ class QuestionnaireConfig extends React.Component {
             top={subQuestion.question.top}
             style={{cursor: 'move'}}
             displayCriteria={subQuestion.question.displayCriteria}
+            heightChanged={this.heightChanged}
           />
         );
       });
