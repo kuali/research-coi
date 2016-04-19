@@ -25,14 +25,60 @@ import {AdminEntitiesSummary} from '../admin-entities-summary';
 import {AdminDeclarationsSummary} from '../admin-declarations-summary';
 import ApprovalConfirmation from '../approval-confirmation';
 import RejectionConfirmation from '../rejection-confirmation';
-import {COIConstants} from '../../../../../../coi-constants';
+import {
+  DISCLOSURE_STEP,
+  FILE_TYPE,
+  DISCLOSURE_STATUS
+} from '../../../../../../coi-constants';
 import classNames from 'classnames';
+
+export function prepareScreeningQuestions(questions) {
+  const active = questions.filter(question => question.active !== 0);
+
+  const parents = active
+    .filter(question => !question.parent)
+    .sort((a, b) => a.question.order - b.question.order);
+
+  const sortedQuestions = [];
+  parents.forEach(parent => {
+    sortedQuestions.push(parent);
+    questions
+      .filter(question => question.parent === parent.id)
+      .sort((a, b) => a.question.order - b.question.order)
+      .forEach(child => {
+        sortedQuestions.push(child);
+      });
+  });
+
+  return sortedQuestions.map(question => {
+    return {
+      id: question.id,
+      parent: question.parent,
+      order: question.question.order,
+      numberToShow: question.question.numberToShow,
+      text: question.question.text,
+      type: question.question.type
+    };
+  });
+}
+
+export function prepareEntityQuestions(questions) {
+  return questions
+    .filter(question => question.active !== 0)
+    .sort((a, b) => a.question.order - b.question.order)
+    .map(question => {
+      return {
+        id: question.id,
+        text: question.question.text,
+        type: question.question.type
+      };
+    });
+}
 
 export class DisclosureDetail extends React.Component {
   constructor() {
     super();
 
-    this.findScreeningQuestion = this.findScreeningQuestion.bind(this);
     this.getResponses = this.getResponses.bind(this);
   }
 
@@ -48,15 +94,6 @@ export class DisclosureDetail extends React.Component {
     return result;
   }
 
-  findScreeningQuestion(questionId) {
-    return this.props.config.questions.screening.find(question => {
-      if (question.id === questionId) {
-        return true;
-      }
-      return false;
-    });
-  }
-
   getResponses(type) {
     let responses = [];
     if (this.props.piResponses && Array.isArray(this.props.piResponses)) {
@@ -69,77 +106,28 @@ export class DisclosureDetail extends React.Component {
   }
 
   render() {
+    const { config, disclosure } = this.props;
     const entityNameMap = this.makeEntityMap();
-
-    const screeningQuestions = this.props.config.questions.screening.filter(question => {
-      return question.active !== 0;
-    }).sort((a, b) => {
-      let aParent, bParent;
-      if (a.parent) {
-        aParent = this.findScreeningQuestion(a.parent);
-      }
-      if (b.parent) {
-        bParent = this.findScreeningQuestion(b.parent);
-      }
-
-      if (!aParent && !bParent) {
-        return a.question.order - b.question.order;
-      }
-      else if (a.parent && b.parent) {
-        if (a.parent === b.parent) {
-          return a.question.order - b.question.order;
-        }
-
-        return aParent.question.order - bParent.question.order;
-      }
-      else if (a.parent && !b.parent) {
-        return aParent.question.order - b.question.order;
-      }
-
-      return a.question.order - bParent.question.order;
-    }).map(question => {
-      return {
-        id: question.id,
-        parent: question.parent,
-        order: question.question.order,
-        numberToShow: question.question.numberToShow,
-        text: question.question.text,
-        type: question.question.type
-      };
-    });
-
-    const entityQuestions = this.props.config.questions.entities.filter(question => {
-      return question.active !== 0;
-    }).sort((a, b) => {
-      return a.question.order - b.question.order;
-    }).map(question => {
-      return {
-        id: question.id,
-        text: question.question.text,
-        type: question.question.type
-      };
-    });
+    const screeningQuestions = prepareScreeningQuestions(
+      config.questions.screening
+    );
+    const entityQuestions = prepareEntityQuestions(config.questions.entities);
     const screeningAnswers = {};
-    this.props.disclosure.answers.forEach(answer => {
+    disclosure.answers.forEach(answer => {
       screeningAnswers[answer.questionId] = answer.answer.value;
     });
 
-    const questionnaireComments = this.props.disclosure.comments.filter(comment => {
-      return comment.topicSection === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+    const { comments } = disclosure;
+    const questionnaireComments = comments.filter(comment => {
+      return comment.topicSection === DISCLOSURE_STEP.QUESTIONNAIRE;
     });
-
-    const entitiesComments = this.props.disclosure.comments.filter(comment => {
-      return comment.topicSection === COIConstants.DISCLOSURE_STEP.ENTITIES;
+    const entitiesComments = comments.filter(comment => {
+      return comment.topicSection === DISCLOSURE_STEP.ENTITIES;
     });
-
-    const declarationsComments = this.props.disclosure.comments.filter(comment => {
-      return comment.topicSection === COIConstants.DISCLOSURE_STEP.PROJECTS;
+    const declarationsComments = comments.filter(comment => {
+      return comment.topicSection === DISCLOSURE_STEP.PROJECTS;
     });
-
-
-    const piComments = this.props.disclosure.comments.filter(comment => {
-      return comment.piVisible;
-    });
+    const piComments = comments.filter(comment => comment.piVisible);
 
     const classes = classNames(
       'inline-flexbox',
@@ -149,24 +137,25 @@ export class DisclosureDetail extends React.Component {
       {[styles.showRejection]: this.props.showRejection}
     );
 
-    const showAttachments = this.props.disclosure.files
-        .filter(file => file.fileType === COIConstants.FILE_TYPE.DISCLOSURE)
-        .length > 0;
+    const showAttachments = disclosure.files
+      .some(file => file.fileType === FILE_TYPE.DISCLOSURE);
 
-    const readonly = this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-      this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED ||
-      this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED ||
-      this.props.disclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED;
+    const { statusCd } = disclosure;
+    const readonly = statusCd === DISCLOSURE_STATUS.UP_TO_DATE ||
+      statusCd === DISCLOSURE_STATUS.REVISION_REQUIRED ||
+      statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED ||
+      statusCd === DISCLOSURE_STATUS.EXPIRED;
 
-    const declarationsWithoutDispositions = this.props.disclosure.declarations.filter(declaration => {
+    const declarationsWithoutDispositions = disclosure.declarations.filter(declaration => {
       return !declaration.dispositionTypeCd;
     });
-    const showDispositionWarning = declarationsWithoutDispositions.length > 0 && this.props.config.general.dispositionsEnabled;
+    const showDispositionWarning =
+      declarationsWithoutDispositions.length > 0 &&
+      config.general.dispositionsEnabled;
+
     return (
-      <div
-        className={classes}
-      >
-        <DisclosureDetailHeading disclosure={this.props.disclosure} />
+      <div className={classes}>
+        <DisclosureDetailHeading disclosure={disclosure} />
         <div className={`fill flexbox row ${styles.bottom}`}>
           <span className={`fill ${styles.detailsFromPI}`}>
             <AdminQuestionnaireSummary
@@ -174,34 +163,34 @@ export class DisclosureDetail extends React.Component {
               answers={screeningAnswers}
               comments={questionnaireComments}
               className={`${styles.override} ${styles.questionnaire}`}
-              piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE)}
+              piResponses={this.getResponses(DISCLOSURE_STEP.QUESTIONNAIRE)}
             />
             <AdminEntitiesSummary
               questions={entityQuestions}
-              entities={this.props.disclosure.entities}
+              entities={disclosure.entities}
               comments={entitiesComments}
               className={`${styles.override} ${styles.entities}`}
-              piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.ENTITIES)}
+              piResponses={this.getResponses(DISCLOSURE_STEP.ENTITIES)}
             />
             <AdminDeclarationsSummary
               entityNameMap={entityNameMap}
-              declarations={this.props.disclosure.declarations}
+              declarations={disclosure.declarations}
               comments={declarationsComments}
-              id={this.props.disclosure.id}
+              id={disclosure.id}
               className={`${styles.override} ${styles.declarations}`}
-              piResponses={this.getResponses(COIConstants.DISCLOSURE_STEP.PROJECTS)}
-              config={this.props.config}
+              piResponses={this.getResponses(DISCLOSURE_STEP.PROJECTS)}
+              config={config}
               readonly={readonly}
             />
           </span>
           <span style={{display: 'inline-block'}}>
             <ApprovalConfirmation
-              id={this.props.disclosure.id}
+              id={disclosure.id}
               showDispositionWarning={showDispositionWarning}
               className={`${styles.override} ${styles.confirmation}`}
             />
             <RejectionConfirmation
-              id={this.props.disclosure.id}
+              id={disclosure.id}
               canReject={piComments.length > 0}
               className={`${styles.override} ${styles.rejection}`}
             />
