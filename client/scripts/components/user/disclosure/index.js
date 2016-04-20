@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import classNames from 'classnames';
 import {AppHeader} from '../../app-header';
 import {Sidebar} from '../sidebar';
 import {DisclosureHeader} from '../disclosure-header';
@@ -185,122 +186,134 @@ export class Disclosure extends React.Component {
       !nextDisabled
     );
 
-    switch (currentDisclosureStep) {
-      case STEP.QUESTIONNAIRE:
-        if (window.config.questions.screening) {
-          percent = Math.floor(((currentQuestion - 1) / window.config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
-        }
+    const loading = currentDisclosureId === 222;
+    if (loading) {
+      heading = 'Loading disclosure...';
+      showPreviousLink = false;
+    } else {
+      switch (currentDisclosureStep) {
+        case STEP.QUESTIONNAIRE:
+          if (window.config.questions.screening) {
+            percent = Math.floor(((currentQuestion - 1) / window.config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
+          }
 
-        const question = currentQuestion;
-        currentStep = (
-          <Questionnaire
-            questions={window.config.questions.screening}
-            answers={currentDisclosureState.disclosure.answers}
-            currentquestion={question}
-            disclosureid={currentDisclosureId}
-            instructionsShowing={this.state.applicationState.instructionsShowing}
-          />
-        );
-        heading = 'Questionnaire';
-        previousLinkLabel = 'PREVIOUS QUESTION';
-        showPreviousLink = currentQuestion > 1;
-
-        break;
-      case STEP.QUESTIONNAIRE_SUMMARY:
-        percent = QUESTIONNAIRE_PERCENTAGE;
-        currentStep = (
-          <QuestionnaireSummary
-            questions={window.config.questions.screening}
-            instructionsShowing={this.state.applicationState.instructionsShowing}
-            answers={this.state.applicationState.currentDisclosureState.disclosure.answers}
-          />
-        );
-        heading = 'Questionnaire';
-        break;
-      case STEP.ENTITIES:
-        stepNumber = 1;
-        const ENTITIES_PERCENTAGE = 50;
-        percent = ENTITIES_PERCENTAGE;
-        const enforceEntities = DisclosureStore.enforceEntities(this.state.applicationState.currentDisclosureState.disclosure, window.config);
-        nextDisabled = this.incompleteEntityExists(this.state.entities) ||
-          enforceEntities;
-        currentStep = (
-          <Entities
-            enforceEntities = {enforceEntities}
-            applicationState={this.state.applicationState}
-            entities={this.state.entities}
-            inProgress={this.state.applicationState.entityInProgress}
-            instructionsShowing={this.state.applicationState.instructionsShowing}
-          />
-        );
-
-        heading = 'Financial Entities';
-        break;
-      case STEP.PROJECTS:
-        stepNumber = 2;
-        const PROJECTS_PERCENTAGE = 75;
-        percent = PROJECTS_PERCENTAGE;
-        const disclosureType = this.props.location.query.type;
-        if (disclosureType === COIConstants.DISCLOSURE_TYPE.MANUAL) {
-          const disclosure = this.state.applicationState.currentDisclosureState.disclosure;
+          const question = currentQuestion;
           currentStep = (
-            <ManualEvent
-              step={this.state.applicationState.manualStep}
-              disclosure={disclosure}
-              type={disclosure.manualType}
+            <Questionnaire
+              questions={window.config.questions.screening}
+              answers={currentDisclosureState.disclosure.answers}
+              currentquestion={question}
+              disclosureid={currentDisclosureId}
+              instructionsShowing={this.state.applicationState.instructionsShowing}
+            />
+          );
+          heading = 'Questionnaire';
+          previousLinkLabel = 'PREVIOUS QUESTION';
+          showPreviousLink = currentQuestion > 1;
+
+          break;
+        case STEP.QUESTIONNAIRE_SUMMARY:
+          percent = QUESTIONNAIRE_PERCENTAGE;
+          currentStep = (
+            <QuestionnaireSummary
+              questions={window.config.questions.screening}
+              instructionsShowing={this.state.applicationState.instructionsShowing}
+              answers={this.state.applicationState.currentDisclosureState.disclosure.answers}
+            />
+          );
+          heading = 'Questionnaire';
+          break;
+        case STEP.ENTITIES:
+          stepNumber = 1;
+          const ENTITIES_PERCENTAGE = 50;
+          percent = ENTITIES_PERCENTAGE;
+          const enforceEntities = DisclosureStore.enforceEntities(this.state.applicationState.currentDisclosureState.disclosure, window.config);
+          nextDisabled = this.incompleteEntityExists(this.state.entities) ||
+            enforceEntities;
+          currentStep = (
+            <Entities
+              enforceEntities = {enforceEntities}
+              applicationState={this.state.applicationState}
               entities={this.state.entities}
-              relations={this.state.declarations}
-              declarationStates={this.state.applicationState.declarationStates}
+              inProgress={this.state.applicationState.entityInProgress}
               instructionsShowing={this.state.applicationState.instructionsShowing}
             />
           );
-          heading = 'Manual Event';
-          nextDisabled = this.undefinedManualRelationExists(
-            this.state.entities,
-            disclosure,
-            this.state.declarations
-          );
-        }
-        else {
-          const activeEntities = this.state.entities.filter(entity => entity.active);
+
+          heading = 'Financial Entities';
+          break;
+        case STEP.PROJECTS:
+          stepNumber = 2;
+          const PROJECTS_PERCENTAGE = 75;
+          percent = PROJECTS_PERCENTAGE;
+          const disclosureType = this.props.location.query.type;
+          if (disclosureType === COIConstants.DISCLOSURE_TYPE.MANUAL) {
+            const disclosure = this.state.applicationState.currentDisclosureState.disclosure;
+            currentStep = (
+              <ManualEvent
+                step={this.state.applicationState.manualStep}
+                disclosure={disclosure}
+                type={disclosure.manualType}
+                entities={this.state.entities}
+                relations={this.state.declarations}
+                declarationStates={this.state.applicationState.declarationStates}
+                instructionsShowing={this.state.applicationState.instructionsShowing}
+              />
+            );
+            heading = 'Manual Event';
+            nextDisabled = this.undefinedManualRelationExists(
+              this.state.entities,
+              disclosure,
+              this.state.declarations
+            );
+          }
+          else {
+            const activeEntities = this.state.entities.filter(entity => entity.active);
+            currentStep = (
+              <Relationships
+                projects={this.state.projects}
+                entities={activeEntities}
+                declarations={this.state.declarations}
+                declarationStates={this.state.applicationState.declarationStates}
+                view={this.state.applicationState.declarationView}
+                declarationTypes={window.config.declarationTypes}
+                instructionsShowing={this.state.applicationState.instructionsShowing}
+              />
+            );
+            heading = 'Project Declarations';
+            nextDisabled = this.undefinedProjectRelationExists(
+              this.state.entities,
+              this.state.projects,
+              this.state.declarations
+            );
+          }
+          break;
+        case STEP.CERTIFY:
+          stepNumber = 3;
+          const CERTIFY_PERCENTAGE = 99;
+          percent = CERTIFY_PERCENTAGE;
           currentStep = (
-            <Relationships
-              projects={this.state.projects}
-              entities={activeEntities}
-              declarations={this.state.declarations}
-              declarationStates={this.state.applicationState.declarationStates}
-              view={this.state.applicationState.declarationView}
-              declarationTypes={window.config.declarationTypes}
+            <Certify
               instructionsShowing={this.state.applicationState.instructionsShowing}
+              isCertified = {this.state.applicationState.currentDisclosureState.isCertified}
+              files={this.state.files}
             />
           );
-          heading = 'Project Declarations';
-          nextDisabled = this.undefinedProjectRelationExists(
-            this.state.entities,
-            this.state.projects,
-            this.state.declarations
-          );
-        }
-        break;
-      case STEP.CERTIFY:
-        stepNumber = 3;
-        const CERTIFY_PERCENTAGE = 99;
-        percent = CERTIFY_PERCENTAGE;
-        currentStep = (
-          <Certify
-            instructionsShowing={this.state.applicationState.instructionsShowing}
-            isCertified = {this.state.applicationState.currentDisclosureState.isCertified}
-            files={this.state.files}
-          />
-        );
-        heading = 'Certification';
-        break;
+          heading = 'Certification';
+          break;
+      }
     }
 
     const submitDisabled = window.config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
 
+    const classes = classNames(
+      'flexbox',
+      'column',
+      {[styles.loading]: loading}
+    );
+
     return (
-      <div className={`flexbox column`} style={{height: '100%'}}>
+      <div className={classes} style={{height: '100%'}}>
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <Sidebar
