@@ -720,36 +720,33 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
   });
 };
 
-export const getAnnualDisclosure = (dbInfo, userInfo, piName) => {
+export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
   const knex = getKnex(dbInfo);
-  return knex('disclosure').select('id as id').where('type_cd', 2).andWhere('user_id', userInfo.schoolId)
-    .then(result => {
-      if (result.length < 1) {
-        return knex('config').max('id as id')
-        .then(config => {
-          const newDisclosure = {
-            type_cd: 2,
-            status_cd: 1,
-            start_date: new Date(),
-            user_id: userInfo.schoolId,
-            submitted_by: piName,
-            config_id: config[0].id
-          };
-          return knex('disclosure')
-            .insert(newDisclosure, 'id')
-            .then(id => {
-              newDisclosure.id = id[0];
-              newDisclosure.answers = [];
-              newDisclosure.entities = [];
-              newDisclosure.declarations = [];
-              return camelizeJson(newDisclosure);
-            });
-        });
-      }
+  const result = await knex('disclosure')
+    .select('id as id')
+    .where('type_cd', 2)
+    .andWhere('user_id', userInfo.schoolId);
 
-      return get(dbInfo, userInfo, result[0].id);
-    });
-};
+  if (result.length >= 1) {
+    return get(dbInfo, userInfo, result[0].id);
+  }
+
+  const config = await knex('config').max('id as id');
+  const newDisclosure = {
+    type_cd: 2,
+    status_cd: 1,
+    start_date: new Date(),
+    user_id: userInfo.schoolId,
+    submitted_by: piName,
+    config_id: config[0].id
+  };
+  const id = await knex('disclosure').insert(newDisclosure, 'id');
+  newDisclosure.id = id[0];
+  newDisclosure.answers = [];
+  newDisclosure.entities = [];
+  newDisclosure.declarations = [];
+  return camelizeJson(newDisclosure);
+}
 
 export const getSummariesForReviewCount = (dbInfo, filters) => {
   const knex = getKnex(dbInfo);
