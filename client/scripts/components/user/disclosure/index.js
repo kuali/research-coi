@@ -186,7 +186,7 @@ export class Disclosure extends React.Component {
       !nextDisabled
     );
 
-    const loading = currentDisclosureId === 222;
+    const loading = currentDisclosureId === -1;
     if (loading) {
       heading = 'Loading disclosure...';
       showPreviousLink = false;
