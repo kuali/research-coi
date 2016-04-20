@@ -150,8 +150,7 @@ export const NOTIFICATIONS_MODE = {
   OFF: 0,
   TEST: 1,
   PROD: 2
-
-}
+};
 
 export const COIConstants = {
   DISCLOSURE_STEP,
