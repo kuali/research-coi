@@ -73,6 +73,13 @@ export const init = app => {
     res.sendStatus(OK);
   }));
 
+
+  app.get('/api/coi/reviewers', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res) => {
+    const results = await getReviewers(req.dbInfo, req.headers.authorization);
+    res.send(results);
+  }));
+
+
   app.get('/api/coi/reviewers/:disclosureId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     if (!req.query.term) {
       res.send([]);

@@ -57,7 +57,8 @@ export default function AdditionalReviewPanel(props) {
   }
 
   let reviewerSearch;
-  if ([DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL, DISCLOSURE_STATUS.RESUBMITTED].includes(props.statusCd)) {
+  if ([DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL, DISCLOSURE_STATUS.RESUBMITTED].includes(props.statusCd) &&
+    props.displayAdditionalReviewers) {
     reviewerSearch = (
       <div>
         <label style={{fontSize: '12px', paddingBottom: '5px', color: '#777'}}>SEARCH REVIEWERS</label>
@@ -73,6 +74,19 @@ export default function AdditionalReviewPanel(props) {
   );
   }
 
+  let additionalReviewers;
+
+  if (props.displayAdditionalReviewers || props.reviewers.length > 0) {
+    additionalReviewers = (
+      <div style={{paddingTop: 12, borderTop: '1px solid #777'}}>
+        <div style={{paddingTop: 12, marginBottom: 15}}>
+          <span className={styles.subLabel}>ADDITIONAL REVIEWERS</span>
+        </div>
+        {reviewerSearch}
+        {additionalReview}
+      </div>
+    );
+  }
   return (
     <div className={classNames(styles.container, props.className)}>
       <div style={{paddingBottom: 20}}>
@@ -99,14 +113,7 @@ export default function AdditionalReviewPanel(props) {
         <div style={{fontSize: 10, marginTop: 2}}>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
       </FileUpload>
 
-      <div style={{paddingTop: 12, borderTop: '1px solid #777'}}>
-        <div style={{paddingTop: 12, marginBottom: 15}}>
-          <span className={styles.subLabel}>ADDITIONAL REVIEWERS</span>
-        </div>
-        {reviewerSearch}
-        {additionalReview}
-      </div>
-
+      {additionalReviewers}
 
     </div>
   );
