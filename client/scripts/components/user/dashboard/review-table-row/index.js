@@ -20,14 +20,13 @@ import styles from './style';
 import React from 'react';
 import {GreyButton} from '../../../grey-button';
 import {formatDate} from '../../../../format-date';
-import {Link} from 'react-router';
 
-export function ReviewTableRow({assignDate, reporter, type, id}) {
+export function ReviewTableRow({assignDate, reporter, type, id, statusCd}) {
   return (
     <div role="row" className={styles.container}>
-      <Link
+      <a
         style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
-        to={`/coi/revise/${id}`}
+        href={`/coi/admin/detailview/${id}/${statusCd}`}
       >
         <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
           {reporter}
@@ -41,7 +40,7 @@ export function ReviewTableRow({assignDate, reporter, type, id}) {
         <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
           <GreyButton>Review &gt;</GreyButton>
         </span>
-      </Link>
+      </a>
     </div>
   );
 }

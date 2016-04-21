@@ -20,18 +20,25 @@ import styles from './style';
 import React from 'react';
 import {ReviewTableRow} from '../review-table-row';
 import ConfigStore from '../../../../stores/config-store';
+import { DATE_TYPE } from '../../../../../../coi-constants';
 
 export function ReviewTable({disclosures}) {
   let rows;
   if (Array.isArray(disclosures)) {
     rows = disclosures.map(disclosure => {
+      let assignedDate;
+      if (disclosure.dates) {
+        const dates = JSON.parse(disclosure.dates);
+        assignedDate = dates.find(date => date.type === DATE_TYPE.ASSIGNED);
+      }
       return (
         <ReviewTableRow
           key={disclosure.id}
-          reporter={disclosure.reporter}
-          type={ConfigStore.getDisclosureTypeString(disclosure.type)}
-          assignDate={disclosure.assign_date}
-          disclosureId={disclosure.id}
+          reporter={disclosure.name}
+          type={ConfigStore.getDisclosureTypeString(disclosure.typeCd)}
+          assignDate={assignedDate.date}
+          id={disclosure.id}
+          statusCd={disclosure.statusCd}
         />
       );
     });

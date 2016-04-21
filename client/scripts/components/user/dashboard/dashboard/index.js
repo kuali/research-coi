@@ -51,7 +51,8 @@ export class Dashboard extends React.Component {
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
       configLoaded: configState.isLoaded,
-      userInfo: UserInfoStore.getState().userInfo
+      userInfo: UserInfoStore.getState().userInfo,
+      toReview: storeState.disclosuresNeedingReview
     };
 
     this.onChange = this.onChange.bind(this);
@@ -79,7 +80,8 @@ export class Dashboard extends React.Component {
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
       configLoaded: configState.isLoaded,
-      userInfo: UserInfoStore.getState().userInfo
+      userInfo: UserInfoStore.getState().userInfo,
+      toReview: storeState.disclosuresNeedingReview
     });
   }
 
@@ -89,7 +91,8 @@ export class Dashboard extends React.Component {
       userInfo,
       applicationState,
       projects,
-      configLoaded
+      configLoaded,
+      toReview
     } = this.state;
 
     const isAdminOrReviewer = userInfo &&
@@ -196,9 +199,6 @@ export class Dashboard extends React.Component {
         );
       }
     }
-
-    const toReview = [
-    ];
 
     let disclosureTableLabel;
     let reviewTableLabel;

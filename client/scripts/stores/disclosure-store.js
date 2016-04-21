@@ -223,6 +223,7 @@ class _DisclosureStore {
     this.archivedDisclosures = [];
     this.archivedDisclosureDetail = undefined;
     this.disclosureSummariesForUser = [];
+    this.disclosuresNeedingReview = [];
   }
 
   loadProjects() {
@@ -278,15 +279,25 @@ class _DisclosureStore {
 
   refreshDisclosureSummaries() {
     createRequest()
-      .get('/api/coi/disclosure-user-summaries')
-      .end(processResponse((err, disclosures) => {
-        if (!err) {
-          this.disclosureSummariesForUser = disclosures.body;
+      .get('/api/coi/config')
+      .end(processResponse((error, config) => {
+        if (!error) {
+          window.config = config.body;
+
           createRequest()
-            .get('/api/coi/config')
-            .end(processResponse((error, config) => {
-              if (!error) {
-                window.config = config.body;
+            .get('/api/coi/disclosure-user-summaries')
+            .end(processResponse((discErrs, disclosures) => {
+              if (!discErrs) {
+                this.disclosureSummariesForUser = disclosures.body;
+                this.emitChange();
+              }
+            }));
+
+          createRequest()
+            .get('/api/coi/reviewers/disclosures')
+            .end(processResponse((reviewErrs, toReview) => {
+              if (!reviewErrs) {
+                this.disclosuresNeedingReview = toReview.body;
                 this.emitChange();
               }
             }));

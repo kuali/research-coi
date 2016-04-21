@@ -56,6 +56,7 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
   const reviewers = await knex('additional_reviewer as ar')
     .select(
       'd.type_cd as typeCd',
+      'd.status_cd as statusCd',
       'ar.id',
       'ar.user_id as userId',
       'ar.disclosure_id as disclosureId',
