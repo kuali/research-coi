@@ -152,6 +152,13 @@ export const NOTIFICATIONS_MODE = {
   PROD: 2
 };
 
+export const LANES = {
+  TEST: 'tst',
+  STAGE: 'stg',
+  SANDBOX: 'sbx',
+  PRODUCTION: 'prd'
+}
+
 export const COIConstants = {
   DISCLOSURE_STEP,
   INSTRUCTION_STEP,
@@ -177,5 +184,6 @@ export const COIConstants = {
   APPROVED_STATUSES,
   COI_ADMIN,
   NOTIFICATIONS_MODE,
-  PI_ROLE_CODE
+  PI_ROLE_CODE,
+  LANES
 };

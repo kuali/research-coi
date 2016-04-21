@@ -20,26 +20,20 @@
 
 import {camelizeJson, snakeizeJson} from './json-utils';
 import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
-import { NOTIFICATIONS_MODE } from '../../coi-constants';
+import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
 
 let getKnex;
 let getNotificationsInfo;
-let getConfiguration;
+let lane;
 try {
   const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
-  getConfiguration = extensions.getConfig;
   getNotificationsInfo = extensions.getNotificationsInfo;
+  lane = extensions.config.lane;
 }
 catch (err) {
   getKnex = require('./connection-manager').default;
-  getConfiguration = () => {
-    return {
-      featureFlag: {
-        dispositionTypes: process.env.DISPOSITION_TYPE_FEATURE_FLAG || false
-      }
-    };
-  };
+  lane = process.env.LANE || LANES.PRODUCTION;
   getNotificationsInfo = () => {
     return {
       notificationsMode: process.env.NOTIFICATIONS_MODE || NOTIFICATIONS_MODE.OFF
@@ -153,7 +147,6 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
   let config = mockDB.UIT;
   const knex = getKnex(dbInfo);
   const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
-  const featureFlags = getConfiguration(dbInfo).featureFlags;
   let query;
   if (optionalTrx) {
     query = knex.transacting(optionalTrx);
@@ -218,13 +211,8 @@ export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
     config.projectStatuses = result[13];
     config.notificationTemplates = result[14];
     config.notificationsMode = notificationsMode;
-
-    //sets feature flag for in progress disposition work
-    config.dispositionTypesFeatureFlag = featureFlags && featureFlags.dispositionTypes ?
-      featureFlags.dispositionTypes :
-      false;
-
     config.dispositionTypes = result[15];
+    config.lane = lane;
     config = camelizeJson(config);
     config.general = JSON.parse(result[9][0].config).general;
     return config;

@@ -60,7 +60,7 @@ export default class Declarations extends React.Component {
       declarationTypes: storeState.config.declarationTypes,
       dispositionTypes: storeState.config.dispositionTypes,
       dispositionsEnabled: storeState.config.general.dispositionsEnabled,
-      dispositionTypesFeatureFlag: storeState.config.dispositionTypesFeatureFlag,
+      lane: storeState.config.lane,
       instructions: storeState.config.general.instructions,
       dirty: storeState.dirty
     });
@@ -145,7 +145,7 @@ export default class Declarations extends React.Component {
       );
     }
     let dispositionPanel;
-    if(this.state.dispositionTypesFeatureFlag) {
+    if(this.state.lane === COIConstants.LANES.TEST) {
       dispositionPanel = (
         <Panel title="Disposition Configuration">
           <div className={styles.types}>

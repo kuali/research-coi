@@ -19,6 +19,7 @@
 /* eslint-disable camelcase */
 
 import {isDisclosureUsers} from './common-db';
+import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
 import { filterProjects } from '../services/project-service/project-service';
 import * as FileService from '../services/file-service/file-service';
@@ -32,12 +33,15 @@ const HOURS = 24;
 const ONE_DAY = MILLIS * SECONDS * MINUTES * HOURS;
 
 let getKnex;
+let lane;
 try {
   const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
+  lane = extensions.config.lane;
 }
 catch (err) {
   getKnex = require('./connection-manager').default;
+  lane = process.env.LANE || COIConstants.LANES.PRODUCTION;
 }
 
 export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEntity, files) => {
@@ -1103,36 +1107,58 @@ function updateProjects(trx, schoolId) {
     });
 }
 
-export const submit = (dbInfo, userInfo, disclosureId, authHeader) => {
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by ${userInfo.username} to submit disclosure ${disclosureId} which isnt theirs`);
-      }
+async function addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, unit) {
+  if(lane === COIConstants.LANES.TEST) {
+    const reviewers = await getReviewers(dbInfo, authHeader, unit);
 
-      const knex = getKnex(dbInfo);
-      return knex.transaction(trx => {
-        return Promise.all([
-          updateStatus(trx, userInfo.name, disclosureId),
-          updateEntitiesAndRelationshipsStatuses(trx, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED),
-          updateProjects(trx, userInfo.schoolId)
-        ]).then(() => {
-          return get(dbInfo, userInfo, disclosureId, trx).then(disclosure => {
-            return trx('config').select('config').where({id: disclosure.configId}).then(config => {
-              const autoApprove = JSON.parse(config[0].config).general.autoApprove;
-              if (autoApprove) {
-                return trx('fin_entity').count('id as count').where({active: true, disclosure_id: disclosureId}).then(count => {
-                  if (count[0].count === 0) {
-                    return approve(dbInfo, disclosure, COIConstants.SYSTEM_USER, disclosureId, authHeader, trx);
-                  }
-                });
-              }
-            });
-          });
-        });
+    return await Promise.all(reviewers.map(reviewer => {
+      return trx('additional_reviewer').insert({
+        user_id: reviewer.userId,
+        disclosure_id: disclosureId,
+        name: reviewer.value,
+        email: reviewer.email,
+        active: true,
+        dates: JSON.stringify([{
+          type: COIConstants.DATE_TYPE.ASSIGNED,
+          date: new Date()
+        }]),
+        assigned_by: COIConstants.SYSTEM_USER
       });
-    });
-};
+    }));
+  }
+  return Promise.resolve();
+}
+
+export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
+  const knex = getKnex(dbInfo);
+  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId);
+
+  if (!isSubmitter) {
+    throw Error(`Attempt by ${userInfo.username} to submit disclosure ${disclosureId} which isnt theirs`);
+  }
+
+  return knex.transaction( async (trx) => {
+    await updateStatus(trx, userInfo.name, disclosureId);
+    await updateEntitiesAndRelationshipsStatuses(trx, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED);
+    await updateProjects(trx, userInfo.schoolId);
+
+    const disclosure = await get(dbInfo, userInfo, disclosureId, trx);
+    const config = await trx('config').select('config').where({id: disclosure.configId});
+
+    const generalConfig = JSON.parse(config[0].config).general;
+
+    if (generalConfig.autoAddAdditionalReviewer) {
+      await addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, userInfo.primaryDepartmentCode);
+    }
+
+    if (generalConfig.autoApprove) {
+      const count = await trx('fin_entity').count('id as count').where({active: true, disclosure_id: disclosureId});
+      if (count[0].count === 0) {
+        await approve(dbInfo, disclosure, COIConstants.SYSTEM_USER, disclosureId, authHeader, trx);
+      }
+    }
+  });
+}
 
 async function updateEditableComments(trx, disclosureId) {
   await trx('comment')
