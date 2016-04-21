@@ -169,6 +169,6 @@ export async function getUsersInRole(url, authToken, role, cacheKey) {
     cache.set(REVIEWER_CACHE_KEY, results);
     return Promise.resolve(results);
   } catch(err) {
-    return Promise.reject(err);
+    return Promise.resolve([]);
   }
 }

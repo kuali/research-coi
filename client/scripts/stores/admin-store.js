@@ -132,6 +132,8 @@ class _AdminStore {
 
     delete this.applicationState.selectedDisclosure;
     this.applicationState.loadingDisclosure = true;
+
+
     createRequest().get(`/api/coi/disclosures/${id}`)
            .end(processResponse((err, disclosure) => {
              if (!err) {
@@ -146,6 +148,14 @@ class _AdminStore {
         this.emitChange();
       }
     }));
+
+    createRequest().get(`/api/coi/reviewers`)
+      .end(processResponse((err, responses) => {
+        if (!err) {
+          this.applicationState.displayAdditionalReviewers = responses.body.length > 0;
+          this.emitChange();
+        }
+      }));
   }
 
   loadArchivedDisclosure(id) {
