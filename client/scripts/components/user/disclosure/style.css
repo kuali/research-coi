@@ -21,6 +21,10 @@
   min-height: 100px;
 }
 
+.loading {
+  cursor: wait;
+}
+
 .override.header {
   box-shadow: 0 1px 6px #D1D1D1;
   z-index: 99;

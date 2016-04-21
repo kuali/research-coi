@@ -189,7 +189,7 @@ class _DisclosureStore {
         question: 1,
         isCertified: false,
         disclosure: {
-          id: 222,
+          id: -1,
           answers: []
         },
         visitedSteps: {}
