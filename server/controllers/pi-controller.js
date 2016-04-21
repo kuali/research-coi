@@ -22,7 +22,7 @@ import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { FORBIDDEN, NO_CONTENT } from '../../http-status-codes';
-import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
+import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import wrapAsync from './wrap-async';
 
 export const init = app => {
@@ -157,7 +157,7 @@ export const init = app => {
    */
   app.get('/api/coi/disclosures/:id/pi-responses', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosureIds = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      const reviewerDisclosureIds = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosureIds.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
         return;

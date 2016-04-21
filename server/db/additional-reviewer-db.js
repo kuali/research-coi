@@ -31,8 +31,18 @@ catch (err) {
 export async function getAdditionalReviewer(dbInfo, id) {
   try {
     const knex = getKnex(dbInfo);
-    const reviewer = await knex('additional_reviewer').select('name', 'user_id as userId', 'email', 'disclosure_id as disclosureId',
-      'dates', 'title', 'unit_name as unitName', 'active', 'assigned_by as assignedBy')
+    const reviewer = await knex('additional_reviewer')
+      .select(
+        'name',
+        'user_id as userId',
+        'email',
+        'disclosure_id as disclosureId',
+        'dates',
+        'title',
+        'unit_name as unitName',
+        'active',
+        'assigned_by as assignedBy'
+      )
       .where({id});
     reviewer[0].dates = JSON.parse(reviewer[0].dates);
     return reviewer[0];
@@ -42,6 +52,30 @@ export async function getAdditionalReviewer(dbInfo, id) {
 }
 
 export async function getDisclosuresForReviewer(dbInfo, schoolId) {
+  const knex = getKnex(dbInfo);
+  const reviewers = await knex('additional_reviewer as ar')
+    .select(
+      'd.type_cd as typeCd',
+      'ar.id',
+      'ar.user_id as userId',
+      'ar.disclosure_id as disclosureId',
+      'ar.name',
+      'ar.email',
+      'ar.title',
+      'ar.unit_name as unitName',
+      'ar.active',
+      'ar.dates',
+      'ar.assigned_by as assignedBy'
+    )
+    .innerJoin('disclosure as d', 'd.id', 'ar.disclosure_id')
+    .where({
+      'ar.user_id': schoolId,
+      'ar.active': true
+    });
+  return reviewers;
+}
+
+export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
   const knex = getKnex(dbInfo);
   try {
     const reviewers = await knex('additional_reviewer')

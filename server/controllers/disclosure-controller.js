@@ -19,7 +19,7 @@
 import * as DisclosureDB from '../db/disclosure-db';
 import * as PIReviewDB from '../db/pi-review-db';
 import wrapAsync from './wrap-async';
-import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
+import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
 import Log from '../log';
 import { ROLES } from '../../coi-constants';
@@ -93,7 +93,7 @@ export const init = app => {
   */
   app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
         return;
@@ -110,7 +110,7 @@ export const init = app => {
   app.get('/api/coi/disclosure-summaries', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
     let reviewerDisclosureIds;
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      reviewerDisclosureIds = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      reviewerDisclosureIds = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
     }
 
     let sortColumn = 'DATE_SUBMITTED';
@@ -252,7 +252,7 @@ export const init = app => {
   */
   app.post('/api/coi/disclosures/:id/comments', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
         return;
@@ -275,7 +275,7 @@ export const init = app => {
   */
   app.put('/api/coi/disclosures/:disclosureId/comments/:id', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
       if (!reviewerDisclosures.includes(req.params.disclosureId)) {
         res.sendStatus(FORBIDDEN);
         return;
