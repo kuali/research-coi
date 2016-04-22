@@ -43,12 +43,12 @@ export function authView(req, res) {
   return client.authView(req, res);
 }
 
-export function getReviewers(dbInfo, authHeader) {
-  return client.getReviewers(dbInfo, getAuthToken(authHeader));
+export function getReviewers(dbInfo, authHeader, unit) {
+  return client.getReviewers(dbInfo, getAuthToken(authHeader), unit);
 }
 
-export function getAdmins(dbInfo, authHeader) {
-  return client.getAdmins(dbInfo, getAuthToken(authHeader));
+export function getAdmins(dbInfo, authHeader, unit) {
+  return client.getAdmins(dbInfo, getAuthToken(authHeader), unit);
 }
 
 export function getAuthToken(header) {

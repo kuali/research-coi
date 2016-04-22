@@ -142,6 +142,15 @@ System configuration for COI is done with environment variables. Environment var
 >**RESEARCH_CORE_URL**
 >: The absolute path to the research core application. Used when linking to or calling services from research core.
 >  *Default*: https://uit.kuali.dev/res
+>
+>**LANE**
+>: Identifies which lane this instance is running in.
+>  **Options**
+> **'tst'**: Includes features that are actively being developed and have regular commits, volatility in designs, or other types of works in progress
+> **'stg'**: Includes features that are stable but are undergoing functional review, require additional burn-in time, or need multiple end-user data points
+> **'sbx'**: Includes features that are stable but are undergoing functional review, require additional burn-in time, or need multiple end-user data points
+> **'prd'**: Includes only complete features
+>  *Default*: 'prd'
 
 -------
 

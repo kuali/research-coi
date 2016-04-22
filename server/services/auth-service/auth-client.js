@@ -39,6 +39,10 @@ try {
   };
 }
 
+const END_POINTS = {
+  RESEARCH_USERS: '/research-common/api/v1/research-users/current/'
+};
+
 async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
   try {
     const response = await request.get(`${researchCoreUrl}/kc-sys-krad/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`)
@@ -71,6 +75,16 @@ async function getUserRoles(dbInfo, schoolId, authToken) {
   return ROLES.USER;
 }
 
+async function getResearchUser(researchCoreUrl, authToken) {
+  try {
+    const response = await request.get(`${researchCoreUrl}${END_POINTS.RESEARCH_USERS}`)
+     .set('Authorization', `Bearer ${authToken}`);
+    return Promise.resolve(response.body);
+  } catch(err) {
+    return Promise.resolve({});
+  }
+}
+
 export async function getUserInfo(dbInfo, hostname, authToken) {
   try {
     const cachedUserInfo = authToken ? cache.get(`${authToken}:${hostname}`) : undefined;
@@ -94,6 +108,9 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
       } else {
         userInfo.coiRole = role;
       }
+      const researchUser = await getResearchUser(authInfo.researchCoreUrl, authToken);
+
+      userInfo.primaryDepartmentCode = researchUser.primaryDepartmentCode;
     }
     cache.set(`${authToken}:${hostname}`, userInfo);
     return Promise.resolve(userInfo);
@@ -136,23 +153,30 @@ export function getAuthLink(req) {
   return `${url}/auth?return_to=${encodeURIComponent(returnLink)}`;
 }
 
-export async function getReviewers(dbInfo, authToken) {
+export async function getReviewers(dbInfo, authToken, unit) {
   const authInfo = getAuthorizationInfo(dbInfo);
-  return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.reviewerRole, REVIEWER_CACHE_KEY);
+  return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.reviewerRole, REVIEWER_CACHE_KEY, unit);
 }
 
-export async function getAdmins(dbInfo, authToken) {
+export async function getAdmins(dbInfo, authToken, unit) {
   const authInfo = getAuthorizationInfo(dbInfo);
-  return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.adminRole, ADMIN_CACHE_KEY);
+  return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.adminRole, ADMIN_CACHE_KEY, unit);
 }
 
-export async function getUsersInRole(url, authToken, role, cacheKey) {
+export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
   try {
+    const query = {};
+
+    if (unit) {
+      cacheKey = `cacheKey${unit}`;
+      query.qualification = `unitNumber:${unit}`;
+    }
     const cachedReviewers = cache.get(cacheKey);
     if (cachedReviewers) {
       return Promise.resolve(cachedReviewers);
     }
     const response = await request.get(`${url}/kc-sys-krad/v1/roles/${role}/principals`)
+      .query(query)
       .set('Authorization', `Bearer ${authToken}`);
 
     if (!response.ok) {
@@ -172,3 +196,4 @@ export async function getUsersInRole(url, authToken, role, cacheKey) {
     return Promise.resolve([]);
   }
 }
+
