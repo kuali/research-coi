@@ -54,8 +54,8 @@ const NOTIFICATION_TEMPLATES = {
   },
   NEW_PROJECT: {
     ID: 3,
-    SUBJECT: 'REPLACE WITH DEFAULT',
-    BODY: 'REPLACE WITH DEFAULT'
+    SUBJECT: 'Annual COI Disclosure Needs Update due to new project to disclose',
+    BODY: 'Dear {{PROJECT_PERSON_FIRST_NAME}} {{PROJECT_PERSON_LAST_NAME}}, Your annual disclosure needs to be updated because you have the role {{PROJECT_ROLE}} on the {{PROJECT_TYPE}} {{PROJECT_NUMBER}} {{PROJECT_TITLE}} (PI: {{PI_FIRST_NAME}} {{PI_LAST_NAME}} ) must be disclosed. To update your annual disclosure, please login to Kuali Research COI and access your annual disclosure at {{REPORTER_DASHBOARD}}. If you have any questions, please contact your COI Admin.' //eslint-disable-line max-len
   },
   SENT_BACK: {
     ID: 4,
