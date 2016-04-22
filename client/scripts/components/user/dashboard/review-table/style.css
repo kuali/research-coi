@@ -34,6 +34,13 @@
   font-weight: normal;
 }
 
+.noRows {
+  padding: 20px 60px;
+  border-bottom: 5px solid white;
+  background-color: #F7F7F7;
+  color: #333;
+}
+
 .headings {
   border-bottom: 1px solid #BBB;
   padding: 0 60px;

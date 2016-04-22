@@ -57,7 +57,7 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
     .select(
       'd.type_cd as typeCd',
       'd.status_cd as statusCd',
-      'ar.id',
+      'd.id',
       'ar.user_id as userId',
       'ar.disclosure_id as disclosureId',
       'ar.name',
