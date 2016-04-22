@@ -114,7 +114,8 @@
   background-color: black;
 }
 
-.disclosureTableLabel, .reviewTableLabel {
+.disclosureTableLabel,
+.reviewTableLabel {
   padding-left: 109px;
   font-size: 17px;
   font-weight: bold;

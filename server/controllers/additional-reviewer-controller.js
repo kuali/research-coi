@@ -87,7 +87,7 @@ export const init = app => {
     res.send(results);
   }));
 
-  app.get('/api/coi/reviewers/disclosures', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res) => {
+  app.get('/api/coi/reviewers/disclosures', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     const results = await AdditionalReviewerDB.getDisclosuresForReviewer(
       req.dbInfo,
       req.userInfo.schoolId
