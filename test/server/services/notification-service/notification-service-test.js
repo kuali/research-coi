@@ -145,8 +145,9 @@ describe('NotificationService', () => {
     });
 
     it('should return defaults if no match', () => {
-      assert.equal('REPLACE WITH DEFAULT', results[2].body);
-      assert.equal('REPLACE WITH DEFAULT', results[2].subject);
+      assert.equal('Dear {{PROJECT_PERSON_FIRST_NAME}} {{PROJECT_PERSON_LAST_NAME}}, Your annual disclosure needs to be updated because you have the role {{PROJECT_ROLE}} on the {{PROJECT_TYPE}} {{PROJECT_NUMBER}} {{PROJECT_TITLE}} (PI: {{PI_FIRST_NAME}} {{PI_LAST_NAME}} ) must be disclosed. To update your annual disclosure, please login to Kuali Research COI and access your annual disclosure at {{REPORTER_DASHBOARD}}. If you have any questions, please contact your COI Admin.' //eslint-disable-line max-len
+        , results[2].body);
+      assert.equal('Annual COI Disclosure Needs Update due to new project to disclose', results[2].subject);
     });
   });
 
