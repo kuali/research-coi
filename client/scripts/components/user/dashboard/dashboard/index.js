@@ -203,7 +203,7 @@ export class Dashboard extends React.Component {
     let disclosureTableLabel;
     let reviewTableLabel;
     let reviewTable;
-    if (toReview.length > 0) {
+    if (userInfo.coiRole === ROLES.REVIEWER) {
       disclosureTableLabel = (
         <div className={styles.disclosureTableLabel}>My Disclosures</div>
       );

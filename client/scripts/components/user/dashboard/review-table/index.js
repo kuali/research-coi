@@ -24,7 +24,7 @@ import { DATE_TYPE } from '../../../../../../coi-constants';
 
 export function ReviewTable({disclosures}) {
   let rows;
-  if (Array.isArray(disclosures)) {
+  if (Array.isArray(disclosures) && disclosures.length > 0) {
     rows = disclosures.map(disclosure => {
       let assignedDate;
       if (disclosure.dates) {
@@ -42,6 +42,12 @@ export function ReviewTable({disclosures}) {
         />
       );
     });
+  } else {
+    rows = (
+      <div role="row" className={styles.noRows}>
+        You don&rsquo;t have any reviews assigned at this time.
+      </div>
+    );
   }
 
   return (
