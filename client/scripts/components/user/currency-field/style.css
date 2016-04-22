@@ -19,7 +19,6 @@
 .currency {
   position: absolute;
   display: inline;
-  float: left;
   color: grey;
   left: 6px;
   top: 4px;

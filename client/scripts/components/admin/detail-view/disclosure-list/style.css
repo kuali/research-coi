@@ -79,5 +79,5 @@
 }
 
 .showFilters .filterArrow {
-  transform: rotateZ(0deg);
+  transform: rotateZ(0);
 }
