@@ -19,7 +19,6 @@
 .container {
   display: block;
   background-color: #eeeeee;
-  vertical-align: top;
   padding: 20px 30px 20px 30px;
   cursor: pointer;
   color: #666;

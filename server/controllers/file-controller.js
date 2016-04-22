@@ -18,7 +18,7 @@
 
 import * as FileService from '../services/file-service/file-service';
 import { isDisclosureUsers, isFinancialEntityUsers, getDisclosureForFinancialEntity } from '../db/common-db';
-import { getDisclosuresForReviewer } from '../db/additional-reviewer-db';
+import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import { ROLES, FILE_TYPE } from '../../coi-constants';
 import * as FileDb from '../db/file-db';
 import multer from 'multer';
@@ -54,7 +54,7 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
 
       if (req.userInfo.coiRole === ROLES.REVIEWER) {
         const disclosureId = await getDisclosureForFinancialEntity(req.dbInfo, refId);
-        const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
         if (!reviewerDisclosures.includes(String(disclosureId))) {
           return Promise.resolve(false);
         }
@@ -68,7 +68,7 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
       }
 
       if (req.userInfo.coiRole === ROLES.REVIEWER) {
-        const reviewerDisclosures = await getDisclosuresForReviewer(req.dbInfo, req.userInfo.schoolId);
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
         if (!reviewerDisclosures.includes(String(refId))) {
           return Promise.resolve(false);
         }

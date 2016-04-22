@@ -16,10 +16,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.currency {
-  position: absolute;
-  display: inline;
-  color: grey;
-  left: 6px;
-  top: 4px;
+.container {
+  border-radius: 5px;
+  box-shadow: 0 0 10px #C0C0C0;
+  margin: 30px 50px;
+  overflow: hidden;
+}
+
+.heading {
+  font-weight: 300;
+  display: inline-block;
+  padding: 20px 0;
+  font-size: 17px;
+}
+
+:global(.color-blind) .heading {
+  font-weight: normal;
+}
+
+.headings {
+  border-bottom: 1px solid #BBB;
+  padding: 0 60px;
+  background-color: white;
+  border-radius: 5px 5px 0 0;
+}
+
+.columnOne {
+  width: 35%;
+}
+
+.columnTwo,
+.columnThree {
+  width: 25%;
 }

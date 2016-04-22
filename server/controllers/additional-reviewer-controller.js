@@ -32,9 +32,18 @@ import {
 
 export const init = app => {
   app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    const result = await AdditionalReviewerDB.createAdditionalReviewer(req.dbInfo, req.body, req.userInfo);
+    const result = await AdditionalReviewerDB.createAdditionalReviewer(
+      req.dbInfo,
+      req.body,
+      req.userInfo
+    );
     try {
-      await createAndSendReviewerAssignedNotification(req.dbInfo, req.hostname, req.userInfo, result.id);
+      await createAndSendReviewerAssignedNotification(
+        req.dbInfo,
+        req.hostname,
+        req.userInfo,
+        result.id
+      );
     } catch(err) {
       Log.error(err,req);
     }
@@ -73,12 +82,18 @@ export const init = app => {
     res.sendStatus(OK);
   }));
 
-
   app.get('/api/coi/reviewers', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res) => {
     const results = await getReviewers(req.dbInfo, req.headers.authorization);
     res.send(results);
   }));
 
+  app.get('/api/coi/reviewers/disclosures', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const results = await AdditionalReviewerDB.getDisclosuresForReviewer(
+      req.dbInfo,
+      req.userInfo.schoolId
+    );
+    res.send(results);
+  }));
 
   app.get('/api/coi/reviewers/:disclosureId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     if (!req.query.term) {

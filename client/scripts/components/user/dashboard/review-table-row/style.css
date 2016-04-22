@@ -16,10 +16,44 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.currency {
-  position: absolute;
-  display: inline;
-  color: grey;
-  left: 6px;
-  top: 4px;
+.container {
+  padding: 20px 60px;
+  border-bottom: 5px solid white;
+  background-color: #F7F7F7;
+  color: #333;
+}
+
+.annual.container {
+  background-color: #E9E9E9;
+}
+
+:global(.color-blind) .container {
+  color: black;
+}
+
+.cell {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.one {
+  width: 35%;
+}
+
+.two,
+.three {
+  width: 25%;
+  font-size: 17px;
+}
+
+.four {
+  width: 15%;
+}
+
+.type {
+  font-size: 17px;
+}
+
+.extra {
+  font-size: 14px;
 }

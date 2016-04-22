@@ -24,10 +24,15 @@ import {NewDisclosureButton} from '../new-disclosure-button';
 import {DisclosureArchiveButton} from '../disclosure-archive-button';
 import {ConfirmationMessage} from '../confirmation-message';
 import {DisclosureTable} from '../disclosure-table';
+import {ReviewTable} from '../review-table';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {TravelLogButton} from '../travel-log-button';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {
+  DISCLOSURE_TYPE,
+  ROLES,
+  DISCLOSURE_STATUS
+} from '../../../../../../coi-constants';
 import ConfigStore from '../../../../stores/config-store';
 import UserInfoStore from '../../../../stores/user-info-store';
 import AdminMenu from '../../../admin-menu';
@@ -46,7 +51,8 @@ export class Dashboard extends React.Component {
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
       configLoaded: configState.isLoaded,
-      userInfo: UserInfoStore.getState().userInfo
+      userInfo: UserInfoStore.getState().userInfo,
+      toReview: storeState.disclosuresNeedingReview
     };
 
     this.onChange = this.onChange.bind(this);
@@ -74,22 +80,30 @@ export class Dashboard extends React.Component {
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
       configLoaded: configState.isLoaded,
-      userInfo: UserInfoStore.getState().userInfo
+      userInfo: UserInfoStore.getState().userInfo,
+      toReview: storeState.disclosuresNeedingReview
     });
   }
 
   render() {
-    const isAdminOrReviewer = this.state.userInfo &&
-      (this.state.userInfo.coiRole === COIConstants.ROLES.ADMIN ||
-      this.state.userInfo.coiRole === COIConstants.ROLES.REVIEWER);
+    const {
+      disclosureSummaries,
+      userInfo,
+      applicationState,
+      projects,
+      configLoaded,
+      toReview
+    } = this.state;
+
+    const isAdminOrReviewer = userInfo &&
+      (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER);
 
     let confirmationMessage;
-    if (this.state && this.state.applicationState && this.state.applicationState.confirmationShowing) {
+    if (this.state && applicationState && applicationState.confirmationShowing) {
       confirmationMessage = (
         <ConfirmationMessage />
       );
     }
-
 
     let annualDisclosureButton;
     let travelLogButton;
@@ -100,29 +114,32 @@ export class Dashboard extends React.Component {
     let travelLogEnabled;
 
     window.config.disclosureTypes.forEach(type => {
-      switch(type.typeCd.toString()) { // eslint-disable-line default-case
-        case COIConstants.DISCLOSURE_TYPE.ANNUAL:
+      switch(type.typeCd.toString()) {
+        case DISCLOSURE_TYPE.ANNUAL:
           annualDisclosureEnabled = type.enabled === 1;
           break;
-        case COIConstants.DISCLOSURE_TYPE.MANUAL:
+        case DISCLOSURE_TYPE.MANUAL:
           manualDisclosureEnabled = type.enabled === 1;
           break;
-        case COIConstants.DISCLOSURE_TYPE.TRAVEL:
+        case DISCLOSURE_TYPE.TRAVEL:
           travelLogEnabled = type.enabled === 1;
           break;
       }
     });
 
     if (annualDisclosureEnabled) {
-      const annualDisclosure = this.state.disclosureSummaries.find(summary => {
-        return summary.type.toString() === COIConstants.DISCLOSURE_TYPE.ANNUAL;
+      const annualDisclosure = disclosureSummaries.find(summary => {
+        return summary.type.toString() === DISCLOSURE_TYPE.ANNUAL;
       });
-      if (!annualDisclosure || annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.IN_PROGRESS ||
-          annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE ||
-          annualDisclosure.status === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED) {
+      if (
+        !annualDisclosure ||
+        annualDisclosure.status === DISCLOSURE_STATUS.IN_PROGRESS ||
+        annualDisclosure.status === DISCLOSURE_STATUS.UP_TO_DATE ||
+        annualDisclosure.status === DISCLOSURE_STATUS.UPDATE_REQUIRED
+      ) {
         annualDisclosureButton = (
           <div>
-            <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.ANNUAL}/>
+            <NewDisclosureButton type={DISCLOSURE_TYPE.ANNUAL}/>
           </div>
         );
       }
@@ -139,23 +156,26 @@ export class Dashboard extends React.Component {
     if (manualDisclosureEnabled) {
       manualDisclosureButton = (
         <div>
-          <NewDisclosureButton type={COIConstants.DISCLOSURE_TYPE.MANUAL} />
+          <NewDisclosureButton type={DISCLOSURE_TYPE.MANUAL} />
         </div>
       );
     }
-    if (!this.state.configLoaded) {
+    if (!configLoaded) {
       return (<div/>);
     }
 
     let adminMenu;
     if (isAdminOrReviewer ) {
       adminMenu = (
-        <AdminMenu role={this.state.userInfo.coiRole} className={`${styles.override} ${styles.adminMenu}`} />
+        <AdminMenu
+          role={userInfo.coiRole}
+          className={`${styles.override} ${styles.adminMenu}`}
+        />
       );
     }
 
     let newProjectBanner;
-    if (Array.isArray(this.state.projects) && this.state.projects.filter(project => project.new === 1).length > 0) {
+    if (Array.isArray(projects) && projects.filter(project => project.new === 1).length > 0) {
       newProjectBanner = (
         <div className={styles.infoBanner}>
           Your annual disclosure needs updates due to new projects to disclose.
@@ -164,8 +184,10 @@ export class Dashboard extends React.Component {
     }
 
     let expirationBanner;
-    if (this.state.disclosureSummaries.length > 0) {
-      const expirationDate = this.state.disclosureSummaries.find(summary => String(summary.type) === COIConstants.DISCLOSURE_TYPE.ANNUAL).expired_date;
+    if (disclosureSummaries.length > 0) {
+      const expirationDate = disclosureSummaries.find(summary => {
+        return String(summary.type) === DISCLOSURE_TYPE.ANNUAL;
+      }).expired_date;
       if (expirationDate) {
         const days = moment(expirationDate).diff(moment(new Date()), 'days');
         expirationBanner = (
@@ -176,6 +198,21 @@ export class Dashboard extends React.Component {
           </div>
         );
       }
+    }
+
+    let disclosureTableLabel;
+    let reviewTableLabel;
+    let reviewTable;
+    if (toReview.length > 0) {
+      disclosureTableLabel = (
+        <div className={styles.disclosureTableLabel}>My Disclosures</div>
+      );
+      reviewTableLabel = (
+        <div className={styles.reviewTableLabel}>Needs Review</div>
+      );
+      reviewTable = (
+        <ReviewTable disclosures={toReview} />
+      );
     }
 
     const classes = classNames(
@@ -208,7 +245,10 @@ export class Dashboard extends React.Component {
                 {newProjectBanner}
               </div>
             </div>
-            <DisclosureTable disclosures={this.state.disclosureSummaries} />
+            {disclosureTableLabel}
+            <DisclosureTable disclosures={disclosureSummaries} />
+            {reviewTableLabel}
+            {reviewTable}
           </span>
         </span>
       </div>

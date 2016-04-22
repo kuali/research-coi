@@ -27,7 +27,7 @@
 .flipper {
   position: absolute;
   right: 22px;
-  transform: rotateZ(0deg) translateY(-3px);
+  transform: rotateZ(0) translateY(-3px);
   transition: transform 0.2s linear;
   font-size: 25px;
 }

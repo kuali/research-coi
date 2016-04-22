@@ -113,3 +113,11 @@
 :global(.color-blind) .expiresBanner {
   background-color: black;
 }
+
+.disclosureTableLabel,
+.reviewTableLabel {
+  padding-left: 109px;
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: -15px;
+}

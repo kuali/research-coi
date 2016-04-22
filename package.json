@@ -97,8 +97,8 @@
     "sinon": "1.17.3",
     "skin-deep": "0.13.0",
     "style-loader": "0.13.0",
-    "stylelint": "4.0.0",
-    "stylelint-config-standard": "1.0.0",
+    "stylelint": "6.0.3",
+    "stylelint-config-standard": "6.0.0",
     "supertest": "1.1.0",
     "trace-line": "0.0.6",
     "webpack": "1.12.12"
