@@ -40,7 +40,7 @@ export const init = app => {
 
   app.get('/api/coi/archived-config/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     const result = await ConfigDB.getArchivedConfig(req.dbInfo, req.params.id);
-    res.send(JSON.parse(result[0].config));
+    res.send(result);
   }));
 
   app.post('/api/coi/config/', allowedRoles(ADMIN), wrapAsync(saveConfig));

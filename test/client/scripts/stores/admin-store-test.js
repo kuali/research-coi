@@ -22,6 +22,7 @@ import alt from '../../../../client/scripts/alt';
 import assert from 'assert';
 import {AdminStore} from '../../../../client/scripts/stores/admin-store';
 import {AdminActions} from '../../../../client/scripts/actions/admin-actions';
+import { DATE_TYPE } from '../../../../coi-constants';
 
 const setApplicationState = (data) => {
   alt.dispatcher.dispatch({
@@ -419,6 +420,38 @@ describe('AdminStore', () => {
 
     it('should set editingComment to undefined', () => {
       assert.equal(false, applicationState.editingComment);
+    });
+  });
+
+  describe('updateAdditionalReviewer', () => {
+    let reviewer;
+
+    before(() => {
+      setApplicationState({
+        selectedDisclosure: {
+          reviewers: [{
+            id: 1,
+            active: false,
+            dates: []
+          }]
+        }
+      });
+
+
+      alt.dispatcher.dispatch({
+        action: AdminActions.UPDATE_ADDITIONAL_REVIEWER,
+        data: 1
+      });
+
+      reviewer = AdminStore.getState().applicationState.selectedDisclosure.reviewers[0];
+    });
+
+    it('should set reviewer to active', () => {
+      assert.equal(true, reviewer.active);
+    });
+
+    it('should add a assigned date', () => {
+      assert.equal(DATE_TYPE.ASSIGNED, reviewer.dates[0].type);
     });
   });
 });

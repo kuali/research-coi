@@ -19,38 +19,48 @@
 import styles from './style';
 import React from 'react';
 import { AdminActions } from '../../../../actions/admin-actions';
-import { formatDate } from '../../../../format-date';
+import ConfigStore from '../../../../stores/config-store';
+import { formatDateTime } from '../../../../format-date';
 import classNames from 'classnames';
-import { DATE_TYPE } from '../../../../../../coi-constants';
+import { DATE_TYPE, LANES } from '../../../../../../coi-constants';
 
 export default class AdditionalReviewer extends React.Component {
   constructor() {
     super();
 
     this.removeAdditionalReviewer = this.removeAdditionalReviewer.bind(this);
+    this.reassignAdditionalReviewer = this.reassignAdditionalReviewer.bind(this);
   }
 
   removeAdditionalReviewer() {
     AdminActions.removeAdditionalReviewer(this.props.id);
   }
 
+  reassignAdditionalReviewer() {
+    AdminActions.reassignAdditionalReviewer(this.props.id);
+  }
+
   render() {
-    const dates = this.props.dates.map((date,index) => {
+    const sortedDates = this.props.dates.sort((a,b) => {
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    const dates = sortedDates.map((date,index) => {
       const message = date.type === DATE_TYPE.COMPLETED ?
         'Review Completed on ' :
         'Reviewer Assigned on ';
 
       return (
         <div key={index} className={styles.dates}>
-          {`${message}${formatDate(date.date)}`}
+          {`${message}${formatDateTime(date.date)}`}
         </div>
       );
     });
 
-    const completedReview = this.props.dates.filter(date => date.type === DATE_TYPE.COMPLETED).length > 0;
-
+    const completedReview = sortedDates[sortedDates.length - 1].type === DATE_TYPE.COMPLETED;
+    const completedReviewOnce = sortedDates.some(date => date.type === DATE_TYPE.COMPLETED);
     let removeButton;
-    if (!completedReview && !this.props.readOnly) {
+    if (!completedReviewOnce && !this.props.readOnly) {
       removeButton = (
         <button
           id="remove_button"
@@ -59,6 +69,19 @@ export default class AdditionalReviewer extends React.Component {
         >
           <i className={`fa fa-times`} style={{marginRight:'5px'}}></i>
           Remove Reviewer
+        </button>
+      );
+    }
+
+    let reassignButton;
+    if (completedReview && !this.props.readOnly && ConfigStore.getLane() === LANES.TEST) {
+      reassignButton = (
+        <button
+          id="reassign_button"
+          className={styles.button}
+          onClick={this.reassignAdditionalReviewer}
+        >
+          Reassign
         </button>
       );
     }
@@ -90,6 +113,7 @@ export default class AdditionalReviewer extends React.Component {
           </div>
 
           {removeButton}
+          {reassignButton}
         </div>
       </div>
     );
