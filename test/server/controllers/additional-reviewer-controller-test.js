@@ -176,6 +176,56 @@ describe('AdditionalReviewerControllerTest', () => {
     });
   });
 
+  describe('PUT /api/coi/additional-reviewers/:id', async () => {
+    let reviewerId;
+    const now = new Date();
+    before(async () => {
+      reviewerId = await addReviewer(disclosureId,'reviewerUpdate985');
+    });
+
+    it('should not allow users to update', async () => {
+      await request(app.run())
+        .put(`/api/coi/additional-reviewers/${reviewerId}`)
+        .set('Authorization',`Bearer cate`)
+        .expect(FORBIDDEN);
+    });
+
+    it('should not allow reviewers to update', async () => {
+      await request(app.run())
+        .put(`/api/coi/additional-reviewers/${reviewerId}`)
+        .set('Authorization',`Bearer reviewer`)
+        .expect(FORBIDDEN);
+    });
+
+    it('should allow admins to update', async () => {
+      await request(app.run())
+        .put(`/api/coi/additional-reviewers/${reviewerId}`)
+        .send({
+          active: true,
+          dates: [
+            {
+              type: COIConstants.DATE_TYPE.ASSIGNED,
+              date: now
+            }
+          ]
+
+        })
+        .set('Authorization',`Bearer admin`)
+        .expect(OK);
+
+      const reviewers = await knex('additional_reviewer')
+        .select('*')
+        .where({id: reviewerId});
+
+      const dates = JSON.parse(reviewers[0].dates);
+      assert.equal(1,reviewers.length);
+      assert.equal(1,reviewers[0].active);
+      assert.equal(1,dates.length);
+      assert.equal(COIConstants.DATE_TYPE.ASSIGNED,dates[0].type);
+      assert.equal(now.getMilliseconds(),new Date(dates[0].date).getMilliseconds());
+    });
+  });
+
   after(async function() {
     await knex('additional_reviewer').del();
     await knex('disclosure').del().where({id: disclosureId});

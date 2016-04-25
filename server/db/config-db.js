@@ -364,10 +364,13 @@ export const archiveConfig = (dbInfo, userId, userName, config) => {
   }, 'id');
 };
 
-export const getArchivedConfig = (dbInfo, id) => {
+export async function getArchivedConfig(dbInfo, id) {
   const knex = getKnex(dbInfo);
-  return knex('config').select('config').where('id', id);
-};
+  const results = await knex('config').select('config').where('id', id);
+  const config = JSON.parse(results[0].config);
+  config.lane = lane;
+  return Promise.resolve(config);
+}
 
 export function getRequiredProjectRoles(dbInfo) {
   const knex = getKnex(dbInfo);

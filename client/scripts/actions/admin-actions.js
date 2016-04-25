@@ -62,6 +62,7 @@ export const AdminActions = alt.generateActions(
   'showCommentingPanel',
   'makeComment',
   'addAdditionalReviewer',
+  'reassignAdditionalReviewer',
   'removeAdditionalReviewer',
   'addReviewerToState',
   'removeReviewerFromState',
@@ -72,5 +73,6 @@ export const AdminActions = alt.generateActions(
   'editComment',
   'cancelComment',
   'updateCommentState',
-  'updateProjectDisposition'
+  'updateProjectDisposition',
+  'updateAdditionalReviewer'
 );

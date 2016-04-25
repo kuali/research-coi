@@ -588,6 +588,26 @@ class _AdminStore {
       }));
   }
 
+  updateAdditionalReviewer(id) {
+    const reviewer = this.applicationState.selectedDisclosure.reviewers.find(r => r.id === id);
+    reviewer.active = true;
+    reviewer.dates.push({
+      type: COIConstants.DATE_TYPE.ASSIGNED,
+      date: new Date()
+    });
+    return reviewer;
+  }
+
+  reassignAdditionalReviewer(id) {
+    createRequest().put(`/api/coi/additional-reviewers/${id}`)
+      .send(this.updateAdditionalReviewer(id))
+      .end(processResponse((err, res) => {
+        if (!err) {
+          this.emitChange();
+        }
+      }));
+  }
+
   removeReviewerFromState(id) {
     const index = this.applicationState.selectedDisclosure.reviewers.indexOf(reviewer => reviewer.id === id);
     this.applicationState.selectedDisclosure.reviewers.splice(index,1);

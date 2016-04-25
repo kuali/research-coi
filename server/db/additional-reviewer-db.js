@@ -96,7 +96,6 @@ export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
 export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) {
   const knex = getKnex(dbInfo);
   const criteria = {
-    active : true,
     disclosure_id : disclosureId
   };
 
@@ -150,6 +149,9 @@ export function updateAdditionalReviewer(dbInfo, id, updates) {
   }
 
   return knex('additional_reviewer')
-    .update(updates)
+    .update({
+      active: updates.active,
+      dates: updates.dates
+    })
     .where({id});
 }
