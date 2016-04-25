@@ -201,6 +201,9 @@ async function saveProjectPersons(trx, project, req) {
 }
 
 async function insertProject(trx, project) {
+  if (!project.title) {
+    throw Error('title is a required field');
+  }
   const id = await trx('project').insert({
     title: project.title,
     type_cd: project.typeCode,
@@ -232,6 +235,9 @@ async function saveNewProjects(trx, project, req) {
 
 
 async function saveExistingProjects(trx, project, authHeader) {
+  if (!project.title) {
+    throw Error('title is a required field');
+  }
   await trx('project').update({
     title: project.title,
     type_cd: project.typeCode,

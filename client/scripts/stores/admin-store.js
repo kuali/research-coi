@@ -601,7 +601,7 @@ class _AdminStore {
   reassignAdditionalReviewer(id) {
     createRequest().put(`/api/coi/additional-reviewers/${id}`)
       .send(this.updateAdditionalReviewer(id))
-      .end(processResponse((err, res) => {
+      .end(processResponse((err) => {
         if (!err) {
           this.emitChange();
         }
