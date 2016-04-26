@@ -755,8 +755,7 @@ export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
 export const getSummariesForReviewCount = (dbInfo, filters) => {
   const knex = getKnex(dbInfo);
 
-  let query = knex('disclosure').count('id as rowcount')
-    .innerJoin('disclosure_type', 'disclosure_type.type_cd', 'disclosure.type_cd');
+  let query = knex('disclosure').count('id as rowcount');
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
@@ -788,16 +787,12 @@ export const getSummariesForReviewCount = (dbInfo, filters) => {
   if (filters.status) {
     query.whereIn('disclosure.status_cd', filters.status);
   }
-  // if (filters.type) {
-  //   query.whereIn('disclosure_type.description', filters.type);
-  // }
   if (filters.submittedBy) {
     query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
     query = query.where(function() {
       this.where('submitted_by', 'like', `%${filters.search}%`);
-         // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
     });
   }
 
@@ -813,14 +808,8 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
       'submitted_by',
       'revised_date',
       'disclosure.status_cd as statusCd',
-      'disclosure_type.description as type',
       'id',
       'submitted_date'
-    )
-    .innerJoin(
-      'disclosure_type',
-      'disclosure_type.type_cd',
-      'disclosure.type_cd'
     );
 
   if (filters.date) {
@@ -853,16 +842,12 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
   if (filters.status) {
     query.whereIn('disclosure.status_cd', filters.status);
   }
-  // if (filters.type) {
-  //   query.whereIn('disclosure_type.description', filters.type);
-  // }
   if (filters.submittedBy) {
     query.where('submitted_by', filters.submittedBy);
   }
   if (filters.search) {
     query.where(function() {
       this.where('submitted_by', 'like', `%${filters.search}%`);
-         // .orWhere('disclosure_type.description', 'like', '%' + filters.search + '%')
     });
   }
 
