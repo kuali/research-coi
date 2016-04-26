@@ -136,6 +136,11 @@ export class ListView extends React.Component {
       });
     }
 
+    let possibleDispositions = [];
+    if (ConfigStore.getDispostionsEnabled()) {
+      possibleDispositions = this.state.config.dispositionTypes;
+    }
+
     const classes = classNames(
       'flexbox',
       'fill',
@@ -168,9 +173,7 @@ export class ListView extends React.Component {
               filters={this.state.data.applicationState.filters}
               possibleStatuses={possibleStatuses}
               possibleTypes={possibleTypes}
-              activeStatusFilters={this.state.data.applicationState.filters.status}
-              activeTypeFilters={this.state.data.applicationState.filters.type}
-              activePIFilter={this.state.data.applicationState.filters.submittedBy}
+              possibleDispositions={possibleDispositions}
               showDateSort={false}
               visible={this.state.data.applicationState.showFilters}
             />

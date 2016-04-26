@@ -108,6 +108,11 @@ export class DisclosureList extends React.Component {
       });
     }
 
+    let possibleDispositions = [];
+    if (ConfigStore.getDispostionsEnabled()) {
+      possibleDispositions = this.props.possibleDispositions;
+    }
+
     const classes = classNames(
       'flexbox',
       'column',
@@ -137,9 +142,7 @@ export class DisclosureList extends React.Component {
             filters={this.props.filters}
             possibleStatuses={possibleStatuses}
             possibleTypes={possibleTypes}
-            activeStatusFilters={this.props.filters.status}
-            activeTypeFilters={this.props.filters.type}
-            activePIFilter={this.props.filters.submittedBy}
+            possibleDispositions={possibleDispositions}
             showDateSort={false}
             visible={this.props.showFilters}
           />

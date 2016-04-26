@@ -23,28 +23,37 @@ import {GreyButton} from '../../grey-button';
 import {AdminActions} from '../../../actions/admin-actions';
 import DisclosureFilter from '../disclosure-filter';
 import DoneWithFilterButton from '../done-with-filter-button';
-import PISearchBox from '../pi-search-box';
 
-export class DisclosureFilterByPI extends DisclosureFilter {
+export class DisclosureFilterByDisposition extends DisclosureFilter {
   constructor() {
     super();
 
-    this.label = 'SUBMITTED BY';
+    this.label = 'DISPOSITION';
+
+    this.toggleFilter = this.toggleFilter.bind(this);
+    this.isChecked = this.isChecked.bind(this);
   }
 
   clear(e) {
-    AdminActions.clearSubmittedByFilter();
+    AdminActions.clearDispositionFilter();
     e.stopPropagation();
   }
 
-  piSelected(piName) {
-    AdminActions.setSubmittedByFilter(piName.value);
+  toggleFilter(evt) {
+    const code = Number(evt.target.id.replace('disposFilt', ''));
+    const theDisposition = this.props.possibleDispositions.find(disposition =>
+      disposition.typeCd === code
+    );
+    AdminActions.toggleDispositionFilter(theDisposition);
   }
 
-  // This method must be implemented. It will be called by DisclosureFilter.
-  setActiveStatus({ piName }) {
+  isChecked(value) {
+    return this.props.activeFilters.some(filter => filter === value);
+  }
+
+  setActiveStatus({ activeFilters, possibleDispositions }) {
     let active = true;
-    if (piName === undefined) {
+    if (activeFilters.length === possibleDispositions.length) {
       active = false;
     }
     this.setState({ active });
@@ -52,19 +61,31 @@ export class DisclosureFilterByPI extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
+    const options = this.props.possibleDispositions
+      .sort((a, b) => a.order - b.order)
+      .map(disposition => {
+        const id = `disposFilt${disposition.typeCd}`;
+        return (
+          <div className={styles.checkbox} key={disposition.typeCd}>
+            <input
+              id={id}
+              type="checkbox"
+              checked={this.isChecked(disposition.typeCd)}
+              onChange={this.toggleFilter}
+            />
+            <label htmlFor={id} style={{paddingLeft: 9}}>{disposition.description}</label>
+          </div>
+        );
+      });
+
     return (
       <div className={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
-
-        <label htmlFor="pisearchbox" style={{fontSize: 13}}>SEARCH FOR NAME:</label>
-
-        <div className={styles.searchBoxDiv}>
-          <PISearchBox value={this.props.piName} onSelected={this.piSelected} />
-        </div>
+        {options}
 
         <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
           <i className={classNames('fa', 'fa-times', styles.x)}></i>
-          CLEAR FILTER
+          RESET FILTER
         </GreyButton>
       </div>
     );

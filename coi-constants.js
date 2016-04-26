@@ -157,7 +157,7 @@ export const LANES = {
   STAGE: 'stg',
   SANDBOX: 'sbx',
   PRODUCTION: 'prd'
-}
+};
 
 export const COIConstants = {
   DISCLOSURE_STEP,

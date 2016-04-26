@@ -46,6 +46,8 @@ export const AdminActions = alt.generateActions(
   'rejectDisclosure',
   'clearTypeFilter',
   'toggleTypeFilter',
+  'clearDispositionFilter',
+  'toggleDispositionFilter',
   'clearStatusFilter',
   'toggleStatusFilter',
   'setSortDirection',

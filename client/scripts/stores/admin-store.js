@@ -21,6 +21,7 @@ import {COIConstants} from '../../../coi-constants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
+import ConfigStore from './config-store';
 const PAGE_SIZE = 40;
 
 function defaultStatusFilters() {
@@ -57,7 +58,8 @@ class _AdminStore {
         submittedBy: undefined,
         status: defaultStatusFilters(),
         type: [],
-        search: ''
+        search: '',
+        disposition: []
       },
       effectiveSearchValue: '',
       showFilters: true,
@@ -84,6 +86,10 @@ class _AdminStore {
 
     this.disclosureSummaries = [];
     this.refreshDisclosures();
+
+    ConfigStore.listen(() => {
+      this.clearDispositionFilter();
+    });
   }
 
   morePossibleSummaries(summaries) {
@@ -317,6 +323,33 @@ class _AdminStore {
     }
     else {
       this.applicationState.filters.status.splice(index, 1);
+    }
+
+    this.refreshDisclosures();
+  }
+
+  clearDispositionFilter() {
+    let possibleDispositions = [];
+    if (ConfigStore.getDispostionsEnabled()) {
+      possibleDispositions = ConfigStore.getState().config.dispositionTypes;
+      possibleDispositions = possibleDispositions.map(disposition =>
+        disposition.typeCd
+      );
+    }
+
+    this.applicationState.filters.disposition = possibleDispositions;
+    this.refreshDisclosures();
+  }
+
+  toggleDispositionFilter(toToggle) {
+    const index = this.applicationState.filters.disposition.findIndex(filter =>
+      filter === toToggle.typeCd
+    );
+    if (index === -1) {
+      this.applicationState.filters.disposition.push(toToggle.typeCd);
+    }
+    else {
+      this.applicationState.filters.disposition.splice(index, 1);
     }
 
     this.refreshDisclosures();
