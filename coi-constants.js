@@ -159,6 +159,8 @@ export const LANES = {
   PRODUCTION: 'prd'
 };
 
+export const NO_DISPOSITION = -1;
+
 export const COIConstants = {
   DISCLOSURE_STEP,
   INSTRUCTION_STEP,
@@ -185,5 +187,6 @@ export const COIConstants = {
   COI_ADMIN,
   NOTIFICATIONS_MODE,
   PI_ROLE_CODE,
-  LANES
+  LANES,
+  NO_DISPOSITION
 };

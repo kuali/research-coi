@@ -121,6 +121,28 @@ export class DisclosureList extends React.Component {
       {[styles.showFilters]: this.props.showFilters}
     );
 
+    let heading;
+    if (this.props.summaries.length === this.props.count) {
+      heading = (
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
+          <span style={{paddingRight: 3}}>{this.props.count}</span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
+    else {
+      heading = (
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
+          <span style={{paddingRight: 3}}>{this.props.summaries.length}</span>
+          <span style={{paddingRight: 3}}>of</span>
+          <span style={{paddingRight: 3}}>{this.props.count}</span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
+
     return (
       <div className={classes}>
         <AdminMenu role={UserInfoStore.getState().userInfo.coiRole} style={{padding: '32px 0px'}} />
@@ -130,13 +152,7 @@ export class DisclosureList extends React.Component {
             onChange={this.changeSearch}
             onSearch={AdminActions.doSearch}
           />
-          <div className={styles.heading} onClick={AdminActions.toggleFilters}>
-            <span style={{paddingRight: 3}}>
-              {this.props.count}
-            </span>
-            Disclosures Shown
-            <span className={styles.filterArrow}>&#9660;</span>
-          </div>
+          {heading}
           <SearchFilterGroup
             className={`${styles.override} ${styles.filterGroup}`}
             filters={this.props.filters}

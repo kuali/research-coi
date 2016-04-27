@@ -150,6 +150,34 @@ export class ListView extends React.Component {
       {[styles.showFilters]: this.state.data.applicationState.showFilters}
     );
 
+    let heading;
+    if (filtered.length === this.state.data.applicationState.summaryCount) {
+      heading = (
+        <div className={styles.heading} onClick={this.toggleFilters}>
+          <span style={{paddingRight: 3}}>
+            {this.state.data.applicationState.summaryCount}
+          </span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
+    else {
+      heading = (
+        <div className={styles.heading} onClick={this.toggleFilters}>
+          <span style={{paddingRight: 3}}>
+            {filtered.length}
+          </span>
+          <span style={{paddingRight: 3}}>of</span>
+          <span style={{paddingRight: 3}}>
+            {this.state.data.applicationState.summaryCount}
+          </span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
+
     return (
       <div className={`flexbox column`} style={{height: '100%', overflowX: 'hidden'}}>
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
@@ -161,13 +189,7 @@ export class ListView extends React.Component {
               onChange={this.changeSearch}
               onSearch={this.doSearch}
             />
-            <div className={styles.heading} onClick={this.toggleFilters}>
-              <span style={{paddingRight: 3}}>
-                {this.state.data.applicationState.summaryCount}
-              </span>
-              Disclosures Shown
-              <span className={styles.filterArrow}>&#9660;</span>
-            </div>
+            {heading}
             <SearchFilterGroup
               className={`${styles.override} ${styles.filterGroup}`}
               filters={this.state.data.applicationState.filters}

@@ -23,6 +23,7 @@ import {GreyButton} from '../../grey-button';
 import {AdminActions} from '../../../actions/admin-actions';
 import DisclosureFilter from '../disclosure-filter';
 import DoneWithFilterButton from '../done-with-filter-button';
+import { NO_DISPOSITION } from '../../../../../coi-constants';
 
 export class DisclosureFilterByDisposition extends DisclosureFilter {
   constructor() {
@@ -41,9 +42,18 @@ export class DisclosureFilterByDisposition extends DisclosureFilter {
 
   toggleFilter(evt) {
     const code = Number(evt.target.id.replace('disposFilt', ''));
-    const theDisposition = this.props.possibleDispositions.find(disposition =>
-      disposition.typeCd === code
-    );
+    let theDisposition;
+    if (code === NO_DISPOSITION) {
+      theDisposition = {
+        description: 'No Disposition',
+        order: 0,
+        typeCd: NO_DISPOSITION
+      };
+    } else {
+      theDisposition = this.props.possibleDispositions.find(disposition =>
+        disposition.typeCd === code
+      );
+    }
     AdminActions.toggleDispositionFilter(theDisposition);
   }
 
@@ -53,7 +63,7 @@ export class DisclosureFilterByDisposition extends DisclosureFilter {
 
   setActiveStatus({ activeFilters, possibleDispositions }) {
     let active = true;
-    if (activeFilters.length === possibleDispositions.length) {
+    if (activeFilters.length === (possibleDispositions.length + 1)) {
       active = false;
     }
     this.setState({ active });
@@ -73,17 +83,33 @@ export class DisclosureFilterByDisposition extends DisclosureFilter {
               checked={this.isChecked(disposition.typeCd)}
               onChange={this.toggleFilter}
             />
-            <label htmlFor={id} style={{paddingLeft: 9}}>{disposition.description}</label>
+            <label htmlFor={id} style={{paddingLeft: 9}}>
+              {disposition.description}
+            </label>
           </div>
         );
       });
 
     return (
-      <div className={styles.container}>
+      <div className={styles.container} key="-1">
         <DoneWithFilterButton onClick={this.close} />
+        <div className={styles.checkbox}>
+          <input
+            id={`disposFilt${NO_DISPOSITION}`}
+            type="checkbox"
+            checked={this.isChecked(NO_DISPOSITION)}
+            onChange={this.toggleFilter}
+          />
+          <label htmlFor={`disposFilt${NO_DISPOSITION}`} style={{paddingLeft: 9}}>
+            No Disposition
+          </label>
+        </div>
         {options}
 
-        <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
+        <GreyButton
+          className={`${styles.override} ${styles.clearButton}`}
+          onClick={this.clear}
+        >
           <i className={classNames('fa', 'fa-times', styles.x)}></i>
           RESET FILTER
         </GreyButton>

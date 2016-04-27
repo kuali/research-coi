@@ -17,7 +17,7 @@
 */
 
 import {AdminActions} from '../actions/admin-actions';
-import {COIConstants} from '../../../coi-constants';
+import {COIConstants, NO_DISPOSITION} from '../../../coi-constants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
@@ -87,9 +87,12 @@ class _AdminStore {
     this.disclosureSummaries = [];
     this.refreshDisclosures();
 
-    ConfigStore.listen(() => {
+    const configLoaded = () => {
       this.clearDispositionFilter();
-    });
+      ConfigStore.unlisten(configLoaded);
+    };
+
+    ConfigStore.listen(configLoaded);
   }
 
   morePossibleSummaries(summaries) {
@@ -329,15 +332,17 @@ class _AdminStore {
   }
 
   clearDispositionFilter() {
-    let possibleDispositions = [];
+    let dispositions = [];
     if (ConfigStore.getDispostionsEnabled()) {
-      possibleDispositions = ConfigStore.getState().config.dispositionTypes;
-      possibleDispositions = possibleDispositions.map(disposition =>
+      dispositions = ConfigStore.getState().config.dispositionTypes;
+      dispositions = dispositions.map(disposition =>
         disposition.typeCd
       );
     }
 
-    this.applicationState.filters.disposition = possibleDispositions;
+    dispositions.push(NO_DISPOSITION);
+
+    this.applicationState.filters.disposition = dispositions;
     this.refreshDisclosures();
   }
 
