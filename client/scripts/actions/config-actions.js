@@ -76,5 +76,6 @@ export default alt.generateActions(
   'cancelNotificationTemplate',
   'moveArrayElement',
   'removeFromArray',
-  'saveNewType'
+  'saveNewType',
+  'updateEditorState'
 );

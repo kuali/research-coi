@@ -153,10 +153,14 @@ export class Entities extends React.Component {
     }
 
     const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
+    const contentState = window.config.general.richTextInstructions ?
+      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES] :
+      undefined;
     const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES]}
+        contentState={contentState}
       />
     );
 

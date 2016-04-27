@@ -48,6 +48,7 @@ export default class Certification extends React.Component {
     const storeState = ConfigStore.getState();
     this.setState({
       certificationOptions: storeState.config.general.certificationOptions,
+      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.CERTIFICATION],
       instructions: storeState.config.general.instructions,
       dirty: storeState.dirty
     });
@@ -90,6 +91,7 @@ export default class Certification extends React.Component {
         <InstructionEditor
           step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
           value={instructionText}
+          editorState={this.state.editorState}
         />
         <Panel title="Certification">
           <div className={styles.details}>

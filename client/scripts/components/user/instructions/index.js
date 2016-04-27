@@ -21,13 +21,33 @@ import React from 'react';
 import {DisclosureActions} from '../../../actions/disclosure-actions';
 import {GreyButton} from '../../grey-button';
 import VerticalSlider from '../../vertical-slider';
+import {Editor, convertFromRaw, EditorState, ContentState} from 'draft-js';
+import { LANES } from '../../../../../coi-constants';
 
 export function Instructions(props) {
+
+  let instruction;
+  if(window.config.lane === LANES.TEST && props.contentState) {
+    const blocks = convertFromRaw(props.contentState);
+    const editorState = EditorState.createWithContent(ContentState.createFromBlockArray(blocks));
+    instruction = (
+      <Editor
+        editorState={editorState}
+        readOnly={true}
+      />
+    );
+  } else {
+    instruction = (
+      <div>{props.text}</div>
+    );
+  }
+
+
   return (
     <VerticalSlider collapsed={props.collapsed}>
       <div className={`${styles.container} ${props.className}`}>
         <div className={styles.arrow}></div>
-        <div>{props.text}</div>
+        {instruction}
         <div className={styles.buttons}>
           <GreyButton
             className={`${styles.override} ${styles.closeButton}`}

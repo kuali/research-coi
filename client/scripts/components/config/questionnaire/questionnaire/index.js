@@ -50,6 +50,7 @@ export default class Questionnaire extends React.Component {
       applicationState: storeState.applicationState,
       questions: storeState.config.questions.screening,
       instructions: storeState.config.general.instructions,
+      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE],
       dirty: storeState.dirty
     });
   }
@@ -67,6 +68,7 @@ export default class Questionnaire extends React.Component {
           <InstructionEditor
             step={COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE}
             value={instructionText}
+            editorState={this.state.editorState}
           />
           <QuestionnaireConfig
             questionnaireCategory="screening"

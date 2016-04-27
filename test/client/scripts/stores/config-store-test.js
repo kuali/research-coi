@@ -19,7 +19,9 @@
 import alt from '../../../../client/scripts/alt';
 import assert from 'assert';
 import ConfigStore from '../../../../client/scripts/stores/config-store';
+import { prepareInstructionsForSave, createEditorStates } from '../../../../client/scripts/stores/config-store';
 import ConfigActions from '../../../../client/scripts/actions/config-actions';
+import { EditorState, ContentState, convertToRaw } from 'draft-js';
 
 const setState = (data) => {
   alt.dispatcher.dispatch({
@@ -455,6 +457,7 @@ describe('ConfigStore', () => {
       assert.equal('one', dispositionTypes[1].name);
     });
   });
+
   describe('removeFromArray', () => {
     it('should remove the element from the array', () => {
       setState({
@@ -489,4 +492,41 @@ describe('ConfigStore', () => {
       assert.equal('three', dispositionTypes[1].name);
     });
   });
+
+  describe('prepareInstructionsForSave', () => {
+    it('should remove the element from the array', () => {
+      const editorStates = {
+        one: EditorState.createWithContent(ContentState.createFromText('one')),
+        two: EditorState.createWithContent(ContentState.createFromText('two'))
+      };
+      const instructions = prepareInstructionsForSave(editorStates);
+      assert.equal('one', instructions.one.blocks[0].text = 'one');
+      assert.equal('two', instructions.two.blocks[0].text = 'two');
+    });
+  });
+
+  describe('createEditorState', () => {
+    const text = {
+      one: 'one',
+      two: 'two'
+    };
+
+    const richText = {
+      one: convertToRaw(ContentState.createFromText('richOne')),
+      two: convertToRaw(ContentState.createFromText('richTwo'))
+    };
+
+    it('should create editor states from text instructions', () => {
+      const editorStates = createEditorStates(text, undefined);
+      assert('one',editorStates.one.getCurrentContent().getBlocksAsArray()[0].text);
+      assert('two',editorStates.two.getCurrentContent().getBlocksAsArray()[0].text);
+    });
+
+    it('should create editor states from rich text instructions', () => {
+      const editorStates = createEditorStates(text, richText);
+      assert('richOne',editorStates.one.getCurrentContent().getBlocksAsArray()[0].text);
+      assert('richTwo',editorStates.two.getCurrentContent().getBlocksAsArray()[0].text);
+    });
+  });
 });
+

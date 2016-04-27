@@ -20,6 +20,10 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import Textarea from '../textarea';
+import ConfigStore from '../../../stores/config-store';
+import ConfigActions from '../../../actions/config-actions';
+import { LANES } from '../../../../../coi-constants';
+import Editor from '../../editor/editor';
 
 export default class InstructionEditor extends React.Component {
   constructor(props) {
@@ -30,6 +34,7 @@ export default class InstructionEditor extends React.Component {
     };
 
     this.toggle = this.toggle.bind(this);
+    this.updateEditorState = (key, editorState) => {ConfigActions.updateEditorState(key, editorState);};
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,6 +56,28 @@ export default class InstructionEditor extends React.Component {
       {[styles.open]: this.state.open}
     );
 
+    let editor;
+    if (ConfigStore.getLane() === LANES.TEST && this.props.editorState) {
+      editor = (
+        <Editor
+          editorState={this.props.editorState}
+          mapKey={this.props.step}
+          onChange={this.updateEditorState}
+        />
+
+      );
+    } else {
+      editor = (
+        <Textarea
+          label='INSTRUCTION TEXT'
+          labelClassName={styles.label}
+          path={`config.general.instructions[${this.props.step}]`}
+          className={styles.textarea}
+          value={this.props.value}
+          dirty={true}
+        />
+      );
+    }
     return (
       <div className={classes}>
         <div className={styles.top} onClick={this.toggle}>
@@ -62,14 +89,7 @@ export default class InstructionEditor extends React.Component {
         </div>
         <div style={{overflow: 'hidden'}}>
           <div className={styles.bottom}>
-            <Textarea
-              label='INSTRUCTION TEXT'
-              labelClassName={styles.label}
-              path={`config.general.instructions[${this.props.step}]`}
-              className={styles.textarea}
-              value={this.props.value}
-              dirty={true}
-            />
+            {editor}
           </div>
         </div>
       </div>
