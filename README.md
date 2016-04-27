@@ -218,12 +218,12 @@ npm run build_babel_to <the target directory>
 
 If you've transpiled in place run
 ```
-DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm start_prod
+DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm run start_prod
 ```
 
 If you've transpiled to a different directory run
 ```
-DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm start_prod <the directory>
+DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm run start_prod <the directory>
 ```
 
 **Step 11**: Navigate to hostname:port/coi/
