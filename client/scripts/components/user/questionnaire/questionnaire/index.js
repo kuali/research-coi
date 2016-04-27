@@ -85,12 +85,15 @@ export class Questionnaire extends React.Component {
     }
 
     const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
-
+    const contentState = window.config.general.richTextInstructions ?
+      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] :
+      undefined;
     return (
       <div className={`${styles.container} ${this.props.className}`}>
         <Instructions
           text={instructionText}
           collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]}
+          contentState={contentState}
         />
 
         <div className={styles.questionArea}>

@@ -49,9 +49,13 @@ export class Certify extends React.Component {
 
   render() {
     const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
+    const contentState = window.config.general.richTextInstructions ?
+      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION] :
+      undefined;
     const instructions = (
       <Instructions
         text={instructionText}
+        contentState={contentState}
         collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.CERTIFICATION]}
       />
     );

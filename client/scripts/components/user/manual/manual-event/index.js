@@ -64,10 +64,14 @@ export class ManualEvent extends React.Component {
     }
 
     const instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
+    const contentState = window.config.general.richTextInstructions ?
+      window.config.general.richTextInstructions[COIConstants.DISCLOSURE_STEP.MANUAL] :
+      undefined;
     const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing[COIConstants.DISCLOSURE_STEP.MANUAL]}
+        contentState={contentState}
       />
     );
 

@@ -57,6 +57,7 @@ export default class Declarations extends React.Component {
     this.setState({
       applicationState: storeState.applicationState,
       edits: storeState.applicationState.edits,
+      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS],
       declarationTypes: storeState.config.declarationTypes,
       dispositionTypes: storeState.config.dispositionTypes,
       dispositionsEnabled: storeState.config.general.dispositionsEnabled,
@@ -175,6 +176,7 @@ export default class Declarations extends React.Component {
         <InstructionEditor
           step={COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS}
           value={instructionText}
+          editorState={this.state.editorState}
         />
         <Panel title="Declaration Types Set by Reporter">
           <div className={styles.types}>

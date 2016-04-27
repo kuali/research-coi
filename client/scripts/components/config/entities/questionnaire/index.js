@@ -49,6 +49,7 @@ export default class Questionnaire extends React.Component {
     this.setState({
       applicationState: storeState.applicationState,
       questions: storeState.config.questions.entities,
+      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES],
       instructions: storeState.config.general.instructions,
       dirty: storeState.dirty
     });
@@ -67,6 +68,7 @@ export default class Questionnaire extends React.Component {
           <InstructionEditor
             step={COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES}
             value={instructionText}
+            editorState={this.state.editorState}
           />
           <QuestionnaireConfig
             questionnaireCategory="entities"

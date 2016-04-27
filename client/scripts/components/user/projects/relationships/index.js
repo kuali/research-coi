@@ -178,10 +178,14 @@ export class Relationships extends React.Component {
     }
 
     const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
+    const contentState = window.config.general.richTextInstructions ?
+      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] :
+      undefined;
     const instructions = (
       <Instructions
         text={instructionText}
         collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS]}
+        contentState={contentState}
       />
     );
 
