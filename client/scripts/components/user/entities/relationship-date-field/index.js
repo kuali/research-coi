@@ -30,6 +30,10 @@ export default class RelationshipDateField extends RelationshipTextField {
     this.props.onChange(newDate);
   }
 
+  getInputStyle(invalid, style) {
+    return invalid === true ? merge(style, {borderBottom: '3px solid red'}) : style;
+  }
+
   render() {
     return (
       <div className={styles.container}>
