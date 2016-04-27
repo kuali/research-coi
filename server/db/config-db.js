@@ -144,6 +144,7 @@ const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) =>
 };
 
 export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
+
   let config = mockDB.UIT;
   const knex = getKnex(dbInfo);
   const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
@@ -290,16 +291,6 @@ export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
     createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
   );
 
-  if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-    handleTemplates(dbInfo, hostname, config.notification_templates).then(results => {
-      Promise.all(results).then(templates => {
-        queries.push(
-          createCollectionQueries(query, templates, {pk: 'template_id', table: 'notification_template'})
-        );
-      });
-    });
-  }
-
   queries.push(
     createCollectionQueries(query, config.notifications, {pk: 'id', table: 'notification'})
   );
@@ -348,6 +339,22 @@ export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
         });
       })
   );
+
+  if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
+    return handleTemplates(dbInfo, hostname, config.notification_templates).then(results => {
+      return Promise.all(results).then(templates => {
+        queries.push(
+          createCollectionQueries(query, templates, {pk: 'template_id', table: 'notification_template'})
+        );
+      }).then(() => {
+        return Promise.all(queries)
+          .then(() => {
+            return camelizeJson(config);
+          });
+      });
+    });
+  }
+
   return Promise.all(queries)
     .then(() => {
       return camelizeJson(config);
