@@ -357,7 +357,8 @@ export const saveExistingDeclaration = (dbInfo, userId, disclosureId, declaratio
       return knex('declaration')
         .update({
           'type_cd': record.typeCd,
-          'comments': record.comments
+          'comments': record.comments,
+          'admin_relationship_cd': record.adminRelationshipCd
         })
         .where({
           'disclosure_id': disclosureId,
@@ -587,6 +588,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         'd.fin_entity_id as finEntityId',
         'd.type_cd as typeCd',
         'd.comments as comments',
+        'd.admin_relationship_cd as adminRelationshipCd',
         'p.title as projectTitle',
         'fe.name as entityName',
         'p.type_cd as projectTypeCd',
@@ -1089,6 +1091,12 @@ async function resetProjectDispositions(knex, id) {
     .where({person_id: disclosure[0].user_id});
 }
 
+async function resetAdminRelationships(knex, disclosureId) {
+  return knex('declaration')
+    .update({admin_relationship_cd: null})
+    .where({disclosure_id: disclosureId});
+}
+
 export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeader, trx) => {
   let knex;
   if (trx) {
@@ -1108,7 +1116,8 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
     deletePIReviewsForDisclsoure(knex, disclosureId),
     deleteAdditionalReviewers(knex, disclosureId),
     updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS),
-    resetProjectDispositions(knex, disclosureId)
+    resetProjectDispositions(knex, disclosureId),
+    resetAdminRelationships(knex, disclosureId)
   ])
   .then(([config, archivedDisclosure]) => {
     const generalConfig = JSON.parse(config[0].config).general;

@@ -718,6 +718,20 @@ class _AdminStore {
         }
       }));
   }
+
+  updateAdminRelationship(data) {
+    const disclosureId = this.applicationState.selectedDisclosure.id;
+    const declaration = this.applicationState.selectedDisclosure.declarations.find(d => d.id === data.declarationId);
+    declaration.adminRelationshipCd = data.adminRelationshipCd;
+    createRequest().put(`/api/coi/disclosures/${disclosureId}/declarations/${data.declarationId}`)
+      .send(declaration)
+      .end(processResponse(err => {
+        if (!err) {
+          this.emitChange();
+        }
+      }));
+  }
+
 }
 
 export const AdminStore = alt.createStore(_AdminStore, 'AdminStore');
