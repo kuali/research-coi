@@ -41,6 +41,15 @@ export class DisclosureFilterByPI extends DisclosureFilter {
     AdminActions.setSubmittedByFilter(piName.value);
   }
 
+  // This method must be implemented. It will be called by DisclosureFilter.
+  setActiveStatus({ piName }) {
+    let active = true;
+    if (piName === undefined) {
+      active = false;
+    }
+    this.setState({ active });
+  }
+
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
     return (

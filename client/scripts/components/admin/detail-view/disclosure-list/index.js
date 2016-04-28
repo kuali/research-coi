@@ -108,6 +108,11 @@ export class DisclosureList extends React.Component {
       });
     }
 
+    let possibleDispositions = [];
+    if (ConfigStore.getDispostionsEnabled()) {
+      possibleDispositions = this.props.possibleDispositions;
+    }
+
     const classes = classNames(
       'flexbox',
       'column',
@@ -115,6 +120,28 @@ export class DisclosureList extends React.Component {
       this.props.className,
       {[styles.showFilters]: this.props.showFilters}
     );
+
+    let heading;
+    if (this.props.summaries.length === this.props.count) {
+      heading = (
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
+          <span style={{paddingRight: 3}}>{this.props.count}</span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
+    else {
+      heading = (
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
+          <span style={{paddingRight: 3}}>{this.props.summaries.length}</span>
+          <span style={{paddingRight: 3}}>of</span>
+          <span style={{paddingRight: 3}}>{this.props.count}</span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
 
     return (
       <div className={classes}>
@@ -125,21 +152,13 @@ export class DisclosureList extends React.Component {
             onChange={this.changeSearch}
             onSearch={AdminActions.doSearch}
           />
-          <div className={styles.heading} onClick={AdminActions.toggleFilters}>
-            <span style={{paddingRight: 3}}>
-              {this.props.count}
-            </span>
-            Disclosures Shown
-            <span className={styles.filterArrow}>&#9660;</span>
-          </div>
+          {heading}
           <SearchFilterGroup
             className={`${styles.override} ${styles.filterGroup}`}
             filters={this.props.filters}
             possibleStatuses={possibleStatuses}
             possibleTypes={possibleTypes}
-            activeStatusFilters={this.props.filters.status}
-            activeTypeFilters={this.props.filters.type}
-            activePIFilter={this.props.filters.submittedBy}
+            possibleDispositions={possibleDispositions}
             showDateSort={false}
             visible={this.props.showFilters}
           />

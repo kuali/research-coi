@@ -19,40 +19,67 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
+import {get} from 'lodash';
 import {DisclosureFilterByStatus} from '../disclosure-filter-by-status';
 import {DisclosureFilterByDate} from '../disclosure-filter-by-date';
 import {DisclosureFilterByPI} from '../disclosure-filter-by-pi';
+import {DisclosureFilterByDisposition} from '../disclosure-filter-by-disposition';
 
 export default function SearchFilterGroup(props) {
+  const {
+    className,
+    visible,
+    possibleDispositions,
+    filters,
+    sortDirection,
+    showDateSort,
+    possibleStatuses
+  } = props;
+
   const classes = classNames(
     styles.container,
-    props.className,
-    {[styles.visible]: props.visible}
+    className
   );
 
-  return (
-    <div className={classes}>
-      <DisclosureFilterByDate
-        active={props.filters.date.start || props.filters.date.end}
-        startDate={props.filters.date.start}
-        endDate={props.filters.date.end}
-        sortDirection={props.sortDirection}
-        showSort={props.showDateSort}
+  let height = 0;
+  if (!visible) {
+    height = 119;
+  }
+
+  let dispositionFilter;
+  if (Array.isArray(possibleDispositions) && possibleDispositions.length > 0) {
+    let activeFilters = [];
+    if (get(filters, 'disposition') !== undefined) {
+      activeFilters = filters.disposition;
+    }
+    dispositionFilter = (
+      <DisclosureFilterByDisposition
+        activeFilters={activeFilters}
+        possibleDispositions={possibleDispositions}
       />
-      {/*<DisclosureFilterByType
-        active={props.activeTypeFilters && props.activeTypeFilters.length > 0}
-        activeFilters={props.activeTypeFilters}
-        possibleTypes={props.possibleTypes}
-      />*/}
+    );
+
+    if (!visible) {
+      height += 32;
+    }
+  }
+
+  return (
+    <div className={classes} style={{marginTop: -height}}>
+      <DisclosureFilterByDate
+        startDate={filters.date.start}
+        endDate={filters.date.end}
+        sortDirection={sortDirection}
+        showSort={showDateSort}
+      />
       <DisclosureFilterByStatus
-        active={props.activeStatusFilters && props.activeStatusFilters.length > 0}
-        activeFilters={props.activeStatusFilters}
-        possibleStatuses={props.possibleStatuses}
+        activeFilters={filters.status}
+        possibleStatuses={possibleStatuses}
       />
       <DisclosureFilterByPI
-        active={props.activePIFilter}
-        piName={props.activePIFilter}
+        piName={filters.submittedBy}
       />
+      {dispositionFilter}
     </div>
   );
 }

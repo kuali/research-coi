@@ -1,11 +1,19 @@
 engines:
   duplication:
     enabled: true
+    checks:
+      Similar code:
+        enabled: false
     config:
       languages:
         - javascript
   csslint:
     enabled: true
+    checks:
+      box-sizing:
+        enabled: false
+      errors:
+        enabled: false
 ratings:
   paths:
   - "**.js"
@@ -17,3 +25,13 @@ exclude_paths:
   - scripts/lib/
   - webpack.config.js
   - test/
+  - CHANGELOG.md
+  - LICENSE
+  - README.md
+  - client/apidocs.html
+  - client/images/
+  - /doc/
+  - /views/
+  - client/styles/fonts/
+  - nightwatch.json
+  - package.json

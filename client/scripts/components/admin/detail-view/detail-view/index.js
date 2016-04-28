@@ -219,6 +219,7 @@ export class DetailView extends React.Component {
             loadingMore={this.state.applicationState.loadingMore}
             loadedAll={this.state.applicationState.loadedAll}
             showFilters={this.state.applicationState.showFilters}
+            possibleDispositions={this.state.config.dispositionTypes}
           />
           <div className={`inline-flexbox fill`}>
             {disclosureDetail}

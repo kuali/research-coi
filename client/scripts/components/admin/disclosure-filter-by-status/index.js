@@ -25,6 +25,7 @@ import DisclosureFilter from '../disclosure-filter';
 import DoneWithFilterButton from '../done-with-filter-button';
 import {COIConstants} from '../../../../../coi-constants';
 const APPROVED = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+const DISCLOSURE_STATUS = COIConstants.DISCLOSURE_STATUS;
 
 export class DisclosureFilterByStatus extends DisclosureFilter {
   constructor() {
@@ -34,6 +35,22 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
 
     this.toggleFilter = this.toggleFilter.bind(this);
     this.isChecked = this.isChecked.bind(this);
+  }
+
+  // This method must be implemented. It will be called by DisclosureFilter.
+  setActiveStatus({ activeFilters }) {
+    let active = true;
+    if (
+      Array.isArray(activeFilters) &&
+      activeFilters.length === 4 &&
+      activeFilters[0] === DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL &&
+      activeFilters[1] === DISCLOSURE_STATUS.REVISION_REQUIRED &&
+      activeFilters[2] === DISCLOSURE_STATUS.EXPIRED &&
+      activeFilters[3] === DISCLOSURE_STATUS.RESUBMITTED
+    ) {
+      active = false;
+    }
+    this.setState({ active });
   }
 
   clear(e) {

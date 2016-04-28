@@ -17,10 +17,11 @@
 */
 
 import {AdminActions} from '../actions/admin-actions';
-import {COIConstants} from '../../../coi-constants';
+import {COIConstants, NO_DISPOSITION} from '../../../coi-constants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
+import ConfigStore from './config-store';
 const PAGE_SIZE = 40;
 
 function defaultStatusFilters() {
@@ -57,7 +58,8 @@ class _AdminStore {
         submittedBy: undefined,
         status: defaultStatusFilters(),
         type: [],
-        search: ''
+        search: '',
+        disposition: []
       },
       effectiveSearchValue: '',
       showFilters: true,
@@ -84,6 +86,13 @@ class _AdminStore {
 
     this.disclosureSummaries = [];
     this.refreshDisclosures();
+
+    const configLoaded = () => {
+      this.clearDispositionFilter();
+      ConfigStore.unlisten(configLoaded);
+    };
+
+    ConfigStore.listen(configLoaded);
   }
 
   morePossibleSummaries(summaries) {
@@ -317,6 +326,35 @@ class _AdminStore {
     }
     else {
       this.applicationState.filters.status.splice(index, 1);
+    }
+
+    this.refreshDisclosures();
+  }
+
+  clearDispositionFilter() {
+    let dispositions = [];
+    if (ConfigStore.getDispostionsEnabled()) {
+      dispositions = ConfigStore.getState().config.dispositionTypes;
+      dispositions = dispositions.map(disposition =>
+        disposition.typeCd
+      );
+    }
+
+    dispositions.push(NO_DISPOSITION);
+
+    this.applicationState.filters.disposition = dispositions;
+    this.refreshDisclosures();
+  }
+
+  toggleDispositionFilter(toToggle) {
+    const index = this.applicationState.filters.disposition.findIndex(filter =>
+      filter === toToggle.typeCd
+    );
+    if (index === -1) {
+      this.applicationState.filters.disposition.push(toToggle.typeCd);
+    }
+    else {
+      this.applicationState.filters.disposition.splice(index, 1);
     }
 
     this.refreshDisclosures();

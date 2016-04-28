@@ -49,6 +49,15 @@ export class DisclosureFilterByDate extends DisclosureFilter {
     AdminActions.setSortDirection(evt.target.value);
   }
 
+  // This method must be implemented. It will be called by DisclosureFilter.
+  setActiveStatus({ startDate, endDate }) {
+    let active = true;
+    if (startDate === undefined && endDate === undefined) {
+      active = false;
+    }
+    this.setState({ active });
+  }
+
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
     let sortFields;

@@ -136,6 +136,11 @@ export class ListView extends React.Component {
       });
     }
 
+    let possibleDispositions = [];
+    if (ConfigStore.getDispostionsEnabled()) {
+      possibleDispositions = this.state.config.dispositionTypes;
+    }
+
     const classes = classNames(
       'flexbox',
       'fill',
@@ -144,6 +149,34 @@ export class ListView extends React.Component {
       this.props.className,
       {[styles.showFilters]: this.state.data.applicationState.showFilters}
     );
+
+    let heading;
+    if (filtered.length === this.state.data.applicationState.summaryCount) {
+      heading = (
+        <div className={styles.heading} onClick={this.toggleFilters}>
+          <span style={{paddingRight: 3}}>
+            {this.state.data.applicationState.summaryCount}
+          </span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
+    else {
+      heading = (
+        <div className={styles.heading} onClick={this.toggleFilters}>
+          <span style={{paddingRight: 3}}>
+            {filtered.length}
+          </span>
+          <span style={{paddingRight: 3}}>of</span>
+          <span style={{paddingRight: 3}}>
+            {this.state.data.applicationState.summaryCount}
+          </span>
+          Disclosures Shown
+          <span className={styles.filterArrow}>&#9660;</span>
+        </div>
+      );
+    }
 
     return (
       <div className={`flexbox column`} style={{height: '100%', overflowX: 'hidden'}}>
@@ -156,21 +189,13 @@ export class ListView extends React.Component {
               onChange={this.changeSearch}
               onSearch={this.doSearch}
             />
-            <div className={styles.heading} onClick={this.toggleFilters}>
-              <span style={{paddingRight: 3}}>
-                {this.state.data.applicationState.summaryCount}
-              </span>
-              Disclosures Shown
-              <span className={styles.filterArrow}>&#9660;</span>
-            </div>
+            {heading}
             <SearchFilterGroup
               className={`${styles.override} ${styles.filterGroup}`}
               filters={this.state.data.applicationState.filters}
               possibleStatuses={possibleStatuses}
               possibleTypes={possibleTypes}
-              activeStatusFilters={this.state.data.applicationState.filters.status}
-              activeTypeFilters={this.state.data.applicationState.filters.type}
-              activePIFilter={this.state.data.applicationState.filters.submittedBy}
+              possibleDispositions={possibleDispositions}
               showDateSort={false}
               visible={this.state.data.applicationState.showFilters}
             />

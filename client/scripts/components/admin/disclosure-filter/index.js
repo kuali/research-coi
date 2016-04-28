@@ -46,6 +46,14 @@ export default class DisclosureFilter extends React.Component {
     this.setState({showing: false});
   }
 
+  componentWillMount() {
+    this.setActiveStatus(this.props);
+  }
+
+  componentWillReceiveProps(props) {
+    this.setActiveStatus(props);
+  }
+
   componentDidMount() {
     const localNode = this.refs.root;
     const eventHandler = this.handleClickOutside;
@@ -76,7 +84,7 @@ export default class DisclosureFilter extends React.Component {
 
   render() {
     let clearButton;
-    if (this.props.active) {
+    if (this.state.active) {
       clearButton = (
         <span onClick={this.clear} className={styles.clear}>
           <i className={`fa fa-times`}></i>
@@ -92,7 +100,7 @@ export default class DisclosureFilter extends React.Component {
     const classes = classNames(
       styles.filter,
       {[styles.showing]: this.state.showing},
-      {[styles.active]: this.props.active}
+      {[styles.active]: this.state.active}
     );
 
     return (
