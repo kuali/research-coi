@@ -25,7 +25,7 @@ import ActionPanel from '../action-panel';
 
 export default function ConfigPage(props) {
   return (
-    <div className={`flexbox column`} style={{height: '100%'}}>
+    <div className={`flexbox column`} style={{minHeight: '100%'}}>
       <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
       <span className={classNames('fill', 'flexbox', 'row', styles.container, props.className)}>
         <Sidebar active={props.routeName} />

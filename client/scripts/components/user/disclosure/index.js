@@ -313,7 +313,7 @@ export class Disclosure extends React.Component {
     );
 
     return (
-      <div className={classes} style={{height: '100%'}}>
+      <div className={classes} style={{minHeight: '100%'}}>
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <Sidebar

@@ -18,7 +18,7 @@
 
 .container {
   background-color: white;
-  height: 100%;
+  min-height: 96vh;
   box-shadow: 0 0 10px 0 #AAA;
 }
 
@@ -146,4 +146,3 @@
 :global(.color-blind) .adminWarning {
   background-color: black;
 }
-
