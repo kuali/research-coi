@@ -105,6 +105,7 @@ export function run() {
   app.use(cookieParser());
 
   app.use('/coi/auth', renderView('auth'));
+  app.use('/api/v1/coi/health', healthReport);
   app.use('/coi/health', healthReport);
   app.use('/api', apiAuthentication);
   app.use('/coi', authentication);
