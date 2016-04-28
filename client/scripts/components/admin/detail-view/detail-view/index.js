@@ -203,7 +203,7 @@ export class DetailView extends React.Component {
     return (
       <div
         className={`flexbox column ${classNames({[styles.listShowing]: this.state.applicationState.listShowing})}`}
-        style={{height: '100%', overflowX: 'hidden'}}
+        style={{minHeight: '100%', overflowX: 'hidden'}}
       >
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`flexbox row fill ${classNames(styles.container, this.props.className)}`}>
