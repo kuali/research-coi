@@ -19,8 +19,22 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
+import ConfigStore from '../../../../stores/config-store';
+import { LANES } from '../../../../../../coi-constants';
 
 export default function DeclarationSummary(props) {
+
+  let adminRelationship;
+  let commentClass = styles.comments;
+  if (props.config.lane === LANES.TEST && props.config.general.adminRelationshipEnabled) {
+    adminRelationship = (
+      <span className={styles.adminRelationship}>
+        {ConfigStore.getDispositionTypeString(props.declaration.adminRelationshipCd)}
+      </span>
+    );
+    commentClass = classNames(styles.comments, styles.shortComment);
+  }
+
   return (
     <div className={classNames(styles.container, props.className)}>
       <div>
@@ -30,7 +44,8 @@ export default function DeclarationSummary(props) {
         <span className={styles.conflict} style={{fontWeight: 'bold'}}>
           {props.disposition}
         </span>
-        <span className={styles.comments} style={{fontStyle: 'italic'}}>
+        {adminRelationship}
+        <span className={commentClass} style={{fontStyle: 'italic'}}>
           {props.declaration.comments}
         </span>
       </div>

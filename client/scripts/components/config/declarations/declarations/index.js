@@ -61,6 +61,7 @@ export default class Declarations extends React.Component {
       declarationTypes: storeState.config.declarationTypes,
       dispositionTypes: storeState.config.dispositionTypes,
       dispositionsEnabled: storeState.config.general.dispositionsEnabled,
+      adminRelationshipEnabled: storeState.config.general.adminRelationshipEnabled,
       lane: storeState.config.lane,
       instructions: storeState.config.general.instructions,
       dirty: storeState.dirty
@@ -139,6 +140,12 @@ export default class Declarations extends React.Component {
     if (this.state.dispositionsEnabled) {
       dispositionConfig = (
         <div>
+          <CheckBox
+            path="config.general.adminRelationshipEnabled"
+            label="Admin set financial entity-project relationship determination"
+            labelClassName={styles.label}
+            checked={this.state.adminRelationshipEnabled}
+          />
           {dispositionTypes}
           {newDispositionType}
           <div className={styles.add} onClick={this.createNewDisposition}>+ Add Another</div>

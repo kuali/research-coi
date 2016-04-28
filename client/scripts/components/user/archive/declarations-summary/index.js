@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import React from 'react';
 import DeclarationSummary from '../declaration-summary';
 import ConfigStore from '../../../../stores/config-store';
+import { LANES } from '../../../../../../coi-constants';
 
 export default class extends React.Component {
   getUniqueProjects(declarations) {
@@ -61,6 +62,7 @@ export default class extends React.Component {
             <DeclarationSummary
               key={declaration.id}
               declaration={declaration}
+              config={this.props.config}
               disposition={ConfigStore.getDeclarationTypeString(declaration.typeCd)}
             />
           );
@@ -74,6 +76,15 @@ export default class extends React.Component {
               <span style={{fontWeight: 'bold'}}>{ConfigStore.getDispositionTypeString(project.dispositionTypeCd)}</span>
             </div>
           );
+        }
+
+        let commentClass = styles.comment;
+        let adminRelationship;
+        if (this.props.config.lane === LANES.TEST && this.props.config.general.adminRelationshipEnabled) {
+          adminRelationship = (
+            <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
+          );
+          commentClass = classNames(styles.comments, styles.shortComment);
         }
 
         return (
@@ -104,7 +115,8 @@ export default class extends React.Component {
             <div className={styles.titles}>
               <span className={styles.entityName}>FINANCIAL ENTITY</span>
               <span className={styles.conflict}>REPORTER RELATIONSHIP</span>
-              <span className={styles.comments}>REPORTER COMMENTS</span>
+              {adminRelationship}
+              <span className={commentClass}>REPORTER COMMENTS</span>
             </div>
             {declarations}
           </div>

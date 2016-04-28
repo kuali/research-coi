@@ -61,10 +61,19 @@
   display: inline-block;
 }
 
+.adminRelationship {
+  width: 25%;
+  display: inline-block;
+}
+
 .comments {
   width: 50%;
   display: inline-block;
   vertical-align: top;
+}
+
+.shortComment {
+  width: 25%;
 }
 
 .relationship {

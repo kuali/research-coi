@@ -56,6 +56,11 @@
   display: inline-block;
 }
 
+.adminRelationship {
+  width: 25%;
+  display: inline-block;
+}
+
 .conflict {
   width: 25%;
   display: inline-block;
@@ -65,6 +70,10 @@
   width: 50%;
   display: inline-block;
   vertical-align: top;
+}
+
+.shortComment {
+  width: 25%;
 }
 
 .relationship {

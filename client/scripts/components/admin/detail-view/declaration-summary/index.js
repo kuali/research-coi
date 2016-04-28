@@ -22,6 +22,7 @@ import ConfigStore from '../../../../stores/config-store';
 import {AdminActions} from '../../../../actions/admin-actions';
 import {COIConstants} from '../../../../../../coi-constants';
 import classNames from 'classnames';
+import AdminRelationshipSelector from '../admin-relationship-selector';
 
 export default class DeclarationSummary extends React.Component {
   constructor() {
@@ -57,6 +58,29 @@ export default class DeclarationSummary extends React.Component {
       this.props.className
     );
 
+    let adminRelationship;
+    let commentClass = styles.comments;
+    if (this.props.config.lane === COIConstants.LANES.TEST && this.props.config.general.adminRelationshipEnabled) {
+      if (this.props.readonly) {
+        adminRelationship = (
+          <span className={styles.adminRelationship}>
+            {ConfigStore.getDispositionTypeString(this.props.declaration.adminRelationshipCd)}
+          </span>
+        );
+      } else {
+        adminRelationship = (
+          <span className={styles.adminRelationship}>
+            <AdminRelationshipSelector
+              options={this.props.options}
+              value={this.props.declaration.adminRelationshipCd}
+              declarationId={this.props.declaration.id}
+            />
+          </span>
+        );
+      }
+      commentClass = classNames(styles.comments, styles.shortComment);
+    }
+
     return (
       <div className={classes}>
         <div>
@@ -66,7 +90,8 @@ export default class DeclarationSummary extends React.Component {
           <span className={styles.conflict} style={{fontWeight: 'bold'}}>
             {ConfigStore.getDeclarationTypeString(this.props.declaration.typeCd)}
           </span>
-          <span className={styles.comments} style={{fontStyle: 'italic'}}>
+          {adminRelationship}
+          <span className={commentClass} style={{fontStyle: 'italic'}}>
             {comment}
           </span>
         </div>

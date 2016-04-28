@@ -22,6 +22,7 @@ import DeclarationSummary from '../declaration-summary';
 import ConfigStore from '../../../../stores/config-store';
 import ProjectDispositionSelector from '../project-disposition-selector';
 import classNames from 'classnames';
+import { LANES } from '../../../../../../coi-constants';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
@@ -96,6 +97,9 @@ export class AdminDeclarationsSummary extends React.Component {
             <DeclarationSummary
               key={`decl${declaration.id}`}
               declaration={declaration}
+              config={this.props.config}
+              readonly={this.props.readonly}
+              options={dispositionTypeOptions}
               commentCount={this.getCommentCount(declaration.id)}
               changedByPI={this.wasRespondedTo(declaration.id)}
             />
@@ -120,6 +124,15 @@ export class AdminDeclarationsSummary extends React.Component {
               />
             );
           }
+        }
+
+        let commentClass = styles.comment;
+        let adminRelationship;
+        if (this.props.config.lane === LANES.TEST && this.props.config.general.adminRelationshipEnabled) {
+          adminRelationship = (
+            <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
+          );
+          commentClass = classNames(styles.comments, styles.shortComment);
         }
 
         return (
@@ -149,7 +162,8 @@ export class AdminDeclarationsSummary extends React.Component {
             <div className={styles.titles}>
               <span className={styles.entityName}>FINANCIAL ENTITY</span>
               <span className={styles.conflict}>REPORTER RELATIONSHIP</span>
-              <span className={styles.comments}>REPORTER COMMENTS</span>
+              {adminRelationship}
+              <span className={commentClass}>REPORTER COMMENTS</span>
             </div>
             {declarations}
           </div>
