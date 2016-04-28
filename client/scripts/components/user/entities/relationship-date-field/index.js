@@ -20,6 +20,7 @@ import styles from './style';
 import React from 'react';
 import RelationshipTextField from '../relationship-text-field';
 import {DatePicker} from '../../../date-picker';
+import { merge } from '../../../../merge';
 
 export default class RelationshipDateField extends RelationshipTextField {
   constructor() {
