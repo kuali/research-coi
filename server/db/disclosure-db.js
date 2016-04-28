@@ -906,7 +906,7 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
       dbSortColumn = 'd.submitted_date';
       break;
     case 'STATUS':
-      dbSortColumn = 'd.statusCd';
+      dbSortColumn = 'statusCd';
       break;
     case 'TYPE':
       dbSortColumn = 'd.type';
