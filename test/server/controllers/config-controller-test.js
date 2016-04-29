@@ -28,10 +28,8 @@ let callback;
 let config;
 let archiveCalled;
 
-sinon.stub(Log, 'error', () => {});
-
-function stubSetConfig() {
-  sinon.stub(ConfigDB, 'setConfig', (dbInfo, schoolId, newConfig) => {
+function stubSetConfig(sandbox) {
+  sandbox.stub(ConfigDB, 'setConfig', (dbInfo, schoolId, newConfig) => {
     return new Promise(resolve => {
       config = newConfig;
       resolve();
@@ -39,16 +37,16 @@ function stubSetConfig() {
   });
 }
 
-function stubGetConfig() {
-  sinon.stub(ConfigDB, 'getConfig', () => {
+function stubGetConfig(sandbox) {
+  sandbox.stub(ConfigDB, 'getConfig', () => {
     return new Promise(resolve => {
       resolve(config);
     });
   });
 }
 
-function stubArchiveConfig() {
-  sinon.stub(ConfigDB, 'archiveConfig', () => {
+function stubArchiveConfig(sandbox) {
+  sandbox.stub(ConfigDB, 'archiveConfig', () => {
     return new Promise(resolve => {
       archiveCalled = true;
       resolve();
@@ -58,10 +56,13 @@ function stubArchiveConfig() {
 
 describe('ConfigController', () => {
   describe('saveConfig', () => {
+    let sandbox;
     before(() => {
-      stubSetConfig();
-      stubArchiveConfig();
-      stubGetConfig();
+      sandbox = sinon.sandbox.create();
+      sandbox.stub(Log, 'error', () => {});
+      stubSetConfig(sandbox);
+      stubArchiveConfig(sandbox);
+      stubGetConfig(sandbox);
     });
 
     beforeEach(() => {
@@ -104,6 +105,10 @@ describe('ConfigController', () => {
       };
 
       saveConfig(req, res);
+    });
+
+    after(() => {
+      sandbox.restore();
     });
   });
 });

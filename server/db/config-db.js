@@ -40,16 +40,9 @@ catch (err) {
     };
   };
 }
-const mockDB = {
-  'UIT': {
-    colors: {
-      'one': '#348FF7',
-      'two': '#0E4BB6',
-      'three': '#048EAF',
-      'four': '#EDF2F2'
-    }
-  }
-};
+
+const SCREENING_QUESTIONNAIRE_TYPE_CD = 1;
+const FIN_ENTITY_QUESTIONNAIRE_TYPE_CD = 2;
 
 const createDeleteQueries = (query, collection, tableProps) => {
   let sel = query(tableProps.table).select(tableProps.pk);
@@ -143,82 +136,87 @@ const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) =>
   return Promise.resolve([]);
 };
 
-export const getConfig = (dbInfo, userId, hostname, optionalTrx) => {
-
-  let config = mockDB.UIT;
-  const knex = getKnex(dbInfo);
-  const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
-  }
-  else {
-    query = knex;
-  }
-  return Promise.all([
-    query.select('*').from('relationship_category_type'),
-    query.select('*').from('relationship_type').where('active', true),
-    query.select('*').from('relationship_amount_type').where('active', true),
-    query.select('*').from('relationship_person_type').where('active', true),
-    query.select('*').from('declaration_type').where('active', true).orderBy('order'),
-    query.select('*').from('disclosure_type'),
-    query.select('*').from('notification').where('active', true),
-    query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc').then(result => {
-      if (result[0]) {
-        return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
-      }
-    }),
-    query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc').then(result => {
-      if (result[0]) {
-        return query.select('*').from('questionnaire_question as qq').where({questionnaire_id: result[0].id, active: true});
-      }
-    }),
-    query('config').select('config').limit(1).orderBy('id', 'desc'),
-    query.select('*').from('disclosure_status'),
-    query.select('*').from('project_type'),
-    query.select('*').from('project_role'),
-    query.select('*').from('project_status'),
-    getNotificationTemplates(query, dbInfo, hostname, notificationsMode),
-    query.select('*').from('disposition_type').where({active: true}).orderBy('order')
-  ])
-  .then(result => {
-    config.matrixTypes = result[0];
-    config.matrixTypes.map(type => {
-      type.typeOptions = result[1].filter(relationType => {
-        return relationType.relationship_cd === type.type_cd;
-      });
-      type.amountOptions = result[2].filter(amountType => {
-        return amountType.relationship_cd === type.type_cd;
-      });
-      return type;
+async function createMatrixTypes(query) {
+  const categories = await query.select('*').from('relationship_category_type');
+  const relationshipTypes = await query.select('*').from('relationship_type').where('active', true);
+  const amountTypes = await query.select('*').from('relationship_amount_type').where('active', true);
+  return categories.map(type => {
+    type.typeOptions = relationshipTypes.filter(relationType => {
+      return relationType.relationship_cd === type.type_cd;
     });
-    config.relationshipPersonTypes = result[3];
-    config.declarationTypes = result[4];
-    config.disclosureTypes = result[5];
-    config.notifications = result[6];
-    config.questions = {};
-    config.questions.screening = result[7] ? result[7].map(question => {
-      question.question = JSON.parse(question.question);
-      return question;
-    }) : [];
-    config.questions.entities = result[8] ? result[8].map(question => {
-      question.question = JSON.parse(question.question);
-      return question;
-    }) : [];
+    type.amountOptions = amountTypes.filter(amountType => {
+      return amountType.relationship_cd === type.type_cd;
+    });
+    return type;
+  });
+}
 
-    config.disclosureStatus = result[10];
-    config.projectTypes = result[11];
-    config.projectRoles = result[12];
-    config.projectStatuses = result[13];
-    config.notificationTemplates = result[14];
+async function getQuestionnaireQuestions(query, typeCd) {
+  const questionnaire = await query.select('id').from('questionnaire').limit(1).where('type_cd', typeCd).orderBy('version', 'desc');
+  if (questionnaire[0]) {
+    const questions = await query.select('*').from('questionnaire_question as qq').where({questionnaire_id: questionnaire[0].id, active: true});
+    return questions.map(question => {
+      question.question = JSON.parse(question.question);
+      return question;
+    });
+  }
+}
+
+async function getScreeningQuestions(query) {
+  return await getQuestionnaireQuestions(query, SCREENING_QUESTIONNAIRE_TYPE_CD);
+}
+
+async function getEntityQuestions(query) {
+  return await getQuestionnaireQuestions(query, FIN_ENTITY_QUESTIONNAIRE_TYPE_CD);
+}
+
+async function getQuestions(query) {
+  const screening = await getScreeningQuestions(query);
+  const entities = await getEntityQuestions(query);
+  return {
+    screening,
+    entities
+  };
+}
+
+async function getGeneralConfig(query) {
+  const general = await query('config').select('config').limit(1).orderBy('id', 'desc');
+  return JSON.parse(general[0].config).general;
+}
+
+export async function getConfig(dbInfo, hostname, optionalTrx) {
+  try {
+    let config = {};
+    const knex = getKnex(dbInfo);
+    const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
+    let query;
+    if (optionalTrx) {
+      query = knex.transacting(optionalTrx);
+    }
+    else {
+      query = knex;
+    }
+
+    config.matrixTypes = await createMatrixTypes(query);
+    config.relationshipPersonTypes = await query.select('*').from('relationship_person_type').where('active', true);
+    config.declarationTypes = await query.select('*').from('declaration_type').where('active', true).orderBy('order');
+    config.dispositionTypes = await query.select('*').from('disposition_type').where({active: true}).orderBy('order');
+    config.disclosureTypes = await query.select('*').from('disclosure_type');
+    config.questions = await getQuestions(query);
+    config.disclosureStatus = await query.select('*').from('disclosure_status');
+    config.projectTypes = await query.select('*').from('project_type');
+    config.projectRoles = await query.select('*').from('project_role');
+    config.projectStatuses = await query.select('*').from('project_status');
+    config.notificationTemplates = await getNotificationTemplates(query, dbInfo, hostname, notificationsMode);
     config.notificationsMode = notificationsMode;
-    config.dispositionTypes = result[15];
     config.lane = lane;
     config = camelizeJson(config);
-    config.general = JSON.parse(result[9][0].config).general;
-    return config;
-  });
-};
+    config.general = await getGeneralConfig(query);
+    return Promise.resolve(config);
+  } catch(err) {
+    Promise.reject(err);
+  }
+}
 
 export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
   const config = snakeizeJson(body);
@@ -289,10 +287,6 @@ export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
 
   queries.push(
     createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
-  );
-
-  queries.push(
-    createCollectionQueries(query, config.notifications, {pk: 'id', table: 'notification'})
   );
 
   queries.push(
