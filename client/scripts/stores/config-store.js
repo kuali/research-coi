@@ -612,9 +612,11 @@ class _ConfigStore {
     });
 
     this.codeMaps.dispositionType = {};
-    this.config.dispositionTypes.forEach(typeRecord => {
-      this.codeMaps.dispositionType[typeRecord.typeCd] = typeRecord;
-    });
+    if (Array.isArray(this.config.dispositionTypes)) {
+      this.config.dispositionTypes.forEach(typeRecord => {
+        this.codeMaps.dispositionType[typeRecord.typeCd] = typeRecord;
+      });
+    }
 
     this.isLoaded = true;
   }

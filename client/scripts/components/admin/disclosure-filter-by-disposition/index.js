@@ -58,12 +58,15 @@ export class DisclosureFilterByDisposition extends DisclosureFilter {
   }
 
   isChecked(value) {
+    if (this.props.activeFilters === null) {
+      return true;
+    }
     return this.props.activeFilters.some(filter => filter === value);
   }
 
-  setActiveStatus({ activeFilters, possibleDispositions }) {
+  setActiveStatus({ activeFilters }) {
     let active = true;
-    if (activeFilters.length === (possibleDispositions.length + 1)) {
+    if (activeFilters === null) {
       active = false;
     }
     this.setState({ active });

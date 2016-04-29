@@ -80,7 +80,7 @@ export class AdminDeclarationsSummary extends React.Component {
       const uniqueProjects = this.getUniqueProjects(this.props.declarations);
 
       let dispositionTypeOptions;
-      if(this.props.config.general.dispositionsEnabled) {
+      if(this.props.config.general.dispositionsEnabled && Array.isArray(this.props.config.dispositionTypes)) {
         dispositionTypeOptions = this.props.config.dispositionTypes.map(type => {
           return (
             <option key={type.typeCd} value={type.typeCd}>{type.description}</option>
