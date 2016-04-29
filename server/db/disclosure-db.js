@@ -760,12 +760,12 @@ export const getSummariesForReviewCount = (dbInfo, filters) => {
 
   if (Array.isArray(filters.disposition)) {
     const validTypeCds = filters.disposition.filter(typeCd => !isNaN(typeCd));
-    query.innerJoin(
+    query.leftJoin(
       'declaration as de',
       'd.id',
       'de.disclosure_id'
     );
-    query.innerJoin('project_person', function() {
+    query.leftJoin('project_person', function() {
       this.on(
         'de.project_id', 'project_person.project_id'
       ).andOn(
@@ -839,12 +839,12 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
 
   if (Array.isArray(filters.disposition)) {
     const validTypeCds = filters.disposition.filter(typeCd => !isNaN(typeCd));
-    query.innerJoin(
+    query.leftJoin(
       'declaration as de',
       'd.id',
       'de.disclosure_id'
     );
-    query.innerJoin('project_person', function() {
+    query.leftJoin('project_person', function() {
       this.on(
         'de.project_id', 'project_person.project_id'
       ).andOn(
