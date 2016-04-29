@@ -675,12 +675,6 @@ class _ConfigStore {
         delete dispositionType.typeCd;
       }
     });
-
-    this.config.notifications.forEach(notification => {
-      if (typeof notification.id === 'string' && notification.id.indexOf('new') === 0) {
-        delete notification.id;
-      }
-    });
   }
 
   updateOrder() {
