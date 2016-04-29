@@ -139,6 +139,7 @@ function cleanTemplate(template) {
   delete template.body;
   delete template.index;
   delete template.editing;
+  delete template.error;
   return template;
 }
 
