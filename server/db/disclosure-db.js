@@ -754,79 +754,7 @@ export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
   return camelizeJson(newDisclosure);
 }
 
-export const getSummariesForReviewCount = (dbInfo, filters) => {
-  const knex = getKnex(dbInfo);
-  let query = knex('disclosure as d').countDistinct('d.id as rowcount');
-
-  if (Array.isArray(filters.disposition)) {
-    const validTypeCds = filters.disposition.filter(typeCd => !isNaN(typeCd));
-    query.leftJoin(
-      'declaration as de',
-      'd.id',
-      'de.disclosure_id'
-    );
-    query.leftJoin('project_person', function() {
-      this.on(
-        'de.project_id', 'project_person.project_id'
-      ).andOn(
-        'd.user_id', 'project_person.person_id'
-      );
-    });
-
-    if (validTypeCds.includes(NO_DISPOSITION)) {
-      query.where(function() {
-        this.whereIn('project_person.disposition_type_cd', validTypeCds)
-          .orWhereNull('project_person.disposition_type_cd');
-      });
-    } else {
-      query.whereIn('project_person.disposition_type_cd', validTypeCds);
-    }
-  }
-
-  if (filters.date) {
-    if (filters.date.start && !isNaN(filters.date.start)) {
-      query.where(function() {
-        this.where(function() {
-          this.whereNotNull('d.revised_date')
-            .andWhere('d.revised_date', '>=', new Date(filters.date.start));
-        });
-        this.orWhere(function() {
-          this.whereNull('d.revised_date')
-            .andWhere('d.submitted_date', '>=', new Date(filters.date.start));
-        });
-      });
-    }
-
-    if (filters.date.end && !isNaN(filters.date.end)) {
-      query.where(function() {
-        this.where(function() {
-          this.whereNotNull('d.revised_date')
-            .andWhere('d.revised_date', '<=', new Date(filters.date.end + ONE_DAY));
-        });
-        this.orWhere(function() {
-          this.whereNull('d.revised_date')
-            .andWhere('d.submitted_date', '<=', new Date(filters.date.end + ONE_DAY));
-        });
-      });
-    }
-  }
-  if (filters.status) {
-    query.whereIn('d.status_cd', filters.status);
-  }
-  if (filters.submittedBy) {
-    query.where('d.submitted_by', filters.submittedBy);
-  }
-  if (filters.search) {
-    query = query.where(function() {
-      this.where('d.submitted_by', 'like', `%${filters.search}%`);
-    });
-  }
-
-  return query;
-};
-
-const SUMMARY_PAGE_SIZE = 40;
-export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosures) => {
+export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosures, pageSize) => {
   const knex = getKnex(dbInfo);
   const query = knex('disclosure as d');
   const columnsToSelect = [
@@ -933,8 +861,22 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
 
   query.orderBy(dbSortColumn, dbSortDirection);
   query.orderBy('d.id', 'desc');
-  return query.limit(SUMMARY_PAGE_SIZE).offset(Number(start));
+  query.limit(pageSize);
+  return query.offset(Number(start));
 };
+
+export async function getSummariesForReviewCount(dbInfo, filters) {
+  const results = await getSummariesForReview(
+    dbInfo,
+    null,
+    'DESCENDING',
+    0,
+    filters,
+    undefined,
+    999999
+  );
+  return Promise.resolve([{rowcount: results.length}]);
+}
 
 export const getSummariesForUser = (dbInfo, userId) => {
   const knex = getKnex(dbInfo);

@@ -22,7 +22,7 @@ import wrapAsync from './wrap-async';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
 import Log from '../log';
-import { ROLES } from '../../coi-constants';
+import { ROLES, ADMIN_PAGE_SIZE } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../http-status-codes';
@@ -140,7 +140,15 @@ export const init = app => {
     if (req.query.start && !isNaN(req.query.start)) {
       start = req.query.start;
     }
-    const result = await DisclosureDB.getSummariesForReview(req.dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosureIds);
+    const result = await DisclosureDB.getSummariesForReview(
+      req.dbInfo,
+      sortColumn,
+      sortDirection,
+      start,
+      filters,
+      reviewerDisclosureIds,
+      ADMIN_PAGE_SIZE
+    );
     res.send(result);
   }));
 

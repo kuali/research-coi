@@ -21,7 +21,7 @@ import {COIConstants, NO_DISPOSITION} from '../../../coi-constants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
-const PAGE_SIZE = 40;
+import {ADMIN_PAGE_SIZE} from '../../../coi-constants';
 import ConfigStore from './config-store';
 
 function defaultStatusFilters() {
@@ -89,7 +89,7 @@ class _AdminStore {
   }
 
   morePossibleSummaries(summaries) {
-    return summaries.length !== 0 && summaries.length % PAGE_SIZE === 0;
+    return summaries.length !== 0 && summaries.length % ADMIN_PAGE_SIZE === 0;
   }
 
   loadSummaryCount() {
@@ -366,7 +366,7 @@ class _AdminStore {
     }
 
     this.applicationState.loadingMore = true;
-    this.applicationState.offset += PAGE_SIZE;
+    this.applicationState.offset += ADMIN_PAGE_SIZE;
 
     createRequest().get('/api/coi/disclosure-summaries')
            .query({sortColumn: this.applicationState.sort})

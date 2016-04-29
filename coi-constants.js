@@ -161,6 +161,8 @@ export const LANES = {
 
 export const NO_DISPOSITION = -1;
 
+export const ADMIN_PAGE_SIZE = 40;
+
 export const COIConstants = {
   DISCLOSURE_STEP,
   INSTRUCTION_STEP,
@@ -188,5 +190,6 @@ export const COIConstants = {
   NOTIFICATIONS_MODE,
   PI_ROLE_CODE,
   LANES,
-  NO_DISPOSITION
+  NO_DISPOSITION,
+  ADMIN_PAGE_SIZE
 };
