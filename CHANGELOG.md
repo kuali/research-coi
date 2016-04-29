@@ -1,3 +1,31 @@
+##coi-1604
+
+######Issues
+* Increased project title column to accommodate titles up to 2000 characters.
+* Fixed issue where screen became unresponsive upon selecting a travel relationship when adding a financial entity.
+* Fixed issue where new disclosures were not picking up the latest configuration.
+* Fixed issue with navigating the screening questionnaire when a question had child questions for both yes and no answers.
+* Fixed issue where warning for not having a financial entity displayed when there was an incomplete entity even if there was a complete entity already.
+* Fixed issue where users were not allowed to move forward if there was an incomplete relationship on a financial entity, by allowing the user to either remove the in progress relationship, or clicking the undo button when editing a financial entity.
+* Fixed issue where UI was not displaying the configured disclosure types in all place in the reporter view.
+* Made the 'I have no entities to disclose' button larger.
+
+######Features in Production
+* Ability to order declaration types set by the reporter in the configuration view.
+
+######Features behind a Feature Flag
+* Ability to reassign additional reviewers.
+* Ability to configure and assign project level dispositions to submitted disclosures. 
+* System will set disclosure level disposition that is the highest risk disposition type of all the project dispositions.
+* Ability to filter disclosures based on disposition in the admin list view.
+* Ability to create and display rich text instructions.
+* Ability to automatically assign additional reviewers based on the reporter's primary department.
+* Ability to configure and send the email notifications to COI Admin when reporter a new disclosure is submitted by a reporter
+* Ability to configure and send the email notifications to a reporter when a new project’s creation requires an annual disclosure update.
+* Ability to configure and send the email notifications to reporter when their disclosure is sent back, approved, expired or about to expire.
+* Ability to configure and send the email notifications related to additional review.
+
+
 ##coi-1603
 * Renamed migration files to facilitate migrations being ran in alphabetic order. New migration files will follow the YYYYMM_xxx.js naming convention. The following sql script will fix your existing knex_migrations table if needed.
 
