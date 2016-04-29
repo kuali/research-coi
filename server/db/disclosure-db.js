@@ -828,16 +828,18 @@ export const getSummariesForReviewCount = (dbInfo, filters) => {
 const SUMMARY_PAGE_SIZE = 40;
 export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosures) => {
   const knex = getKnex(dbInfo);
-  const query = knex('disclosure as d')
-    .distinct(
-      'd.submitted_by',
-      'd.revised_date',
-      'd.status_cd as statusCd',
-      'd.id',
-      'd.submitted_date'
-    );
+  const query = knex('disclosure as d');
+  const columnsToSelect = [
+    'd.submitted_by',
+    'd.revised_date',
+    'd.status_cd as statusCd',
+    'd.id',
+    'd.submitted_date'
+  ];
 
   if (Array.isArray(filters.disposition)) {
+    columnsToSelect.push('project_person.disposition_type_cd');
+
     const validTypeCds = filters.disposition.filter(typeCd => !isNaN(typeCd));
     query.leftJoin(
       'declaration as de',
@@ -853,14 +855,20 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
     });
 
     if (validTypeCds.includes(NO_DISPOSITION)) {
-      query.where(function() {
+      query.having(function() {
         this.whereIn('project_person.disposition_type_cd', validTypeCds)
           .orWhereNull('project_person.disposition_type_cd');
       });
     } else {
-      query.whereIn('project_person.disposition_type_cd', validTypeCds);
+      query.having(function() {
+        this.whereIn('project_person.disposition_type_cd', validTypeCds);
+      });
     }
+
+    query.groupBy('d.id');
   }
+
+  query.select(columnsToSelect);
 
   if (filters.date) {
     if (filters.date.start && !isNaN(filters.date.start)) {
