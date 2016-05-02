@@ -4,7 +4,7 @@
     "**/client/build",
     "scripts/lib/",
     "webpack.config.js",
-    "db/migration/seeds/**"
+    "db/migration/**"
   ],
   "test": [
     "test/**"
