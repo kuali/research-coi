@@ -19,8 +19,10 @@
 import {COIConstants} from '../coi-constants';
 
 let logLevel;
+let reportError;
 try {
   const extensions = require('research-extensions').default;
+  reportError = extensions.reportError;
   logLevel = extensions.config.logLevel;
 } catch (e) {
   logLevel = process.env.LOG_LEVEL;
@@ -40,7 +42,14 @@ class Log {
   }
 
   error(message, req) {
-    console.error(this.create(message, 'ERROR', req));
+    let toLog = this.create(message, 'ERROR', req);
+    console.error(toLog);
+    if (reportError !== undefined) {
+      if (message.stack !== undefined) {
+        toLog += `\n${message.stack}`;
+      }
+      reportError(toLog);
+    }
   }
 
   create(message, type, req) {
