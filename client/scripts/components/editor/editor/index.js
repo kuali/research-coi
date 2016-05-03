@@ -18,17 +18,32 @@
 
 import React from 'react';
 import styles from './style.css';
-import {Editor, RichUtils} from 'draft-js';
+import { Editor, RichUtils, Entity } from 'draft-js';
 import BlockStyleControls from '../block-style-controls';
 import InlineStyleControls from '../inline-style-controls';
+
+const MAX_LIST_DEPTH = 2;
 
 export default class _Editor extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      showURLInput: false,
+      urlValue: ''
+    };
+
     this.onChange = this.onChange.bind(this);
     this.handleKeyCommand = this.handleKeyCommand.bind(this);
     this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
     this.toggleBlockType = (type) => this._toggleBlockType(type);
+    this._onTab = this._onTab.bind(this);
+    this.promptForLink = this._promptForLink.bind(this);
+    this.onURLChange = (e) => this.setState({urlValue: e.target.value});
+    this.confirmLink = this._confirmLink.bind(this);
+    this.cancelLink = this._cancelLink.bind(this);
+    this.onLinkInputKeyDown = this._onLinkInputKeyDown.bind(this);
+    this.removeLink = this._removeLink.bind(this);
   }
 
   onChange(editorState) {
@@ -62,8 +77,98 @@ export default class _Editor extends React.Component {
     );
   }
 
+  _onTab(evt) {
+    const editorState = this.props.editorState;
+    const newEditorState = RichUtils.onTab(evt, editorState, MAX_LIST_DEPTH);
+    if (newEditorState !== editorState) {
+      this.onChange(newEditorState);
+    }
+  }
+
+  _promptForLink(e) {
+    e.preventDefault();
+    const selection = this.props.editorState.getSelection();
+    if (!selection.isCollapsed()) {
+      this.setState({
+        showURLInput: true,
+        urlValue: ''
+      }, () => {
+        setTimeout(() => this.refs.url.focus(), 0);
+      });
+    }
+  }
+
+  _confirmLink(e) {
+    e.preventDefault();
+    const {urlValue} = this.state;
+
+    const entityKey = Entity.create('LINK', 'MUTABLE', {url: urlValue});
+    this.onChange(RichUtils.toggleLink(
+      this.props.editorState,
+      this.props.editorState.getSelection(),
+      entityKey
+    ));
+
+    this.setState({
+      showURLInput: false,
+      urlValue: ''
+    }, () => {
+      setTimeout(() => this.refs.editor.focus(), 0);
+    });
+  }
+
+  _cancelLink(e) {
+    e.preventDefault();
+    this.setState({
+      showURLInput: false,
+      urlValue: ''
+    }, () => {
+      setTimeout(() => this.refs.editor.focus(), 0);
+    });
+  }
+
+  _onLinkInputKeyDown(e) {
+    if (e.which === 13) {
+      this._confirmLink(e);
+    }
+  }
+
+  _removeLink(e) {
+    e.preventDefault();
+    const selection = this.props.editorState.getSelection();
+    if (!selection.isCollapsed()) {
+      this.onChange(
+         RichUtils.toggleLink(this.props.editorState, selection, null)
+      );
+    }
+  }
 
   render() {
+    let urlInput;
+    if (this.state.showURLInput) {
+      urlInput = (
+        <div className={styles.urlInputContainer}>
+          <input
+            onChange={this.onURLChange}
+            ref="url"
+            className={styles.urlInput}
+            type="text"
+            value={this.state.urlValue}
+            onKeyDown={this.onLinkInputKeyDown}
+            placeholder="https://example.com/"
+          />
+          <div style={{display: 'inline-block', width: '30%', paddingLeft: '5px'}}>
+            <button onMouseDown={this.confirmLink}>
+              <i className={`fa fa-check`}></i>
+            </button>
+            <button onMouseDown={this.cancelLink}>
+              <i className={`fa fa-times`}></i>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div>
         <InlineStyleControls
@@ -74,11 +179,29 @@ export default class _Editor extends React.Component {
           editorState={this.props.editorState}
           onToggle={this.toggleBlockType}
         />
+        <div className={styles.buttons}>
+          <button
+            onMouseDown={this.promptForLink}
+            style={{margin: '0 5px'}}
+          >
+            <i className={`fa fa-link`}></i>
+          </button>
+          <button
+            onMouseDown={this.removeLink}
+            style={{margin: '0 5px'}}
+          >
+            <i className={`fa fa-unlink`}></i>
+          </button>
+          {urlInput}
+        </div>
+
         <div id='editorTextArea' className={styles.textArea}>
           <Editor
             editorState={this.props.editorState}
             handleKeyCommand={this.handleKeyCommand}
             onChange={this.onChange}
+            onTab={this._onTab}
+            ref="editor"
           />
         </div>
       </div>
