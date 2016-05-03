@@ -80,7 +80,7 @@ function configureProxy(app) {
 export function run() {
   const app = express();
   app.disable('x-powered-by');
-  app.set('view engine', 'jade');
+  app.set('view engine', 'pug');
   app.set('views', './views');
   configureProxy(app);
 
