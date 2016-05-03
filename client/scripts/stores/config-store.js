@@ -20,7 +20,7 @@ import ConfigActions from '../actions/config-actions';
 import alt from '../alt';
 import {COIConstants} from '../../../coi-constants';
 import {processResponse, createRequest} from '../http-utils';
-import { EditorState, ContentState, convertToRaw, convertFromRaw } from 'draft-js';
+import { prepareInstructionsForSave, createEditorStates } from '../editor-utils';
 import _ from 'lodash';
 
 function convertToggleValue(value) {
@@ -36,54 +36,6 @@ function convertToggleValue(value) {
   }
 
   throw new Error('unknown toggle value');
-}
-
-export function prepareInstructionsForSave(editorStates) {
-  const richTextInstructions = {};
-  for (const key in editorStates) {
-    if (editorStates.hasOwnProperty(key)) {
-      richTextInstructions[key] = convertToRaw(editorStates[key].getCurrentContent());
-    }
-  }
-  return richTextInstructions;
-}
-
-function createEditorStatesFromText(instructions) {
-  const editorStates = {};
-  for (const key in instructions) {
-    if (instructions.hasOwnProperty(key)) {
-      const instruction = instructions[key];
-      if (instruction) {
-        editorStates[key] = EditorState.createWithContent(ContentState.createFromText(instruction));
-      } else {
-        editorStates[key] = EditorState.createEmpty();
-      }
-    }
-  }
-  return editorStates;
-}
-
-function createEditorStatesFromContentState(instructions) {
-  const editorStates = {};
-  for (const key in instructions) {
-    if (instructions.hasOwnProperty(key)) {
-      const instruction = instructions[key];
-      if (instruction) {
-        const blocks = convertFromRaw(instruction);
-        editorStates[key] = EditorState.createWithContent(ContentState.createFromBlockArray(blocks));
-      } else {
-        editorStates[key] = EditorState.createEmpty();
-      }
-    }
-  }
-  return editorStates;
-}
-
-export function createEditorStates(instructions, richTextInstructions) {
-  if (richTextInstructions) {
-    return createEditorStatesFromContentState(richTextInstructions);
-  }
-  return createEditorStatesFromText(instructions);
 }
 
 class _ConfigStore {
