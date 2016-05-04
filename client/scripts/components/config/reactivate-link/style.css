@@ -16,14 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.textbox {
-  vertical-align: middle;
-  margin-left: 10px;
-  padding: 3px;
-  font-size: 16px;
+.container {
+  border-bottom: 1px dotted #008800;
+  cursor: pointer;
 }
 
-.override.editLink {
-  padding-top: 2px;
-  margin-left: 5px;
+:global(.color-blind) .container {
+  border-bottom: 1px dotted black;
+}
+
+.linkText {
+  padding-left: 2px;
+  color: #008800;
+  vertical-align: middle;
+  font-size: 8px;
+}
+
+:global(.color-blind) .linkText {
+  color: black;
+}
+
+.icon {
+  color: #008800;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+:global(.color-blind) .icon {
+  color: black;
 }

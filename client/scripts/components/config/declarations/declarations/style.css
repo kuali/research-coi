@@ -28,16 +28,20 @@
   color: #0095A0;
   margin: 0 0 0 20px;
   padding: 10px;
-  font-size: 17px;
+  font-size: 16px;
   cursor: pointer;
+  vertical-align: middle;
 }
 
 :global(.color-blind) .add {
   color: black;
 }
 
+.another {
+  margin-left: 3px;
+}
+
 .label {
-  border-left: 1px solid black;
   margin-left: 3px;
   padding-left: 10px;
 }

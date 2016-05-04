@@ -19,8 +19,9 @@
 import ConfigActions from '../../../../actions/config-actions';
 import {COIConstants} from '../../../../../../coi-constants';
 import Type from '../type';
+import styles from './style';
 
-export default class DispositionType extends Type {
+export default class DeclarationType extends Type {
   constructor() {
     super();
   }
@@ -30,19 +31,31 @@ export default class DispositionType extends Type {
   }
 
   moveUp() {
-    ConfigActions.moveArrayElement({
-      path: 'config.declarationTypes',
-      index: this.props.index,
-      direction: -1
-    });
+    this.refs.container.previousSibling.classList.add(styles.down);
+    this.refs.container.classList.add(styles.up);
+    setTimeout(() => {
+      this.refs.container.classList.remove(styles.up);
+      this.refs.container.previousSibling.classList.remove(styles.down);
+      ConfigActions.moveArrayElement({
+        path: 'config.declarationTypes',
+        index: this.props.index,
+        direction: -1
+      });
+    }, 100);
   }
 
   moveDown() {
-    ConfigActions.moveArrayElement({
-      path: 'config.declarationTypes',
-      index: this.props.index,
-      direction: 1
-    });
+    this.refs.container.nextSibling.classList.add(styles.up);
+    this.refs.container.classList.add(styles.down);
+    setTimeout(() => {
+      this.refs.container.classList.remove(styles.down);
+      this.refs.container.nextSibling.classList.remove(styles.up);
+      ConfigActions.moveArrayElement({
+        path: 'config.declarationTypes',
+        index: this.props.index,
+        direction: 1
+      });
+    }, 100);
   }
 
   nameChanged(evt) {
@@ -53,10 +66,12 @@ export default class DispositionType extends Type {
   }
 
   doneEditing() {
-    ConfigActions.set({
-      path:`applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
-      value: undefined
-    });
+    if (this.props.type.description && this.props.type.description.length > 0) {
+      ConfigActions.set({
+        path:`applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
+        value: undefined
+      });
+    }
   }
 
   startEditing() {
@@ -66,8 +81,15 @@ export default class DispositionType extends Type {
     });
   }
 
-  deleteType() {
-    ConfigActions.removeFromArray({
+  deactivateType() {
+    ConfigActions.deactivateType({
+      path: `config.declarationTypes`,
+      index: this.props.index
+    });
+  }
+
+  reactivateType() {
+    ConfigActions.reactivateType({
       path: `config.declarationTypes`,
       index: this.props.index
     });
@@ -77,5 +99,12 @@ export default class DispositionType extends Type {
     if (evt.keyCode === COIConstants.RETURN_KEY) {
       this.doneEditing();
     }
+  }
+
+  delete() {
+    ConfigActions.removeFromArray({
+      path: 'config.declarationTypes',
+      index: this.props.index
+    });
   }
 }

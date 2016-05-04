@@ -16,14 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.textbox {
-  vertical-align: middle;
-  margin-left: 10px;
-  padding: 3px;
-  font-size: 16px;
-}
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
-.override.editLink {
-  padding-top: 2px;
-  margin-left: 5px;
+export default class ReactivateLink extends React.Component {
+  constructor() {
+    super();
+
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick() {
+    this.props.onClick(this.props.id);
+  }
+
+  render() {
+    return (
+      <span onClick={this.props.onClick} className={classNames(styles.container, this.props.className)}>
+        <i className={`fa fa-power-off ${styles.icon}`}></i>
+        <span className={styles.linkText}>Reactivate</span>
+      </span>
+    );
+  }
 }

@@ -77,5 +77,8 @@ export default alt.generateActions(
   'moveArrayElement',
   'removeFromArray',
   'saveNewType',
-  'updateEditorState'
+  'saveNewTypeAndAddMore',
+  'updateEditorState',
+  'deactivateType',
+  'reactivateType'
 );

@@ -23,8 +23,9 @@
 
 .typeLabel {
   vertical-align: middle;
-  padding-left: 28px;
+  padding-left: 12px;
   max-width: 80%;
+  min-width: 200px;
   display: inline-block;
   word-wrap: break-word;
 }
@@ -40,20 +41,32 @@
   font-size: 16px;
 }
 
-.override.editLink {
+.override.doneLink {
   float: right;
   padding-top: 2px;
-  margin-left: 3px;
-}
-
-.override.deleteLink {
-  float: right;
-  padding-top: 2px;
-  margin-left: 15px;
+  margin-left: 5px;
 }
 
 .button {
   color: #0095A0;
   border: none;
   background-color: transparent;
+}
+
+.inactive {
+  color: #AAA;
+  text-decoration: line-through;
+}
+
+.editLink {
+  margin-right: 15px;
+}
+
+.deleteLink {
+  margin-left: 15px;
+}
+
+.down {
+  transform: translateY(43px);
+  transition: transform 0.1s ease-out;
 }
