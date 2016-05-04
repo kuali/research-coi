@@ -34,6 +34,7 @@ export default class extends React.Component {
           id: declaration.projectId,
           name: declaration.projectTitle,
           type: ConfigStore.getProjectTypeString(declaration.projectTypeCd),
+          sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
           sponsor: declaration.sponsorName,
           dispositionTypeCd: declaration.dispositionTypeCd
@@ -98,6 +99,10 @@ export default class extends React.Component {
                 <div className={styles.field}>
                   <label className={styles.label}>Project Type:</label>
                   <span style={{fontWeight: 'bold'}}>{project.type}</span>
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>Project Number:</label>
+                  <span style={{fontWeight: 'bold'}}>{project.sourceIdentifier}</span>
                 </div>
                 <div className={styles.field}>
                   <label className={styles.label}>Project Role:</label>
