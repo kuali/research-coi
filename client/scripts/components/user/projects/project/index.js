@@ -103,6 +103,12 @@ export class Project extends React.Component {
                 </span>
               </div>
               <div className={styles.item}>
+                Project Number:
+                <span className={styles.value}>
+                  {this.props.sourceIdentifier}
+                </span>
+              </div>
+              <div className={styles.item}>
                 Project Role:
                 <span className={styles.value}>
                   {this.props.role}

@@ -141,6 +141,7 @@ export class Relationships extends React.Component {
             type={ConfigStore.getProjectTypeString(this.props.projects[i].typeCd)}
             role={this.props.projects[i].roleCd}
             sponsor={this.props.projects[i].sponsorName}
+            sourceIdentifier={this.props.projects[i].sourceIdentifier}
             projectId={this.props.projects[i].id}
             declarationTypes={this.props.declarationTypes}
             open={this.isProjectDeclarationOpen(this.props.projects[i].id)}

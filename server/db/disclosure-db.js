@@ -590,6 +590,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         'd.comments as comments',
         'd.admin_relationship_cd as adminRelationshipCd',
         'p.title as projectTitle',
+        'p.source_identifier as sourceIdentifier',
         'fe.name as entityName',
         'p.type_cd as projectTypeCd',
         'p.sponsor_name as sponsorName',
