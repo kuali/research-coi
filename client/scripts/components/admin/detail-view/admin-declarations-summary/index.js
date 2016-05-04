@@ -75,31 +75,33 @@ export class AdminDeclarationsSummary extends React.Component {
   }
 
   render() {
+    const { config, declarations, readonly, className } = this.props;
     let projects = [];
     if(this.props.declarations !== undefined) {
 
-      const uniqueProjects = this.getUniqueProjects(this.props.declarations);
+      const uniqueProjects = this.getUniqueProjects(declarations);
 
       let dispositionTypeOptions;
-      if(this.props.config.general.dispositionsEnabled && Array.isArray(this.props.config.dispositionTypes)) {
-        dispositionTypeOptions = this.props.config.dispositionTypes.map(type => {
-          return (
-            <option key={type.typeCd} value={type.typeCd}>{type.description}</option>
-          );
-        });
-
+      if(config.general.dispositionsEnabled && Array.isArray(config.dispositionTypes)) {
+        dispositionTypeOptions = config.dispositionTypes
+          .filter(type => Boolean(type.active))
+          .map(type => {
+            return (
+              <option key={type.typeCd} value={type.typeCd}>{type.description}</option>
+            );
+          });
       }
 
       projects = uniqueProjects.map((project, index) => {
-        const declarations = this.props.declarations.filter(declaration => {
+        const declarationSummaries = declarations.filter(declaration => {
           return declaration.projectId === project.id && declaration.finEntityActive === 1;
         }).map(declaration => {
           return (
             <DeclarationSummary
               key={`decl${declaration.id}`}
               declaration={declaration}
-              config={this.props.config}
-              readonly={this.props.readonly}
+              config={config}
+              readonly={readonly}
               options={dispositionTypeOptions}
               commentCount={this.getCommentCount(declaration.id)}
               changedByPI={this.wasRespondedTo(declaration.id)}
@@ -108,12 +110,14 @@ export class AdminDeclarationsSummary extends React.Component {
         });
 
         let dispositionTypeSelector;
-        if (this.props.config.general.dispositionsEnabled) {
-          if (this.props.readonly) {
+        if (config.general.dispositionsEnabled) {
+          if (readonly) {
             dispositionTypeSelector = (
               <div className={styles.field}>
                 <label className={styles.label}>Project Disposition:</label>
-                <span style={{fontWeight: 'bold'}}>{ConfigStore.getDispositionTypeString(project.dispositionTypeCd)}</span>
+                <span style={{fontWeight: 'bold'}}>
+                  {ConfigStore.getDispositionTypeString(project.dispositionTypeCd)}
+                </span>
               </div>
             );
           } else {
@@ -129,7 +133,7 @@ export class AdminDeclarationsSummary extends React.Component {
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (this.props.config.lane === LANES.TEST && this.props.config.general.adminRelationshipEnabled) {
+        if (config.lane === LANES.TEST && config.general.adminRelationshipEnabled) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );
@@ -170,14 +174,14 @@ export class AdminDeclarationsSummary extends React.Component {
               {adminRelationship}
               <span className={commentClass}>REPORTER COMMENTS</span>
             </div>
-            {declarations}
+            {declarationSummaries}
           </div>
         );
       });
     }
 
     return (
-      <div className={classNames(styles.container, this.props.className)} >
+      <div className={classNames(styles.container, className)} >
         <div className={styles.heading}>PROJECT DECLARATIONS</div>
         <div className={styles.body}>
           {projects}
