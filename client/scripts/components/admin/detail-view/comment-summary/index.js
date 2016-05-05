@@ -59,7 +59,7 @@ export default class CommentSummary extends React.Component {
         return comment.topicId === topicId;
       });
 
-      const topicName = `QUESTION ${ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, topicId)}`;
+      const topicName = `${COIConstants.COMMENT_TITLES.QUESTION} ${ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, topicId)}`;
       return (
         <TopicCommentSummary
           role={this.props.role}
@@ -111,7 +111,7 @@ export default class CommentSummary extends React.Component {
         return comment.topicId === topicId;
       });
 
-      const topicName = `ENTITY: ${this.getEntityName(topicId)}`;
+      const topicName = `${COIConstants.COMMENT_TITLES.ENTITY} ${this.getEntityName(topicId)}`;
       return (
         <TopicCommentSummary
           role={this.props.role}
@@ -139,7 +139,7 @@ export default class CommentSummary extends React.Component {
         return comment.topicId === topicId;
       });
 
-      const topicName = this.getDeclarationName(topicId);
+      const topicName = `${COIConstants.COMMENT_TITLES.DECLARATION} ${this.getDeclarationName(topicId)}`;
       return (
         <TopicCommentSummary
           role={this.props.role}

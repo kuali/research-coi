@@ -35,7 +35,7 @@ export default class EntitySummary extends React.Component {
     AdminActions.showCommentingPanel(
       COIConstants.DISCLOSURE_STEP.ENTITIES,
       this.props.entity.id,
-      `ENTITY: ${this.props.entity.name}`
+      `${COIConstants.COMMENT_TITLES.ENTITY} ${this.props.entity.name}`
     );
   }
 

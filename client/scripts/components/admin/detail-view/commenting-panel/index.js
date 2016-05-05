@@ -154,7 +154,7 @@ export default class CommentingPanel extends React.Component {
           <span className={styles.close} onClick={AdminActions.hideCommentingPanel}>
             <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
           </span>
-          <span className={styles.topic}>{this.props.comment.topicSection}</span>
+          <span className={styles.topic}>{this.props.comment.title}</span>
         </div>
 
         <div className={`fill flexbox ${styles.comments}`}>
