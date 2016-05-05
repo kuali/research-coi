@@ -35,7 +35,7 @@ export default class DeclarationSummary extends React.Component {
     AdminActions.showCommentingPanel(
       COIConstants.DISCLOSURE_STEP.PROJECTS,
       this.props.declaration.id,
-      `${this.props.declaration.projectTitle} - ${this.props.declaration.entityName}`
+      `${COIConstants.COMMENT_TITLES.DECLARATION} ${this.props.declaration.projectTitle} - ${this.props.declaration.entityName}`
     );
   }
 
