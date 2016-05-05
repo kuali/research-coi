@@ -601,10 +601,13 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         'pp.disposition_type_cd as dispositionTypeCd'
       )
       .from('declaration as d')
-      .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
       .innerJoin('project as p', 'p.id', 'd.project_id')
       .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
       .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
+      .innerJoin('fin_entity as fe', function() {
+        this.on('fe.id', 'd.fin_entity_id')
+          .andOn('di.id', 'fe.disclosure_id');
+      })
       .where('d.disclosure_id', disclosureId),
     retrieveComments(dbInfo, userInfo, disclosureId),
     knex.select('id', 'name', 'key', 'file_type as fileType')
