@@ -21,7 +21,7 @@
 import assert from 'assert';
 import * as app from '../../../../server/app';
 import request from 'supertest';
-import {COIConstants} from '../../../../coi-constants';
+import { PROJECT_DISCLOSURE_STATUSES, DISCLOSURE_STATUS, RELATIONSHIP_STATUS} from '../../../../coi-constants';
 import { OK, FORBIDDEN } from '../../../../http-status-codes';
 import {
   createProject,
@@ -73,9 +73,12 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
       await insertProjectPerson(knex, createPerson(1, 'PI', true), projectId);
       await insertProjectPerson(knex, createPerson(2, 'COI', true), projectId);
       await insertProjectPerson(knex, createPerson(3, 'PI', true), projectId);
-      const disclosureId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),3);
-      const finEntityId = await insertEntity(knex, createEntity(disclosureId,COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, true));
+      await insertProjectPerson(knex, createPerson(4, 'PI', true), projectId);
+      const disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),3);
+      const finEntityId = await insertEntity(knex, createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true));
       await insertDeclaration(knex, createDeclaration(disclosureId, finEntityId, projectId));
+      const disclosure1Id = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),4);
+      await insertEntity(knex, createEntity(disclosure1Id,RELATIONSHIP_STATUS.IN_PROGRESS, true));
     });
 
     it('should return OK status', async () => {
@@ -88,15 +91,19 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     });
 
     it('should return not yet disclosed for user 1', () => {
-      assert.equal(COIConstants.NOT_YET_DISCLOSED, statuses.find(status => status.userId === '1').status);
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.NOT_YET_DISCLOSED, statuses.find(status => status.userId === '1').status);
     });
 
     it('should return no required for user 2', () => {
-      assert.equal(COIConstants.DISCLOSURE_NOT_REQUIRED, statuses.find(status => status.userId === '2').status);
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED, statuses.find(status => status.userId === '2').status);
     });
 
     it('should return submitted for Approval for user 3', () => {
       assert.equal('Submitted for Approval', statuses.find(status => status.userId === '3').status);
+    });
+
+    it('should return update needed for user 4', () => {
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED, statuses.find(status => status.userId === '4').status);
     });
   });
 

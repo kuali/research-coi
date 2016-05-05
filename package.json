@@ -9,6 +9,7 @@
     "build_babel_to": "babel . --ignore \"./client/,./node_modules,./loadtest,./webpack.config.js,./test,./start-server.js\" -d ",
     "test": "npm run lint && npm run test_unit",
     "test_unit": "BABEL_ENV=test NODE_ENV=test nyc --reporter=lcov mocha",
+    "test_one": "BABEL_ENV=test NODE_ENV=test mocha -g",
     "report": "nyc report && open ./coverage/lcov-report/index.html",
     "start": "babel-node server/bootstrap.js",
     "start_prod": "node start-server.js",

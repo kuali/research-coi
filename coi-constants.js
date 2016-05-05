@@ -123,9 +123,11 @@ export const STATE_TYPE = {
   ANNUAL_DISCLOSURE_STATE: 'annual_disclosure_state'
 };
 
-export const NOT_YET_DISCLOSED = 'Not Yet Disclosed';
-
-export const DISCLOSURE_NOT_REQUIRED = 'Disclosure Not Required';
+export const PROJECT_DISCLOSURE_STATUSES = {
+  NOT_YET_DISCLOSED: 'Not Yet Disclosed',
+  DISCLOSURE_NOT_REQUIRED: 'Disclosure Not Required',
+  UPDATE_NEEDED: 'Update Needed'
+}
 
 export const SYSTEM_USER = 'system';
 
@@ -180,8 +182,6 @@ export const COIConstants = {
   RELATIONSHIP_STATUS,
   LOG_LEVEL,
   STATE_TYPE,
-  NOT_YET_DISCLOSED,
-  DISCLOSURE_NOT_REQUIRED,
   SYSTEM_USER,
   DATE_TYPE,
   EDITABLE_STATUSES,
@@ -191,5 +191,6 @@ export const COIConstants = {
   PI_ROLE_CODE,
   LANES,
   NO_DISPOSITION,
-  ADMIN_PAGE_SIZE
+  ADMIN_PAGE_SIZE,
+  PROJECT_DISCLOSURE_STATUSES
 };
