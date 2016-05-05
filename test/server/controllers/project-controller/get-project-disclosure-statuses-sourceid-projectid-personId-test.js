@@ -21,7 +21,7 @@
 import assert from 'assert';
 import * as app from '../../../../server/app';
 import request from 'supertest';
-import {COIConstants} from '../../../../coi-constants';
+import { PROJECT_DISCLOSURE_STATUSES, RELATIONSHIP_STATUS, DISCLOSURE_STATUS} from '../../../../coi-constants';
 import { OK, FORBIDDEN } from '../../../../http-status-codes';
 import {
   createProject,
@@ -84,7 +84,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
 
     it('should return not yet disclosed', () => {
       assert.equal(1, status.userId);
-      assert.equal(COIConstants.NOT_YET_DISCLOSED, status.status);
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.NOT_YET_DISCLOSED, status.status);
     });
   });
 
@@ -106,18 +106,17 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
 
     it('should return not required', () => {
       assert.equal(2, status.userId);
-      assert.equal(COIConstants.DISCLOSURE_NOT_REQUIRED, status.status);
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED, status.status);
     });
   });
 
-  describe('get status for not required', () => {
+  describe('get status for undeclared project', () => {
     let status;
     before(async () => {
       const projectId = await insertProject(knex, createProject(3));
       await insertProjectPerson(knex, createPerson(3, 'PI', true), projectId);
-      const disclosureId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),3);
-      const finEntityId = await insertEntity(knex, createEntity(disclosureId,COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, true));
-      await insertDeclaration(knex, createDeclaration(disclosureId, finEntityId, projectId));
+      const disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),3);
+      await insertEntity(knex, createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true));
     });
 
     it('should return OK status', async () => {
@@ -129,8 +128,34 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
       status = response.body;
     });
 
-    it('should return not yet disclosed', () => {
+    it('should return update needed', () => {
       assert.equal(3, status.userId);
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED, status.status);
+    });
+  });
+
+
+  describe('get disclosure status', () => {
+    let status;
+    before(async () => {
+      const projectId = await insertProject(knex, createProject(4));
+      await insertProjectPerson(knex, createPerson(4, 'PI', true), projectId);
+      const disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),4);
+      const finEntityId = await insertEntity(knex, createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true));
+      await insertDeclaration(knex, createDeclaration(disclosureId, finEntityId, projectId));
+    });
+
+    it('should return OK status', async () => {
+      const response = await request(app.run())
+        .get('/api/coi/project-disclosure-statuses/KC-PD/4/4')
+        .set('Authorization', `Bearer admin`)
+        .expect(OK);
+
+      status = response.body;
+    });
+
+    it('should return submitted for approval', () => {
+      assert.equal(4, status.userId);
       assert.equal('Submitted for Approval', status.status);
     });
   });

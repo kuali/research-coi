@@ -278,16 +278,20 @@ export async function saveProjects(req, project) {
 
 async function getStatus(trx, projectPerson, dbInfo, authHeader) {
   const disclosureStatus = {
-    userId: projectPerson.person_id,
-    status: COIConstants.NOT_YET_DISCLOSED
+    userId: projectPerson.person_id
   };
 
   const isRequired = await ProjectService.isProjectRequired(dbInfo, projectPerson, authHeader);
 
   if (!isRequired) {
-    disclosureStatus.status = COIConstants.DISCLOSURE_NOT_REQUIRED;
+    disclosureStatus.status = COIConstants.PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED;
     return disclosureStatus;
   }
+
+  const disclosure = await trx('disclosure as d')
+    .select('ds.description as status')
+    .innerJoin('disclosure_status as ds', 'ds.status_cd', 'd.status_cd')
+    .where({user_id: projectPerson.person_id});
 
   const declaration = await trx('declaration')
     .select('disclosure_id')
@@ -296,16 +300,14 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
       disclosure_id: projectPerson.disclosureId
     });
 
-  if (declaration[0]) {
-    const disclosure = await trx('disclosure as d')
-      .select('ds.description as status')
-      .innerJoin('disclosure_status as ds', 'ds.status_cd', 'd.status_cd')
-      .where({id: declaration[0].disclosure_id});
-
-    if (disclosure[0]) {
-
+  if (disclosure[0]) {
+    if(declaration[0]) {
       disclosureStatus.status = disclosure[0].status;
+    } else {
+      disclosureStatus.status = COIConstants.PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
     }
+  } else {
+    disclosureStatus.status = COIConstants.PROJECT_DISCLOSURE_STATUSES.NOT_YET_DISCLOSED;
   }
   return disclosureStatus;
 }
