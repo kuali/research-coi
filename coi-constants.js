@@ -127,7 +127,7 @@ export const PROJECT_DISCLOSURE_STATUSES = {
   NOT_YET_DISCLOSED: 'Not Yet Disclosed',
   DISCLOSURE_NOT_REQUIRED: 'Disclosure Not Required',
   UPDATE_NEEDED: 'Update Needed'
-}
+};
 
 export const SYSTEM_USER = 'system';
 

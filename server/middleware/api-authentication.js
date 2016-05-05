@@ -29,7 +29,13 @@ export default function authentication(req, res, next) {
   getUserInfo(req.dbInfo, req.hostname, authToken)
     .then(userInfo => {
       if (!userInfo) {
-        Log.error('unauthenticated request', req);
+        let ipAddresses;
+        if (req.ips.length > 0) {
+          ipAddresses = req.ips.toString();
+        } else {
+          ipAddresses = req.ip;
+        }
+        Log.error(`unauthenticated request from ${ipAddresses}`, req);
         res.sendStatus(UNAUTHORIZED);
       } else {
         req.userInfo = userInfo;
@@ -40,4 +46,3 @@ export default function authentication(req, res, next) {
       next(err);
     });
 }
-

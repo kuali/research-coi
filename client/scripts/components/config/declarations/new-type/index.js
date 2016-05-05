@@ -22,7 +22,7 @@ import ConfigActions from '../../../../actions/config-actions';
 import DoneLink from '../../done-link';
 import {COIConstants} from '../../../../../../coi-constants';
 
-export default class DeclarationType extends React.Component {
+export default class NewType extends React.Component {
   constructor() {
     super();
 
@@ -45,7 +45,14 @@ export default class DeclarationType extends React.Component {
   }
 
   done() {
-    ConfigActions.saveNewType(this.props.type);
+    if (this.props.value && this.props.value.length > 0) {
+      ConfigActions.saveNewType(this.props.type);
+    } else {
+      ConfigActions.set({
+        path: `applicationState.edits[${this.props.type}]`,
+        value: undefined
+      });
+    }
   }
 
   componentDidMount() {
@@ -53,20 +60,28 @@ export default class DeclarationType extends React.Component {
   }
 
   render() {
-    return (
-      <div style={{margin: '0 20px 0 10px'}}>
-        <input
-          type="text"
-          ref="newType"
-          value={this.props.value}
-          className={styles.textbox}
-          onKeyUp={this.lookForEnter}
-          onChange={this.onChange}
-        />
+    const { value } = this.props;
+    let doneLink;
+    if (value && value.length > 0) {
+      doneLink = (
         <DoneLink
           className={`${styles.override} ${styles.editLink}`}
           onClick={this.done}
         />
+      );
+    }
+
+    return (
+      <div style={{margin: '0 20px 0 20px'}}>
+        <input
+          type="text"
+          ref="newType"
+          value={value}
+          className={styles.textbox}
+          onKeyUp={this.lookForEnter}
+          onChange={this.onChange}
+        />
+        {doneLink}
       </div>
     );
   }

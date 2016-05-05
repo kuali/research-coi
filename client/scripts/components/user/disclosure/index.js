@@ -269,6 +269,7 @@ export class Disclosure extends React.Component {
           }
           else {
             const activeEntities = this.state.entities.filter(entity => entity.active);
+            const declarationTypes = window.config.declarationTypes.filter(type => Boolean(type.active));
             currentStep = (
               <Relationships
                 projects={this.state.projects}
@@ -276,7 +277,7 @@ export class Disclosure extends React.Component {
                 declarations={this.state.declarations}
                 declarationStates={this.state.applicationState.declarationStates}
                 view={this.state.applicationState.declarationView}
-                declarationTypes={window.config.declarationTypes}
+                declarationTypes={declarationTypes}
                 instructionsShowing={this.state.applicationState.instructionsShowing}
               />
             );

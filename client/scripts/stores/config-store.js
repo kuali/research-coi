@@ -171,11 +171,18 @@ class _ConfigStore {
     if (this.applicationState.edits[type]) {
       this.config[type].push({
         description: this.applicationState.edits[type].description,
-        typeCd: `new${new Date().getTime()}`
+        typeCd: `new${new Date().getTime()}`,
+        active: 1
       });
     }
     delete this.applicationState.edits[type];
     this.dirty = true;
+  }
+
+  saveNewTypeAndAddMore(type) {
+    this.saveNewType(type);
+    this.startEditing(type);
+    this.applicationState.edits[type].description = '';
   }
 
   setNewDeclarationTypeText(newValue) {
@@ -529,6 +536,18 @@ class _ConfigStore {
   removeFromArray(data) {
     const array = _.result(this, data.path);
     array.splice(data.index,1);
+    this.dirty = true;
+  }
+
+  deactivateType(data) {
+    const array = _.result(this, data.path);
+    array[data.index].active = 0;
+    this.dirty = true;
+  }
+
+  reactivateType(data) {
+    const array = _.result(this, data.path);
+    array[data.index].active = 1;
     this.dirty = true;
   }
 

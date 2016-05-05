@@ -199,8 +199,8 @@ export async function getConfig(dbInfo, hostname, optionalTrx) {
 
     config.matrixTypes = await createMatrixTypes(query);
     config.relationshipPersonTypes = await query.select('*').from('relationship_person_type').where('active', true);
-    config.declarationTypes = await query.select('*').from('declaration_type').where('active', true).orderBy('order');
-    config.dispositionTypes = await query.select('*').from('disposition_type').where({active: true}).orderBy('order');
+    config.declarationTypes = await query.select('*').from('declaration_type').orderBy('order');
+    config.dispositionTypes = await query.select('*').from('disposition_type').orderBy('order');
     config.disclosureTypes = await query.select('*').from('disclosure_type');
     config.questions = await getQuestions(query);
     config.disclosureStatus = await query.select('*').from('disclosure_status');

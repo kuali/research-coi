@@ -16,53 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.container {
-  font-size: 17px;
-  margin: 20px;
-}
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
 
-.typeLabel {
-  vertical-align: middle;
-  padding-left: 12px;
-  max-width: 80%;
-  min-width: 200px;
-  display: inline-block;
-  word-wrap: break-word;
-}
+export default class DeactivateLink extends React.Component {
+  constructor() {
+    super();
 
-.toggle .typeLabel {
-  padding-left: 10px;
-}
+    this.onClick = this.onClick.bind(this);
+  }
 
-.textbox {
-  vertical-align: middle;
-  margin-left: 10px;
-  padding: 3px;
-  font-size: 16px;
-}
+  onClick() {
+    this.props.onClick(this.props.id);
+  }
 
-.override.doneLink {
-  float: right;
-  padding-top: 2px;
-  margin-left: 5px;
-}
-
-.button {
-  color: #0095A0;
-  border: none;
-  background-color: transparent;
-}
-
-.inactive {
-  color: #AAA;
-  text-decoration: line-through;
-}
-
-.editLink {
-  margin-right: 15px;
-}
-
-.down {
-  transform: translateY(43px);
-  transition: transform 0.1s ease-out;
+  render() {
+    return (
+      <span onClick={this.props.onClick} className={classNames(styles.container, this.props.className)}>
+        <i className={`fa fa-chain-broken ${styles.icon}`}></i>
+        <span className={styles.linkText}>Deactivate</span>
+      </span>
+    );
+  }
 }
