@@ -18,6 +18,7 @@
 
 /* eslint-disable camelcase */
 
+import { values } from 'lodash';
 import {isDisclosureUsers} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
@@ -755,7 +756,7 @@ export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
   return camelizeJson(newDisclosure);
 }
 
-export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosures, pageSize) => {
+export async function getSummariesForReview(dbInfo, sortColumn, sortDirection, start, filters, reviewerDisclosures, pageSize) {
   const knex = getKnex(dbInfo);
   const query = knex('disclosure as d');
   const columnsToSelect = [
@@ -766,10 +767,12 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
     'd.submitted_date'
   ];
 
+  let validTypeCds = [];
   if (Array.isArray(filters.disposition)) {
-    columnsToSelect.push('project_person.disposition_type_cd');
+    query.distinct();
+    columnsToSelect.push('project_person.disposition_type_cd as dispositionTypeCd');
 
-    const validTypeCds = filters.disposition.filter(typeCd => !isNaN(typeCd));
+    validTypeCds = filters.disposition.filter(typeCd => !isNaN(typeCd));
     query.leftJoin(
       'declaration as de',
       'd.id',
@@ -782,19 +785,6 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
         'd.user_id', 'project_person.person_id'
       );
     });
-
-    if (validTypeCds.includes(NO_DISPOSITION)) {
-      query.having(function() {
-        this.whereIn('project_person.disposition_type_cd', validTypeCds)
-          .orWhereNull('project_person.disposition_type_cd');
-      });
-    } else {
-      query.having(function() {
-        this.whereIn('project_person.disposition_type_cd', validTypeCds);
-      });
-    }
-
-    query.groupBy('d.id');
   }
 
   query.select(columnsToSelect);
@@ -855,7 +845,6 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
       break;
   }
 
-
   if (reviewerDisclosures) {
     query.whereIn('d.id', reviewerDisclosures);
   }
@@ -863,8 +852,22 @@ export const getSummariesForReview = (dbInfo, sortColumn, sortDirection, start, 
   query.orderBy(dbSortColumn, dbSortDirection);
   query.orderBy('d.id', 'desc');
   query.limit(pageSize);
-  return query.offset(Number(start));
-};
+
+  let queryResult = await query.offset(Number(start));
+
+  if (Array.isArray(filters.disposition)) {
+    const includeNone = validTypeCds.includes(NO_DISPOSITION);
+    queryResult = queryResult.reduce((result, row) => {
+      if (validTypeCds.includes(row.dispositionTypeCd) || includeNone) {
+        result[row.id] = row;
+      }
+      return result;
+    }, {});
+    queryResult = values(queryResult);
+  }
+
+  return queryResult;
+}
 
 export async function getSummariesForReviewCount(dbInfo, filters) {
   const results = await getSummariesForReview(
