@@ -62,10 +62,6 @@
   margin-right: 15px;
 }
 
-.deleteLink {
-  margin-left: 15px;
-}
-
 .down {
   transform: translateY(43px);
   transition: transform 0.1s ease-out;

@@ -75,24 +75,23 @@ export default class DeclarationType extends React.Component {
         {[styles.inactive]: !this.props.active}
       );
       let activationLink;
-      if (this.props.active) {
-        activationLink = (
-          <DeactivateLink onClick={this.deactivateType} />
-        );
-      } else {
-        activationLink = (
-          <ReactivateLink onClick={this.reactivateType} />
-        );
-      }
-
       let deleteLink;
       if (typeof type.typeCd === 'string' && type.typeCd.startsWith('new')) {
         deleteLink = (
-          <span className={styles.deleteLink}>
-            <DeleteLink onClick={this.delete} />
-          </span>
+          <DeleteLink onClick={this.delete} />
         );
+      } else {
+        if (this.props.active) {
+          activationLink = (
+            <DeactivateLink onClick={this.deactivateType} />
+          );
+        } else {
+          activationLink = (
+            <ReactivateLink onClick={this.reactivateType} />
+          );
+        }
       }
+
       jsx = (
         <div>
           <div className={descriptionClasses}>
