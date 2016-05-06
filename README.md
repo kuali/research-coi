@@ -151,6 +151,10 @@ System configuration for COI is done with environment variables. Environment var
 > **'sbx'**: Includes features that are stable but are undergoing functional review, require additional burn-in time, or need multiple end-user data points
 > **'prd'**: Includes only complete features
 >  *Default*: 'prd'
+>
+>**REPORT_USAGE**
+>: If, and only if, set to true usage statistics will be sent to segment.
+>*Default*:  false
 
 -------
 

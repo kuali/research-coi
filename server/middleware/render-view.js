@@ -17,8 +17,21 @@
 */
 
 export default function renderView(viewName) {
+  const reportUsage = process.env.REPORT_USAGE === 'true';
+ 
   return (req, res, next) => {
-    res.render(viewName, (err, html) => {
+    const { schoolId, firstName, lastName, coiRole } = req.userInfo;
+ 
+    const data = {
+      reportUsage,
+      userId: schoolId,
+      firstName,
+      lastName,
+      coiRole,
+      version: process.env.npm_package_version
+    };
+
+    res.render(viewName, data, (err, html) => {
       if (err) {
         next(err);
       }
