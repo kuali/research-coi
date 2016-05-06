@@ -28,6 +28,8 @@ html(lang='en')
     link(rel='stylesheet', href='/coi/styles/common.css')
     link(rel='stylesheet', href='/coi/styles/font-awesome.min.css')
     link(rel='shortcut icon', href='/coi/images/favicon.ico', type='image/x-icon')
+    if reportUsage
+      include ./segment-header.html
   body
     div(id="theApp")
     script(src='/coi/scripts/lib/browser-polyfill.js')

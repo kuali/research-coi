@@ -34,8 +34,12 @@ html(lang='en')
         background-color: #D0E3E5;
         display: inline;
       }
+    if reportUsage
+      include ../segment-header.html
   body
     div(id="theApp")
     script(src='/coi/scripts/lib/browser-polyfill.js')
     script(src='/coi/build/admin.js')
+    if reportUsage
+      include ../segment-identify.pug
 html
