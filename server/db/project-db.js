@@ -63,7 +63,7 @@ async function updateDisclosureStatus(trx, person, project, req) {
       .where({id: disclosure[0].id});
 
     try {
-      await createAndSendNewProjectNotification(req.dbInfo, req.hostname, req.userInfo, disclosure[0].id, project, person);
+      createAndSendNewProjectNotification(req.dbInfo, req.hostname, req.userInfo, disclosure[0].id, project, person);
     } catch(err) {
       Log.error(err);
     }

@@ -23,7 +23,9 @@ const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { FORBIDDEN, NO_CONTENT } from '../../http-status-codes';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
+import { createAndSendResubmitNotification } from '../services/notification-service/notification-service';
 import wrapAsync from './wrap-async';
+import Log from '../log';
 
 export const init = app => {
   app.get('/api/coi/pi', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
@@ -148,6 +150,11 @@ export const init = app => {
   */
   app.put('/api/coi/pi-revise/:disclosureId/submit', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     await PIReviewDB.reSubmitDisclosure(req.dbInfo, req.userInfo, req.params.disclosureId);
+    try {
+      createAndSendResubmitNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, req.params.disclosureId);
+    } catch (err) {
+      Log.error(err, req);
+    }
     const result = {success: true};
     res.send(result);
   }));

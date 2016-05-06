@@ -86,6 +86,11 @@ const NOTIFICATION_TEMPLATES = {
     ID: 9,
     SUBJECT: 'Annual COI Disclosure is Due',
     BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual Conflict of Interest (COI) disclosure will expire on {{EXPIRATION_DATE}}. Please update your annual disclosure prior to this date. Login to Kuali Research COI and access your annual disclosure at {{REPORTER_DASHBOARD}}.' //eslint-disable-line max-len
+  },
+  RESUBMITTED: {
+    ID: 10,
+    SUBJECT: 'Revised Annual Disclosure Resubmitted for Review',
+    BODY: 'Hello COI Admin, An Annual Disclosure was resubmitted by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}} on {{SUBMISSION_DATE}}. You can review this disclosure at {{ADMIN_DETAIL_VIEW}}. You can access the Kuali Research COI Admin Dashboard at {{ADMIN_DASHBOARD}}. Have a nice day.' //eslint-disable-line max-len
   }
 };
 
@@ -126,6 +131,10 @@ export function getDefaults(notificationTemplate) {
     case NOTIFICATION_TEMPLATES.EXPIRED.ID:
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.EXPIRED.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.EXPIRED.BODY;
+      return notificationTemplate;
+    case NOTIFICATION_TEMPLATES.RESUBMITTED.ID:
+      notificationTemplate.subject = NOTIFICATION_TEMPLATES.RESUBMITTED.SUBJECT;
+      notificationTemplate.body = NOTIFICATION_TEMPLATES.RESUBMITTED.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';
@@ -243,9 +252,9 @@ async function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
   return variables;
 }
 
-export async function createAndSendSubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
+export async function createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, templateId) {
   try {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.SUBMITTED.ID);
+    const template = await getTemplate(dbInfo, templateId);
 
     if (!template) {
       return Promise.resolve();
@@ -258,6 +267,14 @@ export async function createAndSendSubmitNotification(dbInfo, hostname, authHead
   } catch (err) {
     return Promise.reject(err);
   }
+}
+
+export async function createAndSendSubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
+  return await createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, NOTIFICATION_TEMPLATES.SUBMITTED.ID);
+}
+
+export async function createAndSendResubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
+  return await createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, NOTIFICATION_TEMPLATES.RESUBMITTED.ID);
 }
 
 export async function createAndSendApproveNotification(dbInfo, hostname, userInfo, archiveId) {
@@ -279,6 +296,7 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
 export async function createAndSendExpirationNotification(dbInfo, hostname, disclosureId) {
   return await createAndSendExpireNotification(dbInfo, hostname, disclosureId, NOTIFICATION_TEMPLATES.EXPIRED.ID);
 }
+
 export async function createAndSendExpirationReminderNotification(dbInfo, hostname, disclosureId) {
   return await createAndSendExpireNotification(dbInfo, hostname, disclosureId, NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.ID);
 }

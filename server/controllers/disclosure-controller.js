@@ -227,7 +227,7 @@ export const init = app => {
   app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     await DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id, req.headers.authorization);
     try {
-      await createAndSendSubmitNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, req.params.id);
+      createAndSendSubmitNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, req.params.id);
     } catch (err) {
       Log.error(err, req);
     }
@@ -238,7 +238,7 @@ export const init = app => {
   app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     const archiveId = await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id, req.headers.authorization);
     try {
-      await createAndSendApproveNotification(req.dbInfo, req.hostname, req.userInfo, archiveId);
+      createAndSendApproveNotification(req.dbInfo, req.hostname, req.userInfo, archiveId);
     } catch (err) {
       Log.error(err, req);
     }
@@ -248,7 +248,7 @@ export const init = app => {
   app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     await DisclosureDB.reject(req.dbInfo, req.userInfo, req.params.id);
     try {
-      await createAndSendSentBackNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
+      createAndSendSentBackNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
     } catch (err) {
       Log.error(err, req);
     }

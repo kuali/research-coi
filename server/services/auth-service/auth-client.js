@@ -149,7 +149,7 @@ export function getAuthLink(req) {
   const url = authInfo.authUrl || '';
   const returnLink = url ?
   (useSSL ? 'https://' : 'http://') + req.hostname + req.url :
-    '/coi';
+    `/coi${req.path}`;
   return `${url}/auth?return_to=${encodeURIComponent(returnLink)}`;
 }
 
