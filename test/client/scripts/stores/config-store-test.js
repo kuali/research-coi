@@ -18,7 +18,11 @@
 
 import alt from '../../../../client/scripts/alt';
 import assert from 'assert';
-import ConfigStore from '../../../../client/scripts/stores/config-store';
+import {
+  default as ConfigStore,
+  getCodeMap,
+  mapCodes
+} from '../../../../client/scripts/stores/config-store';
 import ConfigActions from '../../../../client/scripts/actions/config-actions';
 
 const setState = (data) => {
@@ -491,5 +495,93 @@ describe('ConfigStore', () => {
     });
   });
 
+  describe('getCodeMap', () => {
+    const items = [
+      {
+        id: 1,
+        name: 'frog'
+      },
+      {
+        id: 2,
+        name: 'bear'
+      },
+      {
+        id: 3,
+        name: 'hampster'
+      }
+    ];
+
+    it('should return an empty object if an invalid array is passed', () => {
+      const result = getCodeMap(1, 'typeCd');
+
+      assert.equal(typeof result, 'object');
+      assert.equal(Object.keys(result).length, 0);
+    });
+
+    it('should throw an error if an invalid codeField is passed', () => {
+      let errorThrown = false;
+      try {
+        getCodeMap(items, 'typeCd');
+      } catch (err) {
+        errorThrown = true;
+      }
+      assert(errorThrown);
+    });
+
+    it('should return the a valid map', () => {
+      const result = getCodeMap(items, 'id');
+      assert.equal(result[3].name, 'hampster');
+      assert.equal(result[2].name, 'bear');
+      assert.equal(result[1].name, 'frog');
+    });
+  });
+
+  describe('mapCodes', () => {
+    it('should throw an error if an invalid config is passed', () => {
+      let errorThrown = false;
+      try {
+        mapCodes(undefined);
+      } catch (err) {
+        errorThrown = true;
+      }
+      assert(errorThrown);
+
+      errorThrown = false;
+      try {
+        mapCodes(1);
+      } catch (err) {
+        errorThrown = true;
+      }
+      assert(errorThrown);
+    });
+
+    it('should return valid maps with a valid config', () => {
+      const config = {
+        declarationTypes: [
+          { typeCd: 1, name: 'uno' },
+          { typeCd: 2, name: 'dos' },
+          { typeCd: 3, name: 'tres' }
+        ],
+        disclosureStatus: [
+          { statusCd: 1, name: '111' },
+          { statusCd: 2, name: '222' },
+          { statusCd: 3, name: '333' }
+        ],
+        matrixTypes: [
+          { typeCd: 1, name: 'one' },
+          { typeCd: 2, name: 'two' },
+          { typeCd: 3, name: 'three' }
+        ]
+      };
+
+      const result = mapCodes(config);
+
+      assert.equal(typeof result, 'object');
+      assert.equal(result.declarationType[2].name, 'dos');
+      assert.equal(result.disclosureStatus[3].name, '333');
+      assert.equal(Object.keys(result.dispositionTypes).length, 0);
+      assert.equal(result.relationshipCategoryType[1].name, 'one');
+    });
+  });
 });
 

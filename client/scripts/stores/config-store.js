@@ -38,6 +38,39 @@ function convertToggleValue(value) {
   throw new Error('unknown toggle value');
 }
 
+export function getCodeMap(items, codeField) {
+  let result = {};
+  if (Array.isArray(items)) {
+    result = items.reduce((map, typeRecord) => {
+      if (!(codeField in typeRecord)) {
+        throw new Error(`Invalid codeField supplied: ${codeField}`);
+      }
+      map[typeRecord[codeField]] = typeRecord;
+      return map;
+    }, result);
+  }
+
+  return result;
+}
+
+export function mapCodes(config) {
+  if (typeof config != 'object') {
+    throw new Error('invalid config object');
+  }
+
+  const codeMaps = {
+    declarationType: getCodeMap(config.declarationTypes, 'typeCd'),
+    disclosureStatus: getCodeMap(config.disclosureStatus, 'statusCd'),
+    disclosureType: getCodeMap(config.disclosureTypes, 'typeCd'),
+    projectType: getCodeMap(config.projectTypes, 'typeCd'),
+    relationshipCategoryType: getCodeMap(config.matrixTypes, 'typeCd'),
+    relationshipPersonType: getCodeMap(config.relationshipPersonTypes, 'typeCd'),
+    dispositionTypes: getCodeMap(config.dispositionTypes, 'typeCd')
+  };
+
+  return codeMaps;
+}
+
 class _ConfigStore {
   constructor() {
     this.codeMaps = {};
@@ -86,6 +119,8 @@ class _ConfigStore {
     };
 
     this.dirty = false;
+
+    this.archivedConfigs = {};
 
     this.config = {
       dispositionTypes: [],
@@ -551,47 +586,6 @@ class _ConfigStore {
     this.dirty = true;
   }
 
-  mapCodes() {
-    this.codeMaps.declarationType = {};
-    this.config.declarationTypes.forEach(typeRecord => {
-      this.codeMaps.declarationType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.disclosureStatus = {};
-    this.config.disclosureStatus.forEach(typeRecord => {
-      this.codeMaps.disclosureStatus[typeRecord.statusCd] = typeRecord;
-    });
-
-    this.codeMaps.disclosureType = {};
-    this.config.disclosureTypes.forEach(typeRecord => {
-      this.codeMaps.disclosureType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.projectType = {};
-    this.config.projectTypes.forEach(typeRecord => {
-      this.codeMaps.projectType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.relationshipCategoryType = {};
-    this.config.matrixTypes.forEach(typeRecord => {
-      this.codeMaps.relationshipCategoryType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.relationshipPersonType = {};
-    this.config.relationshipPersonTypes.forEach(typeRecord => {
-      this.codeMaps.relationshipPersonType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.dispositionType = {};
-    if (Array.isArray(this.config.dispositionTypes)) {
-      this.config.dispositionTypes.forEach(typeRecord => {
-        this.codeMaps.dispositionType[typeRecord.typeCd] = typeRecord;
-      });
-    }
-
-    this.isLoaded = true;
-  }
-
   loadAllConfigData() {
     // Then load config and re-render
     createRequest().get('/api/coi/config')
@@ -612,7 +606,8 @@ class _ConfigStore {
           this.applicationState.selectingProjectTypes = false;
         }
 
-        this.mapCodes();
+        this.codeMaps = mapCodes(this.config);
+        this.isLoaded = true;
 
         this.emitChange();
       }
@@ -621,15 +616,17 @@ class _ConfigStore {
   }
 
   loadConfig(id) {
-    createRequest().get(`/api/coi/archived-config/${id}`)
-    .end(processResponse((err, config) => {
-      if (!err) {
-        this.config = config.body;
-        this.mapCodes();
+    createRequest()
+      .get(`/api/coi/archived-config/${id}`)
+      .end(processResponse((err, config) => {
+        if (!err) {
+          this.archivedConfigs[id] = config.body;
+          this.codeMaps = mapCodes(this.archivedConfigs[id]);
+          this.isLoaded = true;
 
-        this.emitChange();
-      }
-    }));
+          this.emitChange();
+        }
+      }));
   }
 
   clearTemporaryIds() {
