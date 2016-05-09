@@ -21,7 +21,8 @@ import assert from 'assert';
 import {
   default as ConfigStore,
   getCodeMap,
-  mapCodes
+  mapCodes,
+  getCodeMapsFromState
 } from '../../../../client/scripts/stores/config-store';
 import ConfigActions from '../../../../client/scripts/actions/config-actions';
 
@@ -581,6 +582,48 @@ describe('ConfigStore', () => {
       assert.equal(result.disclosureStatus[3].name, '333');
       assert.equal(Object.keys(result.dispositionTypes).length, 0);
       assert.equal(result.relationshipCategoryType[1].name, 'one');
+    });
+  });
+  
+  describe('getCodeMapsFromState', () => {
+    const state = {
+      config: {
+        id: 43,
+        codeMaps: {
+          text: 'current config'
+        }
+      },
+      archivedConfigs: {
+        23: {
+          codeMaps: {
+            text: 'archived'
+          }
+        }
+      }
+    };
+
+    it('should should throw an error with an invalid state', () => {
+      let errorThrown = false;
+      try {
+        getCodeMapsFromState({}, 3);
+      } catch(err) {
+        errorThrown = true;
+      }
+      
+      assert(errorThrown);
+    });
+
+    it('should return an empty object for an invalid configId', () => {
+      const result = getCodeMapsFromState(state, 999);
+      assert.equal(Object.keys(result).length, 0);
+    });
+
+    it('should return correct maps for a valid id', () => {
+      let result = getCodeMapsFromState(state, 43);
+      assert.equal(result.text, 'current config');
+
+      result = getCodeMapsFromState(state, 23);
+      assert.equal(result.text, 'archived');
     });
   });
 });

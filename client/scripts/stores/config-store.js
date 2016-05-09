@@ -71,10 +71,19 @@ export function mapCodes(config) {
   return codeMaps;
 }
 
+export function getCodeMapsFromState(state, configId) {
+  if (state.config.id === configId) {
+    return state.config.codeMaps;
+  } else if (state.archivedConfigs[configId] !== undefined) {
+    return state.archivedConfigs[configId].codeMaps;
+  }
+  
+  return {};
+}
+
+
 class _ConfigStore {
   constructor() {
-    this.codeMaps = {};
-
     this.bindActions(ConfigActions);
 
     this.exportPublicMethods({
@@ -588,30 +597,31 @@ class _ConfigStore {
 
   loadAllConfigData() {
     // Then load config and re-render
-    createRequest().get('/api/coi/config')
-    .end(processResponse((err, config) => {
-      if (!err) {
-        this.config = config.body;
-        this.editorStates = createEditorStates(this.config.general.instructions, this.config.general.richTextInstructions);
+    createRequest()
+      .get('/api/coi/config')
+      .end(processResponse((err, config) => {
+        if (!err) {
+          this.config = config.body;
+          this.editorStates = createEditorStates(this.config.general.instructions, this.config.general.richTextInstructions);
 
-        if (this.config.general.instructionsExpanded === undefined) {
-          this.config.general.instructionsExpanded = true;
+          if (this.config.general.instructionsExpanded === undefined) {
+            this.config.general.instructionsExpanded = true;
+          }
+
+          const projectsRequiringDisclosure = this.config.projectTypes.filter(projectType => {
+            return projectType.reqDisclosure === 1;
+          });
+
+          if (projectsRequiringDisclosure.length > 0) {
+            this.applicationState.selectingProjectTypes = false;
+          }
+
+          this.config.codeMaps = mapCodes(this.config);
+          this.isLoaded = true;
+          this.emitChange();
         }
+      }));
 
-        const projectsRequiringDisclosure = this.config.projectTypes.filter(projectType => {
-          return projectType.reqDisclosure === 1;
-        });
-
-        if (projectsRequiringDisclosure.length > 0) {
-          this.applicationState.selectingProjectTypes = false;
-        }
-
-        this.codeMaps = mapCodes(this.config);
-        this.isLoaded = true;
-
-        this.emitChange();
-      }
-    }));
     this.dirty = false;
   }
 
@@ -621,9 +631,8 @@ class _ConfigStore {
       .end(processResponse((err, config) => {
         if (!err) {
           this.archivedConfigs[id] = config.body;
-          this.codeMaps = mapCodes(this.archivedConfigs[id]);
+          this.archivedConfigs[id].codeMaps = mapCodes(this.archivedConfigs[id]);
           this.isLoaded = true;
-
           this.emitChange();
         }
       }));
@@ -660,15 +669,18 @@ class _ConfigStore {
     this.updateOrder();
     this.config.general.richTextInstructions = prepareInstructionsForSave(this.editorStates);
 
-    createRequest().post('/api/coi/config')
-    .send(this.config)
-    .type('application/json')
-    .end(processResponse((err, config) => {
-      if (!err) {
-        this.config = config.body;
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .post('/api/coi/config')
+      .send(this.config)
+      .type('application/json')
+      .end(processResponse((err, config) => {
+        if (!err) {
+          this.archivedConfigs[this.config.id] = this.config;
+          this.config = config.body;
+          this.emitChange();
+        }
+      }));
+
     this.dirty = false;
   }
 
@@ -676,10 +688,11 @@ class _ConfigStore {
     this.loadAllConfigData();
   }
 
-  getDeclarationTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.declarationType) {
-      const typeRecord = configState.codeMaps.declarationType[code];
+  getDeclarationTypeString(code, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    if (codeMaps.declarationType) {
+      const typeRecord = codeMaps.declarationType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -687,10 +700,11 @@ class _ConfigStore {
     return '';
   }
 
-  getDispositionTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.dispositionType) {
-      const typeRecord = configState.codeMaps.dispositionType[code];
+  getDispositionTypeString(code, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    if (codeMaps.dispositionType) {
+      const typeRecord = codeMaps.dispositionType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -698,10 +712,11 @@ class _ConfigStore {
     return '';
   }
 
-  getDisclosureStatusString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.disclosureStatus) {
-      const typeRecord = configState.codeMaps.disclosureStatus[code];
+  getDisclosureStatusString(code, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    if (codeMaps.disclosureStatus) {
+      const typeRecord = codeMaps.disclosureStatus[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -709,7 +724,7 @@ class _ConfigStore {
     return '';
   }
 
-  getAdminDisclosureStatusString(code) {
+  getAdminDisclosureStatusString(code, configId) {
     switch(code) {
       case 1:
       case 3:
@@ -717,14 +732,15 @@ class _ConfigStore {
       case 4:
         return 'Sent back';
       default:
-        return this.getDisclosureStatusString(code);
+        return this.getDisclosureStatusString(code, configId);
     }
   }
 
-  getDisclosureTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.disclosureType) {
-      const typeRecord = configState.codeMaps.disclosureType[code];
+  getDisclosureTypeString(code, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    if (codeMaps.disclosureType) {
+      const typeRecord = codeMaps.disclosureType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -732,10 +748,11 @@ class _ConfigStore {
     return '';
   }
 
-  getProjectTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.projectType) {
-      const typeRecord = configState.codeMaps.projectType[code];
+  getProjectTypeString(code, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    if (codeMaps.projectType) {
+      const typeRecord = codeMaps.projectType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -743,10 +760,11 @@ class _ConfigStore {
     return '';
   }
 
-  getRelationshipCategoryTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.relationshipCategoryType) {
-      const typeRecord = configState.codeMaps.relationshipCategoryType[code];
+  getRelationshipCategoryTypeString(code, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    if (codeMaps.relationshipCategoryType) {
+      const typeRecord = codeMaps.relationshipCategoryType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
@@ -754,8 +772,10 @@ class _ConfigStore {
     return '';
   }
 
-  getRelationshipTypeString(categoryCode, typeCode) {
-    const typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
+  getRelationshipTypeString(categoryCode, typeCode, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    const typeRecord = codeMaps.relationshipCategoryType[categoryCode];
     if (typeRecord) {
       const option = typeRecord.typeOptions.find(typeOption => {
         return typeOption.typeCd === typeCode;
@@ -768,8 +788,10 @@ class _ConfigStore {
     return 'Undefined';
   }
 
-  getRelationshipAmountString(categoryCode, typeCode) {
-    const typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
+  getRelationshipAmountString(categoryCode, typeCode, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    const typeRecord = codeMaps.relationshipCategoryType[categoryCode];
     if (typeRecord) {
       const option = typeRecord.amountOptions.find(amountOption => {
         return amountOption.typeCd === typeCode;
@@ -782,14 +804,16 @@ class _ConfigStore {
     return 'Undefined';
   }
 
-  getRelationshipPersonTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.relationshipPersonType) {
-      const typeRecord = configState.codeMaps.relationshipPersonType[code];
+  getRelationshipPersonTypeString(code, configId) {
+    const codeMaps = getCodeMapsFromState(this.getState(), configId);
+
+    if (codeMaps.relationshipPersonType) {
+      const typeRecord = codeMaps.relationshipPersonType[code];
       if (typeRecord) {
         return typeRecord.description;
       }
     }
+
     return '';
   }
 
