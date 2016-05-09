@@ -34,7 +34,7 @@ const HOURS = 24;
 const ONE_DAY = MILLIS * SECONDS * MINUTES * HOURS;
 
 let getKnex;
-let lane;
+let lane; // eslint-disable-line no-unused-vars
 try {
   const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
@@ -1107,25 +1107,22 @@ function updateProjects(trx, schoolId) {
 }
 
 async function addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, unit) {
-  if(lane === COIConstants.LANES.TEST) {
-    const reviewers = await getReviewers(dbInfo, authHeader, unit);
+  const reviewers = await getReviewers(dbInfo, authHeader, unit);
 
-    return await Promise.all(reviewers.map(reviewer => {
-      return trx('additional_reviewer').insert({
-        user_id: reviewer.userId,
-        disclosure_id: disclosureId,
-        name: reviewer.value,
-        email: reviewer.email,
-        active: true,
-        dates: JSON.stringify([{
-          type: COIConstants.DATE_TYPE.ASSIGNED,
-          date: new Date()
-        }]),
-        assigned_by: COIConstants.SYSTEM_USER
-      });
-    }));
-  }
-  return Promise.resolve();
+  return await Promise.all(reviewers.map(reviewer => {
+    return trx('additional_reviewer').insert({
+      user_id: reviewer.userId,
+      disclosure_id: disclosureId,
+      name: reviewer.value,
+      email: reviewer.email,
+      active: true,
+      dates: JSON.stringify([{
+        type: COIConstants.DATE_TYPE.ASSIGNED,
+        date: new Date()
+      }]),
+      assigned_by: COIConstants.SYSTEM_USER
+    });
+  }));
 }
 
 export async function submit(dbInfo, userInfo, disclosureId, authHeader) {

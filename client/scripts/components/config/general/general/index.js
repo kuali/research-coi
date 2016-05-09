@@ -24,7 +24,6 @@ import DisclosureTypes from '../disclosure-types';
 import ConfigStore from '../../../../stores/config-store';
 import CheckBox from '../../check-box';
 import DueDateDetails from '../due-date-details';
-import { LANES } from '../../../../../../coi-constants';
 
 export default class General extends React.Component {
   constructor() {
@@ -57,18 +56,6 @@ export default class General extends React.Component {
   }
 
   render() {
-    let autoAddAdditionalReviewer;
-
-    if (this.state.config.lane === LANES.TEST) {
-      autoAddAdditionalReviewer = (
-        <CheckBox
-          path='config.general.autoAddAdditionalReviewer'
-          label='Automatically assign additional reviewers when disclosure is submitted'
-          labelClassName={styles.label}
-          checked={this.state.config.general.autoAddAdditionalReviewer === undefined ? false : this.state.config.general.autoAddAdditionalReviewer}
-        />
-      );
-    }
     return (
       <ConfigPage
         title='General Configuration'
@@ -106,7 +93,12 @@ export default class General extends React.Component {
             labelClassName={styles.label}
             checked={this.state.config.general.autoApprove === undefined ? false : this.state.config.general.autoApprove}
           />
-          {autoAddAdditionalReviewer}
+          <CheckBox
+            path='config.general.autoAddAdditionalReviewer'
+            label='Automatically assign additional reviewers when disclosure is submitted'
+            labelClassName={styles.label}
+            checked={this.state.config.general.autoAddAdditionalReviewer === undefined ? false : this.state.config.general.autoAddAdditionalReviewer}
+          />
         </Panel>
 
         <Panel title="Screening Validations">

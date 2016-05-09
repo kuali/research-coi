@@ -598,9 +598,7 @@ class _ConfigStore {
     .end(processResponse((err, config) => {
       if (!err) {
         this.config = config.body;
-        if (this.config.lane === COIConstants.LANES.TEST) {
-          this.editorStates = createEditorStates(this.config.general.instructions, this.config.general.richTextInstructions);
-        }
+        this.editorStates = createEditorStates(this.config.general.instructions, this.config.general.richTextInstructions);
 
         if (this.config.general.instructionsExpanded === undefined) {
           this.config.general.instructionsExpanded = true;
@@ -663,9 +661,7 @@ class _ConfigStore {
   saveAll() {
     this.clearTemporaryIds();
     this.updateOrder();
-    if (this.config.lane === COIConstants.LANES.TEST) {
-      this.config.general.richTextInstructions = prepareInstructionsForSave(this.editorStates);
-    }
+    this.config.general.richTextInstructions = prepareInstructionsForSave(this.editorStates);
 
     createRequest().post('/api/coi/config')
     .send(this.config)

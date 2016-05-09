@@ -23,12 +23,11 @@ import {GreyButton} from '../../grey-button';
 import VerticalSlider from '../../vertical-slider';
 import {Editor, convertFromRaw, EditorState, ContentState} from 'draft-js';
 import { decorator } from '../../../editor-utils';
-import { LANES } from '../../../../../coi-constants';
 
 export function Instructions(props) {
 
   let instruction;
-  if(window.config.lane === LANES.TEST && props.contentState) {
+  if(props.contentState) {
     const blocks = convertFromRaw(props.contentState);
     const editorState = EditorState.createWithContent(ContentState.createFromBlockArray(blocks), decorator);
     instruction = (

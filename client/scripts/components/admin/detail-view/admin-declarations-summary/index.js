@@ -22,7 +22,6 @@ import DeclarationSummary from '../declaration-summary';
 import ConfigStore from '../../../../stores/config-store';
 import ProjectDispositionSelector from '../project-disposition-selector';
 import classNames from 'classnames';
-import { LANES } from '../../../../../../coi-constants';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
@@ -133,7 +132,7 @@ export class AdminDeclarationsSummary extends React.Component {
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (config.lane === LANES.TEST && config.general.adminRelationshipEnabled) {
+        if (config.general.adminRelationshipEnabled) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );

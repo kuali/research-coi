@@ -20,13 +20,12 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import ConfigStore from '../../../../stores/config-store';
-import { LANES } from '../../../../../../coi-constants';
 
 export default function DeclarationSummary(props) {
 
   let adminRelationship;
   let commentClass = styles.comments;
-  if (props.config.lane === LANES.TEST && props.config.general.adminRelationshipEnabled) {
+  if (props.config.general.adminRelationshipEnabled) {
     adminRelationship = (
       <span className={styles.adminRelationship}>
         {ConfigStore.getDispositionTypeString(props.declaration.adminRelationshipCd)}

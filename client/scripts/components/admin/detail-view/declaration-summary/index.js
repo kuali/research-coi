@@ -60,7 +60,7 @@ export default class DeclarationSummary extends React.Component {
 
     let adminRelationship;
     let commentClass = styles.comments;
-    if (this.props.config.lane === COIConstants.LANES.TEST && this.props.config.general.adminRelationshipEnabled) {
+    if (this.props.config.general.adminRelationshipEnabled) {
       if (this.props.readonly) {
         adminRelationship = (
           <span className={styles.adminRelationship}>

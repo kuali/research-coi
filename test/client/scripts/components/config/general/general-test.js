@@ -32,6 +32,6 @@ describe('General', () => {
     const component = renderer.getRenderOutput();
     assert(ShallowTestUtils.findWithType(component,DisclosureTypes));
     assert.equal(ShallowTestUtils.findAllWithType(component,Panel).length,4);
-    assert.equal(ShallowTestUtils.findAllWithType(component,Checkbox).length,4);
+    assert.equal(ShallowTestUtils.findAllWithType(component,Checkbox).length,5);
   });
 });

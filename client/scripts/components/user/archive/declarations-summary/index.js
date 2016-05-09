@@ -21,7 +21,6 @@ import classNames from 'classnames';
 import React from 'react';
 import DeclarationSummary from '../declaration-summary';
 import ConfigStore from '../../../../stores/config-store';
-import { LANES } from '../../../../../../coi-constants';
 
 export default class extends React.Component {
   getUniqueProjects(declarations) {
@@ -81,7 +80,7 @@ export default class extends React.Component {
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (this.props.config.lane === LANES.TEST && this.props.config.general.adminRelationshipEnabled) {
+        if (this.props.config.general.adminRelationshipEnabled) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );

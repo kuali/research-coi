@@ -20,9 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import Textarea from '../textarea';
-import ConfigStore from '../../../stores/config-store';
 import ConfigActions from '../../../actions/config-actions';
-import { LANES } from '../../../../../coi-constants';
 import Editor from '../../editor/editor';
 
 export default class InstructionEditor extends React.Component {
@@ -57,7 +55,7 @@ export default class InstructionEditor extends React.Component {
     );
 
     let editor;
-    if (ConfigStore.getLane() === LANES.TEST && this.props.editorState) {
+    if (this.props.editorState) {
       editor = (
         <Editor
           editorState={this.props.editorState}
