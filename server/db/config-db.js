@@ -180,8 +180,11 @@ async function getQuestions(query) {
 }
 
 async function getGeneralConfig(query) {
-  const general = await query('config').select('config').limit(1).orderBy('id', 'desc');
-  return JSON.parse(general[0].config).general;
+  const general = await query('config').select('config', 'id').limit(1).orderBy('id', 'desc');
+  return {
+    config: JSON.parse(general[0].config).general,
+    id: general[0].id
+  };
 }
 
 export async function getConfig(dbInfo, hostname, optionalTrx) {
@@ -211,7 +214,9 @@ export async function getConfig(dbInfo, hostname, optionalTrx) {
     config.notificationsMode = notificationsMode;
     config.lane = lane;
     config = camelizeJson(config);
-    config.general = await getGeneralConfig(query);
+    const generalConfig = await getGeneralConfig(query);
+    config.id = generalConfig.id;
+    config.general = generalConfig.config;
     return Promise.resolve(config);
   } catch(err) {
     Promise.reject(err);
