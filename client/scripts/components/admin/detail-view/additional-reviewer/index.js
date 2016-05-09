@@ -19,10 +19,9 @@
 import styles from './style';
 import React from 'react';
 import { AdminActions } from '../../../../actions/admin-actions';
-import ConfigStore from '../../../../stores/config-store';
 import { formatDateTime } from '../../../../format-date';
 import classNames from 'classnames';
-import { DATE_TYPE, LANES } from '../../../../../../coi-constants';
+import { DATE_TYPE } from '../../../../../../coi-constants';
 
 export default class AdditionalReviewer extends React.Component {
   constructor() {
@@ -74,7 +73,7 @@ export default class AdditionalReviewer extends React.Component {
     }
 
     let reassignButton;
-    if (completedReview && !this.props.readOnly && ConfigStore.getLane() === LANES.TEST) {
+    if (completedReview && !this.props.readOnly) {
       reassignButton = (
         <button
           id="reassign_button"

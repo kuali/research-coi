@@ -179,22 +179,21 @@ export default class Declarations extends React.Component {
       );
     }
     let dispositionPanel;
-    if(this.state.lane === COIConstants.LANES.TEST) {
-      dispositionPanel = (
-        <Panel title="Disposition Configuration">
-          <div className={styles.types}>
-            <CheckBox
-              path="config.general.dispositionsEnabled"
-              label="COI Admin can set Project Disposition"
-              labelClassName={styles.label}
-              checked={this.state.dispositionsEnabled}
-            />
-            {dispositionConfig}
-            <div style={{paddingBottom: 10}}/>
-          </div>
-        </Panel>
-      );
-    }
+    dispositionPanel = (
+      <Panel title="Disposition Configuration">
+        <div className={styles.types}>
+          <CheckBox
+            path="config.general.dispositionsEnabled"
+            label="COI Admin can set Project Disposition"
+            labelClassName={styles.label}
+            checked={this.state.dispositionsEnabled}
+          />
+          {dispositionConfig}
+          <div style={{paddingBottom: 10}}/>
+        </div>
+      </Panel>
+    );
+
     let instructionText = '';
     if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS]) {
       instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
