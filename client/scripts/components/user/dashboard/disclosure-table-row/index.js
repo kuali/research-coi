@@ -21,7 +21,10 @@ import classNames from 'classnames';
 import React from 'react';
 import {GreyButton} from '../../../grey-button';
 import {formatDate} from '../../../../format-date';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getDisclosureTypeString,
+  getDisclosureStatusString
+} from '../../../../stores/config-store';
 import {COIConstants} from '../../../../../../coi-constants';
 import {Link} from 'react-router';
 
@@ -55,10 +58,16 @@ export class DisclosureTableRow extends React.Component {
     const revisable = this.props.status === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED;
 
     let extraInfo;
+    const disclosureType = getDisclosureTypeString(
+      this.context.configState,
+      this.props.type,
+      this.context.configState.config.id
+    );
+
     if (this.props.expiresOn) {
       extraInfo = (
         <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
-          <div className={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
+          <div className={styles.type}>{disclosureType}</div>
           <div className={styles.extra}>
             Expires On:
             <span style={{marginLeft: 3}}>
@@ -71,7 +80,7 @@ export class DisclosureTableRow extends React.Component {
     else {
       extraInfo = (
         <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
-          <div className={styles.type}>{ConfigStore.getDisclosureTypeString(this.props.type)}</div>
+          <div className={styles.type}>{disclosureType}</div>
         </span>
       );
     }
@@ -82,9 +91,14 @@ export class DisclosureTableRow extends React.Component {
       extraInfo = this.wrapWithReviseLink(extraInfo);
     }
 
+    const disclosureStatus = getDisclosureStatusString(
+      this.context.configState,
+      this.props.status,
+      this.context.configState.config.id
+    );
     let status = (
       <span role="gridcell" className={`${styles.cell} ${styles.two}`}>
-        {ConfigStore.getDisclosureStatusString(this.props.status)}
+        {disclosureStatus}
       </span>
     );
     if (updateable) {
@@ -143,3 +157,7 @@ export class DisclosureTableRow extends React.Component {
     );
   }
 }
+
+DisclosureTableRow.contextTypes = {
+  configState: React.PropTypes.object
+};

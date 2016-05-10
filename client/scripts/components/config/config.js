@@ -27,6 +27,7 @@ import RelationshipCustomization from './relationship/relationship';
 import DeclarationsCustomization from './declarations/declarations';
 import CertificationCustomization from './certification/certification';
 import ColorStore from '../../stores/color-store';
+import ConfigStore from '../../stores/config-store';
 import DisclosureRequirements from './disclosure-requirements/disclosure-requirements';
 import CustomizeNotifications from './customize-notifications/customize-notifications';
 import history from '../../history';
@@ -35,18 +36,32 @@ class App extends React.Component {
   constructor() {
     super();
 
+    this.state = {
+      configState: ConfigStore.getState()
+    };
+
     this.onChange = this.onChange.bind(this);
   }
 
+  getChildContext() {
+    return {configState: this.state.configState};
+  }
+  
   componentDidMount() {
     ColorStore.listen(this.onChange);
+    ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
     ColorStore.unlisten(this.onChange);
+    ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
+    this.setState({
+      configState: ConfigStore.getState()
+    });
+
     this.forceUpdate();
   }
 
@@ -66,6 +81,10 @@ class App extends React.Component {
     );
   }
 }
+
+App.childContextTypes = {
+  configState: React.PropTypes.object
+};
 
 window.colorBlindModeOn = false;
 if (window.localStorage.getItem('colorBlindModeOn') === 'true') {

@@ -22,7 +22,10 @@ import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
 import {ADMIN_PAGE_SIZE} from '../../../coi-constants';
-import ConfigStore from './config-store';
+import {
+  default as ConfigStore,
+  getDispostionsEnabled
+} from './config-store';
 
 function defaultStatusFilters() {
   return [2, 4, 5, 6];
@@ -331,8 +334,9 @@ class _AdminStore {
 
   turnOnAllDispositionFilters() {
     let dispositions = [];
-    if (ConfigStore.getDispostionsEnabled()) {
-      dispositions = ConfigStore.getState().config.dispositionTypes;
+    const configState = ConfigStore.getState();
+    if (getDispostionsEnabled(configState)) {
+      dispositions = configState.config.dispositionTypes;
       dispositions = dispositions.map(disposition =>
         disposition.typeCd
       );

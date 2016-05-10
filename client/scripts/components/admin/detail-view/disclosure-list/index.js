@@ -25,7 +25,10 @@ import SearchFilterGroup from '../../search-filter-group';
 import {AdminActions} from '../../../../actions/admin-actions';
 import UserInfoStore from '../../../../stores/user-info-store';
 import {BlueButton} from '../../../blue-button';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getAdminDisclosureStatusString,
+  getDispostionsEnabled
+} from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 
 export class DisclosureList extends React.Component {
@@ -93,23 +96,25 @@ export class DisclosureList extends React.Component {
       );
     }
 
+    const {configState} = this.context;
     const possibleStatuses = [
-      {code: 2, label: ConfigStore.getAdminDisclosureStatusString(2)},
-      {code: 3, label: ConfigStore.getAdminDisclosureStatusString(3)},
-      {code: 4, label: ConfigStore.getAdminDisclosureStatusString(4)},
-      {code: 5, label: ConfigStore.getAdminDisclosureStatusString(5)},
-      {code: 6, label: ConfigStore.getAdminDisclosureStatusString(6)}
+      {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
+      {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
+      {code: 4, label: getAdminDisclosureStatusString(configState, 4, configState.config.id)},
+      {code: 5, label: getAdminDisclosureStatusString(configState, 5, configState.config.id)},
+      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)}
     ];
 
     const possibleTypes = [];
-    if (ConfigStore.getState().config.disclosureTypes) {
-      ConfigStore.getState().config.disclosureTypes.map(type => {
+    if (configState.config.disclosureTypes) {
+      configState.config.disclosureTypes.map(type => {
         return type.description;
       });
     }
 
     let possibleDispositions = [];
-    if (ConfigStore.getDispostionsEnabled()) {
+    const dispositionsEnabled = getDispostionsEnabled(configState);
+    if (dispositionsEnabled) {
       possibleDispositions = this.props.possibleDispositions;
     }
 
@@ -173,3 +178,7 @@ export class DisclosureList extends React.Component {
     );
   }
 }
+
+DisclosureList.contextTypes = {
+  configState: React.PropTypes.object
+};

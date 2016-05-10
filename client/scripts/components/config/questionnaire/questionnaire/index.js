@@ -22,80 +22,55 @@ import React from 'react';
 import Sidebar from '../../sidebar';
 import ActionPanel from '../../action-panel';
 import InstructionEditor from '../../instruction-editor';
-import ConfigStore from '../../../../stores/config-store';
 import QuestionnaireConfig from '../../questionnaire-config';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP} from '../../../../../../coi-constants';
 import {AppHeader} from '../../../app-header';
 
-export default class Questionnaire extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {};
-    this.onChange = this.onChange.bind(this);
+export default function Questionnaire(props, {configState}) {
+  const {config, editorStates, applicationState, dirty} = configState;
+  let instructionText = '';
+  if (config.general.instructions && config.general.instructions[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]) {
+    instructionText = config.general.instructions[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
   }
 
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      applicationState: storeState.applicationState,
-      questions: storeState.config.questions.screening,
-      instructions: storeState.config.general.instructions,
-      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE],
-      dirty: storeState.dirty
-    });
-  }
-
-  render() {
-    let instructionText = '';
-    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]) {
-      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
-    }
-
-    let configSection;
-    if (this.state.applicationState) {
-      configSection = (
-        <span className={`fill`} style={{display: 'inline-block'}}>
-          <InstructionEditor
-            step={COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE}
-            value={instructionText}
-            editorState={this.state.editorState}
-          />
-          <QuestionnaireConfig
-            questionnaireCategory="screening"
-            questions={this.state.questions}
-            questionsBeingEdited={this.state.applicationState.questionsBeingEdited.screening}
-            newQuestion={this.state.applicationState.newQuestion.screening}
-          />
-        </span>
-      );
-    }
-
-    return (
-      <div className={`flexbox column`} style={{minHeight: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
-        <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
-          <Sidebar active="questionnaire" />
-          <span className={`inline-flexbox column fill ${styles.content}`}>
-            <div className={styles.stepTitle}>
-              Customize Questionnaire
-            </div>
-            <div className={`fill flexbox row ${styles.configurationArea}`}>
-              {configSection}
-              <ActionPanel visible={this.state.dirty} />
-            </div>
-          </span>
-        </span>
-      </div>
+  let configSection;
+  if (applicationState) {
+    configSection = (
+      <span className={`fill`} style={{display: 'inline-block'}}>
+        <InstructionEditor
+          step={INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE}
+          value={instructionText}
+          editorState={editorStates[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]}
+        />
+        <QuestionnaireConfig
+          questionnaireCategory="screening"
+          questions={config.questions.screening}
+          questionsBeingEdited={applicationState.questionsBeingEdited.screening}
+          newQuestion={applicationState.newQuestion.screening}
+        />
+      </span>
     );
   }
+
+  return (
+    <div className={`flexbox column`} style={{minHeight: '100%'}}>
+      <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
+      <span className={classNames('fill', 'flexbox', 'row', styles.container, props.className)}>
+        <Sidebar active="questionnaire" />
+        <span className={`inline-flexbox column fill ${styles.content}`}>
+          <div className={styles.stepTitle}>
+            Customize Questionnaire
+          </div>
+          <div className={`fill flexbox row ${styles.configurationArea}`}>
+            {configSection}
+            <ActionPanel visible={dirty} />
+          </div>
+        </span>
+      </span>
+    </div>
+  );
 }
+
+Questionnaire.contextTypes = {
+  configState: React.PropTypes.object
+};

@@ -20,7 +20,12 @@ import styles from './style';
 import React from 'react';
 import {formatDate} from '../../format-date';
 import numeral from 'numeral';
-import ConfigStore from '../../stores/config-store';
+import {
+  getRelationshipPersonTypeString,
+  getRelationshipCategoryTypeString,
+  getRelationshipTypeString,
+  getRelationshipAmountString
+} from '../../stores/config-store';
 import {COIConstants} from '../../../../coi-constants';
 
 export default class EntityRelationshipSummary extends React.Component {
@@ -35,6 +40,7 @@ export default class EntityRelationshipSummary extends React.Component {
   }
 
   render() {
+    const { configState } = this.context;
     let commentSection;
     if (this.props.relationship.comments) {
       commentSection = (
@@ -56,13 +62,23 @@ export default class EntityRelationshipSummary extends React.Component {
     }
     if (this.props.relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
       const dateRange = `${formatDate(this.props.relationship.travel.startDate)} - ${formatDate(this.props.relationship.travel.endDate)}`;
+      const relationshipPerson = getRelationshipPersonTypeString(
+        configState,
+        this.props.relationship.personCd,
+        configState.config.id
+      );
+      const relationshipCategory = getRelationshipCategoryTypeString(
+        configState,
+        this.props.relationship.relationshipCd,
+        configState.config.id
+      );
       return (
         <div className={`${styles.container} ${this.props.className}`}>
           <div className={styles.summary}>
             {removeButton}
             <span>
-              {`${ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd)} • `}
-              {`${ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd)} • `}
+              {`${relationshipPerson} • `}
+              {`${relationshipCategory} • `}
               {this.props.relationship.travel.amount ? `${numeral(this.props.relationship.travel.amount).format('$0,0.00')} • ` : ''}
               {this.props.relationship.travel.destination ? `${this.props.relationship.travel.destination} • ` : ''}
               {dateRange ? `${dateRange} • ` : ''}
@@ -74,30 +90,44 @@ export default class EntityRelationshipSummary extends React.Component {
       );
     }
 
+    const relationshipPerson = getRelationshipPersonTypeString(
+      configState,
+      this.props.relationship.personCd,
+      configState.config.id
+    );
+    const relationshipCategory = getRelationshipCategoryTypeString(
+      configState,
+      this.props.relationship.relationshipCd,
+      configState.config.id
+    );
+    const relationship = getRelationshipTypeString(
+      configState,
+      this.props.relationship.relationshipCd,
+      this.props.relationship.typeCd,
+      configState.config.id
+    );
+    const relationshipAmount = getRelationshipAmountString(
+      configState,
+      this.props.relationship.relationshipCd,
+      this.props.relationship.amountCd,
+      configState.config.id
+    );
     return (
       <div className={`${styles.container} ${this.props.className}`}>
         <div className={styles.summary}>
           {removeButton}
           <span>
             <span style={{display: 'inline'}}>
-              {`${ConfigStore.getRelationshipPersonTypeString(this.props.relationship.personCd)} • `}
+              {`${relationshipPerson} • `}
             </span>
             <span style={{display: 'inline'}}>
-              {`${ConfigStore.getRelationshipCategoryTypeString(this.props.relationship.relationshipCd)} • `}
+              {`${relationshipCategory} • `}
             </span>
             <span style={{display: 'inline'}}>
-              {
-                this.props.relationship.typeCd ?
-                  `${ConfigStore.getRelationshipTypeString(this.props.relationship.relationshipCd, this.props.relationship.typeCd)} • ` :
-                  ''
-              }
+              {this.props.relationship.typeCd ? `${relationship} • ` : ''}
             </span>
             <span style={{display: 'inline'}}>
-              {
-                this.props.relationship.amountCd ?
-                  ConfigStore.getRelationshipAmountString(this.props.relationship.relationshipCd, this.props.relationship.amountCd) :
-                  ''
-              }
+              {this.props.relationship.amountCd ? relationshipAmount : ''}
             </span>
           </span>
         </div>
@@ -106,3 +136,7 @@ export default class EntityRelationshipSummary extends React.Component {
     );
   }
 }
+
+EntityRelationshipSummary.contextTypes = {
+  configState: React.PropTypes.object
+};

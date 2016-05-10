@@ -27,24 +27,38 @@ import {Revise} from './revise/revise';
 import {SizeAwareComponent} from '../size-aware-component';
 import {processResponse, createRequest} from '../../http-utils';
 import ColorStore from '../../stores/color-store';
+import ConfigStore from '../../stores/config-store';
 import history from '../../history';
 
 class App extends SizeAwareComponent {
   constructor() {
     super();
 
+    this.state = {
+      configState: ConfigStore.getState()
+    };
+
     this.onChange = this.onChange.bind(this);
   }
 
+  getChildContext() {
+    return {configState: this.state.configState};
+  }
+  
   componentDidMount() {
     ColorStore.listen(this.onChange);
+    ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
     ColorStore.unlisten(this.onChange);
+    ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
+    this.setState({
+      configState: ConfigStore.getState()
+    });
     this.forceUpdate();
   }
 
@@ -61,6 +75,10 @@ class App extends SizeAwareComponent {
     );
   }
 }
+
+App.childContextTypes = {
+  configState: React.PropTypes.object
+};
 
 window.colorBlindModeOn = false;
 if (window.localStorage.getItem('colorBlindModeOn') === 'true') {

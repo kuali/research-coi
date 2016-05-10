@@ -22,81 +22,57 @@ import React from 'react';
 import Sidebar from '../../sidebar';
 import ActionPanel from '../../action-panel';
 import InstructionEditor from '../../instruction-editor';
-import ConfigStore from '../../../../stores/config-store';
 import QuestionnaireConfig from '../../questionnaire-config';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP} from '../../../../../../coi-constants';
 import {AppHeader} from '../../../app-header';
 
-export default class Questionnaire extends React.Component {
-  constructor() {
-    super();
+export default function Questionnaire(props, {configState}) {
+  const {applicationState, config, editorStates, dirty} = configState;
 
-    this.state = {};
-    this.onChange = this.onChange.bind(this);
+  let instructionText = '';
+  if (config.general.instructions && config.general.instructions[INSTRUCTION_STEP.FINANCIAL_ENTITIES]) {
+    instructionText = config.general.instructions[INSTRUCTION_STEP.FINANCIAL_ENTITIES];
   }
 
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      applicationState: storeState.applicationState,
-      questions: storeState.config.questions.entities,
-      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES],
-      instructions: storeState.config.general.instructions,
-      dirty: storeState.dirty
-    });
-  }
-
-  render() {
-    let instructionText = '';
-    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES]) {
-      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
-    }
-
-    let configSection;
-    if (this.state.applicationState) {
-      configSection = (
-        <span className={`fill`} style={{display: 'inline-block'}}>
-          <InstructionEditor
-            step={COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES}
-            value={instructionText}
-            editorState={this.state.editorState}
-          />
-          <QuestionnaireConfig
-            questionnaireCategory="entities"
-            questions={this.state.questions}
-            questionsBeingEdited={this.state.applicationState.questionsBeingEdited.entities}
-            newQuestion={this.state.applicationState.newQuestion.entities}
-            disableSubQuestions={true}
-          />
-        </span>
-      );
-    }
-
-    return (
-      <div className={`flexbox column`} style={{minHeight: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
-        <span className={classNames('fill', 'flexbox', 'row', styles.container, this.props.className)}>
-          <Sidebar active="entities" />
-          <span className={classNames(styles.content, 'inline-flexbox', 'column', 'fill')}>
-            <div className={styles.stepTitle}>
-              Financial Entities Questionnaire
-            </div>
-            <div className={classNames('fill', 'flexbox', 'row', styles.configurationArea)}>
-              {configSection}
-              <ActionPanel visible={this.state.dirty} />
-            </div>
-          </span>
-        </span>
-      </div>
+  let configSection;
+  if (applicationState) {
+    configSection = (
+      <span className={`fill`} style={{display: 'inline-block'}}>
+        <InstructionEditor
+          step={INSTRUCTION_STEP.FINANCIAL_ENTITIES}
+          value={instructionText}
+          editorState={editorStates[INSTRUCTION_STEP.FINANCIAL_ENTITIES]}
+        />
+        <QuestionnaireConfig
+          questionnaireCategory="entities"
+          questions={config.questions.entities}
+          questionsBeingEdited={applicationState.questionsBeingEdited.entities}
+          newQuestion={applicationState.newQuestion.entities}
+          disableSubQuestions={true}
+        />
+      </span>
     );
   }
+
+  return (
+    <div className={`flexbox column`} style={{minHeight: '100%'}}>
+      <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
+      <span className={classNames('fill', 'flexbox', 'row', styles.container, props.className)}>
+        <Sidebar active="entities" />
+        <span className={classNames(styles.content, 'inline-flexbox', 'column', 'fill')}>
+          <div className={styles.stepTitle}>
+            Financial Entities Questionnaire
+          </div>
+          <div className={classNames('fill', 'flexbox', 'row', styles.configurationArea)}>
+            {configSection}
+            <ActionPanel visible={dirty} />
+          </div>
+        </span>
+      </span>
+    </div>
+  );
 }
+
+Questionnaire.contextTypes = {
+  configState: React.PropTypes.object
+};

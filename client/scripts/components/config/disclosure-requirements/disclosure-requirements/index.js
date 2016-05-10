@@ -19,7 +19,6 @@
 import styles from './style';
 import React from 'react';
 import Panel from '../../panel';
-import ConfigStore from '../../../../stores/config-store';
 import ConfigActions from '../../../../actions/config-actions';
 import CheckBox from '../../check-box';
 import ActiveProjectType from '../active-project-type';
@@ -32,30 +31,7 @@ export default class DisclosureRequirements extends React.Component {
   constructor() {
     super();
 
-    this.state = {
-      applicationState: {}
-    };
-    this.onChange = this.onChange.bind(this);
     this.toggleSelectingProjectTypes = this.toggleSelectingProjectTypes.bind(this);
-  }
-
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      applicationState: storeState.applicationState,
-      config: storeState.config,
-      dirty: storeState.dirty,
-      selectingProjectType: storeState.applicationState.selectingProjectTypes
-    });
   }
 
   toggleSelectingProjectTypes() {
@@ -63,14 +39,19 @@ export default class DisclosureRequirements extends React.Component {
   }
 
   render() {
+    const {configState} = this.context;
     let projectTypesPanel;
-    if (this.state.config && this.state.config.projectTypes && !this.state.applicationState.configuringProjectType) {
-      const projectsRequiringDisclosure = this.state.config.projectTypes.filter(projectType => {
+    if (
+      configState.config &&
+      configState.config.projectTypes &&
+      !configState.applicationState.configuringProjectType
+    ) {
+      const projectsRequiringDisclosure = configState.config.projectTypes.filter(projectType => {
         return projectType.reqDisclosure === 1;
       });
 
-      if (this.state.selectingProjectType) {
-        const projectTypes = this.state.config.projectTypes.map((projectType, index) => {
+      if (configState.applicationState.selectingProjectTypes) {
+        const projectTypes = configState.config.projectTypes.map((projectType, index) => {
           return (
             <CheckBox
               path={`config.projectTypes[${index}].reqDisclosure`}
@@ -114,7 +95,7 @@ export default class DisclosureRequirements extends React.Component {
           );
         });
 
-        const inactiveProjectTypes = this.state.config.projectTypes.filter(projectType => {
+        const inactiveProjectTypes = configState.config.projectTypes.filter(projectType => {
           return Number(projectType.reqDisclosure) === 0;
         })
         .map(projectType => {
@@ -153,12 +134,12 @@ export default class DisclosureRequirements extends React.Component {
     }
 
     let configuringPanel;
-    if (this.state.applicationState.configuringProjectType) {
+    if (configState.applicationState.configuringProjectType) {
       configuringPanel = (
         <ConfiguringPanel
-          projectType={this.state.applicationState.configuringProjectType}
-          roles={this.state.config.projectRoles}
-          statuses={this.state.config.projectStatuses}
+          projectType={configState.applicationState.configuringProjectType}
+          roles={configState.config.projectRoles}
+          statuses={configState.config.projectStatuses}
         />
       );
     }
@@ -167,7 +148,7 @@ export default class DisclosureRequirements extends React.Component {
       <ConfigPage
         title='Disclosure Requirements'
         routeName='disclosure-requirements'
-        dirty={this.state.dirty}
+        dirty={configState.dirty}
         className={this.props.className}
       >
         {projectTypesPanel}
@@ -176,3 +157,7 @@ export default class DisclosureRequirements extends React.Component {
     );
   }
 }
+
+DisclosureRequirements.contextTypes = {
+  configState: React.PropTypes.object
+};

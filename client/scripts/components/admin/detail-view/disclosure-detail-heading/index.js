@@ -19,34 +19,48 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getAdminDisclosureStatusString,
+  getDispostionsEnabled,
+  getDisclosureTypeString
+} from '../../../../stores/config-store';
 import {formatDate, formatDateTime} from '../../../../format-date';
 import {DISCLOSURE_STATUS} from '../../../../../../coi-constants';
 
-export function DisclosureDetailHeading(props) {
+export function DisclosureDetailHeading(props, {configState}) {
   const disclosure = props.disclosure;
 
   let submittedDate;
   if (disclosure.revisedDate) {
+    const disclosureStatus = getAdminDisclosureStatusString(
+      configState,
+      disclosure.statusCd,
+      configState.config.id
+    );
     submittedDate = (
       <div className={styles.details}>
         <span className={styles.label}>Revised On:</span>
         <span className={styles.value}>
           <span style={{marginRight: 3}}>{formatDate(disclosure.revisedDate)}</span>
           <span style={{marginRight: 3}}>•</span>
-          {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}
+          {disclosureStatus}
         </span>
       </div>
     );
   }
   else {
+    const disclosureStatus = getAdminDisclosureStatusString(
+      configState,
+      disclosure.statusCd,
+      configState.config.id
+    );
     submittedDate = (
       <div className={styles.details}>
         <span className={styles.label}>Submitted On:</span>
         <span className={styles.value}>
           <span style={{marginRight: 3}}>{formatDate(disclosure.submittedDate)}</span>
           <span style={{marginRight: 3}}>•</span>
-          {ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}
+          {disclosureStatus}
         </span>
       </div>
     );
@@ -67,7 +81,10 @@ export function DisclosureDetailHeading(props) {
   }
 
   let disposition;
-  if (ConfigStore.getDispostionsEnabled() && disclosure.disposition) {
+  if (
+    getDispostionsEnabled(configState) &&
+    disclosure.disposition
+  ) {
     disposition = (
       <span>
         <span style={{margin: '0 3px'}}>•</span>
@@ -76,14 +93,18 @@ export function DisclosureDetailHeading(props) {
     );
   }
 
-
+  const disclosureType = getDisclosureTypeString(
+    configState,
+    disclosure.typeCd,
+    configState.config.id
+  );
   return (
     <div className={classNames(styles.container, props.className)} >
       <span>
         <div className={styles.heading}>
           <span className={styles.disclosure}>
             <span style={{marginRight: 3}}>
-              {ConfigStore.getDisclosureTypeString(disclosure.typeCd)}
+              {disclosureType}
             </span>
             •
           </span>
@@ -101,3 +122,7 @@ export function DisclosureDetailHeading(props) {
     </div>
   );
 }
+
+DisclosureDetailHeading.contextTypes = {
+  configState: React.PropTypes.object
+};

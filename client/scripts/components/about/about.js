@@ -20,6 +20,7 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import {SizeAwareComponent} from '../size-aware-component';
 import ColorStore from '../../stores/color-store';
+import ConfigStore from '../../stores/config-store';
 import UserInfoStore from '../../stores/user-info-store';
 import aboutStyles from './about-style';
 import {AppHeader} from '../app-header';
@@ -34,23 +35,28 @@ class App extends SizeAwareComponent {
     this.onChange = this.onChange.bind(this);
   }
 
+  getChildContext() {
+    return {configState: this.state.configState};
+  }
+  
   componentDidMount() {
     ColorStore.listen(this.onChange);
     UserInfoStore.listen(this.onChange);
-
+    ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
     ColorStore.unlisten(this.onChange);
     UserInfoStore.unlisten(this.onChange);
+    ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
-    this.forceUpdate();
     this.setState({
-      version: UserInfoStore.getState().userInfo.version
+      version: UserInfoStore.getState().userInfo.version,
+      configState: ConfigStore.getState()
     });
-
+    this.forceUpdate();
   }
 
   render() {
@@ -66,6 +72,10 @@ class App extends SizeAwareComponent {
     );
   }
 }
+
+App.childContextTypes = {
+  configState: React.PropTypes.object
+};
 
 window.colorBlindModeOn = false;
 if (window.localStorage.getItem('colorBlindModeOn') === 'true') {

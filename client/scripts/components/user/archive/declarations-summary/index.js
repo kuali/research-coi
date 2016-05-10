@@ -20,19 +20,28 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import DeclarationSummary from '../declaration-summary';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getProjectTypeString,
+  getDeclarationTypeString,
+  getDispositionTypeString
+} from '../../../../stores/config-store';
 
-export default class extends React.Component {
+export default class DeclarationsSummary extends React.Component {
   getUniqueProjects(declarations) {
     const projects = [];
     const alreadyAdded = {};
 
     declarations.forEach(declaration => {
       if (!alreadyAdded[declaration.projectId]) {
+        const projectType = getProjectTypeString(
+          this.context.configState,
+          declaration.projectTypeCd,
+          this.context.configState.config.id
+        );
         projects.push({
           id: declaration.projectId,
           name: declaration.projectTitle,
-          type: ConfigStore.getProjectTypeString(declaration.projectTypeCd),
+          type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
           sponsor: declaration.sponsorName,
@@ -58,22 +67,32 @@ export default class extends React.Component {
         const declarations = this.props.declarations.filter(declaration => {
           return declaration.projectId === project.id && declaration.finEntityActive === 1;
         }).map(declaration => {
+          const declarationType = getDeclarationTypeString(
+            this.context.configState,
+            declaration.typeCd,
+            this.context.configState.config.id
+          );
           return (
             <DeclarationSummary
               key={declaration.id}
               declaration={declaration}
               config={this.props.config}
-              disposition={ConfigStore.getDeclarationTypeString(declaration.typeCd)}
+              disposition={declarationType}
             />
           );
         });
 
         let dispositionType;
         if (this.props.config.general.dispositionsEnabled) {
+          const dispositionTypeString = getDispositionTypeString(
+            this.context.configState,
+            project.dispositionTypeCd,
+            this.context.configState.config.id
+          );
           dispositionType = (
             <div className={styles.field}>
               <label className={styles.label}>Project Disposition:</label>
-              <span style={{fontWeight: 'bold'}}>{ConfigStore.getDispositionTypeString(project.dispositionTypeCd)}</span>
+              <span style={{fontWeight: 'bold'}}>{dispositionTypeString}</span>
             </div>
           );
         }
@@ -138,3 +157,7 @@ export default class extends React.Component {
     );
   }
 }
+
+DeclarationsSummary.contextTypes = {
+  configState: React.PropTypes.object
+};

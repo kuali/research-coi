@@ -19,7 +19,10 @@
 import styles from './style';
 import React from 'react';
 import DeclarationSummary from '../declaration-summary';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getProjectTypeString,
+  getDispositionTypeString
+} from '../../../../stores/config-store';
 import ProjectDispositionSelector from '../project-disposition-selector';
 import classNames from 'classnames';
 
@@ -52,10 +55,15 @@ export class AdminDeclarationsSummary extends React.Component {
 
     declarations.forEach(declaration => {
       if (!alreadyAdded[declaration.projectId]) {
+        const projectType = getProjectTypeString(
+          this.context.configState,
+          declaration.projectTypeCd,
+          this.context.configState.config.id
+        );
         projects.push({
           id: declaration.projectId,
           name: declaration.projectTitle,
-          type: ConfigStore.getProjectTypeString(declaration.projectTypeCd),
+          type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
           sponsor: declaration.sponsorName,
@@ -111,11 +119,16 @@ export class AdminDeclarationsSummary extends React.Component {
         let dispositionTypeSelector;
         if (config.general.dispositionsEnabled) {
           if (readonly) {
+            const dispositionType = getDispositionTypeString(
+              this.context.configState,
+              project.dispositionTypeCd,
+              this.context.configState.config.id
+            );
             dispositionTypeSelector = (
               <div className={styles.field}>
                 <label className={styles.label}>Project Disposition:</label>
                 <span style={{fontWeight: 'bold'}}>
-                  {ConfigStore.getDispositionTypeString(project.dispositionTypeCd)}
+                  {dispositionType}
                 </span>
               </div>
             );
@@ -189,3 +202,7 @@ export class AdminDeclarationsSummary extends React.Component {
     );
   }
 }
+
+AdminDeclarationsSummary.contextTypes = {
+  configState: React.PropTypes.object
+};

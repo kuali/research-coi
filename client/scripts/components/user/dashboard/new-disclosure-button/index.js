@@ -19,28 +19,30 @@
 import styles from './style';
 import React from 'react';
 import {Link} from 'react-router';
-import ConfigStore from '../../../../stores/config-store';
-import {COIConstants} from '../../../../../../coi-constants';
+import {getDisclosureTypeString} from '../../../../stores/config-store';
+import {DISCLOSURE_TYPE} from '../../../../../../coi-constants';
 
-export class NewDisclosureButton extends React.Component {
-  render() {
-    return (
-      <Link
-        to={"/coi/disclosure"}
-        query={{type: this.props.type}}
-        className={`${styles.container} ${this.props.className}`}
-      >
-        <div>
-          <span>
-            <div className={styles.primary}>
-              {this.props.type === COIConstants.DISCLOSURE_TYPE.ANNUAL ? 'Update' : 'New'}
-            </div>
-            <div className={styles.secondary}>
-              {ConfigStore.getDisclosureTypeString(this.props.type)}
-            </div>
-          </span>
-        </div>
-      </Link>
-    );
-  }
+export function NewDisclosureButton(props, {configState}) {
+  return (
+    <Link
+      to={"/coi/disclosure"}
+      query={{type: props.type}}
+      className={`${styles.container} ${props.className}`}
+    >
+      <div>
+        <span>
+          <div className={styles.primary}>
+            {props.type === DISCLOSURE_TYPE.ANNUAL ? 'Update' : 'New'}
+          </div>
+          <div className={styles.secondary}>
+            {getDisclosureTypeString(configState, props.type, configState.config.id)}
+          </div>
+        </span>
+      </div>
+    </Link>
+  );
 }
+
+NewDisclosureButton.contextTypes = {
+  configState: React.PropTypes.object
+};

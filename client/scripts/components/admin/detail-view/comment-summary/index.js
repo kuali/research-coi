@@ -20,8 +20,12 @@ import styles from './style';
 import React from 'react';
 import TopicCommentSummary from '../topic-comment-summary';
 import {AdminActions} from '../../../../actions/admin-actions';
-import ConfigStore from '../../../../stores/config-store';
-import {COIConstants} from '../../../../../../coi-constants';
+import {getQuestionNumberToShow} from '../../../../stores/config-store';
+import {
+  DISCLOSURE_STEP,
+  QUESTIONNAIRE_TYPE,
+  COMMENT_TITLES
+} from '../../../../../../coi-constants';
 import classNames from 'classnames';
 
 export default class CommentSummary extends React.Component {
@@ -40,7 +44,7 @@ export default class CommentSummary extends React.Component {
 
   getQuestionnaireTopics() {
     const questionComments = this.props.disclosure.comments.filter(comment => {
-      return comment.topicSection === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+      return comment.topicSection === DISCLOSURE_STEP.QUESTIONNAIRE;
     }).sort((a, b) => {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
@@ -50,8 +54,18 @@ export default class CommentSummary extends React.Component {
     });
 
     return this.getUniqueTopics(questionComments).sort((a, b) => {
-      const aName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, a);
-      const bName = ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, b);
+      const aName = getQuestionNumberToShow(
+        this.context.configState,
+        QUESTIONNAIRE_TYPE.SCREENING,
+        a,
+        this.context.configState.config.id
+      );
+      const bName = getQuestionNumberToShow(
+        this.context.configState,
+        QUESTIONNAIRE_TYPE.SCREENING,
+        b,
+        this.context.configState.config.id
+      );
 
       return String(aName).localeCompare(String(bName));
     }).map(topicId => {
@@ -59,7 +73,13 @@ export default class CommentSummary extends React.Component {
         return comment.topicId === topicId;
       });
 
-      const topicName = `${COIConstants.COMMENT_TITLES.QUESTION} ${ConfigStore.getQuestionNumberToShow(COIConstants.QUESTIONNAIRE_TYPE.SCREENING, topicId)}`;
+      const questionNumber = getQuestionNumberToShow(
+        this.context.configState,
+        QUESTIONNAIRE_TYPE.SCREENING,
+        topicId,
+        this.context.configState.config.id
+      );
+      const topicName = `${COMMENT_TITLES.QUESTION} ${questionNumber}`;
       return (
         <TopicCommentSummary
           role={this.props.role}
@@ -97,7 +117,7 @@ export default class CommentSummary extends React.Component {
 
   getEntitiesTopics() {
     const entityComments = this.props.disclosure.comments.filter(comment => {
-      return comment.topicSection === COIConstants.DISCLOSURE_STEP.ENTITIES;
+      return comment.topicSection === DISCLOSURE_STEP.ENTITIES;
     }).sort((a, b) => {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
@@ -111,7 +131,7 @@ export default class CommentSummary extends React.Component {
         return comment.topicId === topicId;
       });
 
-      const topicName = `${COIConstants.COMMENT_TITLES.ENTITY} ${this.getEntityName(topicId)}`;
+      const topicName = `${COMMENT_TITLES.ENTITY} ${this.getEntityName(topicId)}`;
       return (
         <TopicCommentSummary
           role={this.props.role}
@@ -125,7 +145,7 @@ export default class CommentSummary extends React.Component {
 
   getDeclarationTopics() {
     const declarationComments = this.props.disclosure.comments.filter(comment => {
-      return comment.topicSection === COIConstants.DISCLOSURE_STEP.PROJECTS;
+      return comment.topicSection === DISCLOSURE_STEP.PROJECTS;
     }).sort((a, b) => {
       if (a.topicId === b.topicId) {
         return a.id - b.id;
@@ -139,7 +159,7 @@ export default class CommentSummary extends React.Component {
         return comment.topicId === topicId;
       });
 
-      const topicName = `${COIConstants.COMMENT_TITLES.DECLARATION} ${this.getDeclarationName(topicId)}`;
+      const topicName = `${COMMENT_TITLES.DECLARATION} ${this.getDeclarationName(topicId)}`;
       return (
         <TopicCommentSummary
           role={this.props.role}
@@ -175,3 +195,7 @@ export default class CommentSummary extends React.Component {
     );
   }
 }
+
+CommentSummary.contextTypes = {
+  configState: React.PropTypes.object
+};
