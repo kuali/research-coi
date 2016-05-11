@@ -25,7 +25,6 @@ import TravelLog from './travel-log/travel-log';
 import {Archive} from './archive/archive';
 import {Revise} from './revise/revise';
 import {SizeAwareComponent} from '../size-aware-component';
-import {processResponse, createRequest} from '../../http-utils';
 import ColorStore from '../../stores/color-store';
 import ConfigStore from '../../stores/config-store';
 import history from '../../history';
@@ -80,19 +79,15 @@ App.childContextTypes = {
   configState: React.PropTypes.object
 };
 
+function renderApp() {
+  ReactDOM.render(<App />, document.querySelector('#theApp'));
+  ConfigStore.unlisten(renderApp);
+}
+
+ConfigStore.listen(renderApp);
+
 window.colorBlindModeOn = false;
 if (window.localStorage.getItem('colorBlindModeOn') === 'true') {
   document.body.classList.add('color-blind');
   window.colorBlindModeOn = true;
 }
-
-// Then load config and re-render
-createRequest()
-  .get('/api/coi/config')
-  .end(processResponse((err, config) => {
-    if (!err) {
-      window.config = config.body;
-      ReactDOM.render(<App />, document.querySelector('#theApp'));
-    }
-  }));
-

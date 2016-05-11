@@ -42,6 +42,7 @@ export class ManualEvent extends React.Component {
   }
 
   render() {
+    const {config} = this.context.configState;
     let screen;
     if (this.props.step === 3) {
       screen = (
@@ -63,9 +64,9 @@ export class ManualEvent extends React.Component {
       );
     }
 
-    const instructionText = window.config.general.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
-    const contentState = window.config.general.richTextInstructions ?
-      window.config.general.richTextInstructions[COIConstants.DISCLOSURE_STEP.MANUAL] :
+    const instructionText = config.general.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
+    const contentState = config.general.richTextInstructions ?
+      config.general.richTextInstructions[COIConstants.DISCLOSURE_STEP.MANUAL] :
       undefined;
     const instructions = (
       <Instructions
@@ -86,3 +87,7 @@ export class ManualEvent extends React.Component {
     );
   }
 }
+
+ManualEvent.contextTypes = {
+  configState: React.PropTypes.object
+};

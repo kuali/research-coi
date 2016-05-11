@@ -126,6 +126,7 @@ export class Relationships extends React.Component {
   }
 
   render() {
+    const {config} = this.context.configState;
     const projectView = this.props.view === 0;
     const relationshipNodes = [];
     let declarations;
@@ -184,9 +185,9 @@ export class Relationships extends React.Component {
       });
     }
 
-    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
-    const contentState = window.config.general.richTextInstructions ?
-      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] :
+    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
+    const contentState = config.general.richTextInstructions ?
+      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] :
       undefined;
     const instructions = (
       <Instructions

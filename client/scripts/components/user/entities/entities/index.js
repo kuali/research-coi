@@ -39,6 +39,7 @@ export class Entities extends React.Component {
   }
 
   render() {
+    const {config} = this.context.configState;
     let viewToggle;
     let entities;
     if (this.props.entities) {
@@ -91,7 +92,7 @@ export class Entities extends React.Component {
       let level;
       if (this.props.enforceEntities) {
         message = 'You have answered "Yes" to a screening question, but do not have an active Financial Entity. Please add an active Financial Entity or edit your screening questionnaire in order to submit your disclosure.'; //eslint-disable-line max-len
-      } else if (DisclosureStore.warnActiveEntity(this.props.applicationState.currentDisclosureState.disclosure, window.config)) {
+      } else if (DisclosureStore.warnActiveEntity(this.props.applicationState.currentDisclosureState.disclosure, config)) {
         message = 'You have answered "No" to all screening questions; however, you have an active financial entity. Please consider reviewing the questions or deactivating your Financial Entity.'; //eslint-disable-line max-len
         level = 'Warning';
       }
@@ -152,9 +153,9 @@ export class Entities extends React.Component {
       );
     }
 
-    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
-    const contentState = window.config.general.richTextInstructions ?
-      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES] :
+    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
+    const contentState = config.general.richTextInstructions ?
+      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES] :
       undefined;
     const instructions = (
       <Instructions
@@ -184,3 +185,7 @@ export class Entities extends React.Component {
     );
   }
 }
+
+Entities.contextTypes = {
+  configState: React.PropTypes.object
+};

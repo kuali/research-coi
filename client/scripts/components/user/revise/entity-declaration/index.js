@@ -180,7 +180,8 @@ export default class EntityDeclaration extends React.Component {
 
     let relationship;
     if (this.state.revising) {
-      const declarationTypes = window.config.declarationTypes.filter(declarationType => {
+      const {config} = this.context.configState;
+      const declarationTypes = config.declarationTypes.filter(declarationType => {
         return Boolean(declarationType.enabled) && Boolean(declarationType.active);
       }).map(declarationType => {
         return (

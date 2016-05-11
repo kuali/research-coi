@@ -39,6 +39,7 @@ export class Questionnaire extends React.Component {
   }
 
   render() {
+    const {config} = this.context.configState;
     let percentToSlide = 0;
     if (this.props.currentquestion) {
       const FULL_WIDTH_IN_PERCENT = 100;
@@ -84,9 +85,9 @@ export class Questionnaire extends React.Component {
       });
     }
 
-    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
-    const contentState = window.config.general.richTextInstructions ?
-      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] :
+    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
+    const contentState = config.general.richTextInstructions ?
+      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] :
       undefined;
     return (
       <div className={`${styles.container} ${this.props.className}`}>
@@ -105,3 +106,7 @@ export class Questionnaire extends React.Component {
     );
   }
 }
+
+Questionnaire.contextTypes = {
+  configState: React.PropTypes.object
+};

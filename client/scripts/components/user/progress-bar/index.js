@@ -20,7 +20,7 @@
 import React from 'react';
 import {merge} from '../../merge';
 
-export function ProgressBar(props: Object): React.Element {
+export function ProgressBar(props, {configState}) {
   const styles = {
     container: {
       width: '100%',
@@ -28,7 +28,7 @@ export function ProgressBar(props: Object): React.Element {
     },
     bar: {
       width: `${props.percentage}%`,
-      backgroundColor: window.config.colors.two,
+      backgroundColor: configState.config.colors.two,
       height: '100%',
       transition: 'width .2s ease-in-out'
     }
@@ -39,3 +39,7 @@ export function ProgressBar(props: Object): React.Element {
     </div>
   );
 }
+
+ProgressBar.contextTypes = {
+  configState: React.PropTypes.object
+};

@@ -77,10 +77,15 @@ App.childContextTypes = {
   configState: React.PropTypes.object
 };
 
+function renderApp() {
+  ReactDOM.render(<App />, document.querySelector('#theApp'));
+  ConfigStore.unlisten(renderApp);
+}
+
+ConfigStore.listen(renderApp);
+
 window.colorBlindModeOn = false;
 if (window.localStorage.getItem('colorBlindModeOn') === 'true') {
   document.body.classList.add('color-blind');
   window.colorBlindModeOn = true;
 }
-
-ReactDOM.render(<App />, document.querySelector('#theApp'));

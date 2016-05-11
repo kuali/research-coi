@@ -71,81 +71,72 @@ class _PIReviewStore {
 
   loadDisclosure(disclosureId) {
     createRequest().get(`/api/coi/disclosures/${disclosureId}/pi-review-items`)
-           .end(processResponse((err, disclosure) => {
-             if (!err) {
-               this.disclosure = disclosure.body;
-               if (this.disclosure.questions) {
-                 this.disclosure.questions.forEach(question => {
-                   if (question.question) {
-                     if (question.question.required_num_selections) {
-                       question.question.requiredNumSelections = question.question.required_num_selections;
-                       delete question.question.required_num_selections;
-                     }
-                     if (question.question.number_to_show) {
-                       question.question.numberToShow = question.question.number_to_show;
-                       delete question.question.number_to_show;
-                     }
-                   }
-                   if (question.answer) {
-                     question.answer = JSON.parse(question.answer);
-                   }
+      .end(processResponse((err, disclosure) => {
+        if (!err) {
+          this.disclosure = disclosure.body;
+          if (this.disclosure.questions) {
+            this.disclosure.questions.forEach(question => {
+              if (question.question) {
+                if (question.question.required_num_selections) {
+                  question.question.requiredNumSelections = question.question.required_num_selections;
+                  delete question.question.required_num_selections;
+                }
+                if (question.question.number_to_show) {
+                  question.question.numberToShow = question.question.number_to_show;
+                  delete question.question.number_to_show;
+                }
+              }
+              if (question.answer) {
+                question.answer = JSON.parse(question.answer);
+              }
 
-                   if (question.subQuestions) {
-                     question.subQuestions = question.subQuestions.map(subQuestion => {
-                       const newSub = {
-                         id: subQuestion.id,
-                         parent: subQuestion.parent,
-                         answer: {},
-                         question: subQuestion.question
-                       };
+              if (question.subQuestions) {
+                question.subQuestions = question.subQuestions.map(subQuestion => {
+                  const newSub = {
+                    id: subQuestion.id,
+                    parent: subQuestion.parent,
+                    answer: {},
+                    question: subQuestion.question
+                  };
 
-                       if (subQuestion.answer) {
-                         newSub.answer = JSON.parse(subQuestion.answer);
-                       }
+                  if (subQuestion.answer) {
+                    newSub.answer = JSON.parse(subQuestion.answer);
+                  }
 
-                       if (newSub.question.required_num_selections) {
-                         newSub.question.requiredNumSelections = newSub.question.required_num_selections;
-                         delete newSub.question.required_num_selections;
-                       }
-                       if (newSub.question.number_to_show) {
-                         newSub.question.numberToShow = newSub.question.number_to_show;
-                         delete newSub.question.number_to_show;
-                       }
-                       if (newSub.question.display_criteria) {
-                         newSub.question.displayCriteria = newSub.question.display_criteria;
-                         delete newSub.question.display_criteria;
-                       }
+                  if (newSub.question.required_num_selections) {
+                    newSub.question.requiredNumSelections = newSub.question.required_num_selections;
+                    delete newSub.question.required_num_selections;
+                  }
+                  if (newSub.question.number_to_show) {
+                    newSub.question.numberToShow = newSub.question.number_to_show;
+                    delete newSub.question.number_to_show;
+                  }
+                  if (newSub.question.display_criteria) {
+                    newSub.question.displayCriteria = newSub.question.display_criteria;
+                    delete newSub.question.display_criteria;
+                  }
 
-                       return newSub;
-                     });
-                   }
-                 });
-               }
+                  return newSub;
+                });
+              }
+            });
+          }
 
-               if (this.disclosure.entities) {
-                 this.disclosure.entities.forEach(entity => {
-                   if (entity.answers) {
-                     entity.answers.forEach(answer => {
-                       answer.answer = JSON.parse(answer.answer);
-                     });
-                   }
-                 });
-               }
+          if (this.disclosure.entities) {
+            this.disclosure.entities.forEach(entity => {
+              if (entity.answers) {
+                entity.answers.forEach(answer => {
+                  answer.answer = JSON.parse(answer.answer);
+                });
+              }
+            });
+          }
 
+          this.updateCanSubmit();
 
-
-               this.updateCanSubmit();
-
-               createRequest().get(`/api/coi/archived-config/${disclosure.body.configId}`)
-               .end(processResponse((error, config) => {
-                 if (!error) {
-                   window.config = config.body;
-                   ConfigActions.loadConfig(disclosure.body.configId);
-                   this.emitChange();
-                 }
-               }));
-             }
-           }));
+          ConfigActions.loadConfig(disclosure.body.configId);
+        }
+      }));
   }
 
   respond([reviewId, comment]) {

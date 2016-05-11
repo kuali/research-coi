@@ -48,9 +48,10 @@ export class Certify extends React.Component {
   shouldComponentUpdate() { return true; }
 
   render() {
-    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
-    const contentState = window.config.general.richTextInstructions ?
-      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION] :
+    const {config} = this.context.configState;
+    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
+    const contentState = config.general.richTextInstructions ?
+      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION] :
       undefined;
     const instructions = (
       <Instructions
@@ -62,7 +63,7 @@ export class Certify extends React.Component {
 
     let agreement;
 
-    if (window.config.general.certificationOptions.required) {
+    if (config.general.certificationOptions.required) {
       agreement = (
         <div style={{marginTop: 20}}>
           <span style={{display: 'inline-block', width: '5%'}}>
@@ -91,7 +92,7 @@ export class Certify extends React.Component {
         <div className={styles.content}>
           <span className={styles.cert}>
             <div style={{whiteSpace: 'pre-wrap', marginBottom: 25}}>
-              {window.config.general.certificationOptions.text}
+              {config.general.certificationOptions.text}
             </div>
             <FileUpload
               fileType='Attachment'
@@ -111,3 +112,7 @@ export class Certify extends React.Component {
     );
   }
 }
+
+Certify.contextTypes = {
+  configState: React.PropTypes.object
+};

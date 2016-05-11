@@ -20,7 +20,7 @@ import styles from './style';
 import React from 'react';
 import {QuestionSummary} from '../question-summary';
 import {Instructions} from '../../instructions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP} from '../../../../../../coi-constants';
 
 export class QuestionnaireSummary extends React.Component {
   constructor() {
@@ -82,14 +82,15 @@ export class QuestionnaireSummary extends React.Component {
       });
     }
 
-    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
-    const contentState = window.config.general.richTextInstructions ?
-      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] :
+    const {config} = this.context.configState;
+    const instructionText = config.general.instructions[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
+    const contentState = config.general.richTextInstructions ?
+      config.general.richTextInstructions[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] :
       undefined;
     const instructions = (
       <Instructions
         text={instructionText}
-        collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]}
+        collapsed={!this.props.instructionsShowing[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]}
         contentState={contentState}
       />
     );
@@ -108,3 +109,7 @@ export class QuestionnaireSummary extends React.Component {
     );
   }
 }
+
+QuestionnaireSummary.contextTypes = {
+  configState: React.PropTypes.object
+};

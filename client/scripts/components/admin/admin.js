@@ -19,7 +19,6 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import ReactDOM from 'react-dom';
 import {Router, Route} from 'react-router';
-import {processResponse, createRequest} from '../../http-utils';
 import {DetailView} from './detail-view/detail-view';
 import {ListView} from './list-view/list-view';
 import {SizeAwareComponent} from '../size-aware-component';
@@ -76,18 +75,16 @@ App.childContextTypes = {
   configState: React.PropTypes.object
 };
 
+function renderApp() {
+  ReactDOM.render(<App />, document.querySelector('#theApp'));
+  ConfigStore.unlisten(renderApp);
+}
+
+ConfigStore.listen(renderApp);
+
+
 window.colorBlindModeOn = false;
 if (window.localStorage.getItem('colorBlindModeOn') === 'true') {
   document.body.classList.add('color-blind');
   window.colorBlindModeOn = true;
 }
-
-// Then load config and re-render
-createRequest()
-  .get('/api/coi/config')
-  .end(processResponse((err, config) => {
-    if (!err) {
-      window.config = config.body;
-      ReactDOM.render(<App />, document.querySelector('#theApp'));
-    }
-  }));

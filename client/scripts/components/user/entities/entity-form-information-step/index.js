@@ -79,8 +79,8 @@ export class EntityFormInformationStep extends React.Component {
       }
     }
 
-
-    const questions = window.config.questions.entities.sort((a, b) => {
+    const {config} = this.context.configState;
+    const questions = config.questions.entities.sort((a, b) => {
       return a.question.order - b.question.order;
     }).map((question, index) => {
       let columnStyle;
@@ -140,3 +140,7 @@ export class EntityFormInformationStep extends React.Component {
     );
   }
 }
+
+EntityFormInformationStep.contextTypes = {
+  configState: React.PropTypes.object
+};
