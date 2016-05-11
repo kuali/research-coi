@@ -18,7 +18,11 @@
 
 import ConfigActions from '../actions/config-actions';
 import alt from '../alt';
-import {COIConstants} from '../../../coi-constants';
+import {
+  QUESTION_TYPE,
+  QUESTIONNAIRE_TYPE,
+  TMP_PLACEHOLDER
+} from '../../../coi-constants';
 import {processResponse, createRequest} from '../http-utils';
 import { prepareInstructionsForSave, createEditorStates } from '../editor-utils';
 import _ from 'lodash';
@@ -54,7 +58,7 @@ export function getCodeMap(items, codeField) {
 }
 
 export function mapCodes(config) {
-  if (typeof config != 'object') {
+  if (!_.isObjectLike(config)) {
     throw new Error('invalid config object');
   }
 
@@ -71,42 +75,54 @@ export function mapCodes(config) {
   return codeMaps;
 }
 
-export function getCodeMapsFromState(state, configId) {
+function getConfig(state, configId) {
   if (state.config.id === configId) {
-    return state.config.codeMaps;
+    return state.config;
   } else if (state.archivedConfigs[configId] !== undefined) {
-    return state.archivedConfigs[configId].codeMaps;
+    return state.archivedConfigs[configId];
   }
-  
-  return {};
+
+  throw new Error('Invalid config id');
 }
 
-export function getDisclosureTypeString(state, code, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
+export function getCodeMapsFromState(...args) {
+  return getConfig(...args).codeMaps;
+}
 
-  if (codeMaps.disclosureType) {
-    const typeRecord = codeMaps.disclosureType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
+export function getStringFromCodeMap(state, code, configId, mapName) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('invalid state');
   }
+  const codeMaps = getCodeMapsFromState(state, configId);
+  if (Object.keys(codeMaps).length === 0) {
+    throw new Error('invalid configId');
+  }
+
+  if (!_.isObjectLike(codeMaps[mapName])) {
+    throw new Error('invalid code map name');
+  }
+
+  const mapRecord = codeMaps[mapName][code];
+  if (mapRecord) {
+    return mapRecord.description;
+  }
+
   return '';
 }
 
-export function getDispostionsEnabled(state) {
+export function getDisclosureTypeString(...args) {
+  return getStringFromCodeMap(...args, 'disclosureType');
+}
+
+export function getDispositionsEnabled(state) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
   return state.config.general.dispositionsEnabled;
 }
 
-export function getDisclosureStatusString(state, code, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
-
-  if (codeMaps.disclosureStatus) {
-    const typeRecord = codeMaps.disclosureStatus[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-  }
-  return '';
+export function getDisclosureStatusString(...args) {
+  return getStringFromCodeMap(...args, 'disclosureStatus');
 }
 
 export function getAdminDisclosureStatusString(state, code, configId) {
@@ -121,133 +137,96 @@ export function getAdminDisclosureStatusString(state, code, configId) {
   }
 }
 
-export function getRelationshipPersonTypeString(state, code, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
-
-  if (codeMaps.relationshipPersonType) {
-    const typeRecord = codeMaps.relationshipPersonType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-  }
-
-  return '';
+export function getRelationshipPersonTypeString(...args) {
+  return getStringFromCodeMap(...args, 'relationshipPersonType');
 }
 
-export function getRelationshipCategoryTypeString(state, code, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
-
-  if (codeMaps.relationshipCategoryType) {
-    const typeRecord = codeMaps.relationshipCategoryType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-  }
-  return '';
+export function getRelationshipCategoryTypeString(...args) {
+  return getStringFromCodeMap(...args, 'relationshipCategoryType');
 }
 
-export function getProjectTypeString(state, code, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
-
-  if (codeMaps.projectType) {
-    const typeRecord = codeMaps.projectType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-  }
-  return '';
+export function getProjectTypeString(...args) {
+  return getStringFromCodeMap(...args, 'projectType');
 }
 
-export function getDeclarationTypeString(state, code, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
-
-  if (codeMaps.declarationType) {
-    const typeRecord = codeMaps.declarationType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-  }
-  return '';
+export function getDeclarationTypeString(...args) {
+  return getStringFromCodeMap(...args, 'declarationType');
 }
 
-export function getDispositionTypeString(state, code, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
-
-  if (codeMaps.dispositionType) {
-    const typeRecord = codeMaps.dispositionType[code];
-    if (typeRecord) {
-      return typeRecord.description;
-    }
-  }
-  return '';
+export function getDispositionTypeString(...args) {
+  return getStringFromCodeMap(...args, 'dispositionType');
 }
 
-export function getRelationshipTypeString(state, categoryCode, typeCode, configId) {
+function getFieldFromRelationship(state, categoryCode, typeCode, configId, field) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+
   const codeMaps = getCodeMapsFromState(state, configId);
 
   const typeRecord = codeMaps.relationshipCategoryType[categoryCode];
-  if (typeRecord) {
-    const option = typeRecord.typeOptions.find(typeOption => {
-      return typeOption.typeCd === typeCode;
-    });
-    if (option) {
-      return option.description;
-    }
+  if (!typeRecord) {
+    throw new Error('Invalid categoryCode');
   }
 
-  return 'Undefined';
+  const option = typeRecord[field].find(typeOption => {
+    return typeOption.typeCd === typeCode;
+  });
+  if (!option) {
+    throw new Error('Invalid typeCode');
+  }
+
+  return option.description;
 }
 
-export function getRelationshipAmountString(state, categoryCode, typeCode, configId) {
-  const codeMaps = getCodeMapsFromState(state, configId);
+export function getRelationshipTypeString(...args) {
+  return getFieldFromRelationship(...args, 'typeOptions');
+}
 
-  const typeRecord = codeMaps.relationshipCategoryType[categoryCode];
-  if (typeRecord) {
-    const option = typeRecord.amountOptions.find(amountOption => {
-      return amountOption.typeCd === typeCode;
-    });
-    if (option) {
-      return option.description;
-    }
-  }
-
-  return 'Undefined';
+export function getRelationshipAmountString(...args) {
+  return getFieldFromRelationship(...args, 'amountOptions');
 }
 
 export function getNotificationsMode(state) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+
   return state.config.notificationsMode;
 }
 
 export function getQuestionNumberToShow(state, type, questionId, configId) {
-  let questions;
-  if (state.config.id === configId) {
-    questions = state.config.questions;
-  } else if (state.archivedConfigs[configId] !== undefined) {
-    questions = state.archivedConfigs[configId].questions;
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
   }
+
+  const config = getConfig(state, configId);
+  const {questions} = config;
 
   let collection;
   switch (type) {
-    case COIConstants.QUESTIONNAIRE_TYPE.SCREENING:
+    case QUESTIONNAIRE_TYPE.SCREENING:
       collection = questions.screening;
       break;
-    case COIConstants.QUESTIONNAIRE_TYPE.ENTITIES:
+    case QUESTIONNAIRE_TYPE.ENTITIES:
       collection = questions.entities;
       break;
     default:
-      return undefined;
+      throw new Error('Invalid type');
   }
-  const theQuestion = collection.find(question => {
-    return question.id === questionId;
-  });
+  const theQuestion = collection.find(question => question.id === questionId);
 
-  if (theQuestion) {
-    return theQuestion.question.numberToShow;
+  if (!theQuestion) {
+    throw new Error('Question not found');
   }
-  return undefined;
+  return theQuestion.question.numberToShow;
 }
 
 export function getLane(state) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+
   return state.config.lane;
 }
 
@@ -449,7 +428,7 @@ class _ConfigStore {
     if (questionId) {
       targetQuestion = this.applicationState.questionsBeingEdited[category][questionId];
 
-      targetQuestion.showWarning = this.hasSubQuestions(category, targetQuestion.id) && type !== COIConstants.QUESTION_TYPE.YESNO;
+      targetQuestion.showWarning = this.hasSubQuestions(category, targetQuestion.id) && type !== QUESTION_TYPE.YESNO;
     }
     else {
       targetQuestion = this.applicationState.newQuestion[category];
@@ -495,7 +474,7 @@ class _ConfigStore {
 
     this.applicationState.newQuestion[category].question.order = 1;
     this.applicationState.newQuestion[category].active = 1;
-    this.applicationState.newQuestion[category].id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
+    this.applicationState.newQuestion[category].id = TMP_PLACEHOLDER + new Date().getTime();
     this.config.questions[category].push(this.applicationState.newQuestion[category]);
     this.applicationState.newQuestion[category] = undefined;
     this.dirty = true;
@@ -531,7 +510,7 @@ class _ConfigStore {
       this.config.questions[category][index] = editedQuestion;
     }
 
-    if (editedQuestion.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
+    if (editedQuestion.question.type !== QUESTION_TYPE.YESNO) {
       this.removeSubQuestions(category, editedQuestion.id);
     }
 

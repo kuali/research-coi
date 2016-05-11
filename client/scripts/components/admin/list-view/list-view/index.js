@@ -27,7 +27,7 @@ import {DisclosureFilterSearch} from '../../disclosure-filter-search';
 import {BlueButton} from '../../../blue-button';
 import {
   getAdminDisclosureStatusString,
-  getDispostionsEnabled
+  getDispositionsEnabled
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 import {AppHeader} from '../../../app-header';
@@ -137,7 +137,7 @@ export class ListView extends React.Component {
     }
 
     let possibleDispositions = [];
-    if (getDispostionsEnabled(configState)) {
+    if (getDispositionsEnabled(configState)) {
       possibleDispositions = configState.config.dispositionTypes;
     }
 

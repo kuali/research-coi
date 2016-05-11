@@ -23,7 +23,7 @@ import {AppHeader} from '../../../app-header';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {
-  getDispostionsEnabled,
+  getDispositionsEnabled,
   getDisclosureTypeString
 } from '../../../../stores/config-store';
 import {Link} from 'react-router';
@@ -117,7 +117,7 @@ export class Archive extends React.Component {
       let dispostion;
 
       if (
-        getDispostionsEnabled(this.context.configState) &&
+        getDispositionsEnabled(this.context.configState) &&
         this.state.disclosure &&
         this.state.disclosure.disposition
       ) {

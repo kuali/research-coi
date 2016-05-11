@@ -24,7 +24,7 @@ import ConfigActions from '../actions/config-actions';
 import {ADMIN_PAGE_SIZE} from '../../../coi-constants';
 import {
   default as ConfigStore,
-  getDispostionsEnabled
+  getDispositionsEnabled
 } from './config-store';
 
 function defaultStatusFilters() {
@@ -335,7 +335,7 @@ class _AdminStore {
   turnOnAllDispositionFilters() {
     let dispositions = [];
     const configState = ConfigStore.getState();
-    if (getDispostionsEnabled(configState)) {
+    if (getDispositionsEnabled(configState)) {
       dispositions = configState.config.dispositionTypes;
       dispositions = dispositions.map(disposition =>
         disposition.typeCd

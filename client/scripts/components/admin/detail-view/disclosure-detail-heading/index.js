@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import React from 'react';
 import {
   getAdminDisclosureStatusString,
-  getDispostionsEnabled,
+  getDispositionsEnabled,
   getDisclosureTypeString
 } from '../../../../stores/config-store';
 import {formatDate, formatDateTime} from '../../../../format-date';
@@ -82,7 +82,7 @@ export function DisclosureDetailHeading(props, {configState}) {
 
   let disposition;
   if (
-    getDispostionsEnabled(configState) &&
+    getDispositionsEnabled(configState) &&
     disclosure.disposition
   ) {
     disposition = (

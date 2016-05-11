@@ -27,7 +27,7 @@ import UserInfoStore from '../../../../stores/user-info-store';
 import {BlueButton} from '../../../blue-button';
 import {
   getAdminDisclosureStatusString,
-  getDispostionsEnabled
+  getDispositionsEnabled
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 
@@ -113,7 +113,7 @@ export class DisclosureList extends React.Component {
     }
 
     let possibleDispositions = [];
-    const dispositionsEnabled = getDispostionsEnabled(configState);
+    const dispositionsEnabled = getDispositionsEnabled(configState);
     if (dispositionsEnabled) {
       possibleDispositions = this.props.possibleDispositions;
     }
