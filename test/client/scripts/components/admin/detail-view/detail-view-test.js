@@ -34,7 +34,7 @@ function renderOutputWithApplicationState(applicationState) {
     applicationState
   });
   return tree.getRenderOutput();
-};
+}
 
 describe('DetailView', () => {
   it('list view should be visible and sidepanel should be hidden', () => {

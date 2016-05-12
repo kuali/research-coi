@@ -55,16 +55,6 @@ const renderEntityDelcaration = (entity, revising, responding) => {
 };
 
 describe('EntityDeclaration', () => {
-  before(() => {
-    global.window.config = {
-      declarationTypes: [{typeCd:1, description:'No Conflict', enabled: 1, active: 1}]
-    };
-  });
-
-  after(() => {
-    global.window.config = undefined;
-  });
-
   it('render without comments, not revising, not responding', () => {
 
     const tree = renderEntityDelcaration(entityWithOutComments, false, false);

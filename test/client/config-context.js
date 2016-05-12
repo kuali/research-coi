@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable quotes */
+/* eslint-disable quotes, max-len */
 
 export default {
   configState: {
@@ -5189,4 +5189,4 @@ export default {
     },
     "isLoaded":true
   }
-}
+};
