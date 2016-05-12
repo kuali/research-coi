@@ -45,10 +45,10 @@ const END_POINTS = {
 
 async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
   try {
-    const response = await request.get(`${researchCoreUrl}/kc-sys-krad/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`)
+    const response = await request.get(`${researchCoreUrl}/research-sys/api/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`)
       .set('Authorization', `Bearer ${authToken}`);
 
-    if (response.ok) {
+    if (response.ok && Array.isArray(response.body) && response.body[0]) {
       return Promise.resolve(true);
     }
     return Promise.resolve(false);
@@ -175,7 +175,7 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
     if (cachedReviewers) {
       return Promise.resolve(cachedReviewers);
     }
-    const response = await request.get(`${url}/kc-sys-krad/v1/roles/${role}/principals`)
+    const response = await request.get(`${url}/research-sys/api/v1/roles/${role}/principals`)
       .query(query)
       .set('Authorization', `Bearer ${authToken}`);
 
