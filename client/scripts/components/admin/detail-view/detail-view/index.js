@@ -189,7 +189,6 @@ export class DetailView extends React.Component {
           piResponses={this.state.applicationState.piResponses}
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
-          config={this.context.configState.config}
           role={this.state.userInfo.coiRole}
         />
       );

@@ -106,7 +106,16 @@ export class DisclosureDetail extends React.Component {
   }
 
   render() {
-    const { config, disclosure } = this.props;
+    const { disclosure } = this.props;
+    let config;
+    if (this.context.configState.config.id === disclosure.configId) {
+      config = this.context.configState.config;
+    } else if (this.context.configState.archivedConfigs[disclosure.configId]) {
+      config = this.context.configState.archivedConfigs[disclosure.configId];
+    } else {
+      return null;
+    }
+
     const entityNameMap = this.makeEntityMap();
     const screeningQuestions = prepareScreeningQuestions(
       config.questions.screening
@@ -206,3 +215,7 @@ export class DisclosureDetail extends React.Component {
     );
   }
 }
+
+DisclosureDetail.contextTypes = {
+  configState: React.PropTypes.object
+};

@@ -757,6 +757,11 @@ class _ConfigStore {
   }
 
   loadConfig(id) {
+    if (this.archivedConfigs[id]) {
+      this.emitChange();
+      return;
+    }
+
     createRequest()
       .get(`/api/coi/archived-config/${id}`)
       .end(processResponse((err, config) => {
