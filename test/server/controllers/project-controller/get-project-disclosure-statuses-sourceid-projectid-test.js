@@ -74,11 +74,13 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
       await insertProjectPerson(knex, createPerson(2, 'COI', true), projectId);
       await insertProjectPerson(knex, createPerson(3, 'PI', true), projectId);
       await insertProjectPerson(knex, createPerson(4, 'PI', true), projectId);
+      await insertProjectPerson(knex, createPerson(5, 'PI', true), projectId);
       const disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),3);
       const finEntityId = await insertEntity(knex, createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true));
       await insertDeclaration(knex, createDeclaration(disclosureId, finEntityId, projectId));
       const disclosure1Id = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),4);
       await insertEntity(knex, createEntity(disclosure1Id,RELATIONSHIP_STATUS.IN_PROGRESS, true));
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),5);
     });
 
     it('should return OK status', async () => {
@@ -104,6 +106,10 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
 
     it('should return update needed for user 4', () => {
       assert.equal(PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED, statuses.find(status => status.userId === '4').status);
+    });
+
+    it('should return update needed for user 5', () => {
+      assert.equal('Submitted for Approval', statuses.find(status => status.userId === '5').status);
     });
   });
 

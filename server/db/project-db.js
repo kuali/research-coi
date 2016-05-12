@@ -289,7 +289,7 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
   }
 
   const disclosure = await trx('disclosure as d')
-    .select('ds.description as status')
+    .select('ds.description as status', 'd.id')
     .innerJoin('disclosure_status as ds', 'ds.status_cd', 'd.status_cd')
     .where({user_id: projectPerson.person_id});
 
@@ -301,7 +301,11 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
     });
 
   if (disclosure[0]) {
-    if(declaration[0]) {
+    const entities = await trx('fin_entity')
+      .select('id')
+      .where({disclosure_id: disclosure[0].id});
+
+    if(declaration[0] || entities.length === 0) {
       disclosureStatus.status = disclosure[0].status;
     } else {
       disclosureStatus.status = COIConstants.PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
