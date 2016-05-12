@@ -160,6 +160,28 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     });
   });
 
+  describe('get disclosure status when no fin entities', () => {
+    let status;
+    before(async () => {
+      const projectId = await insertProject(knex, createProject(5));
+      await insertProjectPerson(knex, createPerson(5, 'PI', true), projectId);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),5);
+    });
+
+    it('should return OK status', async () => {
+      const response = await request(app.run())
+        .get('/api/coi/project-disclosure-statuses/KC-PD/5/5')
+        .set('Authorization', `Bearer admin`)
+        .expect(OK);
+
+      status = response.body;
+    });
+
+    it('should return submitted for approval', () => {
+      assert.equal(5, status.userId);
+      assert.equal('Submitted for Approval', status.status);
+    });
+  });
   describe('test errors and permissions', () => {
     it('should return empty object', async function() {
       const response = await request(app.run())
