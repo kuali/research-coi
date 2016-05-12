@@ -21,6 +21,7 @@ import assert from 'assert';
 import sd from 'skin-deep';
 import {MockPIReviewActions} from './mocks/mock-pi-review-actions';
 import {MockPIReviewStore} from './mocks/mock-pi-review-store';
+import configState from '../../../../config-context';
 import EntityDeclaration from '../../../../../../client/scripts/components/user/revise/entity-declaration';
 EntityDeclaration.__Rewire__('PIReviewActions', MockPIReviewActions); //eslint-disable-line no-underscore-dangle
 
@@ -48,7 +49,8 @@ const renderEntityDelcaration = (entity, revising, responding) => {
       entity={entity}
       revising={revising}
       responding={responding}
-    />
+    />,
+    configState
   );
 };
 

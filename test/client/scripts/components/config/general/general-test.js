@@ -23,12 +23,13 @@ import General from '../../../../../../client/scripts/components/config/general/
 import Panel from '../../../../../../client/scripts/components/config/panel';
 import DisclosureTypes from '../../../../../../client/scripts/components/config/general/disclosure-types';
 import Checkbox from '../../../../../../client/scripts/components/config/check-box';
+import configState from '../../../../config-context';
 import assert from 'assert';
 
 describe('General', () => {
   it('should render ', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<General/>);
+    renderer.render(<General/>, configState);
     const component = renderer.getRenderOutput();
     assert(ShallowTestUtils.findWithType(component,DisclosureTypes));
     assert.equal(ShallowTestUtils.findAllWithType(component,Panel).length,4);

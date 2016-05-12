@@ -20,12 +20,13 @@ import React from 'react';//eslint-disable-line no-unused-vars
 import sd from 'skin-deep';
 import assert from 'assert';
 import {TravelLogHeader} from '../../../../../../client/scripts/components/user/travel-log/travel-log-header';
+import configState from '../../../../config-context';
 
 /*global describe, it */
 
 describe('TravelLogHeader', () => {
   it('should render h2 element with Travel Log text', () => {
-    const travelLogHeader = sd.shallowRender(<TravelLogHeader/>);
+    const travelLogHeader = sd.shallowRender(<TravelLogHeader/>, configState);
     const dom = travelLogHeader.getRenderOutput();
     assert.equal('h2', dom.props.children.type);
   });
