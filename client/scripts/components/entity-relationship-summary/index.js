@@ -100,18 +100,33 @@ export default class EntityRelationshipSummary extends React.Component {
       this.props.relationship.relationshipCd,
       configState.config.id
     );
-    const relationship = getRelationshipTypeString(
-      configState,
-      this.props.relationship.relationshipCd,
-      this.props.relationship.typeCd,
-      configState.config.id
-    );
-    const relationshipAmount = getRelationshipAmountString(
-      configState,
-      this.props.relationship.relationshipCd,
-      this.props.relationship.amountCd,
-      configState.config.id
-    );
+
+    let relationship;
+    if (
+      this.props.relationship.typeCd &&
+      this.props.relationship.typeCd !== ''
+    ) {
+      relationship = getRelationshipTypeString(
+        configState,
+        this.props.relationship.relationshipCd,
+        this.props.relationship.typeCd,
+        configState.config.id
+      );
+    }
+    
+    let relationshipAmount;
+    if (
+      this.props.relationship.amountCd &&
+      this.props.relationship.amountCd !== ''
+    ) {
+      relationshipAmount = getRelationshipAmountString(
+        configState,
+        this.props.relationship.relationshipCd,
+        this.props.relationship.amountCd,
+        configState.config.id
+      );
+    }
+
     return (
       <div className={`${styles.container} ${this.props.className}`}>
         <div className={styles.summary}>

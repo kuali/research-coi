@@ -54,7 +54,7 @@ export class DisclosureTableRow extends React.Component {
     const disclosureStatus = getAdminDisclosureStatusString(
       this.context.configState,
       this.props.statusCd,
-      this.context.configState.config.id
+      this.props.configId
     );
     return (
       <div role="row" className={classNames(styles.container, this.props.className)}>

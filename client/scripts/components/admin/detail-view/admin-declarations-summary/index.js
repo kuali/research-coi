@@ -24,6 +24,7 @@ import {
   getDispositionTypeString
 } from '../../../../stores/config-store';
 import ProjectDispositionSelector from '../project-disposition-selector';
+import getConfig from '../../../../get-config';
 import classNames from 'classnames';
 
 export class AdminDeclarationsSummary extends React.Component {
@@ -82,10 +83,11 @@ export class AdminDeclarationsSummary extends React.Component {
   }
 
   render() {
-    const { config, declarations, readonly, className } = this.props;
+    const { declarations, readonly, className } = this.props;
+    const config = getConfig(this.context.configState, this.props.configId);
+
     let projects = [];
     if(this.props.declarations !== undefined) {
-
       const uniqueProjects = this.getUniqueProjects(declarations);
 
       let dispositionTypeOptions;
@@ -107,7 +109,7 @@ export class AdminDeclarationsSummary extends React.Component {
             <DeclarationSummary
               key={`decl${declaration.id}`}
               declaration={declaration}
-              config={config}
+              configId={this.props.configId}
               readonly={readonly}
               options={dispositionTypeOptions}
               commentCount={this.getCommentCount(declaration.id)}
@@ -122,7 +124,7 @@ export class AdminDeclarationsSummary extends React.Component {
             const dispositionType = getDispositionTypeString(
               this.context.configState,
               project.dispositionTypeCd,
-              this.context.configState.config.id
+              this.props.configId
             );
             dispositionTypeSelector = (
               <div className={styles.field}>

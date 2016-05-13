@@ -115,7 +115,6 @@ export class Archive extends React.Component {
       });
 
       let dispostion;
-
       if (
         getDispositionsEnabled(this.context.configState) &&
         this.state.disclosure &&
@@ -132,11 +131,14 @@ export class Archive extends React.Component {
         );
       }
 
-      const disclosureType = getDisclosureTypeString(
-        this.context.configState,
-        COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        this.context.configState.config.id
-      );
+      let disclosureType;
+      if (this.state.disclosure) {
+        disclosureType = getDisclosureTypeString(
+          this.context.configState,
+          COIConstants.DISCLOSURE_TYPE.ANNUAL,
+          this.state.disclosure.configId
+        );
+      }
       header = (
         <div>
           <span className={styles.versionPicker}>

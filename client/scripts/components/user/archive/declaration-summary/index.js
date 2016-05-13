@@ -28,7 +28,7 @@ export default function DeclarationSummary(props, {configState}) {
     const dispositionType = getDispositionTypeString(
       configState,
       props.declaration.adminRelationshipCd,
-      configState.config.id
+      props.config.id
     );
     adminRelationship = (
       <span className={styles.adminRelationship}>

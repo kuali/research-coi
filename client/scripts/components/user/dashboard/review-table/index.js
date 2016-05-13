@@ -34,7 +34,7 @@ export function ReviewTable({disclosures}, {configState}) {
       const disclosureType = getDisclosureTypeString(
         configState,
         disclosure.typeCd,
-        configState.config.id
+        disclosure.configId
       );
       return (
         <ReviewTableRow

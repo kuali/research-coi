@@ -58,13 +58,13 @@ export default class CommentSummary extends React.Component {
         this.context.configState,
         QUESTIONNAIRE_TYPE.SCREENING,
         a,
-        this.context.configState.config.id
+        this.props.configId
       );
       const bName = getQuestionNumberToShow(
         this.context.configState,
         QUESTIONNAIRE_TYPE.SCREENING,
         b,
-        this.context.configState.config.id
+        this.props.configId
       );
 
       return String(aName).localeCompare(String(bName));
@@ -77,7 +77,7 @@ export default class CommentSummary extends React.Component {
         this.context.configState,
         QUESTIONNAIRE_TYPE.SCREENING,
         topicId,
-        this.context.configState.config.id
+        this.props.configId
       );
       const topicName = `${COMMENT_TITLES.QUESTION} ${questionNumber}`;
       return (

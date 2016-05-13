@@ -31,6 +31,7 @@ import {
   DISCLOSURE_STATUS
 } from '../../../../../../coi-constants';
 import classNames from 'classnames';
+import getConfig from '../../../../get-config';
 
 export function prepareScreeningQuestions(questions) {
   const active = questions.filter(question => question.active !== 0);
@@ -107,12 +108,8 @@ export class DisclosureDetail extends React.Component {
 
   render() {
     const { disclosure } = this.props;
-    let config;
-    if (this.context.configState.config.id === disclosure.configId) {
-      config = this.context.configState.config;
-    } else if (this.context.configState.archivedConfigs[disclosure.configId]) {
-      config = this.context.configState.archivedConfigs[disclosure.configId];
-    } else {
+    const config = getConfig(this.context.configState, disclosure.configId);
+    if (!config) {
       return null;
     }
 
@@ -188,7 +185,7 @@ export class DisclosureDetail extends React.Component {
               id={disclosure.id}
               className={`${styles.override} ${styles.declarations}`}
               piResponses={this.getResponses(DISCLOSURE_STEP.PROJECTS)}
-              config={config}
+              configId={config.id}
               readonly={readonly}
             />
           </span>

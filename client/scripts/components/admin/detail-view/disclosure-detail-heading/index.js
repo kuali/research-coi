@@ -35,7 +35,7 @@ export function DisclosureDetailHeading(props, {configState}) {
     const disclosureStatus = getAdminDisclosureStatusString(
       configState,
       disclosure.statusCd,
-      configState.config.id
+      props.disclosure.configId
     );
     submittedDate = (
       <div className={styles.details}>
@@ -52,7 +52,7 @@ export function DisclosureDetailHeading(props, {configState}) {
     const disclosureStatus = getAdminDisclosureStatusString(
       configState,
       disclosure.statusCd,
-      configState.config.id
+      props.disclosure.configId
     );
     submittedDate = (
       <div className={styles.details}>
@@ -96,7 +96,7 @@ export function DisclosureDetailHeading(props, {configState}) {
   const disclosureType = getDisclosureTypeString(
     configState,
     disclosure.typeCd,
-    configState.config.id
+    props.disclosure.configId
   );
   return (
     <div className={classNames(styles.container, props.className)} >

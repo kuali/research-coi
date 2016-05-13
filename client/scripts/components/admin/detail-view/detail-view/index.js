@@ -156,6 +156,7 @@ export class DetailView extends React.Component {
         <CommentSummary
           role={this.state.userInfo.coiRole}
           disclosure={this.state.applicationState.selectedDisclosure}
+          configId={this.state.applicationState.selectedDisclosure.configId}
         />
       );
     }

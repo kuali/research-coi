@@ -36,7 +36,7 @@ export default class DeclarationsSummary extends React.Component {
         const projectType = getProjectTypeString(
           this.context.configState,
           declaration.projectTypeCd,
-          this.context.configState.config.id
+          this.props.config.id
         );
         projects.push({
           id: declaration.projectId,
@@ -70,7 +70,7 @@ export default class DeclarationsSummary extends React.Component {
           const declarationType = getDeclarationTypeString(
             this.context.configState,
             declaration.typeCd,
-            this.context.configState.config.id
+            this.props.config.id
           );
           return (
             <DeclarationSummary
@@ -87,7 +87,7 @@ export default class DeclarationsSummary extends React.Component {
           const dispositionTypeString = getDispositionTypeString(
             this.context.configState,
             project.dispositionTypeCd,
-            this.context.configState.config.id
+            this.props.config.id
           );
           dispositionType = (
             <div className={styles.field}>

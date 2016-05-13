@@ -133,8 +133,8 @@ class _PIReviewStore {
           }
 
           this.updateCanSubmit();
-
           ConfigActions.loadConfig(disclosure.body.configId);
+          this.emitChange();
         }
       }));
   }

@@ -17,7 +17,12 @@
 */
 
 import {AdminActions} from '../actions/admin-actions';
-import {COIConstants, NO_DISPOSITION} from '../../../coi-constants';
+import {
+  NO_DISPOSITION,
+  DISCLOSURE_STATUS,
+  FILE_TYPE,
+  DATE_TYPE
+} from '../../../coi-constants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
@@ -265,7 +270,7 @@ class _AdminStore {
     .type('application/json')
     .end(processResponse(err => {
       if (!err) {
-        window.location = `/coi/admin/detailview/${this.applicationState.selectedDisclosure.id}/${COIConstants.DISCLOSURE_STATUS.UP_TO_DATE}`;
+        window.location = `/coi/admin/detailview/${this.applicationState.selectedDisclosure.id}/${DISCLOSURE_STATUS.UP_TO_DATE}`;
       }
     }));
   }
@@ -282,7 +287,7 @@ class _AdminStore {
           comment.editable = false;
           return comment;
         });
-        this.applicationState.selectedDisclosure.statusCd = COIConstants.DISCLOSURE_STATUS._REQUIRED;
+        this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.REVISION_REQUIRED;
         this.applicationState.showingRejection = !this.applicationState.showingRejection;
         this.emitChange();
       }
@@ -521,7 +526,7 @@ class _AdminStore {
 
     formData.append('data', JSON.stringify({
       refId: this.applicationState.selectedDisclosure.id,
-      type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN,
+      type: FILE_TYPE.MANAGEMENT_PLAN,
       disclosureId: this.applicationState.selectedDisclosure.id
     }));
 
@@ -569,7 +574,7 @@ class _AdminStore {
 
     formData.append('data', JSON.stringify({
       refId: this.applicationState.selectedDisclosure.id,
-      type: COIConstants.FILE_TYPE.ADMIN,
+      type: FILE_TYPE.ADMIN,
       disclosureId: this.applicationState.selectedDisclosure.id
     }));
 
@@ -634,7 +639,7 @@ class _AdminStore {
     const reviewer = this.applicationState.selectedDisclosure.reviewers.find(r => r.id === id);
     reviewer.active = true;
     reviewer.dates.push({
-      type: COIConstants.DATE_TYPE.ASSIGNED,
+      type: DATE_TYPE.ASSIGNED,
       date: new Date()
     });
     return reviewer;

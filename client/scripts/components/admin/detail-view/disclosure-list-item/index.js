@@ -71,7 +71,7 @@ export class DisclosureListItem extends React.Component {
     const disclosureStatus = getAdminDisclosureStatusString(
       this.context.configState,
       disclosure.statusCd,
-      this.context.configState.config.id
+      disclosure.configId
     );
     return (
       <Link to={`/coi/admin/detailview/${this.props.disclosure.id}/${disclosure.statusCd}`}>

@@ -61,7 +61,7 @@ export class DisclosureTableRow extends React.Component {
     const disclosureType = getDisclosureTypeString(
       this.context.configState,
       this.props.type,
-      this.context.configState.config.id
+      this.props.configId
     );
 
     if (this.props.expiresOn) {
@@ -94,7 +94,7 @@ export class DisclosureTableRow extends React.Component {
     const disclosureStatus = getDisclosureStatusString(
       this.context.configState,
       this.props.status,
-      this.context.configState.config.id
+      this.props.configId
     );
     let status = (
       <span role="gridcell" className={`${styles.cell} ${styles.two}`}>
