@@ -50,5 +50,38 @@ module.exports = {
       .waitAndClick('#certCheckbox')
       .waitAndClick('#submit')
       .end();
+  },
+
+  'user can not view admin page' : function (browser) {
+    browser
+      .url(process.env.FUNCTIONAL_TEST_URL + '/admin')
+      .setValue('input[type=text]', 'cate')
+      .setValue('input[type=password]', 'password')
+      .click("button[value='Sign In']")
+      .waitForElementVisible("#unauthorized", 5000)
+      .assert.containsText("div", "UNAUTHORIZED")
+      .end();
+  },
+
+  'user can not access config' : function (browser) {
+    browser
+      .url(process.env.FUNCTIONAL_TEST_URL + '/config')
+      .setValue('input[type=text]', 'cate')
+      .setValue('input[type=password]', 'password')
+      .click("button[value='Sign In']")
+      .waitForElementVisible("#unauthorized", 5000)
+      .assert.containsText("div", "UNAUTHORIZED")
+      .end();
+  },
+
+  'reviewer can not access config' : function (browser) {
+    browser
+      .url(process.env.FUNCTIONAL_TEST_URL + '/config')
+      .setValue('input[type=text]', 'coireviewer')
+      .setValue('input[type=password]', 'password')
+      .click("button[value='Sign In']")
+      .waitForElementVisible("#unauthorized", 5000)
+      .assert.containsText("div", "UNAUTHORIZED")
+      .end();
   }
 };
