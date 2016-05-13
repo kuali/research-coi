@@ -16,10 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import ConfigActions from './actions/config-actions';
+
 export default function getConfig(state, id) {
   if (state.config.id === id) {
     return state.config;
-  } else if (state.archivedConfigs[id]) {
+  } else if (state.archivedConfigs[id] !== undefined) {
     return state.archivedConfigs[id];
   }
+
+  setTimeout(() => {
+    ConfigActions.loadConfig(id);
+  }, 0);
+  return null;
 }

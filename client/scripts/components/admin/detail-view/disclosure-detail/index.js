@@ -109,7 +109,7 @@ export class DisclosureDetail extends React.Component {
   render() {
     const { disclosure } = this.props;
     const config = getConfig(this.context.configState, disclosure.configId);
-    if (!config) {
+    if (config === null) {
       return null;
     }
 

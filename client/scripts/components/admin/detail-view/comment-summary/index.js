@@ -54,18 +54,24 @@ export default class CommentSummary extends React.Component {
     });
 
     return this.getUniqueTopics(questionComments).sort((a, b) => {
-      const aName = getQuestionNumberToShow(
+      let aName = getQuestionNumberToShow(
         this.context.configState,
         QUESTIONNAIRE_TYPE.SCREENING,
         a,
         this.props.configId
       );
-      const bName = getQuestionNumberToShow(
+      if (aName === null) {
+        aName = '';
+      }
+      let bName = getQuestionNumberToShow(
         this.context.configState,
         QUESTIONNAIRE_TYPE.SCREENING,
         b,
         this.props.configId
       );
+      if (bName === null) {
+        bName = '';
+      }
 
       return String(aName).localeCompare(String(bName));
     }).map(topicId => {

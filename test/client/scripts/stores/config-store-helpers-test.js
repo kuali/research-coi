@@ -175,15 +175,8 @@ describe('ConfigStore helper functions', () => {
       assert(errorThrown);
     });
 
-    it('should throw an error for an invalid configId', () => {
-      let errorThrown = false;
-      try {
-        getCodeMapsFromState(state, 999);
-        
-      } catch(err) {
-        errorThrown = true;
-      }
-      assert(errorThrown);
+    it('should return null for an invalid configId', () => {
+      assert.equal(getCodeMapsFromState(state, 999), null);
     });
 
     it('should return correct maps for a valid id', () => {
@@ -230,14 +223,6 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getStringFromCodeMap(undefined, 1, 43, 'mickey');
-      } catch (err) {
-        errorThrown = true;
-      }
-      assert(errorThrown);
-
-      errorThrown = false;
-      try {
-        getStringFromCodeMap(state, 1, 777, 'mickey');
       } catch (err) {
         errorThrown = true;
       }

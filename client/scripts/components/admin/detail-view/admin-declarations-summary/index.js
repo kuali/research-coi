@@ -85,6 +85,9 @@ export class AdminDeclarationsSummary extends React.Component {
   render() {
     const { declarations, readonly, className } = this.props;
     const config = getConfig(this.context.configState, this.props.configId);
+    if (config === null) {
+      return null;
+    }
 
     let projects = [];
     if(this.props.declarations !== undefined) {

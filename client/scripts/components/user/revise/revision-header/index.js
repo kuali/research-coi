@@ -30,7 +30,7 @@ export default function RevisionHeader(props, {configState}) {
   return (
     <div className={`${styles.container} ${props.className}`}>
       <span className={styles.disclosureType}>
-        {disclosureType.toUpperCase()}
+        {disclosureType !== null ? disclosureType.toUpperCase() : ''}
       </span>
       <span className={styles.dates}>
         <div>

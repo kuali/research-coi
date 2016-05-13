@@ -45,6 +45,10 @@ export default class DeclarationSummary extends React.Component {
 
   render() {
     const config = getConfig(this.context.configState, this.props.configId);
+    if (config === null) {
+      return null;
+    }
+
     let comment;
     if (this.props.declaration.comments) {
       comment = (

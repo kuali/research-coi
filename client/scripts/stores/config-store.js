@@ -26,6 +26,7 @@ import {
 import {processResponse, createRequest} from '../http-utils';
 import { prepareInstructionsForSave, createEditorStates } from '../editor-utils';
 import _ from 'lodash';
+import getConfig from '../get-config';
 
 function convertToggleValue(value) {
   if (value === undefined) {
@@ -75,17 +76,12 @@ export function mapCodes(config) {
   return codeMaps;
 }
 
-function getConfig(state, configId) {
-  if (state.config.id === configId) {
-    return state.config;
-  } else if (state.archivedConfigs[configId] !== undefined) {
-    return state.archivedConfigs[configId];
+export function getCodeMapsFromState(...args) {
+  const config = getConfig(...args);
+  if (config == null) { //eslint-disable-line no-eq-null
+    return null;
   }
 
-  throw new Error('Invalid config id');
-}
-
-export function getCodeMapsFromState(...args) {
   return getConfig(...args).codeMaps;
 }
 
@@ -94,8 +90,8 @@ export function getStringFromCodeMap(state, code, configId, mapName) {
     throw new Error('invalid state');
   }
   const codeMaps = getCodeMapsFromState(state, configId);
-  if (Object.keys(codeMaps).length === 0) {
-    throw new Error('invalid configId');
+  if (codeMaps == null) { // eslint-disable-line no-eq-null
+    return null;
   }
 
   if (!_.isObjectLike(codeMaps[mapName])) {
@@ -163,7 +159,10 @@ function getFieldFromRelationship(state, categoryCode, typeCode, configId, field
   }
 
   const codeMaps = getCodeMapsFromState(state, configId);
-
+  if (codeMaps == null) { // eslint-disable-line no-eq-null
+    return null;
+  }
+  
   const typeRecord = codeMaps.relationshipCategoryType[categoryCode];
   if (!typeRecord) {
     throw new Error('Invalid categoryCode');
@@ -201,6 +200,9 @@ export function getQuestionNumberToShow(state, type, questionId, configId) {
   }
 
   const config = getConfig(state, configId);
+  if (config == null) { // eslint-disable-line no-eq-null
+    return null;
+  }
   const {questions} = config;
 
   let collection;
@@ -255,7 +257,8 @@ class _ConfigStore {
         entities: {}
       },
       selectingProjectTypes: true,
-      configuringProjectType: undefined
+      configuringProjectType: undefined,
+      configsBeingLoaded: {}
     };
 
     this.dirty = false;
@@ -757,20 +760,29 @@ class _ConfigStore {
   }
 
   loadConfig(id) {
+    if (this.applicationState.configsBeingLoaded[id]) {
+      return;
+    }
+
     if (this.archivedConfigs[id]) {
       this.emitChange();
       return;
     }
 
+    this.applicationState.configsBeingLoaded[id] = true;
     createRequest()
       .get(`/api/coi/archived-config/${id}`)
       .end(processResponse((err, config) => {
-        if (!err) {
-          this.archivedConfigs[id] = config.body;
-          this.archivedConfigs[id].codeMaps = mapCodes(this.archivedConfigs[id]);
-          this.isLoaded = true;
-          this.emitChange();
+        if (err) {
+          this.archivedConfigs[id] = null;
+          throw new Error('Attempt to load an invalid config');
         }
+
+        this.archivedConfigs[id] = config.body;
+        this.archivedConfigs[id].codeMaps = mapCodes(this.archivedConfigs[id]);
+        this.isLoaded = true;
+        delete this.applicationState.configsBeingLoaded[id];
+        this.emitChange();
       }));
   }
 
