@@ -175,7 +175,7 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
     if (cachedReviewers) {
       return Promise.resolve(cachedReviewers);
     }
-    const response = await request.get(`${url}/research-sys/api/v1/roles/${role}/principals`)
+    const response = await request.get(`${url}/research-sys/api/v1/roles/${role}/principals/`)
       .query(query)
       .set('Authorization', `Bearer ${authToken}`);
 
