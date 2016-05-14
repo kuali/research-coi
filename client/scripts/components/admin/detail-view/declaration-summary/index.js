@@ -26,7 +26,6 @@ import {AdminActions} from '../../../../actions/admin-actions';
 import {DISCLOSURE_STEP, COMMENT_TITLES} from '../../../../../../coi-constants';
 import classNames from 'classnames';
 import AdminRelationshipSelector from '../admin-relationship-selector';
-import getConfig from '../../../../get-config';
 
 export default class DeclarationSummary extends React.Component {
   constructor() {
@@ -44,11 +43,6 @@ export default class DeclarationSummary extends React.Component {
   }
 
   render() {
-    const config = getConfig(this.context.configState, this.props.configId);
-    if (config === null) {
-      return null;
-    }
-
     let comment;
     if (this.props.declaration.comments) {
       comment = (
@@ -69,7 +63,7 @@ export default class DeclarationSummary extends React.Component {
 
     let adminRelationship;
     let commentClass = styles.comments;
-    if (config.general.adminRelationshipEnabled) {
+    if (this.context.configState.config.general.adminRelationshipEnabled) {
       if (this.props.readonly) {
         const dispositionType = getDispositionTypeString(
           this.context.configState,

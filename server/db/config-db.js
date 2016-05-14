@@ -372,9 +372,10 @@ export const archiveConfig = (dbInfo, userId, userName, config) => {
 
 export async function getArchivedConfig(dbInfo, id) {
   const knex = getKnex(dbInfo);
-  const results = await knex('config').select('config').where('id', id);
+  const results = await knex('config').select('config', 'id').where('id', id);
   const config = JSON.parse(results[0].config);
   config.lane = lane;
+  config.id = results[0].id;
   return Promise.resolve(config);
 }
 

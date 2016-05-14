@@ -346,27 +346,25 @@ export const saveDeclaration = (dbInfo, userId, disclosureId, record) => {
     });
 };
 
-export const saveExistingDeclaration = (dbInfo, userId, disclosureId, declarationId, record) => {
-  return isDisclosureUsers(dbInfo, disclosureId, userId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by userId ${userId} to save a declaration on disclosure ${disclosureId} which isnt theirs`);
-      }
+export async function saveExistingDeclaration(dbInfo, userInfo, disclosureId, declarationId, record) {
+  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId);
+  if (!isSubmitter && userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+    throw Error(`Attempt by userId ${userInfo.schoolId} to save a declaration on disclosure ${disclosureId} which isnt theirs`);
+  }
 
-      const knex = getKnex(dbInfo);
+  const knex = getKnex(dbInfo);
 
-      return knex('declaration')
-        .update({
-          'type_cd': record.typeCd,
-          'comments': record.comments,
-          'admin_relationship_cd': record.adminRelationshipCd
-        })
-        .where({
-          'disclosure_id': disclosureId,
-          id: declarationId
-        });
+  return knex('declaration')
+    .update({
+      'type_cd': record.typeCd,
+      'comments': record.comments,
+      'admin_relationship_cd': record.adminRelationshipCd
+    })
+    .where({
+      'disclosure_id': disclosureId,
+      id: declarationId
     });
-};
+}
 
 export const saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
   return isDisclosureUsers(dbInfo, disclosureId, userId)

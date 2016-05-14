@@ -201,7 +201,7 @@ export const init = app => {
     User can only edit declarations on disclosures which are theirs
   */
   app.put('/api/coi/disclosures/:id/declarations/:declarationId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    await DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.declarationId, req.body);
+    await DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo, req.params.id, req.params.declarationId, req.body);
     res.sendStatus(ACCEPTED);
   }));
 

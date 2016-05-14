@@ -24,7 +24,6 @@ import {
   getDispositionTypeString
 } from '../../../../stores/config-store';
 import ProjectDispositionSelector from '../project-disposition-selector';
-import getConfig from '../../../../get-config';
 import classNames from 'classnames';
 
 export class AdminDeclarationsSummary extends React.Component {
@@ -84,18 +83,17 @@ export class AdminDeclarationsSummary extends React.Component {
 
   render() {
     const { declarations, readonly, className } = this.props;
-    const config = getConfig(this.context.configState, this.props.configId);
-    if (config === null) {
-      return null;
-    }
 
     let projects = [];
     if(this.props.declarations !== undefined) {
       const uniqueProjects = this.getUniqueProjects(declarations);
 
       let dispositionTypeOptions;
-      if(config.general.dispositionsEnabled && Array.isArray(config.dispositionTypes)) {
-        dispositionTypeOptions = config.dispositionTypes
+      if(
+        this.context.configState.config.general.dispositionsEnabled &&
+        Array.isArray(this.context.configState.config.dispositionTypes)
+      ) {
+        dispositionTypeOptions = this.context.configState.config.dispositionTypes
           .filter(type => Boolean(type.active))
           .map(type => {
             return (
@@ -122,7 +120,7 @@ export class AdminDeclarationsSummary extends React.Component {
         });
 
         let dispositionTypeSelector;
-        if (config.general.dispositionsEnabled) {
+        if (this.context.configState.config.general.dispositionsEnabled) {
           if (readonly) {
             const dispositionType = getDispositionTypeString(
               this.context.configState,
@@ -150,7 +148,7 @@ export class AdminDeclarationsSummary extends React.Component {
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (config.general.adminRelationshipEnabled) {
+        if (this.context.configState.config.general.adminRelationshipEnabled) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );

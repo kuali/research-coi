@@ -338,7 +338,7 @@ describe('ConfigStore helper functions', () => {
   });
 
   describe('getDispositionTypeString', () => {
-    const state = generateStateWithCodeMap('dispositionType');
+    const state = generateStateWithCodeMap('dispositionTypes');
 
     it('should return correct string', () => {
       assert.equal('current config 2', getDispositionTypeString(state, 2, 43));

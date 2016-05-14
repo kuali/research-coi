@@ -150,7 +150,7 @@ export function getDeclarationTypeString(...args) {
 }
 
 export function getDispositionTypeString(...args) {
-  return getStringFromCodeMap(...args, 'dispositionType');
+  return getStringFromCodeMap(...args, 'dispositionTypes');
 }
 
 function getFieldFromRelationship(state, categoryCode, typeCode, configId, field) {
@@ -760,13 +760,11 @@ class _ConfigStore {
   }
 
   loadConfig(id) {
-    if (this.applicationState.configsBeingLoaded[id]) {
-      return;
-    }
-
-    if (this.archivedConfigs[id]) {
-      this.emitChange();
-      return;
+    if (
+      this.applicationState.configsBeingLoaded[id] ||
+      this.archivedConfigs[id]
+    ) {
+      return false;
     }
 
     this.applicationState.configsBeingLoaded[id] = true;
