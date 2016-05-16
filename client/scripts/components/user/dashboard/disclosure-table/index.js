@@ -48,6 +48,7 @@ export class DisclosureTable extends React.Component {
           key={index}
           disclosureId={disclosure.id}
           showButtonColumn={showButtonColumn}
+          configId={disclosure.configId}
         />
       );
     }) : null;

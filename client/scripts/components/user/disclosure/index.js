@@ -167,6 +167,7 @@ export class Disclosure extends React.Component {
   }
 
   render() {
+    const {config} = this.context.configState;
     const currentDisclosureId = this.state.applicationState.currentDisclosureState.disclosure.id;
     const currentDisclosureState = this.state.applicationState.currentDisclosureState;
     const currentDisclosureStep = currentDisclosureState.step;
@@ -193,14 +194,14 @@ export class Disclosure extends React.Component {
     } else {
       switch (currentDisclosureStep) {
         case STEP.QUESTIONNAIRE:
-          if (window.config.questions.screening) {
-            percent = Math.floor(((currentQuestion - 1) / window.config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
+          if (config.questions.screening) {
+            percent = Math.floor(((currentQuestion - 1) / config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
           }
 
           const question = currentQuestion;
           currentStep = (
             <Questionnaire
-              questions={window.config.questions.screening}
+              questions={config.questions.screening}
               answers={currentDisclosureState.disclosure.answers}
               currentquestion={question}
               disclosureid={currentDisclosureId}
@@ -216,7 +217,7 @@ export class Disclosure extends React.Component {
           percent = QUESTIONNAIRE_PERCENTAGE;
           currentStep = (
             <QuestionnaireSummary
-              questions={window.config.questions.screening}
+              questions={config.questions.screening}
               instructionsShowing={this.state.applicationState.instructionsShowing}
               answers={this.state.applicationState.currentDisclosureState.disclosure.answers}
             />
@@ -227,7 +228,10 @@ export class Disclosure extends React.Component {
           stepNumber = 1;
           const ENTITIES_PERCENTAGE = 50;
           percent = ENTITIES_PERCENTAGE;
-          const enforceEntities = DisclosureStore.enforceEntities(this.state.applicationState.currentDisclosureState.disclosure, window.config);
+          const enforceEntities = DisclosureStore.enforceEntities(
+            this.state.applicationState.currentDisclosureState.disclosure,
+            config
+          );
           nextDisabled = this.incompleteEntityExists(this.state.entities) ||
             enforceEntities;
           currentStep = (
@@ -269,7 +273,9 @@ export class Disclosure extends React.Component {
           }
           else {
             const activeEntities = this.state.entities.filter(entity => entity.active);
-            const declarationTypes = window.config.declarationTypes.filter(type => Boolean(type.active));
+            const declarationTypes = config.declarationTypes.filter(
+              type => Boolean(type.active)
+            );
             currentStep = (
               <Relationships
                 projects={this.state.projects}
@@ -305,7 +311,7 @@ export class Disclosure extends React.Component {
       }
     }
 
-    const submitDisabled = window.config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
+    const submitDisabled = config.general.certificationOptions.required ? !this.state.applicationState.currentDisclosureState.isCertified : false;
 
     const classes = classNames(
       'flexbox',
@@ -346,3 +352,7 @@ export class Disclosure extends React.Component {
     );
   }
 }
+
+Disclosure.contextTypes = {
+  configState: React.PropTypes.object
+};

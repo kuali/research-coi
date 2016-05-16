@@ -25,7 +25,10 @@ import SearchFilterGroup from '../../search-filter-group';
 import {DisclosureTable} from '../disclosure-table';
 import {DisclosureFilterSearch} from '../../disclosure-filter-search';
 import {BlueButton} from '../../../blue-button';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getAdminDisclosureStatusString,
+  getDispositionsEnabled
+} from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 import {AppHeader} from '../../../app-header';
 import UserInfoStore from '../../../../stores/user-info-store';
@@ -36,7 +39,6 @@ export class ListView extends React.Component {
 
     this.state = {
       data: AdminStore.getState(),
-      config: ConfigStore.getState().config,
       userInfo: UserInfoStore.getState().userInfo
     };
 
@@ -47,7 +49,6 @@ export class ListView extends React.Component {
 
   componentDidMount() {
     AdminStore.listen(this.onChange);
-    ConfigStore.listen(this.onChange);
 
     const rightPanel = this.refs.rightPanel;
     let enabled = true;
@@ -73,13 +74,11 @@ export class ListView extends React.Component {
 
   componentWillUnmount() {
     AdminStore.unlisten(this.onChange);
-    ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
     this.setState({
       data: AdminStore.getState(),
-      config: ConfigStore.getState().config,
       userInfo: UserInfoStore.getState().userInfo
     });
   }
@@ -120,25 +119,26 @@ export class ListView extends React.Component {
       );
     }
 
+    const {configState} = this.context;
     const possibleStatuses = [
-      {code: 2, label: ConfigStore.getAdminDisclosureStatusString(2)},
-      {code: 3, label: ConfigStore.getAdminDisclosureStatusString(3)},
-      {code: 4, label: ConfigStore.getAdminDisclosureStatusString(4)},
-      {code: 5, label: ConfigStore.getAdminDisclosureStatusString(5)},
-      {code: 6, label: ConfigStore.getAdminDisclosureStatusString(6)},
-      {code: 7, label: ConfigStore.getAdminDisclosureStatusString(7)}
+      {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
+      {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
+      {code: 4, label: getAdminDisclosureStatusString(configState, 4, configState.config.id)},
+      {code: 5, label: getAdminDisclosureStatusString(configState, 5, configState.config.id)},
+      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)},
+      {code: 7, label: getAdminDisclosureStatusString(configState, 7, configState.config.id)}
     ];
 
     const possibleTypes = [];
-    if (this.state.config.disclosureTypes) {
-      this.state.config.disclosureTypes.map(type => {
+    if (configState.config.disclosureTypes) {
+      configState.config.disclosureTypes.map(type => {
         return type.description;
       });
     }
 
     let possibleDispositions = [];
-    if (ConfigStore.getDispostionsEnabled()) {
-      possibleDispositions = this.state.config.dispositionTypes;
+    if (getDispositionsEnabled(configState)) {
+      possibleDispositions = configState.config.dispositionTypes;
     }
 
     const classes = classNames(
@@ -222,3 +222,7 @@ export class ListView extends React.Component {
     );
   }
 }
+
+ListView.contextTypes = {
+  configState: React.PropTypes.object
+};

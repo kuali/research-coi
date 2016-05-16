@@ -18,16 +18,25 @@
 
 import styles from './style';
 import React from 'react';
-import ConfigStore from '../../../../stores/config-store';
+import {getDisclosureTypeString} from '../../../../stores/config-store';
 import { DISCLOSURE_TYPE } from '../../../../../../coi-constants';
-export class TravelLogHeader extends React.Component {
-  render() {
-    return (
-      <div className={`${styles.container} ${this.props.className}`}>
-        <h2 className={styles.heading}>
-          {ConfigStore.getDisclosureTypeString(DISCLOSURE_TYPE.TRAVEL)}
-        </h2>
-      </div>
-    );
-  }
+
+export function TravelLogHeader(props, {configState}) {
+  const disclosureType = getDisclosureTypeString(
+    configState,
+    DISCLOSURE_TYPE.TRAVEL,
+    configState.config.id
+  );
+
+  return (
+    <div className={`${styles.container} ${props.className}`}>
+      <h2 className={styles.heading}>
+        {disclosureType}
+      </h2>
+    </div>
+  );
 }
+
+TravelLogHeader.contextTypes = {
+  configState: React.PropTypes.object
+};

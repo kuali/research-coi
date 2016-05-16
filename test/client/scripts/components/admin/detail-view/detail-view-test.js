@@ -20,12 +20,12 @@ import React from 'react';
 import assert from 'assert';
 import sd from 'skin-deep';
 import {DetailView} from '../../../../../../client/scripts/components/admin/detail-view/detail-view';
+import configState from '../../../../config-context';
 
-/*global describe, it */
-
-const renderOutputWithApplicationState = (applicationState) => {
+function renderOutputWithApplicationState(applicationState) {
   const tree = sd.shallowRender(
-    <DetailView/>
+    <DetailView/>,
+    configState
   );
 
   const instance = tree.getMountedInstance();
@@ -34,12 +34,13 @@ const renderOutputWithApplicationState = (applicationState) => {
     applicationState
   });
   return tree.getRenderOutput();
-};
+}
 
 describe('DetailView', () => {
-  it('list view should be visisble and sidepanel should be hidden', () => {
+  it('list view should be visible and sidepanel should be hidden', () => {
     const tree = sd.shallowRender(
-      <DetailView/>
+      <DetailView />,
+      configState
     );
 
     const vdom = tree.getRenderOutput();

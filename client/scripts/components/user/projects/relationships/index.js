@@ -24,7 +24,7 @@ import {Entity} from '../entity';
 import {Toggle} from '../../toggle';
 import {Instructions} from '../../instructions';
 import {COIConstants} from '../../../../../../coi-constants';
-import ConfigStore from '../../../../stores/config-store';
+import {getProjectTypeString} from '../../../../stores/config-store';
 
 export class Relationships extends React.Component {
   constructor() {
@@ -126,6 +126,7 @@ export class Relationships extends React.Component {
   }
 
   render() {
+    const {config} = this.context.configState;
     const projectView = this.props.view === 0;
     const relationshipNodes = [];
     let declarations;
@@ -133,12 +134,18 @@ export class Relationships extends React.Component {
       for (let i = 0; i < this.props.projects.length; i++) {
         declarations = this.getProjectDeclarations(this.props.projects[i].id);
 
+        const projectType = getProjectTypeString(
+          this.context.configState,
+          this.props.projects[i].typeCd,
+          this.context.configState.config.id
+        );
+
         relationshipNodes.push(
           <Project
             declarations={declarations}
             entities={this.props.entities}
             title={this.props.projects[i].name}
-            type={ConfigStore.getProjectTypeString(this.props.projects[i].typeCd)}
+            type={projectType}
             role={this.props.projects[i].roleCd}
             sponsor={this.props.projects[i].sponsorName}
             sourceIdentifier={this.props.projects[i].sourceIdentifier}
@@ -178,9 +185,9 @@ export class Relationships extends React.Component {
       });
     }
 
-    const instructionText = window.config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
-    const contentState = window.config.general.richTextInstructions ?
-      window.config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] :
+    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
+    const contentState = config.general.richTextInstructions ?
+      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] :
       undefined;
     const instructions = (
       <Instructions
@@ -210,3 +217,7 @@ export class Relationships extends React.Component {
     );
   }
 }
+
+Relationships.contextTypes = {
+  configState: React.PropTypes.object
+};

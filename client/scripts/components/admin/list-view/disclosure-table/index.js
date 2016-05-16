@@ -60,7 +60,7 @@ export class DisclosureTable extends React.Component {
   }
 
   render() {
-    const disclosures = this.props.disclosures.map((disclosure) => {
+    const disclosures = this.props.disclosures.map(disclosure => {
       return (
         <DisclosureTableRow
           key={disclosure.id}
@@ -71,6 +71,7 @@ export class DisclosureTable extends React.Component {
           submittedDate={disclosure.submitted_date}
           revisedDate={disclosure.revised_date}
           searchTerm={this.props.searchTerm}
+          configId={disclosure.configId}
         />
       );
     });

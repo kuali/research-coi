@@ -1,4 +1,3 @@
-/* @flow */
 /*
     The Conflict of Interest (COI) module of Kuali Research
     Copyright © 2005-2016 Kuali, Inc.
@@ -17,29 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import React from 'react';
-import {merge} from '../../merge';
+import ConfigActions from './actions/config-actions';
 
-export function ProgressBar(props, {configState}) {
-  const styles = {
-    container: {
-      width: '100%',
-      height: 15
-    },
-    bar: {
-      width: `${props.percentage}%`,
-      backgroundColor: configState.config.colors.two,
-      height: '100%',
-      transition: 'width .2s ease-in-out'
-    }
-  };
-  return (
-    <div style={merge(styles.container, props.style)} onClick={props.onClick}>
-      <div style={styles.bar}></div>
-    </div>
-  );
+export default function getConfig(state, id) {
+  if (state.config.id === id) {
+    return state.config;
+  } else if (state.archivedConfigs[id] !== undefined) {
+    return state.archivedConfigs[id];
+  }
+
+  setTimeout(() => {
+    ConfigActions.loadConfig(id);
+  }, 0);
+  return null;
 }
-
-ProgressBar.contextTypes = {
-  configState: React.PropTypes.object
-};

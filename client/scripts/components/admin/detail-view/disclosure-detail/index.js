@@ -31,6 +31,7 @@ import {
   DISCLOSURE_STATUS
 } from '../../../../../../coi-constants';
 import classNames from 'classnames';
+import getConfig from '../../../../get-config';
 
 export function prepareScreeningQuestions(questions) {
   const active = questions.filter(question => question.active !== 0);
@@ -106,7 +107,12 @@ export class DisclosureDetail extends React.Component {
   }
 
   render() {
-    const { config, disclosure } = this.props;
+    const { disclosure } = this.props;
+    const config = getConfig(this.context.configState, disclosure.configId);
+    if (config === null) {
+      return null;
+    }
+
     const entityNameMap = this.makeEntityMap();
     const screeningQuestions = prepareScreeningQuestions(
       config.questions.screening
@@ -179,7 +185,7 @@ export class DisclosureDetail extends React.Component {
               id={disclosure.id}
               className={`${styles.override} ${styles.declarations}`}
               piResponses={this.getResponses(DISCLOSURE_STEP.PROJECTS)}
-              config={config}
+              configId={config.id}
               readonly={readonly}
             />
           </span>
@@ -206,3 +212,7 @@ export class DisclosureDetail extends React.Component {
     );
   }
 }
+
+DisclosureDetail.contextTypes = {
+  configState: React.PropTypes.object
+};

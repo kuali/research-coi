@@ -26,7 +26,6 @@ import EntitySection from '../entity-section';
 import DeclarationSection from '../declaration-section';
 import SidePanel from '../side-panel';
 import PIReviewActions from '../../../../actions/pi-review-actions';
-import ConfigStore from '../../../../stores/config-store';
 
 export class Revise extends React.Component {
   constructor() {
@@ -44,12 +43,10 @@ export class Revise extends React.Component {
 
   componentDidMount() {
     PIReviewStore.listen(this.onChange);
-    ConfigStore.listen(this.onChange);
     PIReviewActions.loadDisclosure(this.props.params.id);
   }
 
   componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
     PIReviewStore.unlisten(this.onChange);
   }
 
@@ -110,7 +107,7 @@ export class Revise extends React.Component {
             </span>
 
             <SidePanel
-              certificationText={window.config.general.certificationOptions.text}
+              certificationText={this.context.configState.config.general.certificationOptions.text}
               showingCertification={this.state.applicationState.showingCertification}
               submitEnabled={this.state.applicationState.canSubmit}
               onConfirm={this.onConfirm}
@@ -121,3 +118,7 @@ export class Revise extends React.Component {
     );
   }
 }
+
+Revise.contextTypes = {
+  configState: React.PropTypes.object
+};

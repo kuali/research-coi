@@ -56,7 +56,8 @@ export class ManualEventRelations extends React.Component {
   }
 
   getDeclarationDescription(typeCd) {
-    const declarationType = window.config.declarationTypes.find(type => {
+    const {declarationTypes} = this.context.configState.config;
+    const declarationType = declarationTypes.find(type => {
       return type.typeCd === typeCd;
     });
 
@@ -165,4 +166,8 @@ export class ManualEventRelations extends React.Component {
 ManualEventRelations.defaultProps = {
   relations: [],
   entities: []
+};
+
+ManualEventRelations.contextTypes = {
+  configState: React.PropTypes.object
 };

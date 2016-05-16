@@ -17,52 +17,25 @@
  */
 
 import React from 'react';
-import ConfigStore from '../../../../stores/config-store';
 import ConfigPage from '../../config-page';
 import NotificationPanels from '../notification-panels';
 
-export default class CustomizeNotifications extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      applicationState: {}
-    };
-    this.onChange = this.onChange.bind(this);
-  }
-
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      applicationState: storeState.applicationState,
-      config: storeState.config,
-      dirty: storeState.dirty
-    });
-  }
-
-  render() {
-
-    return (
-      <ConfigPage
-        title='Customize Notifications'
-        routeName='customize-notifications'
-        dirty={this.state.dirty}
-        className={this.props.className}
-      >
-        <NotificationPanels
-          notificationTemplates ={this.state.config ? this.state.config.notificationTemplates : []}
-          notificationEdits = {this.state.applicationState.notificationEdits}
-        />
-      </ConfigPage>
-    );
-  }
+export default function CustomizeNotifications(props, {configState}) {
+  return (
+    <ConfigPage
+      title='Customize Notifications'
+      routeName='customize-notifications'
+      dirty={configState.dirty}
+      className={props.className}
+    >
+      <NotificationPanels
+        notificationTemplates ={configState.config ? configState.config.notificationTemplates : []}
+        notificationEdits = {configState.applicationState.notificationEdits}
+      />
+    </ConfigPage>
+  );
 }
+
+CustomizeNotifications.contextTypes = {
+  configState: React.PropTypes.object
+};

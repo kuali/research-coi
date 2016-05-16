@@ -33,7 +33,6 @@ import {
   ROLES,
   DISCLOSURE_STATUS
 } from '../../../../../../coi-constants';
-import ConfigStore from '../../../../stores/config-store';
 import UserInfoStore from '../../../../stores/user-info-store';
 import AdminMenu from '../../../admin-menu';
 import moment from 'moment';
@@ -43,14 +42,12 @@ export class Dashboard extends React.Component {
     super();
 
     const storeState = DisclosureStore.getState();
-    const configState = ConfigStore.getState();
 
     this.state = {
       applicationState: storeState.applicationState,
       disclosureSummaries: storeState.disclosureSummariesForUser,
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
-      configLoaded: configState.isLoaded,
       userInfo: UserInfoStore.getState().userInfo,
       toReview: storeState.disclosuresNeedingReview
     };
@@ -62,24 +59,20 @@ export class Dashboard extends React.Component {
 
   componentDidMount() {
     DisclosureStore.listen(this.onChange);
-    ConfigStore.listen(this.onChange);
     DisclosureActions.loadDisclosureSummaries();
   }
 
   componentWillUnmount() {
     DisclosureStore.unlisten(this.onChange);
-    ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
     const storeState = DisclosureStore.getState();
-    const configState = ConfigStore.getState();
     this.setState({
       applicationState: storeState.applicationState,
       disclosureSummaries: storeState.disclosureSummariesForUser,
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
-      configLoaded: configState.isLoaded,
       userInfo: UserInfoStore.getState().userInfo,
       toReview: storeState.disclosuresNeedingReview
     });
@@ -91,7 +84,6 @@ export class Dashboard extends React.Component {
       userInfo,
       applicationState,
       projects,
-      configLoaded,
       toReview
     } = this.state;
 
@@ -113,7 +105,7 @@ export class Dashboard extends React.Component {
     let manualDisclosureEnabled;
     let travelLogEnabled;
 
-    window.config.disclosureTypes.forEach(type => {
+    this.context.configState.config.disclosureTypes.forEach(type => {
       switch(type.typeCd.toString()) {
         case DISCLOSURE_TYPE.ANNUAL:
           annualDisclosureEnabled = type.enabled === 1;
@@ -160,7 +152,7 @@ export class Dashboard extends React.Component {
         </div>
       );
     }
-    if (!configLoaded) {
+    if (!this.context.configState.isLoaded) {
       return (<div/>);
     }
 
@@ -255,3 +247,7 @@ export class Dashboard extends React.Component {
     );
   }
 }
+
+Dashboard.contextTypes = {
+  configState: React.PropTypes.object
+};

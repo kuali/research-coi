@@ -134,7 +134,7 @@ export class EntityFormRelationshipStep extends React.Component {
   }
 
   getMatrixType(relation) {
-    return window.config.matrixTypes.find(type => {
+    return this.context.configState.config.matrixTypes.find(type => {
       return type.typeCd === relation;
     });
   }
@@ -289,6 +289,7 @@ export class EntityFormRelationshipStep extends React.Component {
       );
     }
 
+    const {config} = this.context.configState;
     let relationshipSummaries = [];
     if (this.props.relations) {
       relationshipSummaries = this.props.relations.map(relation => {
@@ -338,7 +339,7 @@ export class EntityFormRelationshipStep extends React.Component {
         commentTextboxStyle += ` ${styles.invalidField}`;
       }
 
-      const relationshipPersonTypeOptions = window.config.relationshipPersonTypes.map(personType => {
+      const relationshipPersonTypeOptions = config.relationshipPersonTypes.map(personType => {
         return (
           <option key={personType.typeCd} value={personType.typeCd} id={`person_type_option_${personType.typeCd}`}>
             {personType.description}
@@ -385,7 +386,7 @@ export class EntityFormRelationshipStep extends React.Component {
                 <ToggleSet
                   selected={potentialRelationship.relationshipCd}
                   onChoose={this.relationChosen}
-                  values={window.config.matrixTypes.filter(type => {
+                  values={config.matrixTypes.filter(type => {
                     return type.enabled === 1;
                   }).map(type => {
                     const value = {};
@@ -460,3 +461,7 @@ export class EntityFormRelationshipStep extends React.Component {
     );
   }
 }
+
+EntityFormRelationshipStep.contextTypes = {
+  configState: React.PropTypes.object
+};

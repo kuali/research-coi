@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {formatDate} from '../../../../format-date';
-import ConfigStore from '../../../../stores/config-store';
+import {getAdminDisclosureStatusString} from '../../../../stores/config-store';
 import {Link} from 'react-router';
 
 export class DisclosureListItem extends React.Component {
@@ -68,6 +68,11 @@ export class DisclosureListItem extends React.Component {
       {[styles.selected]: this.props.selected}
     );
 
+    const disclosureStatus = getAdminDisclosureStatusString(
+      this.context.configState,
+      disclosure.statusCd,
+      disclosure.configId
+    );
     return (
       <Link to={`/coi/admin/detailview/${this.props.disclosure.id}/${disclosure.statusCd}`}>
         <li className={classes}>
@@ -76,9 +81,13 @@ export class DisclosureListItem extends React.Component {
           </div>*/}
           <div className={styles.submittedBy}>{this.highlightSearchTerm(disclosure.submitted_by)}</div>
           {dateToShow}
-          <div>{ConfigStore.getAdminDisclosureStatusString(disclosure.statusCd)}</div>
+          <div>{disclosureStatus}</div>
         </li>
       </Link>
     );
   }
 }
+
+DisclosureListItem.contextTypes = {
+  configState: React.PropTypes.object
+};

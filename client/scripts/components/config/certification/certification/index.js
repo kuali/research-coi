@@ -20,85 +20,61 @@ import styles from './style';
 import React from 'react';
 import Panel from '../../panel';
 import InstructionEditor from '../../instruction-editor';
-import ConfigStore from '../../../../stores/config-store';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP} from '../../../../../../coi-constants';
 import Textarea from '../../textarea';
 import CheckBox from '../../check-box';
 import ConfigPage from '../../config-page';
 
-export default class Certification extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {};
-
-    this.onChange = this.onChange.bind(this);
-  }
-
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      certificationOptions: storeState.config.general.certificationOptions,
-      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.CERTIFICATION],
-      instructions: storeState.config.general.instructions,
-      dirty: storeState.dirty
-    });
-  }
-
-  render() {
-    let details;
-    if (this.state.certificationOptions) {
-      details = (
-        <div>
-          <Textarea
-            path='config.general.certificationOptions.text'
-            label="CERTIFICATION TEXT"
-            value={this.state.certificationOptions.text}
-            className={styles.textarea}
-            dirty={true}
-          />
-          <CheckBox
-            path="config.general.certificationOptions.required"
-            label="Require checkbox agreement"
-            labelClassName={styles.requireLabel}
-            checked={this.state.certificationOptions.required}
-          />
-        </div>
-      );
-    }
-
-    let instructionText = '';
-    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION]) {
-      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
-    }
-
-    return (
-      <ConfigPage
-        title='Customize Certification'
-        routeName='certification'
-        dirty={this.state.dirty}
-        className={this.props.className}
-      >
-        <InstructionEditor
-          step={COIConstants.INSTRUCTION_STEP.CERTIFICATION}
-          value={instructionText}
-          editorState={this.state.editorState}
+export default function Certification(props, {configState}) {
+  let details;
+  const {certificationOptions} = configState.config.general;
+  if (certificationOptions) {
+    details = (
+      <div>
+        <Textarea
+          path='config.general.certificationOptions.text'
+          label="CERTIFICATION TEXT"
+          value={certificationOptions.text}
+          className={styles.textarea}
+          dirty={true}
         />
-        <Panel title="Certification">
-          <div className={styles.details}>
-            {details}
-          </div>
-        </Panel>
-      </ConfigPage>
+        <CheckBox
+          path="config.general.certificationOptions.required"
+          label="Require checkbox agreement"
+          labelClassName={styles.requireLabel}
+          checked={certificationOptions.required}
+        />
+      </div>
     );
   }
+
+  let instructionText = '';
+  const {instructions} = configState.config.general;
+  if (instructions && instructions[INSTRUCTION_STEP.CERTIFICATION]) {
+    instructionText = instructions[INSTRUCTION_STEP.CERTIFICATION];
+  }
+
+  return (
+    <ConfigPage
+      title='Customize Certification'
+      routeName='certification'
+      dirty={configState.dirty}
+      className={props.className}
+    >
+      <InstructionEditor
+        step={INSTRUCTION_STEP.CERTIFICATION}
+        value={instructionText}
+        editorState={configState.editorStates[INSTRUCTION_STEP.CERTIFICATION]}
+      />
+      <Panel title="Certification">
+        <div className={styles.details}>
+          {details}
+        </div>
+      </Panel>
+    </ConfigPage>
+  );
 }
+
+Certification.contextTypes = {
+  configState: React.PropTypes.object
+};

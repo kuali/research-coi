@@ -23,7 +23,7 @@ import DeclarationsSummary from '../declarations-summary';
 import EntitiesSummary from '../entities-summary';
 import QuestionnaireSummary from '../questionnaire-summary';
 
-export default class extends React.Component {
+export default class ArchiveDetail extends React.Component {
   getAnswerMap(answers) {
     if (!answers || !Array.isArray(answers)) {
       return {};

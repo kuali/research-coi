@@ -19,7 +19,6 @@
 import styles from './style';
 import React from 'react';
 import {AdminStore} from '../../../../stores/admin-store';
-import ConfigStore from '../../../../stores/config-store';
 import {DisclosureDetail} from '../disclosure-detail';
 import {DisclosureList} from '../disclosure-list';
 import {AdminActions} from '../../../../actions/admin-actions';
@@ -28,7 +27,7 @@ import AdditionalReviewPanel from '../additional-review-panel';
 import CommentSummary from '../comment-summary';
 import GeneralAttachmentsPanel from '../general-attachments-panel';
 import UploadAttachmentsPanel from '../upload-attachments-panel';
-import {COIConstants} from '../../../../../../coi-constants';
+import {DISCLOSURE_STATUS, FILE_TYPE} from '../../../../../../coi-constants';
 import {AppHeader} from '../../../app-header';
 import UserInfoStore from '../../../../stores/user-info-store';
 import classNames from 'classnames';
@@ -39,11 +38,9 @@ export class DetailView extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     const store = AdminStore.getState();
-    const configStore = ConfigStore.getState();
     this.state = {
       summaries: store.disclosureSummaries,
       applicationState: store.applicationState,
-      config: configStore.config,
       userInfo: UserInfoStore.getState().userInfo
     };
 
@@ -53,33 +50,36 @@ export class DetailView extends React.Component {
   componentDidMount() {
     AdminStore.listen(this.onChange);
     if (this.props.params !== undefined && this.props.params.id !== undefined && this.props.params.statusCd !== undefined) {
-      if (this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString() ||
-      this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED.toString()) {
+      if (this.props.params.statusCd === DISCLOSURE_STATUS.UP_TO_DATE.toString() ||
+      this.props.params.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED.toString()) {
         AdminActions.loadArchivedDisclosure(this.props.params.id);
       } else {
         AdminActions.loadDisclosure(this.props.params.id);
       }
     }
-    ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
     AdminStore.unlisten(this.onChange);
-    ConfigStore.unlisten(this.onChange);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.params.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE.toString() ||
-      this.props.params.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED.toString()) {
-      AdminActions.loadArchivedDisclosure(nextProps.params.id);
-    } else {
-      AdminActions.loadDisclosure(nextProps.params.id);
+    if (
+      this.props.params.id !== nextProps.params.id ||
+      this.props.params.statusCd !== nextProps.params.statusCd
+    ) {
+      if (nextProps.params.statusCd === DISCLOSURE_STATUS.UP_TO_DATE.toString() ||
+        this.props.params.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED.toString()) {
+        AdminActions.loadArchivedDisclosure(nextProps.params.id);
+      } else {
+        AdminActions.loadDisclosure(nextProps.params.id);
+      }
     }
   }
 
   onChange() {
     const newState = {};
-    const config = ConfigStore.getState();
+    const config = this.context.configState;
     if (config.isLoaded) {
       newState.config = config.config;
     }
@@ -122,9 +122,9 @@ export class DetailView extends React.Component {
           editingComment={this.state.applicationState.editingComment}
           disclosureId={this.state.applicationState.selectedDisclosure.id}
           role={this.state.userInfo.coiRole}
-          readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
-           || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED
-           || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED}
+          readonly={this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+           || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.REVISION_REQUIRED
+           || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED}
         />
       );
     }
@@ -135,9 +135,9 @@ export class DetailView extends React.Component {
       if (this.state.applicationState.selectedDisclosure) {
         reviewers = this.state.applicationState.selectedDisclosure.reviewers;
         managementPlan = this.state.applicationState.selectedDisclosure.managementPlan;
-        readOnly = this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
-          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED
-          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED;
+        readOnly = this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+          || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+          || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.EXPIRED;
       }
       sidePanel = (
         <AdditionalReviewPanel
@@ -156,12 +156,13 @@ export class DetailView extends React.Component {
         <CommentSummary
           role={this.state.userInfo.coiRole}
           disclosure={this.state.applicationState.selectedDisclosure}
+          configId={this.state.applicationState.selectedDisclosure.configId}
         />
       );
     }
     else if (this.state.applicationState.generalAttachmentsShowing) {
       const files = this.state.applicationState.selectedDisclosure.files
-        .filter(file => file.fileType === COIConstants.FILE_TYPE.DISCLOSURE );
+        .filter(file => file.fileType === FILE_TYPE.DISCLOSURE );
       sidePanel = (
         <GeneralAttachmentsPanel
           files={files}
@@ -170,26 +171,25 @@ export class DetailView extends React.Component {
     }
     else if (this.state.applicationState.uploadAttachmentsShowing) {
       const adminFiles = this.state.applicationState.selectedDisclosure.files
-        .filter(file => file.fileType === COIConstants.FILE_TYPE.ADMIN );
+        .filter(file => file.fileType === FILE_TYPE.ADMIN );
       sidePanel = (
         <UploadAttachmentsPanel
           files={adminFiles}
-          readonly={this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE
-          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED
-          || this.state.applicationState.selectedDisclosure.statusCd === COIConstants.DISCLOSURE_STATUS.EXPIRED}
+          readonly={this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+          || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+          || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.EXPIRED}
         />
       );
     }
 
     let disclosureDetail;
-    if (this.state.applicationState.selectedDisclosure && this.state.config) {
+    if (this.state.applicationState.selectedDisclosure && this.context.configState.config) {
       disclosureDetail = (
         <DisclosureDetail
           disclosure={this.state.applicationState.selectedDisclosure}
           piResponses={this.state.applicationState.piResponses}
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
-          config={this.state.config}
           role={this.state.userInfo.coiRole}
         />
       );
@@ -219,7 +219,7 @@ export class DetailView extends React.Component {
             loadingMore={this.state.applicationState.loadingMore}
             loadedAll={this.state.applicationState.loadedAll}
             showFilters={this.state.applicationState.showFilters}
-            possibleDispositions={this.state.config.dispositionTypes}
+            possibleDispositions={this.context.configState.config.dispositionTypes}
           />
           <div className={`inline-flexbox fill`}>
             {disclosureDetail}
@@ -232,3 +232,7 @@ export class DetailView extends React.Component {
     );
   }
 }
+
+DetailView.contextTypes = {
+  configState: React.PropTypes.object
+};

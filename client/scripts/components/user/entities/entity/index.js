@@ -23,7 +23,10 @@ import {GreyButton} from '../../../grey-button';
 import {EntityForm} from '../entity-form';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getRelationshipPersonTypeString,
+  getRelationshipCategoryTypeString
+} from '../../../../stores/config-store';
 
 export class Entity extends React.Component {
   constructor() {
@@ -67,9 +70,20 @@ export class Entity extends React.Component {
     }
 
     const relationships = this.props.entity.relationships.map((relationship) => {
+      const relationshipPersonType = getRelationshipPersonTypeString(
+        this.context.configState,
+        relationship.personCd,
+        this.context.configState.config.id
+      );
+      
+      const relationshipCategoryType = getRelationshipCategoryTypeString(
+        this.context.configState,
+        relationship.relationshipCd,
+        this.context.configState.config.id
+      );
       return (
         <div key={relationship.id}>
-          {ConfigStore.getRelationshipPersonTypeString(relationship.personCd)} - {ConfigStore.getRelationshipCategoryTypeString(relationship.relationshipCd)}
+          {relationshipPersonType} - {relationshipCategoryType}
         </div>
       );
     });
@@ -126,3 +140,7 @@ export class Entity extends React.Component {
     );
   }
 }
+
+Entity.contextTypes = {
+  configState: React.PropTypes.object
+};

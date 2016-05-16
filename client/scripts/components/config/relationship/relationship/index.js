@@ -21,7 +21,6 @@ import React from 'react';
 import Panel from '../../panel';
 import EditableList from '../../editable-list';
 import ConfigActions from '../../../../actions/config-actions';
-import ConfigStore from '../../../../stores/config-store';
 import RelationshipType from '../relationship-type';
 import TravelRelationshipType from '../travel-relationship-type';
 import ConfigPage from '../../config-page';
@@ -30,36 +29,13 @@ export default class Relationship extends React.Component {
   constructor() {
     super();
 
-    this.state = {};
-
     this.itemsChanged = this.itemsChanged.bind(this);
-    this.onChange = this.onChange.bind(this);
     this.peopleEnabledChanged = this.peopleEnabledChanged.bind(this);
     this.enabledChanged = this.enabledChanged.bind(this);
     this.typeEnabledChanged = this.typeEnabledChanged.bind(this);
     this.amountEnabledChanged = this.amountEnabledChanged.bind(this);
     this.typeOptionsChanged = this.typeOptionsChanged.bind(this);
     this.amountOptionsChanged = this.amountOptionsChanged.bind(this);
-  }
-
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      list: storeState.config.relationshipPersonTypes,
-      peopleEnabled: storeState.config.general.peopleEnabled,
-      matrixTypes: storeState.config.matrixTypes,
-      instructions: storeState.config.general.instructions,
-      dirty: storeState.dirty
-    });
   }
 
   itemsChanged(newList) {
@@ -104,9 +80,10 @@ export default class Relationship extends React.Component {
   }
 
   render() {
+    const { config, dirty } = this.context.configState;
     let matrixTypes;
-    if (this.state.matrixTypes) {
-      matrixTypes = this.state.matrixTypes.map(matrixType => {
+    if (config.matrixTypes) {
+      matrixTypes = config.matrixTypes.map(matrixType => {
         if (matrixType.description === 'Travel') {
           return (
             <TravelRelationshipType
@@ -151,7 +128,7 @@ export default class Relationship extends React.Component {
       <ConfigPage
         title='Relationship Matrix'
         routeName='relationship'
-        dirty={this.state.dirty}
+        dirty={dirty}
         className={this.props.className}
       >
         <Panel title="Relationship Matrix People Configuration">
@@ -163,14 +140,14 @@ export default class Relationship extends React.Component {
                   id="peopleCheckbox"
                   type="checkbox"
                   ref="peopleEnabled"
-                  checked={this.state.peopleEnabled}
+                  checked={config.general.peopleEnabled}
                   onChange={this.peopleEnabledChanged}
                 />
                 <label htmlFor="peopleCheckbox" className={styles.peopleCheckboxLabel}>People</label>
               </span>
               <span className={`fill`}>
                 <EditableList
-                  items={this.state.list}
+                  items={config.relationshipPersonTypes}
                   onChange={this.itemsChanged}
                 />
               </span>
@@ -187,3 +164,7 @@ export default class Relationship extends React.Component {
     );
   }
 }
+
+Relationship.contextTypes = {
+  configState: React.PropTypes.object
+};

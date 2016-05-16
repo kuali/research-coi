@@ -23,7 +23,10 @@ import { DisclosureStore } from '../../../../stores/disclosure-store';
 import {EntityRelationDialog} from '../entity-relation-dialog';
 import {GreyButton} from '../../../grey-button';
 import {undefinedRelationExists} from '../../undefined-relation-exists';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getRelationshipCategoryTypeString,
+  getRelationshipPersonTypeString
+} from '../../../../stores/config-store';
 
 export class Entity extends React.Component {
   constructor() {
@@ -44,8 +47,10 @@ export class Entity extends React.Component {
       return 'Action Required';
     }
 
-    return DisclosureStore.getWorstDeclaration(this.props.declarations, window.config.declarationTypes);
-
+    return DisclosureStore.getWorstDeclaration(
+      this.props.declarations,
+      this.context.configState.config.declarationTypes
+    );
   }
 
   render() {
@@ -73,12 +78,22 @@ export class Entity extends React.Component {
     }
 
     const relationships = [];
-    this.props.entity.relationships.forEach((element) => {
+    this.props.entity.relationships.forEach(element => {
+      const relationshipPersonType = getRelationshipPersonTypeString(
+        this.context.configState,
+        element.personCd,
+        this.context.configState.config.id
+      );
+      const relationshipCategoryType = getRelationshipCategoryTypeString(
+        this.context.configState,
+        element.relationshipCd,
+        this.context.configState.config.id
+      );
       relationships.push(
         <div key={element.id}>
-          {ConfigStore.getRelationshipPersonTypeString(element.personCd)}
+          {relationshipPersonType}
           -
-          {ConfigStore.getRelationshipCategoryTypeString(element.relationshipCd)}
+          {relationshipCategoryType}
         </div>
       );
     });
@@ -136,3 +151,7 @@ export class Entity extends React.Component {
     );
   }
 }
+
+Entity.contextTypes = {
+  configState: React.PropTypes.object
+};

@@ -18,9 +18,12 @@
 
 import styles from './style';
 import React from 'react';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getDispositionTypeString,
+  getDeclarationTypeString
+} from '../../../../stores/config-store';
 import {AdminActions} from '../../../../actions/admin-actions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {DISCLOSURE_STEP, COMMENT_TITLES} from '../../../../../../coi-constants';
 import classNames from 'classnames';
 import AdminRelationshipSelector from '../admin-relationship-selector';
 
@@ -33,9 +36,9 @@ export default class DeclarationSummary extends React.Component {
 
   showComments() {
     AdminActions.showCommentingPanel(
-      COIConstants.DISCLOSURE_STEP.PROJECTS,
+      DISCLOSURE_STEP.PROJECTS,
       this.props.declaration.id,
-      `${COIConstants.COMMENT_TITLES.DECLARATION} ${this.props.declaration.projectTitle} - ${this.props.declaration.entityName}`
+      `${COMMENT_TITLES.DECLARATION} ${this.props.declaration.projectTitle} - ${this.props.declaration.entityName}`
     );
   }
 
@@ -60,11 +63,16 @@ export default class DeclarationSummary extends React.Component {
 
     let adminRelationship;
     let commentClass = styles.comments;
-    if (this.props.config.general.adminRelationshipEnabled) {
+    if (this.context.configState.config.general.adminRelationshipEnabled) {
       if (this.props.readonly) {
+        const dispositionType = getDispositionTypeString(
+          this.context.configState,
+          this.props.declaration.adminRelationshipCd,
+          this.props.configId
+        );
         adminRelationship = (
           <span className={styles.adminRelationship}>
-            {ConfigStore.getDispositionTypeString(this.props.declaration.adminRelationshipCd)}
+            {dispositionType}
           </span>
         );
       } else {
@@ -81,6 +89,11 @@ export default class DeclarationSummary extends React.Component {
       commentClass = classNames(styles.comments, styles.shortComment);
     }
 
+    const declarationType = getDeclarationTypeString(
+      this.context.configState,
+      this.props.declaration.typeCd,
+      this.props.configId
+    );
     return (
       <div className={classes}>
         <div>
@@ -88,7 +101,7 @@ export default class DeclarationSummary extends React.Component {
             {this.props.declaration.entityName}
           </span>
           <span className={styles.conflict} style={{fontWeight: 'bold'}}>
-            {ConfigStore.getDeclarationTypeString(this.props.declaration.typeCd)}
+            {declarationType}
           </span>
           {adminRelationship}
           <span className={commentClass} style={{fontStyle: 'italic'}}>
@@ -102,3 +115,7 @@ export default class DeclarationSummary extends React.Component {
     );
   }
 }
+
+DeclarationSummary.contextTypes = {
+  configState: React.PropTypes.object
+};

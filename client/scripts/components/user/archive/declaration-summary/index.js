@@ -19,16 +19,20 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import ConfigStore from '../../../../stores/config-store';
+import {getDispositionTypeString} from '../../../../stores/config-store';
 
-export default function DeclarationSummary(props) {
-
+export default function DeclarationSummary(props, {configState}) {
   let adminRelationship;
   let commentClass = styles.comments;
   if (props.config.general.adminRelationshipEnabled) {
+    const dispositionType = getDispositionTypeString(
+      configState,
+      props.declaration.adminRelationshipCd,
+      props.config.id
+    );
     adminRelationship = (
       <span className={styles.adminRelationship}>
-        {ConfigStore.getDispositionTypeString(props.declaration.adminRelationshipCd)}
+        {dispositionType}
       </span>
     );
     commentClass = classNames(styles.comments, styles.shortComment);
@@ -51,3 +55,7 @@ export default function DeclarationSummary(props) {
     </div>
   );
 }
+
+DeclarationSummary.contextTypes = {
+  configState: React.PropTypes.object
+};

@@ -19,10 +19,10 @@
 import styles from './style';
 import React from 'react';
 import {ReviewTableRow} from '../review-table-row';
-import ConfigStore from '../../../../stores/config-store';
+import {getDisclosureTypeString} from '../../../../stores/config-store';
 import { DATE_TYPE } from '../../../../../../coi-constants';
 
-export function ReviewTable({disclosures}) {
+export function ReviewTable({disclosures}, {configState}) {
   let rows;
   if (Array.isArray(disclosures) && disclosures.length > 0) {
     rows = disclosures.map(disclosure => {
@@ -31,11 +31,16 @@ export function ReviewTable({disclosures}) {
         const dates = JSON.parse(disclosure.dates);
         assignedDate = dates.find(date => date.type === DATE_TYPE.ASSIGNED);
       }
+      const disclosureType = getDisclosureTypeString(
+        configState,
+        disclosure.typeCd,
+        disclosure.configId
+      );
       return (
         <ReviewTableRow
           key={disclosure.id}
           reporter={disclosure.name}
-          type={ConfigStore.getDisclosureTypeString(disclosure.typeCd)}
+          type={disclosureType}
           assignDate={assignedDate.date}
           id={disclosure.id}
           statusCd={disclosure.statusCd}
@@ -67,3 +72,7 @@ export function ReviewTable({disclosures}) {
     </div>
   );
 }
+
+ReviewTable.contextTypes = {
+  configState: React.PropTypes.object
+};

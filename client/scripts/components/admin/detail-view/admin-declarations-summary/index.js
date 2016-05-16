@@ -19,7 +19,10 @@
 import styles from './style';
 import React from 'react';
 import DeclarationSummary from '../declaration-summary';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getProjectTypeString,
+  getDispositionTypeString
+} from '../../../../stores/config-store';
 import ProjectDispositionSelector from '../project-disposition-selector';
 import classNames from 'classnames';
 
@@ -52,10 +55,15 @@ export class AdminDeclarationsSummary extends React.Component {
 
     declarations.forEach(declaration => {
       if (!alreadyAdded[declaration.projectId]) {
+        const projectType = getProjectTypeString(
+          this.context.configState,
+          declaration.projectTypeCd,
+          this.context.configState.config.id
+        );
         projects.push({
           id: declaration.projectId,
           name: declaration.projectTitle,
-          type: ConfigStore.getProjectTypeString(declaration.projectTypeCd),
+          type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
           sponsor: declaration.sponsorName,
@@ -74,15 +82,18 @@ export class AdminDeclarationsSummary extends React.Component {
   }
 
   render() {
-    const { config, declarations, readonly, className } = this.props;
+    const { declarations, readonly, className } = this.props;
+
     let projects = [];
     if(this.props.declarations !== undefined) {
-
       const uniqueProjects = this.getUniqueProjects(declarations);
 
       let dispositionTypeOptions;
-      if(config.general.dispositionsEnabled && Array.isArray(config.dispositionTypes)) {
-        dispositionTypeOptions = config.dispositionTypes
+      if(
+        this.context.configState.config.general.dispositionsEnabled &&
+        Array.isArray(this.context.configState.config.dispositionTypes)
+      ) {
+        dispositionTypeOptions = this.context.configState.config.dispositionTypes
           .filter(type => Boolean(type.active))
           .map(type => {
             return (
@@ -99,7 +110,7 @@ export class AdminDeclarationsSummary extends React.Component {
             <DeclarationSummary
               key={`decl${declaration.id}`}
               declaration={declaration}
-              config={config}
+              configId={this.props.configId}
               readonly={readonly}
               options={dispositionTypeOptions}
               commentCount={this.getCommentCount(declaration.id)}
@@ -109,13 +120,18 @@ export class AdminDeclarationsSummary extends React.Component {
         });
 
         let dispositionTypeSelector;
-        if (config.general.dispositionsEnabled) {
+        if (this.context.configState.config.general.dispositionsEnabled) {
           if (readonly) {
+            const dispositionType = getDispositionTypeString(
+              this.context.configState,
+              project.dispositionTypeCd,
+              this.props.configId
+            );
             dispositionTypeSelector = (
               <div className={styles.field}>
                 <label className={styles.label}>Project Disposition:</label>
                 <span style={{fontWeight: 'bold'}}>
-                  {ConfigStore.getDispositionTypeString(project.dispositionTypeCd)}
+                  {dispositionType}
                 </span>
               </div>
             );
@@ -132,7 +148,7 @@ export class AdminDeclarationsSummary extends React.Component {
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (config.general.adminRelationshipEnabled) {
+        if (this.context.configState.config.general.adminRelationshipEnabled) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );
@@ -189,3 +205,7 @@ export class AdminDeclarationsSummary extends React.Component {
     );
   }
 }
+
+AdminDeclarationsSummary.contextTypes = {
+  configState: React.PropTypes.object
+};

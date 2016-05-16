@@ -19,13 +19,18 @@
 import styles from './style';
 import React from 'react';
 import {formatDate} from '../../../../format-date';
-import ConfigStore from '../../../../stores/config-store';
+import {getDisclosureTypeString} from '../../../../stores/config-store';
 
-export default function RevisionHeader(props) {
+export default function RevisionHeader(props, {configState}) {
+  const disclosureType = getDisclosureTypeString(
+    configState,
+    props.disclosureType,
+    configState.config.id
+  );
   return (
     <div className={`${styles.container} ${props.className}`}>
       <span className={styles.disclosureType}>
-        {ConfigStore.getDisclosureTypeString(props.disclosureType).toUpperCase()}
+        {disclosureType !== null ? disclosureType.toUpperCase() : ''}
       </span>
       <span className={styles.dates}>
         <div>
@@ -44,3 +49,7 @@ export default function RevisionHeader(props) {
     </div>
   );
 }
+
+RevisionHeader.contextTypes = {
+  configState: React.PropTypes.object
+};

@@ -102,6 +102,7 @@ export default class EntitySummary extends React.Component {
           className={`${styles.override} ${styles.relationshipSummary}`}
           relationship={relationship}
           readonly={true}
+          configId={this.props.configId}
         />
       );
     });

@@ -21,101 +21,75 @@ import React from 'react';
 import ConfigPage from '../../config-page';
 import Panel from '../../panel';
 import DisclosureTypes from '../disclosure-types';
-import ConfigStore from '../../../../stores/config-store';
 import CheckBox from '../../check-box';
 import DueDateDetails from '../due-date-details';
 
-export default class General extends React.Component {
-  constructor() {
-    super();
-    const storeState = ConfigStore.getState();
-    this.state = {
-      applicationState: storeState.applicationState,
-      config: storeState.config,
-      dirty: storeState.dirty
-    };
-    this.onChange = this.onChange.bind(this);
-  }
+export default function General(props, {configState}) {
+  const generalConfig = configState.config.general;
 
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      applicationState: storeState.applicationState,
-      config: storeState.config,
-      dirty: storeState.dirty
-    });
-  }
-
-  render() {
-    return (
-      <ConfigPage
-        title='General Configuration'
-        routeName='general'
-        dirty={this.state.dirty}
-        className={this.props.className}
+  return (
+    <ConfigPage
+      title='General Configuration'
+      routeName='general'
+      dirty={configState.dirty}
+      className={props.className}
+    >
+      <Panel
+        title="Disclosure Types"
+        style={{overflow: 'visible'}}
       >
-        <Panel
-          title="Disclosure Types"
-          style={{overflow: 'visible'}}
-        >
-          <DisclosureTypes
-            types={this.state.config.disclosureTypes}
-            appState={this.state.applicationState}
-          />
-        </Panel>
+        <DisclosureTypes
+          types={configState.config.disclosureTypes}
+          appState={configState.applicationState}
+        />
+      </Panel>
 
-        <Panel title="Due Date">
-          <DueDateDetails
-            isRollingDueDate={this.state.config.general.isRollingDueDate}
-            dueDate={this.state.config.general.dueDate}
-          />
-        </Panel>
+      <Panel title="Due Date">
+        <DueDateDetails
+          isRollingDueDate={generalConfig.isRollingDueDate}
+          dueDate={generalConfig.dueDate}
+        />
+      </Panel>
 
-        <Panel title="General Configuration Options">
-          <CheckBox
-            path='config.general.instructionsExpanded'
-            label='Expand instructions by default'
-            labelClassName={styles.label}
-            checked={this.state.config.general.instructionsExpanded}
-          />
-          <CheckBox
-            path='config.general.autoApprove'
-            label='Automatically approve annual disclosures that do not have any Financial Entities'
-            labelClassName={styles.label}
-            checked={this.state.config.general.autoApprove === undefined ? false : this.state.config.general.autoApprove}
-          />
-          <CheckBox
-            path='config.general.autoAddAdditionalReviewer'
-            label='Automatically assign additional reviewers when disclosure is submitted'
-            labelClassName={styles.label}
-            checked={this.state.config.general.autoAddAdditionalReviewer === undefined ? false : this.state.config.general.autoAddAdditionalReviewer}
-          />
-        </Panel>
+      <Panel title="General Configuration Options">
+        <CheckBox
+          path='config.general.instructionsExpanded'
+          label='Expand instructions by default'
+          labelClassName={styles.label}
+          checked={generalConfig.instructionsExpanded}
+        />
+        <CheckBox
+          path='config.general.autoApprove'
+          label='Automatically approve annual disclosures that do not have any Financial Entities'
+          labelClassName={styles.label}
+          checked={generalConfig.autoApprove === undefined ? false : generalConfig.autoApprove}
+        />
+        <CheckBox
+          path='config.general.autoAddAdditionalReviewer'
+          label='Automatically assign additional reviewers when disclosure is submitted'
+          labelClassName={styles.label}
+          checked={generalConfig.autoAddAdditionalReviewer === undefined ? false : generalConfig.autoAddAdditionalReviewer}
+        />
+      </Panel>
 
-        <Panel title="Screening Validations">
-          <CheckBox
-            path='config.general.skipFinancialEntities'
-            label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the certification step.' //eslint-disable-line max-len
-            labelClassName={styles.label}
-            checked={this.state.config.general.skipFinancialEntities === undefined ? false : this.state.config.general.skipFinancialEntities}
-          />
-          <CheckBox
-            path='config.general.enforceFinancialEntities'
-            label='Enforce that a "Yes" answer to any screening question will require the reporter to include an active financial entity in their disclosure.' //eslint-disable-line max-len
-            labelClassName={styles.label}
-            checked={this.state.config.general.enforceFinancialEntities === undefined ? false : this.state.config.general.enforceFinancialEntities}
-          />
-        </Panel>
-      </ConfigPage>
-    );
-  }
+      <Panel title="Screening Validations">
+        <CheckBox
+          path='config.general.skipFinancialEntities'
+          label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the certification step.' //eslint-disable-line max-len
+          labelClassName={styles.label}
+          checked={generalConfig.skipFinancialEntities === undefined ? false : generalConfig.skipFinancialEntities}
+        />
+        <CheckBox
+          path='config.general.enforceFinancialEntities'
+          label='Enforce that a "Yes" answer to any screening question will require the reporter to include an active financial entity in their disclosure.' //eslint-disable-line max-len
+          labelClassName={styles.label}
+          checked={generalConfig.enforceFinancialEntities === undefined ? false : generalConfig.enforceFinancialEntities}
+        />
+      </Panel>
+    </ConfigPage>
+  );
 }
+
+General.contextTypes = {
+  configState: React.PropTypes.object
+};

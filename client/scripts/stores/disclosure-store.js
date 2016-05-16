@@ -22,6 +22,7 @@ import {COIConstants} from '../../../coi-constants';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
 import history from '../history';
+import ConfigStore from './config-store';
 
 const cloneObject = original => {
   return JSON.parse(JSON.stringify(original));
@@ -279,28 +280,20 @@ class _DisclosureStore {
 
   refreshDisclosureSummaries() {
     createRequest()
-      .get('/api/coi/config')
-      .end(processResponse((error, config) => {
-        if (!error) {
-          window.config = config.body;
+      .get('/api/coi/disclosure-user-summaries')
+      .end(processResponse((discErrs, disclosures) => {
+        if (!discErrs) {
+          this.disclosureSummariesForUser = disclosures.body;
+          this.emitChange();
+        }
+      }));
 
-          createRequest()
-            .get('/api/coi/disclosure-user-summaries')
-            .end(processResponse((discErrs, disclosures) => {
-              if (!discErrs) {
-                this.disclosureSummariesForUser = disclosures.body;
-                this.emitChange();
-              }
-            }));
-
-          createRequest()
-            .get('/api/coi/reviewers/disclosures')
-            .end(processResponse((reviewErrs, toReview) => {
-              if (!reviewErrs) {
-                this.disclosuresNeedingReview = toReview.body;
-                this.emitChange();
-              }
-            }));
+    createRequest()
+      .get('/api/coi/reviewers/disclosures')
+      .end(processResponse((reviewErrs, toReview) => {
+        if (!reviewErrs) {
+          this.disclosuresNeedingReview = toReview.body;
+          this.emitChange();
         }
       }));
   }
@@ -310,7 +303,8 @@ class _DisclosureStore {
   }
 
   loadDisclosureState(disclosureId) {
-    const hideInstructions = window.config.general.instructionsExpanded === false;
+    const {config} = ConfigStore.getState();
+    const hideInstructions = config.general.instructionsExpanded === false;
     this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] = hideInstructions ? false : true;
     this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES] = hideInstructions ? false : true;
     this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] = hideInstructions ? false : true;
@@ -347,20 +341,6 @@ class _DisclosureStore {
       .end();
   }
 
-  loadArchivedConfig(configId) {
-    return new Promise((resolve, reject) => {
-      createRequest()
-        .get(`/api/coi/archived-config/${configId}`)
-        .end(processResponse((err, config) => {
-          if (err) {
-            reject();
-          }
-
-          resolve(config);
-        }));
-    });
-  }
-
   loadDisclosureData(disclosureType) {
     if (disclosureType === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
       createRequest()
@@ -368,20 +348,16 @@ class _DisclosureStore {
         .end(processResponse((err, disclosure) => {
           if (!err) {
             if (COIConstants.EDITABLE_STATUSES.includes(disclosure.body.statusCd)) {
-              Promise.all([
-                this.loadDisclosureState(disclosure.body.id),
-                this.loadArchivedConfig(disclosure.body.configId)
-              ])
-              .then(([, config]) => {
-                this.applicationState.currentDisclosureState.disclosure = disclosure.body;
-                this.entities = disclosure.body.entities;
-                this.declarations = disclosure.body.declarations;
-                this.files = disclosure.body.files;
+              this.loadDisclosureState(disclosure.body.id)
+                .then(() => {
+                  this.applicationState.currentDisclosureState.disclosure = disclosure.body;
+                  this.entities = disclosure.body.entities;
+                  this.declarations = disclosure.body.declarations;
+                  this.files = disclosure.body.files;
 
-                window.config = config.body;
-                ConfigActions.loadConfig(disclosure.body.configId);
-                this.emitChange();
-              });
+                  ConfigActions.loadConfig(disclosure.body.configId);
+                  this.emitChange();
+                });
             } else {
               window.location = '/coi';
             }
@@ -491,7 +467,8 @@ class _DisclosureStore {
   }
 
   advanceQuestion() {
-    const parentQuestions = window.config.questions.screening.filter(question => {
+    const {config} = ConfigStore.getState();
+    const parentQuestions = config.questions.screening.filter(question => {
       return !question.parent;
     });
 
@@ -508,7 +485,8 @@ class _DisclosureStore {
   }
 
   previousQuestion() {
-    const parentQuestions = window.config.questions.screening.filter(question => {
+    const {config} = ConfigStore.getState();
+    const parentQuestions = config.questions.screening.filter(question => {
       return !question.parent;
     });
     switch (this.applicationState.currentDisclosureState.step) {
@@ -614,9 +592,10 @@ class _DisclosureStore {
   }
 
   nextStep() {
+    const {config} = ConfigStore.getState();
     switch (this.applicationState.currentDisclosureState.step) {
       case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
-        if (this.canSkipEntities(this.applicationState.currentDisclosureState.disclosure, window.config)) {
+        if (this.canSkipEntities(this.applicationState.currentDisclosureState.disclosure, config)) {
           this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
           break;
         }
@@ -807,6 +786,7 @@ class _DisclosureStore {
   }
 
   addEntityRelationship(entityId) {
+    const {config} = ConfigStore.getState();
     const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
 
     if (!entity.relationships) {
@@ -819,14 +799,14 @@ class _DisclosureStore {
     }
 
     relation.id = `${COIConstants.TMP_PLACEHOLDER}${new Date().getTime()}`;
-    const matrixType = window.config.matrixTypes.find(matrix => {
+    const matrixType = config.matrixTypes.find(matrix => {
       return matrix.typeCd === relation.relationshipCd;
     });
 
     relation.amount = this.getDescriptionFromCode(relation.amountCd, matrixType.amountOptions);
     relation.type = this.getDescriptionFromCode(relation.typeCd, matrixType.typeOptions);
-    relation.relationship = this.getDescriptionFromCode(relation.relationshipCd, window.config.matrixTypes);
-    relation.person = this.getDescriptionFromCode(relation.personCd, window.config.relationshipPersonTypes);
+    relation.relationship = this.getDescriptionFromCode(relation.relationshipCd, config.matrixTypes);
+    relation.person = this.getDescriptionFromCode(relation.personCd, config.relationshipPersonTypes);
     entity.relationships.push(relation);
 
     if (entityId) {
@@ -1253,8 +1233,8 @@ class _DisclosureStore {
       entity = storeState.applicationState.entityInProgress;
     }
 
-
-    window.config.questions.entities.forEach(question => {
+    const {config} = ConfigStore.getState();
+    config.questions.entities.forEach(question => {
 
       const answer = entity.answers.find(a => {
         return a.questionId === question.id;
@@ -1292,9 +1272,10 @@ class _DisclosureStore {
   }
 
   entityRelationshipStepErrors(entityId = 'new') {
+    const {config} = ConfigStore.getState();
     return entityRelationshipStepErrors(
       this.getState().applicationState.potentialRelationships[entityId],
-      window.config.matrixTypes
+      config.matrixTypes
     );
   }
 

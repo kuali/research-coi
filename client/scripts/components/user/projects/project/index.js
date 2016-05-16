@@ -43,7 +43,10 @@ export class Project extends React.Component {
       return 'Action Required';
     }
 
-    return DisclosureStore.getWorstDeclaration(this.props.declarations, window.config.declarationTypes);
+    return DisclosureStore.getWorstDeclaration(
+      this.props.declarations,
+      this.context.configState.config.declarationTypes
+    );
   }
 
   render() {
@@ -138,3 +141,7 @@ export class Project extends React.Component {
     );
   }
 }
+
+Project.contextTypes = {
+  configState: React.PropTypes.object
+};

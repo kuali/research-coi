@@ -21,11 +21,11 @@ import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router';
 import { ROLES, NOTIFICATIONS_MODE } from '../../../../../coi-constants';
-import ConfigStore from '../../../stores/config-store';
+import {getNotificationsMode} from '../../../stores/config-store';
 
 import AdminMenu from '../../admin-menu';
 
-export default function Sidebar(props) {
+export default function Sidebar(props, {configState}) {
   const steps = [
     {
       label: 'General Configuration',
@@ -58,7 +58,7 @@ export default function Sidebar(props) {
     }
   ];
 
-  if (ConfigStore.getNotificationsMode() > NOTIFICATIONS_MODE.OFF) {
+  if (getNotificationsMode(configState) > NOTIFICATIONS_MODE.OFF) {
     steps.splice(2,0,
       {
         label: 'Customize Notifications',
@@ -95,3 +95,7 @@ export default function Sidebar(props) {
     </span>
   );
 }
+
+Sidebar.contextTypes = {
+  configState: React.PropTypes.object
+};

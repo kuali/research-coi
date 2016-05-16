@@ -20,11 +20,10 @@ import styles from './style';
 import React from 'react';
 import Panel from '../../panel';
 import InstructionEditor from '../../instruction-editor';
-import ConfigStore from '../../../../stores/config-store';
 import DeclarationType from '../declaration-type';
 import DispositionType from '../disposition-type';
 import ConfigActions from '../../../../actions/config-actions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP} from '../../../../../../coi-constants';
 import ConfigPage from '../../config-page';
 import NewType from '../new-type';
 import CheckBox from '../../check-box';
@@ -33,39 +32,9 @@ export default class Declarations extends React.Component {
   constructor() {
     super();
 
-    this.state = {
-      dispositionTypes: [],
-      edits: {}
-    };
-    this.onChange = this.onChange.bind(this);
     this.updateNewValue = this.updateNewValue.bind(this);
     this.createNewDeclaration = this.createNewDeclaration.bind(this);
     this.createNewDisposition = this.createNewDisposition.bind(this);
-  }
-
-  componentDidMount() {
-    this.onChange();
-    ConfigStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    ConfigStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = ConfigStore.getState();
-    this.setState({
-      applicationState: storeState.applicationState,
-      edits: storeState.applicationState.edits,
-      editorState: storeState.editorStates[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS],
-      declarationTypes: storeState.config.declarationTypes,
-      dispositionTypes: storeState.config.dispositionTypes,
-      dispositionsEnabled: storeState.config.general.dispositionsEnabled,
-      adminRelationshipEnabled: storeState.config.general.adminRelationshipEnabled,
-      lane: storeState.config.lane,
-      instructions: storeState.config.general.instructions,
-      dirty: storeState.dirty
-    });
   }
 
   updateNewValue() {
@@ -74,7 +43,7 @@ export default class Declarations extends React.Component {
   }
 
   createNewDeclaration() {
-    const { declarationTypes } = this.state.edits;
+    const { declarationTypes } = this.context.configState.applicationState.edits;
     if (declarationTypes !== undefined) {
       if (
         declarationTypes.description &&
@@ -88,7 +57,7 @@ export default class Declarations extends React.Component {
   }
 
   createNewDisposition() {
-    const { dispositionTypes } = this.state.edits;
+    const { dispositionTypes } = this.context.configState.applicationState.edits;
     if (dispositionTypes !== undefined) {
       if (
         dispositionTypes.description &&
@@ -102,52 +71,54 @@ export default class Declarations extends React.Component {
   }
 
   render() {
+    const {editorStates, config, dirty, applicationState} = this.context.configState;
+    
     let declarationTypes = [];
-    if (this.state.declarationTypes) {
-      declarationTypes = this.state.declarationTypes.map((type, index) => {
+    if (config.declarationTypes) {
+      declarationTypes = config.declarationTypes.map((type, index) => {
         return (
           <DeclarationType
             index={index}
-            last={index === this.state.declarationTypes.length - 1}
+            last={index === config.declarationTypes.length - 1}
             type={type}
             key={`custom${index}`}
-            applicationState={this.state.applicationState}
+            applicationState={applicationState}
             active={Boolean(type.active)}
           />
         );
       });
     }
 
-    const dispositionTypes = this.state.dispositionTypes.map((type, index) => {
+    const dispositionTypes = config.dispositionTypes.map((type, index) => {
       return (
         <DispositionType
           index={index}
-          last={index === this.state.dispositionTypes.length - 1}
+          last={index === config.dispositionTypes.length - 1}
           type={type}
           key={type.typeCd}
-          applicationState={this.state.applicationState}
+          applicationState={applicationState}
           active={Boolean(type.active)}
         />
       );
     });
 
     let newDeclarationType;
-    if (this.state.edits.declarationTypes) {
+    if (applicationState.edits.declarationTypes) {
       newDeclarationType = (
         <NewType
           path="applicationState.edits.declarationTypes.description"
-          value={this.state.edits.declarationTypes.description}
+          value={applicationState.edits.declarationTypes.description}
           type='declarationTypes'
         />
       );
     }
 
     let newDispositionType;
-    if (this.state.edits.dispositionTypes) {
+    if (applicationState.edits.dispositionTypes) {
       newDispositionType = (
         <NewType
           path="applicationState.edits.dispositionTypes.description"
-          value={this.state.edits.dispositionTypes.description}
+          value={applicationState.edits.dispositionTypes.description}
           type='dispositionTypes'
         />
       );
@@ -155,14 +126,14 @@ export default class Declarations extends React.Component {
 
     let dispositionConfig;
 
-    if (this.state.dispositionsEnabled) {
+    if (config.general.dispositionsEnabled) {
       dispositionConfig = (
         <div>
           <CheckBox
             path="config.general.adminRelationshipEnabled"
             label="Admin set financial entity-project relationship determination"
             labelClassName={styles.label}
-            checked={this.state.adminRelationshipEnabled}
+            checked={config.general.adminRelationshipEnabled}
           />
           {dispositionTypes}
           {newDispositionType}
@@ -186,7 +157,7 @@ export default class Declarations extends React.Component {
             path="config.general.dispositionsEnabled"
             label="COI Admin can set Project Disposition"
             labelClassName={styles.label}
-            checked={this.state.dispositionsEnabled}
+            checked={config.general.dispositionsEnabled}
           />
           {dispositionConfig}
           <div style={{paddingBottom: 10}}/>
@@ -195,20 +166,23 @@ export default class Declarations extends React.Component {
     );
 
     let instructionText = '';
-    if (this.state.instructions && this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS]) {
-      instructionText = this.state.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
+    if (
+      config.general.instructions &&
+      config.general.instructions[INSTRUCTION_STEP.PROJECT_DECLARATIONS]
+    ) {
+      instructionText = config.general.instructions[INSTRUCTION_STEP.PROJECT_DECLARATIONS];
     }
     return (
       <ConfigPage
         title='Customize Project Declarations'
         routeName='declarations'
-        dirty={this.state.dirty}
+        dirty={dirty}
         className={this.props.className}
       >
         <InstructionEditor
-          step={COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS}
+          step={INSTRUCTION_STEP.PROJECT_DECLARATIONS}
           value={instructionText}
-          editorState={this.state.editorState}
+          editorState={editorStates[INSTRUCTION_STEP.PROJECT_DECLARATIONS]}
         />
         <Panel title="Declaration Types Set by Reporter">
           <div className={styles.types}>
@@ -230,3 +204,7 @@ export default class Declarations extends React.Component {
     );
   }
 }
+
+Declarations.contextTypes = {
+  configState: React.PropTypes.object
+};

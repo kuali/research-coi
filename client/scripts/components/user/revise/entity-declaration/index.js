@@ -21,7 +21,7 @@ import React from 'react';
 import {formatDate} from '../../../../format-date';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
-import ConfigStore from '../../../../stores/config-store';
+import {getDeclarationTypeString} from '../../../../stores/config-store';
 import { COI_ADMIN } from '../../../../../../coi-constants';
 
 export default class EntityDeclaration extends React.Component {
@@ -180,7 +180,8 @@ export default class EntityDeclaration extends React.Component {
 
     let relationship;
     if (this.state.revising) {
-      const declarationTypes = window.config.declarationTypes.filter(declarationType => {
+      const {config} = this.context.configState;
+      const declarationTypes = config.declarationTypes.filter(declarationType => {
         return Boolean(declarationType.enabled) && Boolean(declarationType.active);
       }).map(declarationType => {
         return (
@@ -208,10 +209,13 @@ export default class EntityDeclaration extends React.Component {
       );
     }
     else {
+      const declarationType = getDeclarationTypeString(
+        this.context.configState,
+        this.props.entity.relationshipCd,
+        this.context.configState.config.id
+      );
       relationship = (
-        <span className={styles.relationship}>
-          {ConfigStore.getDeclarationTypeString(this.props.entity.relationshipCd)}
-        </span>
+        <span className={styles.relationship}>{declarationType}</span>
       );
     }
 
@@ -242,3 +246,7 @@ export default class EntityDeclaration extends React.Component {
     );
   }
 }
+
+EntityDeclaration.contextTypes = {
+  configState: React.PropTypes.object
+};

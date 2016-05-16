@@ -18,19 +18,28 @@
 
 import styles from './style';
 import React from 'react';
-import ConfigStore from '../../../../stores/config-store';
-import {COIConstants} from '../../../../../../coi-constants';
+import {getDisclosureTypeString} from '../../../../stores/config-store';
+import {DISCLOSURE_TYPE} from '../../../../../../coi-constants';
 import {Link} from 'react-router';
 
-export function TravelLogButton(props) {
+export function TravelLogButton(props, {configState}) {
+  const disclosureType = getDisclosureTypeString(
+    configState,
+    DISCLOSURE_TYPE.TRAVEL,
+    configState.config.id
+  );
   return (
     <Link to={`/coi/travelLog`} className={`${styles.container} ${props.className}`}>
       <div>
         <span>
           <div className={styles.primary}>Update</div>
-          <div className={styles.secondary}>{ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.TRAVEL)}</div>
+          <div className={styles.secondary}>{disclosureType}</div>
         </span>
       </div>
     </Link>
   );
 }
+
+TravelLogButton.contextTypes = {
+  configState: React.PropTypes.object
+};

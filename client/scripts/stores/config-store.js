@@ -18,10 +18,15 @@
 
 import ConfigActions from '../actions/config-actions';
 import alt from '../alt';
-import {COIConstants} from '../../../coi-constants';
+import {
+  QUESTION_TYPE,
+  QUESTIONNAIRE_TYPE,
+  TMP_PLACEHOLDER
+} from '../../../coi-constants';
 import {processResponse, createRequest} from '../http-utils';
 import { prepareInstructionsForSave, createEditorStates } from '../editor-utils';
 import _ from 'lodash';
+import getConfig from '../get-config';
 
 function convertToggleValue(value) {
   if (value === undefined) {
@@ -38,28 +43,198 @@ function convertToggleValue(value) {
   throw new Error('unknown toggle value');
 }
 
+export function getCodeMap(items, codeField) {
+  let result = {};
+  if (Array.isArray(items)) {
+    result = items.reduce((map, typeRecord) => {
+      if (!(codeField in typeRecord)) {
+        throw new Error(`Invalid codeField supplied: ${codeField}`);
+      }
+      map[typeRecord[codeField]] = typeRecord;
+      return map;
+    }, result);
+  }
+
+  return result;
+}
+
+export function mapCodes(config) {
+  if (!_.isObjectLike(config)) {
+    throw new Error('invalid config object');
+  }
+
+  const codeMaps = {
+    declarationType: getCodeMap(config.declarationTypes, 'typeCd'),
+    disclosureStatus: getCodeMap(config.disclosureStatus, 'statusCd'),
+    disclosureType: getCodeMap(config.disclosureTypes, 'typeCd'),
+    projectType: getCodeMap(config.projectTypes, 'typeCd'),
+    relationshipCategoryType: getCodeMap(config.matrixTypes, 'typeCd'),
+    relationshipPersonType: getCodeMap(config.relationshipPersonTypes, 'typeCd'),
+    dispositionTypes: getCodeMap(config.dispositionTypes, 'typeCd')
+  };
+
+  return codeMaps;
+}
+
+export function getCodeMapsFromState(...args) {
+  const config = getConfig(...args);
+  if (config == null) { //eslint-disable-line no-eq-null
+    return null;
+  }
+
+  return getConfig(...args).codeMaps;
+}
+
+export function getStringFromCodeMap(state, code, configId, mapName) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('invalid state');
+  }
+  const codeMaps = getCodeMapsFromState(state, configId);
+  if (codeMaps == null) { // eslint-disable-line no-eq-null
+    return null;
+  }
+
+  if (!_.isObjectLike(codeMaps[mapName])) {
+    throw new Error('invalid code map name');
+  }
+
+  const mapRecord = codeMaps[mapName][code];
+  if (mapRecord) {
+    return mapRecord.description;
+  }
+
+  return '';
+}
+
+export function getDisclosureTypeString(...args) {
+  return getStringFromCodeMap(...args, 'disclosureType');
+}
+
+export function getDispositionsEnabled(state) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+  return state.config.general.dispositionsEnabled;
+}
+
+export function getDisclosureStatusString(...args) {
+  return getStringFromCodeMap(...args, 'disclosureStatus');
+}
+
+export function getAdminDisclosureStatusString(state, code, configId) {
+  switch(code) {
+    case 1:
+    case 3:
+      return 'Approved';
+    case 4:
+      return 'Sent back';
+    default:
+      return getDisclosureStatusString(state, code, configId);
+  }
+}
+
+export function getRelationshipPersonTypeString(...args) {
+  return getStringFromCodeMap(...args, 'relationshipPersonType');
+}
+
+export function getRelationshipCategoryTypeString(...args) {
+  return getStringFromCodeMap(...args, 'relationshipCategoryType');
+}
+
+export function getProjectTypeString(...args) {
+  return getStringFromCodeMap(...args, 'projectType');
+}
+
+export function getDeclarationTypeString(...args) {
+  return getStringFromCodeMap(...args, 'declarationType');
+}
+
+export function getDispositionTypeString(...args) {
+  return getStringFromCodeMap(...args, 'dispositionTypes');
+}
+
+function getFieldFromRelationship(state, categoryCode, typeCode, configId, field) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+
+  const codeMaps = getCodeMapsFromState(state, configId);
+  if (codeMaps == null) { // eslint-disable-line no-eq-null
+    return null;
+  }
+  
+  const typeRecord = codeMaps.relationshipCategoryType[categoryCode];
+  if (!typeRecord) {
+    throw new Error('Invalid categoryCode');
+  }
+
+  const option = typeRecord[field].find(typeOption => {
+    return typeOption.typeCd === typeCode;
+  });
+  if (!option) {
+    throw new Error('Invalid typeCode');
+  }
+
+  return option.description;
+}
+
+export function getRelationshipTypeString(...args) {
+  return getFieldFromRelationship(...args, 'typeOptions');
+}
+
+export function getRelationshipAmountString(...args) {
+  return getFieldFromRelationship(...args, 'amountOptions');
+}
+
+export function getNotificationsMode(state) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+
+  return state.config.notificationsMode;
+}
+
+export function getQuestionNumberToShow(state, type, questionId, configId) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+
+  const config = getConfig(state, configId);
+  if (config == null) { // eslint-disable-line no-eq-null
+    return null;
+  }
+  const {questions} = config;
+
+  let collection;
+  switch (type) {
+    case QUESTIONNAIRE_TYPE.SCREENING:
+      collection = questions.screening;
+      break;
+    case QUESTIONNAIRE_TYPE.ENTITIES:
+      collection = questions.entities;
+      break;
+    default:
+      throw new Error('Invalid type');
+  }
+  const theQuestion = collection.find(question => question.id === questionId);
+
+  if (!theQuestion) {
+    throw new Error('Question not found');
+  }
+  return theQuestion.question.numberToShow;
+}
+
+export function getLane(state) {
+  if (!_.isObjectLike(state)) {
+    throw new Error('Invalid state');
+  }
+
+  return state.config.lane;
+}
+
 class _ConfigStore {
   constructor() {
-    this.codeMaps = {};
-
     this.bindActions(ConfigActions);
-
-    this.exportPublicMethods({
-      getDeclarationTypeString: this.getDeclarationTypeString,
-      getDispositionTypeString: this.getDispositionTypeString,
-      getDisclosureStatusString: this.getDisclosureStatusString,
-      getAdminDisclosureStatusString: this.getAdminDisclosureStatusString,
-      getDisclosureTypeString: this.getDisclosureTypeString,
-      getProjectTypeString: this.getProjectTypeString,
-      getRelationshipCategoryTypeString: this.getRelationshipCategoryTypeString,
-      getRelationshipTypeString: this.getRelationshipTypeString,
-      getRelationshipAmountString: this.getRelationshipAmountString,
-      getRelationshipPersonTypeString: this.getRelationshipPersonTypeString,
-      getQuestionNumberToShow: this.getQuestionNumberToShow,
-      getNotificationsMode: this.getNotificationsMode,
-      getDispostionsEnabled: this.getDispostionsEnabled,
-      getLane: this.getLane
-    });
 
     this.applicationState = {
       edits: {},
@@ -82,10 +257,13 @@ class _ConfigStore {
         entities: {}
       },
       selectingProjectTypes: true,
-      configuringProjectType: undefined
+      configuringProjectType: undefined,
+      configsBeingLoaded: {}
     };
 
     this.dirty = false;
+
+    this.archivedConfigs = {};
 
     this.config = {
       dispositionTypes: [],
@@ -253,7 +431,7 @@ class _ConfigStore {
     if (questionId) {
       targetQuestion = this.applicationState.questionsBeingEdited[category][questionId];
 
-      targetQuestion.showWarning = this.hasSubQuestions(category, targetQuestion.id) && type !== COIConstants.QUESTION_TYPE.YESNO;
+      targetQuestion.showWarning = this.hasSubQuestions(category, targetQuestion.id) && type !== QUESTION_TYPE.YESNO;
     }
     else {
       targetQuestion = this.applicationState.newQuestion[category];
@@ -299,7 +477,7 @@ class _ConfigStore {
 
     this.applicationState.newQuestion[category].question.order = 1;
     this.applicationState.newQuestion[category].active = 1;
-    this.applicationState.newQuestion[category].id = COIConstants.TMP_PLACEHOLDER + new Date().getTime();
+    this.applicationState.newQuestion[category].id = TMP_PLACEHOLDER + new Date().getTime();
     this.config.questions[category].push(this.applicationState.newQuestion[category]);
     this.applicationState.newQuestion[category] = undefined;
     this.dirty = true;
@@ -335,7 +513,7 @@ class _ConfigStore {
       this.config.questions[category][index] = editedQuestion;
     }
 
-    if (editedQuestion.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
+    if (editedQuestion.question.type !== QUESTION_TYPE.YESNO) {
       this.removeSubQuestions(category, editedQuestion.id);
     }
 
@@ -551,85 +729,59 @@ class _ConfigStore {
     this.dirty = true;
   }
 
-  mapCodes() {
-    this.codeMaps.declarationType = {};
-    this.config.declarationTypes.forEach(typeRecord => {
-      this.codeMaps.declarationType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.disclosureStatus = {};
-    this.config.disclosureStatus.forEach(typeRecord => {
-      this.codeMaps.disclosureStatus[typeRecord.statusCd] = typeRecord;
-    });
-
-    this.codeMaps.disclosureType = {};
-    this.config.disclosureTypes.forEach(typeRecord => {
-      this.codeMaps.disclosureType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.projectType = {};
-    this.config.projectTypes.forEach(typeRecord => {
-      this.codeMaps.projectType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.relationshipCategoryType = {};
-    this.config.matrixTypes.forEach(typeRecord => {
-      this.codeMaps.relationshipCategoryType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.relationshipPersonType = {};
-    this.config.relationshipPersonTypes.forEach(typeRecord => {
-      this.codeMaps.relationshipPersonType[typeRecord.typeCd] = typeRecord;
-    });
-
-    this.codeMaps.dispositionType = {};
-    if (Array.isArray(this.config.dispositionTypes)) {
-      this.config.dispositionTypes.forEach(typeRecord => {
-        this.codeMaps.dispositionType[typeRecord.typeCd] = typeRecord;
-      });
-    }
-
-    this.isLoaded = true;
-  }
-
   loadAllConfigData() {
     // Then load config and re-render
-    createRequest().get('/api/coi/config')
-    .end(processResponse((err, config) => {
-      if (!err) {
-        this.config = config.body;
-        this.editorStates = createEditorStates(this.config.general.instructions, this.config.general.richTextInstructions);
+    createRequest()
+      .get('/api/coi/config')
+      .end(processResponse((err, config) => {
+        if (!err) {
+          this.config = config.body;
+          this.editorStates = createEditorStates(this.config.general.instructions, this.config.general.richTextInstructions);
 
-        if (this.config.general.instructionsExpanded === undefined) {
-          this.config.general.instructionsExpanded = true;
+          if (this.config.general.instructionsExpanded === undefined) {
+            this.config.general.instructionsExpanded = true;
+          }
+
+          const projectsRequiringDisclosure = this.config.projectTypes.filter(projectType => {
+            return projectType.reqDisclosure === 1;
+          });
+
+          if (projectsRequiringDisclosure.length > 0) {
+            this.applicationState.selectingProjectTypes = false;
+          }
+
+          this.config.codeMaps = mapCodes(this.config);
+          this.isLoaded = true;
+          this.emitChange();
         }
+      }));
 
-        const projectsRequiringDisclosure = this.config.projectTypes.filter(projectType => {
-          return projectType.reqDisclosure === 1;
-        });
-
-        if (projectsRequiringDisclosure.length > 0) {
-          this.applicationState.selectingProjectTypes = false;
-        }
-
-        this.mapCodes();
-
-        this.emitChange();
-      }
-    }));
     this.dirty = false;
   }
 
   loadConfig(id) {
-    createRequest().get(`/api/coi/archived-config/${id}`)
-    .end(processResponse((err, config) => {
-      if (!err) {
-        this.config = config.body;
-        this.mapCodes();
+    if (
+      this.applicationState.configsBeingLoaded[id] ||
+      this.archivedConfigs[id]
+    ) {
+      return false;
+    }
 
+    this.applicationState.configsBeingLoaded[id] = true;
+    createRequest()
+      .get(`/api/coi/archived-config/${id}`)
+      .end(processResponse((err, config) => {
+        if (err) {
+          this.archivedConfigs[id] = null;
+          throw new Error('Attempt to load an invalid config');
+        }
+
+        this.archivedConfigs[id] = config.body;
+        this.archivedConfigs[id].codeMaps = mapCodes(this.archivedConfigs[id]);
+        this.isLoaded = true;
+        delete this.applicationState.configsBeingLoaded[id];
         this.emitChange();
-      }
-    }));
+      }));
   }
 
   clearTemporaryIds() {
@@ -663,161 +815,23 @@ class _ConfigStore {
     this.updateOrder();
     this.config.general.richTextInstructions = prepareInstructionsForSave(this.editorStates);
 
-    createRequest().post('/api/coi/config')
-    .send(this.config)
-    .type('application/json')
-    .end(processResponse((err, config) => {
-      if (!err) {
-        this.config = config.body;
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .post('/api/coi/config')
+      .send(this.config)
+      .type('application/json')
+      .end(processResponse((err, config) => {
+        if (!err) {
+          this.archivedConfigs[this.config.id] = this.config;
+          this.config = config.body;
+          this.emitChange();
+        }
+      }));
+
     this.dirty = false;
   }
 
   undoAll() {
     this.loadAllConfigData();
-  }
-
-  getDeclarationTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.declarationType) {
-      const typeRecord = configState.codeMaps.declarationType[code];
-      if (typeRecord) {
-        return typeRecord.description;
-      }
-    }
-    return '';
-  }
-
-  getDispositionTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.dispositionType) {
-      const typeRecord = configState.codeMaps.dispositionType[code];
-      if (typeRecord) {
-        return typeRecord.description;
-      }
-    }
-    return '';
-  }
-
-  getDisclosureStatusString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.disclosureStatus) {
-      const typeRecord = configState.codeMaps.disclosureStatus[code];
-      if (typeRecord) {
-        return typeRecord.description;
-      }
-    }
-    return '';
-  }
-
-  getAdminDisclosureStatusString(code) {
-    switch(code) {
-      case 1:
-      case 3:
-        return 'Approved';
-      case 4:
-        return 'Sent back';
-      default:
-        return this.getDisclosureStatusString(code);
-    }
-  }
-
-  getDisclosureTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.disclosureType) {
-      const typeRecord = configState.codeMaps.disclosureType[code];
-      if (typeRecord) {
-        return typeRecord.description;
-      }
-    }
-    return '';
-  }
-
-  getProjectTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.projectType) {
-      const typeRecord = configState.codeMaps.projectType[code];
-      if (typeRecord) {
-        return typeRecord.description;
-      }
-    }
-    return '';
-  }
-
-  getRelationshipCategoryTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.relationshipCategoryType) {
-      const typeRecord = configState.codeMaps.relationshipCategoryType[code];
-      if (typeRecord) {
-        return typeRecord.description;
-      }
-    }
-    return '';
-  }
-
-  getRelationshipTypeString(categoryCode, typeCode) {
-    const typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
-    if (typeRecord) {
-      const option = typeRecord.typeOptions.find(typeOption => {
-        return typeOption.typeCd === typeCode;
-      });
-      if (option) {
-        return option.description;
-      }
-    }
-
-    return 'Undefined';
-  }
-
-  getRelationshipAmountString(categoryCode, typeCode) {
-    const typeRecord = this.getState().codeMaps.relationshipCategoryType[categoryCode];
-    if (typeRecord) {
-      const option = typeRecord.amountOptions.find(amountOption => {
-        return amountOption.typeCd === typeCode;
-      });
-      if (option) {
-        return option.description;
-      }
-    }
-
-    return 'Undefined';
-  }
-
-  getRelationshipPersonTypeString(code) {
-    const configState = this.getState();
-    if (configState.codeMaps.relationshipPersonType) {
-      const typeRecord = configState.codeMaps.relationshipPersonType[code];
-      if (typeRecord) {
-        return typeRecord.description;
-      }
-    }
-    return '';
-  }
-
-  getQuestionNumberToShow(type, questionId) {
-    const configState = this.getState();
-    const questions = configState.config.questions;
-    let collection;
-    switch (type) {
-      case COIConstants.QUESTIONNAIRE_TYPE.SCREENING:
-        collection = questions.screening;
-        break;
-      case COIConstants.QUESTIONNAIRE_TYPE.ENTITIES:
-        collection = questions.entities;
-        break;
-      default:
-        return undefined;
-    }
-    const theQuestion = collection.find(question => {
-      return question.id === questionId;
-    });
-
-    if (theQuestion) {
-      return theQuestion.question.numberToShow;
-    }
-    return undefined;
   }
 
   updateRoles(data) {
@@ -925,22 +939,6 @@ class _ConfigStore {
       }
     );
     this.dirty = true;
-  }
-
-  getNotificationsMode() {
-    const configState = this.getState();
-    return configState.config.notificationsMode;
-  }
-
-  getDispostionsEnabled() {
-    const configState = this.getState();
-    return configState.config.general.dispositionsEnabled;
-  }
-
-  getLane() {
-
-    const configState = this.getState();
-    return configState.config.lane;
   }
 }
 

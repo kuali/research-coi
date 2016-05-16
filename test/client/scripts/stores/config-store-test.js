@@ -490,6 +490,5 @@ describe('ConfigStore', () => {
       assert.equal('three', dispositionTypes[1].name);
     });
   });
-
 });
 

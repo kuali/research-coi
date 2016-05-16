@@ -22,7 +22,10 @@ import React from 'react';
 import {AppHeader} from '../../../app-header';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
-import ConfigStore from '../../../../stores/config-store';
+import {
+  getDispositionsEnabled,
+  getDisclosureTypeString
+} from '../../../../stores/config-store';
 import {Link} from 'react-router';
 import ArchiveDetail from '../archive-detail';
 import {formatDate, formatDateTime} from '../../../../format-date';
@@ -112,17 +115,30 @@ export class Archive extends React.Component {
       });
 
       let dispostion;
-
-      if (ConfigStore.getDispostionsEnabled() && this.state.disclosure && this.state.disclosure.disposition) {
+      if (
+        getDispositionsEnabled(this.context.configState) &&
+        this.state.disclosure &&
+        this.state.disclosure.disposition
+      ) {
         dispostion = (
           <span>
             <span style={{padding: '0 3px'}}>•</span>
-            <span style={{fontWeight: 'normal'}}>{this.state.disclosure.disposition}</span>
+            <span style={{fontWeight: 'normal'}}>
+              {this.state.disclosure.disposition}
+            </span>
           </span>
 
         );
       }
 
+      let disclosureType;
+      if (this.state.disclosure) {
+        disclosureType = getDisclosureTypeString(
+          this.context.configState,
+          COIConstants.DISCLOSURE_TYPE.ANNUAL,
+          this.state.disclosure.configId
+        );
+      }
       header = (
         <div>
           <span className={styles.versionPicker}>
@@ -135,7 +151,7 @@ export class Archive extends React.Component {
           </span>
 
           <div className={styles.heading}>
-            {ConfigStore.getDisclosureTypeString(COIConstants.DISCLOSURE_TYPE.ANNUAL)}
+            {disclosureType}
             {dispostion}
           </div>
           <div className={styles.dateRow}>
@@ -229,3 +245,7 @@ export class Archive extends React.Component {
     );
   }
 }
+
+Archive.contextTypes = {
+  configState: React.PropTypes.object
+};

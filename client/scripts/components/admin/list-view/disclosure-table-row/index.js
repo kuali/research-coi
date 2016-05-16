@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {formatDate} from '../../../../format-date';
-import ConfigStore from '../../../../stores/config-store';
+import {getAdminDisclosureStatusString} from '../../../../stores/config-store';
 import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
@@ -51,6 +51,11 @@ export class DisclosureTableRow extends React.Component {
       dateToShow = formatDate(this.props.submittedDate);
     }
 
+    const disclosureStatus = getAdminDisclosureStatusString(
+      this.context.configState,
+      this.props.statusCd,
+      this.props.configId
+    );
     return (
       <div role="row" className={classNames(styles.container, this.props.className)}>
         <span role="gridcell" className={classNames(styles.value, styles.firstColumn)}>
@@ -62,7 +67,7 @@ export class DisclosureTableRow extends React.Component {
           {this.highlightSearchTerm(this.props.type)}
         </span>*/}
         <span role="gridcell" className={styles.value}>
-          {ConfigStore.getAdminDisclosureStatusString(this.props.statusCd)}
+          {disclosureStatus}
         </span>
         <span role="gridcell" className={classNames(styles.value, styles.lastColumn)}>
           {dateToShow}
@@ -71,3 +76,7 @@ export class DisclosureTableRow extends React.Component {
     );
   }
 }
+
+DisclosureTableRow.contextTypes = {
+  configState: React.PropTypes.object
+};
