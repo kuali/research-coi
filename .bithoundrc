@@ -4,7 +4,8 @@
     "**/client/build",
     "scripts/lib/",
     "webpack.config.js",
-    "db/migration/**"
+    "db/migration/**",
+    "test/client/config-context.js"
   ],
   "test": [
     "test/**"
