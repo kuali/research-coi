@@ -38,12 +38,14 @@ export default function Certification(props, {configState}) {
           className={styles.textarea}
           dirty={true}
         />
-        <CheckBox
-          path="config.general.certificationOptions.required"
-          label="Require checkbox agreement"
-          labelClassName={styles.requireLabel}
-          checked={certificationOptions.required}
-        />
+        <div className={styles.requiredCheckbox}>
+          <CheckBox
+            path="config.general.certificationOptions.required"
+            label="Require checkbox agreement"
+            labelClassName={styles.requireLabel}
+            checked={certificationOptions.required}
+          />
+        </div>
       </div>
     );
   }

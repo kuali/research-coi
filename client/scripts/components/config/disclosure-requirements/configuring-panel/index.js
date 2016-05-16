@@ -44,12 +44,13 @@ export default class ConfiguringPanel extends React.Component {
     })
     .map((role, index) => {
       return (
-        <CheckBox
-          path={`config.projectRoles[${role.index}].reqDisclosure`}
-          checked={role.reqDisclosure === 1}
-          label={role.description}
-          key={index}
-        />
+        <span key={index} className={styles.checkbox}>
+          <CheckBox
+            path={`config.projectRoles[${role.index}].reqDisclosure`}
+            checked={role.reqDisclosure === 1}
+            label={role.description}
+          />
+        </span>
       );
     });
 
@@ -63,12 +64,14 @@ export default class ConfiguringPanel extends React.Component {
     })
     .map((status, index) => {
       return (
-        <CheckBox
-          path={`config.projectStatuses[${status.index}].reqDisclosure`}
-          checked={status.reqDisclosure === 1}
-          label={status.description}
-          key={index}
-        />
+        <span key={index} className={styles.checkbox}>
+          <CheckBox
+            path={`config.projectStatuses[${status.index}].reqDisclosure`}
+            checked={status.reqDisclosure === 1}
+            label={status.description}
+            key={index}
+          />
+        </span>
       );
     });
 

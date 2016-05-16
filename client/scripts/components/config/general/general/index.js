@@ -52,39 +52,49 @@ export default function General(props, {configState}) {
       </Panel>
 
       <Panel title="General Configuration Options">
-        <CheckBox
-          path='config.general.instructionsExpanded'
-          label='Expand instructions by default'
-          labelClassName={styles.label}
-          checked={generalConfig.instructionsExpanded}
-        />
-        <CheckBox
-          path='config.general.autoApprove'
-          label='Automatically approve annual disclosures that do not have any Financial Entities'
-          labelClassName={styles.label}
-          checked={generalConfig.autoApprove === undefined ? false : generalConfig.autoApprove}
-        />
-        <CheckBox
-          path='config.general.autoAddAdditionalReviewer'
-          label='Automatically assign additional reviewers when disclosure is submitted'
-          labelClassName={styles.label}
-          checked={generalConfig.autoAddAdditionalReviewer === undefined ? false : generalConfig.autoAddAdditionalReviewer}
-        />
+        <div className={styles.checkbox}>
+          <CheckBox
+            path='config.general.instructionsExpanded'
+            label='Expand instructions by default'
+            labelClassName={styles.label}
+            checked={generalConfig.instructionsExpanded}
+          />
+        </div>
+        <div className={styles.checkbox}>
+          <CheckBox
+            path='config.general.autoApprove'
+            label='Automatically approve annual disclosures that do not have any Financial Entities'
+            labelClassName={styles.label}
+            checked={generalConfig.autoApprove === undefined ? false : generalConfig.autoApprove}
+          />
+        </div>
+        <div className={styles.checkbox}>
+          <CheckBox
+            path='config.general.autoAddAdditionalReviewer'
+            label='Automatically assign additional reviewers when disclosure is submitted'
+            labelClassName={styles.label}
+            checked={generalConfig.autoAddAdditionalReviewer === undefined ? false : generalConfig.autoAddAdditionalReviewer}
+          />
+        </div>
       </Panel>
 
       <Panel title="Screening Validations">
-        <CheckBox
-          path='config.general.skipFinancialEntities'
-          label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the certification step.' //eslint-disable-line max-len
-          labelClassName={styles.label}
-          checked={generalConfig.skipFinancialEntities === undefined ? false : generalConfig.skipFinancialEntities}
-        />
-        <CheckBox
-          path='config.general.enforceFinancialEntities'
-          label='Enforce that a "Yes" answer to any screening question will require the reporter to include an active financial entity in their disclosure.' //eslint-disable-line max-len
-          labelClassName={styles.label}
-          checked={generalConfig.enforceFinancialEntities === undefined ? false : generalConfig.enforceFinancialEntities}
-        />
+        <div className={styles.checkbox}>
+          <CheckBox
+            path='config.general.skipFinancialEntities'
+            label='If reporter answers "No" to every "Yes/No" screening question and does not have an active Financial Entity, skip to the certification step.' //eslint-disable-line max-len
+            labelClassName={styles.label}
+            checked={generalConfig.skipFinancialEntities === undefined ? false : generalConfig.skipFinancialEntities}
+          />
+        </div>
+        <div className={styles.checkbox}>
+          <CheckBox
+            path='config.general.enforceFinancialEntities'
+            label='Enforce that a "Yes" answer to any screening question will require the reporter to include an active financial entity in their disclosure.' //eslint-disable-line max-len
+            labelClassName={styles.label}
+            checked={generalConfig.enforceFinancialEntities === undefined ? false : generalConfig.enforceFinancialEntities}
+          />
+        </div>
       </Panel>
     </ConfigPage>
   );
