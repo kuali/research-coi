@@ -47,7 +47,7 @@ const FIN_ENTITY_QUESTIONNAIRE_TYPE_CD = 2;
 const createDeleteQueries = (query, collection, tableProps) => {
   let sel = query(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
-    sel = sel.where(tableProps.where.key, tableProps.where.value);
+    sel = sel.where(tableProps.where);
   }
 
   return sel.then(results => {
@@ -69,12 +69,19 @@ const createDeleteQueries = (query, collection, tableProps) => {
 const createInsertQueries = (query, collection, tableProps) => {
   return Promise.all(
     collection.map(line => {
+      const tmpId = line.tmpId;
+      delete line.tmpId;
+      delete line.tmp_id;
       line.active = true;
       if (tableProps.parent) {
         line[tableProps.parent.key] = tableProps.parent.value;
       }
       return query(tableProps.table)
-        .insert(line, tableProps.pk);
+        .insert(line, tableProps.pk).then(result => {
+          line[tableProps.pk] = result[0];
+          line.tmpId = tmpId;
+          return line;
+        });
     })
   );
 };
@@ -82,6 +89,8 @@ const createInsertQueries = (query, collection, tableProps) => {
 const createUpdateQueries = (query, collection, tableProps) => {
   return Promise.all(
     collection.map(line => {
+      delete line.tmpId;
+      delete line.tmp_id;
       return query(tableProps.table)
         .update(line)
         .where(tableProps.pk, line[tableProps.pk]);
@@ -104,13 +113,26 @@ const createCollectionQueries = (query, collection, tableProps) => {
     createDeleteQueries(query, collection, tableProps),
     createInsertQueries(query, inserts, tableProps),
     createUpdateQueries(query, updates, tableProps)
-  ]);
+  ]).then((results) => {
+    const insertResults = results[1];
+    return collection.map(line => {
+      if (insertResults) {
+        const insert = insertResults.find(result => result.tmpId === line.tmpId);
+        if (insert) {
+          line.id = insert.id;
+        }
+      }
+      return line;
+    });
+  });
 };
 
-const convertQuestionFormat = (questions) => {
+const convertQuestionFormat = (questions, questionnaireId) => {
   return questions.map(question => {
     question.question = JSON.stringify(question.question);
+    question.questionnaire_id = questionnaireId;
     if (isNaN(question.id)) {
+      question.tmpId = question.id;
       delete question.id;
     }
     return question;
@@ -223,142 +245,167 @@ export async function getConfig(dbInfo, hostname, optionalTrx) {
   }
 }
 
-export const setConfig = (dbInfo, userId, body, hostname, optionalTrx) => {
-  const config = snakeizeJson(body);
-  const knex = getKnex(dbInfo);
-  const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
-  }
-  else {
-    query = knex;
-  }
+function updateParentIdOnChildren(children, updatedParents) {
+  return children.map(question => {
+    if (isNaN(question.parent)) {
+      const parent = updatedParents.find(p => {
+        return p.tmpId === question.parent;
+      });
 
-  const queries = [];
+      if (parent) {
+        question.parent = parent.id;
+      }
+    }
+    return question;
+  });
+}
 
-  config.matrix_types.forEach(type => {
-    queries.push(
-      query('relationship_category_type').update({
-        enabled: type.enabled,
-        type_enabled: type.type_enabled,
-        amount_enabled: type.amount_enabled,
-        destination_enabled: type.destination_enabled,
-        date_enabled: type.date_enabled,
-        reason_enabled: type.reason_enabled
-      })
-      .where('type_cd', type.type_cd)
-    );
+export async function saveScreeningQuestionnaire(query, questions) {
+  const questionnaire = await query
+    .select('id')
+    .from('questionnaire')
+    .limit(1)
+    .where('type_cd', 1)
+    .orderBy('version', 'desc');
 
-    queries.push(
-      createCollectionQueries(query, type.type_options, {pk: 'type_cd', table: 'relationship_type', where: {key: 'relationship_cd', value: type.type_cd}})
-    );
+  const convertedQuestions = convertQuestionFormat(questions, questionnaire[0].id);
+  const parents = convertedQuestions.filter(question => !question.parent);
+  const children = convertedQuestions.filter(question => question.parent);
 
-    queries.push(
-      createCollectionQueries(query, type.amount_options, {
-        pk: 'type_cd',
-        table: 'relationship_amount_type',
-        where: {
-          key: 'relationship_cd',
-          value: type.type_cd
-        }
-      })
-    );
+  const updatedParents = await createCollectionQueries(query, parents, {
+    pk: 'id',
+    table: 'questionnaire_question',
+    where() {
+      this.whereNull('parent').andWhere({'questionnaire_id': questionnaire[0].id});
+    }
   });
 
-  queries.push(
-    createCollectionQueries(query, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})
-  );
+  await createCollectionQueries(query, updateParentIdOnChildren(children, updatedParents), {
+    pk: 'id',
+    table: 'questionnaire_question',
+    where() {
+      this.whereNotNull('parent').andWhere({'questionnaire_id': questionnaire[0].id});
+    }
+  });
 
-  queries.push(
-    createCollectionQueries(query, config.disposition_types, {pk: 'type_cd', table: 'disposition_type'})
-  );
+}
 
-  queries.push(
-    createCollectionQueries(query, config.relationship_person_types, {pk: 'type_cd', table: 'relationship_person_type'})
-  );
 
-  queries.push(
-    createCollectionQueries(query, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'})
-  );
+export async function setConfig(dbInfo, userId, body, hostname, optionalTrx){
+  const knex = getKnex(dbInfo);
+  return knex.transaction(async (query) => {
+    if (optionalTrx) {
+      query = knex.transacting(optionalTrx);
+    }
 
-  queries.push(
-    createCollectionQueries(query, config.project_types, {pk: 'type_cd', table: 'project_type'})
-  );
+    const config = snakeizeJson(body);
+    const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
+    const queries = [];
 
-  queries.push(
-    createCollectionQueries(query, config.project_roles, {pk: 'type_cd', table: 'project_role'})
-  );
+    config.matrix_types.forEach(type => {
+      queries.push(
+        query('relationship_category_type').update({
+          enabled: type.enabled,
+          type_enabled: type.type_enabled,
+          amount_enabled: type.amount_enabled,
+          destination_enabled: type.destination_enabled,
+          date_enabled: type.date_enabled,
+          reason_enabled: type.reason_enabled
+        })
+          .where('type_cd', type.type_cd)
+      );
 
-  queries.push(
-    createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
-  );
+      queries.push(
+        createCollectionQueries(query, type.type_options, {
+          pk: 'type_cd',
+          table: 'relationship_type',
+          where: {'relationship_cd': type.type_cd}
+        })
+      );
 
-  queries.push(
-    query.select('*').from('questionnaire').limit(1).where('type_cd', 1).orderBy('version', 'desc')
-      .then(result => {
-        if (result[0]) {
-          return createCollectionQueries(query, convertQuestionFormat(config.questions.screening), {
-            pk: 'id',
-            table: 'questionnaire_question',
-            where: {key: 'questionnaire_id', value: result[0].id},
-            parent: {key: 'questionnaire_id', value: result[0].id}
-          });
-        }
+      queries.push(
+        createCollectionQueries(query, type.amount_options, {
+          pk: 'type_cd',
+          table: 'relationship_amount_type',
+          where: {'relationship_cd': type.type_cd}
+        })
+      );
+    });
 
-        return query('questionnaire').insert({version: 1, type_cd: 1}, 'id').then(id => {
-          return createCollectionQueries(query, convertQuestionFormat(config.questions.screening), {
-            pk: 'id',
-            table: 'questionnaire_question',
-            where: {key: 'questionnaire_id', value: id[0]},
-            parent: {key: 'questionnaire_id', value: id[0]}
-          });
-        });
+    queries.push(
+      createCollectionQueries(query, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})
+    );
+
+    queries.push(
+      createCollectionQueries(query, config.disposition_types, {pk: 'type_cd', table: 'disposition_type'})
+    );
+
+    queries.push(
+      createCollectionQueries(query, config.relationship_person_types, {
+        pk: 'type_cd',
+        table: 'relationship_person_type'
       })
-  );
+    );
 
-  queries.push(
-    query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc')
-      .then(result => {
-        if (result[0]) {
-          return createCollectionQueries(query, convertQuestionFormat(config.questions.entities), {
-            pk: 'id',
-            table: 'questionnaire_question',
-            where: {key: 'questionnaire_id', value: result[0].id},
-            parent: {key: 'questionnaire_id', value: result[0].id}
+    queries.push(
+      createCollectionQueries(query, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'})
+    );
+
+    queries.push(
+      createCollectionQueries(query, config.project_types, {pk: 'type_cd', table: 'project_type'})
+    );
+
+    queries.push(
+      createCollectionQueries(query, config.project_roles, {pk: 'type_cd', table: 'project_role'})
+    );
+
+    queries.push(
+      createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
+    );
+
+    await saveScreeningQuestionnaire(query, config.questions.screening);
+
+    queries.push(
+      query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc')
+        .then(result => {
+          if (result[0]) {
+            return createCollectionQueries(query, convertQuestionFormat(config.questions.entities, result[0].id), {
+              pk: 'id',
+              table: 'questionnaire_question',
+              where: {'questionnaire_id': result[0].id}
+            });
+          }
+          return query('questionnaire').insert({version: 1, type_cd: 2}, 'id').then(id => {
+            return createCollectionQueries(query, convertQuestionFormat(config.questions.entities, id[0]), {
+              pk: 'id',
+              table: 'questionnaire_question',
+              where: {'questionnaire_id': id[0]}
+            });
           });
-        }
-        return query('questionnaire').insert({version: 1, type_cd: 2}, 'id').then(id => {
-          return createCollectionQueries(query, convertQuestionFormat(config.questions.entities), {
-            pk: 'id',
-            table: 'questionnaire_question',
-            where: {key: 'questionnaire_id', value: id[0]},
-            parent: {key: 'questionnaire_id', value: id[0]}
-          });
+        })
+    );
+
+    if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
+      return handleTemplates(dbInfo, hostname, config.notification_templates).then(results => {
+        return Promise.all(results).then(templates => {
+          queries.push(
+            createCollectionQueries(query, templates, {pk: 'template_id', table: 'notification_template'})
+          );
+        }).then(() => {
+          return Promise.all(queries)
+            .then(() => {
+              return camelizeJson(config);
+            });
         });
-      })
-  );
-
-  if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-    return handleTemplates(dbInfo, hostname, config.notification_templates).then(results => {
-      return Promise.all(results).then(templates => {
-        queries.push(
-          createCollectionQueries(query, templates, {pk: 'template_id', table: 'notification_template'})
-        );
-      }).then(() => {
-        return Promise.all(queries)
-          .then(() => {
-            return camelizeJson(config);
-          });
       });
-    });
-  }
+    }
 
-  return Promise.all(queries)
-    .then(() => {
-      return camelizeJson(config);
-    });
-};
+    return Promise.all(queries)
+      .then(() => {
+        return camelizeJson(config);
+      });
+  });
+}
 
 export const archiveConfig = (dbInfo, userId, userName, config) => {
   const knex = getKnex(dbInfo);
