@@ -32,6 +32,7 @@ client/build
 .DS_Store
 
 .vscode
+jsconfig.json
 
 *.sublime-workspace
 *.sublime-project

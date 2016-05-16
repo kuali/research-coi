@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import {get} from 'lodash';
 import {
   getDispositionTypeString,
   getDeclarationTypeString
@@ -35,18 +36,30 @@ export default class DeclarationSummary extends React.Component {
   }
 
   showComments() {
+    const { declaration } = this.props;
     AdminActions.showCommentingPanel(
       DISCLOSURE_STEP.PROJECTS,
-      this.props.declaration.id,
-      `${COMMENT_TITLES.DECLARATION} ${this.props.declaration.projectTitle} - ${this.props.declaration.entityName}`
+      declaration.id,
+      `${COMMENT_TITLES.DECLARATION} ${declaration.projectTitle} - ${declaration.entityName}`
     );
   }
 
   render() {
+    const { configState } = this.context;
+    const {
+      declaration,
+      changedByPI,
+      className,
+      readonly,
+      configId,
+      options,
+      commentCount
+    } = this.props;
+
     let comment;
-    if (this.props.declaration.comments) {
+    if (declaration.comments) {
       comment = (
-        <span>{this.props.declaration.comments}</span>
+        <span>{declaration.comments}</span>
       );
     }
     else {
@@ -55,33 +68,28 @@ export default class DeclarationSummary extends React.Component {
       );
     }
 
-    const classes = classNames(
-      styles.container,
-      {[styles.highlighted]: this.props.changedByPI},
-      this.props.className
-    );
-
     let adminRelationship;
     let commentClass = styles.comments;
-    if (this.context.configState.config.general.adminRelationshipEnabled) {
-      if (this.props.readonly) {
-        const dispositionType = getDispositionTypeString(
-          this.context.configState,
-          this.props.declaration.adminRelationshipCd,
-          this.props.configId
-        );
+    if (get(configState, 'config.general.adminRelationshipEnabled')) {
+      if (readonly) {
         adminRelationship = (
           <span className={styles.adminRelationship}>
-            {dispositionType}
+            {
+              getDispositionTypeString(
+                configState,
+                declaration.adminRelationshipCd,
+                configId
+              )
+            }
           </span>
         );
       } else {
         adminRelationship = (
           <span className={styles.adminRelationship}>
             <AdminRelationshipSelector
-              options={this.props.options}
-              value={this.props.declaration.adminRelationshipCd}
-              declarationId={this.props.declaration.id}
+              options={options}
+              value={declaration.adminRelationshipCd}
+              declarationId={declaration.id}
             />
           </span>
         );
@@ -89,19 +97,26 @@ export default class DeclarationSummary extends React.Component {
       commentClass = classNames(styles.comments, styles.shortComment);
     }
 
-    const declarationType = getDeclarationTypeString(
-      this.context.configState,
-      this.props.declaration.typeCd,
-      this.props.configId
-    );
     return (
-      <div className={classes}>
+      <div className={
+        classNames(
+          styles.container,
+          {[styles.highlighted]: changedByPI},
+          className
+        )}
+      >
         <div>
           <span className={styles.entityName} style={{fontWeight: 'bold'}}>
-            {this.props.declaration.entityName}
+            {declaration.entityName}
           </span>
           <span className={styles.conflict} style={{fontWeight: 'bold'}}>
-            {declarationType}
+            {
+              getDeclarationTypeString(
+                configState,
+                declaration.typeCd,
+                configId
+              )
+            }
           </span>
           {adminRelationship}
           <span className={commentClass} style={{fontStyle: 'italic'}}>
@@ -109,7 +124,7 @@ export default class DeclarationSummary extends React.Component {
           </span>
         </div>
         <div className={styles.commentLink} onClick={this.showComments}>
-          <span className={styles.commentLabel}>COMMENT ({this.props.commentCount})</span>
+          <span className={styles.commentLabel}>COMMENT ({commentCount})</span>
         </div>
       </div>
     );
