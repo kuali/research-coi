@@ -38,3 +38,7 @@
   padding-left: 8px;
   font-size: 14px;
 }
+
+.requiredCheckbox {
+  padding: 0 0 10px 10px;
+}

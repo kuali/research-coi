@@ -53,12 +53,13 @@ export default class DisclosureRequirements extends React.Component {
       if (configState.applicationState.selectingProjectTypes) {
         const projectTypes = configState.config.projectTypes.map((projectType, index) => {
           return (
-            <CheckBox
-              path={`config.projectTypes[${index}].reqDisclosure`}
-              checked={projectType.reqDisclosure === 1}
-              label={projectType.description}
-              key={projectType.typeCd}
-            />
+            <span key={projectType.typeCd} className={styles.checkbox}>
+              <CheckBox
+                path={`config.projectTypes[${index}].reqDisclosure`}
+                checked={projectType.reqDisclosure === 1}
+                label={projectType.description}
+              />
+            </span>
           );
         });
 

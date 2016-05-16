@@ -129,12 +129,23 @@ export default class Declarations extends React.Component {
     if (config.general.dispositionsEnabled) {
       dispositionConfig = (
         <div>
-          <CheckBox
-            path="config.general.adminRelationshipEnabled"
-            label="Admin set financial entity-project relationship determination"
-            labelClassName={styles.label}
-            checked={config.general.adminRelationshipEnabled}
-          />
+          <div className={styles.checkbox}>
+            <CheckBox
+              path="config.general.adminRelationshipEnabled"
+              label="Admin set financial entity-project relationship determination"
+              labelClassName={styles.label}
+              checked={config.general.adminRelationshipEnabled}
+            />
+          </div>
+          <div className={styles.checkbox}>
+            <CheckBox
+              path="config.general.reviewerDispositionsEnabled"
+              label="Reviewers can recommend a Project Disposition"
+              labelClassName={styles.label}
+              checked={config.general.reviewerDispositionsEnabled}
+            />
+          </div>
+
           {dispositionTypes}
           {newDispositionType}
           <div
@@ -153,12 +164,15 @@ export default class Declarations extends React.Component {
     dispositionPanel = (
       <Panel title="Disposition Configuration">
         <div className={styles.types}>
-          <CheckBox
-            path="config.general.dispositionsEnabled"
-            label="COI Admin can set Project Disposition"
-            labelClassName={styles.label}
-            checked={config.general.dispositionsEnabled}
-          />
+          <div className={styles.checkbox}>
+            <CheckBox
+              path="config.general.dispositionsEnabled"
+              label="COI Admin can set Project Disposition"
+              labelClassName={styles.label}
+              checked={config.general.dispositionsEnabled}
+            />
+          </div>
+          
           {dispositionConfig}
           <div style={{paddingBottom: 10}}/>
         </div>
