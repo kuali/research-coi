@@ -23,7 +23,6 @@ import {DisclosureListItem} from '../disclosure-list-item';
 import {DisclosureFilterSearch} from '../../disclosure-filter-search';
 import SearchFilterGroup from '../../search-filter-group';
 import {AdminActions} from '../../../../actions/admin-actions';
-import UserInfoStore from '../../../../stores/user-info-store';
 import {BlueButton} from '../../../blue-button';
 import {
   getAdminDisclosureStatusString,
@@ -32,10 +31,6 @@ import {
 import AdminMenu from '../../../admin-menu';
 
 export class DisclosureList extends React.Component {
-  constructor() {
-    super();
-  }
-
   componentDidMount() {
     const theList = this.refs.theList;
     let enabled = true;
@@ -96,7 +91,8 @@ export class DisclosureList extends React.Component {
       );
     }
 
-    const {configState} = this.context;
+    const { configState } = this.context;
+
     const possibleStatuses = [
       {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
       {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
@@ -150,7 +146,7 @@ export class DisclosureList extends React.Component {
 
     return (
       <div className={classes}>
-        <AdminMenu role={UserInfoStore.getState().userInfo.coiRole} style={{padding: '32px 0px'}} />
+        <AdminMenu style={{padding: '32px 0px'}} />
         <div style={{width: 320}}>
           <DisclosureFilterSearch
             query={this.props.filters.search}
@@ -180,5 +176,6 @@ export class DisclosureList extends React.Component {
 }
 
 DisclosureList.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };

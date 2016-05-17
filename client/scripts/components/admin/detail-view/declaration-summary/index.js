@@ -24,7 +24,11 @@ import {
   getDeclarationTypeString
 } from '../../../../stores/config-store';
 import {AdminActions} from '../../../../actions/admin-actions';
-import {DISCLOSURE_STEP, COMMENT_TITLES} from '../../../../../../coi-constants';
+import {
+  DISCLOSURE_STEP,
+  COMMENT_TITLES,
+  ROLES
+} from '../../../../../../coi-constants';
 import classNames from 'classnames';
 import AdminRelationshipSelector from '../admin-relationship-selector';
 
@@ -45,7 +49,7 @@ export default class DeclarationSummary extends React.Component {
   }
 
   render() {
-    const { configState } = this.context;
+    const { configState, userInfo } = this.context;
     const {
       declaration,
       changedByPI,
@@ -70,31 +74,33 @@ export default class DeclarationSummary extends React.Component {
 
     let adminRelationship;
     let commentClass = styles.comments;
-    if (get(configState, 'config.general.adminRelationshipEnabled')) {
-      if (readonly) {
-        adminRelationship = (
-          <span className={styles.adminRelationship}>
-            {
-              getDispositionTypeString(
-                configState,
-                declaration.adminRelationshipCd,
-                configId
-              )
-            }
-          </span>
-        );
-      } else {
-        adminRelationship = (
-          <span className={styles.adminRelationship}>
-            <AdminRelationshipSelector
-              options={options}
-              value={declaration.adminRelationshipCd}
-              declarationId={declaration.id}
-            />
-          </span>
-        );
+    if (userInfo.coiRole === ROLES.ADMIN) {
+      if (get(configState, 'config.general.adminRelationshipEnabled')) {
+        if (readonly) {
+          adminRelationship = (
+            <span className={styles.adminRelationship}>
+              {
+                getDispositionTypeString(
+                  configState,
+                  declaration.adminRelationshipCd,
+                  configId
+                )
+              }
+            </span>
+          );
+        } else {
+          adminRelationship = (
+            <span className={styles.adminRelationship}>
+              <AdminRelationshipSelector
+                options={options}
+                value={declaration.adminRelationshipCd}
+                declarationId={declaration.id}
+              />
+            </span>
+          );
+        }
+        commentClass = classNames(styles.comments, styles.shortComment);
       }
-      commentClass = classNames(styles.comments, styles.shortComment);
     }
 
     return (
@@ -132,5 +138,6 @@ export default class DeclarationSummary extends React.Component {
 }
 
 DeclarationSummary.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };

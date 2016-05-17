@@ -58,6 +58,7 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
       'd.type_cd as typeCd',
       'd.status_cd as statusCd',
       'd.id',
+      'd.config_id as configId',
       'ar.user_id as userId',
       'ar.disclosure_id as disclosureId',
       'ar.name',

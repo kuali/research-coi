@@ -19,7 +19,6 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import {SizeAwareComponent} from '../size-aware-component';
-import ColorStore from '../../stores/color-store';
 import ConfigStore from '../../stores/config-store';
 import UserInfoStore from '../../stores/user-info-store';
 import aboutStyles from './about-style';
@@ -30,23 +29,26 @@ class App extends SizeAwareComponent {
   constructor() {
     super();
     this.state = {
-      version: ''
+      version: '',
+      configState: ConfigStore.getState(),
+      userInfoState: UserInfoStore.getState()
     };
     this.onChange = this.onChange.bind(this);
   }
 
   getChildContext() {
-    return {configState: this.state.configState};
+    return {
+      configState: this.state.configState,
+      userInfo: this.state.userInfoState.userInfo
+    };
   }
   
   componentDidMount() {
-    ColorStore.listen(this.onChange);
     UserInfoStore.listen(this.onChange);
     ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
-    ColorStore.unlisten(this.onChange);
     UserInfoStore.unlisten(this.onChange);
     ConfigStore.unlisten(this.onChange);
   }
@@ -54,7 +56,8 @@ class App extends SizeAwareComponent {
   onChange() {
     this.setState({
       version: UserInfoStore.getState().userInfo.version,
-      configState: ConfigStore.getState()
+      configState: ConfigStore.getState(),
+      userInfoState: UserInfoStore.getState()
     });
     this.forceUpdate();
   }
@@ -74,7 +77,8 @@ class App extends SizeAwareComponent {
 }
 
 App.childContextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };
 
 function renderApp() {

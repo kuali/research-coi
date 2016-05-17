@@ -25,7 +25,7 @@ import EntitiesQuestionnaire from './entities/questionnaire';
 import RelationshipCustomization from './relationship/relationship';
 import DeclarationsCustomization from './declarations/declarations';
 import CertificationCustomization from './certification/certification';
-import ColorStore from '../../stores/color-store';
+import UserInfoStore from '../../stores/user-info-store';
 import ConfigStore from '../../stores/config-store';
 import DisclosureRequirements from './disclosure-requirements/disclosure-requirements';
 import CustomizeNotifications from './customize-notifications/customize-notifications';
@@ -36,29 +36,34 @@ class App extends React.Component {
     super();
 
     this.state = {
-      configState: ConfigStore.getState()
+      configState: ConfigStore.getState(),
+      userInfoState: UserInfoStore.getState()
     };
 
     this.onChange = this.onChange.bind(this);
   }
 
   getChildContext() {
-    return {configState: this.state.configState};
+    return {
+      configState: this.state.configState,
+      userInfo: this.state.userInfoState.userInfo
+    };
   }
   
   componentDidMount() {
-    ColorStore.listen(this.onChange);
+    UserInfoStore.listen(this.onChange);
     ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
-    ColorStore.unlisten(this.onChange);
+    UserInfoStore.unlisten(this.onChange);
     ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
     this.setState({
-      configState: ConfigStore.getState()
+      configState: ConfigStore.getState(),
+      userInfoState: UserInfoStore.getState()
     });
 
     this.forceUpdate();
@@ -82,7 +87,8 @@ class App extends React.Component {
 }
 
 App.childContextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };
 
 function renderApp() {
@@ -91,7 +97,6 @@ function renderApp() {
 }
 
 ConfigStore.listen(renderApp);
-
 
 window.colorBlindModeOn = false;
 if (window.localStorage.getItem('colorBlindModeOn') === 'true') {

@@ -33,7 +33,6 @@ import {
   ROLES,
   DISCLOSURE_STATUS
 } from '../../../../../../coi-constants';
-import UserInfoStore from '../../../../stores/user-info-store';
 import AdminMenu from '../../../admin-menu';
 import moment from 'moment';
 
@@ -48,7 +47,6 @@ export class Dashboard extends React.Component {
       disclosureSummaries: storeState.disclosureSummariesForUser,
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
-      userInfo: UserInfoStore.getState().userInfo,
       toReview: storeState.disclosuresNeedingReview
     };
 
@@ -73,7 +71,6 @@ export class Dashboard extends React.Component {
       disclosureSummaries: storeState.disclosureSummariesForUser,
       projects: storeState.projects,
       annualDisclosure: storeState.annualDisclosure,
-      userInfo: UserInfoStore.getState().userInfo,
       toReview: storeState.disclosuresNeedingReview
     });
   }
@@ -81,11 +78,12 @@ export class Dashboard extends React.Component {
   render() {
     const {
       disclosureSummaries,
-      userInfo,
       applicationState,
       projects,
       toReview
     } = this.state;
+
+    const { userInfo } = this.context;
 
     const isAdminOrReviewer = userInfo &&
       (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER);
@@ -159,10 +157,7 @@ export class Dashboard extends React.Component {
     let adminMenu;
     if (isAdminOrReviewer ) {
       adminMenu = (
-        <AdminMenu
-          role={userInfo.coiRole}
-          className={`${styles.override} ${styles.adminMenu}`}
-        />
+        <AdminMenu className={`${styles.override} ${styles.adminMenu}`} />
       );
     }
 
@@ -249,5 +244,6 @@ export class Dashboard extends React.Component {
 }
 
 Dashboard.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };

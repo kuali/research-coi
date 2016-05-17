@@ -90,7 +90,7 @@ export default function Sidebar(props, {configState}) {
 
   return (
     <span className={classNames(styles.container, props.className)}>
-      <AdminMenu role={ROLES.ADMIN} style={{marginBottom: 34, padding: '23px 0px'}} />
+      <AdminMenu style={{marginBottom: 34, padding: '23px 0px'}} />
       {stepsJsx}
     </span>
   );
