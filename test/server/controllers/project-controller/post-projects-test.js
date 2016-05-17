@@ -72,14 +72,15 @@ async function insertProject(project) {
   return id[0];
 }
 
-async function insertProjectPerson(projectPerson, projectId) {
+async function insertProjectPerson(projectPerson, projectId, isNew) {
   const id = await knex('project_person')
     .insert({
       project_id: projectId,
       person_id: projectPerson.personId,
       source_person_type: projectPerson.sourcePersonType,
       role_cd: projectPerson.roleCode,
-      active: projectPerson.active
+      active: projectPerson.active,
+      new: isNew
     },'id');
   return id[0];
 }
@@ -271,7 +272,7 @@ describe('POST api/coi/projects', () => {
       project = createProject(5);
       projectId = await insertProject(project);
       projectPerson = createPerson('5','PI', true);
-      await insertProjectPerson(projectPerson, projectId);
+      await insertProjectPerson(projectPerson, projectId, true);
       await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '5');
     });
 
@@ -304,7 +305,7 @@ describe('POST api/coi/projects', () => {
       project = createProject(6);
       projectId = await insertProject(project);
       projectPerson = createPerson('6','PI', true);
-      await insertProjectPerson(projectPerson, projectId);
+      await insertProjectPerson(projectPerson, projectId, true);
       await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '6');
     });
 
@@ -340,9 +341,9 @@ describe('POST api/coi/projects', () => {
       project = createProject(7);
       projectId = await insertProject(project);
       projectPerson = createPerson('7','PI', true);
-      projectPersonId = await insertProjectPerson(projectPerson, projectId);
+      projectPersonId = await insertProjectPerson(projectPerson, projectId, true);
       projectPerson1 = createPerson('8','PI', true);
-      projectPersonId1 = await insertProjectPerson(projectPerson1, projectId);
+      projectPersonId1 = await insertProjectPerson(projectPerson1, projectId, true);
       await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '7');
       await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '8');
     });
@@ -391,7 +392,7 @@ describe('POST api/coi/projects', () => {
       project = createProject(9);
       projectId = await insertProject(project);
       projectPerson = createPerson('9','PI', false);
-      await insertProjectPerson(projectPerson, projectId);
+      await insertProjectPerson(projectPerson, projectId, true);
       await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '9');
     });
 
@@ -441,6 +442,34 @@ describe('POST api/coi/projects', () => {
 
     it('should not update disclosure status', async function() {
       await testDisclosureStatus('10', DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
+    });
+  });
+
+  describe('existing project update on old project ', () => {
+    let projectId;
+    let project;
+    let projectPerson;
+    before(async () => {
+      project = createProject(11);
+      projectId = await insertProject(project);
+      projectPerson = createPerson('11','PI', false);
+      await insertProjectPerson(projectPerson, projectId, false);
+      await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '11');
+    });
+
+    it('should return an OK status with no content', async function() {
+      project.title = 'Panda Dogs';
+      project.persons = [projectPerson];
+      const response = await post(project);
+      assert.deepEqual({},response.body);
+    });
+
+    it('should update project record', async function() {
+      await testProject(projectId, 'Panda Dogs');
+    });
+
+    it('should not update disclosure status', async function() {
+      await testDisclosureStatus('11', DISCLOSURE_STATUS.UP_TO_DATE);
     });
   });
 

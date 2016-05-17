@@ -119,7 +119,7 @@ async function disableAllPersonsForProject(trx, projectId, req) {
   await Promise.all(reverts);
 }
 
-async function updateProjectPerson(trx, person, project, isRequired, req) {
+async function updateProjectPerson(trx, person, project, isRequired, isNew, req) {
   await trx('project_person')
     .update({'active': true, 'role_cd': person.roleCode})
     .where({
@@ -127,10 +127,12 @@ async function updateProjectPerson(trx, person, project, isRequired, req) {
       'source_person_type': person.sourcePersonType,
       'project_id': project.id
     });
-  if (isRequired) {
-    await updateDisclosureStatus(trx, person, project, req);
-  } else {
-    await revertDisclosureStatus(trx, person, req);
+  if (isNew === 1) {
+    if (isRequired) {
+      await updateDisclosureStatus(trx, person, project, req);
+    } else {
+      await revertDisclosureStatus(trx, person, req);
+    }
   }
 }
 
@@ -173,15 +175,16 @@ async function deactivateProjectPersons(trx, existingPersons, persons, projectId
 
 async function saveProjectPersons(trx, project, req) {
   const existingPersons = await trx('project_person')
-    .select('person_id as personId', 'source_person_type')
+    .select('person_id as personId', 'source_person_type', 'new')
     .where('project_id', project.id);
   if (project.persons && project.persons.length > 0) {
     let queries = project.persons.map(async person => {
       const isRequired = await isProjectRequired(req, project, person);
-      if (existingPersons.find(pr => {
+      const existingPerson = existingPersons.find(pr => {
         return pr.personId === person.personId && pr.source_person_type === person.sourcePersonType;
-      })) {
-        return await updateProjectPerson(trx, person, project, isRequired, req);
+      });
+      if (existingPerson) {
+        return await updateProjectPerson(trx, person, project, isRequired, existingPerson.new, req);
       }
       return await insertProjectPerson(trx, person, project, isRequired, req);
     });
