@@ -63,7 +63,7 @@ export default class DeclarationSummary extends React.Component {
     AdminActions.updateReviewerRelationship(
       {
         declarationId: this.props.declaration.id,
-        reviewerRelationshipCd: newValue
+        dispositionCd: newValue
       }
     );
   }
@@ -129,7 +129,7 @@ export default class DeclarationSummary extends React.Component {
         );
       }
       commentClass = classNames(styles.comments, styles.shortComment);
-    } else if (isReviewer && get(configState, 'config.general.reviewerRelationshipEnabled')) {
+    } else if (isReviewer && get(configState, 'config.general.reviewerDispositionsEnabled')) {
       if (readonly) {
         relationship = (
           <span className={styles.disposition}>

@@ -746,7 +746,7 @@ class _AdminStore {
     const { id } = this.applicationState.selectedDisclosure;
     createRequest()
       .put(`/api/coi/reviewers/${id}/recommend/${declarationId}`)
-      .send(dispositionCd)
+      .send({dispositionCd})
       .end(processResponse(err => {
         if (!err) {
           this.emitChange();
