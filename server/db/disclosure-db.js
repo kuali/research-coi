@@ -25,7 +25,18 @@ import { getProjects } from './project-db';
 import { filterProjects } from '../services/project-service/project-service';
 import * as FileService from '../services/file-service/file-service';
 import {camelizeJson} from './json-utils';
-import {COIConstants, NO_DISPOSITION} from '../../coi-constants';
+import {
+  NO_DISPOSITION,
+  ROLES,
+  RELATIONSHIP_STATUS,
+  FILE_TYPE,
+  LANES,
+  ENTITY_RELATIONSHIP,
+  DISCLOSURE_STATUS,
+  DATE_TYPE,
+  SYSTEM_USER,
+  STATE_TYPE
+} from '../../coi-constants';
 
 const MILLIS = 1000;
 const SECONDS = 60;
@@ -42,7 +53,7 @@ try {
 }
 catch (err) {
   getKnex = require('./connection-manager').default;
-  lane = process.env.LANE || COIConstants.LANES.PRODUCTION;
+  lane = process.env.LANE || LANES.PRODUCTION;
 }
 
 export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEntity, files) => {
@@ -60,7 +71,7 @@ export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financial
           active: financialEntity.active,
           name: financialEntity.name,
           description: financialEntity.description,
-          status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
+          status: RELATIONSHIP_STATUS.IN_PROGRESS
         }, 'id')
         .then(id => {
           financialEntity.id = id[0];
@@ -76,11 +87,11 @@ export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financial
                   type_cd: !relationship.typeCd ? null : relationship.typeCd,
                   amount_cd: !relationship.amountCd ? null : relationship.amountCd,
                   comments: relationship.comments,
-                  status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
+                  status: RELATIONSHIP_STATUS.IN_PROGRESS
                 }, 'id')
                 .then(relationshipId => {
                   relationship.id = relationshipId[0];
-                  if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
+                  if (relationship.relationshipCd === ENTITY_RELATIONSHIP.TRAVEL) {
                     return knex('travel_relationship')
                       .insert({
                         relationship_id: relationshipId[0],
@@ -116,7 +127,7 @@ export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financial
           financialEntity.files = [];
           files.forEach(file => {
             const fileData = {
-              file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+              file_type: FILE_TYPE.FINANCIAL_ENTITY,
               ref_id: financialEntity.id,
               type: file.mimetype,
               key: file.filename,
@@ -214,11 +225,11 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
                     type_cd: !relationship.typeCd ? null : relationship.typeCd,
                     amount_cd: !relationship.amountCd ? null : relationship.amountCd,
                     comments: relationship.comments,
-                    status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
+                    status: RELATIONSHIP_STATUS.IN_PROGRESS
                   }, 'id')
                   .then(relationshipId => {
                     relationship.id = relationshipId[0];
-                    if (relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
+                    if (relationship.relationshipCd === ENTITY_RELATIONSHIP.TRAVEL) {
                       return knex('travel_relationship')
                         .insert({
                           relationship_id: relationshipId[0],
@@ -264,7 +275,7 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
               .from('file')
               .where({
                 ref_id: entityId,
-                file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
+                file_type: FILE_TYPE.FINANCIAL_ENTITY
               })
               .then(results => {
                 if (results) {
@@ -297,7 +308,7 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
 
           files.forEach(file => {
             const fileData = {
-              file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+              file_type: FILE_TYPE.FINANCIAL_ENTITY,
               ref_id: entityId,
               type: file.mimetype,
               key: file.filename,
@@ -348,7 +359,7 @@ export const saveDeclaration = (dbInfo, userId, disclosureId, record) => {
 
 export async function saveExistingDeclaration(dbInfo, userInfo, disclosureId, declarationId, record) {
   const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId);
-  if (!isSubmitter && userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+  if (!isSubmitter && userInfo.coiRole !== ROLES.ADMIN) {
     throw Error(`Attempt by userId ${userInfo.schoolId} to save a declaration on disclosure ${disclosureId} which isnt theirs`);
   }
 
@@ -425,11 +436,11 @@ const retrieveComments = (dbInfo, userInfo, disclosureId) => {
     'disclosure_id': disclosureId
   };
 
-  if (userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+  if (userInfo.coiRole === ROLES.REVIEWER) {
     criteria.reviewer_visible = true;
   }
 
-  if (userInfo.coiRole === COIConstants.ROLES.USER) {
+  if (userInfo.coiRole === ROLES.USER) {
     criteria.pi_visible = true;
   }
 
@@ -499,7 +510,7 @@ export const addComment = (dbInfo, userInfo, comment) => {
       user_role: userInfo.coiRole,
       date: new Date(),
       pi_visible: comment.piVisible,
-      reviewer_visible: userInfo.coiRole === COIConstants.ROLES.REVIEWER ? true : comment.reviewerVisible
+      reviewer_visible: userInfo.coiRole === ROLES.REVIEWER ? true : comment.reviewerVisible
     }, 'id').then(() => {
       const statements = [
         retrieveComments(dbInfo, userInfo, comment.disclosureId)
@@ -538,8 +549,8 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
     'id': disclosureId
   };
 
-  if (userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
-    userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
+  if (userInfo.coiRole !== ROLES.ADMIN &&
+    userInfo.coiRole !== ROLES.REVIEWER) {
     criteria.user_id = userInfo.schoolId;
   }
 
@@ -575,13 +586,12 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     knex.select('e.id', 'e.disclosure_id as disclosureId', 'e.active', 'e.name', 'e.description')
       .from('fin_entity as e')
       .where('disclosure_id', disclosureId)
-      .andWhereNot('status', COIConstants.RELATIONSHIP_STATUS.PENDING),
+      .andWhereNot('status', RELATIONSHIP_STATUS.PENDING),
     knex.select('qa.id as id', 'qa.question_id as questionId', 'qa.answer as answer')
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
-    knex
-      .select(
+    knex.select(
         'd.id as id',
         'd.project_id as projectId',
         'd.fin_entity_id as finEntityId',
@@ -610,7 +620,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     retrieveComments(dbInfo, userInfo, disclosureId),
     knex.select('id', 'name', 'key', 'file_type as fileType')
       .from('file')
-      .whereIn('file_type', [COIConstants.FILE_TYPE.DISCLOSURE, COIConstants.FILE_TYPE.ADMIN])
+      .whereIn('file_type', [FILE_TYPE.DISCLOSURE, FILE_TYPE.ADMIN])
       .andWhere({
         ref_id: disclosureId
       }),
@@ -618,7 +628,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       .from('file')
       .where({
         ref_id: disclosureId,
-        file_type: COIConstants.FILE_TYPE.MANAGEMENT_PLAN
+        file_type: FILE_TYPE.MANAGEMENT_PLAN
       }),
     knex('additional_reviewer')
       .select('id', 'disclosure_id as disclosureId', 'user_id as userId', 'name', 'email', 'title', 'unit_name as unitName', 'active', 'dates')
@@ -643,8 +653,8 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     isOwner,
     latestConfig
   ]) => {
-    if (userInfo.coiRole !== COIConstants.ROLES.ADMIN &&
-      userInfo.coiRole !== COIConstants.ROLES.REVIEWER) {
+    if (userInfo.coiRole !== ROLES.ADMIN &&
+      userInfo.coiRole !== ROLES.REVIEWER) {
       if (!isOwner) {
         throw Error(`Attempt by ${userInfo.username} to load disclosure ${disclosureId} which is not theirs`);
       }
@@ -678,7 +688,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         )
         .from('relationship as r')
         .whereIn('fin_entity_id', disclosure.entities.map(entity => { return entity.id; }))
-        .andWhereNot('status', COIConstants.RELATIONSHIP_STATUS.PENDING)
+        .andWhereNot('status', RELATIONSHIP_STATUS.PENDING)
         .then(relationships => {
           return knex('travel_relationship')
             .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
@@ -714,7 +724,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       knex.select('*')
         .from('file')
         .whereIn('ref_id', disclosure.entities.map(entity => { return entity.id; }))
-        .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY)
+        .andWhere('file_type', FILE_TYPE.FINANCIAL_ENTITY)
         .then(files => {
           disclosure.entities.forEach(entity => {
             entity.files = files.filter(file => {
@@ -922,7 +932,7 @@ const updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, n
             results.map(result => {
               const update = {};
               update.status = newStatus;
-              if (newStatus === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
+              if (newStatus === RELATIONSHIP_STATUS.DISCLOSED) {
                 update.disclosed_date = new Date();
               }
 
@@ -958,10 +968,10 @@ const approveDisclosure = (knex, disclosureId, expiredDate, userId, dbInfo, auth
         const newActiveProjects = requiredProjects.filter(project => {
           return project.new === 1;
         });
-        let status = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+        let status = DISCLOSURE_STATUS.UP_TO_DATE;
 
         if (newActiveProjects && newActiveProjects.length > 0) {
-          status = COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED;
+          status = DISCLOSURE_STATUS.UPDATE_REQUIRED;
         }
 
         return knex('disclosure')
@@ -1078,7 +1088,7 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
     knex = getKnex(dbInfo);
   }
 
-  disclosure.statusCd = COIConstants.DISCLOSURE_STATUS.UP_TO_DATE;
+  disclosure.statusCd = DISCLOSURE_STATUS.UP_TO_DATE;
   disclosure.lastReviewDate = new Date();
 
   return Promise.all([
@@ -1088,7 +1098,7 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
     deleteAnswersForDisclosure(knex, disclosureId),
     deletePIReviewsForDisclsoure(knex, disclosureId),
     deleteAdditionalReviewers(knex, disclosureId),
-    updateEntitiesAndRelationshipsStatuses(knex, disclosureId, COIConstants.RELATIONSHIP_STATUS.PENDING, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS),
+    updateEntitiesAndRelationshipsStatuses(knex, disclosureId, RELATIONSHIP_STATUS.PENDING, RELATIONSHIP_STATUS.IN_PROGRESS),
     resetProjectDispositions(knex, disclosureId),
     resetAdminRelationships(knex, disclosureId)
   ])
@@ -1104,7 +1114,7 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
 const updateStatus = (knex, name, disclosureId) => {
   return knex('disclosure')
   .update({
-    status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+    status_cd: DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
     submitted_by: name,
     submitted_date: new Date()
   })
@@ -1133,10 +1143,10 @@ async function addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, uni
       email: reviewer.email,
       active: true,
       dates: JSON.stringify([{
-        type: COIConstants.DATE_TYPE.ASSIGNED,
+        type: DATE_TYPE.ASSIGNED,
         date: new Date()
       }]),
-      assigned_by: COIConstants.SYSTEM_USER
+      assigned_by: SYSTEM_USER
     });
   }));
 }
@@ -1151,7 +1161,7 @@ export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
 
   return knex.transaction( async (trx) => {
     await updateStatus(trx, userInfo.name, disclosureId);
-    await updateEntitiesAndRelationshipsStatuses(trx, disclosureId, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.DISCLOSED);
+    await updateEntitiesAndRelationshipsStatuses(trx, disclosureId, RELATIONSHIP_STATUS.IN_PROGRESS, RELATIONSHIP_STATUS.DISCLOSED);
     await updateProjects(trx, userInfo.schoolId);
 
     const disclosure = await get(dbInfo, userInfo, disclosureId, trx);
@@ -1166,7 +1176,7 @@ export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
     if (generalConfig.autoApprove) {
       const count = await trx('fin_entity').count('id as count').where({active: true, disclosure_id: disclosureId});
       if (count[0].count === 0) {
-        await approve(dbInfo, disclosure, COIConstants.SYSTEM_USER, disclosureId, authHeader, trx);
+        await approve(dbInfo, disclosure, SYSTEM_USER, disclosureId, authHeader, trx);
       }
     }
   });
@@ -1183,7 +1193,7 @@ export const reject = (dbInfo, userInfo, disclosureId) => {
   return knex.transaction(trx => {
     return trx('disclosure')
       .update({
-        status_cd: COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED,
+        status_cd: DISCLOSURE_STATUS.REVISION_REQUIRED,
         last_review_date: new Date()
       })
       .where('id', disclosureId).then(() => {
@@ -1276,7 +1286,7 @@ export const getCurrentState = (dbInfo, userInfo, disclosureId) => {
         .select('state')
         .from('state')
         .where({
-          key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+          key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
           user_id: userInfo.schoolId
         })
         .then(stateFound => {
@@ -1299,7 +1309,7 @@ export const saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
             state: JSON.stringify(state)
           })
           .where({
-            key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+            key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
             user_id: userInfo.schoolId
           }).then(() => {
             return;
@@ -1308,7 +1318,7 @@ export const saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
 
       return knex('state')
         .insert({
-          key: COIConstants.STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+          key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
           user_id: userInfo.schoolId,
           state: JSON.stringify(state)
         }, 'id').then(() => {
