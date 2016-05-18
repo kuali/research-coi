@@ -653,17 +653,42 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     isOwner,
     latestConfig
   ]) => {
-    if (userInfo.coiRole !== ROLES.ADMIN &&
-      userInfo.coiRole !== ROLES.REVIEWER) {
+    const { coiRole } = userInfo;
+    if (coiRole !== ROLES.ADMIN && coiRole !== ROLES.REVIEWER) {
       if (!isOwner) {
         throw Error(`Attempt by ${userInfo.username} to load disclosure ${disclosureId} which is not theirs`);
       }
     }
 
+    const phaseTwoSteps = [];
     disclosure = disclosureRecords[0];
     disclosure.entities = entityRecords;
     disclosure.answers = answerRecords;
     disclosure.declarations = declarationRecords;
+    if (coiRole === ROLES.REVIEWER) {
+      phaseTwoSteps.push(
+        knex.select(
+            'r.declaration_id as declarationId',
+            'r.disposition_type_id as dispositionTypeId'
+          )
+          .from('reviewer_recommendation as r')
+          .innerJoin('additional_reviewer as a', 'r.additional_reviewer_id', 'a.id')
+          .where({
+            'a.user_id': userInfo.schoolId,
+            'a.disclosure_id': disclosureId
+          })
+          .then(recommendations => {
+            recommendations.forEach(recommendation => {
+              const decl = disclosure.declarations.find(declaration => {
+                return declaration.id === recommendation.declarationId;
+              });
+              if (decl) {
+                decl.reviewerRelationshipCd = recommendation.dispositionTypeId;
+              }
+            });
+          })
+      );
+    }
     disclosure.comments = commentRecords;
     disclosure.files = fileRecords;
     disclosure.managementPlan = managementPlans;
@@ -675,9 +700,9 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     if (disclosure.answers.length < 1) {
       disclosure.configId = latestConfig[0].id;
     }
-    return Promise.all([
-      knex
-        .select(
+    
+    phaseTwoSteps.push(
+      knex.select(
           'r.id',
           'r.fin_entity_id as finEntityId',
           'r.relationship_cd as relationshipCd',
@@ -706,7 +731,10 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
                 });
               });
             });
-        }),
+        })
+    );
+
+    phaseTwoSteps.push(
       knex.select('qa.question_id as questionId', 'qa.answer as answer', 'fea.fin_entity_id as finEntityId')
         .from('questionnaire_answer as qa' )
         .innerJoin('fin_entity_answer as fea', 'fea.questionnaire_answer_id', 'qa.id')
@@ -721,6 +749,9 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
             });
           });
         }),
+    );
+
+    phaseTwoSteps.push(
       knex.select('*')
         .from('file')
         .whereIn('ref_id', disclosure.entities.map(entity => { return entity.id; }))
@@ -732,8 +763,13 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
             });
           });
         }),
+    );
+
+    phaseTwoSteps.push(
       knex('disclosure').update({config_id: disclosure.configId}).where({id: disclosure.id})
-    ]).then(() => {
+    );
+    
+    return Promise.all(phaseTwoSteps).then(() => {
       return disclosure;
     });
   });

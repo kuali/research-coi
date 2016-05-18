@@ -743,15 +743,14 @@ class _AdminStore {
   }
 
   updateReviewerRelationship({declarationId, dispositionCd}) {
-    const { id } = this.applicationState.selectedDisclosure;
+    const { id, declarations } = this.applicationState.selectedDisclosure;
+    const declaration = declarations.find(d => d.id === declarationId);
+    declaration.reviewerRelationshipCd = dispositionCd;
+    this.emitChange();
     createRequest()
       .put(`/api/coi/reviewers/${id}/recommend/${declarationId}`)
       .send({dispositionCd})
-      .end(processResponse(err => {
-        if (!err) {
-          this.emitChange();
-        }
-      }));
+      .end(processResponse(() => {}));
   }
 }
 

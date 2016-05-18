@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router';
-import { ROLES, NOTIFICATIONS_MODE } from '../../../../../coi-constants';
+import { NOTIFICATIONS_MODE } from '../../../../../coi-constants';
 import {getNotificationsMode} from '../../../stores/config-store';
 
 import AdminMenu from '../../admin-menu';
