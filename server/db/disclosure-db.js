@@ -789,6 +789,15 @@ export async function getSummariesForReview(dbInfo, sortColumn, sortDirection, s
     });
   }
 
+  if (filters.reviewer) {
+    query.leftJoin('additional_reviewer as ar',
+      'd.id',
+      'ar.disclosure_id'
+    );
+
+    query.where('ar.user_id', 'in', filters.reviewer);
+  }
+
   query.select(columnsToSelect);
 
   if (filters.date) {

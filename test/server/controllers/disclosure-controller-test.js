@@ -192,45 +192,6 @@ describe('DisclosureController',async () => {
     });
   });
 
-  describe('/api/coi/disclosure-summaries', async () => {
-    it('user should not be able to retrieve disclosure summaries', async function () {
-      await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer cate`)
-        .expect(FORBIDDEN);
-    });
-
-    it('reviewer should be able to retrieve disclosure summaries when they are a reviewer', async function () {
-      const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer ${reviewer}`)
-        .expect(OK);
-
-      const summaries = response.body;
-      assert.equal(summaries.length, 1);
-    });
-
-    it('reviewer should not be able to retrieve disclosure summaries when they are not a reviewer', async function () {
-      const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer reviewer1234`)
-        .expect(OK);
-
-      const summaries = response.body;
-      assert.equal(summaries.length, 0);
-    });
-
-    it('admin should be able to retrieve disclosures', async function () {
-      const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer admin`)
-        .expect(OK);
-
-      const summaries = response.body;
-      assert.equal(summaries.length, 2);
-    });
-  });
-
   describe('/api/coi/disclosures/:id/comments', async () => {
     it('user should not be able add comments', async function () {
       await request(app.run())
