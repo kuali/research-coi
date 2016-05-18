@@ -17,32 +17,46 @@
  */
 
 import React from 'react';
-import { AdminActions } from '../../../../actions/admin-actions';
 
-export default class ProjectDispositionSelector extends React.Component {
+export default class Dropdown extends React.Component {
   constructor() {
     super();
     this.onChange = this.onChange.bind(this);
   }
 
   onChange(evt) {
-    AdminActions.updateProjectDisposition(
-      {
-        projectPersonId: this.props.projectPersonId,
-        dispositionTypeCd: evt.target.value
-      }
-    );
+    this.props.onChange(evt.target.value, this.props.context);
   }
 
   render() {
+    const options = this.props.options.map(option => {
+      return (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      );
+    });
+
     return (
-      <div>
-        <label style={{display: 'block'}} htmlFor="disposition">Project Disposition</label>
-        <select id="disposition" value={this.props.value} onChange={this.onChange}>
-          <option value=''>SELECT</option>
-          {this.props.options}
-        </select>
-      </div>
+      <select
+        className={this.props.className || ''}
+        id={this.props.id || ''}
+        value={this.props.value}
+        onChange={this.onChange}
+      >
+        <option value=''>{this.props.defaultLabel || 'SELECT'}</option>
+        {options}
+      </select>
     );
   }
 }
+
+Dropdown.propTypes = {
+  options: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+  onChange: React.PropTypes.func.isRequired,
+  value: React.PropTypes.any,
+  className: React.PropTypes.string,
+  id: React.PropTypes.string,
+  defaultLabel: React.PropTypes.string,
+  context: React.PropTypes.any
+};

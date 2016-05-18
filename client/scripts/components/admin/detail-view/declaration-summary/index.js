@@ -30,13 +30,15 @@ import {
   ROLES
 } from '../../../../../../coi-constants';
 import classNames from 'classnames';
-import AdminRelationshipSelector from '../admin-relationship-selector';
+import Dropdown from '../../../dropdown';
 
 export default class DeclarationSummary extends React.Component {
   constructor() {
     super();
 
     this.showComments = this.showComments.bind(this);
+    this.onAdminDispositionChanged = this.onAdminDispositionChanged.bind(this);
+    this.onReviewerRecommendationChanged = this.onReviewerRecommendationChanged.bind(this);
   }
 
   showComments() {
@@ -48,8 +50,25 @@ export default class DeclarationSummary extends React.Component {
     );
   }
 
+  onAdminDispositionChanged(newValue) {
+    AdminActions.updateAdminRelationship(
+      {
+        declarationId: this.props.declaration.id,
+        adminRelationshipCd: newValue
+      }
+    );
+  }
+
+  onReviewerRecommendationChanged(newValue) {
+    AdminActions.updateReviewerRelationship(
+      {
+        declarationId: this.props.declaration.id,
+        reviewerRelationshipCd: newValue
+      }
+    );
+  }
+
   render() {
-    const { configState, userInfo } = this.context;
     const {
       declaration,
       changedByPI,
@@ -72,35 +91,67 @@ export default class DeclarationSummary extends React.Component {
       );
     }
 
-    let adminRelationship;
+    let relationship;
     let commentClass = styles.comments;
-    if (userInfo.coiRole === ROLES.ADMIN) {
-      if (get(configState, 'config.general.adminRelationshipEnabled')) {
-        if (readonly) {
-          adminRelationship = (
-            <span className={styles.adminRelationship}>
-              {
-                getDispositionTypeString(
-                  configState,
-                  declaration.adminRelationshipCd,
-                  configId
-                )
-              }
-            </span>
-          );
-        } else {
-          adminRelationship = (
-            <span className={styles.adminRelationship}>
-              <AdminRelationshipSelector
+
+    const { configState, userInfo } = this.context;
+
+    function getDispositionType(code) {
+      return getDispositionTypeString(
+        configState,
+        code,
+        configId
+      );
+    }
+
+    const isAdmin = userInfo.coiRole === ROLES.ADMIN;
+    const isReviewer = userInfo.coiRole === ROLES.REVIEWER;
+    if (isAdmin && get(configState, 'config.general.adminRelationshipEnabled')) {
+      if (readonly) {
+        relationship = (
+          <span className={styles.disposition}>
+            {getDispositionType(declaration.adminRelationshipCd)}
+          </span>
+        );
+      } else {
+        relationship = (
+          <span className={styles.disposition}>
+            <div>
+              <Dropdown
                 options={options}
+                className={styles.select}
+                id="adminRelationship"
                 value={declaration.adminRelationshipCd}
-                declarationId={declaration.id}
+                onChange={this.onAdminDispositionChanged}
               />
-            </span>
-          );
-        }
-        commentClass = classNames(styles.comments, styles.shortComment);
+            </div>
+          </span>
+        );
       }
+      commentClass = classNames(styles.comments, styles.shortComment);
+    } else if (isReviewer && get(configState, 'config.general.reviewerRelationshipEnabled')) {
+      if (readonly) {
+        relationship = (
+          <span className={styles.disposition}>
+            {getDispositionType(declaration.reviewerRelationshipCd)}
+          </span>
+        );
+      } else {
+        relationship = (
+          <span className={styles.disposition}>
+            <div>
+              <Dropdown
+                options={options}
+                className={styles.select}
+                id="reviewerRelationship"
+                value={declaration.reviewerRelationshipCd}
+                onChange={this.onReviewerRecommendationChanged}
+              />
+            </div>
+          </span>
+        );
+      }
+      commentClass = classNames(styles.comments, styles.shortComment);
     }
 
     return (
@@ -124,7 +175,7 @@ export default class DeclarationSummary extends React.Component {
               )
             }
           </span>
-          {adminRelationship}
+          {relationship}
           <span className={commentClass} style={{fontStyle: 'italic'}}>
             {comment}
           </span>

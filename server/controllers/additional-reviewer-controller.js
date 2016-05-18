@@ -109,4 +109,8 @@ export const init = app => {
           }).includes(result.userId);
     }));
   }));
+
+  app.put('/api/coi/reviewers/:disclosureId/recommend/:declarationId', allowedRoles([REVIEWER]), wrapAsync(async (req, res) => {
+    res.send('Not implemented');
+  }));
 };

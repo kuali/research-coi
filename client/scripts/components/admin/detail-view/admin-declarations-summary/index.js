@@ -23,14 +23,26 @@ import {
   getProjectTypeString,
   getDispositionTypeString
 } from '../../../../stores/config-store';
-import ProjectDispositionSelector from '../project-disposition-selector';
+import { ROLES } from '../../../../../../coi-constants';
 import classNames from 'classnames';
+import Dropdown from '../../../dropdown';
+import {AdminActions} from '../../../../actions/admin-actions';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
     super();
     this.getCommentCount = this.getCommentCount.bind(this);
     this.wasRespondedTo = this.wasRespondedTo.bind(this);
+    this.onProjectDispositionChanged = this.onProjectDispositionChanged.bind(this);
+  }
+
+  onProjectDispositionChanged(newValue, personId) {
+    AdminActions.updateProjectDisposition(
+      {
+        projectPersonId: personId,
+        dispositionTypeCd: newValue
+      }
+    );
   }
 
   wasRespondedTo(id) {
@@ -89,18 +101,22 @@ export class AdminDeclarationsSummary extends React.Component {
       const uniqueProjects = this.getUniqueProjects(declarations);
 
       let dispositionTypeOptions;
+      const { config } = this.context.configState;
       if(
-        this.context.configState.config.general.dispositionsEnabled &&
-        Array.isArray(this.context.configState.config.dispositionTypes)
+        config.general.dispositionsEnabled &&
+        Array.isArray(config.dispositionTypes)
       ) {
-        dispositionTypeOptions = this.context.configState.config.dispositionTypes
+        dispositionTypeOptions = config.dispositionTypes
           .filter(type => Boolean(type.active))
           .map(type => {
-            return (
-              <option key={type.typeCd} value={type.typeCd}>{type.description}</option>
-            );
+            return {
+              value: type.typeCd,
+              label: type.description
+            };
           });
       }
+
+      const isAdmin = this.context.userInfo.coiRole === ROLES.ADMIN;
 
       projects = uniqueProjects.map((project, index) => {
         const declarationSummaries = declarations.filter(declaration => {
@@ -120,13 +136,16 @@ export class AdminDeclarationsSummary extends React.Component {
         });
 
         let dispositionTypeSelector;
-        if (this.context.configState.config.general.dispositionsEnabled) {
+        if (isAdmin && config.general.dispositionsEnabled) {
           if (readonly) {
-            const dispositionType = getDispositionTypeString(
+            let dispositionType = getDispositionTypeString(
               this.context.configState,
               project.dispositionTypeCd,
               this.props.configId
             );
+            if (dispositionType === null || dispositionType.length === 0) {
+              dispositionType = 'None';
+            }
             dispositionTypeSelector = (
               <div className={styles.field}>
                 <label className={styles.label}>Project Disposition:</label>
@@ -137,18 +156,26 @@ export class AdminDeclarationsSummary extends React.Component {
             );
           } else {
             dispositionTypeSelector = (
-              <ProjectDispositionSelector
-                projectPersonId={project.projectPersonId}
-                value={project.dispositionTypeCd}
-                options={dispositionTypeOptions}
-              />
+              <div>
+                <label style={{display: 'block'}} htmlFor="disposition">
+                  Project Disposition
+                </label>
+
+                <Dropdown
+                  options={dispositionTypeOptions}
+                  id="disposition"
+                  value={project.dispositionTypeCd}
+                  onChange={this.onProjectDispositionChanged}
+                  context={project.projectPersonId}
+                />
+              </div>
             );
           }
         }
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (this.context.configState.config.general.adminRelationshipEnabled) {
+        if (config.general.adminRelationshipEnabled) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );
@@ -207,5 +234,6 @@ export class AdminDeclarationsSummary extends React.Component {
 }
 
 AdminDeclarationsSummary.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };
