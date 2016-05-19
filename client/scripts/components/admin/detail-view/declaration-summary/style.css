@@ -44,6 +44,7 @@
 .disposition {
   width: 25%;
   display: inline-block;
+  vertical-align: top;
 }
 
 .comments {
@@ -84,4 +85,30 @@
 
 .select {
   width: 80%;
+}
+
+.reviewerRecommendations {
+  color: #0095A0;
+  padding-top: 7px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  display: block;
+}
+
+:global(.color-blind) .reviewerRecommendations {
+  color: black;
+}
+
+.userName {
+  color: #666;
+  margin-right: 5px;
+}
+
+:global(.color-blind) .userName {
+  color: black;
+}
+
+.reviewerRecommendation {
+  font-weight: bold;
 }
