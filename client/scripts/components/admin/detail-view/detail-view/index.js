@@ -213,6 +213,7 @@ export class DetailView extends React.Component {
             query={this.state.applicationState.query}
             filters={this.state.applicationState.filters}
             sortDirection={this.state.applicationState.sortDirection}
+            reviewerFilterValues={this.state.applicationState.reviewerFilterValues}
             count={this.state.applicationState.summaryCount}
             searchTerm={this.state.applicationState.effectiveSearchValue}
             loadingMore={this.state.applicationState.loadingMore}

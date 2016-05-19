@@ -221,7 +221,7 @@ describe('get /api/coi/disclosure-summaries', async () => {
     let summaries;
     it('should return an ok status', async () => {
       const filters = {
-        reviewer: [hashCode('reviewer')]
+        reviewers: [hashCode('reviewer')]
       };
 
       const response = await request(app.run())

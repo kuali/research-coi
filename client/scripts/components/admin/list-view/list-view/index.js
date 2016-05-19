@@ -190,6 +190,8 @@ export class ListView extends React.Component {
             <SearchFilterGroup
               className={`${styles.override} ${styles.filterGroup}`}
               filters={this.state.data.applicationState.filters}
+              reviewerFilterValues={this.state.data.applicationState.reviewerFilterValues}
+              lane={configState.config.lane}
               possibleStatuses={possibleStatuses}
               possibleTypes={possibleTypes}
               possibleDispositions={possibleDispositions}

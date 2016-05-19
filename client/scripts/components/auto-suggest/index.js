@@ -51,17 +51,24 @@ export default class AutoSuggest extends React.Component {
   }
 
   onChange(evt) {
-    createRequest().get(this.props.endpoint)
-      .query({
-        term: evt.target.value
-      })
-      .end(processResponse((err, suggestions) => {
-        if (!err) {
-          this.setState({
-            suggestions: suggestions.body
-          });
-        }
-      }));
+    if (!evt.target.value) {
+      this.setState({
+        suggestions: []
+      });
+    } else {
+      createRequest().get(this.props.endpoint)
+        .query({
+          term: evt.target.value
+        })
+        .end(processResponse((err, suggestions) => {
+          if (!err) {
+            this.setState({
+              suggestions: suggestions.body
+            });
+          }
+        }));
+    }
+
 
     this.setState({
       value: evt.target.value
@@ -116,8 +123,17 @@ export default class AutoSuggest extends React.Component {
   render() {
     let suggestionList;
     const Suggestion = this.props.suggestion;
+
+
+
     if (this.state.suggestions && this.state.suggestions.length > 0) {
-      const suggestions = this.state.suggestions.map((suggestion, index) => {
+      let filteredSuggestions;
+      if (this.props.filter) {
+        filteredSuggestions = this.props.filter(this.state.suggestions);
+      } else {
+        filteredSuggestions = this.state.suggestions;
+      }
+      const suggestions = filteredSuggestions.map((suggestion, index) => {
         return (
           <Suggestion
             key={index}
