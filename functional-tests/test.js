@@ -54,7 +54,7 @@ module.exports = {
 
   'user can not view admin page' : function (browser) {
     browser
-      .url(process.env.FUNCTIONAL_TEST_URL + '/admin')
+      .url(`${process.env.FUNCTIONAL_TEST_URL}/admin`)
       .setValue('input[type=text]', 'cate')
       .setValue('input[type=password]', 'password')
       .click("button[value='Sign In']")
@@ -65,7 +65,7 @@ module.exports = {
 
   'user can not access config' : function (browser) {
     browser
-      .url(process.env.FUNCTIONAL_TEST_URL + '/config')
+      .url(`${process.env.FUNCTIONAL_TEST_URL}/config`)
       .setValue('input[type=text]', 'cate')
       .setValue('input[type=password]', 'password')
       .click("button[value='Sign In']")
@@ -76,7 +76,7 @@ module.exports = {
 
   'reviewer can not access config' : function (browser) {
     browser
-      .url(process.env.FUNCTIONAL_TEST_URL + '/config')
+      .url(`${process.env.FUNCTIONAL_TEST_URL}/config`)
       .setValue('input[type=text]', 'coireviewer')
       .setValue('input[type=password]', 'password')
       .click("button[value='Sign In']")

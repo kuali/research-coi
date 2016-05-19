@@ -31,14 +31,18 @@ import DisclosureRequirements from './disclosure-requirements/disclosure-require
 import CustomizeNotifications from './customize-notifications/customize-notifications';
 import history from '../../history';
 
+function latestState() {
+  return {
+    configState: ConfigStore.getState(),
+    userInfoState: UserInfoStore.getState()
+  };
+}
+
 class App extends React.Component {
   constructor() {
     super();
 
-    this.state = {
-      configState: ConfigStore.getState(),
-      userInfoState: UserInfoStore.getState()
-    };
+    this.state = latestState();
 
     this.onChange = this.onChange.bind(this);
   }
@@ -61,10 +65,7 @@ class App extends React.Component {
   }
 
   onChange() {
-    this.setState({
-      configState: ConfigStore.getState(),
-      userInfoState: UserInfoStore.getState()
-    });
+    this.setState(latestState());
 
     this.forceUpdate();
   }

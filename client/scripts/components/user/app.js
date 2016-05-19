@@ -29,14 +29,18 @@ import UserInfoStore from '../../stores/user-info-store';
 import ConfigStore from '../../stores/config-store';
 import history from '../../history';
 
+function latestState() {
+  return {
+    configState: ConfigStore.getState(),
+    userInfoState: UserInfoStore.getState()
+  };
+}
+
 class App extends SizeAwareComponent {
   constructor() {
     super();
 
-    this.state = {
-      configState: ConfigStore.getState(),
-      userInfoState: UserInfoStore.getState()
-    };
+    this.state = latestState();
 
     this.onChange = this.onChange.bind(this);
   }
@@ -59,10 +63,7 @@ class App extends SizeAwareComponent {
   }
 
   onChange() {
-    this.setState({
-      configState: ConfigStore.getState(),
-      userInfoState: UserInfoStore.getState()
-    });
+    this.setState(latestState());
     this.forceUpdate();
   }
 
