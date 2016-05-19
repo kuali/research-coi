@@ -46,7 +46,7 @@ export default class AdminMenu extends React.Component {
     );
 
     let configLink;
-    if (this.props.role === ROLES.ADMIN) {
+    if (this.context.userInfo.coiRole === ROLES.ADMIN) {
       configLink = (
         <a href="/coi/config" className={styles.menuItem}>
           <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
@@ -78,3 +78,7 @@ export default class AdminMenu extends React.Component {
     );
   }
 }
+
+AdminMenu.contextTypes = {
+  userInfo: React.PropTypes.object
+};

@@ -29,7 +29,6 @@ import GeneralAttachmentsPanel from '../general-attachments-panel';
 import UploadAttachmentsPanel from '../upload-attachments-panel';
 import {DISCLOSURE_STATUS, FILE_TYPE} from '../../../../../../coi-constants';
 import {AppHeader} from '../../../app-header';
-import UserInfoStore from '../../../../stores/user-info-store';
 import classNames from 'classnames';
 
 export class DetailView extends React.Component {
@@ -40,8 +39,7 @@ export class DetailView extends React.Component {
     const store = AdminStore.getState();
     this.state = {
       summaries: store.disclosureSummaries,
-      applicationState: store.applicationState,
-      userInfo: UserInfoStore.getState().userInfo
+      applicationState: store.applicationState
     };
 
     this.searchFilter = this.searchFilter.bind(this);
@@ -86,7 +84,6 @@ export class DetailView extends React.Component {
     const store = AdminStore.getState();
     newState.summaries = store.disclosureSummaries;
     newState.applicationState = store.applicationState;
-    newState.userInfo = UserInfoStore.getState().userInfo;
     this.setState(newState);
   }
 
@@ -112,6 +109,8 @@ export class DetailView extends React.Component {
   }
 
   render() {
+    const { userInfo } = this.context;
+
     let sidePanel;
     if (this.state.applicationState.commentingPanelShowing) {
       const comments = this.state.applicationState.currentComments;
@@ -121,7 +120,7 @@ export class DetailView extends React.Component {
           comment={this.state.applicationState.comment}
           editingComment={this.state.applicationState.editingComment}
           disclosureId={this.state.applicationState.selectedDisclosure.id}
-          role={this.state.userInfo.coiRole}
+          role={userInfo.coiRole}
           readonly={this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
            || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.REVISION_REQUIRED
            || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED}
@@ -154,7 +153,7 @@ export class DetailView extends React.Component {
     else if (this.state.applicationState.commentSummaryShowing) {
       sidePanel = (
         <CommentSummary
-          role={this.state.userInfo.coiRole}
+          role={userInfo.coiRole}
           disclosure={this.state.applicationState.selectedDisclosure}
           configId={this.state.applicationState.selectedDisclosure.configId}
         />
@@ -190,7 +189,7 @@ export class DetailView extends React.Component {
           piResponses={this.state.applicationState.piResponses}
           showApproval={this.state.applicationState.showingApproval}
           showRejection={this.state.applicationState.showingRejection}
-          role={this.state.userInfo.coiRole}
+          role={userInfo.coiRole}
         />
       );
     }
@@ -234,5 +233,6 @@ export class DetailView extends React.Component {
 }
 
 DetailView.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };

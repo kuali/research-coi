@@ -21,7 +21,7 @@ import { getReviewers } from '../services/auth-service/auth-service';
 import { ROLES, DATE_TYPE } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
-import { OK } from '../../http-status-codes';
+import { OK, ACCEPTED } from '../../http-status-codes';
 import Log from '../log';
 import wrapAsync from './wrap-async';
 import {
@@ -108,5 +108,16 @@ export const init = app => {
             return reviewer.userId;
           }).includes(result.userId);
     }));
+  }));
+
+  app.put('/api/coi/reviewers/:disclosureId/recommend/:declarationId', allowedRoles([REVIEWER]), wrapAsync(async (req, res) => {
+    await AdditionalReviewerDB.saveRecommendation(
+      req.dbInfo,
+      req.userInfo.schoolId,
+      req.params.disclosureId,
+      req.params.declarationId,
+      req.body.dispositionCd
+    );
+    res.sendStatus(ACCEPTED);
   }));
 };

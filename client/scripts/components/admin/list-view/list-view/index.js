@@ -31,15 +31,13 @@ import {
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 import {AppHeader} from '../../../app-header';
-import UserInfoStore from '../../../../stores/user-info-store';
 
 export class ListView extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      data: AdminStore.getState(),
-      userInfo: UserInfoStore.getState().userInfo
+      data: AdminStore.getState()
     };
 
     this.changeSearch = this.changeSearch.bind(this);
@@ -78,8 +76,7 @@ export class ListView extends React.Component {
 
   onChange() {
     this.setState({
-      data: AdminStore.getState(),
-      userInfo: UserInfoStore.getState().userInfo
+      data: AdminStore.getState()
     });
   }
 
@@ -119,7 +116,7 @@ export class ListView extends React.Component {
       );
     }
 
-    const {configState} = this.context;
+    const { configState } = this.context;
     const possibleStatuses = [
       {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
       {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
@@ -183,7 +180,7 @@ export class ListView extends React.Component {
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={classes}>
           <span className={styles.sidebar}>
-            <AdminMenu role={this.state.userInfo.coiRole} />
+            <AdminMenu />
             <DisclosureFilterSearch
               query={this.state.data.applicationState.filters.search}
               onChange={this.changeSearch}
@@ -224,5 +221,6 @@ export class ListView extends React.Component {
 }
 
 ListView.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };

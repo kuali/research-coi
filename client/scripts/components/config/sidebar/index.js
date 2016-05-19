@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {Link} from 'react-router';
-import { ROLES, NOTIFICATIONS_MODE } from '../../../../../coi-constants';
+import { NOTIFICATIONS_MODE } from '../../../../../coi-constants';
 import {getNotificationsMode} from '../../../stores/config-store';
 
 import AdminMenu from '../../admin-menu';
@@ -90,7 +90,7 @@ export default function Sidebar(props, {configState}) {
 
   return (
     <span className={classNames(styles.container, props.className)}>
-      <AdminMenu role={ROLES.ADMIN} style={{marginBottom: 34, padding: '23px 0px'}} />
+      <AdminMenu style={{marginBottom: 34, padding: '23px 0px'}} />
       {stepsJsx}
     </span>
   );

@@ -16,33 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import React from 'react';
-import styles from './style.css';
-import { AdminActions } from '../../../../actions/admin-actions';
+/* eslint-disable prefer-arrow-callback, camelcase */
 
-export default class AdminRelationshipSelector extends React.Component {
-  constructor() {
-    super();
-    this.onChange = this.onChange.bind(this);
-  }
+exports.up = function(knex) {
+  return knex.schema.createTable('reviewer_recommendation', function(table) {
+    table.integer('additional_reviewer_id').unsigned().notNullable().references('id').inTable('additional_reviewer');
+    table.integer('declaration_id').unsigned().notNullable().references('id').inTable('declaration');
+    table.integer('disposition_type_id').unsigned().notNullable().references('type_cd').inTable('disposition_type');
+  });
+};
 
-  onChange(evt) {
-    AdminActions.updateAdminRelationship(
-      {
-        declarationId: this.props.declarationId,
-        adminRelationshipCd: evt.target.value
-      }
-    );
-  }
-
-  render() {
-    return (
-      <div>
-        <select className={styles.select} id="adminRelationship" value={this.props.value} onChange={this.onChange}>
-          <option value=''>SELECT</option>
-          {this.props.options}
-        </select>
-      </div>
-    );
-  }
-}
+exports.down = function() {
+};

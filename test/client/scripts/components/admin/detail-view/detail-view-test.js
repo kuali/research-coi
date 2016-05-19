@@ -21,11 +21,16 @@ import assert from 'assert';
 import sd from 'skin-deep';
 import {DetailView} from '../../../../../../client/scripts/components/admin/detail-view/detail-view';
 import configState from '../../../../config-context';
+import { ROLES } from '../../../../../../coi-constants';
 
 function renderOutputWithApplicationState(applicationState) {
+  const context = configState;
+  context.userInfo = {
+    coiRole: ROLES.ADMIN
+  };
   const tree = sd.shallowRender(
     <DetailView/>,
-    configState
+    context
   );
 
   const instance = tree.getMountedInstance();

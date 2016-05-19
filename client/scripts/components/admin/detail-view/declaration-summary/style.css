@@ -41,7 +41,7 @@
   display: inline-block;
 }
 
-.adminRelationship {
+.disposition {
   width: 25%;
   display: inline-block;
 }
@@ -80,4 +80,8 @@
 
 :global(.color-blind) .noComment {
   color: black;
+}
+
+.select {
+  width: 80%;
 }

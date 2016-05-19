@@ -18,35 +18,71 @@
 
 import styles from './style';
 import React from 'react';
+import {get} from 'lodash';
 import {
   getDispositionTypeString,
   getDeclarationTypeString
 } from '../../../../stores/config-store';
 import {AdminActions} from '../../../../actions/admin-actions';
-import {DISCLOSURE_STEP, COMMENT_TITLES} from '../../../../../../coi-constants';
+import {
+  DISCLOSURE_STEP,
+  COMMENT_TITLES,
+  ROLES
+} from '../../../../../../coi-constants';
 import classNames from 'classnames';
-import AdminRelationshipSelector from '../admin-relationship-selector';
+import Dropdown from '../../../dropdown';
 
 export default class DeclarationSummary extends React.Component {
   constructor() {
     super();
 
     this.showComments = this.showComments.bind(this);
+    this.onAdminDispositionChanged = this.onAdminDispositionChanged.bind(this);
+    this.onReviewerRecommendationChanged = this.onReviewerRecommendationChanged.bind(this);
   }
 
   showComments() {
+    const { declaration } = this.props;
     AdminActions.showCommentingPanel(
       DISCLOSURE_STEP.PROJECTS,
-      this.props.declaration.id,
-      `${COMMENT_TITLES.DECLARATION} ${this.props.declaration.projectTitle} - ${this.props.declaration.entityName}`
+      declaration.id,
+      `${COMMENT_TITLES.DECLARATION} ${declaration.projectTitle} - ${declaration.entityName}`
+    );
+  }
+
+  onAdminDispositionChanged(newValue) {
+    AdminActions.updateAdminRelationship(
+      {
+        declarationId: this.props.declaration.id,
+        adminRelationshipCd: newValue
+      }
+    );
+  }
+
+  onReviewerRecommendationChanged(newValue) {
+    AdminActions.updateReviewerRelationship(
+      {
+        declarationId: this.props.declaration.id,
+        dispositionCd: newValue
+      }
     );
   }
 
   render() {
+    const {
+      declaration,
+      changedByPI,
+      className,
+      readonly,
+      configId,
+      options,
+      commentCount
+    } = this.props;
+
     let comment;
-    if (this.props.declaration.comments) {
+    if (declaration.comments) {
       comment = (
-        <span>{this.props.declaration.comments}</span>
+        <span>{declaration.comments}</span>
       );
     }
     else {
@@ -55,61 +91,97 @@ export default class DeclarationSummary extends React.Component {
       );
     }
 
-    const classes = classNames(
-      styles.container,
-      {[styles.highlighted]: this.props.changedByPI},
-      this.props.className
-    );
-
-    let adminRelationship;
+    let relationship;
     let commentClass = styles.comments;
-    if (this.context.configState.config.general.adminRelationshipEnabled) {
-      if (this.props.readonly) {
-        const dispositionType = getDispositionTypeString(
-          this.context.configState,
-          this.props.declaration.adminRelationshipCd,
-          this.props.configId
-        );
-        adminRelationship = (
-          <span className={styles.adminRelationship}>
-            {dispositionType}
+
+    const { configState, userInfo } = this.context;
+
+    function getDispositionType(code) {
+      return getDispositionTypeString(
+        configState,
+        code,
+        configId
+      );
+    }
+
+    const isAdmin = userInfo.coiRole === ROLES.ADMIN;
+    const isReviewer = userInfo.coiRole === ROLES.REVIEWER;
+    if (isAdmin && get(configState, 'config.general.adminRelationshipEnabled')) {
+      if (readonly) {
+        relationship = (
+          <span className={styles.disposition}>
+            {getDispositionType(declaration.adminRelationshipCd)}
           </span>
         );
       } else {
-        adminRelationship = (
-          <span className={styles.adminRelationship}>
-            <AdminRelationshipSelector
-              options={this.props.options}
-              value={this.props.declaration.adminRelationshipCd}
-              declarationId={this.props.declaration.id}
-            />
+        relationship = (
+          <span className={styles.disposition}>
+            <div>
+              <Dropdown
+                options={options}
+                className={styles.select}
+                id="adminRelationship"
+                value={declaration.adminRelationshipCd}
+                onChange={this.onAdminDispositionChanged}
+              />
+            </div>
+          </span>
+        );
+      }
+      commentClass = classNames(styles.comments, styles.shortComment);
+    } else if (isReviewer && get(configState, 'config.general.reviewerDispositionsEnabled')) {
+      if (readonly) {
+        relationship = (
+          <span className={styles.disposition}>
+            {getDispositionType(declaration.reviewerRelationshipCd)}
+          </span>
+        );
+      } else {
+        relationship = (
+          <span className={styles.disposition}>
+            <div>
+              <Dropdown
+                options={options}
+                className={styles.select}
+                id="reviewerRelationship"
+                value={declaration.reviewerRelationshipCd}
+                onChange={this.onReviewerRecommendationChanged}
+              />
+            </div>
           </span>
         );
       }
       commentClass = classNames(styles.comments, styles.shortComment);
     }
 
-    const declarationType = getDeclarationTypeString(
-      this.context.configState,
-      this.props.declaration.typeCd,
-      this.props.configId
-    );
     return (
-      <div className={classes}>
+      <div className={
+        classNames(
+          styles.container,
+          {[styles.highlighted]: changedByPI},
+          className
+        )}
+      >
         <div>
           <span className={styles.entityName} style={{fontWeight: 'bold'}}>
-            {this.props.declaration.entityName}
+            {declaration.entityName}
           </span>
           <span className={styles.conflict} style={{fontWeight: 'bold'}}>
-            {declarationType}
+            {
+              getDeclarationTypeString(
+                configState,
+                declaration.typeCd,
+                configId
+              )
+            }
           </span>
-          {adminRelationship}
+          {relationship}
           <span className={commentClass} style={{fontStyle: 'italic'}}>
             {comment}
           </span>
         </div>
         <div className={styles.commentLink} onClick={this.showComments}>
-          <span className={styles.commentLabel}>COMMENT ({this.props.commentCount})</span>
+          <span className={styles.commentLabel}>COMMENT ({commentCount})</span>
         </div>
       </div>
     );
@@ -117,5 +189,6 @@ export default class DeclarationSummary extends React.Component {
 }
 
 DeclarationSummary.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };

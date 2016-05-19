@@ -58,6 +58,7 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
       'd.type_cd as typeCd',
       'd.status_cd as statusCd',
       'd.id',
+      'd.config_id as configId',
       'ar.user_id as userId',
       'ar.disclosure_id as disclosureId',
       'ar.name',
@@ -154,4 +155,40 @@ export function updateAdditionalReviewer(dbInfo, id, updates) {
       dates: updates.dates
     })
     .where({id});
+}
+
+export async function saveRecommendation(dbInfo, schoolId, disclosureId, declarationId, dispositionType) {
+  const knex = getKnex(dbInfo);
+  const additionalReviewer = await knex('additional_reviewer')
+    .first('id')
+    .where({
+      user_id: schoolId,
+      disclosure_id: disclosureId
+    });
+
+  if (!additionalReviewer) {
+    throw new Error(`Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`);
+  }
+  
+  const additionalReviewerId = additionalReviewer.id;
+
+  const exists = await knex('reviewer_recommendation').first().where({
+    additional_reviewer_id: additionalReviewerId,
+    declaration_id: declarationId
+  });
+
+  if (exists) {
+    return knex('reviewer_recommendation').update({
+      disposition_type_id: dispositionType
+    }).where({
+      additional_reviewer_id: additionalReviewerId,
+      declaration_id: declarationId
+    });
+  }
+
+  return knex('reviewer_recommendation').insert({
+    additional_reviewer_id: additionalReviewerId,
+    declaration_id: declarationId,
+    disposition_type_id: dispositionType
+  });
 }

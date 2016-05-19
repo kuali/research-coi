@@ -22,35 +22,14 @@ import {KualiLogo} from '../dynamic-icons/kuali-logo';
 import ToggleSwitch from '../toggle-switch';
 import ColorActions from '../../actions/color-actions';
 import cookies from 'cookies-js';
-import UserInfoStore from '../../stores/user-info-store';
 import Menu from '../menu';
 
 export class AppHeader extends React.Component {
   constructor() {
     super();
 
-    this.state = {
-      userInfo: UserInfoStore.getState().userInfo
-    };
-
     this.onContrastChange = this.onContrastChange.bind(this);
     this.logOut = this.logOut.bind(this);
-    this.onChange = this.onChange.bind(this);
-  }
-
-  componentDidMount() {
-    UserInfoStore.listen(this.onChange);
-  }
-
-  componentWillUnmount() {
-    UserInfoStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const userInfoState = UserInfoStore.getState();
-    this.setState({
-      userInfo: userInfoState.userInfo
-    });
   }
 
   onContrastChange(newValue) {
@@ -63,8 +42,9 @@ export class AppHeader extends React.Component {
   }
 
   render() {
+    const { userInfo } = this.context;
     let signOut;
-    if (this.state.userInfo && this.state.userInfo.mock === true) {
+    if (userInfo && userInfo.mock === true) {
       signOut = (
         <a className={styles.menuItem} href="#" onClick={this.logOut}>
           <i className={`fa fa-sign-out ${styles.icon}`}></i>
@@ -81,14 +61,14 @@ export class AppHeader extends React.Component {
     }
 
     let usersName;
-    if (this.state.userInfo && this.state.userInfo.firstName !== undefined && this.state.userInfo.lastName !== undefined) {
-      usersName = `${this.state.userInfo.firstName} ${this.state.userInfo.lastName}`;
+    if (userInfo && userInfo.firstName !== undefined && userInfo.lastName !== undefined) {
+      usersName = `${userInfo.firstName} ${userInfo.lastName}`;
     }
 
     return (
       <header className={`${styles.container} ${this.props.className}`}>
         <span style={{margin: '6px 0', display: 'inline-block'}}>
-          <a href={this.state.userInfo.researchCoreUrl}>
+          <a href={userInfo.researchCoreUrl}>
             <KualiLogo className={`${styles.override} ${styles.logo}`} />
             <span className={styles.product}>
               Kuali
@@ -125,3 +105,7 @@ export class AppHeader extends React.Component {
     );
   }
 }
+
+AppHeader.contextTypes = {
+  userInfo: React.PropTypes.object
+};

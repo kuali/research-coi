@@ -14,7 +14,7 @@
     "start": "babel-node server/bootstrap.js",
     "start_prod": "node start-server.js",
     "lint": "npm run eslint && npm run stylelint",
-    "eslint": "eslint client db server test loadtest",
+    "eslint": "eslint client db server test loadtest functional-tests",
     "stylelint": "stylelint client/**/**/*.css",
     "webpack": "webpack -p",
     "watch": "webpack -w",

@@ -17,7 +17,7 @@
 */
 
 import ReactDOM from 'react-dom';
-import React from 'react'; // eslint-disable-line no-unused-vars
+import React from 'react';
 import {Router, Route} from 'react-router';
 import {Dashboard} from './dashboard/dashboard';
 import {Disclosure} from './disclosure';
@@ -25,39 +25,45 @@ import TravelLog from './travel-log/travel-log';
 import {Archive} from './archive/archive';
 import {Revise} from './revise/revise';
 import {SizeAwareComponent} from '../size-aware-component';
-import ColorStore from '../../stores/color-store';
+import UserInfoStore from '../../stores/user-info-store';
 import ConfigStore from '../../stores/config-store';
 import history from '../../history';
+
+function latestState() {
+  return {
+    configState: ConfigStore.getState(),
+    userInfoState: UserInfoStore.getState()
+  };
+}
 
 class App extends SizeAwareComponent {
   constructor() {
     super();
 
-    this.state = {
-      configState: ConfigStore.getState()
-    };
+    this.state = latestState();
 
     this.onChange = this.onChange.bind(this);
   }
 
   getChildContext() {
-    return {configState: this.state.configState};
+    return {
+      configState: this.state.configState,
+      userInfo: this.state.userInfoState.userInfo
+    };
   }
   
   componentDidMount() {
-    ColorStore.listen(this.onChange);
+    UserInfoStore.listen(this.onChange);
     ConfigStore.listen(this.onChange);
   }
 
   componentWillUnmount() {
-    ColorStore.unlisten(this.onChange);
+    UserInfoStore.unlisten(this.onChange);
     ConfigStore.unlisten(this.onChange);
   }
 
   onChange() {
-    this.setState({
-      configState: ConfigStore.getState()
-    });
+    this.setState(latestState());
     this.forceUpdate();
   }
 
@@ -76,7 +82,8 @@ class App extends SizeAwareComponent {
 }
 
 App.childContextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };
 
 function renderApp() {
