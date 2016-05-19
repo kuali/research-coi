@@ -24,6 +24,8 @@ import {DisclosureFilterByStatus} from '../disclosure-filter-by-status';
 import {DisclosureFilterByDate} from '../disclosure-filter-by-date';
 import {DisclosureFilterByPI} from '../disclosure-filter-by-pi';
 import {DisclosureFilterByDisposition} from '../disclosure-filter-by-disposition';
+import {DisclosureFilterByReviewer} from '../disclosure-filter-by-reviewer';
+import { LANES } from '../../../../../coi-constants';
 
 export default function SearchFilterGroup(props) {
   const {
@@ -64,6 +66,15 @@ export default function SearchFilterGroup(props) {
     }
   }
 
+  let reviewerFilter;
+  if(props.lane === LANES.TEST) {
+    reviewerFilter = (
+      <DisclosureFilterByReviewer
+        reviewers={props.reviewerFilterValues}
+      />
+    );
+  }
+
   return (
     <div className={classes} style={{marginTop: -height}}>
       <DisclosureFilterByDate
@@ -80,6 +91,7 @@ export default function SearchFilterGroup(props) {
         piName={filters.submittedBy}
       />
       {dispositionFilter}
+      {reviewerFilter}
     </div>
   );
 }

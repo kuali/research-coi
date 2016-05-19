@@ -252,6 +252,38 @@ class _AdminStore {
     this.refreshDisclosures();
   }
 
+  clearReviewerFilter() {
+    this.applicationState.filters.reviewers = undefined;
+    this.applicationState.reviewerFilterValues = undefined;
+    this.refreshDisclosures();
+  }
+
+  removeReviewerFilter(id) {
+    const valueIndex = this.applicationState.reviewerFilterValues.findIndex(r => r.userId === id);
+    const filterIndex = this.applicationState.filters.reviewers.findIndex(r => r === id);
+    this.applicationState.reviewerFilterValues.splice(valueIndex, 1);
+    this.applicationState.filters.reviewers.splice(filterIndex, 1);
+    if (this.applicationState.filters.reviewers.length < 1) {
+      this.applicationState.filters.reviewers = undefined;
+    }
+    this.refreshDisclosures();
+  }
+
+  setReviewerFilter(reviewer) {
+    if (!this.applicationState.filters.reviewers) {
+      this.applicationState.filters.reviewers = [];
+    }
+
+    if (!this.applicationState.reviewerFilterValues) {
+      this.applicationState.reviewerFilterValues = [];
+    }
+
+    this.applicationState.reviewerFilterValues.push(reviewer);
+    this.applicationState.filters.reviewers.push(reviewer.userId);
+
+    this.refreshDisclosures();
+  }
+
   changeReporterFilter(newFilter) {
     this.applicationState.filters.reporterName = newFilter;
   }

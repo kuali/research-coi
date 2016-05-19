@@ -161,6 +161,8 @@ export class DisclosureList extends React.Component {
           <SearchFilterGroup
             className={`${styles.override} ${styles.filterGroup}`}
             filters={this.props.filters}
+            reviewerFilterValues={this.props.reviewerFilterValues}
+            lane={configState.config.lane}
             possibleStatuses={possibleStatuses}
             possibleTypes={possibleTypes}
             possibleDispositions={possibleDispositions}

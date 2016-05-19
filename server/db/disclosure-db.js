@@ -789,13 +789,13 @@ export async function getSummariesForReview(dbInfo, sortColumn, sortDirection, s
     });
   }
 
-  if (filters.reviewer) {
+  if (filters.reviewers) {
     query.leftJoin('additional_reviewer as ar',
       'd.id',
       'ar.disclosure_id'
     );
 
-    query.where('ar.user_id', 'in', filters.reviewer);
+    query.where('ar.user_id', 'in', filters.reviewers);
   }
 
   query.select(columnsToSelect);
