@@ -31,6 +31,7 @@ import {
 } from '../../../../../../coi-constants';
 import classNames from 'classnames';
 import Dropdown from '../../../dropdown';
+import PopOver from '../../../pop-over';
 
 export default class DeclarationSummary extends React.Component {
   constructor() {
@@ -114,6 +115,33 @@ export default class DeclarationSummary extends React.Component {
           </span>
         );
       } else {
+        let recommendationLink;
+        if (declaration.recommendations && declaration.recommendations.length > 0) {
+          const recommendations = declaration.recommendations.map(recommendation => {
+            const answer = getDispositionType(recommendation.dispositionTypeCd);
+            return (
+              <div key={recommendation.usersName}>
+                <span className={styles.userName}>{recommendation.usersName}:</span>
+                <span className={styles.reviewerRecommendation}>{answer}</span>
+              </div>
+            );
+          });
+          
+          const linkId = `recmndLnk${declaration.id}`;
+          recommendationLink = (
+            <div style={{position: 'relative'}}>
+              <button
+                id={linkId}
+                className={styles.reviewerRecommendations}
+              >
+                View Reviewer Recommendations
+              </button>
+              <PopOver triggerId={linkId} style={{top: 32}}>
+                {recommendations}
+              </PopOver>
+            </div>
+          );
+        }
         relationship = (
           <span className={styles.disposition}>
             <div>
@@ -125,6 +153,7 @@ export default class DeclarationSummary extends React.Component {
                 onChange={this.onAdminDispositionChanged}
               />
             </div>
+            {recommendationLink}
           </span>
         );
       }

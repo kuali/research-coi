@@ -688,6 +688,37 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
             });
           })
       );
+    } else if (coiRole === ROLES.ADMIN) {
+      phaseTwoSteps.push(
+        knex.select(
+            'r.declaration_id as declarationId',
+            'r.disposition_type_id as dispositionTypeId',
+            'a.name as usersName'
+          )
+          .from('reviewer_recommendation as r')
+          .innerJoin('additional_reviewer as a', 'r.additional_reviewer_id', 'a.id')
+          .where({
+            'a.disclosure_id': disclosureId
+          })
+          .orderBy('r.disposition_type_id')
+          .then(recommendations => {
+            recommendations.forEach(recommendation => {
+              const decl = disclosure.declarations.find(declaration => {
+                return declaration.id === recommendation.declarationId;
+              });
+              if (decl) {
+                if (!decl.recommendations) {
+                  decl.recommendations = [];
+                }
+                
+                decl.recommendations.push({
+                  usersName: recommendation.usersName,
+                  dispositionTypeCd: recommendation.dispositionTypeId
+                });
+              }
+            });
+          })
+      );
     }
     disclosure.comments = commentRecords;
     disclosure.files = fileRecords;
