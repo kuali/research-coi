@@ -1125,7 +1125,17 @@ const deletePIReviewsForDisclsoure = (knex, disclosureId) => {
     .where('disclosure_id', disclosureId);
 };
 
-function deleteAdditionalReviewers(knex, disclosureId) {
+async function deleteAdditionalReviewers(knex, disclosureId) {
+  await knex('reviewer_recommendation')
+    .del()
+    .whereIn('additional_reviewer_id', function() {
+      this.select('id')
+        .from('additional_reviewer')
+        .where({
+          disclosure_id: disclosureId
+        });
+    });
+
   return knex('additional_reviewer')
     .del()
     .where('disclosure_id', disclosureId);

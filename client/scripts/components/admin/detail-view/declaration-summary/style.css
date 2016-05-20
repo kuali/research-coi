@@ -88,6 +88,7 @@
 }
 
 .reviewerRecommendations {
+  text-align: left;
   color: #0095A0;
   padding-top: 7px;
   cursor: pointer;
