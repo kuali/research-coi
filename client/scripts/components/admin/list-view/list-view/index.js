@@ -201,7 +201,7 @@ export class ListView extends React.Component {
           </span>
           <span className={`fill ${styles.content}`} ref="rightPanel">
             <div className={styles.header2}>
-              <h2 className={styles.title}>COI ADMIN DASHBOARD</h2>
+              <h2 className={styles.title}>{`COI ${this.context.userInfo.coiRole} DASHBOARD`}</h2>
             </div>
             <div style={{padding: '33px 38px'}}>
               <DisclosureTable

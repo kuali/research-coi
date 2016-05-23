@@ -45,37 +45,45 @@ export default class AdminMenu extends React.Component {
       this.props.className
     );
 
-    let configLink;
-    if (this.context.userInfo.coiRole === ROLES.ADMIN) {
-      configLink = (
-        <a href="/coi/config" className={styles.menuItem}>
-          <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
-          Configuration
-        </a>
+    let menu;
+    const { coiRole } = this.context.userInfo;
+    if (coiRole === ROLES.ADMIN) {
+      menu = (
+        <div className={classes} onClick={this.toggle}>
+          <div>
+            <i className={`fa fa-bars`}></i>
+            <span style={{marginLeft: 15}}>ADMIN MENU</span>
+          </div>
+          <div style={{overflowY: 'hidden'}}>
+            <div className={styles.menuItems}>
+              <a href="/coi/admin" className={styles.menuItem}>
+                <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+                Admin Dashboard
+              </a>
+              <a href="/coi/config" className={styles.menuItem}>
+                <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+                Configuration
+              </a>
+              <a href="/coi/" className={styles.menuItem}>
+                <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+                Researcher Dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+    } else if ( coiRole === ROLES.REVIEWER) {
+      menu = (
+        <div className={styles.container}>
+          <a href="/coi/" className={styles.menuItem}>
+            <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+            Researcher Dashboard
+          </a>
+        </div>
       );
     }
 
-    return (
-      <div className={classes} onClick={this.toggle}>
-        <div>
-          <i className={`fa fa-bars`}></i>
-          <span style={{marginLeft: 15}}>ADMIN MENU</span>
-        </div>
-        <div style={{overflowY: 'hidden'}}>
-          <div className={styles.menuItems}>
-            <a href="/coi/admin" className={styles.menuItem}>
-              <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
-              Admin Dashboard
-            </a>
-            {configLink}
-            <a href="/coi/" className={styles.menuItem}>
-              <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
-              Researcher Dashboard
-            </a>
-          </div>
-        </div>
-      </div>
-    );
+    return menu;
   }
 }
 

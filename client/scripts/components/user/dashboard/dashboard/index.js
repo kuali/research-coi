@@ -85,8 +85,8 @@ export class Dashboard extends React.Component {
 
     const { userInfo } = this.context;
 
-    const isAdminOrReviewer = userInfo &&
-      (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER);
+    const isAdmin = userInfo &&
+      (userInfo.coiRole === ROLES.ADMIN);
 
     let confirmationMessage;
     if (this.state && applicationState && applicationState.confirmationShowing) {
@@ -155,7 +155,7 @@ export class Dashboard extends React.Component {
     }
 
     let adminMenu;
-    if (isAdminOrReviewer ) {
+    if (isAdmin ) {
       adminMenu = (
         <AdminMenu className={`${styles.override} ${styles.adminMenu}`} />
       );
@@ -205,7 +205,7 @@ export class Dashboard extends React.Component {
     const classes = classNames(
       'flexbox',
       'column',
-      {[styles.isAdmin]: isAdminOrReviewer}
+      {[styles.isAdmin]: isAdmin}
     );
 
     return (
