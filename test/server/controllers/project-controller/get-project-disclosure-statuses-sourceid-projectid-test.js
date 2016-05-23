@@ -21,7 +21,12 @@
 import assert from 'assert';
 import * as app from '../../../../server/app';
 import request from 'supertest';
-import { PROJECT_DISCLOSURE_STATUSES, DISCLOSURE_STATUS, RELATIONSHIP_STATUS} from '../../../../coi-constants';
+import {
+  PROJECT_DISCLOSURE_STATUSES,
+  DISCLOSURE_STATUS,
+  RELATIONSHIP_STATUS,
+  NO_DISPOSITION_DESCRIPTION
+} from '../../../../coi-constants';
 import { OK, FORBIDDEN } from '../../../../http-status-codes';
 import {
   createProject,
@@ -48,6 +53,8 @@ const knex = getKnex({});
 
 
 describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => {
+  let dispositionTypeCd;
+
   before(async () => {
     await knex('project_type')
       .update({req_disclosure: true})
@@ -64,13 +71,21 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
       req_disclosure: true,
       description: 'the status'
     });
+    const dispositionType = await knex('disposition_type').insert({
+      description: 'test',
+      order: 1,
+      active: true
+    });
+
+    dispositionTypeCd = dispositionType[0];
+
   });
 
   describe('get statuses for all persons on project', () => {
     let statuses;
     before(async () => {
       const projectId = await insertProject(knex, createProject(1));
-      await insertProjectPerson(knex, createPerson(1, 'PI', true), projectId);
+      await insertProjectPerson(knex, createPerson(1, 'PI', true), projectId, dispositionTypeCd);
       await insertProjectPerson(knex, createPerson(2, 'COI', true), projectId);
       await insertProjectPerson(knex, createPerson(3, 'PI', true), projectId);
       await insertProjectPerson(knex, createPerson(4, 'PI', true), projectId);
@@ -92,12 +107,16 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
       statuses = response.body;
     });
 
-    it('should return not yet disclosed for user 1', () => {
-      assert.equal(PROJECT_DISCLOSURE_STATUSES.NOT_YET_DISCLOSED, statuses.find(status => status.userId === '1').status);
+    it('should return not yet disclosed status and test disposition for user 1', () => {
+      const status = statuses.find(s => s.userId === '1');
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.NOT_YET_DISCLOSED, status.status);
+      assert.equal('test', status.disposition);
     });
 
     it('should return no required for user 2', () => {
-      assert.equal(PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED, statuses.find(status => status.userId === '2').status);
+      const status = statuses.find(s => s.userId === '2');
+      assert.equal(PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED, status.status);
+      assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
 
     it('should return submitted for Approval for user 3', () => {
@@ -110,6 +129,10 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
 
     it('should return update needed for user 5', () => {
       assert.equal('Submitted for Approval', statuses.find(status => status.userId === '5').status);
+    });
+
+    it('should return disposition of test for user 1', () => {
+
     });
   });
 
@@ -142,5 +165,6 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     await knex('project').del();
     await knex('fin_entity').del();
     await knex('disclosure').del();
+    await knex('disposition_type').del();
   });
 });

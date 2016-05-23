@@ -60,14 +60,15 @@ export function createPerson(personId, roleCode, active) {
   };
 }
 
-export async function insertProjectPerson(knex, projectPerson, projectId) {
+export async function insertProjectPerson(knex, projectPerson, projectId, dispositionTypeCd) {
   const id = await knex('project_person')
     .insert({
       project_id: projectId,
       person_id: projectPerson.personId,
       source_person_type: projectPerson.sourcePersonType,
       role_cd: projectPerson.roleCode,
-      active: projectPerson.active
+      active: projectPerson.active,
+      disposition_type_cd: dispositionTypeCd
     },'id');
   return id[0];
 }

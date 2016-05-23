@@ -135,6 +135,8 @@ export const COI_ADMIN = 'COI Admin';
 
 export const PI_ROLE_CODE = 'PI';
 
+export const NO_DISPOSITION_DESCRIPTION = 'None';
+
 export const EDITABLE_STATUSES = [
   DISCLOSURE_STATUS.EXPIRED,
   DISCLOSURE_STATUS.IN_PROGRESS,
