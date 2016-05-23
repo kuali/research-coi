@@ -676,26 +676,6 @@ class _DisclosureStore {
       .end(processResponse(() => {}));
   }
 
-  setEntityType([type, id]) {
-    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
-    entity.type = type;
-  }
-
-  setEntityPublic([isPublic, id]) {
-    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
-    entity.isPublic = isPublic;
-  }
-
-  setEntityIsSponsor([isSponsor, id]) {
-    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
-    entity.isSponsor = isSponsor;
-  }
-
-  setEntityDescription([description, id]) {
-    const entity = id ? this.getEntity(id) : this.applicationState.entityInProgress;
-    entity.description = description;
-  }
-
   getPotentialRelationship(entityId = 'new') {
     let relationship = this.applicationState.potentialRelationships[entityId];
     if (!relationship) {
