@@ -117,6 +117,7 @@ export class AdminDeclarationsSummary extends React.Component {
       }
 
       const isAdmin = this.context.userInfo.coiRole === ROLES.ADMIN;
+      const isReviewer = this.context.userInfo.coiRole === ROLES.REVIEWER;
 
       projects = uniqueProjects.map((project, index) => {
         const declarationSummaries = declarations.filter(declaration => {
@@ -174,10 +175,16 @@ export class AdminDeclarationsSummary extends React.Component {
         }
 
         let commentClass = styles.comment;
-        let adminRelationship;
-        if (config.general.adminRelationshipEnabled) {
-          adminRelationship = (
+        let relationhipLabel;
+
+        if (isAdmin && config.general.adminRelationshipEnabled) {
+          relationhipLabel = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
+          );
+          commentClass = classNames(styles.comments, styles.shortComment);
+        } else if (isReviewer && config.general.reviewerDispositionsEnabled) {
+          relationhipLabel = (
+            <span className={styles.adminRelationship}>RECOMMENDED RELATIONSHIP</span>
           );
           commentClass = classNames(styles.comments, styles.shortComment);
         }
@@ -213,7 +220,7 @@ export class AdminDeclarationsSummary extends React.Component {
             <div className={styles.titles}>
               <span className={styles.entityName}>FINANCIAL ENTITY</span>
               <span className={styles.conflict}>REPORTER RELATIONSHIP</span>
-              {adminRelationship}
+              {relationhipLabel}
               <span className={commentClass}>REPORTER COMMENTS</span>
             </div>
             {declarationSummaries}
