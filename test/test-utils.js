@@ -44,8 +44,8 @@ export async function insertProject(knex, project) {
     source_status: project.sourceStatus,
     sponsor_cd: project.sponsorCode,
     sponsor_name: project.sponsorName,
-    start_date: project.startDate,
-    end_date: project.endDate
+    start_date: new Date(project.startDate),
+    end_date: new Date(project.endDate)
   }, 'id');
   return id[0];
 }
@@ -86,7 +86,7 @@ export async function insertDisclosure(knex, disclosure, user_id) {
     type_cd: disclosure.typeCd,
     status_cd: disclosure.statusCd,
     user_id,
-    start_date: disclosure.startDate,
+    start_date: new Date(disclosure.startDate),
     config_id: disclosure.configId
   }, 'id');
   return id[0];
