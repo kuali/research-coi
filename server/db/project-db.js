@@ -215,8 +215,8 @@ async function insertProject(trx, project) {
     source_status: project.sourceStatus,
     sponsor_cd: project.sponsorCode,
     sponsor_name: project.sponsorName,
-    start_date: project.startDate,
-    end_date: project.endDate
+    start_date: new Date(project.startDate),
+    end_date: new Date(project.endDate)
   }, 'id');
 
   return id[0];
@@ -247,8 +247,8 @@ async function saveExistingProjects(trx, project, authHeader) {
     source_status: project.sourceStatus,
     sponsor_cd: project.sponsorCode,
     sponsor_name: project.sponsorName,
-    start_date: project.startDate,
-    end_date: project.endDate
+    start_date: new Date(project.startDate),
+    end_date: new Date(project.endDate)
   }).where('id', project.id);
 
   await saveProjectPersons(trx, project, authHeader);

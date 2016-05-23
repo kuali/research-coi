@@ -54,8 +54,8 @@ async function insertProject(project) {
     source_status: project.sourceStatus,
     sponsor_cd: project.sponsorCode,
     sponsor_name: project.sponsorName,
-    start_date: project.startDate,
-    end_date: project.endDate
+    start_date: new Date(project.startDate),
+    end_date: new Date(project.endDate)
   }, 'id');
   return id[0];
 }
