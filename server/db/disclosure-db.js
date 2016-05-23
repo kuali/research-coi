@@ -70,7 +70,6 @@ export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financial
           disclosure_id: disclosureId,
           active: financialEntity.active,
           name: financialEntity.name,
-          description: financialEntity.description,
           status: RELATIONSHIP_STATUS.IN_PROGRESS
         }, 'id')
         .then(id => {
@@ -182,8 +181,7 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
         .where('id', entityId)
         .update({
           active: financialEntity.active,
-          name: financialEntity.name,
-          description: financialEntity.description
+          name: financialEntity.name
         })
         .then(() => {
           const queries = [];
@@ -583,7 +581,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
 
   return Promise.all([
     getDisclosure(knex, userInfo, disclosureId),
-    knex.select('e.id', 'e.disclosure_id as disclosureId', 'e.active', 'e.name', 'e.description')
+    knex.select('e.id', 'e.disclosure_id as disclosureId', 'e.active', 'e.name')
       .from('fin_entity as e')
       .where('disclosure_id', disclosureId)
       .andWhereNot('status', RELATIONSHIP_STATUS.PENDING),
@@ -710,7 +708,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
                 if (!decl.recommendations) {
                   decl.recommendations = [];
                 }
-                
+
                 decl.recommendations.push({
                   usersName: recommendation.usersName,
                   dispositionTypeCd: recommendation.dispositionTypeId
@@ -731,7 +729,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     if (disclosure.answers.length < 1) {
       disclosure.configId = latestConfig[0].id;
     }
-    
+
     phaseTwoSteps.push(
       knex.select(
           'r.id',
@@ -779,7 +777,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
               return answer;
             });
           });
-        }),
+        })
     );
 
     phaseTwoSteps.push(
@@ -793,13 +791,13 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
               return file.ref_id === entity.id;
             });
           });
-        }),
+        })
     );
 
     phaseTwoSteps.push(
       knex('disclosure').update({config_id: disclosure.configId}).where({id: disclosure.id})
     );
-    
+
     return Promise.all(phaseTwoSteps).then(() => {
       return disclosure;
     });

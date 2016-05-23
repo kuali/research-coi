@@ -124,8 +124,8 @@ export async function createAdditionalReviewer(dbInfo, reviewer, userInfo) {
       user_id: reviewer.userId,
       name: reviewer.name,
       email: reviewer.email,
-      title: reviewer.title,
-      unit_name: reviewer.unitName,
+      title: reviewer.title ? reviewer.title : null,
+      unit_name: reviewer.unitName ? reviewer.unitName : null,
       active: true,
       dates: JSON.stringify(reviewer.dates),
       assigned_by: userInfo.name
