@@ -171,14 +171,13 @@ function insertRelationship(knex, entityId) {
     }, 'id');
 }
 
-function insertEntity(knex, disclosureId, name, description) {
+function insertEntity(knex, disclosureId, name) {
   console.log('Demo data - Inserting entity for disclosure ' + disclosureId);
   return knex('fin_entity')
     .insert({
       disclosure_id: disclosureId,
       active: true,
       name: name,
-      description: description,
       status: 'IN PROGRESS'
     }, 'id')
     .then(function(entityId){
@@ -215,9 +214,9 @@ function insertDisclosure(knex) {
     config_id: 1
   }, 'id').then(function(disclosureId) {
     return Promise.all([
-      insertEntity(knex, disclosureId[0], 'Apple', 'A company that makes trendy things'),
-      insertEntity(knex, disclosureId[0], 'Monsanto', 'An agro-business company'),
-      insertEntity(knex, disclosureId[0], 'Xerox', 'This is a company that makes copiers and stuff like that'),
+      insertEntity(knex, disclosureId[0], 'Apple'),
+      insertEntity(knex, disclosureId[0], 'Monsanto'),
+      insertEntity(knex, disclosureId[0], 'Xerox'),
       insertProject(knex, 'Glucose levels in heirloom corn'),
       insertProject(knex, 'Longevity of car batteries')
     ]).then(function(results) {
