@@ -21,7 +21,12 @@
 import assert from 'assert';
 import * as app from '../../../../server/app';
 import request from 'supertest';
-import { PROJECT_DISCLOSURE_STATUSES, RELATIONSHIP_STATUS, DISCLOSURE_STATUS} from '../../../../coi-constants';
+import {
+  PROJECT_DISCLOSURE_STATUSES,
+  RELATIONSHIP_STATUS,
+  DISCLOSURE_STATUS,
+  NO_DISPOSITION_DESCRIPTION
+} from '../../../../coi-constants';
 import { OK, FORBIDDEN } from '../../../../http-status-codes';
 import {
   createProject,
@@ -48,6 +53,8 @@ const knex = getKnex({});
 
 
 describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', () => {
+  let dispositionTypeCd;
+
   before(async () => {
     await knex('project_type')
       .update({req_disclosure: true})
@@ -64,6 +71,13 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
       req_disclosure: true,
       description: 'the status'
     });
+    const dispositionType = await knex('disposition_type').insert({
+      description: 'test',
+      order: 1,
+      active: true
+    });
+
+    dispositionTypeCd = dispositionType[0];
   });
 
   describe('get status for project with no disclosure', () => {
@@ -92,7 +106,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     let status;
     before(async () => {
       const projectId = await insertProject(knex, createProject(2));
-      await insertProjectPerson(knex, createPerson(2, 'COI', true), projectId);
+      await insertProjectPerson(knex, createPerson(2, 'COI', true), projectId, dispositionTypeCd);
     });
 
     it('should return OK status', async () => {
@@ -107,6 +121,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     it('should return not required', () => {
       assert.equal(2, status.userId);
       assert.equal(PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED, status.status);
+      assert.equal('test', status.disposition);
     });
   });
 
@@ -131,6 +146,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     it('should return update needed', () => {
       assert.equal(3, status.userId);
       assert.equal(PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED, status.status);
+      assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
   });
 
@@ -157,6 +173,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     it('should return submitted for approval', () => {
       assert.equal(4, status.userId);
       assert.equal('Submitted for Approval', status.status);
+      assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
   });
 
@@ -180,6 +197,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     it('should return submitted for approval', () => {
       assert.equal(5, status.userId);
       assert.equal('Submitted for Approval', status.status);
+      assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
   });
   describe('test errors and permissions', () => {
@@ -210,5 +228,6 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
     await knex('project').del();
     await knex('fin_entity').del();
     await knex('disclosure').del();
+    await knex('disposition_type').del();
   });
 });

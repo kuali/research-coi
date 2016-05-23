@@ -18,7 +18,12 @@
 
 /* eslint-disable camelcase */
 
-import {COIConstants} from '../../coi-constants';
+import {
+  DISCLOSURE_STATUS,
+  DISCLOSURE_TYPE,
+  NO_DISPOSITION_DESCRIPTION,
+  PROJECT_DISCLOSURE_STATUSES
+} from '../../coi-constants';
 import * as ProjectService from '../services/project-service/project-service';
 import Log from '../log';
 import { createAndSendNewProjectNotification } from '../services/notification-service/notification-service';
@@ -54,12 +59,12 @@ async function updateDisclosureStatus(trx, person, project, req) {
     .select('status_cd as statusCd', 'id')
     .where({
       user_id: person.personId,
-      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL
+      type_cd: DISCLOSURE_TYPE.ANNUAL
     });
 
-  if (disclosure.length > 0 && disclosure[0].statusCd === COIConstants.DISCLOSURE_STATUS.UP_TO_DATE) {
+  if (disclosure.length > 0 && disclosure[0].statusCd === DISCLOSURE_STATUS.UP_TO_DATE) {
     await trx('disclosure')
-      .update({status_cd: COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED})
+      .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
       .where({id: disclosure[0].id});
 
     try {
@@ -81,12 +86,12 @@ async function revertDisclosureStatus(trx, person, req, projectId) {
       .select('status_cd as statusCd', 'id')
       .where({
         user_id: person.personId,
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL
+        type_cd: DISCLOSURE_TYPE.ANNUAL
       });
 
-    if (disclosure.length > 0 && disclosure[0].statusCd === COIConstants.DISCLOSURE_STATUS.UPDATE_REQUIRED) {
+    if (disclosure.length > 0 && disclosure[0].statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED) {
       await trx('disclosure')
-        .update({status_cd: COIConstants.DISCLOSURE_STATUS.UP_TO_DATE})
+        .update({status_cd: DISCLOSURE_STATUS.UP_TO_DATE})
         .where({id: disclosure[0].id});
     }
   }
@@ -281,13 +286,14 @@ export async function saveProjects(req, project) {
 
 async function getStatus(trx, projectPerson, dbInfo, authHeader) {
   const disclosureStatus = {
-    userId: projectPerson.person_id
+    userId: projectPerson.person_id,
+    disposition: projectPerson.disposition ? projectPerson.disposition : NO_DISPOSITION_DESCRIPTION
   };
 
   const isRequired = await ProjectService.isProjectRequired(dbInfo, projectPerson, authHeader);
 
   if (!isRequired) {
-    disclosureStatus.status = COIConstants.PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED;
+    disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED;
     return disclosureStatus;
   }
 
@@ -311,10 +317,10 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
     if(declaration[0] || entities.length === 0) {
       disclosureStatus.status = disclosure[0].status;
     } else {
-      disclosureStatus.status = COIConstants.PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
+      disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
     }
   } else {
-    disclosureStatus.status = COIConstants.PROJECT_DISCLOSURE_STATUSES.NOT_YET_DISCLOSED;
+    disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.NOT_YET_DISCLOSED;
   }
   return disclosureStatus;
 }
@@ -332,9 +338,10 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
   const projectPersons = await trx('project as p')
     .distinct('pp.person_id')
     .select('p.id as projectId', 'd.id as disclosureId', 'p.sponsor_cd as sponsorCd', 'p.source_status as statusCd',
-      'p.type_cd as typeCd','pp.role_cd as roleCd ')
+      'p.type_cd as typeCd','pp.role_cd as roleCd', 'dt.description as disposition')
     .innerJoin('project_person as pp', 'p.id', 'pp.project_id')
     .leftJoin('disclosure as d', 'd.user_id', 'pp.person_id')
+    .leftJoin('disposition_type as dt', 'dt.type_cd', 'pp.disposition_type_cd')
     .where(criteria);
 
   return projectPersons;
