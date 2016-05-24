@@ -27,6 +27,7 @@ import { ROLES } from '../../../../../../coi-constants';
 import classNames from 'classnames';
 import Dropdown from '../../../dropdown';
 import {AdminActions} from '../../../../actions/admin-actions';
+import PopOver from '../../../pop-over';
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
@@ -36,13 +37,20 @@ export class AdminDeclarationsSummary extends React.Component {
     this.onProjectDispositionChanged = this.onProjectDispositionChanged.bind(this);
   }
 
-  onProjectDispositionChanged(newValue, personId) {
+  onProjectDispositionChanged(dispositionTypeCd, projectPersonId) {
     AdminActions.updateProjectDisposition(
       {
-        projectPersonId: personId,
-        dispositionTypeCd: newValue
+        projectPersonId,
+        dispositionTypeCd
       }
     );
+  }
+  
+  onRecommendedDispositionChanged(dispositionTypeCd, projectPersonId) {
+    AdminActions.recommendProjectDisposition({
+      projectPersonId,
+      dispositionTypeCd
+    });
   }
 
   wasRespondedTo(id) {
@@ -93,6 +101,19 @@ export class AdminDeclarationsSummary extends React.Component {
     return projects;
   }
 
+  getRecommendationFor(projectPersonId) {
+    if (this.props.projectRecommendations) {
+      const rec = this.props.projectRecommendations.find(recommendation => {
+        return recommendation.projectPersonId === projectPersonId;
+      });
+      if (rec) {
+        return rec.disposition;
+      }
+    }
+    
+    return -1;
+  }
+
   render() {
     const { declarations, readonly, className } = this.props;
 
@@ -117,6 +138,7 @@ export class AdminDeclarationsSummary extends React.Component {
       }
 
       const isAdmin = this.context.userInfo.coiRole === ROLES.ADMIN;
+      const isReviewer = this.context.userInfo.coiRole === ROLES.REVIEWER;
 
       projects = uniqueProjects.map((project, index) => {
         const declarationSummaries = declarations.filter(declaration => {
@@ -155,6 +177,39 @@ export class AdminDeclarationsSummary extends React.Component {
               </div>
             );
           } else {
+            let recommendationLink;
+            if (this.props.projectRecommendations) {
+              const recommendations = this.props.projectRecommendations.filter(recommendation => {
+                return recommendation.projectPersonId === project.projectPersonId;
+              }).map(recommendation => {
+                const answer = getDispositionTypeString(
+                  this.context.configState,
+                  recommendation.disposition,
+                  this.props.configId
+                );
+                return (
+                  <div key={recommendation.usersName}>
+                    <span className={styles.userName}>{recommendation.usersName}:</span>
+                    <span className={styles.reviewerRecommendation}>{answer}</span>
+                  </div>
+                );
+              });
+              
+              recommendationLink = (
+                <div style={{position: 'relative', fontSize: 12}}>
+                  <button
+                    id={`proj${project.projectPersonId}`}
+                    className={styles.reviewerRecommendations}
+                  >
+                    View Reviewer Recommendations
+                  </button>
+                  <PopOver triggerId={`proj${project.projectPersonId}`} style={{top: 32}}>
+                    {recommendations}
+                  </PopOver>
+                </div>
+              );
+            }
+
             dispositionTypeSelector = (
               <div>
                 <label style={{display: 'block'}} htmlFor="disposition">
@@ -168,18 +223,44 @@ export class AdminDeclarationsSummary extends React.Component {
                   onChange={this.onProjectDispositionChanged}
                   context={project.projectPersonId}
                 />
+                {recommendationLink}
+              </div>
+            );
+          }
+        } else if (isReviewer && config.general.reviewerDispositionsEnabled) {
+          if (!readonly) {
+            dispositionTypeSelector = (
+              <div>
+                <label style={{display: 'block'}} htmlFor="disposition">
+                  Recommended Project Disposition
+                </label>
+
+                <Dropdown
+                  options={dispositionTypeOptions}
+                  value={this.getRecommendationFor(project.projectPersonId)}
+                  onChange={this.onRecommendedDispositionChanged}
+                  context={project.projectPersonId}
+                />
               </div>
             );
           }
         }
 
         let commentClass = styles.comment;
-        let adminRelationship;
-        if (config.general.adminRelationshipEnabled) {
-          adminRelationship = (
-            <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
-          );
-          commentClass = classNames(styles.comments, styles.shortComment);
+        let relationhipLabel;
+
+        if (config.general.dispositionsEnabled) {
+          if (isAdmin && config.general.adminRelationshipEnabled) {
+            relationhipLabel = (
+              <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
+            );
+            commentClass = classNames(styles.comments, styles.shortComment);
+          } else if (isReviewer && config.general.reviewerDispositionsEnabled) {
+            relationhipLabel = (
+              <span className={styles.adminRelationship}>RECOMMENDED RELATIONSHIP</span>
+            );
+            commentClass = classNames(styles.comments, styles.shortComment);
+          }
         }
 
         return (
@@ -213,7 +294,7 @@ export class AdminDeclarationsSummary extends React.Component {
             <div className={styles.titles}>
               <span className={styles.entityName}>FINANCIAL ENTITY</span>
               <span className={styles.conflict}>REPORTER RELATIONSHIP</span>
-              {adminRelationship}
+              {relationhipLabel}
               <span className={commentClass}>REPORTER COMMENTS</span>
             </div>
             {declarationSummaries}

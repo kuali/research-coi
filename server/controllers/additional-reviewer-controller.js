@@ -120,4 +120,15 @@ export const init = app => {
     );
     res.sendStatus(ACCEPTED);
   }));
+
+  app.put('/api/coi/reviewers/:disclosureId/recommendProject/:projectPersonId', allowedRoles([REVIEWER]), wrapAsync(async (req, res) => {
+    await AdditionalReviewerDB.saveProjectRecommendation(
+      req.dbInfo,
+      req.userInfo.schoolId,
+      req.params.disclosureId,
+      req.params.projectPersonId,
+      req.body.dispositionTypeCd
+    );
+    res.sendStatus(ACCEPTED);
+  }));
 };

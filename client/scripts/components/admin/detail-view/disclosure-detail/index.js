@@ -181,6 +181,7 @@ export class DisclosureDetail extends React.Component {
             <AdminDeclarationsSummary
               entityNameMap={entityNameMap}
               declarations={disclosure.declarations}
+              projectRecommendations={disclosure.recommendedProjectDispositions}
               comments={declarationsComments}
               id={disclosure.id}
               className={`${styles.override} ${styles.declarations}`}

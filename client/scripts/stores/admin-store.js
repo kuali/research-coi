@@ -784,6 +784,30 @@ class _AdminStore {
       .send({dispositionCd})
       .end(processResponse(() => {}));
   }
+  
+  recommendProjectDisposition({projectPersonId, dispositionTypeCd}) {
+    const { selectedDisclosure } = this.applicationState;
+    if (!selectedDisclosure.recommendedProjectDispositions) {
+      selectedDisclosure.recommendedProjectDispositions = [];
+    }
+    const existing = selectedDisclosure.recommendedProjectDispositions.find(recommendation => {
+      return recommendation.projectPersonId === projectPersonId;
+    });
+    if (existing) {
+      existing.disposition = dispositionTypeCd;
+    }
+    else {
+      selectedDisclosure.recommendedProjectDispositions.push({
+        projectPersonId,
+        disposition: dispositionTypeCd
+      });
+    }
+    
+    createRequest()
+      .put(`/api/coi/reviewers/${selectedDisclosure.id}/recommendProject/${projectPersonId}`)
+      .send({dispositionTypeCd})
+      .end(processResponse(() => {}));
+  }
 }
 
 export const AdminStore = alt.createStore(_AdminStore, 'AdminStore');
