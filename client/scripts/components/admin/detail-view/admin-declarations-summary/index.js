@@ -177,35 +177,38 @@ export class AdminDeclarationsSummary extends React.Component {
               </div>
             );
           } else {
-            const recommendations = this.props.projectRecommendations.filter(recommendation => {
-              return recommendation.projectPersonId === project.projectPersonId;
-            }).map(recommendation => {
-              const answer = getDispositionTypeString(
-                this.context.configState,
-                recommendation.disposition,
-                this.props.configId
-              );
-              return (
-                <div key={recommendation.usersName}>
-                  <span className={styles.userName}>{recommendation.usersName}:</span>
-                  <span className={styles.reviewerRecommendation}>{answer}</span>
+            let recommendationLink;
+            if (this.props.projectRecommendations) {
+              const recommendations = this.props.projectRecommendations.filter(recommendation => {
+                return recommendation.projectPersonId === project.projectPersonId;
+              }).map(recommendation => {
+                const answer = getDispositionTypeString(
+                  this.context.configState,
+                  recommendation.disposition,
+                  this.props.configId
+                );
+                return (
+                  <div key={recommendation.usersName}>
+                    <span className={styles.userName}>{recommendation.usersName}:</span>
+                    <span className={styles.reviewerRecommendation}>{answer}</span>
+                  </div>
+                );
+              });
+              
+              recommendationLink = (
+                <div style={{position: 'relative', fontSize: 12}}>
+                  <button
+                    id={`proj${project.projectPersonId}`}
+                    className={styles.reviewerRecommendations}
+                  >
+                    View Reviewer Recommendations
+                  </button>
+                  <PopOver triggerId={`proj${project.projectPersonId}`} style={{top: 32}}>
+                    {recommendations}
+                  </PopOver>
                 </div>
               );
-            });
-            
-            const recommendationLink = (
-              <div style={{position: 'relative', fontSize: 12}}>
-                <button
-                  id={`proj${project.projectPersonId}`}
-                  className={styles.reviewerRecommendations}
-                >
-                  View Reviewer Recommendations
-                </button>
-                <PopOver triggerId={`proj${project.projectPersonId}`} style={{top: 32}}>
-                  {recommendations}
-                </PopOver>
-              </div>
-            );
+            }
 
             dispositionTypeSelector = (
               <div>
