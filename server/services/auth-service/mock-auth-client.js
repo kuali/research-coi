@@ -30,7 +30,16 @@ export function getUserInfo(dbInfo, hostname, token) {
     if (!token) {
       resolve();
     }
-    const lowercaseToken = token.toLowerCase();
+    let lowercaseToken = token.toLowerCase();
+    let impersonator;
+
+    if (lowercaseToken.startsWith('impersonating_')) {
+      const split = token.split('_');
+      impersonator = 'impersonator';
+      token = split[1];
+      lowercaseToken = token.toLowerCase();
+    }
+
     if (lowercaseToken.startsWith('a')) {
       resolve({
         id: hashCode(token),
@@ -45,6 +54,7 @@ export function getUserInfo(dbInfo, hostname, token) {
         phone: '801-322-3323',
         schoolId: hashCode(token),
         coiRole: COIConstants.ROLES.ADMIN,
+        impersonatedBy: impersonator,
         mock: true
       });
     }
@@ -62,6 +72,7 @@ export function getUserInfo(dbInfo, hostname, token) {
         phone: '801-322-3323',
         schoolId: hashCode(token),
         coiRole: COIConstants.ROLES.REVIEWER,
+        impersonatedBy: impersonator,
         mock: true
       });
     } else {
@@ -78,6 +89,7 @@ export function getUserInfo(dbInfo, hostname, token) {
         phone: '801-322-3323',
         schoolId: hashCode(token),
         coiRole: COIConstants.ROLES.USER,
+        impersonatedBy: impersonator,
         mock: true
       });
     }
