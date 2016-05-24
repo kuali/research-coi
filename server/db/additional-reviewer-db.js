@@ -157,14 +157,19 @@ export function updateAdditionalReviewer(dbInfo, id, updates) {
     .where({id});
 }
 
-export async function saveRecommendation(dbInfo, schoolId, disclosureId, declarationId, dispositionType) {
+async function findAdditionalReviewer(dbInfo, userId, disclosureId) {
   const knex = getKnex(dbInfo);
-  const additionalReviewer = await knex('additional_reviewer')
+  return await knex('additional_reviewer')
     .first('id')
     .where({
-      user_id: schoolId,
+      user_id: userId,
       disclosure_id: disclosureId
     });
+}
+
+export async function saveRecommendation(dbInfo, schoolId, disclosureId, declarationId, dispositionType) {
+  const knex = getKnex(dbInfo);
+  const additionalReviewer = await findAdditionalReviewer(dbInfo, schoolId, disclosureId);
 
   if (!additionalReviewer) {
     throw new Error(`Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`);
@@ -189,6 +194,37 @@ export async function saveRecommendation(dbInfo, schoolId, disclosureId, declara
   return knex('reviewer_recommendation').insert({
     additional_reviewer_id: additionalReviewerId,
     declaration_id: declarationId,
+    disposition_type_id: dispositionType
+  });
+}
+
+export async function saveProjectRecommendation(dbInfo, schoolId, disclosureId, projectPersonId, dispositionType) {
+  const knex = getKnex(dbInfo);
+  const additionalReviewer = await findAdditionalReviewer(dbInfo, schoolId, disclosureId);
+
+  if (!additionalReviewer) {
+    throw new Error(`Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`);
+  }
+  
+  const additionalReviewerId = additionalReviewer.id;
+
+  const exists = await knex('reviewer_recommendation').first().where({
+    additional_reviewer_id: additionalReviewerId,
+    project_person_id: projectPersonId
+  });
+
+  if (exists) {
+    return knex('reviewer_recommendation').update({
+      disposition_type_id: dispositionType
+    }).where({
+      additional_reviewer_id: additionalReviewerId,
+      project_person_id: projectPersonId
+    });
+  }
+
+  return knex('reviewer_recommendation').insert({
+    additional_reviewer_id: additionalReviewerId,
+    project_person_id: projectPersonId,
     disposition_type_id: dispositionType
   });
 }

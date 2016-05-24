@@ -667,6 +667,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       phaseTwoSteps.push(
         knex.select(
             'r.declaration_id as declarationId',
+            'r.project_person_id as projectPersonId',
             'r.disposition_type_id as dispositionTypeId'
           )
           .from('reviewer_recommendation as r')
@@ -677,11 +678,22 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
           })
           .then(recommendations => {
             recommendations.forEach(recommendation => {
-              const decl = disclosure.declarations.find(declaration => {
-                return declaration.id === recommendation.declarationId;
-              });
-              if (decl) {
-                decl.reviewerRelationshipCd = recommendation.dispositionTypeId;
+              if (recommendation.projectPersonId) {
+                if (!disclosure.recommendedProjectDispositions) {
+                  disclosure.recommendedProjectDispositions = [];
+                }
+                
+                disclosure.recommendedProjectDispositions.push({
+                  projectPersonId: recommendation.projectPersonId,
+                  disposition: recommendation.dispositionTypeId
+                });
+              } else {
+                const decl = disclosure.declarations.find(declaration => {
+                  return declaration.id === recommendation.declarationId;
+                });
+                if (decl) {
+                  decl.reviewerRelationshipCd = recommendation.dispositionTypeId;
+                }
               }
             });
           })
@@ -690,6 +702,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       phaseTwoSteps.push(
         knex.select(
             'r.declaration_id as declarationId',
+            'r.project_person_id as projectPersonId',
             'r.disposition_type_id as dispositionTypeId',
             'a.name as usersName'
           )
@@ -701,17 +714,31 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
           .orderBy('r.disposition_type_id')
           .then(recommendations => {
             recommendations.forEach(recommendation => {
-              const decl = disclosure.declarations.find(declaration => {
-                return declaration.id === recommendation.declarationId;
-              });
-              if (decl) {
-                if (!decl.recommendations) {
-                  decl.recommendations = [];
-                }
+              let decl;
+              if (recommendation.declarationId) {
+                decl = disclosure.declarations.find(declaration => {
+                  return declaration.id === recommendation.declarationId;
+                });
 
-                decl.recommendations.push({
+                if (decl) {
+                  if (!decl.recommendations) {
+                    decl.recommendations = [];
+                  }
+
+                  decl.recommendations.push({
+                    usersName: recommendation.usersName,
+                    dispositionTypeCd: recommendation.dispositionTypeId
+                  });
+                }
+              } else if (recommendation.projectPersonId) {
+                if (!disclosure.recommendedProjectDispositions) {
+                  disclosure.recommendedProjectDispositions = [];
+                }
+                
+                disclosure.recommendedProjectDispositions.push({
                   usersName: recommendation.usersName,
-                  dispositionTypeCd: recommendation.dispositionTypeId
+                  projectPersonId: recommendation.projectPersonId,
+                  disposition: recommendation.dispositionTypeId
                 });
               }
             });

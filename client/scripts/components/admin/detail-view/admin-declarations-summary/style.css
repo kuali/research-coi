@@ -96,3 +96,26 @@
   width: 100%;
   padding: 0 0 10px 10px;
 }
+
+.reviewerRecommendations {
+  text-align: left;
+  color: #0095A0;
+  padding-top: 7px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  display: block;
+}
+
+.userName {
+  color: #666;
+  margin-right: 5px;
+}
+
+:global(.color-blind) .userName {
+  color: black;
+}
+
+.reviewerRecommendation {
+  font-weight: bold;
+}
