@@ -347,7 +347,7 @@ export const saveDeclaration = (dbInfo, userId, disclosureId, record) => {
           disclosure_id: disclosureId,
           fin_entity_id: record.finEntityId,
           type_cd: record.typeCd,
-          comments: record.comments
+          comments: record.comments ? record.comments : null
         }, 'id').then(id => {
           record.id = id[0];
           return record;
