@@ -39,6 +39,7 @@ import { NOT_FOUND } from '../http-status-codes';
 import { configCheck, adminCheck } from './middleware/role-check';
 import unauthorized from './middleware/unauthorized';
 import scheduleExpirationCheck from './expiration-check';
+import impersonationLogger from './middleware/impersonation-logger';
 
 const DEFAULT_PORT = 8090;
 
@@ -103,7 +104,6 @@ export function run() {
 
   app.use(methodChecker);
   app.use(cookieParser());
-
   app.use('/coi/auth', renderView('auth'));
   app.use('/api/v1/coi/health', healthReport);
   app.use('/coi/health', healthReport);
@@ -123,6 +123,7 @@ export function run() {
   app.use('/coi', unauthorized);
 
   app.use(bodyParser.json());
+  app.use(impersonationLogger);
   ConfigController.init(app);
   DisclosureController.init(app);
   TravelLogController.init(app);
