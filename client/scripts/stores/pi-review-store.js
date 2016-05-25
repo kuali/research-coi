@@ -140,6 +140,10 @@ class _PIReviewStore {
   }
 
   respond([reviewId, comment]) {
+    if (!comment || comment.length === 0) {
+      return;
+    }
+
     const questionToRespondTo = this.disclosure.questions.find(question => {
       return reviewId === question.reviewId;
     });
@@ -155,6 +159,9 @@ class _PIReviewStore {
     });
     if (entityToRespondTo) {
       entityToRespondTo.reviewedOn = new Date();
+      entityToRespondTo.piResponse = {
+        text: comment
+      };
     }
 
     this.disclosure.declarations.forEach(project => {

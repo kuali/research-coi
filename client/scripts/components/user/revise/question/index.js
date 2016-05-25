@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import {get} from 'lodash';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import {COIConstants} from '../../../../../../coi-constants';
@@ -49,6 +50,7 @@ export default class Question extends React.Component {
     this.answer = this.answer.bind(this);
     this.answerMultiple = this.answerMultiple.bind(this);
     this.controlValidityChanged = this.controlValidityChanged.bind(this);
+    this.responseChanged = this.responseChanged.bind(this);
   }
 
   componentWillReceiveProps(newProps) {
@@ -210,9 +212,23 @@ export default class Question extends React.Component {
   }
 
   respond() {
+    const defaultText = get(this, 'props.question.piResponse.text');
     this.setState({
-      responding: true
+      responding: true,
+      isValid: defaultText && defaultText.length > 0
     });
+  }
+
+  responseChanged() {
+    if (!this.state.isValid && this.refs.responseText.value.length > 0) {
+      this.setState({
+        isValid: true
+      });
+    } else if (this.state.isValid && this.refs.responseText.value.length === 0) {
+      this.setState({
+        isValid: false
+      });
+    }
   }
 
   cancel() {
@@ -271,7 +287,13 @@ export default class Question extends React.Component {
       }
       responseText = (
         <div>
-          <textarea aria-label="Response" ref="responseText" className={styles.responseText} defaultValue={defaultText} />
+          <textarea
+            aria-label="Response"
+            ref="responseText"
+            className={styles.responseText}
+            defaultValue={defaultText}
+            onChange={this.responseChanged}
+          />
         </div>
       );
     }
