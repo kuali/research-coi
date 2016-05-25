@@ -18,7 +18,6 @@
 
 import styles from './style';
 import React from 'react';
-import {get} from 'lodash';
 import {formatDate} from '../../../../format-date';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
@@ -41,7 +40,6 @@ export default class EntityDeclaration extends React.Component {
     this.respond = this.respond.bind(this);
     this.cancel = this.cancel.bind(this);
     this.done = this.done.bind(this);
-    this.responseChanged = this.responseChanged.bind(this);
   }
 
   revise() {
@@ -51,24 +49,9 @@ export default class EntityDeclaration extends React.Component {
   }
 
   respond() {
-    const defaultText = get(this, 'props.entity.piResponse.text');
-
     this.setState({
-      responding: true,
-      isValid: defaultText && defaultText.length > 0
+      responding: true
     });
-  }
-
-  responseChanged() {
-    if (!this.state.isValid && this.refs.responseText.value.length > 0) {
-      this.setState({
-        isValid: true
-      });
-    } else if (this.state.isValid && this.refs.responseText.value.length === 0) {
-      this.setState({
-        isValid: false
-      });
-    }
   }
 
   cancel() {
@@ -98,9 +81,13 @@ export default class EntityDeclaration extends React.Component {
       PIReviewActions.reviseDeclaration(this.props.entity.reviewId, selectedRadio.value, declarationComment.value);
     }
     else if (this.state.responding) {
-      newState.responded = true;
       const textarea = this.refs.responseText ? this.refs.responseText : {};
-      PIReviewActions.respond(this.props.entity.reviewId, textarea.value);
+      if (textarea.value.length > 0) {
+        newState.responded = true;
+        PIReviewActions.respond(this.props.entity.reviewId, textarea.value);
+      } else {
+        newState.responded = false;
+      }
     }
 
     this.setState(newState);
@@ -170,7 +157,6 @@ export default class EntityDeclaration extends React.Component {
             ref="responseText"
             className={styles.responseText}
             defaultValue={defaultText}
-            onChange={this.responseChanged}
           />
         </div>
       );
