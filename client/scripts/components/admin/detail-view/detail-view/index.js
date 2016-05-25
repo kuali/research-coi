@@ -112,7 +112,9 @@ export class DetailView extends React.Component {
     const { userInfo } = this.context;
 
     let sidePanel;
+    let top = 0;
     if (this.state.applicationState.commentingPanelShowing) {
+      top = window.pageYOffset > 45 ? window.pageYOffset - 45 : 0;
       const comments = this.state.applicationState.currentComments;
       sidePanel = (
         <CommentingPanel
@@ -224,7 +226,7 @@ export class DetailView extends React.Component {
           <div className={`inline-flexbox fill`}>
             {disclosureDetail}
           </div>
-          <span className={styles.sidePanel}>
+          <span className={styles.sidePanel} style={{top}}>
             {sidePanel}
           </span>
         </div>
