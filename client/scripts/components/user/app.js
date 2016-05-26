@@ -27,6 +27,7 @@ import {Revise} from './revise/revise';
 import {SizeAwareComponent} from '../size-aware-component';
 import UserInfoStore from '../../stores/user-info-store';
 import ConfigStore from '../../stores/config-store';
+import ColorStore from '../../stores/color-store'; // eslint-disable-line no-unused-vars
 import history from '../../history';
 
 function latestState() {

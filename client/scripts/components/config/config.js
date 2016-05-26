@@ -27,6 +27,7 @@ import DeclarationsCustomization from './declarations/declarations';
 import CertificationCustomization from './certification/certification';
 import UserInfoStore from '../../stores/user-info-store';
 import ConfigStore from '../../stores/config-store';
+import ColorStore from '../../stores/color-store'; // eslint-disable-line no-unused-vars
 import DisclosureRequirements from './disclosure-requirements/disclosure-requirements';
 import CustomizeNotifications from './customize-notifications/customize-notifications';
 import history from '../../history';
