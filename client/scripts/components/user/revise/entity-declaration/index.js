@@ -81,7 +81,7 @@ export default class EntityDeclaration extends React.Component {
       PIReviewActions.reviseDeclaration(this.props.entity.reviewId, selectedRadio.value, declarationComment.value);
     }
     else if (this.state.responding) {
-      const textarea = this.refs.responseText ? this.refs.responseText : {};
+      const textarea = this.refs.responseText ? this.refs.responseText : { value: ''};
       if (textarea.value.length > 0) {
         newState.responded = true;
         PIReviewActions.respond(this.props.entity.reviewId, textarea.value);
