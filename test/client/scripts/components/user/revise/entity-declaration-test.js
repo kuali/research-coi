@@ -125,11 +125,14 @@ describe('EntityDeclaration', () => {
   it('done method revising', () => {
     const tree = renderEntityDelcaration(entityWithComments, false, true);
     const instance = tree.getMountedInstance();
+    instance.refs = {
+      responseText: {
+        value: 'fdsfds'
+      }
+    };
     instance.done();
     const storeState = MockPIReviewStore.getState();
     assert.equal(false, instance.state.responding);
     assert.equal(1, storeState.responseId);
   });
-
-
 });
