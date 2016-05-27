@@ -25,6 +25,7 @@ import {
   PROJECT_DISCLOSURE_STATUSES
 } from '../../coi-constants';
 import * as ProjectService from '../services/project-service/project-service';
+import { getGeneralConfig } from '../db/config-db';
 import Log from '../log';
 import { createAndSendNewProjectNotification } from '../services/notification-service/notification-service';
 let getKnex;
@@ -54,6 +55,23 @@ export const getProjects = (dbInfo, userId, trx) => {
     });
 };
 
+async function shouldUpdateStatus(trx, disclosureId) {
+  const generalConfig = await getGeneralConfig(trx);
+
+  const shouldUpdate = !generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities;
+
+  if (shouldUpdate) {
+    return true;
+  }
+
+  const entities = await trx('fin_entity').select('id').where({disclosure_id: disclosureId});
+
+  if (entities && entities.length > 0) {
+    return true;
+  }
+  return false;
+}
+
 async function updateDisclosureStatus(trx, person, project, req) {
   const disclosure = await trx('disclosure')
     .select('status_cd as statusCd', 'id')
@@ -62,7 +80,7 @@ async function updateDisclosureStatus(trx, person, project, req) {
       type_cd: DISCLOSURE_TYPE.ANNUAL
     });
 
-  if (disclosure.length > 0 && disclosure[0].statusCd === DISCLOSURE_STATUS.UP_TO_DATE) {
+  if (disclosure.length > 0 && await shouldUpdateStatus(trx, disclosure[0].id) && disclosure[0].statusCd === DISCLOSURE_STATUS.UP_TO_DATE) {
     await trx('disclosure')
       .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
       .where({id: disclosure[0].id});
@@ -132,6 +150,7 @@ async function updateProjectPerson(trx, person, project, isRequired, isNew, req)
       'source_person_type': person.sourcePersonType,
       'project_id': project.id
     });
+
   if (isNew === 1) {
     if (isRequired) {
       await updateDisclosureStatus(trx, person, project, req);
@@ -188,6 +207,7 @@ async function saveProjectPersons(trx, project, req) {
       const existingPerson = existingPersons.find(pr => {
         return pr.personId === person.personId && pr.source_person_type === person.sourcePersonType;
       });
+
       if (existingPerson) {
         return await updateProjectPerson(trx, person, project, isRequired, existingPerson.new, req);
       }

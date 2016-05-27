@@ -60,7 +60,7 @@ export function createPerson(personId, roleCode, active) {
   };
 }
 
-export async function insertProjectPerson(knex, projectPerson, projectId, dispositionTypeCd) {
+export async function insertProjectPerson(knex, projectPerson, projectId, dispositionTypeCd, isNew) {
   const id = await knex('project_person')
     .insert({
       project_id: projectId,
@@ -68,7 +68,8 @@ export async function insertProjectPerson(knex, projectPerson, projectId, dispos
       source_person_type: projectPerson.sourcePersonType,
       role_cd: projectPerson.roleCode,
       active: projectPerson.active,
-      disposition_type_cd: dispositionTypeCd
+      disposition_type_cd: dispositionTypeCd,
+      new: isNew !== undefined ? isNew : true
     },'id');
   return id[0];
 }
