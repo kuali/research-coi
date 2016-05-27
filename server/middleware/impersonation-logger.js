@@ -28,7 +28,7 @@ try {
   lane = extensions.config.lane;
 }
 catch (err) {
-  getKnex = require('./connection-manager').default;
+  getKnex = require('../db/connection-manager').default;
   lane = process.env.LANE || LANES.PRODUCTION;
 }
 
