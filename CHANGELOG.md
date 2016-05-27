@@ -1,3 +1,40 @@
+##coi-1605
+
+
+Issues
+* Fixed issue when adding a parent and child screening question at the same time.
+* Fixed issue when adding new projects due to passing dates as strings to an oracle database and getting `ORA-01843: not a valid month` error.
+* Fixed issue when updating projects that would cause the disclosure status to change to 'Update Needed' on projects that had already been disclosed.
+* Fixed multiple `ORA-01008: not all variables bound` errors when attempting to insert rows into an oracle database.
+* Fixed issue where additional reviewer search would not show up even if there were valid additional reviewers in the system.
+
+Enhancements
+* Updated review comment headers to display more info about the section being commented on.  
+* Cleaned up the UI for reviewers.
+* Display the application build version on the about page.
+* Refactored configuration code to improve robustness when multiple configurations are being used simultaneously
+
+Generally Available Features
+* Added ability for reviewers to provide recommended project level dispositions during their review.
+* Added ability for admins to view all reviewers' recommened project level dispositions.
+* Ability to configure and send the email notifications to COI Admin when a disclosure is resubmitted by a reporter
+
+Generally Available Features (formerly behind a feature flag)
+* Ability to reassign additional reviewers.
+* Ability to configure and assign project level dispositions to submitted disclosures.
+* System will set disclosure level disposition that is the highest risk disposition type of all the project dispositions.
+* Ability to filter disclosures based on disposition in the admin list view.
+* Ability to create and display rich text instructions.
+* Ability to automatically assign additional reviewers based on the reporter's primary department.
+* Ability to configure and send the email notifications to COI Admin when reporter a new disclosure is submitted by a reporter
+* Ability to configure and send the email notifications to a reporter when a new project’s creation requires an annual disclosure update.
+* Ability to configure and send the email notifications to reporter when their disclosure is sent back, approved, expired or about to expire.
+* Ability to configure and send the email notifications related to additional review.
+
+Features behind a Feature Flag
+* Added ability to filter admin list view by assigned additional reviewers
+* Added logging for upcoming core impersonation feature.
+
 ##coi-1604
 
 ######Issues
