@@ -20,6 +20,7 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import {SizeAwareComponent} from '../size-aware-component';
 import ConfigStore from '../../stores/config-store';
+import ColorStore from '../../stores/color-store'; // eslint-disable-line no-unused-vars
 import UserInfoStore from '../../stores/user-info-store';
 import aboutStyles from './about-style';
 import {AppHeader} from '../app-header';
