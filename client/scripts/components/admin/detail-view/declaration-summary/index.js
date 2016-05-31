@@ -109,40 +109,42 @@ export default class DeclarationSummary extends React.Component {
       const isAdmin = userInfo.coiRole === ROLES.ADMIN;
       const isReviewer = userInfo.coiRole === ROLES.REVIEWER;
       if (isAdmin && get(configState, 'config.general.adminRelationshipEnabled')) {
+        let recommendationLink;
+        if (declaration.recommendations && declaration.recommendations.length > 0) {
+          const recommendations = declaration.recommendations.map(recommendation => {
+            const answer = getDispositionType(recommendation.dispositionTypeCd);
+            return (
+              <div key={recommendation.usersName}>
+                <span className={styles.userName}>{recommendation.usersName}:</span>
+                <span className={styles.reviewerRecommendation}>{answer}</span>
+              </div>
+            );
+          });
+
+          const linkId = `recmndLnk${declaration.id}`;
+          recommendationLink = (
+            <div style={{position: 'relative'}}>
+              <button
+                id={linkId}
+                className={styles.reviewerRecommendations}
+              >
+                View Reviewer Recommendations
+              </button>
+              <PopOver triggerId={linkId} style={{top: 32}}>
+                {recommendations}
+              </PopOver>
+            </div>
+          );
+        }
+
         if (readonly) {
           relationship = (
             <span className={styles.disposition}>
               {getDispositionType(declaration.adminRelationshipCd)}
+              {recommendationLink}
             </span>
           );
         } else {
-          let recommendationLink;
-          if (declaration.recommendations && declaration.recommendations.length > 0) {
-            const recommendations = declaration.recommendations.map(recommendation => {
-              const answer = getDispositionType(recommendation.dispositionTypeCd);
-              return (
-                <div key={recommendation.usersName}>
-                  <span className={styles.userName}>{recommendation.usersName}:</span>
-                  <span className={styles.reviewerRecommendation}>{answer}</span>
-                </div>
-              );
-            });
-            
-            const linkId = `recmndLnk${declaration.id}`;
-            recommendationLink = (
-              <div style={{position: 'relative'}}>
-                <button
-                  id={linkId}
-                  className={styles.reviewerRecommendations}
-                >
-                  View Reviewer Recommendations
-                </button>
-                <PopOver triggerId={linkId} style={{top: 32}}>
-                  {recommendations}
-                </PopOver>
-              </div>
-            );
-          }
           relationship = (
             <span className={styles.disposition}>
               <div>
@@ -158,6 +160,8 @@ export default class DeclarationSummary extends React.Component {
             </span>
           );
         }
+
+
         commentClass = classNames(styles.comments, styles.shortComment);
       } else if (isReviewer && get(configState, 'config.general.reviewerDispositionsEnabled')) {
         if (readonly) {
