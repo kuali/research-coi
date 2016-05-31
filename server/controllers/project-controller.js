@@ -54,7 +54,7 @@ export const init = app => {
   }));
 
   app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    const result = await ProjectDB.getProjectStatuses(req.dbInfo, req.params.sourceId, req.params.projectId);
+    const result = await ProjectDB.getProjectStatuses(req.dbInfo, req.params.sourceId, req.params.projectId, req.headers.authorization);
     res.send(result);
   }));
 
