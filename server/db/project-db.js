@@ -367,13 +367,13 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
   return projectPersons;
 }
 
-export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier) {
+export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier, authHeader) {
   try {
     const knex = getKnex(dbInfo);
     return knex.transaction(async function(trx) {
       const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier);
       const queries = projectPersons.map(async projectPerson => {
-        return await getStatus(trx, projectPerson);
+        return await getStatus(trx, projectPerson, dbInfo, authHeader);
       });
 
       return Promise.all(queries);
