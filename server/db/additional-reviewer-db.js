@@ -62,6 +62,7 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
       'ar.user_id as userId',
       'ar.disclosure_id as disclosureId',
       'ar.name',
+      'd.submitted_by as reporter',
       'ar.email',
       'ar.title',
       'ar.unit_name as unitName',
