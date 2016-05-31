@@ -76,6 +76,16 @@ export default function General(props, {configState}) {
             checked={generalConfig.autoAddAdditionalReviewer === undefined ? false : generalConfig.autoAddAdditionalReviewer}
           />
         </div>
+        <div className={styles.checkbox}>
+          <CheckBox
+            path='config.general.disableNewProjectStatusUpdateWhenNoEntities'
+            label='Do not require researchers with no entities to update their annual disclosure when they have a new project.'
+            labelClassName={styles.label}
+            checked={generalConfig.disableNewProjectStatusUpdateWhenNoEntities === undefined ?
+              false :
+              generalConfig.disableNewProjectStatusUpdateWhenNoEntities}
+          />
+        </div>
       </Panel>
 
       <Panel title="Screening Validations">

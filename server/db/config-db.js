@@ -201,7 +201,7 @@ async function getQuestions(query) {
   };
 }
 
-async function getGeneralConfig(query) {
+export async function getGeneralConfig(query) {
   const general = await query('config').select('config', 'id').limit(1).orderBy('id', 'desc');
   return {
     config: JSON.parse(general[0].config).general,

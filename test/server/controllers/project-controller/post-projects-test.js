@@ -22,7 +22,17 @@ import assert from 'assert';
 import * as app from '../../../../server/app';
 import request from 'supertest';
 import { OK } from '../../../../http-status-codes';
-import { DISCLOSURE_STATUS, DISCLOSURE_TYPE } from '../../../../coi-constants';
+import { DISCLOSURE_STATUS, DISCLOSURE_TYPE, RELATIONSHIP_STATUS } from '../../../../coi-constants';
+import {
+  createProject,
+  insertProject,
+  createPerson,
+  insertProjectPerson,
+  createDisclosure,
+  insertDisclosure,
+  createEntity,
+  insertEntity
+} from '../../../test-utils';
 
 let getKnex;
 try {
@@ -33,57 +43,6 @@ catch (err) {
   getKnex = require('../../../server/db/connection-manager').default;
 }
 const knex = getKnex({});
-
-function createProject(sourceIdentifier) {
-  return {
-    title: 'TEST TITLE',
-    typeCode: 1,
-    sourceSystem: 'KC-PD',
-    sourceIdentifier,
-    sourceStatus: 1,
-    sponsorCode: '000340',
-    sponsorName: 'NIH',
-    startDate: '2017-01-01',
-    endDate: '2017-1-31'
-  };
-}
-
-function createPerson(personId, roleCode, active) {
-  return {
-    personId,
-    sourcePersonType: 'EMPLOYEE',
-    roleCode,
-    active
-  };
-}
-
-async function insertProject(project) {
-  const id = await knex('project').insert({
-    title: project.title,
-    type_cd: project.typeCode,
-    source_system: project.sourceSystem,
-    source_identifier: project.sourceIdentifier,
-    source_status: project.sourceStatus,
-    sponsor_cd: project.sponsorCode,
-    sponsor_name: project.sponsorName,
-    start_date: new Date(project.startDate),
-    end_date: new Date(project.endDate)
-  }, 'id');
-  return id[0];
-}
-
-async function insertProjectPerson(projectPerson, projectId, isNew) {
-  const id = await knex('project_person')
-    .insert({
-      project_id: projectId,
-      person_id: projectPerson.personId,
-      source_person_type: projectPerson.sourcePersonType,
-      role_cd: projectPerson.roleCode,
-      active: projectPerson.active,
-      new: isNew
-    },'id');
-  return id[0];
-}
 
 async function post(project) {
   return await request(app.run())
@@ -120,15 +79,6 @@ async function testDisclosureStatus(user_id, expectedStatus) {
   assert.equal(expectedStatus, disclosure[0].statusCd);
 }
 
-async function insertDisclosure(status_cd, user_id) {
-  await knex('disclosure').insert({
-    type_cd: DISCLOSURE_TYPE.ANNUAL,
-    status_cd,
-    user_id,
-    start_date: new Date(),
-    config_id: 1}, 'id');
-}
-
 describe('POST api/coi/projects', () => {
   before(async () => {
     await knex('project_type')
@@ -151,7 +101,7 @@ describe('POST api/coi/projects', () => {
   describe('new project no persons', () => {
     let project;
     before(async () => {
-      await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '1');
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '1');
     });
     it('should return an OK status', async function() {
       const response = await post(createProject(1));
@@ -175,7 +125,8 @@ describe('POST api/coi/projects', () => {
   describe('new project with persons', () => {
     let project;
     before(async () => {
-      await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '2');
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '2');
+
     });
 
     it('should return a OK status', async function() {
@@ -216,8 +167,8 @@ describe('POST api/coi/projects', () => {
     let project;
     before(async () => {
       project = createProject(3);
-      projectId = await insertProject(project);
-      await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '3');
+      projectId = await insertProject(knex, project);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '3');
     });
 
     it('should return an OK status with no content', async function() {
@@ -240,8 +191,8 @@ describe('POST api/coi/projects', () => {
     let project;
     before(async () => {
       project = createProject(4);
-      projectId = await insertProject(project);
-      await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '4');
+      projectId = await insertProject(knex, project);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '4');
     });
 
     it('should return an OK status with no content', async function() {
@@ -270,10 +221,10 @@ describe('POST api/coi/projects', () => {
     let projectPerson;
     before(async () => {
       project = createProject(5);
-      projectId = await insertProject(project);
+      projectId = await insertProject(knex, project);
       projectPerson = createPerson('5','PI', true);
-      await insertProjectPerson(projectPerson, projectId, true);
-      await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '5');
+      await insertProjectPerson(knex, projectPerson, projectId, null, true);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED), '5');
     });
 
     it('should return an OK status with no content', async function() {
@@ -303,10 +254,10 @@ describe('POST api/coi/projects', () => {
     let projectPerson;
     before(async () => {
       project = createProject(6);
-      projectId = await insertProject(project);
+      projectId = await insertProject(knex, project);
       projectPerson = createPerson('6','PI', true);
-      await insertProjectPerson(projectPerson, projectId, true);
-      await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '6');
+      await insertProjectPerson(knex, projectPerson, projectId, null, true);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED), '6');
     });
 
     it('should return an OK status with no content', async function() {
@@ -339,13 +290,13 @@ describe('POST api/coi/projects', () => {
     let projectPersonId1;
     before(async () => {
       project = createProject(7);
-      projectId = await insertProject(project);
+      projectId = await insertProject(knex, project);
       projectPerson = createPerson('7','PI', true);
-      projectPersonId = await insertProjectPerson(projectPerson, projectId, true);
+      projectPersonId = await insertProjectPerson(knex, projectPerson, projectId, null, true);
       projectPerson1 = createPerson('8','PI', true);
-      projectPersonId1 = await insertProjectPerson(projectPerson1, projectId, true);
-      await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '7');
-      await insertDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED, '8');
+      projectPersonId1 = await insertProjectPerson(knex, projectPerson1, projectId, null, true);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED), '7');
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UPDATE_REQUIRED), '8');
     });
 
     it('should return an OK status with no content', async function() {
@@ -390,10 +341,10 @@ describe('POST api/coi/projects', () => {
     let projectPerson;
     before(async () => {
       project = createProject(9);
-      projectId = await insertProject(project);
+      projectId = await insertProject(knex, project);
       projectPerson = createPerson('9','PI', false);
-      await insertProjectPerson(projectPerson, projectId, true);
-      await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '9');
+      await insertProjectPerson(knex, projectPerson, projectId, null, true);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '9');
     });
 
     it('should return an OK status with no content', async function() {
@@ -421,8 +372,8 @@ describe('POST api/coi/projects', () => {
     let project;
     before(async () => {
       project = createProject(10);
-      projectId = await insertProject(project);
-      await insertDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL, '10');
+      projectId = await insertProject(knex, project);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL), '10');
     });
 
     it('should return an OK status with no content', async function() {
@@ -451,10 +402,10 @@ describe('POST api/coi/projects', () => {
     let projectPerson;
     before(async () => {
       project = createProject(11);
-      projectId = await insertProject(project);
+      projectId = await insertProject(knex, project);
       projectPerson = createPerson('11','PI', false);
-      await insertProjectPerson(projectPerson, projectId, false);
-      await insertDisclosure(DISCLOSURE_STATUS.UP_TO_DATE, '11');
+      await insertProjectPerson(knex, projectPerson, projectId, null, false);
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '11');
     });
 
     it('should return an OK status with no content', async function() {
@@ -473,12 +424,109 @@ describe('POST api/coi/projects', () => {
     });
   });
 
+  describe('test no fe config option ', () => {
+    let config;
+    before(async() => {
+      const configs = await knex('config').select('config');
+      config = JSON.parse(configs[0].config);
+      config.general.disableNewProjectStatusUpdateWhenNoEntities = true;
+
+      await knex('config').update({config: JSON.stringify(config)});
+    });
+
+    describe('new project with persons no fe', () => {
+      let project;
+      before(async () => {
+        await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '12');
+
+      });
+
+      it('should return a OK status', async function() {
+        const newProject = createProject(12);
+        newProject.persons = [createPerson('12','PI')];
+        const response = await post(newProject);
+        project = response.body;
+      });
+
+      it('should return a project with an id', async function() {
+        assert.equal('TEST TITLE', project.title);
+        assert.equal(1,project.persons.length);
+        assert(project.id !== undefined);
+      });
+
+      it('should return a project person with an id', async function() {
+        assert.equal('TEST TITLE', project.title);
+        assert.equal(1,project.persons.length);
+        assert(project.persons[0].id !== undefined);
+        assert(project.id !== undefined);
+      });
+
+      it('should insert new project record', async function() {
+        await testProject(project.id, 'TEST TITLE');
+      });
+
+      it('should insert new project person record', async function() {
+        await testProjectPersons(project.id, true, true, 1, 'PI');
+      });
+
+      it('should update disclosure status', async function() {
+        await testDisclosureStatus('12', DISCLOSURE_STATUS.UP_TO_DATE);
+      });
+    });
+
+    describe('new project with persons with fe', () => {
+      let project;
+      before(async () => {
+        const disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '13');
+        await insertEntity(knex, createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true));
+      });
+
+      it('should return a OK status', async function() {
+        const newProject = createProject(13);
+        newProject.persons = [createPerson('13','PI')];
+        const response = await post(newProject);
+        project = response.body;
+      });
+
+      it('should return a project with an id', async function() {
+        assert.equal('TEST TITLE', project.title);
+        assert.equal(1,project.persons.length);
+        assert(project.id !== undefined);
+      });
+
+      it('should return a project person with an id', async function() {
+        assert.equal('TEST TITLE', project.title);
+        assert.equal(1,project.persons.length);
+        assert(project.persons[0].id !== undefined);
+        assert(project.id !== undefined);
+      });
+
+      it('should insert new project record', async function() {
+        await testProject(project.id, 'TEST TITLE');
+      });
+
+      it('should insert new project person record', async function() {
+        await testProjectPersons(project.id, true, true, 1, 'PI');
+      });
+
+      it('should update disclosure status', async function() {
+        await testDisclosureStatus('13', DISCLOSURE_STATUS.UPDATE_REQUIRED);
+      });
+    });
+
+    after(async() => {
+      config.general.disableNewProjectStatusUpdateWhenNoEntities = false;
+      await knex('config').update({config: JSON.stringify(config)});
+    });
+  });
+
   after(async function() {
     await knex('project_type').update({req_disclosure: false});
     await knex('project_role').del();
     await knex('project_status').del();
     await knex('project_person').del();
     await knex('project').del();
+    await knex('fin_entity').del();
     await knex('disclosure').del();
   });
 });
