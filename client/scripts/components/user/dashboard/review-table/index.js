@@ -39,7 +39,7 @@ export function ReviewTable({disclosures}, {configState}) {
       return (
         <ReviewTableRow
           key={disclosure.id}
-          reporter={disclosure.name}
+          reporter={disclosure.reporter}
           type={disclosureType}
           assignDate={assignedDate.date}
           id={disclosure.id}
