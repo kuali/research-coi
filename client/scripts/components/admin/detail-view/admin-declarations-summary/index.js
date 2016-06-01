@@ -229,7 +229,9 @@ export class AdminDeclarationsSummary extends React.Component {
               </div>
             );
           }
-        } else if (isReviewer && config.general.reviewerDispositionsEnabled) {
+        } else if (isReviewer &&
+          config.general.reviewerDispositionsEnabled &&
+          config.general.dispositionsEnabled) {
           if (!readonly) {
             dispositionTypeSelector = (
               <div>
@@ -250,14 +252,15 @@ export class AdminDeclarationsSummary extends React.Component {
 
         let commentClass = styles.comment;
         let relationhipLabel;
-
         if (config.general.dispositionsEnabled) {
           if (isAdmin && config.general.adminRelationshipEnabled) {
             relationhipLabel = (
               <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
             );
             commentClass = classNames(styles.comments, styles.shortComment);
-          } else if (isReviewer && config.general.reviewerDispositionsEnabled) {
+          } else if (isReviewer &&
+            config.general.reviewerDispositionsEnabled &&
+            config.general.reviewerEntityProjectDispositionsEnabled) {
             relationhipLabel = (
               <span className={styles.adminRelationship}>RECOMMENDED RELATIONSHIP</span>
             );
