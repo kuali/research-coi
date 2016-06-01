@@ -126,12 +126,13 @@ export function getReviewers(dbInfo, authToken) { //eslint-disable-line no-unuse
   return Promise.resolve([
     {
       userId: hashCode('reviewer1'),
-      displayName: 'Reviewer 1',
+      value: 'reviewer1',
       email: 'reviewer1@email.com'
     },
     {
       userId: hashCode('reviewer2'),
-      displayName: 'reviewer2@email.com'
+      value: 'reviewer2',
+      email: 'reviewer2@email.com'
     }
   ]);
 }

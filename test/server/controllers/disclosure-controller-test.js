@@ -25,6 +25,7 @@ import {COIConstants} from '../../../coi-constants';
 import hashCode from '../../../hash';
 import {formatDate} from '../../../client/scripts/format-date';
 import { ACCEPTED, OK, FORBIDDEN, INTERNAL_SERVER_ERROR} from '../../../http-status-codes';
+import { createDisclosure, insertDisclosure } from '../../test-utils';
 
 let getKnex;
 try {
@@ -36,12 +37,12 @@ catch (err) {
 }
 const knex = getKnex({});
 
-async function updateAutoApprove(value) {
+async function updateConfig(autoApprove, addReviewers) {
   const configResult = await knex('config').select('config').where({id: 1});
   const config = JSON.parse(configResult[0].config);
 
-  config.general.autoApprove = value;
-
+  config.general.autoApprove = autoApprove;
+  config.general.autoAddAdditionalReviewer = addReviewers;
   await knex('config').update({config: JSON.stringify(config)}).where({id: 1});
 }
 
@@ -86,7 +87,6 @@ function createComment(disclosureId, user) {
 describe('DisclosureController',async () => {
   let disclosureId;
   let disclosure1Id;
-  let additionalReviewerId;
   const user = 'DisclosureControllerTest';
   const userId = hashCode(user);
   const reviewer = 'reviewerDisclosureControllerTest';
@@ -103,7 +103,7 @@ describe('DisclosureController',async () => {
 
     disclosureId = disclosure[0];
 
-    const additionalReviewer = await knex('additional_reviewer').insert({
+    await knex('additional_reviewer').insert({
       disclosure_id: disclosureId,
       user_id: reviewerId,
       name: reviewer,
@@ -115,7 +115,6 @@ describe('DisclosureController',async () => {
       }])
     },'id');
 
-    additionalReviewerId = additionalReviewer[0];
 
     const disclosure1 = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
@@ -228,7 +227,7 @@ describe('DisclosureController',async () => {
 
   describe('/api/coi/disclosure/:id/submit', async () => {
     it('should submit disclosure if auto approve is false ', async function () {
-      await updateAutoApprove(false);
+      await updateConfig(false, false);
       await changeDisclosureStatus(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
       const response = await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
@@ -260,7 +259,7 @@ describe('DisclosureController',async () => {
     });
 
     it('should submit disclosure if auto approve is true but there are financial entities ', async function () {
-      await updateAutoApprove(true);
+      await updateConfig(true, false);
       await changeDisclosureStatus(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
       await addFinancialEntity(disclosureId);
       const response = await request(app.run())
@@ -290,7 +289,7 @@ describe('DisclosureController',async () => {
     });
 
     it('should submit and approve disclosure if auto approve is true but there are no financial entities ', async function () {
-      await updateAutoApprove(true);
+      await updateConfig(true, false);
       await changeDisclosureStatus(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
       const response = await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
@@ -325,12 +324,60 @@ describe('DisclosureController',async () => {
     });
   });
 
+  describe('test auto add additional reviewers ', () => {
+    let discId;
+    let disclosure;
+    before(async () => {
+      await updateConfig(false, true);
+      discId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS), hashCode('cate'));
+    });
+
+    it('should return accepted status', async () => {
+      await request(app.run())
+        .put(`/api/coi/disclosures/${discId}/submit`)
+        .send(disclosure)
+        .set('Authorization', `Bearer cate`)
+        .expect(ACCEPTED);
+    });
+
+    it('should add 2 additional reviewers', async () => {
+      const reviewers = await knex('additional_reviewer').select('name').where({disclosure_id: discId});
+      assert.equal(2, reviewers.length);
+      assert.equal('reviewer1',reviewers[0].name);
+      assert.equal('reviewer2',reviewers[1].name);
+    });
+  });
+
+  describe('test auto add additional reviewers when reviewer is the reporter ', () => {
+    let discId;
+    let disclosure;
+    before(async () => {
+      await updateConfig(false, true);
+      discId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS), hashCode('reviewer1'));
+    });
+
+    it('should return accepted status', async () => {
+      await request(app.run())
+        .put(`/api/coi/disclosures/${discId}/submit`)
+        .send(disclosure)
+        .set('Authorization', `Bearer reviewer1`)
+        .expect(ACCEPTED);
+    });
+
+    it('should add only reviewer 2 as an additional reviewer', async () => {
+      const reviewers = await knex('additional_reviewer').select('name').where({disclosure_id: discId});
+      assert.equal(1, reviewers.length);
+      assert.equal('reviewer2',reviewers[0].name);
+    });
+  });
+
   after(async function() {
+    await updateConfig(false, false);
     await knex('project_person').del();
     await knex('project').del();
-    await knex('comment').del().whereIn('disclosure_id', [disclosureId, disclosure1Id]);
-    await knex('additional_reviewer').del().where({id: additionalReviewerId});
-    await knex('disclosure_archive').del().whereIn('disclosure_id', [disclosureId, disclosure1Id]);
-    await knex('disclosure').del().whereIn('id',[disclosureId, disclosure1Id]);
+    await knex('comment').del();
+    await knex('additional_reviewer').del();
+    await knex('disclosure_archive').del();
+    await knex('disclosure').del();
   });
 });

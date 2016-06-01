@@ -1234,23 +1234,27 @@ function updateProjects(trx, schoolId) {
     });
 }
 
-async function addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, unit) {
-  const reviewers = await getReviewers(dbInfo, authHeader, unit);
+async function addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, userInfo) {
+  const reviewers = await getReviewers(dbInfo, authHeader, userInfo.primaryDepartmentCode);
 
-  return await Promise.all(reviewers.map(reviewer => {
-    return trx('additional_reviewer').insert({
-      user_id: reviewer.userId,
-      disclosure_id: disclosureId,
-      name: reviewer.value,
-      email: reviewer.email,
-      active: true,
-      dates: JSON.stringify([{
-        type: DATE_TYPE.ASSIGNED,
-        date: new Date()
-      }]),
-      assigned_by: SYSTEM_USER
-    });
-  }));
+  return await Promise.all(
+    reviewers.filter(reviewer => {
+      return reviewer.userId !== userInfo.schoolId;
+    }).map(reviewer => {
+      return trx('additional_reviewer').insert({
+        user_id: reviewer.userId,
+        disclosure_id: disclosureId,
+        name: reviewer.value,
+        email: reviewer.email,
+        active: true,
+        dates: JSON.stringify([{
+          type: DATE_TYPE.ASSIGNED,
+          date: new Date()
+        }]),
+        assigned_by: SYSTEM_USER
+      });
+    })
+  );
 }
 
 export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
@@ -1272,7 +1276,7 @@ export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
     const generalConfig = JSON.parse(config[0].config).general;
 
     if (generalConfig.autoAddAdditionalReviewer) {
-      await addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, userInfo.primaryDepartmentCode);
+      await addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, userInfo);
     }
 
     if (generalConfig.autoApprove) {
