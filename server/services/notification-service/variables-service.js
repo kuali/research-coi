@@ -53,6 +53,7 @@ export function getDisclosureVariables(disclosure, url, variables) {
   const approver = getNamePartsFromString(disclosure.approvedBy);
   variables[`${LEFT}APPROVER_FIRST_NAME${RIGHT}`] = approver.firstName;
   variables[`${LEFT}APPROVER_LAST_NAME${RIGHT}`] = approver.lastName;
+  variables[`${LEFT}DISPOSITION${RIGHT}`] = disclosure.disposition;
 
   return variables;
 }
