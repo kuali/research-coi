@@ -127,6 +127,19 @@ export default class Declarations extends React.Component {
     let dispositionConfig;
 
     if (config.general.dispositionsEnabled) {
+      let projectEntityRecommendationsOption;
+      if (config.general.reviewerDispositionsEnabled) {
+        projectEntityRecommendationsOption = (
+          <div className={styles.checkbox}>
+            <CheckBox
+              path="config.general.reviewerEntityProjectDispositionsEnabled"
+              label="Reviewers can recommend financial entity-project relationship determination"
+              labelClassName={styles.label}
+              checked={config.general.reviewerEntityProjectDispositionsEnabled}
+            />
+          </div>
+        );
+      }
       dispositionConfig = (
         <div>
           <div className={styles.checkbox}>
@@ -145,6 +158,7 @@ export default class Declarations extends React.Component {
               checked={config.general.reviewerDispositionsEnabled}
             />
           </div>
+          {projectEntityRecommendationsOption}
 
           {dispositionTypes}
           {newDispositionType}
@@ -160,6 +174,7 @@ export default class Declarations extends React.Component {
         </div>
       );
     }
+
     let dispositionPanel;
     dispositionPanel = (
       <Panel title="Disposition Configuration">
