@@ -66,6 +66,13 @@ class App extends SizeAwareComponent {
   }
 
   render() {
+    if (this.state.userInfoState.userInfo.coiRole === undefined) {
+     return (
+       <div>
+         Loading...
+       </div>
+     )
+    }
     return (
       <Router history={history}>
         <Route path="/coi/admin/detailview" component={DetailView}>
