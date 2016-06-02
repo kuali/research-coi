@@ -53,7 +53,8 @@ const knexInstance = knex({
   pool: {
     min: 2,
     max: process.env.CONNECTION_POOL_SIZE || DEFAULT_CONNECTION_POOL_SIZE
-  }
+  },
+  useNullAsDefault: process.env.USE_NULL_AS_DEFAULT || false
 });
 
 export default () => {
