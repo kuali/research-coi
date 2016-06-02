@@ -187,6 +187,18 @@ export class Dashboard extends React.Component {
       }
     }
 
+    let banners;
+    if (newProjectBanner || expirationBanner) {
+      banners = (
+        <div>
+          <div className={styles.bannerContainer}>
+            {expirationBanner}
+            {newProjectBanner}
+          </div>
+        </div>
+      );
+    }
+
     let disclosureTableLabel;
     let reviewTableLabel;
     let reviewTable;
@@ -226,12 +238,7 @@ export class Dashboard extends React.Component {
               <h2 className={styles.heading}>MY COI DASHBOARD</h2>
             </div>
             {confirmationMessage}
-            <div>
-              <div className={styles.bannerContainer}>
-                {expirationBanner}
-                {newProjectBanner}
-              </div>
-            </div>
+            {banners}
             {disclosureTableLabel}
             <DisclosureTable disclosures={disclosureSummaries} />
             {reviewTableLabel}
