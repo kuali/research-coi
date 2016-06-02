@@ -72,6 +72,13 @@ class App extends React.Component {
   }
 
   render() {
+    if (this.state.userInfoState.userInfo.coiRole === undefined) {
+      return (
+        <div>
+          Loading...
+        </div>
+      )
+    }
     return (
       <Router history={history}>
         <Route path="/coi/config/general" component={GeneralConfiguration} />

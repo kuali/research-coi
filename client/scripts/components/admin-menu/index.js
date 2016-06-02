@@ -81,6 +81,11 @@ export default class AdminMenu extends React.Component {
           </a>
         </div>
       );
+    } else {
+      menu = (
+        <div className={styles.container}>
+        </div>
+      );
     }
 
     return menu;
