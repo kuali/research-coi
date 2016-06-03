@@ -995,9 +995,9 @@ export async function getSummariesForReviewCount(dbInfo, filters) {
   return Promise.resolve([{rowcount: results.length}]);
 }
 
-export const getSummariesForUser = (dbInfo, userId) => {
+export const getSummariesForUser = async (dbInfo, userId) => {
   const knex = getKnex(dbInfo);
-  return knex.select(
+  const summaries = await knex.select(
       'expired_date',
       'type_cd as type',
       'title',
@@ -1008,6 +1008,20 @@ export const getSummariesForUser = (dbInfo, userId) => {
     )
     .from('disclosure as d')
     .where('d.user_id', userId);
+
+  const entityCounts = await knex('fin_entity')
+    .count('id as entityCount')
+    .select('id')
+    .where('disclosure_id','in',summaries.map(s => s.id))
+    .groupBy('id');
+
+
+  return summaries.map(summary => {
+    const count = entityCounts.find(c => c.id === summary.id);
+    summary.entityCount = count ? count.entityCount : 0;
+    return summary;
+  });
+
 };
 
 const updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, newStatus) => {
