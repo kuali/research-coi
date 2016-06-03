@@ -77,7 +77,7 @@ class App extends React.Component {
         <div>
           Loading...
         </div>
-      )
+      );
     }
     return (
       <Router history={history}>

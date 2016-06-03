@@ -74,7 +74,7 @@ class App extends SizeAwareComponent {
         <div>
           Loading...
         </div>
-      )
+      );
     }
     return (
       <Router history={history}>

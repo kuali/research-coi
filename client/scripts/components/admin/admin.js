@@ -67,11 +67,11 @@ class App extends SizeAwareComponent {
 
   render() {
     if (this.state.userInfoState.userInfo.coiRole === undefined) {
-     return (
-       <div>
+      return (
+        <div>
          Loading...
-       </div>
-     )
+        </div>
+      );
     }
     return (
       <Router history={history}>
