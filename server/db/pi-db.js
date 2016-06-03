@@ -18,6 +18,7 @@
 
 /* eslint-disable camelcase */
 
+import { ROLES } from '../../coi-constants';
 const MAX_ROWS = 10;
 
 let getKnex;
@@ -43,15 +44,31 @@ const queryWithoutIndex = (knex, term) => {
     .limit(MAX_ROWS);
 };
 
-export const getSuggestions = (dbInfo, term) => {
-  const knex = getKnex(dbInfo);
+function addReviewerCriteria(query, schoolId) {
+  return query
+    .leftJoin('additional_reviewer as ar', 'ar.disclosure_id', 'd.id')
+    .andWhere({'ar.user_id': schoolId});
+}
+export async function getSuggestions(dbInfo, term, userInfo) {
+  try {
+    const knex = getKnex(dbInfo);
 
-  return queryUsingIndex(knex, term)
-    .then(result => {
-      if (result.length < MAX_ROWS) {
-        return queryWithoutIndex(knex, term);
-      }
+    let indexQuery = queryUsingIndex(knex, term);
+    let noIndexQuery = queryWithoutIndex(knex, term);
+    if (userInfo.coiRole === ROLES.REVIEWER) {
 
-      return result;
-    });
-};
+      indexQuery = addReviewerCriteria(indexQuery, userInfo.schoolId);
+      noIndexQuery = addReviewerCriteria(noIndexQuery, userInfo.schoolId);
+    }
+
+    const result = await indexQuery;
+    if (result.length < MAX_ROWS) {
+      return await noIndexQuery;
+    }
+
+    return result;
+  } catch(err) {
+    return Promise.reject(err);
+  }
+
+}
