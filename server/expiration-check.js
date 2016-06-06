@@ -39,7 +39,7 @@ async function checkForExpiredDisclosures(expiredCode) {
 
     const remindersDisclosures = await knex('disclosure')
       .select('id')
-      .where('expired_date','=',moment().add(reminderNotification[0].value,reminderNotification[0].period).format('YYYY-MM-DD'));
+      .where('expired_date','=',new Date(moment().add(reminderNotification[0].value,reminderNotification[0].period).format('YYYY-MM-DD')));
 
     const expiredDisclosures = await knex('disclosure')
       .select('id')
