@@ -1139,6 +1139,7 @@ class _DisclosureStore {
   }
 
   resetDisclosure() {
+    this.applicationState.currentDisclosureState.isCertified = false;
     this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.visitedSteps = {};
     this.applicationState.currentDisclosureState.question = 1;
