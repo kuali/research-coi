@@ -161,8 +161,20 @@ export class Dashboard extends React.Component {
       );
     }
 
+    const updateStatus = () => {
+      if (this.context.configState.config.general.disableNewProjectStatusUpdateWhenNoEntities) {
+        const annualSummary = disclosureSummaries.find(s => String(s.type) === DISCLOSURE_TYPE.ANNUAL);
+        if (annualSummary && annualSummary.entityCount === 0) {
+          return false;
+        }
+      }
+      return true;
+    };
+
     let newProjectBanner;
-    if (Array.isArray(projects) && projects.filter(project => project.new === 1).length > 0) {
+    if (Array.isArray(projects) &&
+      projects.filter(project => project.new === 1).length > 0 &&
+      updateStatus()) {
       newProjectBanner = (
         <div className={styles.infoBanner}>
           Your annual disclosure needs updates due to new projects to disclose.
