@@ -28,8 +28,8 @@ import wrapAsync from './wrap-async';
 import Log from '../log';
 
 export const init = app => {
-  app.get('/api/coi/pi', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    const result = await PIDB.getSuggestions(req.dbInfo, req.query.term);
+  app.get('/api/coi/pi', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res) => {
+    const result = await PIDB.getSuggestions(req.dbInfo, req.query.term, req.userInfo);
     res.send(result);
   }));
 

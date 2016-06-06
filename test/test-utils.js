@@ -89,7 +89,8 @@ export async function insertDisclosure(knex, disclosure, user_id) {
     status_cd: disclosure.statusCd,
     user_id,
     start_date: new Date(disclosure.startDate),
-    config_id: disclosure.configId
+    config_id: disclosure.configId,
+    submitted_by: user_id
   }, 'id');
   return id[0];
 }
