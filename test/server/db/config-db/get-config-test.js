@@ -226,6 +226,7 @@ describe('getConfig', () => {
 
   describe('general', () => {
     it('should have a notificationsMode', () => {
+      assert(false);
       assert.notEqual(undefined, config.notificationsMode);
     });
     it('should have a lane', () => {
