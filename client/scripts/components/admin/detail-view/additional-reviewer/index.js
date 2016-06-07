@@ -66,7 +66,7 @@ export default class AdditionalReviewer extends React.Component {
           className={styles.button}
           onClick={this.removeAdditionalReviewer}
         >
-          <i className={`fa fa-times`} style={{marginRight:'5px'}}></i>
+          <i className={'fa fa-times'} style={{marginRight:'5px'}}></i>
           Remove Reviewer
         </button>
       );

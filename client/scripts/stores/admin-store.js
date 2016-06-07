@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import {get, remove} from 'lodash';
 import {AdminActions} from '../actions/admin-actions';
 import {
   NO_DISPOSITION,
@@ -688,8 +689,12 @@ class _AdminStore {
   }
 
   removeReviewerFromState(id) {
-    const index = this.applicationState.selectedDisclosure.reviewers.indexOf(reviewer => reviewer.id === id);
-    this.applicationState.selectedDisclosure.reviewers.splice(index,1);
+    const reviewers = get(this, 'applicationState.selectedDisclosure.reviewers');
+    if (!reviewers) {
+      return;
+    }
+
+    remove(reviewers, reviewer => reviewer.id === id);
   }
 
   removeAdditionalReviewer(id) {
