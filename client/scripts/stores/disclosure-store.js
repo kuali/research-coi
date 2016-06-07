@@ -18,7 +18,17 @@
 
 import {DisclosureActions} from '../actions/disclosure-actions';
 import alt from '../alt';
-import {COIConstants} from '../../../coi-constants';
+import {
+  DISCLOSURE_STEP,
+  INSTRUCTION_STEP,
+  ARCHIVE_SORT_FIELD,
+  SORT_DIRECTION,
+  QUESTION_TYPE,
+  DISCLOSURE_TYPE,
+  EDITABLE_STATUSES,
+  TMP_PLACEHOLDER,
+  FILE_TYPE
+} from '../../../coi-constants';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
 import history from '../history';
@@ -40,16 +50,16 @@ function provided(value) {
 
 function mapDisclosureToInstructionStep(step) {
   switch(step) {
-    case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE:
-      return COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
-    case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
-      return COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
-    case COIConstants.DISCLOSURE_STEP.ENTITIES:
-      return COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES;
-    case COIConstants.DISCLOSURE_STEP.PROJECTS:
-      return COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS;
-    case COIConstants.DISCLOSURE_STEP.CERTIFY:
-      return COIConstants.INSTRUCTION_STEP.CERTIFICATION;
+    case DISCLOSURE_STEP.QUESTIONNAIRE:
+      return INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
+    case DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
+      return INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
+    case DISCLOSURE_STEP.ENTITIES:
+      return INSTRUCTION_STEP.FINANCIAL_ENTITIES;
+    case DISCLOSURE_STEP.PROJECTS:
+      return INSTRUCTION_STEP.PROJECT_DECLARATIONS;
+    case DISCLOSURE_STEP.CERTIFY:
+      return INSTRUCTION_STEP.CERTIFICATION;
     default:
       return '';
   }
@@ -153,7 +163,7 @@ export function areNoActiveEntities(entities) {
 
 export function getYesNoYeses(answers, questions) {
   return answers.filter(answer => {
-    return questions.find(question => question.id === answer.questionId).question.type === COIConstants.QUESTION_TYPE.YESNO
+    return questions.find(question => question.id === answer.questionId).question.type === QUESTION_TYPE.YESNO
       && answer.answer.value === 'Yes';
   });
 }
@@ -182,11 +192,11 @@ class _DisclosureStore {
     this.applicationState = {
       archiveFilter: '2',
       archiveQuery: '',
-      archiveSortField: COIConstants.ARCHIVE_SORT_FIELD.START,
-      archiveSortDirection: COIConstants.SORT_DIRECTION.DESCENDING,
+      archiveSortField: ARCHIVE_SORT_FIELD.START,
+      archiveSortDirection: SORT_DIRECTION.DESCENDING,
       instructionsShowing: {},
       currentDisclosureState: {
-        step: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+        step: DISCLOSURE_STEP.QUESTIONNAIRE,
         question: 1,
         isCertified: false,
         disclosure: {
@@ -305,10 +315,10 @@ class _DisclosureStore {
   loadDisclosureState(disclosureId) {
     const {config} = ConfigStore.getState();
     const hideInstructions = config.general.instructionsExpanded === false;
-    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] = hideInstructions ? false : true;
-    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES] = hideInstructions ? false : true;
-    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] = hideInstructions ? false : true;
-    this.applicationState.instructionsShowing[COIConstants.INSTRUCTION_STEP.CERTIFICATION] = hideInstructions ? false : true;
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] = hideInstructions ? false : true;
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.FINANCIAL_ENTITIES] = hideInstructions ? false : true;
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.PROJECT_DECLARATIONS] = hideInstructions ? false : true;
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.CERTIFICATION] = hideInstructions ? false : true;
 
 
 
@@ -342,12 +352,12 @@ class _DisclosureStore {
   }
 
   loadDisclosureData(disclosureType) {
-    if (disclosureType === COIConstants.DISCLOSURE_TYPE.ANNUAL) {
+    if (disclosureType === DISCLOSURE_TYPE.ANNUAL) {
       createRequest()
         .get('/api/coi/disclosures/annual')
         .end(processResponse((err, disclosure) => {
           if (!err) {
-            if (COIConstants.EDITABLE_STATUSES.includes(disclosure.body.statusCd)) {
+            if (EDITABLE_STATUSES.includes(disclosure.body.statusCd)) {
               this.loadDisclosureState(disclosure.body.id)
                 .then(() => {
                   this.applicationState.currentDisclosureState.disclosure = disclosure.body;
@@ -474,8 +484,8 @@ class _DisclosureStore {
 
     if (this.applicationState.returnToSummaryOnAnswer || this.applicationState.currentDisclosureState.question >= parentQuestions.length) {
       this.applicationState.returnToSummaryOnAnswer = false;
-      this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
-      this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY] = true;
+      this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
+      this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY] = true;
     }
     else {
       this.applicationState.currentDisclosureState.question++;
@@ -490,30 +500,30 @@ class _DisclosureStore {
       return !question.parent;
     });
     switch (this.applicationState.currentDisclosureState.step) {
-      case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE:
+      case DISCLOSURE_STEP.QUESTIONNAIRE:
         if (this.applicationState.currentDisclosureState.question > 1) {
           this.applicationState.currentDisclosureState.question--;
         }
         break;
-      case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
-        this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+      case DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
+        this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.QUESTIONNAIRE;
         this.applicationState.currentDisclosureState.question = parentQuestions.length;
         break;
-      case COIConstants.DISCLOSURE_STEP.ENTITIES:
-        this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
+      case DISCLOSURE_STEP.ENTITIES:
+        this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY;
         break;
-      case COIConstants.DISCLOSURE_STEP.PROJECTS:
-        this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
+      case DISCLOSURE_STEP.PROJECTS:
+        this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         break;
-      case COIConstants.DISCLOSURE_STEP.CERTIFY:
+      case DISCLOSURE_STEP.CERTIFY:
         const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
         if (activeEntitiesExists && this.projects.length > 0) {
-          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.PROJECTS;
+          this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.PROJECTS;
         }
         else {
-          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
+          this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         }
         break;
     }
@@ -522,7 +532,7 @@ class _DisclosureStore {
   }
 
   setCurrentQuestion(newQuestionId) {
-    this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+    this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.question = newQuestionId;
     this.applicationState.returnToSummaryOnAnswer = true;
   }
@@ -594,30 +604,30 @@ class _DisclosureStore {
   nextStep() {
     const {config} = ConfigStore.getState();
     switch (this.applicationState.currentDisclosureState.step) {
-      case COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
+      case DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
         if (this.canSkipEntities(this.applicationState.currentDisclosureState.disclosure, config)) {
-          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
+          this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.CERTIFY;
           break;
         }
-        this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.ENTITIES;
-        this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.ENTITIES] = true;
+        this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
+        this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.ENTITIES] = true;
         break;
-      case COIConstants.DISCLOSURE_STEP.ENTITIES:
+      case DISCLOSURE_STEP.ENTITIES:
         const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
         if (activeEntitiesExists && this.projects.length > 0) {
-          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.PROJECTS;
-          this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.PROJECTS] = true;
+          this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.PROJECTS;
+          this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.PROJECTS] = true;
         }
         else {
-          this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
-          this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.CERTIFY] = true;
+          this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.CERTIFY;
+          this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.CERTIFY] = true;
         }
         break;
-      case COIConstants.DISCLOSURE_STEP.PROJECTS:
-        this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.CERTIFY;
-        this.applicationState.currentDisclosureState.visitedSteps[COIConstants.DISCLOSURE_STEP.CERTIFY] = true;
+      case DISCLOSURE_STEP.PROJECTS:
+        this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.CERTIFY;
+        this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.CERTIFY] = true;
         break;
     }
     this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
@@ -778,7 +788,7 @@ class _DisclosureStore {
       relation = this.applicationState.potentialRelationships.new;
     }
 
-    relation.id = `${COIConstants.TMP_PLACEHOLDER}${new Date().getTime()}`;
+    relation.id = `${TMP_PLACEHOLDER}${new Date().getTime()}`;
     const matrixType = config.matrixTypes.find(matrix => {
       return matrix.typeCd === relation.relationshipCd;
     });
@@ -1129,7 +1139,8 @@ class _DisclosureStore {
   }
 
   resetDisclosure() {
-    this.applicationState.currentDisclosureState.step = COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+    this.applicationState.currentDisclosureState.isCertified = false;
+    this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.QUESTIONNAIRE;
     this.applicationState.currentDisclosureState.visitedSteps = {};
     this.applicationState.currentDisclosureState.question = 1;
     this.applicationState.entityInProgress = {
@@ -1225,7 +1236,7 @@ class _DisclosureStore {
         value = answer.answer.value;
       }
 
-      if (question.question.type === COIConstants.QUESTION_TYPE.MULTISELECT && question.question.requiredNumSelections > 1) {
+      if (question.question.type === QUESTION_TYPE.MULTISELECT && question.question.requiredNumSelections > 1) {
         if(value instanceof Array) {
           if (value.length < question.question.requiredNumSelections) {
             errors.push(question.id);
@@ -1339,7 +1350,7 @@ class _DisclosureStore {
 
     formData.append('data', JSON.stringify({
       refId: this.applicationState.currentDisclosureState.disclosure.id,
-      type: COIConstants.FILE_TYPE.DISCLOSURE,
+      type: FILE_TYPE.DISCLOSURE,
       disclosureId: this.applicationState.currentDisclosureState.disclosure.id
     }));
 

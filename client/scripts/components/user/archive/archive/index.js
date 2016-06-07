@@ -29,7 +29,10 @@ import {
 import {Link} from 'react-router';
 import ArchiveDetail from '../archive-detail';
 import {formatDate, formatDateTime} from '../../../../format-date';
-import {COIConstants} from '../../../../../../coi-constants';
+import {
+  DISCLOSURE_TYPE,
+  EDITABLE_STATUSES
+} from '../../../../../../coi-constants';
 import ManagementPlan from '../management-plan';
 
 export class Archive extends React.Component {
@@ -135,7 +138,7 @@ export class Archive extends React.Component {
       if (this.state.disclosure) {
         disclosureType = getDisclosureTypeString(
           this.context.configState,
-          COIConstants.DISCLOSURE_TYPE.ANNUAL,
+          DISCLOSURE_TYPE.ANNUAL,
           this.state.disclosure.configId
         );
       }
@@ -193,7 +196,7 @@ export class Archive extends React.Component {
 
     let isEditable = false;
     if (this.state.currentAnnualDisclosureStatus && (
-          COIConstants.EDITABLE_STATUSES.includes(this.state.currentAnnualDisclosureStatus)
+          EDITABLE_STATUSES.includes(this.state.currentAnnualDisclosureStatus)
        )) {
       isEditable = true;
     }
@@ -201,7 +204,10 @@ export class Archive extends React.Component {
     let updateDisclosureLink;
     if (isEditable) {
       updateDisclosureLink = (
-        <Link to={"/coi/disclosure"}>
+        <Link
+          to={"/coi/disclosure"}
+          query={{type: DISCLOSURE_TYPE.ANNUAL}}
+        >
           <div className={`${styles.sidebarButton} ${styles.firstButton}`}>
             <div className={styles.sidebarTopText}>Update</div>
             <div className={styles.sidebarBottomText}>Annual Disclosure</div>
@@ -221,10 +227,7 @@ export class Archive extends React.Component {
         <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <span className={styles.sidebar}>
             {updateDisclosureLink}
-            <Link
-              to={"/coi/dashboard"}
-              query={{type: COIConstants.DISCLOSURE_TYPE.ANNUAL}}
-            >
+            <Link to={"/coi/dashboard"}>
               <div className={linkClasses}>
                 <div className={styles.sidebarTopText}>Back To</div>
                 <div className={styles.sidebarBottomText}>Dashboard</div>
