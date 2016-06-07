@@ -427,23 +427,18 @@ export const saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questio
     });
 };
 
-const retrieveComments = (dbInfo, userInfo, disclosureId) => {
+async function retrieveComments(dbInfo, userInfo, disclosureId) {
   const knex = getKnex(dbInfo);
 
   const criteria = {
     'disclosure_id': disclosureId
   };
 
-  if (userInfo.coiRole === ROLES.REVIEWER) {
-    criteria.reviewer_visible = true;
-  }
-
   if (userInfo.coiRole === ROLES.USER) {
     criteria.pi_visible = true;
   }
 
-  return knex('comment')
-    .select(
+  const query = knex.select(
       'id',
       'disclosure_id as disclosureId',
       'topic_section as topicSection',
@@ -457,17 +452,27 @@ const retrieveComments = (dbInfo, userInfo, disclosureId) => {
       'pi_visible as piVisible',
       'reviewer_visible as reviewerVisible'
     )
-    .where(criteria)
-    .then(comments => {
-      comments.forEach(comment => {
-        comment.isCurrentUser = comment.userId == userInfo.schoolId; // eslint-disable-line eqeqeq
+    .from('comment')
+    .where(criteria);
+
+  if (userInfo.coiRole === ROLES.REVIEWER) {
+    query.andWhere(function() {
+      this.where({
+        reviewer_visible: true
+      }).orWhere({
+        user_id: userInfo.schoolId
       });
-      return comments;
-    })
-    .catch(err => {
-      throw err;
     });
-};
+  }
+
+  const comments = await query;
+
+  comments.forEach(comment => {
+    comment.isCurrentUser = comment.userId == userInfo.schoolId; // eslint-disable-line eqeqeq
+  });
+
+  return comments;
+}
 
 const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
   const knex = getKnex(dbInfo);
@@ -507,8 +512,8 @@ export const addComment = (dbInfo, userInfo, comment) => {
       author: `${userInfo.firstName} ${userInfo.lastName}`,
       user_role: userInfo.coiRole,
       date: new Date(),
-      pi_visible: comment.piVisible,
-      reviewer_visible: userInfo.coiRole === ROLES.REVIEWER ? true : comment.reviewerVisible
+      pi_visible: userInfo.coiRole === ROLES.ADMIN && comment.piVisible,
+      reviewer_visible: userInfo.coiRole === ROLES.ADMIN && comment.reviewerVisible
     }, 'id').then(() => {
       const statements = [
         retrieveComments(dbInfo, userInfo, comment.disclosureId)
@@ -531,8 +536,8 @@ export const updateComment = (dbInfo, userInfo, comment) => {
       author: `${userInfo.firstName} ${userInfo.lastName}`,
       user_role: userInfo.coiRole,
       date: new Date(),
-      pi_visible: comment.piVisible,
-      reviewer_visible: comment.reviewerVisible
+      pi_visible: userInfo.coiRole === ROLES.ADMIN && comment.piVisible,
+      reviewer_visible: userInfo.coiRole === ROLES.ADMIN && comment.reviewerVisible
     })
     .where({
       id: comment.id
