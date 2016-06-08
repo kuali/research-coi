@@ -46,47 +46,35 @@ export const verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
     });
 };
 
-const updatePIResponseComment = (dbInfo, userInfo, disclosureId, targetType, targetId, comment) => {
+async function updatePIResponseComment(dbInfo, userInfo, disclosureId, targetType, targetId, comment) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('c.id')
-    .from('comment as c')
+  await knex('comment as c')
+    .update({
+      current: false
+    })
     .where({
       'c.disclosure_id': disclosureId,
       'c.topic_section': targetType,
       'c.topic_id': targetId,
-      'c.user_id': userInfo.schoolId,
-      'c.user_role' : COIConstants.ROLES.USER
-    })
-    .then(comments => {
-      if (comments.length > 0) {
-        return knex('comment as c')
-          .update({
-            'text': comment
-          })
-          .where({
-            'c.disclosure_id': disclosureId,
-            'c.topic_section': targetType,
-            'c.topic_id': targetId,
-            'c.user_id': userInfo.schoolId
-          });
-      }
-
-      return knex('comment').insert({
-        'disclosure_id': disclosureId,
-        'topic_section': targetType,
-        'topic_id': targetId,
-        'text': comment,
-        'user_id': userInfo.schoolId,
-        'author': `${userInfo.firstName} ${userInfo.lastName}`,
-        'user_role' : COIConstants.ROLES.USER,
-        'editable' : false,
-        'date': new Date(),
-        'pi_visible': true,
-        'reviewer_visible': true
-      }, 'id');
+      'c.user_id': userInfo.schoolId
     });
-};
+
+  await knex('comment').insert({
+    'disclosure_id': disclosureId,
+    'topic_section': targetType,
+    'topic_id': targetId,
+    'text': comment,
+    'user_id': userInfo.schoolId,
+    'author': `${userInfo.firstName} ${userInfo.lastName}`,
+    'user_role' : COIConstants.ROLES.USER,
+    'editable' : false,
+    'date': new Date(),
+    'pi_visible': true,
+    'reviewer_visible': true,
+    current: true
+  }, 'id');
+}
 
 const updateReviewRecord = (knex, reviewId, values) => {
   const newValues = {
@@ -220,7 +208,17 @@ const getComments = (knex, disclosureId, topicIDs, section) => {
       'topic_section': section,
       'pi_visible': true
     })
-    .andWhere('topic_id', 'in', topicIDs);
+    .andWhere('topic_id', 'in', topicIDs)
+    .andWhere(function() {
+      this.whereNot({
+        user_role: COIConstants.ROLES.USER
+      }).orWhere(function() {
+        this.where({
+          user_role: COIConstants.ROLES.USER,
+          current: true
+        });
+      });
+    });
 };
 
 const getQuestionnaireComments = (knex, disclosureId, topicIDs) => {
