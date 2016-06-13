@@ -138,11 +138,17 @@ function insertProject(knex, title) {
     source_system: 'COI-SEED',
     source_identifier: randomNumberBetween(1, 9999999999),
     source_status: '1',
-    sponsor_cd: '000010',
-    sponsor_name: 'Air Force',
     start_date: startDate,
     end_date: endDate
-  }, 'id');
+  }, 'id').then(function(insertedRow) {
+    return knex('project_sponsor').insert({
+      project_id: insertedRow[0],
+      sponsor_cd: '000010',
+      sponsor_name: 'Air Force',
+      source_identifier: randomNumberBetween(1, 9999999999),
+      source_system: 'COI-SEED'
+    });
+  });
 }
 
 function insertProjectPerson(knex, userId, role, projectId) {
