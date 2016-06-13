@@ -44,7 +44,7 @@ export default class DeclarationsSummary extends React.Component {
           type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
-          sponsor: declaration.sponsorName,
+          sponsor: declaration.sponsors ? declaration.sponsors.join(', ') : '',
           dispositionTypeCd: declaration.dispositionTypeCd
         });
         alreadyAdded[declaration.projectId] = true;

@@ -18,6 +18,7 @@
 
 /* eslint-disable camelcase */
 
+import {isNumber, uniq} from 'lodash';
 import {
   DISCLOSURE_STATUS,
   DISCLOSURE_TYPE,
@@ -37,7 +38,7 @@ catch (err) {
   getKnex = require('./connection-manager').default;
 }
 
-export const getProjects = (dbInfo, userId, trx) => {
+export async function getProjects (dbInfo, userId, trx) {
   let knex;
   if (trx) {
     knex = trx;
@@ -45,15 +46,45 @@ export const getProjects = (dbInfo, userId, trx) => {
     knex = getKnex(dbInfo);
   }
 
-  return knex.select('p.id as id', 'p.source_identifier as sourceIdentifier', 'p.title as name', 'p.type_cd as typeCd', 'person.role_cd as roleCd',
-    'p.sponsor_cd as sponsorCd', 'p.sponsor_name as sponsorName', 'p.source_status as statusCd', 'person.new as new')
+  const projects = await knex.select(
+      'p.id as id',
+      'p.source_identifier as sourceIdentifier',
+      'p.title as name',
+      'p.type_cd as typeCd',
+      'person.role_cd as roleCd',
+      'p.source_status as statusCd',
+      'person.new as new'
+    )
     .from('project as p')
     .innerJoin('project_person as person', 'p.id', 'person.project_id')
     .where({
       'person.person_id': userId,
       'person.active': 1
     });
-};
+
+  let projectIds = projects.map(project => project.id);
+  projectIds = uniq(projectIds);
+
+  const sponsors = await knex.select(
+      'project_id as projectId',
+      'sponsor_cd as sponsorCode',
+      'sponsor_name as sponsorName'
+    )
+    .from('project_sponsor')
+    .whereIn('project_id', projectIds);
+
+  sponsors.forEach(sponsor => {
+    const project = projects.find(prj => prj.id === sponsor.projectId);
+    if (project) {
+      if (!project.sponsors) {
+        project.sponsors = [];
+      }
+      project.sponsors.push(sponsor);
+    }
+  });
+
+  return Promise.resolve(projects);
+}
 
 async function shouldUpdateStatus(trx, disclosureId) {
   const generalConfig = await getGeneralConfig(trx);
@@ -120,7 +151,7 @@ async function isProjectRequired(req, project, person) {
     typeCd: project.typeCode,
     roleCd: person.roleCode,
     statusCd: project.sourceStatus,
-    sponsorCd: project.sponsorCode
+    sponsors: project.sponsors
   };
 
   return await ProjectService.isProjectRequired(req.dbInfo, projectData, req.headers.authorization);
@@ -238,8 +269,6 @@ async function insertProject(trx, project) {
     source_system: project.sourceSystem,
     source_identifier: project.sourceIdentifier,
     source_status: project.sourceStatus,
-    sponsor_cd: project.sponsorCode,
-    sponsor_name: project.sponsorName,
     start_date: new Date(project.startDate),
     end_date: new Date(project.endDate)
   }, 'id');
@@ -250,8 +279,12 @@ async function insertProject(trx, project) {
 async function saveNewProjects(trx, project, req) {
   project.id = await insertProject(trx, project);
 
+  if (project.sponsors) {
+    await updateProjectSponsors(trx, project.id, project.sponsors);
+  }
+
   if (project.persons) {
-    const inserts = project.persons.map( async person => {
+    const inserts = project.persons.map(async (person) => {
       const isRequired = await isProjectRequired(req, project, person);
       const id = await insertProjectPerson(trx, person, project, isRequired, req);
       person.id = id;
@@ -261,7 +294,6 @@ async function saveNewProjects(trx, project, req) {
   return project;
 }
 
-
 async function saveExistingProjects(trx, project, authHeader) {
   if (!project.title) {
     throw Error('title is a required field');
@@ -270,12 +302,11 @@ async function saveExistingProjects(trx, project, authHeader) {
     title: project.title,
     type_cd: project.typeCode,
     source_status: project.sourceStatus,
-    sponsor_cd: project.sponsorCode,
-    sponsor_name: project.sponsorName,
     start_date: new Date(project.startDate),
     end_date: new Date(project.endDate)
   }).where('id', project.id);
 
+  await updateProjectSponsors(trx, project.id, project.sponsors);
   await saveProjectPersons(trx, project, authHeader);
 }
 
@@ -357,12 +388,39 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
 
   const projectPersons = await trx('project as p')
     .distinct('pp.person_id')
-    .select('p.id as projectId', 'd.id as disclosureId', 'p.sponsor_cd as sponsorCd', 'p.source_status as statusCd',
-      'p.type_cd as typeCd','pp.role_cd as roleCd', 'dt.description as disposition')
+    .select(
+      'p.id as projectId',
+      'd.id as disclosureId',
+      'p.source_status as statusCd',
+      'p.type_cd as typeCd',
+      'pp.role_cd as roleCd',
+      'dt.description as disposition'
+    )
     .innerJoin('project_person as pp', 'p.id', 'pp.project_id')
     .leftJoin('disclosure as d', 'd.user_id', 'pp.person_id')
     .leftJoin('disposition_type as dt', 'dt.type_cd', 'pp.disposition_type_cd')
     .where(criteria);
+
+  let projectIds = projectPersons.map(project => project.projectId);
+  projectIds = uniq(projectIds);
+
+  const sponsors = await trx.select(
+      'project_id as projectId',
+      'sponsor_cd as sponsorCode',
+      'sponsor_name as sponsorName'
+    )
+    .from('project_sponsor')
+    .whereIn('project_id', projectIds);
+
+  sponsors.forEach(sponsor => {
+    const project = projectPersons.find(prj => prj.projectId === sponsor.projectId);
+    if (project) {
+      if (!project.sponsors) {
+        project.sponsors = [];
+      }
+      project.sponsors.push(sponsor);
+    }
+  });
 
   return projectPersons;
 }
@@ -408,5 +466,77 @@ export async function updateProjectPersonDispositionType(dbInfo, projectPerson, 
     }).where({id});
   } catch(err) {
     return Promise.reject(err);
+  }
+}
+
+async function updateProjectSponsors(trx, projectId, sponsors) {
+  if (!isNumber) {
+    throw new Error('invalid project id');
+  }
+
+  if (!Array.isArray(sponsors)) {
+    throw new Error('invalid sponsors array');
+  }
+
+  const existingSponsors = await trx.select(
+      'id',
+      'source_system as sourceSystem',
+      'source_identifier as sourceIdentifier',
+      'sponsor_cd as sponsorCode',
+      'sponsor_name as sponsorName'
+    ).from('project_sponsor')
+    .where({
+      project_id: projectId
+    });
+
+  const toDelete = [];
+  existingSponsors.forEach(existingSponsor => {
+    const stillExists = sponsors.some(sponsor => {
+      return (
+        sponsor.sourceSystem === existingSponsor.sourceSystem &&
+        sponsor.sourceIdentifier === existingSponsor.sourceIdentifier &&
+        sponsor.sponsorCode === existingSponsor.sponsorCode &&
+        sponsor.sponsorName === existingSponsor.sponsorName
+      );
+    });
+
+    if (!stillExists) {
+      toDelete.push(existingSponsor.id);
+    }
+  });
+
+  if (toDelete.length > 0) {
+    await trx('project_sponsor')
+      .whereIn('id', toDelete)
+      .andWhere({
+        project_id: projectId
+      })
+      .del();
+  }
+
+  const toAdd = [];
+  sponsors.forEach(sponsor => {
+    const alreadyExists = existingSponsors.some(existingSponsor => {
+      return (
+        sponsor.sourceSystem === existingSponsor.sourceSystem &&
+        sponsor.sourceIdentifier === existingSponsor.sourceIdentifier &&
+        sponsor.sponsorCode === existingSponsor.sponsorCode &&
+        sponsor.sponsorName === existingSponsor.sponsorName
+      );
+    });
+
+    if (!alreadyExists) {
+      toAdd.push({
+        project_id: projectId,
+        source_system: sponsor.sourceSystem,
+        source_identifier: sponsor.sourceIdentifier,
+        sponsor_cd: sponsor.sponsorCode,
+        sponsor_name: sponsor.sponsorName
+      });
+    }
+  });
+
+  if (toAdd.length > 0) {
+    await trx('project_sponsor').insert(toAdd);
   }
 }

@@ -124,16 +124,24 @@ describe('POST api/coi/projects', () => {
 
   describe('new project with persons', () => {
     let project;
+    let response;
     before(async () => {
-      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '2');
+      await insertDisclosure(
+        knex,
+        createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE),
+        '2'
+      );
 
+      const newProject = createProject(2);
+      newProject.persons = [
+        createPerson('2','PI')
+      ];
+      response = await post(newProject);
+      project = response.body;
     });
 
     it('should return a OK status', async function() {
-      const newProject = createProject(2);
-      newProject.persons = [createPerson('2','PI')];
-      const response = await post(newProject);
-      project = response.body;
+      assert.notEqual(response, undefined);
     });
 
     it('should return a project with an id', async function() {
@@ -189,16 +197,18 @@ describe('POST api/coi/projects', () => {
   describe('existing project create person', () => {
     let projectId;
     let project;
+    let response;
     before(async () => {
       project = createProject(4);
       projectId = await insertProject(knex, project);
       await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '4');
+
+      project.title = 'Panda Dogs';
+      project.persons = [createPerson('4','PI', true)];
+      response = await post(project);
     });
 
     it('should return an OK status with no content', async function() {
-      project.title = 'Panda Dogs';
-      project.persons = [createPerson('4','PI', true)];
-      const response = await post(project);
       assert.deepEqual({},response.body);
     });
 
@@ -525,6 +535,7 @@ describe('POST api/coi/projects', () => {
     await knex('project_role').del();
     await knex('project_status').del();
     await knex('project_person').del();
+    await knex('project_sponsor').del();
     await knex('project').del();
     await knex('fin_entity').del();
     await knex('disclosure').del();

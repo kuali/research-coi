@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import {uniq} from 'lodash';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {Project} from '../project';
 import {Entity} from '../entity';
@@ -140,6 +141,9 @@ export class Relationships extends React.Component {
           this.context.configState.config.id
         );
 
+        const sponsorNames = uniq(this.props.projects[i].sponsors.map(sponsor => {
+          return sponsor.sponsorName;
+        }));
         relationshipNodes.push(
           <Project
             declarations={declarations}
@@ -147,7 +151,7 @@ export class Relationships extends React.Component {
             title={this.props.projects[i].name}
             type={projectType}
             role={this.props.projects[i].roleCd}
-            sponsor={this.props.projects[i].sponsorName}
+            sponsorNames={sponsorNames}
             sourceIdentifier={this.props.projects[i].sourceIdentifier}
             projectId={this.props.projects[i].id}
             declarationTypes={this.props.declarationTypes}

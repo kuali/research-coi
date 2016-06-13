@@ -27,8 +27,14 @@ export function createProject(sourceIdentifier) {
     sourceSystem: 'KC-PD',
     sourceIdentifier,
     sourceStatus: 1,
-    sponsorCode: '000340',
-    sponsorName: 'NIH',
+    sponsors: [
+      {
+        sponsorCode: '000340',
+        sponsorName: 'NIH',
+        sourceSystem: 'KC-PD',
+        sourceIdentifier
+      }
+    ],
     startDate: '2017-01-01',
     endDate: '2017-1-31'
   };
@@ -42,11 +48,18 @@ export async function insertProject(knex, project) {
     source_system: project.sourceSystem,
     source_identifier: project.sourceIdentifier,
     source_status: project.sourceStatus,
-    sponsor_cd: project.sponsorCode,
-    sponsor_name: project.sponsorName,
     start_date: new Date(project.startDate),
     end_date: new Date(project.endDate)
   }, 'id');
+
+  await knex('project_sponsor').insert({
+    project_id: id[0],
+    source_identifier: project.sourceIdentifier,
+    source_system: project.sourceSystem,
+    sponsor_cd: project.sponsors[0].sponsorCode,
+    sponsor_name: project.sponsors[0].sponsorName
+  });
+
   return id[0];
 }
 

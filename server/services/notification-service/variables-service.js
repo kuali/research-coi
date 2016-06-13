@@ -77,7 +77,10 @@ export function getProjectVariables(project, variables) {
   variables[`${LEFT}PROJECT_TITLE${RIGHT}`] = project.title;
   variables[`${LEFT}PROJECT_TYPE${RIGHT}`] = project.type;
   variables[`${LEFT}PROJECT_ROLE${RIGHT}`] = project.person.roleCode;
-  variables[`${LEFT}PROJECT_SPONSOR${RIGHT}`] = project.sponsorName;
+  if (project.sponsors && Array.isArray(project.sponsors)) {
+    const names = project.sponsors.map(sponsor => sponsor.sponsorName);
+    variables[`${LEFT}PROJECT_SPONSOR${RIGHT}`] = names.join(', ');
+  }
   variables[`${LEFT}PROJECT_NUMBER${RIGHT}`] = project.sourceIdentifier;
   variables[`${LEFT}PROJECT_PERSON_FIRST_NAME${RIGHT}`] = project.person.info.firstName;
   variables[`${LEFT}PROJECT_PERSON_LAST_NAME${RIGHT}`] = project.person.info.lastName;

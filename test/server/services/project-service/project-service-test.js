@@ -155,31 +155,51 @@ describe('ProjectService', () => {
         typeCd: 1,
         roleCd: 'PI',
         statusCd: '1',
-        sponsorCd : '000340'
+        sponsors: [
+          {
+            sponsorCode: '000340'
+          }
+        ]
       },
       {
         typeCd: 3,
         roleCd: 'PI',
         statusCd: '1',
-        sponsorCd : '000340'
+        sponsors: [
+          {
+            sponsorCode: '000340'
+          }
+        ]
       },
       {
         typeCd: 1,
         roleCd: 'KP',
         statusCd: '1',
-        sponsorCd : '000340'
+        sponsors: [
+          {
+            sponsorCode: '000340'
+          }
+        ]
       },
       {
         typeCd: 1,
         roleCd: 'PI',
         statusCd: '4',
-        sponsorCd : '000340'
+        sponsors: [
+          {
+            sponsorCode: '000340'
+          }
+        ]
       },
       {
         typeCd: 1,
         roleCd: 'PI',
         statusCd: '1',
-        sponsorCd : '000100'
+        sponsors: [
+          {
+            sponsorCode: '000100'
+          }
+        ]
       }
     ];
 

@@ -160,7 +160,7 @@ Requires valid API key with role of admin or user.  Admins can access any disclo
                   "projectTitle":"Longevity of car batteries",
                   "entityName":"Interstate Battery",
                   "projectTypeCd":1,
-                  "sponsorName":"Air Force",
+                  "sponsors": ["Air Force"],
                   "roleCd":"PI",
                   "finEntityActive":1
                 }
@@ -355,7 +355,7 @@ Requires valid API key with role of admin or user.  Admins and users can only vi
                               "projectTitle":"Longevity of car batteries",
                               "entityName":"Interstate Battery",
                               "projectTypeCd":1,
-                              "sponsorName":"Air Force",
+                              "sponsors": ["Air Force"],
                               "roleCd":"PI",
                               "finEntityActive":1
                             }
@@ -1161,7 +1161,7 @@ Requires valid API key with role of admin or user.  Admins can view any latest a
                               "projectTitle":"Longevity of car batteries",
                               "entityName":"Interstate Battery",
                               "projectTypeCd":1,
-                              "sponsorName":"Air Force",
+                              "sponsors": ["Air Force"],
                               "roleCd":"PI",
                               "finEntityActive":1
                             }

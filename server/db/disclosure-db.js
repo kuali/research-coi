@@ -18,7 +18,7 @@
 
 /* eslint-disable camelcase */
 
-import { values } from 'lodash';
+import { values, uniq } from 'lodash';
 import {isDisclosureUsers} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
@@ -575,6 +575,56 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
     .where(criteria);
 };
 
+async function getDeclarations(knex, disclosureId) {
+  const declarations = await knex.select(
+      'd.id as id',
+      'd.project_id as projectId',
+      'd.fin_entity_id as finEntityId',
+      'd.type_cd as typeCd',
+      'd.comments as comments',
+      'd.admin_relationship_cd as adminRelationshipCd',
+      'p.title as projectTitle',
+      'p.source_identifier as sourceIdentifier',
+      'fe.name as entityName',
+      'p.type_cd as projectTypeCd',
+      'pp.role_cd as roleCd',
+      'fe.active as finEntityActive',
+      'pp.id as projectPersonId',
+      'pp.disposition_type_cd as dispositionTypeCd'
+    )
+    .from('declaration as d')
+    .innerJoin('project as p', 'p.id', 'd.project_id')
+    .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
+    .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
+    .innerJoin('fin_entity as fe', function() {
+      this.on('fe.id', 'd.fin_entity_id')
+        .andOn('di.id', 'fe.disclosure_id');
+    })
+    .where('d.disclosure_id', disclosureId);
+
+  if (declarations.length === 0) {
+    return declarations;
+  }
+
+  let projectIds = declarations.map(declaration => declaration.projectId);
+  projectIds = uniq(projectIds);
+
+  const sponsors = await knex
+    .distinct('sponsor_name as sponsorName', 'project_id as projectId')
+    .from('project_sponsor')
+    .whereIn('project_id', projectIds);
+
+  declarations.forEach(declaration => {
+    const matchingSponsors = sponsors.filter(sponsor => {
+      return sponsor.projectId === declaration.projectId;
+    }).map(sponsor => sponsor.sponsorName);
+
+    declaration.sponsors = matchingSponsors;
+  });
+
+  return declarations;
+}
+
 export const get = (dbInfo, userInfo, disclosureId, trx) => {
   let disclosure;
   let knex;
@@ -594,32 +644,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
-    knex.select(
-        'd.id as id',
-        'd.project_id as projectId',
-        'd.fin_entity_id as finEntityId',
-        'd.type_cd as typeCd',
-        'd.comments as comments',
-        'd.admin_relationship_cd as adminRelationshipCd',
-        'p.title as projectTitle',
-        'p.source_identifier as sourceIdentifier',
-        'fe.name as entityName',
-        'p.type_cd as projectTypeCd',
-        'p.sponsor_name as sponsorName',
-        'pp.role_cd as roleCd',
-        'fe.active as finEntityActive',
-        'pp.id as projectPersonId',
-        'pp.disposition_type_cd as dispositionTypeCd'
-      )
-      .from('declaration as d')
-      .innerJoin('project as p', 'p.id', 'd.project_id')
-      .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
-      .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
-      .innerJoin('fin_entity as fe', function() {
-        this.on('fe.id', 'd.fin_entity_id')
-          .andOn('di.id', 'fe.disclosure_id');
-      })
-      .where('d.disclosure_id', disclosureId),
+    getDeclarations(knex, disclosureId),
     retrieveComments(dbInfo, userInfo, disclosureId),
     knex.select('id', 'name', 'key', 'file_type as fileType')
       .from('file')

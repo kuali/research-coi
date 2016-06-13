@@ -60,7 +60,6 @@ export class Project extends React.Component {
           title={this.props.title}
           type={this.props.type}
           role={this.props.role}
-          sponsor={this.props.sponsor}
           projectId={this.props.projectId}
           declarationTypes={this.props.declarationTypes}
           id={this.props.id}
@@ -120,7 +119,7 @@ export class Project extends React.Component {
               <div className={styles.item}>
                 Sponsor:
                 <span className={styles.value}>
-                  {this.props.sponsor}
+                  {this.props.sponsorNames ? this.props.sponsorNames.join(', ') : ''}
                 </span>
               </div>
             </span>
