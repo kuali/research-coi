@@ -275,6 +275,7 @@ describe('get /api/coi/disclosure-summaries', async () => {
     await knex('declaration').del();
     await knex('fin_entity').del();
     await knex('project_person').del();
+    await knex('project_sponsor').del();
     await knex('project').del();
     await knex('additional_reviewer').del();
     await knex('disclosure').del();

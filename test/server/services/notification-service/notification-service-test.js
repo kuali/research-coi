@@ -877,10 +877,17 @@ describe('NotificationService', () => {
             'sourceIdentifier':'1239',
             'personId':'PI',
             'sourcePersonType':'EMPLOYEE',
-            'roleCode':'PI'}
+            'roleCode':'PI'
+          }
         ],
-        'sponsorCode':'000340',
-        'sponsorName':'NIH',
+        'sponsors': [
+          {
+            'sourceSystem':'KC-PD',
+            'sourceIdentifier':'1239',
+            'sponsorCode': '000340',
+            'sponsorName': 'NIH'
+          }
+        ],
         'startDate':'2016-07-01',
         'endDate':'2018-06-30'
       };

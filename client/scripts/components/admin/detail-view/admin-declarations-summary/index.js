@@ -80,13 +80,19 @@ export class AdminDeclarationsSummary extends React.Component {
           declaration.projectTypeCd,
           this.context.configState.config.id
         );
+
+        let sponsors;
+        if (declaration.sponsors && Array.isArray(declaration.sponsors)) {
+          sponsors = declaration.sponsors.join(', ');
+        }
+
         projects.push({
           id: declaration.projectId,
           name: declaration.projectTitle,
           type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
-          sponsor: declaration.sponsorName,
+          sponsors,
           dispositionTypeCd: declaration.dispositionTypeCd,
           projectPersonId: declaration.projectPersonId
         });
@@ -289,7 +295,7 @@ export class AdminDeclarationsSummary extends React.Component {
                 </div>
                 <div className={styles.field}>
                   <label className={styles.label}>Sponsor:</label>
-                  <span style={{fontWeight: 'bold'}}>{project.sponsor}</span>
+                  <span style={{fontWeight: 'bold'}}>{project.sponsors}</span>
                 </div>
               </div>
               <div style={{display: 'inline-block', width: '50%', verticalAlign: 'top'}}>

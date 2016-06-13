@@ -374,6 +374,7 @@ describe('DisclosureController',async () => {
   after(async function() {
     await updateConfig(false, false);
     await knex('project_person').del();
+    await knex('project_sponsor').del();
     await knex('project').del();
     await knex('comment').del();
     await knex('additional_reviewer').del();

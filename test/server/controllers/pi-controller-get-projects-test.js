@@ -94,107 +94,111 @@ async function insertProjectStatuses(projectTypeCd) {
   ]);
 }
 
+async function insertProject(project) {
+  const insertedProject = await knex('project').insert({
+    title: project.title,
+    type_cd: project.type_cd,
+    source_system: project.source_system,
+    source_identifier: project.source_identifier,
+    source_status: project.source_status
+  }, 'id');
+
+  await knex('project_sponsor').insert({
+    project_id: insertedProject[0],
+    sponsor_cd: project.sponsor_cd,
+    source_identifier: project.source_identifier,
+    source_system: project.source_system,
+    sponsor_name: ''
+  });
+
+  await knex('project_person').insert({
+    project_id: insertedProject[0],
+    person_id: project.person_id,
+    source_person_type: project.source_person_type,
+    role_cd: project.role_cd,
+    active: project.active
+  });
+}
+
 async function insertProjectsAndPersons(user) {
-  knex('project').insert({
+  const userHash = hashCode(user);
+
+  await insertProject({
     title: 'test project1',
     type_cd: 1,
     source_system: 'propdev',
     source_identifier: 1,
     source_status: '1',
-    sponsor_cd: '000340'
-  },'id').then(project => {
-    return knex('project_person').insert({
-      project_id: project[0],
-      person_id: hashCode(user),
-      source_person_type: 'employee',
-      role_cd: 'PI',
-      active: true
-    });
+    sponsor_cd: '000340',
+    person_id: userHash,
+    source_person_type: 'employee',
+    role_cd: 'PI',
+    active: true
   });
 
-  knex('project').insert({
+  await insertProject({
     title: 'test project2',
     type_cd: 1,
     source_system: 'propdev',
     source_identifier: 2,
     source_status: '2',
-    sponsor_cd: '000500'
-  },'id').then(project => {
-    return knex('project_person').insert({
-      project_id: project[0],
-      person_id: hashCode(user),
-      source_person_type: 'employee',
-      role_cd: 'COI',
-      active: true
-    });
+    sponsor_cd: '000500',
+    person_id: userHash,
+    source_person_type: 'employee',
+    role_cd: 'COI',
+    active: true
   });
 
-  knex('project').insert({
+  await insertProject({
     title: 'test project3',
     type_cd: 1,
     source_system: 'propdev',
     source_identifier: 3,
     source_status: '10',
-    sponsor_cd: '000500'
-  },'id').then(project => {
-    return knex('project_person').insert({
-      project_id: project[0],
-      person_id: hashCode(user),
-      source_person_type: 'employee',
-      role_cd: 'PI',
-      active: true
-    });
+    sponsor_cd: '000500',
+    person_id: userHash,
+    source_person_type: 'employee',
+    role_cd: 'PI',
+    active: true
   });
 
-  knex('project').insert({
+  await insertProject({
     title: 'test project4',
     type_cd: 1,
     source_system: 'propdev',
     source_identifier: 4,
     source_status: '10',
-    sponsor_cd: '000500'
-  },'id').then(project => {
-    return knex('project_person').insert({
-      project_id: project[0],
-      person_id: hashCode(user),
-      source_person_type: 'employee',
-      role_cd: 'KP',
-      active: true
-    });
+    sponsor_cd: '000500',
+    person_id: userHash,
+    source_person_type: 'employee',
+    role_cd: 'KP',
+    active: true
   });
 
-  knex('project').insert({
+  await insertProject({
     title: 'test project5',
     type_cd: 1,
     source_system: 'propdev',
     source_identifier: 5,
     source_status: '1',
-    sponsor_cd: '000500'
-  },'id').then(project => {
-    return knex('project_person').insert({
-      project_id: project[0],
-      person_id: hashCode(user),
-      source_person_type: 'employee',
-      role_cd: 'KP',
-      active: true
-    });
+    sponsor_cd: '000500',
+    person_id: userHash,
+    source_person_type: 'employee',
+    role_cd: 'KP',
+    active: true
   });
 
-  knex('project').insert({
+  await insertProject({
     title: 'test project6',
     type_cd: 3,
     source_system: 'irb',
     source_identifier: 1,
     source_status: '1',
-    sponsor_cd: '000500'
-  },'id').then(project => {
-    return knex('project_person').insert({
-      project_id: project[0],
-      person_id: hashCode(user),
-      source_person_type: 'employee',
-      role_cd: 'PI',
-      active: true
-    });
+    sponsor_cd: '000500',
+    person_id: userHash,
+    source_person_type: 'employee',
+    role_cd: 'PI',
+    active: true
   });
 }
 
@@ -224,6 +228,7 @@ describe('ProjectControllerTest', async () => {
     await knex('project_role').del();
     await knex('project_status').del();
     await knex('project_person').del();
+    await knex('project_sponsor').del();
     await knex('project').del();
   });
 });

@@ -64,8 +64,6 @@ export class Entity extends React.Component {
           title={this.props.title}
           type={this.props.type}
           role={this.props.role}
-          sponsor={this.props.sponsor}
-          cosponsor={this.props.cosponsor}
           declarationTypes={this.props.declarationTypes}
           finEntityId={this.props.entity.id}
           id={this.props.id}

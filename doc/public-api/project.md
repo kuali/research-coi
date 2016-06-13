@@ -23,7 +23,13 @@ Requires valid API key with role of admin or user.  Gets all projects for logged
                 "name":"Longevity of car batteries",
                 "typeCd":1,
                 "roleCd":"PI",
-                "sponsorName":"Air Force"
+                "sponsors": [
+                  {
+                    projectId: 345,
+                    sponsorCode: 456,
+                    sponsorName: "Air Force"
+                  }
+                ]
               }
             ]
 
@@ -45,8 +51,6 @@ Requires valid API key with role of admin or user.  Gets all projects for logged
               "sourceSystem":"KC-PD",
               "sourceIdentifier":"1",
               "sourceStatus":"1",
-              "sponsorCode":"000340",
-              "sponsorName":"NIH",
               "startDate":"2015-01-01",
               "endDate":"2016-01-01",
               "persons":[
@@ -56,6 +60,14 @@ Requires valid API key with role of admin or user.  Gets all projects for logged
                   "personId":"10000000005",
                   "sourcePersonType":"EMPLOYEE",
                   "roleCode":"PI"
+                }
+              ],
+              "sponsors": [
+                {
+                  "sourceSystem":"KC-PD",
+                  "sourceIdentifier":"1",
+                  "sponsorCode":"000340",
+                  "sponsorName":"NIH"
                 }
               ]
             }

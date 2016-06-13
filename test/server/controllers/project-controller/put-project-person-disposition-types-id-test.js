@@ -63,11 +63,18 @@ async function insertProject(project) {
     source_system: project.sourceSystem,
     source_identifier: project.sourceIdentifier,
     source_status: project.sourceStatus,
-    sponsor_cd: project.sponsorCode,
-    sponsor_name: project.sponsorName,
     start_date: new Date(project.startDate),
     end_date: new Date(project.endDate)
   }, 'id');
+
+  await knex('project_sponsor').insert({
+    project_id: id[0],
+    source_system: project.sourceSystem,
+    source_identifier: project.sourceIdentifier,
+    sponsor_cd: project.sponsorCode,
+    sponsor_name: project.sponsorName
+  });
+
   return id[0];
 }
 
@@ -122,6 +129,7 @@ describe('PUT api/coi/project-persons-disposition-types/:id', () => {
 
   after(async function() {
     await knex('project_person').del();
+    await knex('project_sponsor').del();
     await knex('project').del();
     await knex('disposition_type').del();
   });

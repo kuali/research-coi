@@ -52,11 +52,19 @@ async function insertProject(project) {
     source_system: project.sourceSystem,
     source_identifier: project.sourceIdentifier,
     source_status: project.sourceStatus,
-    sponsor_cd: project.sponsorCode,
-    sponsor_name: project.sponsorName,
     start_date: new Date(project.startDate),
     end_date: new Date(project.endDate)
   }, 'id');
+
+  
+  await knex('project_sponsor').insert({
+    project_id: id[0],
+    source_system: project.sourceSystem,
+    source_identifier: project.sourceIdentifier,
+    sponsor_cd: project.sponsors[0].sponsorCode,
+    sponsor_name: project.sponsors[0].sponsorName
+  }, 'id');
+
   return id[0];
 }
 
@@ -79,8 +87,12 @@ function createProject(sourceIdentifier) {
     sourceSystem: 'KC-PD',
     sourceIdentifier,
     sourceStatus: 1,
-    sponsorCode: '000340',
-    sponsorName: 'NIH',
+    sponsors: [
+      {
+        sponsorCode: '000340',
+        sponsorName: 'NIH'
+      }
+    ],
     startDate: '2017-01-01',
     endDate: '2017-1-31'
   };
@@ -181,6 +193,7 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
     await knex('project_role').del();
     await knex('project_status').del();
     await knex('project_person').del();
+    await knex('project_sponsor').del();
     await knex('project').del();
     await knex('disclosure_archive').del();
     await knex('disclosure').del();

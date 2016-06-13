@@ -226,7 +226,15 @@ export function isRequired(requirements, project) {
   const isStatusRequired = requirements.statuses.findIndex(status => {
     return status.projectTypeCd == project.typeCd && status.sourceStatusCd == project.statusCd; // eslint-disable-line eqeqeq
   }) > -1;
-  const isSponsorRequired = requirements.sponsors ? requirements.sponsors.includes(project.sponsorCd) : true;
+
+  let isSponsorRequired = true;
+  if (requirements.sponsors) {
+    if (project.sponsors) {
+      isSponsorRequired = project.sponsors.some(sponsor => {
+        return requirements.sponsors.includes(sponsor.sponsorCode);
+      });
+    }
+  }
 
   return isTypeRequired && isRoleRequired && isStatusRequired && isSponsorRequired;
 }

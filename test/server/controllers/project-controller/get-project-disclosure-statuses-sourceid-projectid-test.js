@@ -162,6 +162,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     await knex('project_role').del();
     await knex('project_status').del();
     await knex('project_person').del();
+    await knex('project_sponsor').del();
     await knex('project').del();
     await knex('fin_entity').del();
     await knex('disclosure').del();
