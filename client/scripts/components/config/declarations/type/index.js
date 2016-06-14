@@ -64,6 +64,7 @@ export default class DeclarationType extends React.Component {
             value={this.props.type.description}
             onKeyUp={this.lookForEnter}
             onChange={this.nameChanged}
+            maxLength="50"
           />
           {doneLink}
         </span>
