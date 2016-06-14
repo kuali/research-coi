@@ -293,12 +293,26 @@ export async function saveScreeningQuestionnaire(query, questions) {
 
 export async function setConfig(dbInfo, userId, body, hostname, optionalTrx){
   const knex = getKnex(dbInfo);
+  const config = snakeizeJson(body);
+
+  if (config.disposition_types && Array.isArray(config.disposition_types)) {
+    const tooLong = config.disposition_types.some(dispositionType => {
+      return (
+        dispositionType.description &&
+        dispositionType.description.length > 50
+      );
+    });
+
+    if (tooLong) {
+      throw Error('disposition type description is too long');
+    }
+  }
+
   return knex.transaction(async (query) => {
     if (optionalTrx) {
       query = knex.transacting(optionalTrx);
     }
 
-    const config = snakeizeJson(body);
     const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
     const queries = [];
 

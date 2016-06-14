@@ -35,7 +35,7 @@ export default function authentication(req, res, next) {
         } else {
           ipAddresses = req.ip;
         }
-        Log.error(`unauthenticated request from ${ipAddresses}`, req);
+        Log.warn(`unauthenticated request from ${ipAddresses}`, req);
         res.sendStatus(UNAUTHORIZED);
       } else {
         req.userInfo = userInfo;
