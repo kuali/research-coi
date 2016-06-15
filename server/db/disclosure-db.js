@@ -24,6 +24,9 @@ import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
 import { filterProjects } from '../services/project-service/project-service';
 import * as FileService from '../services/file-service/file-service';
+import {
+  createAndSendReviewerAssignedNotification
+} from '../services/notification-service/notification-service';
 import {camelizeJson} from './json-utils';
 import {
   NO_DISPOSITION,
@@ -37,6 +40,7 @@ import {
   SYSTEM_USER,
   STATE_TYPE
 } from '../../coi-constants';
+import Log from '../log';
 
 const MILLIS = 1000;
 const SECONDS = 60;
@@ -1296,12 +1300,19 @@ async function addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, use
           date: new Date()
         }]),
         assigned_by: SYSTEM_USER
+      }, 'id').then(newId => {
+        return Promise.resolve(newId[0]);
+      }).catch(() => {
+        Log.info(
+          `reviewer ${reviewer.userId} already added to disclosure ${disclosureId}`
+        );
+        return Promise.resolve(null);
       });
     })
   );
 }
 
-export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
+export async function submit(dbInfo, userInfo, disclosureId, authHeader, hostName) {
   const knex = getKnex(dbInfo);
   const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId);
 
@@ -1309,6 +1320,7 @@ export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
     throw Error(`Attempt by ${userInfo.username} to submit disclosure ${disclosureId} which isnt theirs`);
   }
 
+  let reviewerIds;
   return knex.transaction( async (trx) => {
     await updateStatus(trx, userInfo.name, disclosureId);
     await updateEntitiesAndRelationshipsStatuses(trx, disclosureId, RELATIONSHIP_STATUS.IN_PROGRESS, RELATIONSHIP_STATUS.DISCLOSED);
@@ -1320,13 +1332,28 @@ export async function submit(dbInfo, userInfo, disclosureId, authHeader) {
     const generalConfig = JSON.parse(config[0].config).general;
 
     if (generalConfig.autoAddAdditionalReviewer) {
-      await addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, userInfo);
+      reviewerIds = await addAdditionalReviewers(trx, dbInfo, authHeader, disclosureId, userInfo);
     }
 
     if (generalConfig.autoApprove) {
       const count = await trx('fin_entity').count('id as count').where({active: true, disclosure_id: disclosureId});
       if (count[0].count === 0) {
         await approve(dbInfo, disclosure, SYSTEM_USER, disclosureId, authHeader, trx);
+      }
+    }
+  }).then(async () => {
+    if (Array.isArray(reviewerIds)) {
+      for (let i = 0; i < reviewerIds.length; i++) {
+        if (reviewerIds[i] === null) {
+          continue;
+        }
+
+        await createAndSendReviewerAssignedNotification(
+          dbInfo,
+          hostName,
+          userInfo,
+          reviewerIds[i]
+        );
       }
     }
   });

@@ -225,7 +225,7 @@ export const init = app => {
     User can only submit disclosures which are theirs
   */
   app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    await DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id, req.headers.authorization);
+    await DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id, req.headers.authorization, req.hostname);
     try {
       createAndSendSubmitNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, req.params.id);
     } catch (err) {

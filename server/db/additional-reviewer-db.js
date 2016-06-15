@@ -44,7 +44,9 @@ export async function getAdditionalReviewer(dbInfo, id) {
         'assigned_by as assignedBy'
       )
       .where({id});
-    reviewer[0].dates = JSON.parse(reviewer[0].dates);
+    if (reviewer[0] && reviewer[0].dates) {
+      reviewer[0].dates = JSON.parse(reviewer[0].dates);
+    }
     return reviewer[0];
   } catch(err) {
     return Promise.reject(err);
