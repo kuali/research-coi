@@ -203,7 +203,7 @@ export default class EntityToReview extends React.Component {
         <span className={styles.statusIcon}>
           {icon}
         </span>
-        <span style={{marginRight: 25}} className={`fill`}>
+        <span style={{marginRight: 25}} className={'fill'}>
           <div className={styles.entityName}>{this.props.entity.name}</div>
           <div style={{marginBottom: 10}}>
             <EntityFormInformationStep

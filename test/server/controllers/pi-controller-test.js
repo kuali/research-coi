@@ -77,7 +77,7 @@ describe('PIControllerTest', () => {
     it('admin should be able to retrieve any responses', async function () {
       const response = await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}/pi-responses`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       const review = response.body[0];
@@ -102,7 +102,7 @@ describe('PIControllerTest', () => {
     it('reviewers should not be able to retrieve responses for disclosures they are not reviewers on ', async function () {
       await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}/pi-responses`)
-        .set('Authorization', `Bearer reviewer1234`)
+        .set('Authorization', 'Bearer reviewer1234')
         .expect(FORBIDDEN);
     });
   });

@@ -27,7 +27,7 @@ export function DisclosureHeader(props) {
         className={styles.instructionButton}
         onClick={DisclosureActions.toggleInstructions}
       >
-        <i className={`fa fa-info-circle`} style={{marginRight: 5, fontSize: 20}}></i>
+        <i className={'fa fa-info-circle'} style={{marginRight: 5, fontSize: 20}}></i>
         Instructions
       </span>
       <h2 className={styles.heading}>

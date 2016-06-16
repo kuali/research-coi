@@ -83,14 +83,14 @@ export default class DeclarationType extends Type {
 
   deactivateType() {
     ConfigActions.deactivateType({
-      path: `config.declarationTypes`,
+      path: 'config.declarationTypes',
       index: this.props.index
     });
   }
 
   reactivateType() {
     ConfigActions.reactivateType({
-      path: `config.declarationTypes`,
+      path: 'config.declarationTypes',
       index: this.props.index
     });
   }

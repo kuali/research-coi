@@ -155,8 +155,8 @@ class Question extends React.Component {
       }
 
       buttons = (
-        <div className={`flexbox row`}>
-          <div className={`fill`}>
+        <div className={'flexbox row'}>
+          <div className={'fill'}>
             {subQuestionWarning}
           </div>
           <span>

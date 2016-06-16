@@ -155,7 +155,7 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
     it('should return OK status', async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${disclosureId}/approve`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .send(disclosure)
         .expect(ACCEPTED);
     });
@@ -178,7 +178,7 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
     it('should return OK status', async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${disclosureId}/approve`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .send(disclosure)
         .expect(ACCEPTED);
     });

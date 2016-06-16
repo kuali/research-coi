@@ -110,8 +110,8 @@ describe('get /api/coi/disclosure-summaries', async () => {
     let summaries;
     it('should return an ok status', async () => {
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer admin`)
+        .get('/api/coi/disclosure-summaries')
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       summaries = response.body;
@@ -133,9 +133,9 @@ describe('get /api/coi/disclosure-summaries', async () => {
       };
 
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
+        .get('/api/coi/disclosure-summaries')
         .query({filters: encodeURIComponent(JSON.stringify(filters))})
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       summaries = response.body;
@@ -154,9 +154,9 @@ describe('get /api/coi/disclosure-summaries', async () => {
       };
 
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
+        .get('/api/coi/disclosure-summaries')
         .query({filters: encodeURIComponent(JSON.stringify(filters))})
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       summaries = response.body;
@@ -175,9 +175,9 @@ describe('get /api/coi/disclosure-summaries', async () => {
       };
 
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
+        .get('/api/coi/disclosure-summaries')
         .query({filters: encodeURIComponent(JSON.stringify(filters))})
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       summaries = response.body;
@@ -200,9 +200,9 @@ describe('get /api/coi/disclosure-summaries', async () => {
       };
 
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
+        .get('/api/coi/disclosure-summaries')
         .query({filters: encodeURIComponent(JSON.stringify(filters))})
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       summaries = response.body;
@@ -225,9 +225,9 @@ describe('get /api/coi/disclosure-summaries', async () => {
       };
 
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
+        .get('/api/coi/disclosure-summaries')
         .query({filters: encodeURIComponent(JSON.stringify(filters))})
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       summaries = response.body;
@@ -245,15 +245,15 @@ describe('get /api/coi/disclosure-summaries', async () => {
   describe('test permissions', () => {
     it('user should not be able to retrieve disclosure summaries', async function () {
       await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer cate`)
+        .get('/api/coi/disclosure-summaries')
+        .set('Authorization', 'Bearer cate')
         .expect(FORBIDDEN);
     });
 
     it('reviewer should be able to retrieve disclosure summaries when they are a reviewer', async function () {
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer reviewer`)
+        .get('/api/coi/disclosure-summaries')
+        .set('Authorization', 'Bearer reviewer')
         .expect(OK);
 
       const summaries = response.body;
@@ -262,8 +262,8 @@ describe('get /api/coi/disclosure-summaries', async () => {
 
     it('reviewer should not be able to retrieve disclosure summaries when they are not a reviewer', async function () {
       const response = await request(app.run())
-        .get(`/api/coi/disclosure-summaries`)
-        .set('Authorization', `Bearer reviewer1234`)
+        .get('/api/coi/disclosure-summaries')
+        .set('Authorization', 'Bearer reviewer1234')
         .expect(OK);
 
       const summaries = response.body;

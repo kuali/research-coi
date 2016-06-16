@@ -38,7 +38,7 @@ export default function ProjectToReview(props) {
   let bottomBorder;
   if (!props.last) {
     bottomBorder = (
-      <div className={`flexbox row`}>
+      <div className={'flexbox row'}>
         <span className={`fill ${styles.borderArea}`}></span>
         <span className={styles.commentFiller}></span>
       </div>
@@ -48,7 +48,7 @@ export default function ProjectToReview(props) {
   return (
     <div className={`${styles.container} ${props.className}`}>
       <div className={styles.projectTitle}>{props.project.name}</div>
-      <div className={`flexbox row`}>
+      <div className={'flexbox row'}>
         <span className={`fill ${styles.headings}`}>
           <span className={styles.entityName}>FINANCIAL ENTITY</span>
           <span className={styles.relationship}>REPORTER RELATIONSHIP</span>

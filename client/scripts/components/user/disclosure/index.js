@@ -193,7 +193,7 @@ export class Disclosure extends React.Component {
       showPreviousLink = false;
     } else {
       switch (currentDisclosureStep) {
-        case STEP.QUESTIONNAIRE:
+        case STEP.QUESTIONNAIRE: {
           if (config.questions.screening) {
             percent = Math.floor(((currentQuestion - 1) / config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
           }
@@ -213,6 +213,7 @@ export class Disclosure extends React.Component {
           showPreviousLink = currentQuestion > 1;
 
           break;
+        }
         case STEP.QUESTIONNAIRE_SUMMARY:
           percent = QUESTIONNAIRE_PERCENTAGE;
           currentStep = (
@@ -224,7 +225,7 @@ export class Disclosure extends React.Component {
           );
           heading = 'Questionnaire';
           break;
-        case STEP.ENTITIES:
+        case STEP.ENTITIES: {
           stepNumber = 1;
           const ENTITIES_PERCENTAGE = 50;
           percent = ENTITIES_PERCENTAGE;
@@ -246,7 +247,8 @@ export class Disclosure extends React.Component {
 
           heading = 'Financial Entities';
           break;
-        case STEP.PROJECTS:
+        }
+        case STEP.PROJECTS: {
           stepNumber = 2;
           const PROJECTS_PERCENTAGE = 75;
           percent = PROJECTS_PERCENTAGE;
@@ -295,7 +297,8 @@ export class Disclosure extends React.Component {
             );
           }
           break;
-        case STEP.CERTIFY:
+        }
+        case STEP.CERTIFY: {
           stepNumber = 3;
           const CERTIFY_PERCENTAGE = 99;
           percent = CERTIFY_PERCENTAGE;
@@ -308,6 +311,7 @@ export class Disclosure extends React.Component {
           );
           heading = 'Certification';
           break;
+        }
       }
     }
 

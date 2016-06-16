@@ -47,7 +47,7 @@ const knex = getKnex({});
 async function post(project) {
   return await request(app.run())
     .post('/api/coi/projects')
-    .set('Authorization', `Bearer admin`)
+    .set('Authorization', 'Bearer admin')
     .send(project)
     .expect(OK);
 }

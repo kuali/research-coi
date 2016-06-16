@@ -247,8 +247,8 @@ export default class Entry extends React.Component {
       );
     } else {
       jsx = (
-        <div className={`flexbox row`} name='Entry Viewer'>
-          <span className={`fill`}>
+        <div className={'flexbox row'} name='Entry Viewer'>
+          <span className={'fill'}>
             <div style={{marginBottom: 10}}>
               <span style={{width: '50%', fontSize: 20, fontWeight: 'bold', verticalAlign: 'middle'}}>
                 <div className={styles.entityName}>{this.props.travelLog.entityName}</div>

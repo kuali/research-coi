@@ -64,7 +64,7 @@ export class QuestionSummary extends React.Component {
 
         <span className={`fill ${styles.question}`}>
           <div>{this.props.question.question.text}</div>
-          <div style={{marginTop: 15}} className={`flexbox row`}>
+          <div style={{marginTop: 15}} className={'flexbox row'}>
             <span className={`fill ${styles.answer}`}>
               <span className={styles.answerLabel}>Answer: </span>
               <span style={{fontSize: 20}}>

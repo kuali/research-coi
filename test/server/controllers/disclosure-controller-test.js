@@ -165,7 +165,7 @@ describe('DisclosureController',async () => {
     it('user should not be able to retrieve others disclosures', async function () {
       await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
-        .set('Authorization', `Bearer cate`)
+        .set('Authorization', 'Bearer cate')
         .expect(INTERNAL_SERVER_ERROR);
     });
 
@@ -179,14 +179,14 @@ describe('DisclosureController',async () => {
     it('reviewer should not be able to retrieve disclosures when they are not a reviewer', async function () {
       await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
-        .set('Authorization', `Bearer reviewer1234`)
+        .set('Authorization', 'Bearer reviewer1234')
         .expect(FORBIDDEN);
     });
 
     it('admin should be able to retrieve disclosures', async function () {
       await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
     });
   });
@@ -196,7 +196,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .post(`/api/coi/disclosures/${disclosureId}/comments`)
         .send(createComment(disclosureId, 'cate'))
-        .set('Authorization', `Bearer cate`)
+        .set('Authorization', 'Bearer cate')
         .expect(FORBIDDEN);
     });
 
@@ -204,7 +204,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .post(`/api/coi/disclosures/${disclosureId}/comments`)
         .send(createComment(disclosureId, 'admin'))
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
     });
 
@@ -336,7 +336,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${discId}/submit`)
         .send(disclosure)
-        .set('Authorization', `Bearer cate`)
+        .set('Authorization', 'Bearer cate')
         .expect(ACCEPTED);
     });
 
@@ -360,7 +360,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${discId}/submit`)
         .send(disclosure)
-        .set('Authorization', `Bearer reviewer1`)
+        .set('Authorization', 'Bearer reviewer1')
         .expect(ACCEPTED);
     });
 

@@ -101,7 +101,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     it('should return OK status', async () => {
       const response = await request(app.run())
         .get('/api/coi/project-disclosure-statuses/KC-PD/1/')
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
 
       statuses = response.body;
@@ -140,7 +140,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
   describe('test errors and permissions', () => {
     it('should return empty array', async function() {
       const response = await request(app.run())
-        .get(`/api/coi/project-disclosure-statuses/NOSOURCE/NOID`)
+        .get('/api/coi/project-disclosure-statuses/NOSOURCE/NOID')
         .set('Authorization','Bearer admin')
         .expect(OK);
 
@@ -150,7 +150,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
 
     it('should return forbidden for non admins', async function() {
       await request(app.run())
-        .get(`/api/coi/project-disclosure-statuses/NOSOURCE/NOID`)
+        .get('/api/coi/project-disclosure-statuses/NOSOURCE/NOID')
         .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
     });

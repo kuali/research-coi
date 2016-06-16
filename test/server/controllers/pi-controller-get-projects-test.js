@@ -214,7 +214,7 @@ describe('ProjectControllerTest', async () => {
   describe('/api/coi/projects', () => {
     it('get projects with out filter returns all projects', async function () {
       const response = await request(app.run())
-        .get(`/api/coi/projects`)
+        .get('/api/coi/projects')
         .set('Authorization',`Bearer ${user}`)
         .expect(OK);
 

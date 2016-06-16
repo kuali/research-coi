@@ -23,7 +23,7 @@ import {Link} from 'react-router';
 export class BackToDashBoardButton extends React.Component {
   render() {
     return (
-      <Link to={`/coi/dashboard`} className={styles.container} name='Back Button'>
+      <Link to={'/coi/dashboard'} className={styles.container} name='Back Button'>
         <div>
           <span>
             <div className={styles.primary}>Back</div>

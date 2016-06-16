@@ -72,7 +72,7 @@ export default class CommentingPanel extends React.Component {
         <div className={styles.editSection}>
 
           <button className={styles.editButton} onClick={this.editComment}>
-            <i className={`fa fa-edit`} style={{marginRight: 5}}></i>
+            <i className={'fa fa-edit'} style={{marginRight: 5}}></i>
             EDIT COMMENT
           </button>
         </div>

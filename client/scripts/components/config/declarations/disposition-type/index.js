@@ -83,14 +83,14 @@ export default class DispositionType extends Type {
 
   deactivateType() {
     ConfigActions.deactivateType({
-      path: `config.dispositionTypes`,
+      path: 'config.dispositionTypes',
       index: this.props.index
     });
   }
 
   reactivateType() {
     ConfigActions.reactivateType({
-      path: `config.dispositionTypes`,
+      path: 'config.dispositionTypes',
       index: this.props.index
     });
   }

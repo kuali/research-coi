@@ -28,7 +28,6 @@
         "no-unexpected-multiline": 2,
         "block-scoped-var": 2,
         "camelcase": 2,
-        "consistent-return": 2,
         "curly": 2,
         "no-else-return": 2,
         "no-eq-null": 2,

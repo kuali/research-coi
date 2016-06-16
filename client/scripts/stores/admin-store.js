@@ -160,7 +160,7 @@ class _AdminStore {
       }
     }));
 
-    createRequest().get(`/api/coi/reviewers`)
+    createRequest().get('/api/coi/reviewers')
       .end(processResponse((err, responses) => {
         if (!err) {
           this.applicationState.displayAdditionalReviewers = responses.body.length > 0;

@@ -57,7 +57,7 @@ export function allowedRoles(rolesToAllow) {
 
   return (req, res, next) => {
     if (!valid(req)) {
-      Log.error(`Unauthorized to access`, req);
+      Log.error('Unauthorized to access', req);
       res.sendStatus(FORBIDDEN);
       return;
     }

@@ -326,11 +326,11 @@ export default class Question extends React.Component {
         }
         if (this.state.revising) {
           return (
-            <div className={`flexbox row`} key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
+            <div className={'flexbox row'} key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
               <span style={{width: 70, fontSize: 22, verticalAlign: 'top'}}>
                 <div>{subQuestion.question.numberToShow}</div>
               </span>
-              <span className={`fill`}>
+              <span className={'fill'}>
                 <div style={{marginBottom: 10}}>{subQuestion.question.text}</div>
                 <div className={styles.answerLabel}>ANSWER</div>
                 {this.getControl(subQuestion, answerValue)}
@@ -351,11 +351,11 @@ export default class Question extends React.Component {
           );
         }
         return (
-          <div className={`flexbox row`} key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
+          <div className={'flexbox row'} key={subQuestion.id} style={{margin: '10px 0', borderTop: '1px solid #CCC', padding: '13px 0px'}}>
             <span style={{width: 70, fontSize: 22, verticalAlign: 'top'}}>
               <div>{subQuestion.question.numberToShow}</div>
             </span>
-            <span className={`fill`}>
+            <span className={'fill'}>
               <div style={{marginBottom: 10}}>{subQuestion.question.text}</div>
               <div className={styles.answerLabel}>ANSWER</div>
               {subQuestionAnswer}

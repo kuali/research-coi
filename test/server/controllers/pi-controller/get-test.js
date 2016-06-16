@@ -58,9 +58,9 @@ describe('GET api/coi/pi', () => {
     let response;
     it('should return an OK status', async function() {
       response = await request(app.run())
-        .get(`/api/coi/pi`)
+        .get('/api/coi/pi')
         .query({term: 'a'})
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
     });
 
@@ -73,9 +73,9 @@ describe('GET api/coi/pi', () => {
     let response;
     it('should return an OK status', async function() {
       response = await request(app.run())
-        .get(`/api/coi/pi`)
+        .get('/api/coi/pi')
         .query({term: 'a'})
-        .set('Authorization', `Bearer reviewer1`)
+        .set('Authorization', 'Bearer reviewer1')
         .expect(OK);
     });
 

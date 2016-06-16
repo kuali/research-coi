@@ -77,7 +77,7 @@ export class Sidebar extends React.Component {
     const steps = this.generateSteps();
     return (
       <span className={`${styles.container} ${this.props.className}`}>
-        <div className={`fill`}>
+        <div className={'fill'}>
           <BackToDashboard />
           <ul className={styles.ul}>
             {steps}

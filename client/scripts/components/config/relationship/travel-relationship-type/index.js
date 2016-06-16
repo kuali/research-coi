@@ -126,7 +126,7 @@ export default class TravelRelationshipType extends RelationshipType {
             style={{verticalAlign: 'top'}}
           />
         </span>
-        <span className={`fill`}>
+        <span className={'fill'}>
           {content}
         </span>
       </div>

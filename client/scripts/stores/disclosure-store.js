@@ -515,7 +515,7 @@ class _DisclosureStore {
       case DISCLOSURE_STEP.PROJECTS:
         this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         break;
-      case DISCLOSURE_STEP.CERTIFY:
+      case DISCLOSURE_STEP.CERTIFY: {
         const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
@@ -526,6 +526,7 @@ class _DisclosureStore {
           this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         }
         break;
+      }
     }
 
     this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
@@ -612,7 +613,7 @@ class _DisclosureStore {
         this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.ENTITIES] = true;
         break;
-      case DISCLOSURE_STEP.ENTITIES:
+      case DISCLOSURE_STEP.ENTITIES: {
         const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
@@ -625,6 +626,7 @@ class _DisclosureStore {
           this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.CERTIFY] = true;
         }
         break;
+      }
       case DISCLOSURE_STEP.PROJECTS:
         this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.CERTIFY;
         this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.CERTIFY] = true;

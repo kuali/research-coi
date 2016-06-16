@@ -114,7 +114,7 @@ describe('PUT api/coi/project-persons-disposition-types/:id', () => {
     it('should return an OK status', async function() {
       await request(app.run())
         .put(`/api/coi/project-persons-disposition-types/${projectPersonId}`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .send({
           dispositionTypeCd
         })
