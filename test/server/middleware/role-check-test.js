@@ -59,7 +59,7 @@ describe('role-check', () => {
       assert.equal(callCount, 3);
     });
 
-    it ('should not allow anyone with an empty array', () => {
+    it('should not allow anyone with an empty array', () => {
       const middleware = allowedRoles([]);
 
       const res = {
@@ -82,7 +82,7 @@ describe('role-check', () => {
       assert(res.sendStatusCalled);
     });
 
-    it ('should allow the correct role through given a valid array', () => {
+    it('should allow the correct role through given a valid array', () => {
       const middleware = allowedRoles(['admin']);
 
       const res = {
@@ -102,7 +102,7 @@ describe('role-check', () => {
       assert.equal(callCount, 1);
     });
 
-    it ('should not allow an incorrect role through given a valid array', () => {
+    it('should not allow an incorrect role through given a valid array', () => {
       const middleware = allowedRoles(['admin']);
 
       const res = {
@@ -122,7 +122,7 @@ describe('role-check', () => {
       assert(res.sendStatusCalled);
     });
 
-    it ('should allow the correct role through given a valid string', () => {
+    it('should allow the correct role through given a valid string', () => {
       const middleware = allowedRoles('admin');
 
       const res = {
@@ -142,7 +142,7 @@ describe('role-check', () => {
       assert.equal(callCount, 1);
     });
 
-    it ('should not allow an incorrect role through given a valid string', () => {
+    it('should not allow an incorrect role through given a valid string', () => {
       const middleware = allowedRoles('admin');
 
       const res = {
@@ -162,7 +162,7 @@ describe('role-check', () => {
       assert(res.sendStatusCalled);
     });
 
-    it ('should not allow anyone with an empty string', () => {
+    it('should not allow anyone with an empty string', () => {
       const middleware = allowedRoles('');
 
       const res = {

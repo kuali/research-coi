@@ -67,7 +67,7 @@ export default function SearchFilterGroup(props) {
   }
 
   let reviewerFilter;
-  if(props.lane === LANES.TEST) {
+  if (props.lane === LANES.TEST) {
     reviewerFilter = (
       <DisclosureFilterByReviewer
         reviewers={props.reviewerFilterValues}

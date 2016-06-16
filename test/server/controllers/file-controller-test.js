@@ -51,7 +51,7 @@ describe('FileController', () => {
   const userId = hashCode(user);
   const today = new Date();
 
-  before(async function(){
+  before(async function() {
     const disclosure = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
       status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
@@ -172,7 +172,7 @@ describe('FileController', () => {
   });
 
   describe('/api/coi/files/:fileType/:refId', () => {
-    before(async function(){
+    before(async function() {
       await request(app.run())
         .post('/api/coi/files')
         .attach('attachments','coi-constants.js')

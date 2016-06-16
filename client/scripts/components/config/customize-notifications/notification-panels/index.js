@@ -51,7 +51,7 @@ export default class NotificationPanels extends React.Component {
   render() {
     const panels = [];
     const templateMap = this.createTemplateMap();
-    for(const key in templateMap) {
+    for (const key in templateMap) {
       if (templateMap.hasOwnProperty(key)) {
         const toggles = templateMap[key].map(template => { //eslint-disable-line no-loop-func
           let link;
@@ -177,7 +177,7 @@ export default class NotificationPanels extends React.Component {
       }
     }
 
-    return(
+    return (
       <div>
         {panels}
       </div>

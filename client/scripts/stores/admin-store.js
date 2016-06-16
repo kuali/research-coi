@@ -492,7 +492,7 @@ class _AdminStore {
     }, 400);
   }
 
-  showUploadAttachmentsPanel(){
+  showUploadAttachmentsPanel() {
     this.applicationState.listShowing = false;
     this.applicationState.uploadAttachmentsShowing = true;
   }

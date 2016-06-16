@@ -204,7 +204,7 @@ async function insertProjectsAndPersons(user) {
 
 describe('ProjectControllerTest', async () => {
   const user = 'projectTest';
-  before(async function(){
+  before(async function() {
     await updateProjectTypes([1]);
     await insertProjectRoles(1);
     await insertProjectStatuses(1);

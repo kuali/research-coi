@@ -46,7 +46,7 @@ export class AdminEntitiesSummary extends React.Component {
 
   render() {
     let entities;
-    if(this.props.entities !== undefined) {
+    if (this.props.entities !== undefined) {
       entities = this.props.entities.filter(entity => {
         return entity.active === 1;
       })

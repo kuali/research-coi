@@ -49,7 +49,7 @@ function provided(value) {
 }
 
 function mapDisclosureToInstructionStep(step) {
-  switch(step) {
+  switch (step) {
     case DISCLOSURE_STEP.QUESTIONNAIRE:
       return INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
     case DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
@@ -425,7 +425,7 @@ class _DisclosureStore {
         .send(answer)
         .type('application/json')
         .end(processResponse((err, res) => {
-          if(!err) {
+          if (!err) {
             answer.id = res.body.id;
             this.emitChange();
           }
@@ -588,7 +588,7 @@ class _DisclosureStore {
 
   addEntityAttachments([files, entityId]) {
     const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
-    if(!entity.files) {
+    if (!entity.files) {
       entity.files = [];
     }
 
@@ -814,7 +814,7 @@ class _DisclosureStore {
       return type.typeCd === typeCd;
     });
 
-    if(desc) {
+    if (desc) {
       return desc.description;
     }
   }
@@ -824,7 +824,7 @@ class _DisclosureStore {
       return type.description === description;
     });
 
-    if(code) {
+    if (code) {
       return code.typeCd;
     }
   }
@@ -1239,7 +1239,7 @@ class _DisclosureStore {
       }
 
       if (question.question.type === QUESTION_TYPE.MULTISELECT && question.question.requiredNumSelections > 1) {
-        if(value instanceof Array) {
+        if (value instanceof Array) {
           if (value.length < question.question.requiredNumSelections) {
             errors.push(question.id);
           }

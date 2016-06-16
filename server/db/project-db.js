@@ -118,7 +118,7 @@ async function updateDisclosureStatus(trx, person, project, req) {
 
     try {
       createAndSendNewProjectNotification(req.dbInfo, req.hostname, req.userInfo, disclosure[0].id, project, person);
-    } catch(err) {
+    } catch (err) {
       Log.error(err);
     }
   }
@@ -365,7 +365,7 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
       .select('id')
       .where({disclosure_id: disclosure[0].id});
 
-    if(declaration[0] || entities.length === 0) {
+    if (declaration[0] || entities.length === 0) {
       disclosureStatus.status = disclosure[0].status;
     } else {
       disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
@@ -436,7 +436,7 @@ export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier,
 
       return Promise.all(queries);
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -453,7 +453,7 @@ export async function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, p
 
       return {};
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -464,7 +464,7 @@ export async function updateProjectPersonDispositionType(dbInfo, projectPerson, 
     return knex('project_person').update({
       disposition_type_cd: projectPerson.dispositionTypeCd ? projectPerson.dispositionTypeCd : null
     }).where({id});
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }

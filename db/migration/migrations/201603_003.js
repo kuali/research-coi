@@ -26,7 +26,7 @@ exports.up = function(knex) {
     table.boolean('active').notNullable().defaultTo(false);
     table.string('core_template_id');
     table.engine('InnoDB');
-  }).then(function(){
+  }).then(function() {
     return knex('notification_template')
       .insert([
         {

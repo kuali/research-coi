@@ -104,7 +104,7 @@ export class Dashboard extends React.Component {
     let travelLogEnabled;
 
     this.context.configState.config.disclosureTypes.forEach(type => {
-      switch(type.typeCd.toString()) {
+      switch (type.typeCd.toString()) {
         case DISCLOSURE_TYPE.ANNUAL:
           annualDisclosureEnabled = type.enabled === 1;
           break;

@@ -360,7 +360,7 @@ class _PIReviewStore {
       return entityId === entity.id;
     });
 
-    if(!entityToRevise.files) {
+    if (!entityToRevise.files) {
       entityToRevise.files = [];
     }
 

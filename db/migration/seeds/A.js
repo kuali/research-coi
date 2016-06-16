@@ -186,7 +186,7 @@ function insertEntity(knex, disclosureId, name) {
       name: name,
       status: 'IN PROGRESS'
     }, 'id')
-    .then(function(entityId){
+    .then(function(entityId) {
       return insertRelationship(knex, entityId[0]);
     });
 }
@@ -377,7 +377,7 @@ exports.seed = function(knex, Promise) {
           req_disclosure: 0
         }
       ]);
-    }).then(function(){
+    }).then(function() {
       console.log('Project Statuses');
       return knex('project_status').insert([
         {

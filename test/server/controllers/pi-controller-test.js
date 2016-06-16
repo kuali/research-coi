@@ -45,7 +45,7 @@ describe('PIControllerTest', () => {
   const userId = hashCode(user);
   const today = new Date();
 
-  before(async function(){
+  before(async function() {
     const disclosure = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
       status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,

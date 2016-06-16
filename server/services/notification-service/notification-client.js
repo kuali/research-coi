@@ -65,7 +65,7 @@ export async function getTemplates(dbInfo, hostname) {
       .set('Authorization',`Bearer ${notificationsInfo.systemAuthToken}`);
 
     return response.body;
-  } catch(err) {
+  } catch (err) {
     Promise.reject(err);
   }
 }
@@ -111,7 +111,7 @@ export async function updateTemplateData(dbInfo, hostname, notificationTemplate)
       .send(template);
 
     return Promise.resolve();
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -126,7 +126,7 @@ export async function createNewTemplate(dbInfo, hostname, notificationTemplate) 
 
     return response.body.id;
 
-  } catch(err) {
+  } catch (err) {
     Promise.reject(err);
   }
 }

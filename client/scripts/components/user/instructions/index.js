@@ -27,7 +27,7 @@ import { decorator } from '../../../editor-utils';
 export function Instructions(props) {
 
   let instruction;
-  if(props.contentState) {
+  if (props.contentState) {
     const blocks = convertFromRaw(props.contentState);
     const editorState = EditorState.createWithContent(ContentState.createFromBlockArray(blocks), decorator);
     instruction = (

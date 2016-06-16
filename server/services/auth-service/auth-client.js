@@ -52,7 +52,7 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
       return Promise.resolve(true);
     }
     return Promise.resolve(false);
-  } catch(err) {
+  } catch (err) {
     LOG.warn(`user ${schoolId} is not a member of the ${role} role`);
     return Promise.resolve(false);
   }
@@ -80,7 +80,7 @@ async function getResearchUser(researchCoreUrl, authToken) {
     const response = await request.get(`${researchCoreUrl}${END_POINTS.RESEARCH_USERS}`)
      .set('Authorization', `Bearer ${authToken}`);
     return Promise.resolve(response.body);
-  } catch(err) {
+  } catch (err) {
     return Promise.resolve({});
   }
 }
@@ -192,7 +192,7 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
     });
     cache.set(REVIEWER_CACHE_KEY, results);
     return Promise.resolve(results);
-  } catch(err) {
+  } catch (err) {
     return Promise.resolve([]);
   }
 }

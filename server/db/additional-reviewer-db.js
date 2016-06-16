@@ -48,7 +48,7 @@ export async function getAdditionalReviewer(dbInfo, id) {
       reviewer[0].dates = JSON.parse(reviewer[0].dates);
     }
     return reviewer[0];
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -92,7 +92,7 @@ export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
     return reviewers.map(reviewer => {
       return reviewer.disclosureId.toString();
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }

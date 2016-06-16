@@ -23,7 +23,7 @@ import QuestionSummary from '../question-summary';
 
 export default function QuestionnaireSummary(props) {
   let questions;
-  if(props.questions !== undefined) {
+  if (props.questions !== undefined) {
     questions = props.questions.filter(question => {
       return props.answers[question.id] !== undefined;
     }).sort((a, b) => {

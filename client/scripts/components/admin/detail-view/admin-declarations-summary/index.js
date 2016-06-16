@@ -124,12 +124,12 @@ export class AdminDeclarationsSummary extends React.Component {
     const { declarations, readonly, className } = this.props;
 
     let projects = [];
-    if(this.props.declarations !== undefined) {
+    if (this.props.declarations !== undefined) {
       const uniqueProjects = this.getUniqueProjects(declarations);
 
       let dispositionTypeOptions;
       const { config } = this.context.configState;
-      if(
+      if (
         config.general.dispositionsEnabled &&
         Array.isArray(config.dispositionTypes)
       ) {

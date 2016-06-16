@@ -25,7 +25,7 @@ exports.up = function(knex) {
   .table('notification_template', function(table) {
     table.text('period');
   })
-  .then(function(){
+  .then(function() {
     return knex('notification_template')
       .insert({
         template_id: 9,

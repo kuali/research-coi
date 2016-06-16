@@ -32,7 +32,7 @@ export default function AddSection (props) {
     );
   }
 
-  return(
+  return (
     <div className={styles.container}>
       <div className={styles.left}>
         {props.button}

@@ -75,7 +75,7 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
       }
     }
     return Promise.resolve(true);
-  } catch(err) {
+  } catch (err) {
     Promise.reject(err);
   }
 }

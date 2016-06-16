@@ -122,7 +122,7 @@ export function getDisclosureStatusString(...args) {
 }
 
 export function getAdminDisclosureStatusString(state, code, configId) {
-  switch(code) {
+  switch (code) {
     case 1:
     case 3:
       return 'Approved';

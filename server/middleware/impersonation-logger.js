@@ -57,7 +57,7 @@ export default async function(req, res, next) {
         })
       }, 'id').then();
     }
-  } catch(err) {
+  } catch (err) {
     console.error(err); //eslint-disable-line no-console
   } finally {
     next();

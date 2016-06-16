@@ -23,7 +23,7 @@ import EntitySummary from '../entity-summary';
 
 export default function EntitiesSummary(props) {
   let entities;
-  if(props.entities !== undefined) {
+  if (props.entities !== undefined) {
     entities = props.entities.filter(entity => {
       return entity.active;
     }).map((entity, index, array) => {

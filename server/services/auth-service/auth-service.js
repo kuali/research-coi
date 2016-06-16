@@ -59,7 +59,7 @@ export function getAuthToken(header) {
     }
 
     return undefined;
-  } catch(e) {
+  } catch (e) {
     return undefined;
   }
 }

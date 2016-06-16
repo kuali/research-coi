@@ -311,7 +311,7 @@ export const deleteTravelLogEntry = (dbInfo, id, userInfo) => {
   const knex = getKnex(dbInfo);
   return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
     .then(isAllowed => {
-      if(isAllowed) {
+      if (isAllowed) {
         return knex.transaction(trx => {
           return getRelationshipsEntity(trx, id).then(entityId => {
             return deleteTravelRelationship(trx, id).then(() => {
@@ -452,7 +452,7 @@ export const updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
   const knex = getKnex(dbInfo);
   return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
   .then(isAllowed => {
-    if(isAllowed) {
+    if (isAllowed) {
       return knex.transaction(trx => {
         return Promise.all([
           updateTravelRelationship(trx, entry, id),

@@ -44,7 +44,7 @@ export const init = app => {
         req.userInfo,
         result.id
       );
-    } catch(err) {
+    } catch (err) {
       Log.error(err,req);
     }
     res.send(result);
@@ -53,7 +53,7 @@ export const init = app => {
   app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     try {
       createAndSendReviewerUnassignNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
-    } catch(err) {
+    } catch (err) {
       Log.error(err,req);
     }
     await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, req.params.id);
@@ -76,7 +76,7 @@ export const init = app => {
     await AdditionalReviewerDB.updateAdditionalReviewer(req.dbInfo, additionalReviewer[0].id, updates);
     try {
       createAndSendReviewCompleteNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, additionalReviewer[0].id);
-    } catch(err) {
+    } catch (err) {
       Log.error(err,req);
     }
     res.sendStatus(OK);

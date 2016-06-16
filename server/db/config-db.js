@@ -240,7 +240,7 @@ export async function getConfig(dbInfo, hostname, optionalTrx) {
     config.id = generalConfig.id;
     config.general = generalConfig.config;
     return Promise.resolve(config);
-  } catch(err) {
+  } catch (err) {
     Promise.reject(err);
   }
 }
@@ -291,7 +291,7 @@ export async function saveScreeningQuestionnaire(query, questions) {
 }
 
 
-export async function setConfig(dbInfo, userId, body, hostname, optionalTrx){
+export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
   const knex = getKnex(dbInfo);
   const config = snakeizeJson(body);
 

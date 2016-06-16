@@ -148,7 +148,7 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
   describe('approve - no new projects', async () => {
     const disclosure = createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
     let disclosureId;
-    before(async function(){
+    before(async function() {
       disclosureId = await insertDisclosure(disclosure, 1);
     });
 
@@ -169,7 +169,7 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
     const disclosure = createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
     let disclosureId;
     let projectId;
-    before(async function(){
+    before(async function() {
       disclosureId = await insertDisclosure(disclosure, 2);
       projectId = await insertProject(createProject('2'), true);
       await insertProjectPerson(createPerson('2','PI'), projectId);

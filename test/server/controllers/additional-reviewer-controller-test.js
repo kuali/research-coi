@@ -65,7 +65,7 @@ async function addReviewer(disclosureId, user) {
 
 let disclosureId;
 describe('AdditionalReviewerControllerTest', () => {
-  before(async function(){
+  before(async function() {
     const disclosure = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
       status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,

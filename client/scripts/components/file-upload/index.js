@@ -57,7 +57,7 @@ export class FileUpload extends React.Component {
               </span>
             </a>
           );
-        } else if(file.key) {
+        } else if (file.key) {
           downloadLink = (
             <a className={styles.link} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
               {file.name}

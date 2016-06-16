@@ -36,7 +36,7 @@ export function processResponse(callback) {
           `An error has occurred
         ${res.error.message}`
         );
-      } catch(error) {
+      } catch (error) {
         console.log(error);
       }
     }

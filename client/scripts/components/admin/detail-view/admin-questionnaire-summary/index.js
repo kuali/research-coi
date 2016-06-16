@@ -47,7 +47,7 @@ export class AdminQuestionnaireSummary extends React.Component {
 
   render() {
     let questions;
-    if(this.props.questions !== undefined) {
+    if (this.props.questions !== undefined) {
       questions = this.props.questions.filter(question => {
         return this.props.answers[question.id] !== undefined;
       }).map(question => {

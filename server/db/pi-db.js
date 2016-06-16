@@ -67,7 +67,7 @@ export async function getSuggestions(dbInfo, term, userInfo) {
     }
 
     return result;
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 

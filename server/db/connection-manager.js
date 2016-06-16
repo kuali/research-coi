@@ -42,7 +42,7 @@ else {
   }
 }
 
-if(process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'test') {
   connectionOptions.password = process.env.TEST_DB_PASSWORD || '';
   connectionOptions.database = process.env.TEST_DB_NAME || 'coi_tst';
 }
