@@ -22,6 +22,7 @@ import React from 'react';
 import DeclarationsSummary from '../declarations-summary';
 import EntitiesSummary from '../entities-summary';
 import QuestionnaireSummary from '../questionnaire-summary';
+import getConfig from '../../../../get-config';
 
 export default class ArchiveDetail extends React.Component {
   getAnswerMap(answers) {
@@ -38,23 +39,33 @@ export default class ArchiveDetail extends React.Component {
   render() {
     const disclosure = this.props.disclosure;
     let detail;
+
+    if (!disclosure || !disclosure.configId) {
+      return null;
+    }
+
+    const config = getConfig(this.context.configState, disclosure.configId);
+    if (config === null) {
+      return null;
+    }
+
     if (disclosure) {
       detail = (
         <div>
           <QuestionnaireSummary
-            questions={this.props.config.questions.screening}
+            questions={config.questions.screening}
             answers={this.getAnswerMap(disclosure.answers)}
             className={`${styles.override} ${styles.questionnaire}`}
           />
           <EntitiesSummary
             entities={disclosure.entities}
             className={`${styles.override} ${styles.entities}`}
-            questions={this.props.config.questions.entities}
+            questions={config.questions.entities}
           />
           <DeclarationsSummary
             declarations={disclosure.declarations}
-            config={this.props.config}
             id={disclosure.id}
+            configId={config.id}
           />
         </div>
       );
@@ -67,3 +78,7 @@ export default class ArchiveDetail extends React.Component {
     );
   }
 }
+
+ArchiveDetail.contextTypes = {
+  configState: React.PropTypes.object
+};
