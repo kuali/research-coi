@@ -69,6 +69,9 @@ export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financial
         throw Error(`Attempt by ${userInfo.username} to associate an entity with disclosure ${disclosureId} that isnt the users`);
       }
 
+      resetAdminRelationships(knex, disclosureId).then();
+      resetProjectDispositions(knex, disclosureId).then();
+
       return knex('fin_entity')
         .insert({
           disclosure_id: disclosureId,
@@ -180,6 +183,16 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
       if (!isOwner) {
         throw Error(`Attempt by ${userInfo.username} to update entity ${entityId} not owned by user`);
       }
+
+      knex
+        .select('disclosure_id as disclosureId')
+        .from('fin_entity')
+        .where({
+          id: entityId
+        }).then(entityRecord => {
+          resetAdminRelationships(knex, entityRecord.disclosureId).then();
+          resetProjectDispositions(knex, entityRecord.disclosureId).then();
+        });
 
       return knex('fin_entity')
         .where('id', entityId)
@@ -1214,20 +1227,30 @@ async function deleteAdditionalReviewers(knex, disclosureId) {
     .where('disclosure_id', disclosureId);
 }
 
-async function resetProjectDispositions(knex, id) {
+async function resetProjectDispositions(knex, disclosureId) {
   const disclosure = await knex('disclosure')
     .select('user_id')
-    .where({id});
+    .where({
+      id: disclosureId
+    });
 
   return knex('project_person')
-    .update({disposition_type_cd: null})
-    .where({person_id: disclosure[0].user_id});
+    .update({
+      disposition_type_cd: null
+    })
+    .where({
+      person_id: disclosure[0].user_id
+    });
 }
 
 async function resetAdminRelationships(knex, disclosureId) {
   return knex('declaration')
-    .update({admin_relationship_cd: null})
-    .where({disclosure_id: disclosureId});
+    .update({
+      admin_relationship_cd: null
+    })
+    .where({
+      disclosure_id: disclosureId
+    });
 }
 
 export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeader, trx) => {
@@ -1248,9 +1271,7 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
     deleteAnswersForDisclosure(knex, disclosureId),
     deletePIReviewsForDisclsoure(knex, disclosureId),
     deleteAdditionalReviewers(knex, disclosureId),
-    updateEntitiesAndRelationshipsStatuses(knex, disclosureId, RELATIONSHIP_STATUS.PENDING, RELATIONSHIP_STATUS.IN_PROGRESS),
-    resetProjectDispositions(knex, disclosureId),
-    resetAdminRelationships(knex, disclosureId)
+    updateEntitiesAndRelationshipsStatuses(knex, disclosureId, RELATIONSHIP_STATUS.PENDING, RELATIONSHIP_STATUS.IN_PROGRESS)
   ])
   .then(([config, archivedDisclosure]) => {
     const generalConfig = JSON.parse(config[0].config).general;
