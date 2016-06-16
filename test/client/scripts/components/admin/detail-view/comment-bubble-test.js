@@ -116,4 +116,15 @@ describe('CommentBubble', () => {
     assert.equal(wrapper.find('#reporterBubble').length, 0);
     assert.equal(wrapper.find('#reviewerBubble').length, 0);
   });
+
+  it('should render the ViewableByReporterButton component', () => {
+    const wrapper = shallow(
+      <CommentBubble
+        role={ROLES.ADMIN}
+        {...createComment(ROLES.USER,1,1)}
+      />
+    );
+
+    assert.equal(wrapper.find('ViewableByReporterButton').length, 1);
+  });
 });
