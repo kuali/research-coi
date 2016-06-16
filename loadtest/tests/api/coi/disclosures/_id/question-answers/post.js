@@ -29,9 +29,9 @@ export class Test extends LoadTest {
     this.method = 'POST';
 
     this.postData = JSON.stringify({
-      'questionId':2,
-      'answer':{
-        'value':'No'
+      'questionId': 2,
+      'answer': {
+        'value': 'No'
       }
     });
 

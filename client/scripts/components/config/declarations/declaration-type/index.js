@@ -68,7 +68,7 @@ export default class DeclarationType extends Type {
   doneEditing() {
     if (this.props.type.description && this.props.type.description.length > 0) {
       ConfigActions.set({
-        path:`applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
+        path: `applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
         value: undefined
       });
     }
@@ -76,7 +76,7 @@ export default class DeclarationType extends Type {
 
   startEditing() {
     ConfigActions.set({
-      path:`applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
+      path: `applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
       value: {}
     });
   }

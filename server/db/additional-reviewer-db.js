@@ -100,7 +100,7 @@ export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
 export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) {
   const knex = getKnex(dbInfo);
   const criteria = {
-    disclosure_id : disclosureId
+    disclosure_id: disclosureId
   };
 
   if (schoolId) {

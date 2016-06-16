@@ -36,7 +36,7 @@ exports.up = function(knex) {
             update = order + 1;
             order = order + 1;
           }
-          return knex('declaration_type').update({order: update}).where({type_cd:type.type_cd});
+          return knex('declaration_type').update({order: update}).where({type_cd: type.type_cd});
         });
         return Promise.all(queries);
       });

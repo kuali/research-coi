@@ -68,7 +68,7 @@ export default class DispositionType extends Type {
   doneEditing() {
     if (this.props.type.description && this.props.type.description.length > 0) {
       ConfigActions.set({
-        path:`applicationState.dispositionTypesBeingEdited[${this.props.type.typeCd}]`,
+        path: `applicationState.dispositionTypesBeingEdited[${this.props.type.typeCd}]`,
         value: undefined
       });
     }
@@ -76,7 +76,7 @@ export default class DispositionType extends Type {
 
   startEditing() {
     ConfigActions.set({
-      path:`applicationState.dispositionTypesBeingEdited[${this.props.type.typeCd}]`,
+      path: `applicationState.dispositionTypesBeingEdited[${this.props.type.typeCd}]`,
       value: {}
     });
   }

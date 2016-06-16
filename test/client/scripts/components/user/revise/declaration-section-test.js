@@ -28,7 +28,7 @@ describe('DeclarationSection', () => {
   it('render colorblind mode off', () => {
     const tree = sd.shallowRender(
       <DeclarationSection
-        declarationsToReview={[{id:1}]}
+        declarationsToReview={[{id: 1}]}
       />
     );
 
@@ -40,7 +40,7 @@ describe('DeclarationSection', () => {
     global.window.colorBlindModeOn = true;
     const tree = sd.shallowRender(
       <DeclarationSection
-        declarationsToReview={[{id:1}]}
+        declarationsToReview={[{id: 1}]}
       />
     );
     global.window.colorBlindModeOn = false;

@@ -183,7 +183,7 @@ describe('AdminStore', () => {
       setApplicationState({
         selectedDisclosure: {
           reviewers: [
-            {id:1, name: 'reviewer'}
+            {id: 1, name: 'reviewer'}
           ]
         }
       });

@@ -891,7 +891,7 @@ class _ConfigStore {
       .end(processResponse((err, data) => {
         if (!err) {
           this.updateRoles({
-            existingRoles : this.config.projectRoles,
+            existingRoles: this.config.projectRoles,
             newRoles: data.body.roles,
             projectTypeCd: typeCd
           });

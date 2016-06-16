@@ -59,7 +59,7 @@ export default class CommentingPanel extends React.Component {
       visibleChecks = (
         <span className={styles.left}>
           <div>
-            <div style={{color:'#737373'}}>VISIBLE TO</div>
+            <div style={{color: '#737373'}}>VISIBLE TO</div>
             <div>
               <input
                 type="checkbox"
@@ -130,7 +130,7 @@ export default class CommentingPanel extends React.Component {
           <div className={styles.controls}>
             {visibleChecks}
             <span className={commentClasses}>
-              <div style={{color:'#737373'}}>COMMENT</div>
+              <div style={{color: '#737373'}}>COMMENT</div>
               <div style={{marginTop: '5px'}}>
                 <textarea
                   className={styles.textbox}

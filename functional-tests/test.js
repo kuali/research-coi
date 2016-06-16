@@ -19,7 +19,7 @@
 /* eslint-disable object-shorthand, quotes */
 
 module.exports = {
-  'Submit an annual disclosure' : function (browser) {
+  'Submit an annual disclosure': function (browser) {
     browser
       .url(process.env.FUNCTIONAL_TEST_URL)
       .setValue('input[type=text]', process.env.FUNCTIONAL_USER)
@@ -52,7 +52,7 @@ module.exports = {
       .end();
   },
 
-  'user can not view admin page' : function (browser) {
+  'user can not view admin page': function (browser) {
     browser
       .url(`${process.env.FUNCTIONAL_TEST_URL}/admin`)
       .setValue('input[type=text]', 'cate')
@@ -63,7 +63,7 @@ module.exports = {
       .end();
   },
 
-  'user can not access config' : function (browser) {
+  'user can not access config': function (browser) {
     browser
       .url(`${process.env.FUNCTIONAL_TEST_URL}/config`)
       .setValue('input[type=text]', 'cate')
@@ -74,7 +74,7 @@ module.exports = {
       .end();
   },
 
-  'reviewer can not access config' : function (browser) {
+  'reviewer can not access config': function (browser) {
     browser
       .url(`${process.env.FUNCTIONAL_TEST_URL}/config`)
       .setValue('input[type=text]', 'coireviewer')

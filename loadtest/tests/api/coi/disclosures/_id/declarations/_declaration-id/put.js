@@ -30,7 +30,7 @@ export class Test extends LoadTest {
     this.method = 'PUT';
 
     this.postData = JSON.stringify({
-      id:49,
+      id: 49,
       projectId: 17,
       finEntityId: 25,
       typeCd: 1,

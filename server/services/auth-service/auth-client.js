@@ -133,7 +133,7 @@ export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValu
     const authInfo = getAuthorizationInfo(dbInfo);
     const url = authInfo.authUrl || (useSSL ? 'https://' : 'http://') + hostname;
     const response = await request.get(`${url}/api/v1/users/`)
-      .query({q:queryValue.trim()})
+      .query({q: queryValue.trim()})
       .set('Authorization', `Bearer ${authToken}`);
 
     const userInfo = response.body;
