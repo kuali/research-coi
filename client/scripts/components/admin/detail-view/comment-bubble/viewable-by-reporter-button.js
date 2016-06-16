@@ -29,6 +29,7 @@ export default class ViewableByReporterButton extends React.Component {
   }
 
   toggleViewableByReporter() {
+    AdminActions.toggleCommentViewableByReporter(this.props.id);
   }
 
   render() {

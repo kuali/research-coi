@@ -553,6 +553,15 @@ class _AdminStore {
     }
   }
 
+  toggleCommentViewableByReporter(id) {
+    const commentToToggle = this.findCurrentCommentById(id);
+
+    if (commentToToggle) {
+      commentToToggle.piVisible = !commentToToggle.piVisible;
+      this.updateComment(commentToToggle);
+    }
+  }
+
   addManagementPlan(files) {
     const formData = new FormData();
     files.forEach(file => {

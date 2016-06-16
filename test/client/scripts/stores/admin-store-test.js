@@ -421,6 +421,50 @@ describe('AdminStore', () => {
     });
   });
 
+  describe('toggleCommentViewableByReporter', () => {
+    let applicationState;
+
+    const setUpStateWithComment = (viewable) => {
+      setApplicationState({
+        selectedDisclosure: {
+          id: 1,
+          comments: []
+        },
+        currentComments: [
+          {
+            id: 1,
+            text: 'test',
+            piVisible: viewable,
+            reviewerVisible: 1
+          }
+        ]
+      });
+
+      applicationState = AdminStore.getState().applicationState;
+    };
+
+    const dispatchToggle = () => {
+      alt.dispatcher.dispatch({
+        action: AdminActions.TOGGLE_COMMENT_VIEWABLE_BY_REPORTER,
+        data: 1
+      });
+
+      applicationState = AdminStore.getState().applicationState;
+    };
+
+    it('should make a comment that is not viewable by a reporter viewable', () => {
+      setUpStateWithComment(false);
+      dispatchToggle();
+      assert.equal(true, applicationState.currentComments[0].piVisible);
+    });
+
+    it('should make a comment that is viewable by a reporter not viewable', () => {
+      setUpStateWithComment(true);
+      dispatchToggle();
+      assert.equal(false, applicationState.currentComments[0].piVisible);
+    });
+  });
+
   describe('updateAdditionalReviewer', () => {
     let reviewer;
 
