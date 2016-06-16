@@ -77,7 +77,6 @@ describe('AdditionalReviewerControllerTest', () => {
   });
 
   describe('POST /api/coi/additional-reviewers', () => {
-
     it('should only allow admins to add reviewers', async () => {
       await request(app.run())
         .post('/api/coi/additional-reviewers')

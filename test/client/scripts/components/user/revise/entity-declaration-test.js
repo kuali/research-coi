@@ -25,8 +25,6 @@ import configState from '../../../../config-context';
 import EntityDeclaration from '../../../../../../client/scripts/components/user/revise/entity-declaration';
 EntityDeclaration.__Rewire__('PIReviewActions', MockPIReviewActions); //eslint-disable-line no-underscore-dangle
 
-/*global describe, it, before, after */
-
 const entityWithComments = {
   reviewId: 1,
   comments: [{id: 1, author: 'Kuali Joe', text: 'comment', date: new Date()}],
@@ -56,7 +54,6 @@ const renderEntityDelcaration = (entity, revising, responding) => {
 
 describe('EntityDeclaration', () => {
   it('render without comments, not revising, not responding', () => {
-
     const tree = renderEntityDelcaration(entityWithOutComments, false, false);
     const vdom = tree.getRenderOutput();
     assert.equal('Entity Declaration',vdom.props.name);

@@ -36,7 +36,7 @@ export function getUserInfo(dbInfo, hostname, token) {
     if (lowercaseToken.startsWith('impersonating_')) {
       const split = token.split('_');
       impersonator = 'impersonator';
-      token = split[1];
+      token = split[1]; // eslint-disable-line no-param-reassign
       lowercaseToken = token.toLowerCase();
     }
 
@@ -105,7 +105,6 @@ export function getAuthLink(req) {
   const returnToValue = encodeURIComponent(req.originalUrl);
   return `/coi/auth?return_to=${returnToValue}`;
 }
-
 
 export async function getAdmins(dbInfo, authToken) {//eslint-disable-line no-unused-vars
   return Promise.resolve([

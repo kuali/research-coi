@@ -51,7 +51,6 @@ catch (err) {
 }
 const knex = getKnex({});
 
-
 describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => {
   let dispositionTypeCd;
 
@@ -78,7 +77,6 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     });
 
     dispositionTypeCd = dispositionType[0];
-
   });
 
   describe('get statuses for all persons on project', () => {
@@ -135,7 +133,6 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
 
     });
   });
-
 
   describe('test errors and permissions', () => {
     it('should return empty array', async function() {

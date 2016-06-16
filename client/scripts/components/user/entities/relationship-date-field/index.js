@@ -23,10 +23,6 @@ import {DatePicker} from '../../../date-picker';
 import { merge } from '../../../../merge';
 
 export default class RelationshipDateField extends RelationshipTextField {
-  constructor() {
-    super();
-  }
-
   onChange(newDate) {
     this.props.onChange(newDate);
   }

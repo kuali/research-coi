@@ -99,7 +99,6 @@ describe('AdminStore', () => {
         assert.equal(applicationState.uploadAttachmentsShowing, false);
         done();
       }, 5);
-
     });
   });
 
@@ -369,7 +368,6 @@ describe('AdminStore', () => {
 
       //set editting to false
       assert.equal(false, applicationState.editingComment);
-
     });
   });
 
@@ -436,7 +434,6 @@ describe('AdminStore', () => {
           }]
         }
       });
-
 
       alt.dispatcher.dispatch({
         action: AdminActions.UPDATE_ADDITIONAL_REVIEWER,

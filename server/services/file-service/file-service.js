@@ -27,7 +27,6 @@ catch (err) {
   client = localClient;
 }
 
-
 export function getFile(dbInfo, key, callback) {
   return client.getFile(dbInfo, key, callback);
 }

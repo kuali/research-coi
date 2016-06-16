@@ -16,9 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import { getCoreTemplateIdByTemplateId } from '../../db/config-db';
+import {
+  getCoreTemplateIdByTemplateId,
+  getProjectTypeDescription
+} from '../../db/config-db';
 import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
-import { getProjectTypeDescription } from '../../db/config-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import Log from '../../log';
@@ -305,7 +307,6 @@ export async function createAndSendExpireNotification(dbInfo, hostname, disclosu
   try {
     const template = await getTemplate(dbInfo, templateId);
     if (!template) {
-
       return Promise.resolve();
     }
     const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
@@ -317,7 +318,6 @@ export async function createAndSendExpireNotification(dbInfo, hostname, disclosu
     Log.error(err);
   }
 }
-
 
 export async function createAndSendSentBackNotification(dbInfo, hostname, userInfo, disclosureId) {
   try {

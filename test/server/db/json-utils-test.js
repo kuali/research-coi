@@ -27,7 +27,6 @@ const JsonUtils = rewire('../../../server/db/json-utils.js');
 const izeJson = JsonUtils.__get__('izeJson'); //eslint-disable-line no-underscore-dangle
 
 describe('JsonUtils', () => {
-
   it('izeJson should return null when null', () => {
     const json = izeJson(null, _.camelCase);
     assert(json === null);

@@ -22,9 +22,6 @@ import ShallowTestUtils from 'react-shallow-testutils';
 import assert from 'assert';
 import AutoApproveDisclosure from '../../../../../../client/scripts/components/config/general/auto-approve-disclosure';
 
-/*global describe, it */
-
-
 describe('UploadAttachmentsPanel', () => {
   it('should render unchecked if checked is undefined', () => {
     const renderer = TestUtils.createRenderer();

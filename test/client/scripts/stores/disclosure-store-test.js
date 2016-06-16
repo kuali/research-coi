@@ -342,7 +342,7 @@ describe('DisclosureStore', () => {
         value: {
           potentialRelationships: {
             new: {},
-            '1': {}
+            1: {}
           }
         }
       };

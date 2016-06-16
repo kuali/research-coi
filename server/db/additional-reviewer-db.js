@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/* eslint-disable camelcase */
 import { DATE_TYPE } from '../../coi-constants';
 
 let getKnex;

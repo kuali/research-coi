@@ -90,7 +90,6 @@ export default class CommentingPanel extends React.Component {
           {reviewerBubble}
         </div>
       );
-
     }
 
     return (

@@ -51,7 +51,6 @@ catch (err) {
 }
 const knex = getKnex({});
 
-
 describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', () => {
   let dispositionTypeCd;
 
@@ -149,7 +148,6 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
       assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
   });
-
 
   describe('get disclosure status', () => {
     let status;

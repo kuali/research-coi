@@ -58,6 +58,4 @@ describe('impersonationLogger', async () => {
   after(async () => {
     await knex('impersonation_audit').del();
   });
-
-
 });

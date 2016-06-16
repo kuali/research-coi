@@ -293,21 +293,20 @@ export default class Question extends React.Component {
         </div>
       );
     }
+    else if (this.props.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+      answerArea = (
+        <div>{this.props.answer.join(', ')}</div>
+      );
+    }
+    else if (this.props.type === COIConstants.QUESTION_TYPE.DATE) {
+      answerArea = (
+        <div>{formatDate(this.props.answer)}</div>
+      );
+    }
     else {
-      if (this.props.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
-        answerArea = (
-          <div>{this.props.answer.join(', ')}</div>
-        );
-      } else if (this.props.type === COIConstants.QUESTION_TYPE.DATE) {
-        answerArea = (
-          <div>{formatDate(this.props.answer)}</div>
-        );
-      }
-      else {
-        answerArea = (
-          <div>{this.props.answer}</div>
-        );
-      }
+      answerArea = (
+        <div>{this.props.answer}</div>
+      );
     }
 
     let relevantSubQuestions;

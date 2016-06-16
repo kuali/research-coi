@@ -52,8 +52,6 @@ describe('GET api/coi/pi', () => {
     });
   });
 
-
-
   describe('test admin ', () => {
     let response;
     it('should return an OK status', async function() {

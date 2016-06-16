@@ -81,16 +81,14 @@ export default class DeclarationType extends React.Component {
         deleteLink = (
           <DeleteLink onClick={this.delete} />
         );
+      } else if (this.props.active) {
+        activationLink = (
+          <DeactivateLink onClick={this.deactivateType} />
+        );
       } else {
-        if (this.props.active) {
-          activationLink = (
-            <DeactivateLink onClick={this.deactivateType} />
-          );
-        } else {
-          activationLink = (
-            <ReactivateLink onClick={this.reactivateType} />
-          );
-        }
+        activationLink = (
+          <ReactivateLink onClick={this.reactivateType} />
+        );
       }
 
       jsx = (
@@ -123,7 +121,6 @@ export default class DeclarationType extends React.Component {
     if (this.props.last) {
       downStyle = {display: 'none'};
     }
-
 
     return (
       <div ref="container" className={classes}>

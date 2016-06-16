@@ -168,5 +168,4 @@ describe('Entry', () => {
     const storeState = MockTravelLogStore.getState();
     assert.equal('endDate', storeState.updateValue);
   });
-
 });

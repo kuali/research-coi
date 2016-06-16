@@ -30,32 +30,32 @@ export function createDisplayName(hostname, description) {
 export async function getTemplates(dbInfo, hostname) {
   return [
     {
-      'id': '1',
-      'applicationId': '1',
-      'displayName': 'COI-test.com-Notify COI admin when a new disclosure is submitted by a reporter.',
-      'subject': 'submitted',
-      'defaults': {
-        'email': true,
-        'sms': false
+      id: '1',
+      applicationId: '1',
+      displayName: 'COI-test.com-Notify COI admin when a new disclosure is submitted by a reporter.',
+      subject: 'submitted',
+      defaults: {
+        email: true,
+        sms: false
       },
-      'templates': {
-        'email': {
-          'text': 'submitted'
+      templates: {
+        email: {
+          text: 'submitted'
         }
       }
     },
     {
-      'id': '2',
-      'applicationId': '1',
-      'displayName': 'COI-test.com-Notify COI admin when an additional reviewer has completed their review',
-      'subject': 'completed their review',
-      'defaults': {
-        'email': true,
-        'sms': false
+      id: '2',
+      applicationId: '1',
+      displayName: 'COI-test.com-Notify COI admin when an additional reviewer has completed their review',
+      subject: 'completed their review',
+      defaults: {
+        email: true,
+        sms: false
       },
-      'templates': {
-        'email': {
-          'text': 'completed their review'
+      templates: {
+        email: {
+          text: 'completed their review'
         }
       }
     }

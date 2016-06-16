@@ -25,7 +25,6 @@ import {Editor, convertFromRaw, EditorState, ContentState} from 'draft-js';
 import { decorator } from '../../../editor-utils';
 
 export function Instructions(props) {
-
   let instruction;
   if (props.contentState) {
     const blocks = convertFromRaw(props.contentState);
@@ -41,7 +40,6 @@ export function Instructions(props) {
       <div>{props.text}</div>
     );
   }
-
 
   return (
     <VerticalSlider collapsed={props.collapsed}>

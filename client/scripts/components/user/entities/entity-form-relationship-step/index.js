@@ -217,7 +217,7 @@ export class EntityFormRelationshipStep extends React.Component {
       if (this.state.matrixType.description === 'Travel') {
         amountSection = (
           <RelationshipTextField
-            invalid={this.props.validating && validationErrors.travelAmount ? true : false}
+            invalid={this.props.validating && validationErrors.travelAmount}
             onChange={this.amountChanged}
             value={potentialRelationship.travel.amount}
             label='Amount'
@@ -246,7 +246,7 @@ export class EntityFormRelationshipStep extends React.Component {
     if (this.state.relation !== '' && this.state.matrixType.destinationEnabled === 1) {
       destination = (
         <RelationshipTextField
-          invalid={this.props.validating && validationErrors.travelDestination ? true : false}
+          invalid={this.props.validating && validationErrors.travelDestination}
           onChange={this.destinationChanged}
           value={potentialRelationship.travel.destination}
           label='Destination'
@@ -254,13 +254,12 @@ export class EntityFormRelationshipStep extends React.Component {
       );
     }
 
-
     let departureDate;
     let returnDate;
     if (this.state.relation !== '' && this.state.matrixType.dateEnabled === 1) {
       departureDate = (
         <RelationshipDateField
-          invalid={this.props.validating && validationErrors.travelStartDate ? true : false}
+          invalid={this.props.validating && validationErrors.travelStartDate}
           onChange={this.startDateSelected}
           value={potentialRelationship.travel.startDate}
           label='Departure Date'
@@ -269,7 +268,7 @@ export class EntityFormRelationshipStep extends React.Component {
 
       returnDate = (
         <RelationshipDateField
-          invalid={this.props.validating && validationErrors.travelEndDate ? true : false}
+          invalid={this.props.validating && validationErrors.travelEndDate}
           onChange={this.endDateSelected}
           value={potentialRelationship.travel.endDate}
           label='Return Date'
@@ -281,7 +280,7 @@ export class EntityFormRelationshipStep extends React.Component {
     if (this.state.relation !== '' && this.state.matrixType.reasonEnabled === 1) {
       reason = (
         <RelationshipTextField
-          invalid={this.props.validating && validationErrors.travelReason ? true : false}
+          invalid={this.props.validating && validationErrors.travelReason}
           onChange={this.reasonChanged}
           value={potentialRelationship.travel.reason}
           label='Reason'
@@ -325,7 +324,6 @@ export class EntityFormRelationshipStep extends React.Component {
         personLabelStyle = styles.invalidText;
         personDropDownStyle += ` ${styles.invalidField}`;
       }
-
 
       let relationStyle = styles.relationStyle;
       if (this.props.validating && validationErrors.relation) {

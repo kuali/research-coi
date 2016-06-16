@@ -115,7 +115,6 @@ describe('DisclosureController',async () => {
       }])
     },'id');
 
-
     const disclosure1 = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
       status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
@@ -320,7 +319,6 @@ describe('DisclosureController',async () => {
 
       assert.equal(disclosureArchive[0].approved_by, COIConstants.SYSTEM_USER);
       assert.equal(formatDate(disclosureArchive[0].approved_date), formatDate(today));
-
     });
   });
 

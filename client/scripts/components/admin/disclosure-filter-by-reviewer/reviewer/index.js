@@ -32,7 +32,6 @@ export default class Reviewer extends React.Component {
     AdminActions.removeReviewerFilter(this.props.userId);
   }
 
-
   render() {
     return (
       <div className={styles.container}>

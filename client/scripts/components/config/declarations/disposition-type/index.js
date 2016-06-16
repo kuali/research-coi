@@ -22,10 +22,6 @@ import Type from '../type';
 import styles from './style';
 
 export default class DispositionType extends Type {
-  constructor() {
-    super();
-  }
-
   typeIsBeingEdited(type) {
     return this.props.applicationState.dispositionTypesBeingEdited[type.typeCd] !== undefined;
   }

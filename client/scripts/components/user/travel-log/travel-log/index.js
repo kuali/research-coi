@@ -38,7 +38,6 @@ export default class TravelLog extends React.Component {
       entryStates: storeState.entryStates
     };
 
-
     this.onChange = this.onChange.bind(this);
   }
 

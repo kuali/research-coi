@@ -82,7 +82,7 @@ export class Test extends LoadTest {
   getHeaders() {
     const id = this.getUserID();
     return {
-      'Authorization': `Bearer p${id}`,
+      Authorization: `Bearer p${id}`,
       'Content-Length': this.postData.length,
       'Content-Type': 'application/json'
     };

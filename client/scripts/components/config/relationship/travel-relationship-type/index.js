@@ -52,7 +52,6 @@ export default class TravelRelationshipType extends RelationshipType {
     this.props.reasonEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
-
   render() {
     let content;
     if (this.state.editing) {

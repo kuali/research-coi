@@ -36,7 +36,7 @@ function randomNumberBetween(lowest, highest) {
   return Math.floor(Math.random() * (highest - lowest + 1)) + lowest;
 }
 
-function getRandomLastName() {
+function getRandomLastName() { //eslint-disable-line complexity
   switch (randomNumberBetween(0, 33)) {
     case 0: return 'Anderson';
     case 1: return 'Carhart';
@@ -75,7 +75,7 @@ function getRandomLastName() {
   }
 }
 
-function getRandomFirstName() {
+function getRandomFirstName() { //eslint-disable-line complexity
   switch (randomNumberBetween(0, 33)) {
     case 0: return 'Chloe';
     case 1: return 'James';

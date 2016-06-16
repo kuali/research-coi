@@ -60,7 +60,6 @@ describe('setConfig', () => {
       parentId = parent.id;
     });
 
-
     it('it should return the inserted id for the parent', () => {
       assert(!isNaN(parent.id));
     });

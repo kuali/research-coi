@@ -694,7 +694,7 @@ class _ConfigStore {
   set(data) {
     _.set(this, data.path, data.value);
 
-    this.dirty = data.dirty === false ? false : true;
+    this.dirty = data.dirty !== false;
   }
 
   toggle(path) {

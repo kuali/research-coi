@@ -21,9 +21,6 @@ import assert from 'assert';
 import sd from 'skin-deep';
 import DeclarationSection from '../../../../../../client/scripts/components/user/revise/declaration-section';
 
-/*global describe, it */
-
-
 describe('DeclarationSection', () => {
   it('render colorblind mode off', () => {
     const tree = sd.shallowRender(

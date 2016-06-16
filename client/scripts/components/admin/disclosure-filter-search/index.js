@@ -44,7 +44,6 @@ export class DisclosureFilterSearch extends React.Component {
     this.props.onChange(evt.target.value);
   }
 
-
   render() {
     const currentValue = this.props.query || '';
     return (

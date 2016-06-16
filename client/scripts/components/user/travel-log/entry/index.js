@@ -197,7 +197,7 @@ export default class Entry extends React.Component {
               name="Entity Name"
               styles={textFieldStyles}
               value={this.props.travelLog.entityName}
-              invalid={this.props.validating && errors.entityName ? true : false}
+              invalid={this.props.validating && errors.entityName}
             />
           </div>
           <div style={{marginBottom: 9}}>
@@ -208,7 +208,7 @@ export default class Entry extends React.Component {
               name="Amount"
               styles={textFieldStyles}
               value={this.props.travelLog.amount}
-              invalid={this.props.validating && errors.amount ? true : false}
+              invalid={this.props.validating && errors.amount}
             />
             <TextField
               id='destination'
@@ -217,7 +217,7 @@ export default class Entry extends React.Component {
               name="Destinantion"
               styles={textFieldStyles}
               value={this.props.travelLog.destination}
-              invalid={this.props.validating && errors.destination ? true : false}
+              invalid={this.props.validating && errors.destination}
             />
           </div>
           <div style={{marginBottom: 15}}>
@@ -229,8 +229,8 @@ export default class Entry extends React.Component {
               styles={textFieldStyles}
               startDate={this.props.travelLog.startDate}
               endDate={this.props.travelLog.endDate}
-              startDateInvalid={this.props.validating && errors.startDate ? true : false}
-              endDateInvalid={this.props.validating && errors.endDate ? true : false}
+              startDateInvalid={this.props.validating && errors.startDate}
+              endDateInvalid={this.props.validating && errors.endDate}
             />
             <TextField
               id='reason'
@@ -239,7 +239,7 @@ export default class Entry extends React.Component {
               name="Reason"
               styles={textFieldStyles}
               value={this.props.travelLog.reason}
-              invalid={this.props.validating && errors.reason ? true : false}
+              invalid={this.props.validating && errors.reason}
             />
           </div>
           {actionButtons}

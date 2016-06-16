@@ -29,7 +29,6 @@ exports.up = function(knex) {
           var update;
           if (type.type_cd === 1) {
             update = types.length - 1;
-
           } else if (type.type_cd === 2) {
             update = 0;
           } else {

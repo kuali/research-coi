@@ -43,5 +43,4 @@ export default function ConfigPage(props) {
       </span>
     </div>
   );
-
 }

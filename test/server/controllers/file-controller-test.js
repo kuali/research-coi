@@ -86,7 +86,6 @@ describe('FileController', () => {
 
       assert.equal(response.body.length, 2);
       assert.equal(response.body[0].userId,hashCode('admin'));
-
     });
 
     it('successfully uploads one file', async function() {
@@ -219,7 +218,6 @@ describe('FileController', () => {
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
         .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
-
     });
 
     it('user should get management plan files if they are the user of the disclsoure', async function() {
@@ -252,7 +250,6 @@ describe('FileController', () => {
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
         .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
-
     });
 
     it('user should get fin entity files if they are the user of the disclsoure', async function() {

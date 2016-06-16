@@ -87,6 +87,5 @@ export function getProjectVariables(project, variables) {
   variables[`${LEFT}PI_FIRST_NAME${RIGHT}`] = project.piInfo.firstName;
   variables[`${LEFT}PI_LAST_NAME${RIGHT}`] = project.piInfo.lastName;
 
-
   return variables;
 }

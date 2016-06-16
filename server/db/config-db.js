@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable camelcase */
-
 import {camelizeJson, snakeizeJson} from './json-utils';
 import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
 import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
@@ -140,7 +138,6 @@ const convertQuestionFormat = (questions, questionnaireId) => {
 };
 
 const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) => {
-
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
     return query.select('template_id as templateId', 'description', 'type', 'active', 'core_template_id as coreTemplateId', 'value', 'period')
       .from('notification_template')
@@ -276,7 +273,11 @@ export async function saveScreeningQuestionnaire(query, questions) {
     pk: 'id',
     table: 'questionnaire_question',
     where() {
-      this.whereNull('parent').andWhere({'questionnaire_id': questionnaire[0].id});
+      this
+        .whereNull('parent')
+        .andWhere({
+          questionnaire_id: questionnaire[0].id
+        });
     }
   });
 
@@ -284,12 +285,14 @@ export async function saveScreeningQuestionnaire(query, questions) {
     pk: 'id',
     table: 'questionnaire_question',
     where() {
-      this.whereNotNull('parent').andWhere({'questionnaire_id': questionnaire[0].id});
+      this
+        .whereNotNull('parent')
+        .andWhere({
+          questionnaire_id: questionnaire[0].id}
+        );
     }
   });
-
 }
-
 
 export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
   const knex = getKnex(dbInfo);
@@ -310,7 +313,7 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
 
   return knex.transaction(async (query) => {
     if (optionalTrx) {
-      query = knex.transacting(optionalTrx);
+      query = knex.transacting(optionalTrx); // eslint-disable-line no-param-reassign
     }
 
     const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
@@ -333,7 +336,7 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
         createCollectionQueries(query, type.type_options, {
           pk: 'type_cd',
           table: 'relationship_type',
-          where: {'relationship_cd': type.type_cd}
+          where: {relationship_cd: type.type_cd}
         })
       );
 
@@ -341,7 +344,7 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
         createCollectionQueries(query, type.amount_options, {
           pk: 'type_cd',
           table: 'relationship_amount_type',
-          where: {'relationship_cd': type.type_cd}
+          where: {relationship_cd: type.type_cd}
         })
       );
     });
@@ -386,14 +389,14 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
             return createCollectionQueries(query, convertQuestionFormat(config.questions.entities, result[0].id), {
               pk: 'id',
               table: 'questionnaire_question',
-              where: {'questionnaire_id': result[0].id}
+              where: {questionnaire_id: result[0].id}
             });
           }
           return query('questionnaire').insert({version: 1, type_cd: 2}, 'id').then(id => {
             return createCollectionQueries(query, convertQuestionFormat(config.questions.entities, id[0]), {
               pk: 'id',
               table: 'questionnaire_question',
-              where: {'questionnaire_id': id[0]}
+              where: {questionnaire_id: id[0]}
             });
           });
         })

@@ -89,7 +89,7 @@ export default class TravelLogForm extends React.Component {
             name="Entity Name"
             styles={textFieldStyles}
             value={this.props.entry.entityName}
-            invalid={this.props.validating && errors.entityName ? true : false}
+            invalid={this.props.validating && errors.entityName}
           />
           <CurrencyField
             id='amount'
@@ -98,7 +98,7 @@ export default class TravelLogForm extends React.Component {
             name="Amount"
             styles={textFieldStyles}
             value={this.props.entry.amount}
-            invalid={this.props.validating && errors.amount ? true : false}
+            invalid={this.props.validating && errors.amount}
           />
           <TextField
             id='destination'
@@ -107,7 +107,7 @@ export default class TravelLogForm extends React.Component {
             name="Destinantion"
             styles={textFieldStyles}
             value={this.props.entry.destination}
-            invalid={this.props.validating && errors.destination ? true : false}
+            invalid={this.props.validating && errors.destination}
           />
         </div>
         <div className={styles.row}>
@@ -119,8 +119,8 @@ export default class TravelLogForm extends React.Component {
             styles={textFieldStyles}
             startDate={this.props.entry.startDate}
             endDate={this.props.entry.endDate}
-            startDateInvalid={this.props.validating && errors.startDate ? true : false}
-            endDateInvalid={this.props.validating && errors.endDate ? true : false}
+            startDateInvalid={this.props.validating && errors.startDate}
+            endDateInvalid={this.props.validating && errors.endDate}
           />
           <TextField
             id='reason'
@@ -129,7 +129,7 @@ export default class TravelLogForm extends React.Component {
             name="Reason"
             styles={textFieldStyles}
             value={this.props.entry.reason}
-            invalid={this.props.validating && errors.reason ? true : false}
+            invalid={this.props.validating && errors.reason}
           />
           <div style={textFieldStyles.container}>
             <BlueButton onClick={this.addEntry}>+ ADD</BlueButton>

@@ -56,8 +56,6 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
     LOG.warn(`user ${schoolId} is not a member of the ${role} role`);
     return Promise.resolve(false);
   }
-
-
 }
 
 async function getUserRoles(dbInfo, schoolId, authToken) {
@@ -125,7 +123,6 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
  */
 export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValue) {
   try {
-
     const cachedUserInfo = queryValue ? cache.get(queryValue) : undefined;
     if (cachedUserInfo) {
       return Promise.resolve(cachedUserInfo);
@@ -168,7 +165,7 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
     const query = {};
 
     if (unit) {
-      cacheKey = `cacheKey${unit}`;
+      cacheKey = `cacheKey${unit}`; // eslint-disable-line no-param-reassign
       query.qualification = `unitNumber:${unit}`;
     }
     const cachedReviewers = cache.get(cacheKey);

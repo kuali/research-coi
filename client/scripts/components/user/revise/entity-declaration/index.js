@@ -170,21 +170,19 @@ export default class EntityDeclaration extends React.Component {
         </span>
       );
     }
+    else if (this.props.entity.comments && this.props.entity.comments.length > 0) {
+      declarationComment = (
+        <span className={`fill ${styles.declarationComment}`}>
+          {this.props.entity.comments}
+        </span>
+      );
+    }
     else {
-      if (this.props.entity.comments && this.props.entity.comments.length > 0) {
-        declarationComment = (
-          <span className={`fill ${styles.declarationComment}`}>
-            {this.props.entity.comments}
-          </span>
-        );
-      }
-      else {
-        declarationComment = (
-          <span className={`fill ${styles.declarationCommentPlaceHolder}`}>
-            None
-          </span>
-        );
-      }
+      declarationComment = (
+        <span className={`fill ${styles.declarationCommentPlaceHolder}`}>
+          None
+        </span>
+      );
     }
 
     let relationship;

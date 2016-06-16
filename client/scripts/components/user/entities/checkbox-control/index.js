@@ -64,7 +64,6 @@ export class CheckboxControl extends React.Component {
       );
     });
 
-
     if (this.props.readonly) {
       return (
         <div className={styles.value}>

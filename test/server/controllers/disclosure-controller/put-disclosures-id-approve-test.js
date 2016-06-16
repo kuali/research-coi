@@ -56,7 +56,6 @@ async function insertProject(project) {
     end_date: new Date(project.endDate)
   }, 'id');
 
-  
   await knex('project_sponsor').insert({
     project_id: id[0],
     source_system: project.sourceSystem,

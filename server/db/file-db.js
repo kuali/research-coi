@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable camelcase */
-
 import * as FileService from '../services/file-service/file-service';
 import {COIConstants} from '../../coi-constants';
 import {isDisclosureUsers} from './common-db';
@@ -52,11 +50,11 @@ export const getFile = (dbInfo, userInfo, id) => {
         })
         .andWhere({'f.id': id});
     }
-    return query.andWhere({'user_id': userInfo.schoolId});
+    return query.andWhere({
+      user_id: userInfo.schoolId
+    });
   });
 };
-
-
 
 export async function getFiles(dbInfo, userInfo, refId, fileType) {
   const knex = getKnex(dbInfo);
@@ -83,7 +81,9 @@ export async function getFiles(dbInfo, userInfo, refId, fileType) {
         'f.ref_id': refId
       });
   }
-  return query.andWhere({'user_id': userInfo.schoolId});
+  return query.andWhere({
+    user_id: userInfo.schoolId
+  });
 }
 
 export const saveNewFiles = (dbInfo, body, files, userInfo) => {
@@ -140,7 +140,7 @@ export const deleteFiles = (dbInfo, userInfo, fileId) => {
   const knex = getKnex(dbInfo);
 
   const criteria = {
-    'id': fileId
+    id: fileId
   };
 
   if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
