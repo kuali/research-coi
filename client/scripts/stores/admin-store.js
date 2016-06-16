@@ -525,7 +525,9 @@ class _AdminStore {
 
   makeComment(comment) {
     if (comment.id) {
-      createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments/${comment.id}`)
+      this.updateComment(comment);
+    } else {
+      createRequest().post(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments`)
         .send(comment)
         .end(processResponse((err, updatedComments) => {
           if (!err) {
@@ -534,8 +536,12 @@ class _AdminStore {
             this.emitChange();
           }
         }));
-    } else {
-      createRequest().post(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments`)
+    }
+  }
+
+  updateComment(comment) {
+    if (comment.id) {
+      createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments/${comment.id}`)
         .send(comment)
         .end(processResponse((err, updatedComments) => {
           if (!err) {
