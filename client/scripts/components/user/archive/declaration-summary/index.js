@@ -20,15 +20,22 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {getDispositionTypeString} from '../../../../stores/config-store';
+import getConfig from '../../../../get-config';
 
 export default function DeclarationSummary(props, {configState}) {
   let adminRelationship;
   let commentClass = styles.comments;
-  if (props.config.general.adminRelationshipEnabled) {
+
+  const config = getConfig(configState, props.configId);
+  if (config === null) {
+    return null;
+  }
+
+  if (config.general.adminRelationshipEnabled) {
     const dispositionType = getDispositionTypeString(
       configState,
       props.declaration.adminRelationshipCd,
-      props.config.id
+      props.configId
     );
     adminRelationship = (
       <span className={styles.adminRelationship}>

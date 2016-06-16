@@ -87,8 +87,7 @@ export class Archive extends React.Component {
 
   displayArchive(archive) {
     this.setState({
-      disclosure: JSON.parse(archive.disclosure),
-      config: JSON.parse(archive.config)
+      disclosure: JSON.parse(archive.disclosure)
     });
   }
 
@@ -172,7 +171,6 @@ export class Archive extends React.Component {
         detail = (
           <ArchiveDetail
             disclosure={this.state.disclosure}
-            config={this.state.config}
           />
         );
         if (this.state.disclosure.managementPlan.length > 0) {

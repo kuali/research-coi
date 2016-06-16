@@ -25,6 +25,7 @@ import {
   getDeclarationTypeString,
   getDispositionTypeString
 } from '../../../../stores/config-store';
+import getConfig from '../../../../get-config';
 
 export default class DeclarationsSummary extends React.Component {
   getUniqueProjects(declarations) {
@@ -36,7 +37,7 @@ export default class DeclarationsSummary extends React.Component {
         const projectType = getProjectTypeString(
           this.context.configState,
           declaration.projectTypeCd,
-          this.props.config.id
+          this.props.configId
         );
         projects.push({
           id: declaration.projectId,
@@ -61,6 +62,11 @@ export default class DeclarationsSummary extends React.Component {
   render() {
     let projects = [];
     if(this.props.declarations !== undefined) {
+      const config = getConfig(this.context.configState, this.props.configId);
+      if (config === null) {
+        return null;
+      }
+
       const uniqueProjects = this.getUniqueProjects(this.props.declarations);
 
       projects = uniqueProjects.map((project, index) => {
@@ -70,24 +76,24 @@ export default class DeclarationsSummary extends React.Component {
           const declarationType = getDeclarationTypeString(
             this.context.configState,
             declaration.typeCd,
-            this.props.config.id
+            this.props.configId
           );
           return (
             <DeclarationSummary
               key={declaration.id}
               declaration={declaration}
-              config={this.props.config}
+              configId={this.props.configId}
               disposition={declarationType}
             />
           );
         });
 
         let dispositionType;
-        if (this.props.config.general.dispositionsEnabled) {
+        if (config.general.dispositionsEnabled) {
           const dispositionTypeString = getDispositionTypeString(
             this.context.configState,
             project.dispositionTypeCd,
-            this.props.config.id
+            this.props.configId
           );
           dispositionType = (
             <div className={styles.field}>
@@ -99,7 +105,7 @@ export default class DeclarationsSummary extends React.Component {
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (this.props.config.general.adminRelationshipEnabled) {
+        if (config.general.adminRelationshipEnabled) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );
