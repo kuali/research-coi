@@ -24,7 +24,7 @@ import { AdminActions } from '../../../../actions/admin-actions';
 import { ROLES } from '../../../../../../coi-constants';
 import ViewableByReporterButton from './viewable-by-reporter-button';
 
-export default class CommentingPanel extends React.Component {
+export default class CommentBubble extends React.Component {
   constructor() {
     super();
 
