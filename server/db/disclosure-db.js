@@ -547,9 +547,6 @@ export const updateComment = (dbInfo, userInfo, comment) => {
   return knex('comment')
     .update({
       text: comment.text,
-      user_id: userInfo.schoolId,
-      author: `${userInfo.firstName} ${userInfo.lastName}`,
-      user_role: userInfo.coiRole,
       date: new Date(),
       pi_visible: userInfo.coiRole === ROLES.ADMIN && comment.piVisible,
       reviewer_visible: userInfo.coiRole === ROLES.ADMIN && comment.reviewerVisible
@@ -727,7 +724,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
                 if (!disclosure.recommendedProjectDispositions) {
                   disclosure.recommendedProjectDispositions = [];
                 }
-                
+
                 disclosure.recommendedProjectDispositions.push({
                   projectPersonId: recommendation.projectPersonId,
                   disposition: recommendation.dispositionTypeId
@@ -779,7 +776,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
                 if (!disclosure.recommendedProjectDispositions) {
                   disclosure.recommendedProjectDispositions = [];
                 }
-                
+
                 disclosure.recommendedProjectDispositions.push({
                   usersName: recommendation.usersName,
                   projectPersonId: recommendation.projectPersonId,

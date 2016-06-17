@@ -18,7 +18,8 @@
 
 /* eslint-disable no-magic-numbers, camelcase */
 
-import { DISCLOSURE_TYPE } from '../coi-constants';
+import { DISCLOSURE_TYPE, COIConstants } from '../coi-constants';
+import hashCode from '../hash';
 
 export function createProject(sourceIdentifier) {
   return {
@@ -104,6 +105,37 @@ export async function insertDisclosure(knex, disclosure, user_id) {
     submitted_by: user_id
   }, 'id');
   return id[0];
+}
+
+export function createComment(disclosureId, user) {
+  return {
+    disclosureId,
+    topicSection: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+    topicId: 1,
+    text: 'blah',
+    userId: hashCode(user),
+    author: user,
+    date: new Date(),
+    piVisible: true,
+    reviewerVisible: true
+  };
+}
+
+export async function insertComment(knex, disclosure_id, user, text) {
+  const id = await knex('comment').insert({
+    disclosure_id,
+    text: text || 'I like this.',
+    user_id: hashCode(user),
+    author: user,
+    pi_visible: false,
+    reviewer_visible: true
+  }, 'id');
+  return id[0];
+}
+
+export async function getComment(knex, id) {
+  const comments = await knex('comment').select().where('id', id);
+  return comments[0];
 }
 
 export function createDeclaration(disclosureId, finEntityId, projectId) {

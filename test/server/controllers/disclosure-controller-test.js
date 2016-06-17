@@ -25,7 +25,7 @@ import {COIConstants} from '../../../coi-constants';
 import hashCode from '../../../hash';
 import {formatDate} from '../../../client/scripts/format-date';
 import { ACCEPTED, OK, FORBIDDEN, INTERNAL_SERVER_ERROR} from '../../../http-status-codes';
-import { createDisclosure, insertDisclosure } from '../../test-utils';
+import { createDisclosure, insertDisclosure, createComment } from '../../test-utils';
 
 let getKnex;
 try {
@@ -68,20 +68,6 @@ async function changeDisclosureStatus(status, id) {
       submitted_date: null
     })
     .where({id});
-}
-
-function createComment(disclosureId, user) {
-  return {
-    disclosureId,
-    topicSection: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
-    topicId: 1,
-    text: 'blah',
-    userId: hashCode(user),
-    author: user,
-    date: new Date(),
-    piVisible: true,
-    reviewerVisible: true
-  };
 }
 
 describe('DisclosureController',async () => {
