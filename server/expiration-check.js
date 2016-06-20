@@ -46,7 +46,6 @@ async function checkForExpiredDisclosures(expiredCode) {
       .whereNot('status_cd', expiredCode)
       .andWhere('expired_date', '<', new Date());
 
-
     const numberExpired = await knex('disclosure')
       .whereNot('status_cd', expiredCode)
       .andWhere('expired_date', '<', new Date())
@@ -72,9 +71,8 @@ async function checkForExpiredDisclosures(expiredCode) {
         };
       })
     };
-
   }
-  catch(err) {
+  catch (err) {
     Log.error(err);
   }
 }
@@ -94,16 +92,18 @@ async function handleNotifications() {
   await notifications.expirationNotifications.map(async disclosure => {
     try {
       return await createAndSendExpirationNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
-    } catch(err) {
+    } catch (err) {
       Log.error(err);
+      return Promise.resolve();
     }
   });
 
   await notifications.expirationReminders.map(async disclosure => {
     try {
       return await createAndSendExpirationReminderNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
-    } catch(err) {
+    } catch (err) {
       Log.error(err);
+      return Promise.resolve();
     }
   });
 }

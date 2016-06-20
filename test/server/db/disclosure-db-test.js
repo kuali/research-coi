@@ -37,5 +37,4 @@ describe('Disclosure', () => {
     const expirationDate = DisclosureDB.getExpirationDate(new Date(2015, 8, 1), true);
     assert.equal(expirationDate.toDateString(), new Date(2016, 8, 1).toDateString());
   });
-
 });

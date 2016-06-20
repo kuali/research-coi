@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/* eslint-disable camelcase */
 import { DATE_TYPE } from '../../coi-constants';
 
 let getKnex;
@@ -48,7 +47,7 @@ export async function getAdditionalReviewer(dbInfo, id) {
       reviewer[0].dates = JSON.parse(reviewer[0].dates);
     }
     return reviewer[0];
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -92,7 +91,7 @@ export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
     return reviewers.map(reviewer => {
       return reviewer.disclosureId.toString();
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -100,7 +99,7 @@ export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
 export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) {
   const knex = getKnex(dbInfo);
   const criteria = {
-    disclosure_id : disclosureId
+    disclosure_id: disclosureId
   };
 
   if (schoolId) {

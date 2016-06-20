@@ -36,7 +36,6 @@ export default function renderView(viewName) {
       };
     }
 
-
     res.render(viewName, data, (err, html) => {
       if (err) {
         next(err);

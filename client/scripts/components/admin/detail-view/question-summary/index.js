@@ -71,9 +71,9 @@ export default class QuestionSummary extends React.Component {
         <span className={this.props.question.parent ? styles.subQuestionNumber : styles.number}>
           <div>{this.props.question.numberToShow}</div>
         </span>
-        <span className={`fill`} style={{display: 'inline-block'}}>
+        <span className={'fill'} style={{display: 'inline-block'}}>
           <div style={{paddingRight: 125, fontSize: 14}}>{this.props.question.text}</div>
-          <div className={`flexbox row`}>
+          <div className={'flexbox row'}>
             <span className={`fill ${styles.answerSection}`}>
               <div className={styles.answerLabel}>ANSWER:</div>
               <div className={styles.answer}>

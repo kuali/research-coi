@@ -92,12 +92,12 @@ export default class RelationshipType extends React.Component {
             </BlueButton>
             <label htmlFor={`rtcb${this.props.typeCd}`} className={styles.name}>{this.props.name}</label>
           </div>
-          <div className={`flexbox row`} style={{paddingLeft: 27}}>
+          <div className={'flexbox row'} style={{paddingLeft: 27}}>
             <span className={styles.left}>
               <input id="typeCheckbox" type="checkbox" ref="typeEnabled" checked={this.props.typeEnabled === 1} onChange={this.typeEnabledChanged} />
               <label htmlFor="typeCheckbox" className={styles.checkboxLabel}>Type</label>
             </span>
-            <span className={`fill`} style={{display: 'inline-block'}}>
+            <span className={'fill'} style={{display: 'inline-block'}}>
               <EditableList
                 items={this.props.typeOptions}
                 onChange={this.typeOptionsChanged}
@@ -109,7 +109,7 @@ export default class RelationshipType extends React.Component {
               <input id="amountCheckbox" type="checkbox" ref="amountEnabled" checked={this.props.amountEnabled === 1} onChange={this.amountEnabledChanged} />
               <label htmlFor="amountCheckbox" className={styles.checkboxLabel}>Amount</label>
             </span>
-            <span className={`fill`}>
+            <span className={'fill'}>
               <EditableList
                 items={this.props.amountOptions}
                 onChange={this.amountOptionsChanged}
@@ -142,7 +142,7 @@ export default class RelationshipType extends React.Component {
             style={{verticalAlign: 'top'}}
           />
         </span>
-        <span className={`fill`}>
+        <span className={'fill'}>
           {content}
         </span>
       </div>

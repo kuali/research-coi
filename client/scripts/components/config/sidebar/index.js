@@ -67,8 +67,6 @@ export default function Sidebar(props, {configState}) {
     );
   }
 
-
-
   const stepsJsx = steps.map((step, index) => {
     const parts = step.label.split(' ');
     const rest = parts.pop();

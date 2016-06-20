@@ -32,7 +32,7 @@ function searchDirectoryForTests(baseDirectory) {
   let testsFound = [];
   file.walkSync(baseDirectory, (dirPath, dirs, files) => {
     if (files.length > 0) {
-      files = files.map(fileName => {
+      files = files.map(fileName => { // eslint-disable-line
         return path.join(dirPath, fileName);
       });
       testsFound = testsFound.concat(files);

@@ -40,7 +40,7 @@ export default class ReviewerSuggestion extends React.Component {
       return (
         <span>
           <span style={{display: 'inline'}}>{String(value.substr(0, start))}</span>
-          <span className={`highlight`}>
+          <span className={'highlight'}>
             {matchingValue}
           </span>
           <span style={{display: 'inline'}}>{value.substr(start + searchTerm.length)}</span>

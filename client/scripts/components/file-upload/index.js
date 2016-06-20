@@ -57,7 +57,7 @@ export class FileUpload extends React.Component {
               </span>
             </a>
           );
-        } else if(file.key) {
+        } else if (file.key) {
           downloadLink = (
             <a className={styles.link} href={`/api/coi/files/${encodeURIComponent(file.id)}`}>
               {file.name}
@@ -102,7 +102,7 @@ export class FileUpload extends React.Component {
           activeClassName={`file-drop ${styles.dropZoneActive}`}
           multiple={this.props.multiple}
         >
-          <div className={`not-hovering`}>
+          <div className={'not-hovering'}>
             <span className={styles.left}>
               <i className={`fa fa-upload ${styles.icon}`}></i>
             </span>
@@ -113,9 +113,9 @@ export class FileUpload extends React.Component {
               <BlueButton className={`${styles.override} ${styles.button}`}>UPLOAD</BlueButton>
             </span>
           </div>
-          <div className={`hovering`} style={{textAlign: 'center', height: 31}}>
+          <div className={'hovering'} style={{textAlign: 'center', height: 31}}>
             <i
-              className={`fa fa-file-text`}
+              className={'fa fa-file-text'}
               style={{color: 'white', marginRight: 15, fontSize: 20}}
             ></i>
             <span style={{fontSize: 19}}>Drop Me Here!</span>

@@ -342,7 +342,7 @@ describe('DisclosureStore', () => {
         value: {
           potentialRelationships: {
             new: {},
-            '1' : {}
+            1: {}
           }
         }
       };
@@ -380,13 +380,13 @@ describe('DisclosureStore', () => {
           description: 'Three'
         },
         {
-          typeCd:1,
-          order:2,
+          typeCd: 1,
+          order: 2,
           description: 'Two'
         },
         {
-          typeCd:1,
-          order:1,
+          typeCd: 1,
+          order: 1,
           description: 'One'
         }
       ];

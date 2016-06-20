@@ -123,8 +123,8 @@ export const isDisclosureUsers = (dbInfo, disclosureId, userId) => {
   return knex.select('user_id')
     .from('disclosure')
     .where({
-      'id': disclosureId,
-      'user_id': userId
+      id: disclosureId,
+      user_id: userId
     })
     .then(result => {
       return result.length > 0;
@@ -154,7 +154,6 @@ export function getDisclosureForFinancialEntity(dbInfo, id) {
       return entity[0].disclosureId;
     });
 }
-
 
 export const verifyRelationshipIsUsers = (dbInfo, userId, relationshipId) => {
   const knex = getKnex(dbInfo);

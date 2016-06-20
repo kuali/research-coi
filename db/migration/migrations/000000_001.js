@@ -309,7 +309,7 @@ exports.up = function(knex) {
           date_enabled: false,
           reason_enabled: false
         })
-        .then(function(){
+        .then(function() {
           return Promise.all([
             knex('relationship_type').insert({relationship_cd: 1, description: 'Stock', active: true})
               .then(function() {return knex('relationship_type').insert({relationship_cd: 1, description: 'Stock Options', active: true});})

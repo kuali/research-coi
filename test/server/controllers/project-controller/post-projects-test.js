@@ -47,7 +47,7 @@ const knex = getKnex({});
 async function post(project) {
   return await request(app.run())
     .post('/api/coi/projects')
-    .set('Authorization', `Bearer admin`)
+    .set('Authorization', 'Bearer admin')
     .send(project)
     .expect(OK);
 }
@@ -74,7 +74,7 @@ async function testDisclosureStatus(user_id, expectedStatus) {
     .select('status_cd as statusCd','id')
     .where({
       user_id,
-      'type_cd': DISCLOSURE_TYPE.ANNUAL
+      type_cd: DISCLOSURE_TYPE.ANNUAL
     });
   assert.equal(expectedStatus, disclosure[0].statusCd);
 }
@@ -290,7 +290,6 @@ describe('POST api/coi/projects', () => {
     });
   });
 
-
   describe('existing project deactivate person other persons still active ', () => {
     let projectId;
     let project;
@@ -448,7 +447,6 @@ describe('POST api/coi/projects', () => {
       let project;
       before(async () => {
         await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '12');
-
       });
 
       it('should return a OK status', async function() {

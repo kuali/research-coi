@@ -69,7 +69,6 @@ export default class AutoSuggest extends React.Component {
         }));
     }
 
-
     this.setState({
       value: evt.target.value
     });
@@ -123,8 +122,6 @@ export default class AutoSuggest extends React.Component {
   render() {
     let suggestionList;
     const Suggestion = this.props.suggestion;
-
-
 
     if (this.state.suggestions && this.state.suggestions.length > 0) {
       let filteredSuggestions;

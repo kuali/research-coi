@@ -21,9 +21,6 @@ import assert from 'assert';
 import sd from 'skin-deep';
 import UploadAttachmentsPanel from '../../../../../../client/scripts/components/admin/detail-view/upload-attachments-panel';
 
-/*global describe, it */
-
-
 describe('UploadAttachmentsPanel', () => {
   it('should render', () => {
     const tree = sd.shallowRender(

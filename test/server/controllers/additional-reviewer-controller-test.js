@@ -65,7 +65,7 @@ async function addReviewer(disclosureId, user) {
 
 let disclosureId;
 describe('AdditionalReviewerControllerTest', () => {
-  before(async function(){
+  before(async function() {
     const disclosure = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
       status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
@@ -77,12 +77,11 @@ describe('AdditionalReviewerControllerTest', () => {
   });
 
   describe('POST /api/coi/additional-reviewers', () => {
-
     it('should only allow admins to add reviewers', async () => {
       await request(app.run())
         .post('/api/coi/additional-reviewers')
         .send(getReviewer(disclosureId, 'reviewerDeleteTest'))
-        .set('Authorization',`Bearer cate`)
+        .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
     });
 
@@ -90,7 +89,7 @@ describe('AdditionalReviewerControllerTest', () => {
       const response = await request(app.run())
         .post('/api/coi/additional-reviewers')
         .send(getReviewer(disclosureId, 'reviewerDeleteTest1'))
-        .set('Authorization',`Bearer admin`)
+        .set('Authorization','Bearer admin')
         .expect(OK);
 
       const reviewer = response.body;
@@ -101,7 +100,7 @@ describe('AdditionalReviewerControllerTest', () => {
       await request(app.run())
         .post('/api/coi/additional-reviewers')
         .send({})
-        .set('Authorization',`Bearer admin`)
+        .set('Authorization','Bearer admin')
         .expect(INTERNAL_SERVER_ERROR);
     });
   });
@@ -111,7 +110,7 @@ describe('AdditionalReviewerControllerTest', () => {
       const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest2');
       await request(app.run())
         .del(`/api/coi/additional-reviewers/${reviewerId}`)
-        .set('Authorization',`Bearer cate`)
+        .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
     });
 
@@ -119,7 +118,7 @@ describe('AdditionalReviewerControllerTest', () => {
       const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest3');
       await request(app.run())
         .del(`/api/coi/additional-reviewers/${reviewerId}`)
-        .set('Authorization',`Bearer reviewerDeleteTest3`)
+        .set('Authorization','Bearer reviewerDeleteTest3')
         .expect(FORBIDDEN);
     });
 
@@ -127,7 +126,7 @@ describe('AdditionalReviewerControllerTest', () => {
       const reviewerId = await addReviewer(disclosureId,'reviewerDeleteTest4');
       await request(app.run())
         .del(`/api/coi/additional-reviewers/${reviewerId}`)
-        .set('Authorization',`Bearer admin`)
+        .set('Authorization','Bearer admin')
         .expect(OK);
 
       const reviewers = await knex('additional_reviewer')
@@ -143,7 +142,7 @@ describe('AdditionalReviewerControllerTest', () => {
       await addReviewer(disclosureId,'reviewerUpdate1');
       await request(app.run())
         .put(`/api/coi/additional-reviewers/complete-review/${disclosureId}`)
-        .set('Authorization',`Bearer cate`)
+        .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
     });
 
@@ -151,7 +150,7 @@ describe('AdditionalReviewerControllerTest', () => {
       await addReviewer(disclosureId,'reviewerUpdate2');
       await request(app.run())
         .put(`/api/coi/additional-reviewers/complete-review/${disclosureId}`)
-        .set('Authorization',`Bearer admin`)
+        .set('Authorization','Bearer admin')
         .expect(FORBIDDEN);
     });
 
@@ -159,7 +158,7 @@ describe('AdditionalReviewerControllerTest', () => {
       const reviewerId = await addReviewer(disclosureId,'reviewerUpdate3');
       await request(app.run())
         .put(`/api/coi/additional-reviewers/complete-review/${disclosureId}`)
-        .set('Authorization',`Bearer reviewerUpdate3`)
+        .set('Authorization','Bearer reviewerUpdate3')
         .expect(OK);
 
       const reviewers = await knex('additional_reviewer')
@@ -186,14 +185,14 @@ describe('AdditionalReviewerControllerTest', () => {
     it('should not allow users to update', async () => {
       await request(app.run())
         .put(`/api/coi/additional-reviewers/${reviewerId}`)
-        .set('Authorization',`Bearer cate`)
+        .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
     });
 
     it('should not allow reviewers to update', async () => {
       await request(app.run())
         .put(`/api/coi/additional-reviewers/${reviewerId}`)
-        .set('Authorization',`Bearer reviewer`)
+        .set('Authorization','Bearer reviewer')
         .expect(FORBIDDEN);
     });
 
@@ -210,7 +209,7 @@ describe('AdditionalReviewerControllerTest', () => {
           ]
 
         })
-        .set('Authorization',`Bearer admin`)
+        .set('Authorization','Bearer admin')
         .expect(OK);
 
       const reviewers = await knex('additional_reviewer')

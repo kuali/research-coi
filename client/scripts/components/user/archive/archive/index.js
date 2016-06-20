@@ -237,7 +237,7 @@ export class Archive extends React.Component {
               {header}
             </div>
             {managementPlan}
-            <div className={`fill`} style={{overflowY: 'auto'}}>
+            <div className={'fill'} style={{overflowY: 'auto'}}>
               {detail}
             </div>
           </span>

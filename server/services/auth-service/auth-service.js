@@ -27,7 +27,6 @@ try {
   client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? require('./auth-client') : require('./mock-auth-client');
 }
 
-
 export function getUserInfo(dbInfo, hostname, authToken) {
   return client.getUserInfo(dbInfo, hostname, authToken);
 }
@@ -59,7 +58,7 @@ export function getAuthToken(header) {
     }
 
     return undefined;
-  } catch(e) {
+  } catch (e) {
     return undefined;
   }
 }

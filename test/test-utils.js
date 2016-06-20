@@ -40,7 +40,6 @@ export function createProject(sourceIdentifier) {
   };
 }
 
-
 export async function insertProject(knex, project) {
   const id = await knex('project').insert({
     title: project.title,
@@ -62,7 +61,6 @@ export async function insertProject(knex, project) {
 
   return id[0];
 }
-
 
 export function createPerson(personId, roleCode, active) {
   return {

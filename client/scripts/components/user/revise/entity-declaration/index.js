@@ -170,21 +170,19 @@ export default class EntityDeclaration extends React.Component {
         </span>
       );
     }
+    else if (this.props.entity.comments && this.props.entity.comments.length > 0) {
+      declarationComment = (
+        <span className={`fill ${styles.declarationComment}`}>
+          {this.props.entity.comments}
+        </span>
+      );
+    }
     else {
-      if (this.props.entity.comments && this.props.entity.comments.length > 0) {
-        declarationComment = (
-          <span className={`fill ${styles.declarationComment}`}>
-            {this.props.entity.comments}
-          </span>
-        );
-      }
-      else {
-        declarationComment = (
-          <span className={`fill ${styles.declarationCommentPlaceHolder}`}>
-            None
-          </span>
-        );
-      }
+      declarationComment = (
+        <span className={`fill ${styles.declarationCommentPlaceHolder}`}>
+          None
+        </span>
+      );
     }
 
     let relationship;
@@ -233,8 +231,8 @@ export default class EntityDeclaration extends React.Component {
         <span className={styles.statusIcon}>
           {icon}
         </span>
-        <span style={{marginRight: 25}} className={`fill`}>
-          <div style={{margin: '8px 0 10px 0'}} className={`flexbox row`}>
+        <span style={{marginRight: 25}} className={'fill'}>
+          <div style={{margin: '8px 0 10px 0'}} className={'flexbox row'}>
             <span className={styles.entityName}>{this.props.entity.name}</span>
             {relationship}
             {declarationComment}

@@ -38,7 +38,6 @@ export default class TravelLog extends React.Component {
       entryStates: storeState.entryStates
     };
 
-
     this.onChange = this.onChange.bind(this);
   }
 
@@ -77,7 +76,7 @@ export default class TravelLog extends React.Component {
     }
 
     return (
-      <div className={`flexbox column`} style={{height: '100%'}} name='Travel Log'>
+      <div className={'flexbox column'} style={{height: '100%'}} name='Travel Log'>
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <span className={`flexbox row fill ${styles.container}`}>
           <span className={styles.sidebar}>

@@ -5,3 +5,4 @@ npm-debug.log
 **/*.png
 node_modules
 **/webpack.config.js
+test/client/config-context.js

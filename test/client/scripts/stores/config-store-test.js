@@ -119,7 +119,6 @@ describe('ConfigStore', () => {
       const autoApprove = ConfigStore.getState().config.general.autoApprove;
       assert.equal(0, autoApprove);
     });
-
   });
 
   describe('set', () => {
@@ -188,7 +187,6 @@ describe('ConfigStore', () => {
       const text = ConfigStore.getState().config.general.text;
       assert.equal('Dragon Cats', text);
     });
-
   });
 
   describe('configureProjectTypeState', () => {
@@ -221,7 +219,6 @@ describe('ConfigStore', () => {
 
       configuringProjectType = ConfigStore.getState().applicationState.configuringProjectType;
       assert.equal(configuringProjectType.typeCd, 1);
-
     });
   });
 
@@ -327,7 +324,6 @@ describe('ConfigStore', () => {
         }
       ];
 
-
       alt.dispatcher.dispatch({
         action: ConfigActions.UPDATE_STATUSES,
         data: {
@@ -355,7 +351,6 @@ describe('ConfigStore', () => {
       const edits = ConfigStore.getState().applicationState.edits;
       assert(edits.disclosureType !== undefined);
     });
-
   });
 
   describe('saveNewType', () => {
@@ -364,7 +359,7 @@ describe('ConfigStore', () => {
         key: 'applicationState',
         value: {
           edits: {
-            'dispositionTypes': {
+            dispositionTypes: {
               description: 'test'
             }
           }

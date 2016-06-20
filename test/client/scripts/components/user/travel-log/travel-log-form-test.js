@@ -56,7 +56,7 @@ describe('TravelLogForm', () => {
   });
 
   it('updateField method', () => {
-    instance.updateField({target: {value:'travelLogFormTest', id: 'travelLogFormTest'}});
+    instance.updateField({target: {value: 'travelLogFormTest', id: 'travelLogFormTest'}});
     const storeState = MockTravelLogStore.getState();
     assert.equal('travelLogFormTest', storeState.updateLogValue);
   });

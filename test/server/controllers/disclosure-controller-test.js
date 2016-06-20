@@ -93,7 +93,7 @@ describe('DisclosureController',async () => {
   const reviewerId = hashCode(reviewer);
   const today = new Date();
 
-  before(async function(){
+  before(async function() {
     const disclosure = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
       status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
@@ -114,7 +114,6 @@ describe('DisclosureController',async () => {
         date: new Date(2016,0,0)
       }])
     },'id');
-
 
     const disclosure1 = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
@@ -165,7 +164,7 @@ describe('DisclosureController',async () => {
     it('user should not be able to retrieve others disclosures', async function () {
       await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
-        .set('Authorization', `Bearer cate`)
+        .set('Authorization', 'Bearer cate')
         .expect(INTERNAL_SERVER_ERROR);
     });
 
@@ -179,14 +178,14 @@ describe('DisclosureController',async () => {
     it('reviewer should not be able to retrieve disclosures when they are not a reviewer', async function () {
       await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
-        .set('Authorization', `Bearer reviewer1234`)
+        .set('Authorization', 'Bearer reviewer1234')
         .expect(FORBIDDEN);
     });
 
     it('admin should be able to retrieve disclosures', async function () {
       await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
     });
   });
@@ -196,7 +195,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .post(`/api/coi/disclosures/${disclosureId}/comments`)
         .send(createComment(disclosureId, 'cate'))
-        .set('Authorization', `Bearer cate`)
+        .set('Authorization', 'Bearer cate')
         .expect(FORBIDDEN);
     });
 
@@ -204,7 +203,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .post(`/api/coi/disclosures/${disclosureId}/comments`)
         .send(createComment(disclosureId, 'admin'))
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .expect(OK);
     });
 
@@ -320,7 +319,6 @@ describe('DisclosureController',async () => {
 
       assert.equal(disclosureArchive[0].approved_by, COIConstants.SYSTEM_USER);
       assert.equal(formatDate(disclosureArchive[0].approved_date), formatDate(today));
-
     });
   });
 
@@ -336,7 +334,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${discId}/submit`)
         .send(disclosure)
-        .set('Authorization', `Bearer cate`)
+        .set('Authorization', 'Bearer cate')
         .expect(ACCEPTED);
     });
 
@@ -360,7 +358,7 @@ describe('DisclosureController',async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${discId}/submit`)
         .send(disclosure)
-        .set('Authorization', `Bearer reviewer1`)
+        .set('Authorization', 'Bearer reviewer1')
         .expect(ACCEPTED);
     });
 

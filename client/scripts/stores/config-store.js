@@ -122,7 +122,7 @@ export function getDisclosureStatusString(...args) {
 }
 
 export function getAdminDisclosureStatusString(state, code, configId) {
-  switch(code) {
+  switch (code) {
     case 1:
     case 3:
       return 'Approved';
@@ -694,7 +694,7 @@ class _ConfigStore {
   set(data) {
     _.set(this, data.path, data.value);
 
-    this.dirty = data.dirty === false ? false : true;
+    this.dirty = data.dirty !== false;
   }
 
   toggle(path) {
@@ -891,7 +891,7 @@ class _ConfigStore {
       .end(processResponse((err, data) => {
         if (!err) {
           this.updateRoles({
-            existingRoles : this.config.projectRoles,
+            existingRoles: this.config.projectRoles,
             newRoles: data.body.roles,
             projectTypeCd: typeCd
           });

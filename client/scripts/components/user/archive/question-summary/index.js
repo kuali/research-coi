@@ -27,9 +27,9 @@ export default function QuestionSummary(props) {
       <span className={props.question.parent ? styles.subQuestionNumber : styles.number}>
         <div>{props.question.question.numberToShow}</div>
       </span>
-      <span className={`fill`} style={{display: 'inline-block'}}>
+      <span className={'fill'} style={{display: 'inline-block'}}>
         <div style={{fontSize: 14}}>{props.question.question.text}</div>
-        <div className={`flexbox row`}>
+        <div className={'flexbox row'}>
           <span className={`fill ${styles.answerSection}`}>
             <div className={styles.answerLabel}>ANSWER:</div>
             <div className={styles.answer}>

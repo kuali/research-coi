@@ -28,7 +28,6 @@ class _MockPIReviewStore {
 
     this.reviseId = 0;
     this.responseId = 0;
-
   }
 
   reviseDeclaration([reviewId]) {

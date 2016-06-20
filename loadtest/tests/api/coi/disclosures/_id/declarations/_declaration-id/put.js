@@ -30,7 +30,7 @@ export class Test extends LoadTest {
     this.method = 'PUT';
 
     this.postData = JSON.stringify({
-      id:49,
+      id: 49,
       projectId: 17,
       finEntityId: 25,
       typeCd: 1,
@@ -91,7 +91,7 @@ export class Test extends LoadTest {
   getHeaders() {
     const id = this.getID();
     return {
-      'Authorization': `Bearer p${id}`,
+      Authorization: `Bearer p${id}`,
       'Content-Length': this.postData.length,
       'Content-Type': 'application/json'
     };

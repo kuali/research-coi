@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable prefer-arrow-callback */
+/* eslint-disable */
 
 import _ from 'lodash';
 
@@ -64,5 +64,3 @@ export function camelizeJson(attrs) {
 export function snakeizeJson(attrs) {
   return izeJson(attrs, _.snakeCase);
 }
-
-

@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable camelcase */
-
 import { values, uniq } from 'lodash';
 import {isDisclosureUsers} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
@@ -228,7 +226,7 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
               })
           );
 
-          financialEntity.relationships.map(relationship => {
+          financialEntity.relationships.forEach(relationship => {
             if (isNaN(relationship.id)) {
               relationship.finEntityId = entityId;
               queries.push(
@@ -382,12 +380,12 @@ export async function saveExistingDeclaration(dbInfo, userInfo, disclosureId, de
 
   return knex('declaration')
     .update({
-      'type_cd': record.typeCd,
-      'comments': record.comments,
-      'admin_relationship_cd': record.adminRelationshipCd
+      type_cd: record.typeCd,
+      comments: record.comments,
+      admin_relationship_cd: record.adminRelationshipCd
     })
     .where({
-      'disclosure_id': disclosureId,
+      disclosure_id: disclosureId,
       id: declarationId
     });
 }
@@ -448,7 +446,7 @@ async function retrieveComments(dbInfo, userInfo, disclosureId) {
   const knex = getKnex(dbInfo);
 
   const criteria = {
-    'disclosure_id': disclosureId
+    disclosure_id: disclosureId
   };
 
   if (userInfo.coiRole === ROLES.USER) {
@@ -496,23 +494,23 @@ const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
   return knex.select('*')
     .from('pi_review')
     .where({
-      'disclosure_id': disclosureId,
-      'target_type': section,
-      'target_id': id
+      disclosure_id: disclosureId,
+      target_type: section,
+      target_id: id
     }).then(rows => {
       if (rows.length > 0) {
         return knex('pi_review').update({
-          'reviewed_on': null
+          reviewed_on: null
         }).where({
-          'disclosure_id': disclosureId,
-          'target_type': section,
-          'target_id': id
+          disclosure_id: disclosureId,
+          target_type: section,
+          target_id: id
         });
       }
       return knex('pi_review').insert({
-        'disclosure_id': disclosureId,
-        'target_type': section,
-        'target_id': id
+        disclosure_id: disclosureId,
+        target_type: section,
+        target_id: id
       }, 'id');
     });
 };
@@ -566,7 +564,7 @@ export const updateComment = (dbInfo, userInfo, comment) => {
 
 const getDisclosure = (knex, userInfo, disclosureId) => {
   const criteria = {
-    'id': disclosureId
+    id: disclosureId
   };
 
   if (userInfo.coiRole !== ROLES.ADMIN &&
@@ -1062,13 +1060,11 @@ export const getSummariesForUser = async (dbInfo, userId) => {
     .where('disclosure_id','in',summaries.map(s => s.id))
     .groupBy('id');
 
-
   return summaries.map(summary => {
     const count = entityCounts.find(c => c.id === summary.id);
     summary.entityCount = count ? count.entityCount : 0;
     return summary;
   });
-
 };
 
 const updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, newStatus) => {
@@ -1174,7 +1170,6 @@ async function getDisclosureDisposition(knex, declarations, id) {
 }
 
 async function archiveDisclosure(knex, disclosureId, approverName, disclosure) {
-
   disclosure.disposition = await getDisclosureDisposition(knex, disclosure.declarations, disclosure.configId);
 
   return knex('disclosure_archive')
@@ -1398,7 +1393,6 @@ export const reject = (dbInfo, userInfo, disclosureId) => {
         return updateEditableComments(trx, disclosureId);
       });
   });
-
 };
 
 export const getArchivedDisclosures = (dbInfo, userId) => {

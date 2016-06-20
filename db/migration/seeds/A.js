@@ -36,7 +36,7 @@ function randomNumberBetween(lowest, highest) {
   return Math.floor(Math.random() * (highest - lowest + 1)) + lowest;
 }
 
-function getRandomLastName() {
+function getRandomLastName() { //eslint-disable-line complexity
   switch (randomNumberBetween(0, 33)) {
     case 0: return 'Anderson';
     case 1: return 'Carhart';
@@ -75,7 +75,7 @@ function getRandomLastName() {
   }
 }
 
-function getRandomFirstName() {
+function getRandomFirstName() { //eslint-disable-line complexity
   switch (randomNumberBetween(0, 33)) {
     case 0: return 'Chloe';
     case 1: return 'James';
@@ -186,7 +186,7 @@ function insertEntity(knex, disclosureId, name) {
       name: name,
       status: 'IN PROGRESS'
     }, 'id')
-    .then(function(entityId){
+    .then(function(entityId) {
       return insertRelationship(knex, entityId[0]);
     });
 }
@@ -377,7 +377,7 @@ exports.seed = function(knex, Promise) {
           req_disclosure: 0
         }
       ]);
-    }).then(function(){
+    }).then(function() {
       console.log('Project Statuses');
       return knex('project_status').insert([
         {

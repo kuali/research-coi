@@ -81,16 +81,14 @@ export default class DeclarationType extends React.Component {
         deleteLink = (
           <DeleteLink onClick={this.delete} />
         );
+      } else if (this.props.active) {
+        activationLink = (
+          <DeactivateLink onClick={this.deactivateType} />
+        );
       } else {
-        if (this.props.active) {
-          activationLink = (
-            <DeactivateLink onClick={this.deactivateType} />
-          );
-        } else {
-          activationLink = (
-            <ReactivateLink onClick={this.reactivateType} />
-          );
-        }
+        activationLink = (
+          <ReactivateLink onClick={this.reactivateType} />
+        );
       }
 
       jsx = (
@@ -124,15 +122,14 @@ export default class DeclarationType extends React.Component {
       downStyle = {display: 'none'};
     }
 
-
     return (
       <div ref="container" className={classes}>
         <div style={{width: '50px', float: 'left'}}>
           <div style={{display: 'inline-block', width: '45%'}}>
-            <button className={styles.button} style={upSytle} onClick={this.moveUp}> <i className={`fa fa-arrow-up`}></i></button>
+            <button className={styles.button} style={upSytle} onClick={this.moveUp}> <i className={'fa fa-arrow-up'}></i></button>
           </div>
           <div style={{display: 'inline-block', width: '45%'}}>
-            <button className={styles.button} style={downStyle} onClick={this.moveDown}><i className={`fa fa-arrow-down`}></i></button>
+            <button className={styles.button} style={downStyle} onClick={this.moveDown}><i className={'fa fa-arrow-down'}></i></button>
           </div>
         </div>
         <div style={{width: 'auto', overflow: 'hidden'}}>

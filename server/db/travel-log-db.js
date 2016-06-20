@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable camelcase */
-
 import {COIConstants} from '../../coi-constants';
 import {verifyRelationshipIsUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';
@@ -311,7 +309,7 @@ export const deleteTravelLogEntry = (dbInfo, id, userInfo) => {
   const knex = getKnex(dbInfo);
   return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
     .then(isAllowed => {
-      if(isAllowed) {
+      if (isAllowed) {
         return knex.transaction(trx => {
           return getRelationshipsEntity(trx, id).then(entityId => {
             return deleteTravelRelationship(trx, id).then(() => {
@@ -452,7 +450,7 @@ export const updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
   const knex = getKnex(dbInfo);
   return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
   .then(isAllowed => {
-    if(isAllowed) {
+    if (isAllowed) {
       return knex.transaction(trx => {
         return Promise.all([
           updateTravelRelationship(trx, entry, id),

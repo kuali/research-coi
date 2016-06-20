@@ -29,14 +29,13 @@ exports.up = function(knex) {
           var update;
           if (type.type_cd === 1) {
             update = types.length - 1;
-
           } else if (type.type_cd === 2) {
             update = 0;
           } else {
             update = order + 1;
             order = order + 1;
           }
-          return knex('declaration_type').update({order: update}).where({type_cd:type.type_cd});
+          return knex('declaration_type').update({order: update}).where({type_cd: type.type_cd});
         });
         return Promise.all(queries);
       });

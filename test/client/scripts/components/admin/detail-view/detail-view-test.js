@@ -58,7 +58,7 @@ describe('DetailView', () => {
     const vdom = renderOutputWithApplicationState({
       listShowing: false,
       uploadAttachmentsShowing: true,
-      selectedDisclosure: {files:[]}
+      selectedDisclosure: {files: []}
     });
 
     const sidePanelContainer = vdom.props.children[1].props.children[2];
@@ -70,7 +70,7 @@ describe('DetailView', () => {
     const vdom = renderOutputWithApplicationState({
       listShowing: false,
       generalAttachmentsShowing: true,
-      selectedDisclosure: {files:[]}
+      selectedDisclosure: {files: []}
     });
     const sidePanelContainer = vdom.props.children[1].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'GeneralAttachmentsPanel');
@@ -81,7 +81,7 @@ describe('DetailView', () => {
     const vdom = renderOutputWithApplicationState({
       listShowing: false,
       commentingPanelShowing: true,
-      selectedDisclosure: {files:[]}
+      selectedDisclosure: {files: []}
     });
     const sidePanelContainer = vdom.props.children[1].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'CommentingPanel');
@@ -92,7 +92,7 @@ describe('DetailView', () => {
     const vdom = renderOutputWithApplicationState({
       listShowing: false,
       additionalReviewShowing: true,
-      selectedDisclosure: {files:[]}
+      selectedDisclosure: {files: []}
     });
     const sidePanelContainer = vdom.props.children[1].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'AdditionalReviewPanel');
@@ -103,7 +103,7 @@ describe('DetailView', () => {
     const vdom = renderOutputWithApplicationState({
       listShowing: false,
       commentSummaryShowing: true,
-      selectedDisclosure: {files:[]}
+      selectedDisclosure: {files: []}
     });
     const sidePanelContainer = vdom.props.children[1].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'CommentSummary');

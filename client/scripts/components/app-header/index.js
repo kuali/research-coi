@@ -33,7 +33,7 @@ export class AppHeader extends React.Component {
   }
 
   onContrastChange(newValue) {
-    ColorActions.setColorBlindMode(newValue === 'On' ? true : false);
+    ColorActions.setColorBlindMode(newValue === 'On');
   }
 
   logOut() {

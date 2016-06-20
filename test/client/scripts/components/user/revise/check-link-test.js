@@ -21,9 +21,6 @@ import assert from 'assert';
 import sd from 'skin-deep';
 import CheckLink from '../../../../../../client/scripts/components/user/revise/check-link';
 
-/*global describe, it */
-
-
 describe('CheckLink', () => {
   it('render not checked', () => {
     const tree = sd.shallowRender(
@@ -53,7 +50,6 @@ describe('CheckLink', () => {
   });
 
   it('render disabled', () => {
-
     const tree = sd.shallowRender(
       <CheckLink checked={true} disabled={true}>DISABLED</CheckLink>
     );

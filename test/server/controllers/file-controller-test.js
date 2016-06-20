@@ -51,7 +51,7 @@ describe('FileController', () => {
   const userId = hashCode(user);
   const today = new Date();
 
-  before(async function(){
+  before(async function() {
     const disclosure = await knex('disclosure').insert({
       type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
       status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
@@ -86,7 +86,6 @@ describe('FileController', () => {
 
       assert.equal(response.body.length, 2);
       assert.equal(response.body[0].userId,hashCode('admin'));
-
     });
 
     it('successfully uploads one file', async function() {
@@ -172,7 +171,7 @@ describe('FileController', () => {
   });
 
   describe('/api/coi/files/:fileType/:refId', () => {
-    before(async function(){
+    before(async function() {
       await request(app.run())
         .post('/api/coi/files')
         .attach('attachments','coi-constants.js')
@@ -201,7 +200,7 @@ describe('FileController', () => {
     it('admin should successfully get management plan zip file', async function() {
       const response = await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
-        .set('Authorization',`Bearer admin`)
+        .set('Authorization','Bearer admin')
         .expect(OK);
 
       assert.equal(response.header['content-disposition'], `attachment; filename="${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}.zip"`);
@@ -210,16 +209,15 @@ describe('FileController', () => {
     it('reviewer should not get management plan files if not assigned as reviewer', async function() {
       await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
-        .set('Authorization',`Bearer reviewer`)
+        .set('Authorization','Bearer reviewer')
         .expect(FORBIDDEN);
     });
 
     it('user should not get management plan files if they are not the user of the disclsoure', async function() {
       await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.MANAGEMENT_PLAN}/${disclosureId}`)
-        .set('Authorization',`Bearer cate`)
+        .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
-
     });
 
     it('user should get management plan files if they are the user of the disclsoure', async function() {
@@ -234,7 +232,7 @@ describe('FileController', () => {
     it('admin should successfully get fin entity zip file', async function() {
       const response = await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
-        .set('Authorization',`Bearer admin`)
+        .set('Authorization','Bearer admin')
         .expect(OK);
 
       assert.equal(response.header['content-disposition'], `attachment; filename="${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}.zip"`);
@@ -243,16 +241,15 @@ describe('FileController', () => {
     it('reviewer should not get fin entity files if not assigned as reviewer', async function() {
       await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
-        .set('Authorization',`Bearer reviewer`)
+        .set('Authorization','Bearer reviewer')
         .expect(FORBIDDEN);
     });
 
     it('user should not get fin entity files if they are not the user of the disclsoure', async function() {
       await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
-        .set('Authorization',`Bearer cate`)
+        .set('Authorization','Bearer cate')
         .expect(FORBIDDEN);
-
     });
 
     it('user should get fin entity files if they are the user of the disclsoure', async function() {
@@ -268,14 +265,14 @@ describe('FileController', () => {
       await addReviewer(disclosureId, 'reviewer');
       await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
-        .set('Authorization',`Bearer reviewer`)
+        .set('Authorization','Bearer reviewer')
         .expect(OK);
     });
 
     it('reviewer should get fin entity files they are  assigned as reviewer', async function() {
       await request(app.run())
         .get(`/api/coi/files/${COIConstants.FILE_TYPE.FINANCIAL_ENTITY}/${finEntityId}`)
-        .set('Authorization',`Bearer reviewer`)
+        .set('Authorization','Bearer reviewer')
         .expect(OK);
     });
     after(async function() {

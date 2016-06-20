@@ -61,7 +61,7 @@ export default class DeclarationsSummary extends React.Component {
 
   render() {
     let projects = [];
-    if(this.props.declarations !== undefined) {
+    if (this.props.declarations !== undefined) {
       const config = getConfig(this.context.configState, this.props.configId);
       if (config === null) {
         return null;

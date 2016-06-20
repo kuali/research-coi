@@ -36,7 +36,7 @@ export default function Questionnaire(props, {configState}) {
   let configSection;
   if (applicationState) {
     configSection = (
-      <span className={`fill`} style={{display: 'inline-block'}}>
+      <span className={'fill'} style={{display: 'inline-block'}}>
         <InstructionEditor
           step={INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE}
           value={instructionText}
@@ -53,7 +53,7 @@ export default function Questionnaire(props, {configState}) {
   }
 
   return (
-    <div className={`flexbox column`} style={{minHeight: '100%'}}>
+    <div className={'flexbox column'} style={{minHeight: '100%'}}>
       <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
       <span className={classNames('fill', 'flexbox', 'row', styles.container, props.className)}>
         <Sidebar active="questionnaire" />

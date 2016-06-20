@@ -223,7 +223,7 @@ export class DetailView extends React.Component {
             showFilters={this.state.applicationState.showFilters}
             possibleDispositions={this.context.configState.config.dispositionTypes}
           />
-          <div className={`inline-flexbox fill`}>
+          <div className={'inline-flexbox fill'}>
             {disclosureDetail}
           </div>
           <span className={styles.sidePanel} style={{top}}>

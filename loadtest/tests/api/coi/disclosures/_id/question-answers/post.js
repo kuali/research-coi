@@ -29,9 +29,9 @@ export class Test extends LoadTest {
     this.method = 'POST';
 
     this.postData = JSON.stringify({
-      'questionId':2,
-      'answer':{
-        'value':'No'
+      questionId: 2,
+      answer: {
+        value: 'No'
       }
     });
 
@@ -83,7 +83,7 @@ export class Test extends LoadTest {
   getHeaders() {
     const id = this.getUserID();
     return {
-      'Authorization': `Bearer p${id}`,
+      Authorization: `Bearer p${id}`,
       'Content-Length': this.postData.length,
       'Content-Type': 'application/json'
     };

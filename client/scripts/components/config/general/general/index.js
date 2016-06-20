@@ -71,7 +71,7 @@ export default function General(props, {configState}) {
         <div className={styles.checkbox}>
           <CheckBox
             path='config.general.autoAddAdditionalReviewer'
-            label={`Automatically assign additional reviewers when disclosure is submitted, based on the reporter's primary unit.`}
+            label={'Automatically assign additional reviewers when disclosure is submitted, based on the reporter\'s primary unit.'}
             labelClassName={styles.label}
             checked={generalConfig.autoAddAdditionalReviewer === undefined ? false : generalConfig.autoAddAdditionalReviewer}
           />

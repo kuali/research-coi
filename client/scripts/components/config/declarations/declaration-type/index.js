@@ -22,10 +22,6 @@ import Type from '../type';
 import styles from './style';
 
 export default class DeclarationType extends Type {
-  constructor() {
-    super();
-  }
-
   typeIsBeingEdited(type) {
     return this.props.applicationState.declarationsTypesBeingEdited[type.typeCd] !== undefined;
   }
@@ -68,7 +64,7 @@ export default class DeclarationType extends Type {
   doneEditing() {
     if (this.props.type.description && this.props.type.description.length > 0) {
       ConfigActions.set({
-        path:`applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
+        path: `applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
         value: undefined
       });
     }
@@ -76,21 +72,21 @@ export default class DeclarationType extends Type {
 
   startEditing() {
     ConfigActions.set({
-      path:`applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
+      path: `applicationState.declarationsTypesBeingEdited[${this.props.type.typeCd}]`,
       value: {}
     });
   }
 
   deactivateType() {
     ConfigActions.deactivateType({
-      path: `config.declarationTypes`,
+      path: 'config.declarationTypes',
       index: this.props.index
     });
   }
 
   reactivateType() {
     ConfigActions.reactivateType({
-      path: `config.declarationTypes`,
+      path: 'config.declarationTypes',
       index: this.props.index
     });
   }

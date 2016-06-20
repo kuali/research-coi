@@ -190,7 +190,6 @@ export function FEPlaceHolder(props) {
   );
 }
 
-
 FEPlaceHolder.defaultProps = {
   colorOne: window.colorBlindModeOn ? '#555' : '#0097a7',
   colorTwo: window.colorBlindModeOn ? 'black' : '#00bcd4'

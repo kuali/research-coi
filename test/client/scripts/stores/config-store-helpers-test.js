@@ -168,7 +168,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getCodeMapsFromState({}, 3);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       
@@ -392,7 +392,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getRelationshipAmountString(undefined);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);
@@ -402,7 +402,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getRelationshipAmountString(state, 2, 9, 1);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);
@@ -412,7 +412,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getRelationshipAmountString(state, 3, 90, 1);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);
@@ -434,7 +434,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getNotificationsMode(undefined);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);
@@ -482,7 +482,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getQuestionNumberToShow(undefined);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);
@@ -492,7 +492,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getQuestionNumberToShow(state, 333, 1, 99);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);
@@ -502,7 +502,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getQuestionNumberToShow(state, 'entities', 9, 99);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);
@@ -530,7 +530,7 @@ describe('ConfigStore helper functions', () => {
       let errorThrown = false;
       try {
         getLane(undefined);
-      } catch(err) {
+      } catch (err) {
         errorThrown = true;
       }
       assert(errorThrown);

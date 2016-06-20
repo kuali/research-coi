@@ -65,7 +65,7 @@ export async function getTemplates(dbInfo, hostname) {
       .set('Authorization',`Bearer ${notificationsInfo.systemAuthToken}`);
 
     return response.body;
-  } catch(err) {
+  } catch (err) {
     Promise.reject(err);
   }
 }
@@ -103,7 +103,6 @@ function createCoreTemplate(notificationTemplate, hostname, applicationId) {
 
 export async function updateTemplateData(dbInfo, hostname, notificationTemplate) {
   try {
-
     const requestInfo = getRequestInfo(dbInfo, hostname);
     const template = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
     await request.put(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}/${notificationTemplate.core_template_id}`)
@@ -111,7 +110,7 @@ export async function updateTemplateData(dbInfo, hostname, notificationTemplate)
       .send(template);
 
     return Promise.resolve();
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -125,8 +124,7 @@ export async function createNewTemplate(dbInfo, hostname, notificationTemplate) 
       .send(coreTemplate);
 
     return response.body.id;
-
-  } catch(err) {
+  } catch (err) {
     Promise.reject(err);
   }
 }

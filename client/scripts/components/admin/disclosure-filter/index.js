@@ -60,7 +60,7 @@ export default class DisclosureFilter extends React.Component {
     const fn = evt => {
       let source = evt.target;
 
-      while(source.parentNode) {
+      while (source.parentNode) {
         if (source === localNode) {
           return;
         }
@@ -76,7 +76,7 @@ export default class DisclosureFilter extends React.Component {
   }
 
   componentWillUnmount() {
-    if(this.clickListener) {
+    if (this.clickListener) {
       document.removeEventListener('mousedown', this.clickListener);
       document.removeEventListener('touchstart', this.clickListener);
     }
@@ -87,7 +87,7 @@ export default class DisclosureFilter extends React.Component {
     if (this.state.active) {
       clearButton = (
         <span onClick={this.clear} className={styles.clear}>
-          <i className={`fa fa-times`}></i>
+          <i className={'fa fa-times'}></i>
         </span>
       );
     }

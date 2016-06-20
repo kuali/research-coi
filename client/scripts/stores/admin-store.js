@@ -22,12 +22,12 @@ import {
   NO_DISPOSITION,
   DISCLOSURE_STATUS,
   FILE_TYPE,
-  DATE_TYPE
+  DATE_TYPE,
+  ADMIN_PAGE_SIZE
 } from '../../../coi-constants';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
-import {ADMIN_PAGE_SIZE} from '../../../coi-constants';
 import {
   default as ConfigStore,
   getDispositionsEnabled
@@ -140,10 +140,8 @@ class _AdminStore {
   }
 
   loadDisclosure(id) {
-
     delete this.applicationState.selectedDisclosure;
     this.applicationState.loadingDisclosure = true;
-
 
     createRequest().get(`/api/coi/disclosures/${id}`)
            .end(processResponse((err, disclosure) => {
@@ -160,7 +158,7 @@ class _AdminStore {
       }
     }));
 
-    createRequest().get(`/api/coi/reviewers`)
+    createRequest().get('/api/coi/reviewers')
       .end(processResponse((err, responses) => {
         if (!err) {
           this.applicationState.displayAdditionalReviewers = responses.body.length > 0;
@@ -454,7 +452,6 @@ class _AdminStore {
     this.applicationState.commentSnapShot = undefined;
     this.applicationState.editingComment = false;
 
-
     this.updateCurrentComments(false);
   }
 
@@ -492,13 +489,13 @@ class _AdminStore {
     }, 400);
   }
 
-  showUploadAttachmentsPanel(){
+  showUploadAttachmentsPanel() {
     this.applicationState.listShowing = false;
     this.applicationState.uploadAttachmentsShowing = true;
   }
 
   hideUploadAttachmentsPanel(timeout) {
-    timeout = !isNaN(timeout) ? timeout : 400;
+    timeout = !isNaN(timeout) ? timeout : 400; // eslint-disable-line no-param-reassign
     this.applicationState.listShowing = true;
     setTimeout(() => {
       this.applicationState.uploadAttachmentsShowing = false;
@@ -548,7 +545,6 @@ class _AdminStore {
           }
         }));
     }
-
   }
 
   addManagementPlan(files) {

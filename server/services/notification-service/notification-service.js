@@ -16,9 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import { getCoreTemplateIdByTemplateId } from '../../db/config-db';
+import {
+  getCoreTemplateIdByTemplateId,
+  getProjectTypeDescription
+} from '../../db/config-db';
 import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
-import { getProjectTypeDescription } from '../../db/config-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import Log from '../../log';
@@ -26,7 +28,7 @@ import * as VariableService from './variables-service';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
-  require('./notification-client') ;
+  require('./notification-client');
 
 const {
   createDisplayName,
@@ -95,7 +97,7 @@ const NOTIFICATION_TEMPLATES = {
 };
 
 export function getDefaults(notificationTemplate) {
-  switch(notificationTemplate.templateId) {
+  switch (notificationTemplate.templateId) {
     case NOTIFICATION_TEMPLATES.SUBMITTED.ID:
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.SUBMITTED.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.SUBMITTED.BODY;
@@ -166,7 +168,7 @@ export async function handleTemplates(dbInfo, hostname, templates) {
 
       return cleanTemplate(template);
     });
-  } catch(err) {
+  } catch (err) {
     Promise.reject(err);
   }
 }
@@ -188,7 +190,7 @@ export async function populateTemplateData(dbInfo, hostname, notificationTemplat
       notificationTemplate.coreTemplateId = template.id;
       return notificationTemplate;
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -288,7 +290,7 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
     const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -305,7 +307,6 @@ export async function createAndSendExpireNotification(dbInfo, hostname, disclosu
   try {
     const template = await getTemplate(dbInfo, templateId);
     if (!template) {
-
       return Promise.resolve();
     }
     const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
@@ -313,11 +314,10 @@ export async function createAndSendExpireNotification(dbInfo, hostname, disclosu
     const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, disclosure.reporterInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
-  } catch(err) {
+  } catch (err) {
     Log.error(err);
   }
 }
-
 
 export async function createAndSendSentBackNotification(dbInfo, hostname, userInfo, disclosureId) {
   try {
@@ -330,7 +330,7 @@ export async function createAndSendSentBackNotification(dbInfo, hostname, userIn
     const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -349,7 +349,7 @@ export async function createAndSendReviewerNotification(dbInfo, hostname, userIn
     const recipients = getRecipients(dbInfo, reviewer.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -376,7 +376,7 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
     const recipients = await getAdminRecipients(dbInfo, authHeader);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -393,7 +393,7 @@ export async function createAndSendNewProjectNotification(dbInfo, hostname, user
     const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }

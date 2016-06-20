@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable camelcase */
-
 import { ROLES } from '../../coi-constants';
 const MAX_ROWS = 10;
 
@@ -56,7 +54,6 @@ export async function getSuggestions(dbInfo, term, userInfo) {
     let indexQuery = queryUsingIndex(knex, term);
     let noIndexQuery = queryWithoutIndex(knex, term);
     if (userInfo.coiRole === ROLES.REVIEWER) {
-
       indexQuery = addReviewerCriteria(indexQuery, userInfo.schoolId);
       noIndexQuery = addReviewerCriteria(noIndexQuery, userInfo.schoolId);
     }
@@ -67,8 +64,7 @@ export async function getSuggestions(dbInfo, term, userInfo) {
     }
 
     return result;
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
-
 }

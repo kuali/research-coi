@@ -52,12 +52,10 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
       return Promise.resolve(true);
     }
     return Promise.resolve(false);
-  } catch(err) {
+  } catch (err) {
     LOG.warn(`user ${schoolId} is not a member of the ${role} role`);
     return Promise.resolve(false);
   }
-
-
 }
 
 async function getUserRoles(dbInfo, schoolId, authToken) {
@@ -80,7 +78,7 @@ async function getResearchUser(researchCoreUrl, authToken) {
     const response = await request.get(`${researchCoreUrl}${END_POINTS.RESEARCH_USERS}`)
      .set('Authorization', `Bearer ${authToken}`);
     return Promise.resolve(response.body);
-  } catch(err) {
+  } catch (err) {
     return Promise.resolve({});
   }
 }
@@ -125,7 +123,6 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
  */
 export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValue) {
   try {
-
     const cachedUserInfo = queryValue ? cache.get(queryValue) : undefined;
     if (cachedUserInfo) {
       return Promise.resolve(cachedUserInfo);
@@ -133,7 +130,7 @@ export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValu
     const authInfo = getAuthorizationInfo(dbInfo);
     const url = authInfo.authUrl || (useSSL ? 'https://' : 'http://') + hostname;
     const response = await request.get(`${url}/api/v1/users/`)
-      .query({q:queryValue.trim()})
+      .query({q: queryValue.trim()})
       .set('Authorization', `Bearer ${authToken}`);
 
     const userInfo = response.body;
@@ -168,7 +165,7 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
     const query = {};
 
     if (unit) {
-      cacheKey = `cacheKey${unit}`;
+      cacheKey = `cacheKey${unit}`; // eslint-disable-line no-param-reassign
       query.qualification = `unitNumber:${unit}`;
     }
     const cachedReviewers = cache.get(cacheKey);
@@ -192,7 +189,7 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
     });
     cache.set(REVIEWER_CACHE_KEY, results);
     return Promise.resolve(results);
-  } catch(err) {
+  } catch (err) {
     return Promise.resolve([]);
   }
 }

@@ -49,7 +49,7 @@ function provided(value) {
 }
 
 function mapDisclosureToInstructionStep(step) {
-  switch(step) {
+  switch (step) {
     case DISCLOSURE_STEP.QUESTIONNAIRE:
       return INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE;
     case DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
@@ -121,10 +121,8 @@ export function entityRelationshipStepErrors(potentialRelationship, matrixTypes)
       } else if (isNaN(travel.amount)) {
         errors.travelAmount = 'Numeric Value Only';
       }
-    } else {
-      if (!provided(amountCd)) {
-        errors.amount = 'Required Field';
-      }
+    } else if (!provided(amountCd)) {
+      errors.amount = 'Required Field';
     }
   }
 
@@ -315,12 +313,10 @@ class _DisclosureStore {
   loadDisclosureState(disclosureId) {
     const {config} = ConfigStore.getState();
     const hideInstructions = config.general.instructionsExpanded === false;
-    this.applicationState.instructionsShowing[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] = hideInstructions ? false : true;
-    this.applicationState.instructionsShowing[INSTRUCTION_STEP.FINANCIAL_ENTITIES] = hideInstructions ? false : true;
-    this.applicationState.instructionsShowing[INSTRUCTION_STEP.PROJECT_DECLARATIONS] = hideInstructions ? false : true;
-    this.applicationState.instructionsShowing[INSTRUCTION_STEP.CERTIFICATION] = hideInstructions ? false : true;
-
-
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] = !hideInstructions;
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.FINANCIAL_ENTITIES] = !hideInstructions;
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.PROJECT_DECLARATIONS] = !hideInstructions;
+    this.applicationState.instructionsShowing[INSTRUCTION_STEP.CERTIFICATION] = !hideInstructions;
 
     return new Promise((resolve, reject) => {
       createRequest()
@@ -425,7 +421,7 @@ class _DisclosureStore {
         .send(answer)
         .type('application/json')
         .end(processResponse((err, res) => {
-          if(!err) {
+          if (!err) {
             answer.id = res.body.id;
             this.emitChange();
           }
@@ -515,7 +511,7 @@ class _DisclosureStore {
       case DISCLOSURE_STEP.PROJECTS:
         this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         break;
-      case DISCLOSURE_STEP.CERTIFY:
+      case DISCLOSURE_STEP.CERTIFY: {
         const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
@@ -526,6 +522,7 @@ class _DisclosureStore {
           this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         }
         break;
+      }
     }
 
     this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
@@ -587,7 +584,7 @@ class _DisclosureStore {
 
   addEntityAttachments([files, entityId]) {
     const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
-    if(!entity.files) {
+    if (!entity.files) {
       entity.files = [];
     }
 
@@ -612,7 +609,7 @@ class _DisclosureStore {
         this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.ENTITIES;
         this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.ENTITIES] = true;
         break;
-      case DISCLOSURE_STEP.ENTITIES:
+      case DISCLOSURE_STEP.ENTITIES: {
         const activeEntitiesExists = this.entities.some(entity => {
           return entity.active;
         });
@@ -625,6 +622,7 @@ class _DisclosureStore {
           this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.CERTIFY] = true;
         }
         break;
+      }
       case DISCLOSURE_STEP.PROJECTS:
         this.applicationState.currentDisclosureState.step = DISCLOSURE_STEP.CERTIFY;
         this.applicationState.currentDisclosureState.visitedSteps[DISCLOSURE_STEP.CERTIFY] = true;
@@ -648,10 +646,8 @@ class _DisclosureStore {
       }
       this.applicationState.entityStates[entityId].formStep++;
     }
-    else {
-      if (this.applicationState.newEntityFormStep < 2) {
-        this.applicationState.newEntityFormStep++;
-      }
+    else if (this.applicationState.newEntityFormStep < 2) {
+      this.applicationState.newEntityFormStep++;
     }
   }
 
@@ -662,10 +658,8 @@ class _DisclosureStore {
       }
       this.applicationState.entityStates[entityId].formStep--;
     }
-    else {
-      if (this.applicationState.newEntityFormStep > 0) {
-        this.applicationState.newEntityFormStep--;
-      }
+    else if (this.applicationState.newEntityFormStep > 0) {
+      this.applicationState.newEntityFormStep--;
     }
   }
 
@@ -812,7 +806,7 @@ class _DisclosureStore {
       return type.typeCd === typeCd;
     });
 
-    if(desc) {
+    if (desc) {
       return desc.description;
     }
   }
@@ -822,7 +816,7 @@ class _DisclosureStore {
       return type.description === description;
     });
 
-    if(code) {
+    if (code) {
       return code.typeCd;
     }
   }
@@ -978,7 +972,6 @@ class _DisclosureStore {
     delete this.applicationState.potentialRelationships[snapshot.id];
     this.applicationState.entityStates[snapshot.id].editing = false;
   }
-
 
   resetPotentialRelationship(id) {
     delete this.applicationState.potentialRelationships[id];
@@ -1148,7 +1141,9 @@ class _DisclosureStore {
       answers: []
     };
     this.applicationState.entityStates = {};
-    this.projects.forEach(project => project.new = false);
+    this.projects.forEach(project => {
+      project.new = false;
+    });
     this.updateDisclosureState(this.applicationState.currentDisclosureState.disclosure.id);
   }
 
@@ -1226,7 +1221,6 @@ class _DisclosureStore {
 
     const {config} = ConfigStore.getState();
     config.questions.entities.forEach(question => {
-
       const answer = entity.answers.find(a => {
         return a.questionId === question.id;
       });
@@ -1237,7 +1231,7 @@ class _DisclosureStore {
       }
 
       if (question.question.type === QUESTION_TYPE.MULTISELECT && question.question.requiredNumSelections > 1) {
-        if(value instanceof Array) {
+        if (value instanceof Array) {
           if (value.length < question.question.requiredNumSelections) {
             errors.push(question.id);
           }
@@ -1308,7 +1302,6 @@ class _DisclosureStore {
 
     return this.entityRelationshipStepComplete(id);
   }
-
 
   turnOnValidation(step) {
     switch (step) {

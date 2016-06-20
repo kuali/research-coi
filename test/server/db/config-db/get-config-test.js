@@ -159,7 +159,6 @@ describe('getConfig', () => {
       assert.notEqual(undefined, question.question.type);
       assert.notEqual(undefined, question.question.numberToShow);
     });
-
   });
 
   describe('disclosureStatus', () => {
@@ -191,8 +190,6 @@ describe('getConfig', () => {
       assert.notEqual(undefined, role.description);
       assert.notEqual(undefined, role.reqDisclosure);
       assert.notEqual(undefined, role.active);
-
-
     });
   });
 

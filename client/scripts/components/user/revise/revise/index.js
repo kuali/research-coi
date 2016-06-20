@@ -91,7 +91,7 @@ export class Revise extends React.Component {
     }
 
     return (
-      <div className={`flexbox column`} style={{height: '100%'}}>
+      <div className={'flexbox column'} style={{height: '100%'}}>
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`fill flexbox column ${styles.container} ${this.props.className}`}>
           <RevisionHeader
@@ -99,7 +99,7 @@ export class Revise extends React.Component {
             submittedDate={new Date()}
             returnedDate={new Date()}
           />
-          <div className={`flexbox row fill`}>
+          <div className={'flexbox row fill'}>
             <span className={`fill ${styles.disclosure}`}>
               {questionnaire}
               {entities}

@@ -56,7 +56,6 @@ async function insertProject(project) {
     end_date: new Date(project.endDate)
   }, 'id');
 
-  
   await knex('project_sponsor').insert({
     project_id: id[0],
     source_system: project.sourceSystem,
@@ -148,14 +147,14 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
   describe('approve - no new projects', async () => {
     const disclosure = createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
     let disclosureId;
-    before(async function(){
+    before(async function() {
       disclosureId = await insertDisclosure(disclosure, 1);
     });
 
     it('should return OK status', async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${disclosureId}/approve`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .send(disclosure)
         .expect(ACCEPTED);
     });
@@ -169,7 +168,7 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
     const disclosure = createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
     let disclosureId;
     let projectId;
-    before(async function(){
+    before(async function() {
       disclosureId = await insertDisclosure(disclosure, 2);
       projectId = await insertProject(createProject('2'), true);
       await insertProjectPerson(createPerson('2','PI'), projectId);
@@ -178,7 +177,7 @@ describe('PUT api/coi/disclosures/:id/approve', async () => {
     it('should return OK status', async () => {
       await request(app.run())
         .put(`/api/coi/disclosures/${disclosureId}/approve`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .send(disclosure)
         .expect(ACCEPTED);
     });

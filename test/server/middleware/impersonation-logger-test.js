@@ -36,9 +36,9 @@ const knex = getKnex({});
 describe('impersonationLogger', async () => {
   it('should not insert a row in impersonation audit when not impersonation', async () => {
     await request(app.run())
-      .post(`/api/coi/impersonation-test1`)
+      .post('/api/coi/impersonation-test1')
       .send({test: 'test'})
-      .set('Authorization', `Bearer test1`);
+      .set('Authorization', 'Bearer test1');
 
     const record = await knex('impersonation_audit').select('*').where({path: '/api/coi/impersonation-test1'});
     assert.equal(0, record.length);
@@ -46,9 +46,9 @@ describe('impersonationLogger', async () => {
 
   it('should insert a row in impersonation audit when impersonation', async () => {
     await request(app.run())
-      .post(`/api/coi/impersonation-test2`)
+      .post('/api/coi/impersonation-test2')
       .send({test: 'test'})
-      .set('Authorization', `Bearer impersonating_test2`);
+      .set('Authorization', 'Bearer impersonating_test2');
 
     const record = await knex('impersonation_audit').select('*').where({path: '/api/coi/impersonation-test2'});
     assert.equal(1, record.length);
@@ -58,6 +58,4 @@ describe('impersonationLogger', async () => {
   after(async () => {
     await knex('impersonation_audit').del();
   });
-
-
 });

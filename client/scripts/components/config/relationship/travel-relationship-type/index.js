@@ -52,7 +52,6 @@ export default class TravelRelationshipType extends RelationshipType {
     this.props.reasonEnabledChanged(this.props.typeCd, checkbox.checked === true ? 1 : 0);
   }
 
-
   render() {
     let content;
     if (this.state.editing) {
@@ -126,7 +125,7 @@ export default class TravelRelationshipType extends RelationshipType {
             style={{verticalAlign: 'top'}}
           />
         </span>
-        <span className={`fill`}>
+        <span className={'fill'}>
           {content}
         </span>
       </div>

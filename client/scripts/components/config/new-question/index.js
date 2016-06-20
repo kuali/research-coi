@@ -137,7 +137,7 @@ export default class NewQuestion extends React.Component {
       }
 
       multiSelectOptions = (
-        <div className={`flexbox row`} style={{padding: '10px 10px 0 10px'}}>
+        <div className={'flexbox row'} style={{padding: '10px 10px 0 10px'}}>
           <span className={styles.optionEnteringSection}>
             <div>
               <label className={styles.label} htmlFor="options">OPTIONS</label>

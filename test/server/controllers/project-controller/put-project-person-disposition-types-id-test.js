@@ -114,7 +114,7 @@ describe('PUT api/coi/project-persons-disposition-types/:id', () => {
     it('should return an OK status', async function() {
       await request(app.run())
         .put(`/api/coi/project-persons-disposition-types/${projectPersonId}`)
-        .set('Authorization', `Bearer admin`)
+        .set('Authorization', 'Bearer admin')
         .send({
           dispositionTypeCd
         })
@@ -122,7 +122,7 @@ describe('PUT api/coi/project-persons-disposition-types/:id', () => {
     });
 
     it('should update the project person', async function() {
-      const projectPerson = await knex('project_person').select('*').where({id:projectPersonId});
+      const projectPerson = await knex('project_person').select('*').where({id: projectPersonId});
       assert.equal(dispositionTypeCd,projectPerson[0].disposition_type_cd);
     });
   });

@@ -58,7 +58,7 @@ async function callEndPoint(researchCoreUrl, authHeader, endPoint) {
       return Promise.resolve(response.body);
     }
     return Promise.resolve([]);
-  } catch(err) {
+  } catch (err) {
     Log.error(`cannot access ${researchCoreUrl}${endPoint}`);
     return Promise.resolve([]);
   }
@@ -154,7 +154,7 @@ async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoin
       };
     });
     return Promise.resolve({roles, statuses});
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -175,7 +175,7 @@ export async function getProjectData(dbInfo, authHeader, projectTypeCd) {
       default:
         return Promise.resolve({roles: [], statuses: []});
     }
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -201,7 +201,7 @@ async function getRequiredSponsors(researchCoreUrl, coiHierarchy, authHeader) {
     cache.set(REQUIRED_SPONSORS_KEY, requiredSponsors);
 
     return Promise.resolve(requiredSponsors);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(`cannot access ${researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${coiHierarchy}`);
   }
 }
@@ -246,7 +246,7 @@ export async function filterProjects(dbInfo, projects, authHeader) {
       return isRequired(requirements, project);
     });
     return Promise.resolve(result);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -255,7 +255,7 @@ export async function isProjectRequired(dbInfo, project, authHeader) {
   try {
     const requirements = await getRequirements(dbInfo, authHeader);
     return isRequired(requirements, project);
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }

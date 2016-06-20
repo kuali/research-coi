@@ -77,8 +77,6 @@ const dbTemplates = [
   }
 ];
 
-
-
 describe('NotificationService', () => {
   describe('getDefaults', () => {
     let populatedTemplate;
@@ -362,7 +360,6 @@ describe('NotificationService', () => {
       await knex('disclosure_archive').del();
       await knex('disclosure').del();
     });
-
   });
 
   describe('createAndSendExpirationNotification', () => {
@@ -597,7 +594,6 @@ describe('NotificationService', () => {
 
       reviewerId = reviewerIds[0];
 
-
       results = await NotificationService.createAndSendReviewerAssignedNotification({},'test.com', {id: '5678'}, reviewerId);
     });
 
@@ -687,7 +683,6 @@ describe('NotificationService', () => {
       });
 
       reviewerId = reviewerIds[0];
-
 
       results = await NotificationService.createAndSendReviewerUnassignNotification({},'test.com', {id: '5678'}, reviewerId);
     });
@@ -783,7 +778,6 @@ describe('NotificationService', () => {
 
       reviewerId = reviewerIds[0];
 
-
       results = await NotificationService.createAndSendReviewCompleteNotification({},'test.com', 'Bearer 1234', {id: '5678'}, reviewerId);
     });
 
@@ -858,38 +852,38 @@ describe('NotificationService', () => {
       disclosureId = dislcosureIds[0];
 
       const person = {
-        'sourceSystem':'KC-PD',
-        'sourceIdentifier':'1239',
-        'personId':'1234',
-        'sourcePersonType':'EMPLOYEE',
-        'roleCode':'PI'
+        sourceSystem: 'KC-PD',
+        sourceIdentifier: '1239',
+        personId: '1234',
+        sourcePersonType: 'EMPLOYEE',
+        roleCode: 'PI'
       };
       
       const project = {
-        'title':'TEST',
-        'typeCode':1,
-        'sourceSystem':'KC-PD',
-        'sourceIdentifier':'1239',
-        'sourceStatus':'1',
-        'persons':[
+        title: 'TEST',
+        typeCode: 1,
+        sourceSystem: 'KC-PD',
+        sourceIdentifier: '1239',
+        sourceStatus: '1',
+        persons: [
           {
-            'sourceSystem':'KC-PD',
-            'sourceIdentifier':'1239',
-            'personId':'PI',
-            'sourcePersonType':'EMPLOYEE',
-            'roleCode':'PI'
+            sourceSystem: 'KC-PD',
+            sourceIdentifier: '1239',
+            personId: 'PI',
+            sourcePersonType: 'EMPLOYEE',
+            roleCode: 'PI'
           }
         ],
-        'sponsors': [
+        sponsors: [
           {
-            'sourceSystem':'KC-PD',
-            'sourceIdentifier':'1239',
-            'sponsorCode': '000340',
-            'sponsorName': 'NIH'
+            sourceSystem: 'KC-PD',
+            sourceIdentifier: '1239',
+            sponsorCode: '000340',
+            sponsorName: 'NIH'
           }
         ],
-        'startDate':'2016-07-01',
-        'endDate':'2018-06-30'
+        startDate: '2016-07-01',
+        endDate: '2018-06-30'
       };
 
       results = await NotificationService.createAndSendNewProjectNotification({}, 'test.com', {id: '5678'}, disclosureId, project, person );

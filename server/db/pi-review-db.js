@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable camelcase */
-
 import {COIConstants} from '../../coi-constants';
 import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
 import * as DisclosureDB from './disclosure-db';
@@ -61,17 +59,17 @@ async function updatePIResponseComment(dbInfo, userInfo, disclosureId, targetTyp
     });
 
   await knex('comment').insert({
-    'disclosure_id': disclosureId,
-    'topic_section': targetType,
-    'topic_id': targetId,
-    'text': comment,
-    'user_id': userInfo.schoolId,
-    'author': `${userInfo.firstName} ${userInfo.lastName}`,
-    'user_role' : COIConstants.ROLES.USER,
-    'editable' : false,
-    'date': new Date(),
-    'pi_visible': true,
-    'reviewer_visible': true,
+    disclosure_id: disclosureId,
+    topic_section: targetType,
+    topic_id: targetId,
+    text: comment,
+    user_id: userInfo.schoolId,
+    author: `${userInfo.firstName} ${userInfo.lastName}`,
+    user_role: COIConstants.ROLES.USER,
+    editable: false,
+    date: new Date(),
+    pi_visible: true,
+    reviewer_visible: true,
     current: true
   }, 'id');
 }
@@ -89,7 +87,7 @@ const updateReviewRecord = (knex, reviewId, values) => {
 
   return knex('pi_review')
     .update(newValues).where({
-      'id': reviewId
+      id: reviewId
     });
 };
 
@@ -204,9 +202,9 @@ const getComments = (knex, disclosureId, topicIDs, section) => {
   return knex.select('id', 'topic_id as topicId', 'text', 'author', 'date', 'user_id as userId', 'user_role as userRole')
     .from('comment as c')
     .where({
-      'disclosure_id': disclosureId,
-      'topic_section': section,
-      'pi_visible': true
+      disclosure_id: disclosureId,
+      topic_section: section,
+      pi_visible: true
     })
     .andWhere('topic_id', 'in', topicIDs)
     .andWhere(function() {

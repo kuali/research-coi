@@ -51,7 +51,7 @@ export default class AdminMenu extends React.Component {
       menu = (
         <div className={classes} onClick={this.toggle}>
           <div>
-            <i className={`fa fa-bars`}></i>
+            <i className={'fa fa-bars'}></i>
             <span style={{marginLeft: 15}}>ADMIN MENU</span>
           </div>
           <div style={{overflowY: 'hidden'}}>

@@ -1,80 +1,108 @@
 {
     "parser": "babel-eslint",
     "rules": {
+        "array-callback-return": 2,
+        "arrow-spacing": 2,
+        "block-scoped-var": 2,
+        "camelcase": 2,
+        "comma-style": 2,
+        "complexity": ["error", { "max": 22 }],
+        "constructor-super": 2,
+        "curly": 2,
+        "dot-notation": 2,
         "indent": [
             2,
             2,
             {"SwitchCase": 1}
         ],
-        "quotes": [
-            2,
-            "single"
-        ],
+        "key-spacing": 2,
+        "keyword-spacing": 2,
         "linebreak-style": [
             2,
             "unix"
         ],
-        "semi": [
-            2,
-            "always"
-        ],
-        "no-trailing-spaces": [
-            2, 
-            { "skipBlankLines": true }
-        ],
-        "dot-notation": 2,
-        "eqeqeq": [2, "smart"],
-        "max-len": [1, 160, 2],
-        "no-unexpected-multiline": 2,
-        "block-scoped-var": 2,
-        "camelcase": 2,
-        "consistent-return": 2,
-        "curly": 2,
+        "max-len": [2, 160, 2],
+        "module-name/kebab-case": 2,
+        "no-duplicate-imports": 2,
         "no-else-return": 2,
         "no-eq-null": 2,
-        "space-infix-ops": 2,
+        "no-extra-bind": 2,
         "no-floating-decimal": 2,
         "no-implicit-coercion": 2,
+        "no-implicit-globals": 2,
+        "no-invalid-this": 2,
         "no-lone-blocks": 2,
+        "no-lonely-if": 2,
         "no-loop-func": 2,
+        "no-magic-numbers": ["off", { "ignoreArrayIndexes": true, "ignore": [-1, 0, 1] }],
+        "no-multiple-empty-lines": ["error", {"max": 1}],
         "no-multi-spaces": 2,
+        "no-native-reassign": 2,
+        "no-nested-ternary": 2,
+        "no-new-require": 2,
+        "no-new-wrappers": 2,
+        "no-param-reassign": 2,
+        "no-return-assign": 2,
         "no-self-compare": 2,
-        "no-sequences": 2,
-        "no-unused-expressions": 2,
-        "no-with": 2,
-        "yoda": 2,
         "no-shadow": 2,
-        "no-use-before-define": [2, 'nofunc'],
-        "arrow-spacing": 2,
-        "constructor-super": 2,
-        "no-const-assign": 2,
-        "no-dupe-class-members": 2,
-        "no-this-before-super": 2,
-        "prefer-arrow-callback": 2,
+        "no-shadow-restricted-names": 2,
+        "no-sequences": 2,
+        "no-spaced-func": 2,
+        "no-sync": 2,
+        "no-throw-literal": 2,
+        "no-trailing-spaces": [
+            2,
+            { "skipBlankLines": true }
+        ],
+        "no-unmodified-loop-condition": 2,
+        "no-unneeded-ternary": 2,
+        "no-unsafe-finally": 2,
+        "no-unused-expressions": 2,
+        "no-use-before-define": "off",
+        "no-useless-concat": 2,
+        "no-useless-computed-key": 2,
+        "no-useless-constructor": 2,
+        "no-useless-escape": 2,
         "no-var": 2,
+        "no-void": 2,
+        "no-whitespace-before-property": 2,
+        "no-with": 2,
         "object-shorthand": 2,
+        "padded-blocks": ["error", "never"],
+        "prefer-arrow-callback": 2,
         "prefer-const": 2,
+        "prefer-rest-params": 2,
+        "prefer-spread": 2,
         "prefer-template": 2,
+        "quote-props": ["error", "as-needed"],
+        "quotes": [
+            2,
+            "single"
+        ],
         "react/jsx-closing-bracket-location": 2,
         "react/jsx-curly-spacing": 2,
         "react/jsx-indent-props": [2, 2],
-        "react/jsx-indent": [2, 2],
         "react/jsx-key": 2,
         "react/jsx-no-duplicate-props": 2,
         "react/jsx-no-undef": 2,
         "react/jsx-pascal-case": 2,
         "react/jsx-uses-react": 2,
         "react/jsx-uses-vars": 2,
-        "react/no-did-mount-set-state": [2, "allow-in-func"],
+        "react/no-did-mount-set-state": 2,
         "react/no-did-update-set-state": 2,
         "react/no-direct-mutation-state": 2,
         "react/no-unknown-property": 2,
         "react/prefer-es6-class": 2,
         "react/require-extension": [2, { "extensions": [".js", ".jsx"] }],
         "react/self-closing-comp": 2,
-        "contains/contains": [2, { "toFind": "GNU Affero General Public License", "errorMessage": "No license found"} ],
-        "module-name/kebab-case": 2,
-        "custom/allowed-roles": 2
+        "semi": [
+            2,
+            "always"
+        ],
+        "semi-spacing": 2,
+        "space-before-blocks": 2,
+        "space-infix-ops": 2,
+        "yoda": 2
     },
     "env": {
         "es6": true,
@@ -83,15 +111,17 @@
         "mocha": true
     },
     "extends": "eslint:recommended",
-    "ecmaFeatures": {
-        "jsx": true,
-        "experimentalObjectRestSpread": true,
-        "modules": true
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 6,
+        "ecmaFeatures": {
+            "jsx": true,
+            "experimentalObjectRestSpread": true
+        }
     },
     "plugins": [
         "react",
-        "contains",
-        "module-name",
-        "custom"
-    ]
+        "module-name"
+    ],
+    "root": true
 }

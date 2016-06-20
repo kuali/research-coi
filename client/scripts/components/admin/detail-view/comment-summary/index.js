@@ -187,12 +187,12 @@ export default class CommentSummary extends React.Component {
         <div className={styles.heading}>
           <span className={styles.title}>COMMENTS</span>
           <span className={styles.close} onClick={AdminActions.hideCommentSummary}>
-            <i className={`fa fa-times`} style={{fontSize: 23, marginRight: 3}}></i>
+            <i className={'fa fa-times'} style={{fontSize: 23, marginRight: 3}}></i>
             CLOSE
           </span>
         </div>
 
-        <div className={`fill`} style={{overflowY: 'auto', paddingBottom: 15}}>
+        <div className={'fill'} style={{overflowY: 'auto', paddingBottom: 15}}>
           {questionnaireTopics}
           {entitiesTopics}
           {declarationTopics}

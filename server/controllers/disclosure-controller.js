@@ -41,12 +41,14 @@ catch (err) {
 }
 
 function validateComment(comment) {
-  return (comment.topicSection &&
+  return (
+    comment.topicSection &&
     comment.topicId &&
     comment.text &&
     comment.piVisible !== undefined &&
     comment.reviewerVisible !== undefined &&
-    !isNaN(comment.disclosureId)) ? true : false;
+    !isNaN(comment.disclosureId)
+  );
 }
 
 export const init = app => {

@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "camelcase": ["off"],
+    "no-invalid-this": ["off"]
+  }
+}

@@ -92,8 +92,6 @@ describe('ProjectService', () => {
   });
 
   describe('filterProposalRoles', () => {
-
-
     it('should combine duplicate role codes and include all descriptions in description', () => {
       const roles = [
         {
@@ -122,7 +120,6 @@ describe('ProjectService', () => {
   });
 
   describe('isRequired', () => {
-
     const requirements = {};
     requirements.roles = [
       {

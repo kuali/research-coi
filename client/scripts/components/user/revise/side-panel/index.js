@@ -89,7 +89,7 @@ export default class SidePanel extends React.Component {
             SUBMIT
           </div>
 
-          <Link to={`/coi/dashboard`}>
+          <Link to={'/coi/dashboard'}>
             <div className={styles.cancel}>
               <i className={`fa fa-times-circle ${styles.cancelIcon}`}></i>
               CANCEL

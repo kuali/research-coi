@@ -91,7 +91,6 @@ export default class EntitySummary extends React.Component {
       );
     });
 
-
     const files = this.props.entity.files.map(file => {
       return (
         <div key={file.id} style={{marginBottom: 5}}>

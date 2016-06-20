@@ -27,7 +27,7 @@ export default class LoadTest {
     this.TOTAL_REQUESTS = 4000;
     this.method = 'GET';
     this.headers = {
-      'Authorization': 'Bearer a22'
+      Authorization: 'Bearer a22'
     };
 
     this.getShortestTime = this.getShortestTime.bind(this);

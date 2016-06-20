@@ -25,7 +25,7 @@ export default function BackToDashboard(props) {
     <Link to={"/coi/dashboard"}>
       <div className={`${styles.container} ${props.className}`}>
         <div>
-          <i className={`fa fa-arrow-left`}></i>
+          <i className={'fa fa-arrow-left'}></i>
           <span style={{marginLeft: 15}}>BACK TO DASHBOARD</span>
         </div>
       </div>

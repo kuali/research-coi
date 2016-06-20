@@ -51,7 +51,7 @@ export default class NotificationPanels extends React.Component {
   render() {
     const panels = [];
     const templateMap = this.createTemplateMap();
-    for(const key in templateMap) {
+    for (const key in templateMap) {
       if (templateMap.hasOwnProperty(key)) {
         const toggles = templateMap[key].map(template => { //eslint-disable-line no-loop-func
           let link;
@@ -65,7 +65,6 @@ export default class NotificationPanels extends React.Component {
             let value;
             let period;
             if (!template.editing && !template.error) {
-
               path = `config.notificationTemplates[${template.index}]`;
               subject = this.props.notificationTemplates[template.index].subject;
               body = this.props.notificationTemplates[template.index].body;
@@ -153,7 +152,7 @@ export default class NotificationPanels extends React.Component {
               <NotificationToggle
                 onChange={ConfigActions.toggle}
                 propertyPath={`config.notificationTemplates[${template.index}].active`}
-                defaultValue={template.active === 1 ? true : false}
+                defaultValue={template.active === 1}
               />
               <div style={{width: '75%', display: 'inline-block'}}>
                 <div className={styles.description}>
@@ -177,7 +176,7 @@ export default class NotificationPanels extends React.Component {
       }
     }
 
-    return(
+    return (
       <div>
         {panels}
       </div>

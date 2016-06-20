@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable camelcase */
-
 import {isNumber, uniq} from 'lodash';
 import {
   DISCLOSURE_STATUS,
@@ -118,7 +116,7 @@ async function updateDisclosureStatus(trx, person, project, req) {
 
     try {
       createAndSendNewProjectNotification(req.dbInfo, req.hostname, req.userInfo, disclosure[0].id, project, person);
-    } catch(err) {
+    } catch (err) {
       Log.error(err);
     }
   }
@@ -175,11 +173,14 @@ async function disableAllPersonsForProject(trx, projectId, req) {
 
 async function updateProjectPerson(trx, person, project, isRequired, isNew, req) {
   await trx('project_person')
-    .update({'active': true, 'role_cd': person.roleCode})
+    .update({
+      active: true,
+      role_cd: person.roleCode
+    })
     .where({
-      'person_id': person.personId,
-      'source_person_type': person.sourcePersonType,
-      'project_id': project.id
+      person_id: person.personId,
+      source_person_type: person.sourcePersonType,
+      project_id: project.id
     });
 
   if (isNew === 1) {
@@ -194,11 +195,11 @@ async function updateProjectPerson(trx, person, project, isRequired, isNew, req)
 async function insertProjectPerson(trx, person, project, isRequired, req) {
   const id = await trx('project_person')
     .insert({
-      'active': true,
-      'role_cd': person.roleCode,
-      'person_id': person.personId,
-      'source_person_type': person.sourcePersonType,
-      'project_id': project.id
+      active: true,
+      role_cd: person.roleCode,
+      person_id: person.personId,
+      source_person_type: person.sourcePersonType,
+      project_id: project.id
     }, 'id');
 
   if (isRequired) {
@@ -211,9 +212,9 @@ async function deactivateProjectPerson(trx, person, projectId, req) {
   await trx('project_person')
     .update('active', false)
     .where({
-      'person_id': person.personId,
-      'source_person_type': person.source_person_type,
-      'project_id': projectId
+      person_id: person.personId,
+      source_person_type: person.source_person_type,
+      project_id: projectId
     });
   await revertDisclosureStatus(trx, person, req, projectId);
 }
@@ -223,7 +224,7 @@ async function deactivateProjectPersons(trx, existingPersons, persons, projectId
     return persons.find(person => {
       return person.personId === pr.personId && person.sourcePersonType === pr.source_person_type;
     }) === undefined;
-  }).map(async result => {
+  }).map(async result => { // eslint-disable-line array-callback-return
     await deactivateProjectPerson(trx, result, projectId, req);
   });
 }
@@ -284,7 +285,7 @@ async function saveNewProjects(trx, project, req) {
   }
 
   if (project.persons) {
-    const inserts = project.persons.map(async (person) => {
+    const inserts = project.persons.map(async (person) => { // eslint-disable-line array-callback-return
       const isRequired = await isProjectRequired(req, project, person);
       const id = await insertProjectPerson(trx, person, project, isRequired, req);
       person.id = id;
@@ -365,7 +366,7 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
       .select('id')
       .where({disclosure_id: disclosure[0].id});
 
-    if(declaration[0] || entities.length === 0) {
+    if (declaration[0] || entities.length === 0) {
       disclosureStatus.status = disclosure[0].status;
     } else {
       disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
@@ -436,7 +437,7 @@ export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier,
 
       return Promise.all(queries);
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -453,7 +454,7 @@ export async function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, p
 
       return {};
     });
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
@@ -464,7 +465,7 @@ export async function updateProjectPersonDispositionType(dbInfo, projectPerson, 
     return knex('project_person').update({
       disposition_type_cd: projectPerson.dispositionTypeCd ? projectPerson.dispositionTypeCd : null
     }).where({id});
-  } catch(err) {
+  } catch (err) {
     return Promise.reject(err);
   }
 }
