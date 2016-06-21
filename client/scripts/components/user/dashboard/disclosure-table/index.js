@@ -19,61 +19,71 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {DisclosureTableRow} from '../disclosure-table-row';
-import {COIConstants} from '../../../../../../coi-constants';
+import DisclosureTableRow from '../disclosure-table-row';
+import {
+  EDITABLE_STATUSES,
+  DISCLOSURE_STATUS
+} from '../../../../../../coi-constants';
 
-export class DisclosureTable extends React.Component {
-  atLeastOneRowHasButton(disclosures) {
-    if (!disclosures || !Array.isArray(disclosures)) {
-      return false;
-    }
-
-    return disclosures.some(disclosure => {
-      return (COIConstants.EDITABLE_STATUSES.includes(disclosure.status) ||
-      disclosure.status === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED);
-    });
+function atLeastOneRowHasButton(disclosures) {
+  if (!disclosures || !Array.isArray(disclosures)) {
+    return false;
   }
 
-  render() {
-    const showButtonColumn = this.atLeastOneRowHasButton(this.props.disclosures);
+  return disclosures.some(disclosure => {
+    return (EDITABLE_STATUSES.includes(disclosure.status) ||
+    disclosure.status === DISCLOSURE_STATUS.REVISION_REQUIRED);
+  });
+}
 
-    const rows = this.props.disclosures ? this.props.disclosures.map((disclosure, index) => {
-      return (
-        <DisclosureTableRow
-          type={disclosure.type}
-          status={disclosure.status}
-          lastreviewed={disclosure.last_review_date}
-          title={disclosure.title}
-          expiresOn={disclosure.expired_date}
-          key={index}
-          disclosureId={disclosure.id}
-          showButtonColumn={showButtonColumn}
-          configId={disclosure.configId}
-        />
-      );
-    }) : null;
+export default function DisclosureTable({disclosures, className}) {
+  const showButtonColumn = atLeastOneRowHasButton(disclosures);
 
-    const classes = classNames(
-      styles.container,
-      this.props.className,
-      {[styles.showButtonColumn]: showButtonColumn}
-    );
-
+  const rows = disclosures ? disclosures.map((disclosure, index) => {
     return (
-      <div role="grid" className={classes}>
-        <div role="row" className={styles.headings}>
-          <span role="columnheader" className={`${styles.heading} ${styles.columnOne}`}>
-            DISCLOSURE TYPE
-          </span>
-          <span role="columnheader" className={`${styles.heading} ${styles.columnTwo}`}>
-            STATUS
-          </span>
-          <span role="columnheader" className={`${styles.heading} ${styles.columnThree}`}>
-            LAST REVIEW
-          </span>
-        </div>
-        {rows}
-      </div>
+      <DisclosureTableRow
+        type={disclosure.type}
+        status={disclosure.status}
+        lastreviewed={disclosure.last_review_date}
+        title={disclosure.title}
+        expiresOn={disclosure.expired_date}
+        key={index}
+        disclosureId={disclosure.id}
+        showButtonColumn={showButtonColumn}
+        configId={disclosure.configId}
+      />
     );
-  }
+  }) : null;
+
+  const classes = classNames(
+    styles.container,
+    className,
+    {[styles.showButtonColumn]: showButtonColumn}
+  );
+
+  return (
+    <div role="grid" className={classes}>
+      <div role="row" className={styles.headings}>
+        <span
+          role="columnheader"
+          className={`${styles.heading} ${styles.columnOne}`}
+        >
+          DISCLOSURE TYPE
+        </span>
+        <span
+          role="columnheader"
+          className={`${styles.heading} ${styles.columnTwo}`}
+        >
+          STATUS
+        </span>
+        <span
+          role="columnheader"
+          className={`${styles.heading} ${styles.columnThree}`}
+        >
+          LAST REVIEW
+        </span>
+      </div>
+      {rows}
+    </div>
+  );
 }
