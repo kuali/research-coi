@@ -54,6 +54,17 @@ function wrapWithReviseLink(dom, disclosureId) {
   );
 }
 
+function wrapWithReadOnlyLink(dom, disclosureId) {
+  return (
+    <Link
+      style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
+      to={`/coi/readonly/${disclosureId}`}
+    >
+      {dom}
+    </Link>
+  );
+}
+
 export default function DisclosureTableRow(props, {configState}) {
   const {
     status,
@@ -61,7 +72,6 @@ export default function DisclosureTableRow(props, {configState}) {
     configId,
     expiresOn,
     lastreviewed,
-    showButtonColumn,
     className,
     disclosureId
   } = props;
@@ -100,6 +110,9 @@ export default function DisclosureTableRow(props, {configState}) {
   else if (revisable) {
     extraInfo = wrapWithReviseLink(extraInfo, disclosureId);
   }
+  else {
+    extraInfo = wrapWithReadOnlyLink(extraInfo, disclosureId);
+  }
 
   const disclosureStatus = getDisclosureStatusString(
     configState,
@@ -117,6 +130,9 @@ export default function DisclosureTableRow(props, {configState}) {
   else if (revisable) {
     statusColumn = wrapWithReviseLink(statusColumn, disclosureId);
   }
+  else {
+    statusColumn = wrapWithReadOnlyLink(statusColumn, disclosureId);
+  }
 
   let lastReviewed = (
     <span role="gridcell" className={`${styles.cell} ${styles.three}`}>
@@ -129,6 +145,9 @@ export default function DisclosureTableRow(props, {configState}) {
   else if (revisable) {
     lastReviewed = wrapWithReviseLink(lastReviewed, disclosureId);
   }
+  else {
+    lastReviewed = wrapWithReadOnlyLink(lastReviewed, disclosureId);
+  }
 
   let button;
   if (updateable) {
@@ -139,20 +158,20 @@ export default function DisclosureTableRow(props, {configState}) {
     button = wrapWithReviseLink((
       <GreyButton>Revise &gt;</GreyButton>
     ), disclosureId);
+  } else {
+    button = wrapWithReadOnlyLink((
+      <GreyButton>View &gt;</GreyButton>
+    ), disclosureId);
   }
 
-  let buttonColumn;
-  if (showButtonColumn) {
-    buttonColumn = (
-      <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
-        {button}
-      </span>
-    );
-  }
+  let buttonColumn = (
+    <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
+      {button}
+    </span>
+  );
 
   const classes = classNames(
     styles.container,
-    {[styles.showButtonColumn]: showButtonColumn},
     {[styles.annual]: type === 'Annual'},
     className
   );

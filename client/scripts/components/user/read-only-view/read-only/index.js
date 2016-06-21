@@ -22,7 +22,8 @@ import {AppHeader} from '../../../app-header';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {
-  getDisclosureTypeString
+  getDisclosureTypeString,
+  getDisclosureStatusString
 } from '../../../../stores/config-store';
 import {Link} from 'react-router';
 import ReadOnlyDetail from '../read-only-detail';
@@ -31,7 +32,7 @@ import {
   DISCLOSURE_TYPE
 } from '../../../../../../coi-constants';
 
-export class ReadOnly extends React.Component {
+export default class ReadOnly extends React.Component {
   constructor() {
     super();
 
@@ -55,7 +56,7 @@ export class ReadOnly extends React.Component {
   onChange() {
     const storeState = DisclosureStore.getState();
     this.setState({
-      disclosure: storeState.loadDisclosureDetail
+      disclosure: storeState.disclosureDetail
     });
   }
 
@@ -70,18 +71,17 @@ export class ReadOnly extends React.Component {
   render() {
     let detail;
     let header;
-    if (
-      this.state.archivedDisclosures &&
-      this.state.archivedDisclosures.length > 0
-    ) {
-      let disclosureType;
-      if (this.state.disclosure) {
-        disclosureType = getDisclosureTypeString(
-          this.context.configState,
-          DISCLOSURE_TYPE.ANNUAL,
-          this.state.disclosure.configId
-        );
-      }
+    if (this.state.disclosure) {
+      const disclosureType = getDisclosureTypeString(
+        this.context.configState,
+        DISCLOSURE_TYPE.ANNUAL,
+        this.state.disclosure.configId
+      );
+      const statusString = getDisclosureStatusString(
+        this.context.configState,
+        this.state.disclosure.statusCd,
+        this.state.disclosure.configId
+      );
       header = (
         <div>
           <div className={styles.heading}>
@@ -91,14 +91,16 @@ export class ReadOnly extends React.Component {
             Submitted On:
             <span className={styles.dateValue}>{this.getSubmittedDate()}</span>
           </div>
+          <div className={styles.statusRow}>
+            Status:
+            <span className={styles.statusValue}>{statusString}</span>
+          </div>
         </div>
       );
 
-      if (this.state.disclosure) {
-        detail = (
-          <ReadOnlyDetail disclosure={this.state.disclosure} />
-        );
-      }
+      detail = (
+        <ReadOnlyDetail disclosure={this.state.disclosure} />
+      );
     }
     else {
       header = (

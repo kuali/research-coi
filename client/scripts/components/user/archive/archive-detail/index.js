@@ -66,6 +66,7 @@ export default class ArchiveDetail extends React.Component {
             declarations={disclosure.declarations}
             id={disclosure.id}
             configId={config.id}
+            showDispositions={true}
           />
         </div>
       );

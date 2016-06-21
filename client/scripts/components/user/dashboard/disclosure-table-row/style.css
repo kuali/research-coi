@@ -37,22 +37,13 @@
 }
 
 .one {
-  width: 33%;
-}
-
-.showButtonColumn .one {
   width: 35%;
 }
 
 .two,
 .three {
-  width: 33%;
-  font-size: 17px;
-}
-
-.showButtonColumn .two,
-.showButtonColumn .three {
   width: 25%;
+  font-size: 17px;
 }
 
 .four {

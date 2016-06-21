@@ -20,25 +20,8 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import DisclosureTableRow from '../disclosure-table-row';
-import {
-  EDITABLE_STATUSES,
-  DISCLOSURE_STATUS
-} from '../../../../../../coi-constants';
-
-function atLeastOneRowHasButton(disclosures) {
-  if (!disclosures || !Array.isArray(disclosures)) {
-    return false;
-  }
-
-  return disclosures.some(disclosure => {
-    return (EDITABLE_STATUSES.includes(disclosure.status) ||
-    disclosure.status === DISCLOSURE_STATUS.REVISION_REQUIRED);
-  });
-}
 
 export default function DisclosureTable({disclosures, className}) {
-  const showButtonColumn = atLeastOneRowHasButton(disclosures);
-
   const rows = disclosures ? disclosures.map((disclosure, index) => {
     return (
       <DisclosureTableRow
@@ -49,7 +32,6 @@ export default function DisclosureTable({disclosures, className}) {
         expiresOn={disclosure.expired_date}
         key={index}
         disclosureId={disclosure.id}
-        showButtonColumn={showButtonColumn}
         configId={disclosure.configId}
       />
     );
@@ -57,8 +39,7 @@ export default function DisclosureTable({disclosures, className}) {
 
   const classes = classNames(
     styles.container,
-    className,
-    {[styles.showButtonColumn]: showButtonColumn}
+    className
   );
 
   return (
