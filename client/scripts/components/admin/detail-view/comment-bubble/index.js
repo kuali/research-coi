@@ -118,6 +118,7 @@ export default class CommentBubble extends React.Component {
           id={this.props.id}
           piVisible={this.props.piVisible}
           role={this.props.role}
+          disclosureReadonly={this.props.disclosureReadonly}
         />
       </div>
     );

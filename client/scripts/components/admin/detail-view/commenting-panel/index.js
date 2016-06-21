@@ -48,6 +48,7 @@ export default class CommentingPanel extends React.Component {
             readOnly={this.props.editingComment}
             key={comment.id}
             className={`${styles.override} ${styles.comment}`}
+            disclosureReadonly={this.props.readonly}
           />
         );
       });

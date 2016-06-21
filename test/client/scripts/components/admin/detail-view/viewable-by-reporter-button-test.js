@@ -23,37 +23,75 @@ import ViewableByReporterButton from '../../../../../../client/scripts/component
 import assert from 'assert';
 
 describe('ViewableByReporterButton', () => {
-  const createComponentWrapper = (role, visible) => {
+  const createComponentWrapper = (role, visible, readonly) => {
     return shallow(
       <ViewableByReporterButton
         id={3}
         role={role}
         piVisible={visible}
+        disclosureReadonly={readonly}
       />
     );
   };
 
+  let wrapper;
+
   context('as an admin', () => {
-    it('should display the button', () => {
-      const wrapper = createComponentWrapper(ROLES.ADMIN, false);
-      assert.equal(wrapper.find('button').length, 1);
+    context('and the disclosure is not readonly', () => {
+      const readonly = false;
+
+      context('and the comment is not visible by the reporter', () => {
+        const visible = false;
+
+        before(() => {
+          wrapper = createComponentWrapper(ROLES.ADMIN, visible, readonly);
+        });
+
+        it('should display the button', () => {
+          assert.equal(wrapper.find('button').length, 1);
+        });
+
+        it('should display the show button text', () => {
+          assert.equal(wrapper.find('button').text(), 'Show to Reporter');
+        });
+      });
+
+      context('and the comment is visisble by the reporter', () => {
+        const visible = true;
+
+        before(() => {
+          wrapper = createComponentWrapper(ROLES.ADMIN, visible, readonly);
+        });
+
+        it('should display the button', () => {
+          assert.equal(wrapper.find('button').length, 1);
+        });
+
+        it('should display the hide button text', () => {
+          assert.equal(wrapper.find('button').text(), 'Hide from Reporter');
+        });
+      });
     });
 
-    it('should display the show button if the comment is currently not visibly by the reporter', () => {
-      const wrapper = createComponentWrapper(ROLES.ADMIN, false);
-      assert.equal(wrapper.find('button').text(), 'Show to Reporter');
-    });
 
-    it('should display the hide button text if the comment is already visible to the reporter', () => {
-      const wrapper = createComponentWrapper(ROLES.ADMIN, true);
-      assert.equal(wrapper.find('button').text(), 'Hide from Reporter');
+    context('and the disclosure is readonly', () => {
+      before(() => {
+        wrapper = createComponentWrapper(ROLES.ADMIN, false, true);
+      });
+
+      it('should not display the button', () => {
+        assert.equal(wrapper.find('button').length, 0);
+      });
     });
   });
 
 
   context('as a reviewer', () => {
+    beforeEach(() => {
+      wrapper = createComponentWrapper(ROLES.REVIEWER, true, false);
+    });
+
     it('should not display the button', () => {
-      const wrapper = createComponentWrapper(ROLES.REVIEWER, true);
       assert.equal(wrapper.find('button').length, 0);
     });
   });

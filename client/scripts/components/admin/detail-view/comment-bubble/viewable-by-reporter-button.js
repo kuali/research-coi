@@ -39,7 +39,7 @@ export default class ViewableByReporterButton extends React.Component {
     }
 
     let viewableButton = null;
-    if (this.props.role === ROLES.ADMIN) {
+    if (this.props.role === ROLES.ADMIN && !this.props.disclosureReadonly) {
       viewableButton = (
         <button id="viewableByReporterButton" onClick={this.toggleViewableByReporter}>
           {toggleText}
