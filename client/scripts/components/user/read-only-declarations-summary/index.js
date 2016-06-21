@@ -19,13 +19,13 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import DeclarationSummary from '../declaration-summary';
+import DeclarationSummary from '../read-only-declaration-summary';
 import {
   getProjectTypeString,
   getDeclarationTypeString,
   getDispositionTypeString
-} from '../../../../stores/config-store';
-import getConfig from '../../../../get-config';
+} from '../../../stores/config-store';
+import getConfig from '../../../get-config';
 
 export default class DeclarationsSummary extends React.Component {
   getUniqueProjects(declarations) {

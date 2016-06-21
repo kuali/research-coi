@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import QuestionSummary from '../question-summary';
+import QuestionSummary from '../read-only-question-summary';
 
 export default function QuestionnaireSummary(props) {
   let questions;

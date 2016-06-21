@@ -230,7 +230,7 @@ class _DisclosureStore {
     this.entities = [];
     this.declarations = [];
     this.archivedDisclosures = [];
-    this.archivedDisclosureDetail = undefined;
+    this.disclosureDetail = undefined;
     this.disclosureSummariesForUser = [];
     this.disclosuresNeedingReview = [];
   }
@@ -275,12 +275,12 @@ class _DisclosureStore {
     this.refreshArchivedDisclosures();
   }
 
-  loadArchivedDisclosureDetail(id) {
+  loadDisclosureDetail(id) {
     createRequest()
       .get(`/api/coi/disclosures/${id}`)
       .end(processResponse((err, disclosure) => {
         if (!err) {
-          this.archivedDisclosureDetail = disclosure.body;
+          this.disclosureDetail = disclosure.body;
           this.emitChange();
         }
       }));

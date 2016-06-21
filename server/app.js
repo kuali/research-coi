@@ -111,6 +111,7 @@ export function run() {
   app.use('/coi', authentication);
   app.use('/coi$', renderView('index'));
   app.use('/coi/$', renderView('index'));
+  app.use('/coi/readonly', renderView('index'));
   app.use('/coi/archiveview', renderView('index'));
   app.use('/coi/dashboard', renderView('index'));
   app.use('/coi/disclosure', renderView('index'));

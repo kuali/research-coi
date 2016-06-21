@@ -17,14 +17,13 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
 import DeclarationsSummary from '../../read-only-declarations-summary';
 import EntitiesSummary from '../../read-only-entities-summary';
 import QuestionnaireSummary from '../../read-only-questionnaire-summary';
 import getConfig from '../../../../get-config';
 
-export default class ArchiveDetail extends React.Component {
+export default class ReadOnlyDetail extends React.Component {
   getAnswerMap(answers) {
     if (!answers || !Array.isArray(answers)) {
       return {};
@@ -72,13 +71,13 @@ export default class ArchiveDetail extends React.Component {
     }
 
     return (
-      <div className={classNames(styles.container, this.props.className)}>
+      <div className={`${styles.container} ${this.props.className}`}>
         {detail}
       </div>
     );
   }
 }
 
-ArchiveDetail.contextTypes = {
+ReadOnlyDetail.contextTypes = {
   configState: React.PropTypes.object
 };
