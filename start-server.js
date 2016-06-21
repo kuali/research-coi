@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable no-var, prefer-arrow-callback, prefer-template, no-console */
+/* eslint-disable no-var, prefer-template, no-console, no-sync */
 
 var fs = require('fs');
 
@@ -24,7 +24,7 @@ var directoryToUse = process.argv.length < 3 ? '' : process.argv[2];
 var pathToBootstrap = './' + directoryToUse + '/server/bootstrap.js';
 try {
   fs.accessSync(pathToBootstrap, fs.F_OK);
-} catch(err) {
+} catch (err) {
   console.error(pathToBootstrap + ' is not found or does not have permission');
   return;
 }

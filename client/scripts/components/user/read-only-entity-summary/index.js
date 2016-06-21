@@ -19,127 +19,129 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../coi-constants';
+import {QUESTION_TYPE} from '../../../../../coi-constants';
 import {formatDate} from '../../../format-date';
 import EntityRelationshipSummary from '../../entity-relationship-summary';
 
-export default class EntitySummary extends React.Component {
-  getQuestionAnswer(questionId, entity, type) {
-    const theAnswer = entity.answers.find(answer => {
-      return answer.questionId === questionId;
-    });
-    if (!theAnswer) {
-      return '';
-    }
-
-    switch (type) {
-      case COIConstants.QUESTION_TYPE.DATE:
-        if (isNaN(theAnswer.answer.value)) {
-          return theAnswer.answer.value;
-        }
-
-        return formatDate(theAnswer.answer.value);
-      case COIConstants.QUESTION_TYPE.TEXTAREA:
-        return (
-          <div>
-            {theAnswer.answer.value}
-          </div>
-        );
-      case COIConstants.QUESTION_TYPE.MULTISELECT:
-        if (Array.isArray(theAnswer.answer.value)) {
-          const answers = theAnswer.answer.value.map((answer, index, array) => {
-            let answerToShow = answer;
-            if (index !== array.length - 1) {
-              answerToShow += ', ';
-            }
-            return (
-              <span key={`ans${questionId}${index}`}>{answerToShow}</span>
-            );
-          });
-
-          return (
-            <div>
-              {answers}
-            </div>
-          );
-        }
-
-        return theAnswer.answer.value;
-      default:
-        return theAnswer.answer.value;
-    }
+function getQuestionAnswer(questionId, entity, type) {
+  const theAnswer = entity.answers.find(answer => {
+    return answer.questionId === questionId;
+  });
+  if (!theAnswer) {
+    return '';
   }
 
-  render() {
-    const fields = this.props.questions.map(question => {
+  switch (type) {
+    case QUESTION_TYPE.DATE:
+      if (isNaN(theAnswer.answer.value)) {
+        return theAnswer.answer.value;
+      }
+
+      return formatDate(theAnswer.answer.value);
+    case QUESTION_TYPE.TEXTAREA:
       return (
-        <div key={`qa${question.id}`} style={{marginBottom: 8}}>
-          <span className={styles.fieldLabel}>{question.question.text}</span>
-          <span className={styles.fieldValue}>{this.getQuestionAnswer(question.id, this.props.entity, question.question.type)}</span>
-        </div>
-      );
-    });
-
-    const relationships = this.props.entity.relationships.map(relationship => {
-      return (
-        <EntityRelationshipSummary
-          key={`rel${relationship.id}`}
-          className={`${styles.override} ${styles.relationshipSummary}`}
-          relationship={relationship}
-          readonly={true}
-        />
-      );
-    });
-
-    const files = this.props.entity.files.map(file => {
-      return (
-        <div key={file.id} style={{marginBottom: 5}}>
-          <a
-            style={{
-              color: window.colorBlindModeOn ? 'black' : '#0095A0',
-              borderBottom: `1px dotted ${(window.colorBlindModeOn ? 'black' : '#0095A0')}`
-            }}
-            href={`/api/coi/files/${encodeURIComponent(file.id)}`}
-          >
-            {file.name}
-          </a>
-        </div>
-      );
-    });
-
-    const classes = classNames(
-      styles.container,
-      {[styles.highlighted]: this.props.changedByPI},
-      {[styles.entity]: !this.props.isLast},
-      this.props.style
-    );
-
-    let attachmentSection;
-    if (files.length > 0) {
-      attachmentSection = (
-        <div className={styles.bottomLeft}>
-          <div style={{color: window.colorBlindModeOn ? 'black' : '#888', fontSize: 12}}>ATTACHMENTS</div>
-          {files}
-        </div>
-      );
-    }
-
-    return (
-      <div className={classes}>
-        <div className={styles.name}>{this.props.entity.name}</div>
         <div>
-          <span className={styles.left}>
-            {fields}
-          </span>
-          <span className={styles.relations}>
-            <div className={styles.relationshipsLabel}>RELATIONSHIP(S)</div>
-            {relationships}
-          </span>
-          <div className={styles.bottom}>
-            {attachmentSection}
-          </div>
+          {theAnswer.answer.value}
         </div>
+      );
+    case QUESTION_TYPE.MULTISELECT:
+      if (Array.isArray(theAnswer.answer.value)) {
+        const answers = theAnswer.answer.value.map((answer, index, array) => {
+          let answerToShow = answer;
+          if (index !== array.length - 1) {
+            answerToShow += ', ';
+          }
+          return (
+            <span key={`ans${questionId}${index}`}>{answerToShow}</span>
+          );
+        });
+
+        return (
+          <div>
+            {answers}
+          </div>
+        );
+      }
+
+      return theAnswer.answer.value;
+    default:
+      return theAnswer.answer.value;
+  }
+}
+
+export default function EntitySummary(props) {
+  const fields = props.questions.map(question => {
+    return (
+      <div key={`qa${question.id}`} style={{marginBottom: 8}}>
+        <span className={styles.fieldLabel}>{question.question.text}</span>
+        <span className={styles.fieldValue}>
+          {getQuestionAnswer(question.id, props.entity, question.question.type)}
+        </span>
+      </div>
+    );
+  });
+
+  const relationships = props.entity.relationships.map(relationship => {
+    return (
+      <EntityRelationshipSummary
+        key={`rel${relationship.id}`}
+        className={`${styles.override} ${styles.relationshipSummary}`}
+        relationship={relationship}
+        readonly={true}
+      />
+    );
+  });
+
+  const files = props.entity.files.map(file => {
+    return (
+      <div key={file.id} style={{marginBottom: 5}}>
+        <a
+          style={{
+            color: window.colorBlindModeOn ? 'black' : '#0095A0',
+            borderBottom: `1px dotted ${(window.colorBlindModeOn ? 'black' : '#0095A0')}`
+          }}
+          href={`/api/coi/files/${encodeURIComponent(file.id)}`}
+        >
+          {file.name}
+        </a>
+      </div>
+    );
+  });
+
+  const classes = classNames(
+    styles.container,
+    {[styles.highlighted]: props.changedByPI},
+    {[styles.entity]: !props.isLast},
+    props.style
+  );
+
+  let attachmentSection;
+  if (files.length > 0) {
+    attachmentSection = (
+      <div className={styles.bottomLeft}>
+        <div style={{color: window.colorBlindModeOn ? 'black' : '#888', fontSize: 12}}>
+          ATTACHMENTS
+        </div>
+        {files}
       </div>
     );
   }
+
+  return (
+    <div className={classes}>
+      <div className={styles.name}>{props.entity.name}</div>
+      <div>
+        <span className={styles.left}>
+          {fields}
+        </span>
+        <span className={styles.relations}>
+          <div className={styles.relationshipsLabel}>RELATIONSHIP(S)</div>
+          {relationships}
+        </span>
+        <div className={styles.bottom}>
+          {attachmentSection}
+        </div>
+      </div>
+    </div>
+  );
 }
