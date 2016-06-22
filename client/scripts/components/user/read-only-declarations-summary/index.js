@@ -39,13 +39,18 @@ export default class DeclarationsSummary extends React.Component {
           declaration.projectTypeCd,
           this.props.configId
         );
+
+        let sponsor = 'None';
+        if (Array.isArray(declaration.sponsors) && declaration.sponsors.length > 0) {
+          sponsor = declaration.sponsors.join(', ');
+        }
         projects.push({
           id: declaration.projectId,
           name: declaration.projectTitle,
           type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
-          sponsor: declaration.sponsors ? declaration.sponsors.join(', ') : '',
+          sponsor,
           dispositionTypeCd: declaration.dispositionTypeCd
         });
         alreadyAdded[declaration.projectId] = true;
