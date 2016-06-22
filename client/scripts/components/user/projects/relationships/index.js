@@ -141,9 +141,12 @@ export class Relationships extends React.Component {
           this.context.configState.config.id
         );
 
-        const sponsorNames = uniq(this.props.projects[i].sponsors.map(sponsor => {
-          return sponsor.sponsorName;
-        }));
+        let sponsorNames = ['None'];
+        if (Array.isArray(this.props.projects[i].sponsors)) {
+          sponsorNames = uniq(this.props.projects[i].sponsors.map(sponsor => {
+            return sponsor.sponsorName;
+          }));
+        }
         relationshipNodes.push(
           <Project
             declarations={declarations}
