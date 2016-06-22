@@ -94,6 +94,12 @@
   vertical-align: top;
 }
 
+.daysLabel {
+  color: 'white';
+  vertical-align: 'bottom';
+  margin-bottom: '5px';
+}
+
 .infoBanner {
   float: right;
   background-color: #F57C00;
