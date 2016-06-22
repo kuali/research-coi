@@ -42,19 +42,10 @@
 }
 
 .columnOne {
-  width: 33%;
-}
-
-.showButtonColumn .columnOne {
   width: 35%;
 }
 
 .columnTwo,
 .columnThree {
-  width: 33%;
-}
-
-.showButtonColumn .columnTwo,
-.showButtonColumn .columnThree {
   width: 25%;
 }

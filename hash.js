@@ -20,7 +20,7 @@
       no-var
 */
 
-module.exports = function hashCode(toHash){
+module.exports = function hashCode(toHash) {
   var hash = 0;
   if (toHash.length === 0) { return hash; }
   for (var i = 0; i < toHash.length; i++) {

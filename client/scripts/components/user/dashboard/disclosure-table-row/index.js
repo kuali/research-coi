@@ -25,137 +25,165 @@ import {
   getDisclosureTypeString,
   getDisclosureStatusString
 } from '../../../../stores/config-store';
-import {COIConstants} from '../../../../../../coi-constants';
+import {
+  EDITABLE_STATUSES,
+  DISCLOSURE_STATUS
+} from '../../../../../../coi-constants';
 import {Link} from 'react-router';
 
-export class DisclosureTableRow extends React.Component {
-  wrapWithUpdateLink(dom) {
-    return (
-      <Link
-        style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
-        to={"/coi/disclosure"}
-        query={{type: this.props.type }}
-      >
-        {dom}
-      </Link>
-    );
-  }
+function wrapWithUpdateLink(dom, type) {
+  return (
+    <Link
+      style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
+      to={"/coi/disclosure"}
+      query={{type}}
+    >
+      {dom}
+    </Link>
+  );
+}
 
-  wrapWithReviseLink(dom) {
-    return (
-      <Link
-        style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
-        to={`/coi/revise/${this.props.disclosureId}`}
-      >
-        {dom}
-      </Link>
-    );
-  }
+function wrapWithReviseLink(dom, disclosureId) {
+  return (
+    <Link
+      style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
+      to={`/coi/revise/${disclosureId}`}
+    >
+      {dom}
+    </Link>
+  );
+}
 
-  render() {
-    const updateable = COIConstants.EDITABLE_STATUSES.includes(this.props.status);
+function wrapWithReadOnlyLink(dom, disclosureId) {
+  return (
+    <Link
+      style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
+      to={`/coi/readonly/${disclosureId}`}
+    >
+      {dom}
+    </Link>
+  );
+}
 
-    const revisable = this.props.status === COIConstants.DISCLOSURE_STATUS.REVISION_REQUIRED;
+export default function DisclosureTableRow(props, {configState}) {
+  const {
+    status,
+    type,
+    configId,
+    expiresOn,
+    lastreviewed,
+    className,
+    disclosureId
+  } = props;
+  const updateable = EDITABLE_STATUSES.includes(status);
+  const revisable = status === DISCLOSURE_STATUS.REVISION_REQUIRED;
+  const disclosureType = getDisclosureTypeString(
+    configState,
+    type,
+    configId
+  );
 
-    let extraInfo;
-    const disclosureType = getDisclosureTypeString(
-      this.context.configState,
-      this.props.type,
-      this.props.configId
-    );
-
-    if (this.props.expiresOn) {
-      extraInfo = (
-        <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
-          <div className={styles.type}>{disclosureType}</div>
-          <div className={styles.extra}>
-            Expires On:
-            <span style={{marginLeft: 3}}>
-              {formatDate(this.props.expiresOn)}
-            </span>
-          </div>
-        </span>
-      );
-    }
-    else {
-      extraInfo = (
-        <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
-          <div className={styles.type}>{disclosureType}</div>
-        </span>
-      );
-    }
-    if (updateable) {
-      extraInfo = this.wrapWithUpdateLink(extraInfo);
-    }
-    else if (revisable) {
-      extraInfo = this.wrapWithReviseLink(extraInfo);
-    }
-
-    const disclosureStatus = getDisclosureStatusString(
-      this.context.configState,
-      this.props.status,
-      this.props.configId
-    );
-    let status = (
-      <span role="gridcell" className={`${styles.cell} ${styles.two}`}>
-        {disclosureStatus}
+  let extraInfo;
+  if (expiresOn) {
+    extraInfo = (
+      <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
+        <div className={styles.type}>{disclosureType}</div>
+        <div className={styles.extra}>
+          Expires On:
+          <span style={{marginLeft: 3}}>
+            {formatDate(expiresOn)}
+          </span>
+        </div>
       </span>
     );
-    if (updateable) {
-      status = this.wrapWithUpdateLink(status);
-    }
-    else if (revisable) {
-      status = this.wrapWithReviseLink(status);
-    }
-
-    let lastReviewed = (
-      <span role="gridcell" className={`${styles.cell} ${styles.three}`}>
-        {this.props.lastreviewed ? formatDate(this.props.lastreviewed) : 'None'}
+  }
+  else {
+    extraInfo = (
+      <span role="gridcell" className={`${styles.cell} ${styles.one}`}>
+        <div className={styles.type}>{disclosureType}</div>
       </span>
     );
-    if (updateable) {
-      lastReviewed = this.wrapWithUpdateLink(lastReviewed);
-    }
-    else if (revisable) {
-      lastReviewed = this.wrapWithReviseLink(lastReviewed);
-    }
-
-    let button;
-    if (updateable) {
-      button = this.wrapWithUpdateLink((
-        <GreyButton>Update &gt;</GreyButton>
-      ));
-    } else if (revisable) {
-      button = this.wrapWithReviseLink((
-        <GreyButton>Revise &gt;</GreyButton>
-      ));
-    }
-
-    let buttonColumn;
-    if (this.props.showButtonColumn) {
-      buttonColumn = (
-        <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
-          {button}
-        </span>
-      );
-    }
-
-    const classes = classNames(
-      styles.container,
-      {[styles.showButtonColumn]: this.props.showButtonColumn},
-      {[styles.annual]: this.props.type === 'Annual'},
-      this.props.className
-    );
-
-    return (
-      <div role="row" className={classes}>
-        {extraInfo}
-        {status}
-        {lastReviewed}
-        {buttonColumn}
-      </div>
-    );
   }
+  if (updateable) {
+    extraInfo = wrapWithUpdateLink(extraInfo, type);
+  }
+  else if (revisable) {
+    extraInfo = wrapWithReviseLink(extraInfo, disclosureId);
+  }
+  else {
+    extraInfo = wrapWithReadOnlyLink(extraInfo, disclosureId);
+  }
+
+  const disclosureStatus = getDisclosureStatusString(
+    configState,
+    status,
+    configId
+  );
+  let statusColumn = (
+    <span role="gridcell" className={`${styles.cell} ${styles.two}`}>
+      {disclosureStatus}
+    </span>
+  );
+  if (updateable) {
+    statusColumn = wrapWithUpdateLink(statusColumn, type);
+  }
+  else if (revisable) {
+    statusColumn = wrapWithReviseLink(statusColumn, disclosureId);
+  }
+  else {
+    statusColumn = wrapWithReadOnlyLink(statusColumn, disclosureId);
+  }
+
+  let lastReviewed = (
+    <span role="gridcell" className={`${styles.cell} ${styles.three}`}>
+      {lastreviewed ? formatDate(lastreviewed) : 'None'}
+    </span>
+  );
+  if (updateable) {
+    lastReviewed = wrapWithUpdateLink(lastReviewed, type);
+  }
+  else if (revisable) {
+    lastReviewed = wrapWithReviseLink(lastReviewed, disclosureId);
+  }
+  else {
+    lastReviewed = wrapWithReadOnlyLink(lastReviewed, disclosureId);
+  }
+
+  let button;
+  if (updateable) {
+    button = wrapWithUpdateLink((
+      <GreyButton>Update &gt;</GreyButton>
+    ), type);
+  } else if (revisable) {
+    button = wrapWithReviseLink((
+      <GreyButton>Revise &gt;</GreyButton>
+    ), disclosureId);
+  } else {
+    button = wrapWithReadOnlyLink((
+      <GreyButton>View &gt;</GreyButton>
+    ), disclosureId);
+  }
+
+  let buttonColumn = (
+    <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
+      {button}
+    </span>
+  );
+
+  const classes = classNames(
+    styles.container,
+    {[styles.annual]: type === 'Annual'},
+    className
+  );
+
+  return (
+    <div role="row" className={classes}>
+      {extraInfo}
+      {statusColumn}
+      {lastReviewed}
+      {buttonColumn}
+    </div>
+  );
 }
 
 DisclosureTableRow.contextTypes = {

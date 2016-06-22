@@ -19,13 +19,13 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import DeclarationSummary from '../declaration-summary';
+import DeclarationSummary from '../read-only-declaration-summary';
 import {
   getProjectTypeString,
   getDeclarationTypeString,
   getDispositionTypeString
-} from '../../../../stores/config-store';
-import getConfig from '../../../../get-config';
+} from '../../../stores/config-store';
+import getConfig from '../../../get-config';
 
 export default class DeclarationsSummary extends React.Component {
   getUniqueProjects(declarations) {
@@ -84,12 +84,13 @@ export default class DeclarationsSummary extends React.Component {
               declaration={declaration}
               configId={this.props.configId}
               disposition={declarationType}
+              showDispositions={this.props.showDispositions}
             />
           );
         });
 
         let dispositionType;
-        if (config.general.dispositionsEnabled) {
+        if (config.general.dispositionsEnabled && this.props.showDispositions) {
           const dispositionTypeString = getDispositionTypeString(
             this.context.configState,
             project.dispositionTypeCd,
@@ -105,7 +106,7 @@ export default class DeclarationsSummary extends React.Component {
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (config.general.adminRelationshipEnabled) {
+        if (config.general.adminRelationshipEnabled && this.props.showDispositions) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );

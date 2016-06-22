@@ -23,6 +23,7 @@ import {Dashboard} from './dashboard/dashboard';
 import {Disclosure} from './disclosure';
 import TravelLog from './travel-log/travel-log';
 import {Archive} from './archive/archive';
+import ReadOnlyView from './read-only-view/read-only';
 import {Revise} from './revise/revise';
 import {SizeAwareComponent} from '../size-aware-component';
 import UserInfoStore from '../../stores/user-info-store';
@@ -78,6 +79,7 @@ class App extends SizeAwareComponent {
     }
     return (
       <Router history={history}>
+        <Route path="/coi/readonly/:id" component={ReadOnlyView} />
         <Route path="/coi/archiveview" component={Archive} />
         <Route path="/coi/dashboard" component={Dashboard} />
         <Route path="/coi/disclosure" component={Disclosure} />

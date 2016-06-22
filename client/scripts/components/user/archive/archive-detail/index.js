@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import DeclarationsSummary from '../declarations-summary';
-import EntitiesSummary from '../entities-summary';
-import QuestionnaireSummary from '../questionnaire-summary';
+import DeclarationsSummary from '../../read-only-declarations-summary';
+import EntitiesSummary from '../../read-only-entities-summary';
+import QuestionnaireSummary from '../../read-only-questionnaire-summary';
 import getConfig from '../../../../get-config';
 
 export default class ArchiveDetail extends React.Component {
@@ -66,6 +66,7 @@ export default class ArchiveDetail extends React.Component {
             declarations={disclosure.declarations}
             id={disclosure.id}
             configId={config.id}
+            showDispositions={true}
           />
         </div>
       );

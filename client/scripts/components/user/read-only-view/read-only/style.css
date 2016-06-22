@@ -88,29 +88,20 @@
   font-weight: bold;
 }
 
-.dateRow {
+.dateRow,
+.statusRow {
   font-size: 14px;
 }
 
-.dateValue {
+.dateValue,
+.statusValue {
   font-weight: bold;
   margin-left: 3px;
 }
 
-.versionPicker {
-  float: right;
-  margin-right: 55px;
-  padding-top: 8px;
-}
-
-.versionLabel {
-  font-size: 12px;
-}
-
 @media print {
   .sidebar,
-  .header,
-  .versionPicker {
+  .header {
     display: none;
   }
 

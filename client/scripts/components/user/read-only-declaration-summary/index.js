@@ -19,19 +19,18 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {getDispositionTypeString} from '../../../../stores/config-store';
-import getConfig from '../../../../get-config';
+import {getDispositionTypeString} from '../../../stores/config-store';
+import getConfig from '../../../get-config';
 
 export default function DeclarationSummary(props, {configState}) {
-  let adminRelationship;
-  let commentClass = styles.comments;
-
   const config = getConfig(configState, props.configId);
   if (config === null) {
     return null;
   }
 
-  if (config.general.adminRelationshipEnabled) {
+  let adminRelationship;
+  let commentClass = styles.comments;
+  if (config.general.adminRelationshipEnabled && props.showDispositions) {
     const dispositionType = getDispositionTypeString(
       configState,
       props.declaration.adminRelationshipCd,

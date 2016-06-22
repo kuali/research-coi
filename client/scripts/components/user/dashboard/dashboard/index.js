@@ -23,7 +23,7 @@ import {AppHeader} from '../../../app-header';
 import {NewDisclosureButton} from '../new-disclosure-button';
 import {DisclosureArchiveButton} from '../disclosure-archive-button';
 import {ConfirmationMessage} from '../confirmation-message';
-import {DisclosureTable} from '../disclosure-table';
+import DisclosureTable from '../disclosure-table';
 import {ReviewTable} from '../review-table';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {TravelLogButton} from '../travel-log-button';

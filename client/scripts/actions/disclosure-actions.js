@@ -48,7 +48,7 @@ export const DisclosureActions = alt.generateActions(
   'toggleConfirmationMessage',
   'doneEditingManualEvent',
   'jumpToStep',
-  'loadArchivedDisclosureDetail',
+  'loadDisclosureDetail',
   'turnOnValidation',
   'turnOffValidation',
   'certify',

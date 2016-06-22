@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import EntitySummary from '../entity-summary';
+import EntitySummary from '../read-only-entity-summary';
 
 export default function EntitiesSummary(props) {
   let entities;
