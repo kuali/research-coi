@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-// import styles from './style';
+import styles from './style';
 import React from 'react';
 import { AdminActions } from '../../../../actions/admin-actions';
 import { ROLES } from '../../../../../../coi-constants';
@@ -34,14 +34,18 @@ export default class ViewableByReporterButton extends React.Component {
 
   render() {
     let toggleText = 'Show to Reporter';
+    let toggleIconClass = 'fa-eye-slash';
+
     if (this.props.piVisible) {
       toggleText = 'Hide from Reporter';
+      toggleIconClass = 'fa-eye';
     }
 
     let viewableButton = null;
     if (this.props.role === ROLES.ADMIN && !this.props.disclosureReadonly) {
       viewableButton = (
-        <button id="viewableByReporterButton" onClick={this.toggleViewableByReporter}>
+        <button className={styles.viewableByReporterButton} id="viewableByReporterButton" onClick={this.toggleViewableByReporter}>
+          <i className={`fa ${toggleIconClass}`} aria-hidden="true"></i>
           {toggleText}
         </button>
       );
