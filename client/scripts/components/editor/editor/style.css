@@ -65,3 +65,11 @@
   display: inline-block;
   position: relative;
 }
+
+.button {
+  color: black;
+  margin: 0 5px;
+  border: 1px solid #666;
+  border-radius: 5px;
+  background-color: white;
+}
