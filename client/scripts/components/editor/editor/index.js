@@ -182,13 +182,13 @@ export default class _Editor extends React.Component {
         <div className={styles.buttons}>
           <button
             onMouseDown={this.promptForLink}
-            style={{margin: '0 5px'}}
+            className={styles.button}
           >
             <i className={'fa fa-link'}></i>
           </button>
           <button
             onMouseDown={this.removeLink}
-            style={{margin: '0 5px'}}
+            className={styles.button}
           >
             <i className={'fa fa-unlink'}></i>
           </button>

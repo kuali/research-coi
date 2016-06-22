@@ -14,14 +14,19 @@
 */
 
 .button {
-  color: #999;
+  color: black;
   margin: 0 5px;
+  border: 1px solid #666;
+  border-radius: 5px;
+  background-color: white;
 }
 
 .activeButton {
-  color: #5890ff;
+  color: #0141c0;
+  background-color: #EFF6FE;
 }
 
 :global(.color-blind) .activeButton {
   color: black;
+  background-color: white;
 }
