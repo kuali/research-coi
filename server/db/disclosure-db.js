@@ -1057,7 +1057,8 @@ export const getSummariesForUser = async (dbInfo, userId) => {
   const entityCounts = await knex('fin_entity')
     .count('disclosure_id as entityCount')
     .select('disclosure_id as disclosureId')
-    .where('disclosure_id','in', summaries.map(s => s.id))
+    .whereIn('disclosure_id', summaries.map(s => s.id))
+    .andWhere('active', true)
     .groupBy('disclosure_id');
 
   return summaries.map(summary => {
