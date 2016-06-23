@@ -61,8 +61,8 @@ export class AppHeader extends React.Component {
     }
 
     let usersName;
-    if (userInfo && userInfo.firstName !== undefined && userInfo.lastName !== undefined) {
-      usersName = `${userInfo.firstName} ${userInfo.lastName}`;
+    if (userInfo && userInfo.displayName) {
+      usersName = userInfo.displayName;
     }
 
     return (
@@ -95,7 +95,7 @@ export class AppHeader extends React.Component {
             {signOut}
           </Menu>
           <span className={styles.usersName}>
-            Welcome,
+            Welcome
             <span style={{marginLeft: 3}}>
               {usersName}
             </span>

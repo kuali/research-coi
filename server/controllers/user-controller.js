@@ -33,12 +33,22 @@ try {
 
 export const init = app => {
   app.get('/api/coi/userinfo', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+    const {
+      schoolId: userId,
+      firstName,
+      lastName,
+      displayName,
+      coiRole,
+      mock
+    } = req.userInfo;
+
     res.send({
-      userId: req.userInfo.schoolId,
-      firstName: req.userInfo.firstName,
-      lastName: req.userInfo.lastName,
-      coiRole: req.userInfo.coiRole,
-      mock: req.userInfo.mock,
+      userId,
+      firstName,
+      lastName,
+      displayName,
+      coiRole,
+      mock,
       researchCoreUrl: getAuthorizationInfo(req.dbInfo).researchCoreUrl,
       version: process.env.npm_package_version
     });
