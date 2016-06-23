@@ -19,6 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
+import {get} from 'lodash';
 import {AppHeader} from '../../../app-header';
 import {NewDisclosureButton} from '../new-disclosure-button';
 import {DisclosureArchiveButton} from '../disclosure-archive-button';
@@ -35,6 +36,21 @@ import {
 } from '../../../../../../coi-constants';
 import AdminMenu from '../../../admin-menu';
 import moment from 'moment';
+
+function shouldUpdateStatus(noEntityConfigValue, disclosureSummaries) {
+  if (!noEntityConfigValue) {
+    return true;
+  }
+
+  const annualSummary = disclosureSummaries.find(summary => {
+    return String(summary.type) === DISCLOSURE_TYPE.ANNUAL;
+  });
+  if (annualSummary && annualSummary.entityCount === 0) {
+    return false;
+  }
+
+  return true;
+}
 
 export class Dashboard extends React.Component {
   constructor() {
@@ -83,7 +99,7 @@ export class Dashboard extends React.Component {
       toReview
     } = this.state;
 
-    const { userInfo } = this.context;
+    const { userInfo, configState } = this.context;
 
     const isAdmin = userInfo &&
       (userInfo.coiRole === ROLES.ADMIN);
@@ -95,15 +111,10 @@ export class Dashboard extends React.Component {
       );
     }
 
-    let annualDisclosureButton;
-    let travelLogButton;
-    let manualDisclosureButton;
-
     let annualDisclosureEnabled;
     let manualDisclosureEnabled;
     let travelLogEnabled;
-
-    this.context.configState.config.disclosureTypes.forEach(type => {
+    configState.config.disclosureTypes.forEach(type => {
       switch (type.typeCd.toString()) {
         case DISCLOSURE_TYPE.ANNUAL:
           annualDisclosureEnabled = type.enabled === 1;
@@ -117,6 +128,7 @@ export class Dashboard extends React.Component {
       }
     });
 
+    let annualDisclosureButton;
     if (annualDisclosureEnabled) {
       const annualDisclosure = disclosureSummaries.find(summary => {
         return summary.type.toString() === DISCLOSURE_TYPE.ANNUAL;
@@ -135,6 +147,7 @@ export class Dashboard extends React.Component {
       }
     }
 
+    let travelLogButton;
     if (travelLogEnabled) {
       travelLogButton = (
         <div>
@@ -143,6 +156,7 @@ export class Dashboard extends React.Component {
       );
     }
 
+    let manualDisclosureButton;
     if (manualDisclosureEnabled) {
       manualDisclosureButton = (
         <div>
@@ -150,7 +164,7 @@ export class Dashboard extends React.Component {
         </div>
       );
     }
-    if (!this.context.configState.isLoaded) {
+    if (!configState.isLoaded) {
       return (<div/>);
     }
 
@@ -161,20 +175,17 @@ export class Dashboard extends React.Component {
       );
     }
 
-    const updateStatus = () => {
-      if (this.context.configState.config.general.disableNewProjectStatusUpdateWhenNoEntities) {
-        const annualSummary = disclosureSummaries.find(s => String(s.type) === DISCLOSURE_TYPE.ANNUAL);
-        if (annualSummary && annualSummary.entityCount === 0) {
-          return false;
-        }
-      }
-      return true;
-    };
-
+    const configValueOn = get(
+      configState,
+      'config.general.disableNewProjectStatusUpdateWhenNoEntities',
+      false
+    );
     let newProjectBanner;
-    if (Array.isArray(projects) &&
-      projects.filter(project => project.new === 1).length > 0 &&
-      updateStatus()) {
+    if (
+      Array.isArray(projects) &&
+      projects.some(project => project.new === 1) &&
+      shouldUpdateStatus(configValueOn, disclosureSummaries)
+    ) {
       newProjectBanner = (
         <div className={styles.infoBanner}>
           Your annual disclosure needs updates due to new projects to disclose.
@@ -193,7 +204,7 @@ export class Dashboard extends React.Component {
           <div className={styles.expiresBanner}>
             <span style={{paddingTop: '5px'}}>Your disclosure expires in:</span>
             <span className={styles.days}>{days}</span>
-            <span style={{color: 'white', verticalAlign: 'bottom', marginBottom: '5px'}}>Days</span>
+            <span className={styles.daysLabel}>Days</span>
           </div>
         );
       }
@@ -234,7 +245,10 @@ export class Dashboard extends React.Component {
 
     return (
       <div className={classes} style={{minHeight: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
+        <AppHeader
+          className={`${styles.override} ${styles.header}`}
+          moduleName={'Conflict Of Interest'}
+        />
         <span className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <span className={styles.sidebar}>
             {adminMenu}
@@ -242,7 +256,9 @@ export class Dashboard extends React.Component {
             {travelLogButton}
             {manualDisclosureButton}
             <div>
-              <DisclosureArchiveButton className={`${styles.override} ${styles.borderBottom}`} />
+              <DisclosureArchiveButton
+                className={`${styles.override} ${styles.borderBottom}`}
+              />
             </div>
           </span>
           <span className={`fill ${styles.content}`}>
