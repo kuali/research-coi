@@ -68,7 +68,11 @@ class _AdminStore {
         status: defaultStatusFilters(),
         type: [],
         search: '',
-        disposition: null
+        disposition: null,
+        reviewStatus: {
+          assigned: true,
+          notAssigned: true
+        }
       },
       effectiveSearchValue: '',
       showFilters: true,
@@ -257,6 +261,14 @@ class _AdminStore {
     this.refreshDisclosures();
   }
 
+  clearReviewStatusFilter() {
+    this.applicationState.filters.reviewStatus = {
+      assigned: true,
+      notAssigned: true
+    };
+    this.refreshDisclosures();
+  }
+
   removeReviewerFilter(id) {
     const valueIndex = this.applicationState.reviewerFilterValues.findIndex(r => r.userId === id);
     const filterIndex = this.applicationState.filters.reviewers.findIndex(r => r === id);
@@ -358,6 +370,18 @@ class _AdminStore {
     }
     else {
       this.applicationState.filters.status.splice(index, 1);
+    }
+
+    this.refreshDisclosures();
+  }
+
+  toggleReviewStatusFilter(toToggle) {
+    const {filters} = this.applicationState;
+    if (toToggle === 'Assigned') {
+      filters.reviewStatus.assigned = !filters.reviewStatus.assigned;
+    }
+    else if (toToggle === 'Not') {
+      filters.reviewStatus.notAssigned = !filters.reviewStatus.notAssigned;
     }
 
     this.refreshDisclosures();

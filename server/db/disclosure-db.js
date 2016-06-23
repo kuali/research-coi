@@ -936,11 +936,42 @@ export async function getSummariesForReview(dbInfo, sortColumn, sortDirection, s
     });
   }
 
+  let reviewJoinMade = false;
+  if (filters.reviewStatus) {
+    const {reviewStatus} = filters;
+    
+    if (!reviewStatus.assigned && !reviewStatus.notAssigned) {
+      query.where('status_cd', -99999999); // return no rows
+    }
+    else if (reviewStatus.assigned && !reviewStatus.notAssigned) {
+      if (!reviewJoinMade) {
+        reviewJoinMade = true;
+        query.innerJoin('additional_reviewer as ar',
+          'd.id',
+          'ar.disclosure_id'
+        );
+      }
+    }
+    else if (!reviewStatus.assigned && reviewStatus.notAssigned) {
+      if (!reviewJoinMade) {
+        reviewJoinMade = true;
+        query.leftJoin('additional_reviewer as ar',
+          'd.id',
+          'ar.disclosure_id'
+        );
+        query.whereNull('ar.id');
+      }
+    }
+  }
+
   if (filters.reviewers) {
-    query.leftJoin('additional_reviewer as ar',
-      'd.id',
-      'ar.disclosure_id'
-    );
+    if (!reviewJoinMade) {
+      reviewJoinMade = true;
+      query.innerJoin('additional_reviewer as ar',
+        'd.id',
+        'ar.disclosure_id'
+      );
+    }
 
     query.where('ar.user_id', 'in', filters.reviewers);
   }

@@ -51,6 +51,8 @@ export const AdminActions = alt.generateActions(
   'clearStatusFilter',
   'toggleStatusFilter',
   'clearReviewerFilter',
+  'clearReviewStatusFilter',
+  'toggleReviewStatusFilter',
   'setReviewerFilter',
   'removeReviewerFilter',
   'setSortDirection',
