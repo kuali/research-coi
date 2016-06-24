@@ -546,7 +546,7 @@ class _AdminStore {
         .end(processResponse((err, updatedComments) => {
           if (!err) {
             this.updateCommentState(updatedComments.body);
-            this.updateCurrentComments(true);
+            this.updateCurrentComments(false);
             this.emitChange();
           }
         }));
