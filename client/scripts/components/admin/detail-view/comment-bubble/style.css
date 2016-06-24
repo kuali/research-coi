@@ -98,7 +98,8 @@
   border-top: 1px solid #CCCCCC;
 }
 
-.editButton, .viewableByReporterButton {
+.editButton,
+.viewableByReporterButton {
   font-size: 13px;
   margin: 7px 20px;
   padding: 0;
@@ -115,7 +116,7 @@
 }
 
 .viewableByReporterButton {
-  margin-right: 10px
+  margin-right: 10px;
 }
 
 .viewableByReporterButton i {
