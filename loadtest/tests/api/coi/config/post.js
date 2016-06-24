@@ -20,8 +20,10 @@
 import LoadTest from '../../../../load-test';
 
 export class Test extends LoadTest {
-  constructor() {
-    super();
+  constructor(config) {
+    super(config);
+    this.disabled = true;
+
     this.CONCURRENT_REQUESTS = 10;
     this.method = 'POST';
     this.path = '/api/coi/config';
@@ -550,10 +552,14 @@ export class Test extends LoadTest {
     };
 
     this.postData = JSON.stringify(dataObject);
-    this.headers = {
-      Authorization: 'Bearer a22',
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(this.postData, 'utf8')
-    };
+  }
+
+  getHeaders() {
+    const headers = this.headers;
+
+    headers['Content-Type'] = 'application/json';
+    headers['Content-Length'] = Buffer.byteLength(this.postData, 'utf8');
+
+    return headers;
   }
 }

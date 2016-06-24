@@ -16,18 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable no-magic-numbers */
+/* eslint-disable no-magic-numbers, no-console */
 
+import https from 'https';
 import http from 'http';
 import {OK} from '../http-status-codes';
 
 export default class LoadTest {
-  constructor() {
-    this.CONCURRENT_REQUESTS = 25;
-    this.TOTAL_REQUESTS = 4000;
+  constructor(config) {
+    this.hostname = config.host;
+    this.port = config.port;
+    this.protocol = config.protocol;
+
+    this.CONCURRENT_REQUESTS = config.defaultConcurrentRequests;
+    this.TOTAL_REQUESTS = config.defaultTotalRequestsPerTest;
     this.method = 'GET';
     this.headers = {
-      Authorization: 'Bearer a22'
+      Authorization: `Bearer ${config.authToken}`
     };
 
     this.getShortestTime = this.getShortestTime.bind(this);
@@ -99,6 +104,11 @@ export default class LoadTest {
 
   processResponse(err, response) {
     if (err || !this.isValidResponse(response)) {
+      if (err) {
+        console.error(err);
+      }
+      console.error(response.statusCode);
+
       this.testRunnerCallback({
         success: false
       });
@@ -137,19 +147,28 @@ export default class LoadTest {
 
   hitEndpoint(callback) {
     const options = {
-      hostname: 'localhost',
-      port: this.portToUse,
+      hostname: this.hostname,
+      port: this.port,
       path: this.getPath(),
       method: this.method,
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      protocol: this.protocol,
+      rejectUnauthorized: false
     };
 
     const startTime = new Date().getTime();
 
-    const req = http.request(options, res => {
+    let httpLib;
+    if (this.protocol === 'https:') {
+      httpLib = https;
+    }
+    else {
+      httpLib = http;
+    }
+
+    const req = httpLib.request(options, res => {
       let response = '';
       const statusCode = res.statusCode;
-
       res.setEncoding('utf8');
       res.on('data', chunk => {
         response += chunk;
