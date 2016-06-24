@@ -73,7 +73,6 @@ describe('ViewableByReporterButton', () => {
       });
     });
 
-
     context('and the disclosure is readonly', () => {
       before(() => {
         wrapper = createComponentWrapper(ROLES.ADMIN, false, true);
@@ -84,7 +83,6 @@ describe('ViewableByReporterButton', () => {
       });
     });
   });
-
 
   context('as a reviewer', () => {
     beforeEach(() => {
