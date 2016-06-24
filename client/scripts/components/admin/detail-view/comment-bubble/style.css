@@ -26,7 +26,7 @@
   margin-left: 0;
   transform: translateY(0%);
   transition: transform 0.2s ease-out;
-  width: 60%;
+  width: 65%;
 }
 
 .container.new {
@@ -36,7 +36,7 @@
 .container.isUser {
   background-color: #D0E3E5;
 
-  margin-left: 35%;
+  margin-left: 30%;
 }
 
 .comment {
@@ -98,14 +98,26 @@
   border-top: 1px solid #CCCCCC;
 }
 
-.editButton {
-
+.editButton, .viewableByReporterButton {
   font-size: 13px;
   margin: 7px 20px;
   padding: 0;
   color: #189EA8;
-  float: right;
   background-color: transparent;
   border: none;
   border-bottom: 1px dotted #189EA8;
+  text-transform: uppercase;
+}
+
+.editButton {
+  float: right;
+  margin-left: 10px;
+}
+
+.viewableByReporterButton {
+  margin-right: 10px
+}
+
+.viewableByReporterButton i {
+  margin-right: 5px;
 }

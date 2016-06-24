@@ -66,6 +66,7 @@ export const AdminActions = alt.generateActions(
   'deleteManagementPlan',
   'showCommentingPanel',
   'makeComment',
+  'toggleCommentViewableByReporter',
   'addAdditionalReviewer',
   'reassignAdditionalReviewer',
   'removeAdditionalReviewer',

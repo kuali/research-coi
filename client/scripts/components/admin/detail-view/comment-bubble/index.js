@@ -22,8 +22,9 @@ import {formatDate} from '../../../../format-date';
 import classNames from 'classnames';
 import { AdminActions } from '../../../../actions/admin-actions';
 import { ROLES } from '../../../../../../coi-constants';
+import ViewableByReporterButton from './viewable-by-reporter-button';
 
-export default class CommentingPanel extends React.Component {
+export default class CommentBubble extends React.Component {
   constructor() {
     super();
 
@@ -33,7 +34,7 @@ export default class CommentingPanel extends React.Component {
   editComment() {
     AdminActions.editComment(this.props.id);
   }
-  
+
   render() {
     let theDate;
     if (this.props.date) {
@@ -113,6 +114,12 @@ export default class CommentingPanel extends React.Component {
 
         </span>
         {editButton}
+        <ViewableByReporterButton
+          id={this.props.id}
+          piVisible={this.props.piVisible}
+          role={this.props.role}
+          disclosureReadonly={this.props.disclosureReadonly}
+        />
       </div>
     );
   }

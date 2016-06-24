@@ -525,15 +525,7 @@ class _AdminStore {
 
   makeComment(comment) {
     if (comment.id) {
-      createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments/${comment.id}`)
-        .send(comment)
-        .end(processResponse((err, updatedComments) => {
-          if (!err) {
-            this.updateCommentState(updatedComments.body);
-            this.updateCurrentComments(true);
-            this.emitChange();
-          }
-        }));
+      this.updateComment(comment);
     } else {
       createRequest().post(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments`)
         .send(comment)
@@ -544,6 +536,29 @@ class _AdminStore {
             this.emitChange();
           }
         }));
+    }
+  }
+
+  updateComment(comment) {
+    if (comment.id) {
+      createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/comments/${comment.id}`)
+        .send(comment)
+        .end(processResponse((err, updatedComments) => {
+          if (!err) {
+            this.updateCommentState(updatedComments.body);
+            this.updateCurrentComments(false);
+            this.emitChange();
+          }
+        }));
+    }
+  }
+
+  toggleCommentViewableByReporter(id) {
+    const commentToToggle = this.findCurrentCommentById(id);
+
+    if (commentToToggle) {
+      commentToToggle.piVisible = !commentToToggle.piVisible;
+      this.updateComment(commentToToggle);
     }
   }
 
@@ -724,11 +739,15 @@ class _AdminStore {
     this.applicationState.comment.text = evt.target.value;
   }
 
-  editComment(id) {
-    this.applicationState.editingComment = true;
-    const commentToEdit = this.applicationState.currentComments.find(comment => {
+  findCurrentCommentById(id) {
+    return this.applicationState.currentComments.find(comment => {
       return comment.id == id; // eslint-disable-line eqeqeq
     });
+  }
+
+  editComment(id) {
+    this.applicationState.editingComment = true;
+    const commentToEdit = this.findCurrentCommentById(id);
 
     this.applicationState.comment = JSON.parse(JSON.stringify(commentToEdit));
     this.applicationState.commentSnapShot = JSON.parse(JSON.stringify(commentToEdit));
@@ -785,7 +804,7 @@ class _AdminStore {
       .send({dispositionCd})
       .end(processResponse(() => {}));
   }
-  
+
   recommendProjectDisposition({projectPersonId, dispositionTypeCd}) {
     const { selectedDisclosure } = this.applicationState;
     if (!selectedDisclosure.recommendedProjectDispositions) {
@@ -803,7 +822,7 @@ class _AdminStore {
         disposition: dispositionTypeCd
       });
     }
-    
+
     createRequest()
       .put(`/api/coi/reviewers/${selectedDisclosure.id}/recommendProject/${projectPersonId}`)
       .send({dispositionTypeCd})

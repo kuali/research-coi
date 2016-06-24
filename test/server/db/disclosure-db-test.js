@@ -21,6 +21,19 @@
 
 import assert from 'assert';
 import * as DisclosureDB from '../../../server/db/disclosure-db';
+import { COIConstants } from '../../../coi-constants';
+import hashCode from '../../../hash';
+import { insertDisclosure, createDisclosure, insertComment, getComment } from '../../test-utils';
+
+let getKnex;
+try {
+  const extensions = require('research-extensions').default;
+  getKnex = extensions.getKnex;
+}
+catch (err) {
+  getKnex = require('../../../server/db/connection-manager').default;
+}
+const knex = getKnex({});
 
 describe('Disclosure', () => {
   it('expiration date year should equal approval year when approval month day is before expiration month day', () => {
@@ -36,5 +49,61 @@ describe('Disclosure', () => {
   it('expiration date year should be approval year plus 1 when rolling date is true', () => {
     const expirationDate = DisclosureDB.getExpirationDate(new Date(2015, 8, 1), true);
     assert.equal(expirationDate.toDateString(), new Date(2016, 8, 1).toDateString());
+  });
+});
+
+describe('Comments', () => {
+  let disclosureId;
+
+  before(async () => {
+    disclosureId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS), hashCode('cate'));
+  });
+
+  after(async () => {
+    knex('disclosure').where('id', disclosureId).delete();
+  });
+
+  describe('updating', () => {
+    let comment;
+
+    beforeEach(async () => {
+      const commentId = await insertComment(knex, disclosureId, 'cate', 'This is great!');
+      comment = await getComment(knex, commentId);
+    });
+
+    afterEach(async () => {
+      await knex('comment').where('id', comment.id).delete();
+      comment = undefined;
+    });
+
+    it('should update the comment', async () => {
+      comment.text = 'I really like it.';
+      await DisclosureDB.updateComment(knex, {coiRole: 'reviewer'}, comment);
+      comment = await getComment(knex, comment.id);
+      assert.equal(comment.text, 'I really like it.');
+    });
+  });
+
+  describe('updating another user\'s comment as an admin', () => {
+    let comment;
+
+    beforeEach(async () => {
+      const commentId = await insertComment(knex, disclosureId, 'cate', 'This is great!');
+      comment = await getComment(knex, commentId);
+    });
+
+    afterEach(async () => {
+      await knex('comment').where('id', comment.id).delete();
+      comment = undefined;
+    });
+
+    it('should not update the user', async () => {
+      comment.piVisible = true;
+      await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
+      comment = await getComment(knex, comment.id);
+
+      assert.equal(comment.pi_visible, true);
+      assert.equal(comment.author, 'cate');
+    });
   });
 });
