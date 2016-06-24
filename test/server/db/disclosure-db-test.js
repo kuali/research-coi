@@ -78,7 +78,7 @@ describe('Comments', () => {
 
     it('should update the comment', async () => {
       comment.text = 'I really like it.';
-      DisclosureDB.updateComment(knex, {coiRole: 'reviewer'}, comment);
+      await DisclosureDB.updateComment(knex, {coiRole: 'reviewer'}, comment);
       comment = await getComment(knex, comment.id);
       assert.equal(comment.text, 'I really like it.');
     });
@@ -99,7 +99,7 @@ describe('Comments', () => {
 
     it('should not update the user', async () => {
       comment.piVisible = true;
-      DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
+      await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
       comment = await getComment(knex, comment.id);
 
       assert.equal(comment.pi_visible, true);
