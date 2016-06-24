@@ -19,8 +19,8 @@
 import LoadTest from '../../../../load-test';
 
 export class Test extends LoadTest {
-  constructor() {
-    super();
+  constructor(config) {
+    super(config);
 
     this.path = '/api/coi/archived-disclosures';
   }

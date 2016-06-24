@@ -20,7 +20,7 @@
     "stylelint": "stylelint client/**/**/*.css",
     "webpack": "webpack -p",
     "watch": "webpack -w",
-    "load": "node loadtest"
+    "load": "babel-node loadtest"
   },
   "repository": {
     "type": "git",

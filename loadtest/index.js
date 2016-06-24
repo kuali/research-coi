@@ -24,4 +24,4 @@
         * All load tests are run against localhost
 */
 
-require('./driver')();
+require('./driver').default();

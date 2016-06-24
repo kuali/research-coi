@@ -16,15 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable no-magic-numbers */
-
 import LoadTest from '../../../../../../load-test';
 import hashCode from '../../../../../../../hash';
 import {getDBConnection} from '../../../../../../db';
 
 export class Test extends LoadTest {
-  constructor() {
-    super();
+  constructor(config) {
+    super(config);
+
+    this.disabled = true;
+
     this.CONCURRENT_REQUESTS = 10;
     this.method = 'POST';
 
@@ -80,11 +81,10 @@ export class Test extends LoadTest {
   }
 
   getHeaders() {
-    const id = this.getUserID();
-    return {
-      Authorization: `Bearer p${id}`,
-      'Content-Length': this.postData.length,
-      'Content-Type': 'application/json'
-    };
+    const headers = this.headers;
+    headers['Content-Length'] = this.postData.length;
+    headers['Content-Type'] = 'application/json';
+
+    return headers;
   }
 }

@@ -17,13 +17,14 @@
 */
 
 import mysql from 'mysql';
+const config = require('./config.json');
 
 export function getDBConnection() {
   const connection = mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'coi',
+    host: config.db.host,
+    user: config.db.user,
+    password: config.db.password,
+    database: config.db.database,
     charset: 'utf8'
   });
 

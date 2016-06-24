@@ -22,11 +22,12 @@ import file from 'file';
 import path from 'path';
 import fs from 'fs';
 
+const config = require('./config.json');
+
 let testsToRun;
 let currentTestIndex;
-let port;
 
-const DEFAULT_PORT = 8080;
+const DEFAULT_PORT = config.port;
 
 function searchDirectoryForTests(baseDirectory) {
   let testsFound = [];
@@ -63,9 +64,14 @@ function startNextTest() {
 
   const test = testsToRun[currentTestIndex];
   const TestClass = require(test.replace('loadtest/', './')).Test;
-  const theTest = new TestClass;
+  const theTest = new TestClass(config);
+  if (theTest.disabled) {
+    console.log(`${test} - DISABLED\n`);
+    return startNextTest();
+  }
+
   console.log(test);
-  theTest.run(port, results => {
+  theTest.run(DEFAULT_PORT, results => {
     printResults(test, results);
     startNextTest();
   });
@@ -74,7 +80,6 @@ function startNextTest() {
 export default function() {
   testsToRun = [];
   currentTestIndex = -1;
-  port = process.env.COI_PORT || DEFAULT_PORT;
 
   if (process.argv.length > 2) {
     const fsStats = fs.statSync(process.argv[2]);

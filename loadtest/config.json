@@ -1,0 +1,14 @@
+{
+  "authToken": "<a valid admin auth token here>",
+  "protocol": "https:",
+  "host": "<your hostname>",
+  "port": 443,
+  "defaultConcurrentRequests": 10,
+  "defaultTotalRequestsPerTest": 1000,
+  "db": {
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "database": "<the name of your db>"
+  }
+}
