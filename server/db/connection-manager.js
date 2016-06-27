@@ -47,6 +47,11 @@ if (process.env.NODE_ENV === 'test') {
   connectionOptions.database = process.env.TEST_DB_NAME || 'coi_tst';
 }
 
+let useNullAsDefault = true;
+if (process.env.USE_NULL_AS_DEFAULT) {
+  useNullAsDefault = process.env.USE_NULL_AS_DEFAULT;
+}
+
 const knexInstance = knex({
   client: process.env.DB_PACKAGE || 'strong-oracle',
   connection: connectionOptions,
@@ -54,7 +59,7 @@ const knexInstance = knex({
     min: 2,
     max: process.env.CONNECTION_POOL_SIZE || DEFAULT_CONNECTION_POOL_SIZE
   },
-  useNullAsDefault: process.env.USE_NULL_AS_DEFAULT || false
+  useNullAsDefault
 });
 
 export default () => {
