@@ -80,6 +80,7 @@ export default class NewType extends React.Component {
           className={styles.textbox}
           onKeyUp={this.lookForEnter}
           onChange={this.onChange}
+          maxLength="50"
         />
         {doneLink}
       </div>
