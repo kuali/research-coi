@@ -18,7 +18,7 @@
 
 /* eslint-disable no-magic-numbers, camelcase */
 
-import { DISCLOSURE_TYPE, COIConstants } from '../coi-constants';
+import { DISCLOSURE_TYPE, DISCLOSURE_STEP, ROLES } from '../coi-constants';
 import hashCode from '../hash';
 
 export function createProject(sourceIdentifier) {
@@ -110,7 +110,7 @@ export async function insertDisclosure(knex, disclosure, user_id) {
 export function createComment(disclosureId, user) {
   return {
     disclosureId,
-    topicSection: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+    topicSection: DISCLOSURE_STEP.QUESTIONNAIRE,
     topicId: 1,
     text: 'blah',
     userId: hashCode(user),
@@ -125,7 +125,11 @@ export async function insertComment(knex, disclosure_id, user, text) {
   const id = await knex('comment').insert({
     disclosure_id,
     text: text || 'I like this.',
+    topic_section: DISCLOSURE_STEP.QUESTIONNAIRE,
+    topic_id: 1,
+    date: new Date(),
     user_id: hashCode(user),
+    user_role: ROLES.USER,
     author: user,
     pi_visible: false,
     reviewer_visible: true
