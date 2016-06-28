@@ -73,19 +73,17 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
 
 export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
   const knex = getKnex(dbInfo);
-  try {
-    const reviewers = await knex('additional_reviewer')
-      .select('disclosure_id as disclosureId')
-      .where({
-        user_id: schoolId,
-        active: true
-      });
-    return reviewers.map(reviewer => {
-      return reviewer.disclosureId.toString();
+
+  const reviewers = await knex('additional_reviewer')
+    .select('disclosure_id as disclosureId')
+    .where({
+      user_id: schoolId,
+      active: true
     });
-  } catch (err) {
-    return Promise.reject(err);
-  }
+
+  return reviewers.map(reviewer => {
+    return reviewer.disclosureId.toString();
+  });
 }
 
 export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) {
@@ -105,15 +103,16 @@ export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) 
 
 export async function createAdditionalReviewer(dbInfo, reviewer, userInfo) {
   const knex = getKnex(dbInfo);
-  try {
-    reviewer.dates = [
-      {
-        type: DATE_TYPE.ASSIGNED,
-        date: new Date()
-      }
-    ];
 
-    const id = await knex('additional_reviewer').insert({
+  reviewer.dates = [
+    {
+      type: DATE_TYPE.ASSIGNED,
+      date: new Date()
+    }
+  ];
+
+  const id = await knex('additional_reviewer')
+    .insert({
       disclosure_id: reviewer.disclosureId,
       user_id: reviewer.userId,
       name: reviewer.name,
@@ -123,18 +122,16 @@ export async function createAdditionalReviewer(dbInfo, reviewer, userInfo) {
       active: true,
       dates: JSON.stringify(reviewer.dates),
       assigned_by: userInfo.name
-    },'id');
-    reviewer.id = id[0];
-    return Promise.resolve(reviewer);
-  } catch (err) {
-    return Promise.reject(err);
-  }
+    }, 'id');
+
+  reviewer.id = id[0];
+  return reviewer;
 }
 
-export const deleteAdditionalReviewer = (dbInfo, id) => {
+export function deleteAdditionalReviewer(dbInfo, id) {
   const knex = getKnex(dbInfo);
   return knex('additional_reviewer').del().where({id});
-};
+}
 
 export function updateAdditionalReviewer(dbInfo, id, updates) {
   const knex = getKnex(dbInfo);
@@ -163,18 +160,26 @@ async function findAdditionalReviewer(dbInfo, userId, disclosureId) {
 
 export async function saveRecommendation(dbInfo, schoolId, disclosureId, declarationId, dispositionType) {
   const knex = getKnex(dbInfo);
-  const additionalReviewer = await findAdditionalReviewer(dbInfo, schoolId, disclosureId);
+  const additionalReviewer = await findAdditionalReviewer(
+    dbInfo,
+    schoolId,
+    disclosureId
+  );
 
   if (!additionalReviewer) {
-    throw new Error(`Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`);
+    throw new Error(
+      `Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`
+    );
   }
   
   const additionalReviewerId = additionalReviewer.id;
 
-  const exists = await knex('reviewer_recommendation').first().where({
-    additional_reviewer_id: additionalReviewerId,
-    declaration_id: declarationId
-  });
+  const exists = await knex('reviewer_recommendation')
+    .first()
+    .where({
+      additional_reviewer_id: additionalReviewerId,
+      declaration_id: declarationId
+    });
 
   if (exists) {
     return knex('reviewer_recommendation').update({
@@ -194,18 +199,26 @@ export async function saveRecommendation(dbInfo, schoolId, disclosureId, declara
 
 export async function saveProjectRecommendation(dbInfo, schoolId, disclosureId, projectPersonId, dispositionType) {
   const knex = getKnex(dbInfo);
-  const additionalReviewer = await findAdditionalReviewer(dbInfo, schoolId, disclosureId);
+  const additionalReviewer = await findAdditionalReviewer(
+    dbInfo,
+    schoolId,
+    disclosureId
+  );
 
   if (!additionalReviewer) {
-    throw new Error(`Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`);
+    throw new Error(
+      `Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`
+    );
   }
   
   const additionalReviewerId = additionalReviewer.id;
 
-  const exists = await knex('reviewer_recommendation').first().where({
-    additional_reviewer_id: additionalReviewerId,
-    project_person_id: projectPersonId
-  });
+  const exists = await knex('reviewer_recommendation')
+    .first()
+    .where({
+      additional_reviewer_id: additionalReviewerId,
+      project_person_id: projectPersonId
+    });
 
   if (exists) {
     return knex('reviewer_recommendation').update({
