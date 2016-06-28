@@ -25,55 +25,55 @@ catch (err) {
   getKnex = require('./connection-manager').default;
 }
 
-export const isDisclosureUsers = (dbInfo, disclosureId, userId) => {
+export async function isDisclosureUsers(dbInfo, disclosureId, userId) {
   const knex = getKnex(dbInfo);
-  return knex.select('user_id')
+  const result = await knex
+    .select('user_id')
     .from('disclosure')
     .where({
       id: disclosureId,
       user_id: userId
-    })
-    .then(result => {
-      return result.length > 0;
     });
-};
+  
+  return result.length > 0;
+}
 
-export const isFinancialEntityUsers = (dbInfo, id, userId) => {
+export async function isFinancialEntityUsers(dbInfo, id, userId) {
   const knex = getKnex(dbInfo);
-  return knex.select('d.user_id')
+  const result = await knex
+    .select('d.user_id')
     .from('fin_entity as fe')
     .innerJoin('disclosure as d', 'd.id', 'fe.disclosure_id')
     .where({
       'fe.id': id,
       'd.user_id': userId
-    })
-    .then(result => {
-      return result.length > 0;
     });
-};
 
-export function getDisclosureForFinancialEntity(dbInfo, id) {
-  const knex = getKnex(dbInfo);
-  return knex('fin_entity')
-    .select('disclosure_id as disclosureId')
-    .where({id})
-    .then(entity => {
-      return entity[0].disclosureId;
-    });
+  return result.length > 0;
 }
 
-export const verifyRelationshipIsUsers = (dbInfo, userId, relationshipId) => {
+export async function getDisclosureForFinancialEntity(dbInfo, id) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('')
-  .from('relationship as r')
-  .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
-  .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
-  .where({
-    'd.user_id': userId,
-    'r.id': relationshipId
-  })
-  .then(rows => {
-    return rows.length > 0;
-  });
-};
+  const entity = await knex('fin_entity')
+    .select('disclosure_id as disclosureId')
+    .where({id});
+
+  return entity[0].disclosureId;
+}
+
+export async function verifyRelationshipIsUsers(dbInfo, userId, relationshipId) {
+  const knex = getKnex(dbInfo);
+
+  const rows = await knex
+    .select('')
+    .from('relationship as r')
+    .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
+    .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
+    .where({
+      'd.user_id': userId,
+      'r.id': relationshipId
+    });
+
+  return rows.length > 0;
+}
