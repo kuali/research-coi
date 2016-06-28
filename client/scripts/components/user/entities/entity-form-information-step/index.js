@@ -20,7 +20,7 @@ import styles from './style';
 import React from 'react';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {Question} from '../question';
-import {COIConstants} from '../../../../../../coi-constants';
+import {QUESTION_TYPE} from '../../../../../../coi-constants';
 import {FileUpload} from '../../../file-upload';
 
 export class EntityFormInformationStep extends React.Component {
@@ -84,7 +84,7 @@ export class EntityFormInformationStep extends React.Component {
       return a.question.order - b.question.order;
     }).map((question, index) => {
       let columnStyle;
-      if (question.question.type === COIConstants.QUESTION_TYPE.TEXTAREA) {
+      if (question.question.type === QUESTION_TYPE.TEXTAREA) {
         columnStyle = styles.longColumn;
       } else {
         columnStyle = styles.column;

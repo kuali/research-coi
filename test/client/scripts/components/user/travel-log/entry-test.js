@@ -23,7 +23,7 @@ import assert from 'assert';
 import sd from 'skin-deep';
 import {MockTravelLogActions} from './mocks/mock-travel-log-action';
 import {MockTravelLogStore} from './mocks/mock-travel-log-store';
-import {COIConstants} from '../../../../../../coi-constants';
+import {RELATIONSHIP_STATUS} from '../../../../../../coi-constants';
 import Entry from '../../../../../../client/scripts/components/user/travel-log/entry';
 Entry.__Rewire__('TravelLogActions', MockTravelLogActions); //eslint-disable-line no-underscore-dangle
 Entry.__Rewire__('TravelLogStore', MockTravelLogStore); //eslint-disable-line no-underscore-dangle
@@ -75,7 +75,7 @@ describe('Entry', () => {
 
   it('render disclosed entry viewer', () => {
     const travelLog = getTravelLog();
-    travelLog.status = COIConstants.RELATIONSHIP_STATUS.DISCLOSED;
+    travelLog.status = RELATIONSHIP_STATUS.DISCLOSED;
     travelLog.disclosedDate = new Date();
     const entry = sd.shallowRender(
       <Entry

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 /* eslint-disable no-console */
-import {COIConstants} from '../coi-constants';
+import {LOG_LEVEL} from '../coi-constants';
 
 let logLevel;
 let reportError;
@@ -30,13 +30,13 @@ try {
 
 class Log {
   info(message, req) {
-    if (logLevel <= COIConstants.LOG_LEVEL.INFO) {
+    if (logLevel <= LOG_LEVEL.INFO) {
       console.info(this.create(message, 'INFO', req));
     }
   }
 
   warn(message, req) {
-    if (logLevel <= COIConstants.LOG_LEVEL.WARN) {
+    if (logLevel <= LOG_LEVEL.WARN) {
       console.warn(this.create(message, 'WARN', req));
     }
   }

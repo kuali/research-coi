@@ -24,7 +24,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import NewQuestion from '../new-question';
 import Question from '../question';
 import NewQuestionButton from '../new-question-button';
-import {COIConstants} from '../../../../../coi-constants';
+import {QUESTION_TYPE, QUESTIONNAIRE_TYPE} from '../../../../../coi-constants';
 import PanelWithButtons from '../panel-with-buttons';
 import ConfigActions from '../../../actions/config-actions';
 import AddSection from '../../add-section';
@@ -120,7 +120,7 @@ class QuestionnaireConfig extends React.Component {
     }
 
     const parent = this.findQuestion(targetId);
-    if (parent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
+    if (parent.question.type !== QUESTION_TYPE.YESNO) {
       return;
     }
 
@@ -185,7 +185,7 @@ class QuestionnaireConfig extends React.Component {
     const parent = this.findNewParentQuestion(question);
     if (parent) {
       // Can only be a sub question if the parent is a yes/no question
-      if (parent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
+      if (parent.question.type !== QUESTION_TYPE.YESNO) {
         return;
       }
 
@@ -258,7 +258,7 @@ class QuestionnaireConfig extends React.Component {
 
     if (this.isOpen(question.id)) {
       const editState = this.props.questionsBeingEdited[question.id];
-      if (editState.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+      if (editState.question.type === QUESTION_TYPE.MULTISELECT) {
         return initHeightOfExpandedMultiSelect;
       }
 
@@ -284,7 +284,7 @@ class QuestionnaireConfig extends React.Component {
     }
 
     const potentialParent = this.findNewParentQuestion(question);
-    if (!potentialParent || potentialParent.question.type !== COIConstants.QUESTION_TYPE.YESNO) {
+    if (!potentialParent || potentialParent.question.type !== QUESTION_TYPE.YESNO) {
       return false;
     }
 
@@ -339,7 +339,7 @@ class QuestionnaireConfig extends React.Component {
     }
     else {
       let message;
-      if (this.props.questionnaireCategory === COIConstants.QUESTIONNAIRE_TYPE.SCREENING) {
+      if (this.props.questionnaireCategory === QUESTIONNAIRE_TYPE.SCREENING) {
         message = 'Only parent-level, Yes/No questions can be used in screening questionnaire validations as configured in Screening Validations in General Configuration.'; //eslint-disable-line max-len
       }
       newQuestionSection = (

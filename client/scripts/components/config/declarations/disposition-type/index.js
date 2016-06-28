@@ -17,7 +17,7 @@
  */
 
 import ConfigActions from '../../../../actions/config-actions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {RETURN_KEY} from '../../../../../../coi-constants';
 import Type from '../type';
 import styles from './style';
 
@@ -92,7 +92,7 @@ export default class DispositionType extends Type {
   }
 
   lookForEnter(evt) {
-    if (evt.keyCode === COIConstants.RETURN_KEY) {
+    if (evt.keyCode === RETURN_KEY) {
       this.doneEditing();
     }
   }

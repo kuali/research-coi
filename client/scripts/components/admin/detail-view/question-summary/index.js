@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {formatDate} from '../../../../format-date';
-import {COIConstants} from '../../../../../../coi-constants';
+import {DISCLOSURE_STEP, QUESTION_TYPE} from '../../../../../../coi-constants';
 import {AdminActions} from '../../../../actions/admin-actions';
 
 export default class QuestionSummary extends React.Component {
@@ -32,7 +32,7 @@ export default class QuestionSummary extends React.Component {
 
   showComments() {
     AdminActions.showCommentingPanel(
-      COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+      DISCLOSURE_STEP.QUESTIONNAIRE,
       this.props.question.id,
       `QUESTION ${this.props.question.numberToShow}`
     );
@@ -77,7 +77,7 @@ export default class QuestionSummary extends React.Component {
             <span className={`fill ${styles.answerSection}`}>
               <div className={styles.answerLabel}>ANSWER:</div>
               <div className={styles.answer}>
-                {this.props.question.type === COIConstants.QUESTION_TYPE.DATE ? formatDate(this.props.answer) : this.props.answer}
+                {this.props.question.type === QUESTION_TYPE.DATE ? formatDate(this.props.answer) : this.props.answer}
               </div>
             </span>
             {commentLink}

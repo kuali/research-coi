@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP, FILE_TYPE} from '../../../../../../coi-constants';
 import {Instructions} from '../../instructions';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {FileUpload} from '../../../file-upload';
@@ -49,15 +49,15 @@ export class Certify extends React.Component {
 
   render() {
     const {config} = this.context.configState;
-    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION];
+    const instructionText = config.general.instructions[INSTRUCTION_STEP.CERTIFICATION];
     const contentState = config.general.richTextInstructions ?
-      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.CERTIFICATION] :
+      config.general.richTextInstructions[INSTRUCTION_STEP.CERTIFICATION] :
       undefined;
     const instructions = (
       <Instructions
         text={instructionText}
         contentState={contentState}
-        collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.CERTIFICATION]}
+        collapsed={!this.props.instructionsShowing[INSTRUCTION_STEP.CERTIFICATION]}
       />
     );
 
@@ -81,7 +81,7 @@ export class Certify extends React.Component {
     let disclosureFiles;
     if (this.props.files) {
       disclosureFiles = this.props.files.filter(
-        file => file.fileType === COIConstants.FILE_TYPE.DISCLOSURE
+        file => file.fileType === FILE_TYPE.DISCLOSURE
       );
     }
 

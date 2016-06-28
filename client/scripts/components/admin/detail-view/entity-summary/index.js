@@ -19,7 +19,11 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../../coi-constants';
+import {
+  DISCLOSURE_STEP,
+  COMMENT_TITLES,
+  QUESTION_TYPE
+} from '../../../../../../coi-constants';
 import {formatDate} from '../../../../format-date';
 import {AdminActions} from '../../../../actions/admin-actions';
 import EntityRelationshipSummary from '../../../entity-relationship-summary';
@@ -33,9 +37,9 @@ export default class EntitySummary extends React.Component {
 
   showComments() {
     AdminActions.showCommentingPanel(
-      COIConstants.DISCLOSURE_STEP.ENTITIES,
+      DISCLOSURE_STEP.ENTITIES,
       this.props.entity.id,
-      `${COIConstants.COMMENT_TITLES.ENTITY} ${this.props.entity.name}`
+      `${COMMENT_TITLES.ENTITY} ${this.props.entity.name}`
     );
   }
 
@@ -48,19 +52,19 @@ export default class EntitySummary extends React.Component {
     }
 
     switch (type) {
-      case COIConstants.QUESTION_TYPE.DATE:
+      case QUESTION_TYPE.DATE:
         if (isNaN(theAnswer.answer.value)) {
           return theAnswer.answer.value;
         }
 
         return formatDate(theAnswer.answer.value);
-      case COIConstants.QUESTION_TYPE.TEXTAREA:
+      case QUESTION_TYPE.TEXTAREA:
         return (
           <div>
             {theAnswer.answer.value}
           </div>
         );
-      case COIConstants.QUESTION_TYPE.MULTISELECT:
+      case QUESTION_TYPE.MULTISELECT:
         if (Array.isArray(theAnswer.answer.value)) {
           const answers = theAnswer.answer.value.map((answer, index, array) => {
             let answerToShow = answer;

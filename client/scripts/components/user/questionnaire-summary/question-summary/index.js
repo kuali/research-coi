@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {QUESTION_TYPE} from '../../../../../../coi-constants';
 import {formatDate} from '../../../../../scripts/format-date';
 
 export class QuestionSummary extends React.Component {
@@ -37,10 +37,10 @@ export class QuestionSummary extends React.Component {
   render() {
     let answer = this.props.answer;
     switch (this.props.question.question.type) {
-      case COIConstants.QUESTION_TYPE.DATE:
+      case QUESTION_TYPE.DATE:
         answer = formatDate(this.props.answer);
         break;
-      case COIConstants.QUESTION_TYPE.MULTISELECT:
+      case QUESTION_TYPE.MULTISELECT:
         if (this.props.answer.length > 1) {
           answer = this.props.answer.join(', ');
         }

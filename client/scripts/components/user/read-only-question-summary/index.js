@@ -19,7 +19,7 @@
 import styles from './style';
 import React from 'react';
 import {formatDate} from '../../../format-date';
-import {COIConstants} from '../../../../../coi-constants';
+import {QUESTION_TYPE} from '../../../../../coi-constants';
 
 export default function QuestionSummary(props) {
   return (
@@ -33,7 +33,7 @@ export default function QuestionSummary(props) {
           <span className={`fill ${styles.answerSection}`}>
             <div className={styles.answerLabel}>ANSWER:</div>
             <div className={styles.answer}>
-              {props.question.question.type === COIConstants.QUESTION_TYPE.DATE ? formatDate(props.answer) : props.answer}
+              {props.question.question.type === QUESTION_TYPE.DATE ? formatDate(props.answer) : props.answer}
             </div>
           </span>
         </div>

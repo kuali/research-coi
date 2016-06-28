@@ -21,7 +21,11 @@
 import assert from 'assert';
 import * as app from '../../../server/app';
 import request from 'supertest';
-import {COIConstants} from '../../../coi-constants';
+import {
+  DATE_TYPE,
+  DISCLOSURE_TYPE,
+  DISCLOSURE_STATUS
+} from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { OK, FORBIDDEN, INTERNAL_SERVER_ERROR } from '../../../http-status-codes';
 
@@ -55,7 +59,7 @@ async function addReviewer(disclosureId, user) {
     email: 'test@test.com',
     active: true,
     dates: JSON.stringify([{
-      type: COIConstants.DATE_TYPE.ASSIGNED,
+      type: DATE_TYPE.ASSIGNED,
       date: new Date(2016,0,0)
     }]),
     assigned_by: 'Admin, COI'
@@ -67,8 +71,8 @@ let disclosureId;
 describe('AdditionalReviewerControllerTest', () => {
   before(async function() {
     const disclosure = await knex('disclosure').insert({
-      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-      status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+      type_cd: DISCLOSURE_TYPE.ANNUAL,
+      status_cd: DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
       user_id: 1234,
       start_date: new Date(),
       config_id: 1}, 'id');
@@ -170,8 +174,8 @@ describe('AdditionalReviewerControllerTest', () => {
       assert.equal(1,reviewers.length);
       assert.equal(0,reviewers[0].active);
       assert.equal(2,dates.length);
-      assert.equal(COIConstants.DATE_TYPE.ASSIGNED,dates[0].type);
-      assert.equal(COIConstants.DATE_TYPE.COMPLETED,dates[1].type);
+      assert.equal(DATE_TYPE.ASSIGNED,dates[0].type);
+      assert.equal(DATE_TYPE.COMPLETED,dates[1].type);
     });
   });
 
@@ -203,7 +207,7 @@ describe('AdditionalReviewerControllerTest', () => {
           active: true,
           dates: [
             {
-              type: COIConstants.DATE_TYPE.ASSIGNED,
+              type: DATE_TYPE.ASSIGNED,
               date: now
             }
           ]
@@ -220,7 +224,7 @@ describe('AdditionalReviewerControllerTest', () => {
       assert.equal(1,reviewers.length);
       assert.equal(1,reviewers[0].active);
       assert.equal(1,dates.length);
-      assert.equal(COIConstants.DATE_TYPE.ASSIGNED,dates[0].type);
+      assert.equal(DATE_TYPE.ASSIGNED,dates[0].type);
       assert.equal(now.getMilliseconds(),new Date(dates[0].date).getMilliseconds());
     });
   });

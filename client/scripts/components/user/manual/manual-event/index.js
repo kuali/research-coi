@@ -21,7 +21,7 @@ import React from 'react';
 import {ManualEventEntry} from '../manual-event-entry';
 import {ManualEventRelations} from '../manual-event-relations';
 import {Instructions} from '../../instructions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {DISCLOSURE_STEP} from '../../../../../../coi-constants';
 
 export class ManualEvent extends React.Component {
   constructor() {
@@ -64,14 +64,14 @@ export class ManualEvent extends React.Component {
       );
     }
 
-    const instructionText = config.general.instructions[COIConstants.DISCLOSURE_STEP.MANUAL];
+    const instructionText = config.general.instructions[DISCLOSURE_STEP.MANUAL];
     const contentState = config.general.richTextInstructions ?
-      config.general.richTextInstructions[COIConstants.DISCLOSURE_STEP.MANUAL] :
+      config.general.richTextInstructions[DISCLOSURE_STEP.MANUAL] :
       undefined;
     const instructions = (
       <Instructions
         text={instructionText}
-        collapsed={!this.props.instructionsShowing[COIConstants.DISCLOSURE_STEP.MANUAL]}
+        collapsed={!this.props.instructionsShowing[DISCLOSURE_STEP.MANUAL]}
         contentState={contentState}
       />
     );

@@ -24,7 +24,7 @@ import {Project} from '../project';
 import {Entity} from '../entity';
 import {Toggle} from '../../toggle';
 import {Instructions} from '../../instructions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP} from '../../../../../../coi-constants';
 import {getProjectTypeString} from '../../../../stores/config-store';
 
 export class Relationships extends React.Component {
@@ -192,14 +192,14 @@ export class Relationships extends React.Component {
       });
     }
 
-    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS];
+    const instructionText = config.general.instructions[INSTRUCTION_STEP.PROJECT_DECLARATIONS];
     const contentState = config.general.richTextInstructions ?
-      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS] :
+      config.general.richTextInstructions[INSTRUCTION_STEP.PROJECT_DECLARATIONS] :
       undefined;
     const instructions = (
       <Instructions
         text={instructionText}
-        collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.PROJECT_DECLARATIONS]}
+        collapsed={!this.props.instructionsShowing[INSTRUCTION_STEP.PROJECT_DECLARATIONS]}
         contentState={contentState}
       />
     );

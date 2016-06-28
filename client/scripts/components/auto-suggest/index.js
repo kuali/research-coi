@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import {processResponse, createRequest} from '../../http-utils';
-import {COIConstants} from '../../../../coi-constants';
+import {RETURN_KEY} from '../../../../coi-constants';
 
 export default class AutoSuggest extends React.Component {
   constructor(props) {
@@ -76,7 +76,7 @@ export default class AutoSuggest extends React.Component {
 
   keyUp(evt) {
     switch (evt.keyCode) { // eslint-disable-line default-case
-      case COIConstants.RETURN_KEY:
+      case RETURN_KEY:
         if (this.state.selectedIndex >= 0) {
           this.onSelected(this.state.suggestions[this.state.selectedIndex]);
         }

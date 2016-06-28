@@ -21,7 +21,7 @@
 
 import assert from 'assert';
 import * as DisclosureDB from '../../../server/db/disclosure-db';
-import { COIConstants } from '../../../coi-constants';
+import { DISCLOSURE_STATUS } from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { insertDisclosure, createDisclosure, insertComment, getComment } from '../../test-utils';
 
@@ -56,7 +56,7 @@ describe('Comments', () => {
   let disclosureId;
 
   before(async () => {
-    disclosureId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS), hashCode('cate'));
+    disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.IN_PROGRESS), hashCode('cate'));
   });
 
   after(async () => {

@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import CheckmarkIcon from '../../dynamic-icons/checkmark-icon';
-import {COIConstants} from '../../../../../coi-constants';
+import {RETURN_KEY} from '../../../../../coi-constants';
 
 export default class EditableItem extends React.Component {
   constructor() {
@@ -54,7 +54,7 @@ export default class EditableItem extends React.Component {
   }
 
   keyPressed(evt) {
-    if (evt.keyCode === COIConstants.RETURN_KEY) {
+    if (evt.keyCode === RETURN_KEY) {
       evt.preventDefault();
       this.done();
     }
