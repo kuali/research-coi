@@ -21,7 +21,7 @@ import React from 'react';
 import {GreyButton} from '../../../grey-button';
 import {BlueButton} from '../../../blue-button';
 import {formatDate} from '../../../../format-date';
-import {COIConstants} from '../../../../../../coi-constants';
+import {RELATIONSHIP_STATUS} from '../../../../../../coi-constants';
 import {TravelLogActions} from '../../../../actions/travel-log-actions';
 import {TravelLogStore} from '../../../../stores/travel-log-store';
 import TextField from '../../text-field';
@@ -151,7 +151,7 @@ export default class Entry extends React.Component {
           </GreyButton>
         </div>
       );
-    } else if (this.props.travelLog.status === COIConstants.RELATIONSHIP_STATUS.DISCLOSED) {
+    } else if (this.props.travelLog.status === RELATIONSHIP_STATUS.DISCLOSED) {
       actionButtons = (
         <div className={styles.buttons}>
           {archiveButton}

@@ -26,7 +26,7 @@ import {
   getRelationshipTypeString,
   getRelationshipAmountString
 } from '../../stores/config-store';
-import {COIConstants} from '../../../../coi-constants';
+import {ENTITY_RELATIONSHIP} from '../../../../coi-constants';
 
 export default class EntityRelationshipSummary extends React.Component {
   constructor() {
@@ -60,7 +60,7 @@ export default class EntityRelationshipSummary extends React.Component {
         </button>
       );
     }
-    if (this.props.relationship.relationshipCd === COIConstants.ENTITY_RELATIONSHIP.TRAVEL) {
+    if (this.props.relationship.relationshipCd === ENTITY_RELATIONSHIP.TRAVEL) {
       const dateRange = `${formatDate(this.props.relationship.travel.startDate)} - ${formatDate(this.props.relationship.travel.endDate)}`;
       const relationshipPerson = getRelationshipPersonTypeString(
         configState,

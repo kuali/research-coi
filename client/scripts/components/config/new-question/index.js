@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import React from 'react';
 import Badge from '../badge';
 import ConfigActions from '../../../actions/config-actions';
-import {COIConstants} from '../../../../../coi-constants';
+import {RETURN_KEY, QUESTION_TYPE} from '../../../../../coi-constants';
 
 export default class NewQuestion extends React.Component {
   constructor() {
@@ -81,7 +81,7 @@ export default class NewQuestion extends React.Component {
   }
 
   optionTextChanged(evt) {
-    if (evt.keyCode === COIConstants.RETURN_KEY) {
+    if (evt.keyCode === RETURN_KEY) {
       const textbox = this.refs.optionText;
       ConfigActions.multiSelectOptionAdded(
         this.props.questionnaireCategory,
@@ -110,16 +110,16 @@ export default class NewQuestion extends React.Component {
   }
 
   render() {
-    const questionTypes = Object.keys(COIConstants.QUESTION_TYPE).map(questionType => {
+    const questionTypes = Object.keys(QUESTION_TYPE).map(questionType => {
       return (
-        <option key={questionType} value={COIConstants.QUESTION_TYPE[questionType]}>
-          {COIConstants.QUESTION_TYPE[questionType]}
+        <option key={questionType} value={QUESTION_TYPE[questionType]}>
+          {QUESTION_TYPE[questionType]}
         </option>
       );
     });
 
     let multiSelectOptions, requiredSelections;
-    if (this.props.question.question.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+    if (this.props.question.question.type === QUESTION_TYPE.MULTISELECT) {
       let options;
       if (this.props.question.question.options) {
         options = this.props.question.question.options.map(option => {

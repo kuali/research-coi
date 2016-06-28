@@ -22,7 +22,7 @@ eslint-disable camelcase
 
 import assert from 'assert';
 import * as NotificationService from '../../../../server/services/notification-service/notification-service';
-import { COIConstants } from '../../../../coi-constants';
+import { DISCLOSURE_STATUS, DISCLOSURE_TYPE, DATE_TYPE } from '../../../../coi-constants';
 import { formatDate } from '../../../../server/date-utils';
 let getKnex;
 try {
@@ -163,8 +163,8 @@ describe('NotificationService', () => {
         .where({template_id: 1});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -227,8 +227,8 @@ describe('NotificationService', () => {
         .where({template_id: 10});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -292,8 +292,8 @@ describe('NotificationService', () => {
         .where({template_id: 6});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -303,8 +303,8 @@ describe('NotificationService', () => {
       disclosureId = dislcosureIds[0];
 
       const disclosure = JSON.stringify({
-        typeCd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        statusCd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        typeCd: DISCLOSURE_TYPE.ANNUAL,
+        statusCd: DISCLOSURE_STATUS.IN_PROGRESS,
         userId: '1234',
         startDate: now,
         expiredDate: now,
@@ -376,8 +376,8 @@ describe('NotificationService', () => {
         .where({template_id: 7});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -439,8 +439,8 @@ describe('NotificationService', () => {
         .where({template_id: 9});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -502,8 +502,8 @@ describe('NotificationService', () => {
         .where({template_id: 4});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -566,8 +566,8 @@ describe('NotificationService', () => {
         .where({template_id: 5});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -578,7 +578,7 @@ describe('NotificationService', () => {
 
       const dates = JSON.stringify([
         {
-          type: COIConstants.DATE_TYPE.ASSIGNED,
+          type: DATE_TYPE.ASSIGNED,
           date: now
         }
       ]);
@@ -656,8 +656,8 @@ describe('NotificationService', () => {
         .where({template_id: 8});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -668,7 +668,7 @@ describe('NotificationService', () => {
 
       const dates = JSON.stringify([
         {
-          type: COIConstants.DATE_TYPE.ASSIGNED,
+          type: DATE_TYPE.ASSIGNED,
           date: now
         }
       ]);
@@ -746,8 +746,8 @@ describe('NotificationService', () => {
         .where({template_id: 2});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,
@@ -758,11 +758,11 @@ describe('NotificationService', () => {
 
       const dates = JSON.stringify([
         {
-          type: COIConstants.DATE_TYPE.ASSIGNED,
+          type: DATE_TYPE.ASSIGNED,
           date: now
         },
         {
-          type: COIConstants.DATE_TYPE.COMPLETED,
+          type: DATE_TYPE.COMPLETED,
           date: now
         }
       ]);
@@ -840,8 +840,8 @@ describe('NotificationService', () => {
         .where({template_id: 3});
 
       const dislcosureIds = await knex('disclosure').insert({
-        type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-        status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+        type_cd: DISCLOSURE_TYPE.ANNUAL,
+        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
         user_id: '1234',
         start_date: now,
         expired_date: now,

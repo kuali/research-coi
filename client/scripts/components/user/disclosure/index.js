@@ -24,7 +24,7 @@ import {Sidebar} from '../sidebar';
 import {DisclosureHeader} from '../disclosure-header';
 import {DisclosureStore} from '../../../stores/disclosure-store';
 import {DisclosureActions} from '../../../actions/disclosure-actions';
-import {COIConstants} from '../../../../../coi-constants';
+import {DISCLOSURE_STEP, DISCLOSURE_TYPE} from '../../../../../coi-constants';
 import {Questionnaire} from '../questionnaire/questionnaire';
 import {QuestionnaireSummary} from '../questionnaire-summary/questionnaire-summary';
 import {ManualEvent} from '../manual/manual-event';
@@ -32,7 +32,6 @@ import {Relationships} from '../projects/relationships';
 import {Entities} from '../entities/entities';
 import {Certify} from '../certification/certify';
 import {NavSidebar} from '../nav-sidebar';
-const STEP = COIConstants.DISCLOSURE_STEP;
 
 export class Disclosure extends React.Component {
   constructor(props) {
@@ -40,16 +39,16 @@ export class Disclosure extends React.Component {
 
     // Set up steps for the sidebar
     this.steps = [
-      {label: 'Questionnaire', value: STEP.QUESTIONNAIRE_SUMMARY},
-      {label: 'Financial Entities', value: STEP.ENTITIES}
+      {label: 'Questionnaire', value: DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY},
+      {label: 'Financial Entities', value: DISCLOSURE_STEP.ENTITIES}
     ];
     if (props.disclosuretype && props.disclosuretype.toLowerCase() === 'manual') {
-      this.steps.push({label: 'Manual Event', value: STEP.MANUAL});
+      this.steps.push({label: 'Manual Event', value: DISCLOSURE_STEP.MANUAL});
     }
     else {
-      this.steps.push({label: 'Project Declarations', value: STEP.PROJECTS});
+      this.steps.push({label: 'Project Declarations', value: DISCLOSURE_STEP.PROJECTS});
     }
-    this.steps.push({label: 'Certification', value: STEP.CERTIFY});
+    this.steps.push({label: 'Certification', value: DISCLOSURE_STEP.CERTIFY});
 
     const storeState = DisclosureStore.getState();
     this.state = {
@@ -182,8 +181,8 @@ export class Disclosure extends React.Component {
     let previousLinkLabel = 'PREVIOUS STEP';
     let showPreviousLink = true;
     const showNextLink = (
-      currentDisclosureStep !== STEP.QUESTIONNAIRE &&
-      currentDisclosureStep !== STEP.CERTIFY &&
+      currentDisclosureStep !== DISCLOSURE_STEP.QUESTIONNAIRE &&
+      currentDisclosureStep !== DISCLOSURE_STEP.CERTIFY &&
       !nextDisabled
     );
 
@@ -193,7 +192,7 @@ export class Disclosure extends React.Component {
       showPreviousLink = false;
     } else {
       switch (currentDisclosureStep) {
-        case STEP.QUESTIONNAIRE: {
+        case DISCLOSURE_STEP.QUESTIONNAIRE: {
           if (config.questions.screening) {
             percent = Math.floor(((currentQuestion - 1) / config.questions.screening.length) * QUESTIONNAIRE_PERCENTAGE);
           }
@@ -214,7 +213,7 @@ export class Disclosure extends React.Component {
 
           break;
         }
-        case STEP.QUESTIONNAIRE_SUMMARY:
+        case DISCLOSURE_STEP.QUESTIONNAIRE_SUMMARY:
           percent = QUESTIONNAIRE_PERCENTAGE;
           currentStep = (
             <QuestionnaireSummary
@@ -225,7 +224,7 @@ export class Disclosure extends React.Component {
           );
           heading = 'Questionnaire';
           break;
-        case STEP.ENTITIES: {
+        case DISCLOSURE_STEP.ENTITIES: {
           stepNumber = 1;
           const ENTITIES_PERCENTAGE = 50;
           percent = ENTITIES_PERCENTAGE;
@@ -248,12 +247,12 @@ export class Disclosure extends React.Component {
           heading = 'Financial Entities';
           break;
         }
-        case STEP.PROJECTS: {
+        case DISCLOSURE_STEP.PROJECTS: {
           stepNumber = 2;
           const PROJECTS_PERCENTAGE = 75;
           percent = PROJECTS_PERCENTAGE;
           const disclosureType = this.props.location.query.type;
-          if (disclosureType === COIConstants.DISCLOSURE_TYPE.MANUAL) {
+          if (disclosureType === DISCLOSURE_TYPE.MANUAL) {
             const disclosure = this.state.applicationState.currentDisclosureState.disclosure;
             currentStep = (
               <ManualEvent
@@ -298,7 +297,7 @@ export class Disclosure extends React.Component {
           }
           break;
         }
-        case STEP.CERTIFY: {
+        case DISCLOSURE_STEP.CERTIFY: {
           stepNumber = 3;
           const CERTIFY_PERCENTAGE = 99;
           percent = CERTIFY_PERCENTAGE;
@@ -348,7 +347,7 @@ export class Disclosure extends React.Component {
               nextDisabled={nextDisabled}
               showNextLink={showNextLink}
               showPreviousLink={showPreviousLink}
-              showSubmitLink={currentDisclosureStep === STEP.CERTIFY}
+              showSubmitLink={currentDisclosureStep === DISCLOSURE_STEP.CERTIFY}
             />
           </span>
         </div>

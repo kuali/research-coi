@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import CheckmarkIcon from '../../dynamic-icons/checkmark-icon';
-import {COIConstants} from '../../../../../coi-constants';
+import {RETURN_KEY} from '../../../../../coi-constants';
 import EditableItem from '../editable-item';
 
 export default class EditableList extends React.Component {
@@ -80,7 +80,7 @@ export default class EditableList extends React.Component {
   }
 
   keyPressed(evt) {
-    if (evt.keyCode === COIConstants.RETURN_KEY) {
+    if (evt.keyCode === RETURN_KEY) {
       evt.preventDefault();
       this.addItem();
     }

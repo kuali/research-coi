@@ -20,7 +20,7 @@ import PIReviewActions from '../actions/pi-review-actions';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
-import {COIConstants} from '../../../coi-constants';
+import {FILE_TYPE} from '../../../coi-constants';
 
 class _PIReviewStore {
   constructor() {
@@ -371,7 +371,7 @@ class _PIReviewStore {
 
     formData.append('data', JSON.stringify({
       refId: entityToRevise.id,
-      type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY,
+      type: FILE_TYPE.FINANCIAL_ENTITY,
       disclosureId: entityToRevise.disclosureId
     }));
 

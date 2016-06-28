@@ -17,7 +17,7 @@
 */
 
 import * as FileService from '../services/file-service/file-service';
-import {COIConstants} from '../../coi-constants';
+import {ROLES, FILE_TYPE} from '../../coi-constants';
 import {isDisclosureUsers} from './common-db';
 
 let getKnex;
@@ -35,12 +35,12 @@ export const getFile = (dbInfo, userInfo, id) => {
     id
   };
   const query = knex.select('name', 'key', 'file_type').from('file').where(criteria);
-  if (userInfo.coiRole === COIConstants.ROLES.ADMIN || userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+  if (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER) {
     return query;
   }
 
   return query.then(file => {
-    if (file[0] && file[0].file_type === COIConstants.FILE_TYPE.MANAGEMENT_PLAN) {
+    if (file[0] && file[0].file_type === FILE_TYPE.MANAGEMENT_PLAN) {
       return knex.select('f.name', 'f.key')
         .from('file as f')
         .innerJoin('disclosure as d', 'd.id', 'f.ref_id')
@@ -64,11 +64,11 @@ export async function getFiles(dbInfo, userInfo, refId, fileType) {
   };
 
   const query = knex.select('name', 'key').from('file').where(criteria);
-  if (userInfo.coiRole === COIConstants.ROLES.ADMIN || userInfo.coiRole === COIConstants.ROLES.REVIEWER) {
+  if (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER) {
     return query;
   }
 
-  if (fileType === COIConstants.FILE_TYPE.MANAGEMENT_PLAN) {
+  if (fileType === FILE_TYPE.MANAGEMENT_PLAN) {
     return knex.select('f.name', 'f.key')
       .from('file as f')
       .innerJoin('disclosure as d', 'd.id', 'f.ref_id')
@@ -87,16 +87,16 @@ export async function getFiles(dbInfo, userInfo, refId, fileType) {
 }
 
 export const saveNewFiles = (dbInfo, body, files, userInfo) => {
-  if (body.type !== COIConstants.FILE_TYPE.DISCLOSURE &&
-    body.type !== COIConstants.FILE_TYPE.MANAGEMENT_PLAN &&
-    body.type !== COIConstants.FILE_TYPE.FINANCIAL_ENTITY &&
-    body.type !== COIConstants.FILE_TYPE.ADMIN) {
+  if (body.type !== FILE_TYPE.DISCLOSURE &&
+    body.type !== FILE_TYPE.MANAGEMENT_PLAN &&
+    body.type !== FILE_TYPE.FINANCIAL_ENTITY &&
+    body.type !== FILE_TYPE.ADMIN) {
     throw Error(`Attempt by ${userInfo.username} to upload an unknown file type`);
   }
 
   return isDisclosureUsers(dbInfo, body.disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
-      if (!isSubmitter && userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+      if (!isSubmitter && userInfo.coiRole !== ROLES.ADMIN) {
         throw Error(`Attempt by ${userInfo.username} to upload a file for disclosure ${body.disclosureId} which isnt theirs`);
       }
 
@@ -143,7 +143,7 @@ export const deleteFiles = (dbInfo, userInfo, fileId) => {
     id: fileId
   };
 
-  if (userInfo.coiRole !== COIConstants.ROLES.ADMIN) {
+  if (userInfo.coiRole !== ROLES.ADMIN) {
     criteria.user_id = userInfo.schoolId;
   }
 

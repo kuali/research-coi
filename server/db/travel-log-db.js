@@ -16,7 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {COIConstants} from '../../coi-constants';
+import {
+  RELATIONSHIP_STATUS,
+  ENTITY_RELATIONSHIP,
+  EDITABLE_STATUSES,
+  DISCLOSURE_TYPE,
+  FILE_TYPE
+} from '../../coi-constants';
 import {verifyRelationshipIsUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';
 
@@ -71,10 +77,10 @@ export const getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, f
 
   switch (filter) {
     case 'disclosed':
-      query.andWhere('r.active', true).andWhere('r.status', COIConstants.RELATIONSHIP_STATUS.DISCLOSED);
+      query.andWhere('r.active', true).andWhere('r.status', RELATIONSHIP_STATUS.DISCLOSED);
       break;
     case 'notYetDisclosed':
-      query.whereIn('r.status', [COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS, COIConstants.RELATIONSHIP_STATUS.PENDING]).andWhere('r.active', true);
+      query.whereIn('r.status', [RELATIONSHIP_STATUS.IN_PROGRESS, RELATIONSHIP_STATUS.PENDING]).andWhere('r.active', true);
       break;
     case 'archived':
       query.andWhere('r.active', false);
@@ -114,7 +120,7 @@ const createNewEntity = (knex, disclosureId, entry, status) => {
 const createNewRelationship = (knex, entityId, entry, status) => {
   return knex('relationship').insert({
     fin_entity_id: entityId,
-    relationship_cd: COIConstants.ENTITY_RELATIONSHIP.TRAVEL,
+    relationship_cd: ENTITY_RELATIONSHIP.TRAVEL,
     person_cd: 1,
     status
   }, 'id').then(relationshipId => {
@@ -134,7 +140,7 @@ const createNewRelationship = (knex, entityId, entry, status) => {
 };
 
 const isSubmitted = (status) => {
-  if (COIConstants.EDITABLE_STATUSES.includes(status)) {
+  if (EDITABLE_STATUSES.includes(status)) {
     return false;
   }
 
@@ -164,7 +170,7 @@ const handleTravelLogEntry = (trx, disclosureId, entry, status) => {
 const getAnnualDisclosureForUser = (trx, schoolId) => {
   return trx('disclosure').select('status_cd', 'id').where({
     user_id: schoolId,
-    type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL
+    type_cd: DISCLOSURE_TYPE.ANNUAL
   });
 };
 
@@ -175,15 +181,15 @@ export const createTravelLogEntry = (dbInfo, entry, userInfo) => {
     .then(disclosure => {
       if (disclosure[0]) {
         if (isSubmitted(disclosure[0].status_cd) === true) {
-          return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.PENDING);
+          return handleTravelLogEntry(trx, disclosure[0].id, entry, RELATIONSHIP_STATUS.PENDING);
         }
 
-        return handleTravelLogEntry(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
+        return handleTravelLogEntry(trx, disclosure[0].id, entry, RELATIONSHIP_STATUS.IN_PROGRESS);
       }
 
       return createAnnualDisclosure(trx, userInfo).then(disclosureId => {
-        return createNewEntity(trx, disclosureId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(entityId => {
-          return createNewRelationship(trx, entityId, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS);
+        return createNewEntity(trx, disclosureId, entry, RELATIONSHIP_STATUS.IN_PROGRESS).then(entityId => {
+          return createNewRelationship(trx, entityId, entry, RELATIONSHIP_STATUS.IN_PROGRESS);
         });
       });
     });
@@ -247,7 +253,7 @@ const getEntityFiles = (trx, id) => {
   .select('id', 'key')
   .where({
     ref_id: id,
-    file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
+    file_type: FILE_TYPE.FINANCIAL_ENTITY
   });
 };
 
@@ -256,7 +262,7 @@ const deleteDbFiles = (trx, id) => {
   .del()
   .where({
     ref_id: id,
-    file_type: COIConstants.FILE_TYPE.FINANCIAL_ENTITY
+    file_type: FILE_TYPE.FINANCIAL_ENTITY
   });
 };
 
@@ -435,7 +441,7 @@ const updateEntity = (trx, entry, id, schoolId) => {
             });
           }
 
-          return createNewEntity(trx, disclosure[0].id, entry, COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS).then(newEntityId => {
+          return createNewEntity(trx, disclosure[0].id, entry, RELATIONSHIP_STATUS.IN_PROGRESS).then(newEntityId => {
             return updateRelationshipEntityId(trx, id, newEntityId).then(() => {
               return handleOldEntity(trx, relationship[0].fin_entity_id);
             });

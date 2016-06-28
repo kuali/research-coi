@@ -20,7 +20,7 @@ import styles from './style';
 import React from 'react';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {QUESTION_TYPE} from '../../../../../../coi-constants';
 import {RadioControl} from '../../radio-control';
 import {TextAreaControl} from '../../text-area-control';
 import {CheckboxControl} from '../../checkbox-control';
@@ -136,7 +136,7 @@ export default class Question extends React.Component {
     const isSubQuestion = question.parent !== null;
 
     switch (question.question.type) {
-      case COIConstants.QUESTION_TYPE.YESNO:
+      case QUESTION_TYPE.YESNO:
         return (
           <RadioControl
             options={['Yes', 'No']}
@@ -147,7 +147,7 @@ export default class Question extends React.Component {
             onValidityChange={this.controlValidityChanged}
           />
         );
-      case COIConstants.QUESTION_TYPE.YESNONA:
+      case QUESTION_TYPE.YESNONA:
         return (
           <RadioControl
             options={['Yes', 'No', 'N/A']}
@@ -158,7 +158,7 @@ export default class Question extends React.Component {
             onValidityChange={this.controlValidityChanged}
           />
         );
-      case COIConstants.QUESTION_TYPE.TEXTAREA:
+      case QUESTION_TYPE.TEXTAREA:
         return (
           <TextAreaControl
             answer={answer}
@@ -168,7 +168,7 @@ export default class Question extends React.Component {
             onValidityChange={this.controlValidityChanged}
           />
         );
-      case COIConstants.QUESTION_TYPE.MULTISELECT:
+      case QUESTION_TYPE.MULTISELECT:
         return (
           <CheckboxControl
             options={question.question.options}
@@ -180,7 +180,7 @@ export default class Question extends React.Component {
             onValidityChange={this.controlValidityChanged}
           />
         );
-      case COIConstants.QUESTION_TYPE.NUMBER:
+      case QUESTION_TYPE.NUMBER:
         return (
           <NumericControl
             answer={answer}
@@ -190,7 +190,7 @@ export default class Question extends React.Component {
             onValidityChange={this.controlValidityChanged}
           />
         );
-      case COIConstants.QUESTION_TYPE.DATE:
+      case QUESTION_TYPE.DATE:
         return (
           <DateControl
             answer={answer}
@@ -293,12 +293,12 @@ export default class Question extends React.Component {
         </div>
       );
     }
-    else if (this.props.type === COIConstants.QUESTION_TYPE.MULTISELECT) {
+    else if (this.props.type === QUESTION_TYPE.MULTISELECT) {
       answerArea = (
         <div>{this.props.answer.join(', ')}</div>
       );
     }
-    else if (this.props.type === COIConstants.QUESTION_TYPE.DATE) {
+    else if (this.props.type === QUESTION_TYPE.DATE) {
       answerArea = (
         <div>{formatDate(this.props.answer)}</div>
       );
@@ -320,7 +320,7 @@ export default class Question extends React.Component {
         if (subQuestion.answer !== null) {
           answerValue = subQuestion.answer.value;
         }
-        if (subQuestion.question.type === COIConstants.QUESTION_TYPE.DATE) {
+        if (subQuestion.question.type === QUESTION_TYPE.DATE) {
           answerValue = formatDate(answerValue);
         }
         if (this.state.revising) {

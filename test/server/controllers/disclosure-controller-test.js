@@ -21,7 +21,13 @@
 import assert from 'assert';
 import * as app from '../../../server/app';
 import request from 'supertest';
-import {COIConstants} from '../../../coi-constants';
+import {
+  RELATIONSHIP_STATUS,
+  DISCLOSURE_TYPE,
+  DISCLOSURE_STATUS,
+  DATE_TYPE,
+  SYSTEM_USER
+} from '../../../coi-constants';
 import hashCode from '../../../hash';
 import {formatDate} from '../../../client/scripts/format-date';
 import { ACCEPTED, OK, FORBIDDEN, INTERNAL_SERVER_ERROR} from '../../../http-status-codes';
@@ -49,7 +55,7 @@ async function updateConfig(autoApprove, addReviewers) {
 async function addFinancialEntity(id) {
   await knex('fin_entity').insert({
     disclosure_id: id,
-    status: COIConstants.RELATIONSHIP_STATUS.PENDING,
+    status: RELATIONSHIP_STATUS.PENDING,
     active: true
   });
 }
@@ -81,8 +87,8 @@ describe('DisclosureController',async () => {
 
   before(async function() {
     const disclosure = await knex('disclosure').insert({
-      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-      status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+      type_cd: DISCLOSURE_TYPE.ANNUAL,
+      status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
       user_id: userId,
       start_date: today,
       config_id: 1}, 'id');
@@ -96,14 +102,14 @@ describe('DisclosureController',async () => {
       email: 'test@test.com',
       active: true,
       dates: JSON.stringify([{
-        type: COIConstants.DATE_TYPE.ASSIGNED,
+        type: DATE_TYPE.ASSIGNED,
         date: new Date(2016,0,0)
       }])
     },'id');
 
     const disclosure1 = await knex('disclosure').insert({
-      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-      status_cd: COIConstants.DISCLOSURE_STATUS.IN_PROGRESS,
+      type_cd: DISCLOSURE_TYPE.ANNUAL,
+      status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
       user_id: userId,
       start_date: today,
       config_id: 1}, 'id');
@@ -139,12 +145,12 @@ describe('DisclosureController',async () => {
 
       const disclosure = response.body;
       assert.equal(disclosure.id, disclosureId);
-      assert.equal(disclosure.typeCd, COIConstants.DISCLOSURE_TYPE.ANNUAL);
-      assert.equal(disclosure.statusCd, COIConstants.DISCLOSURE_STATUS.IN_PROGRESS);
+      assert.equal(disclosure.typeCd, DISCLOSURE_TYPE.ANNUAL);
+      assert.equal(disclosure.statusCd, DISCLOSURE_STATUS.IN_PROGRESS);
       assert.equal(formatDate(disclosure.startDate), formatDate(today));
       assert.equal(1, disclosure.reviewers.length);
       assert.equal(1, disclosure.reviewers[0].dates.length);
-      assert.equal(COIConstants.DATE_TYPE.ASSIGNED, disclosure.reviewers[0].dates[0].type);
+      assert.equal(DATE_TYPE.ASSIGNED, disclosure.reviewers[0].dates[0].type);
     });
 
     it('user should not be able to retrieve others disclosures', async function () {
@@ -213,7 +219,7 @@ describe('DisclosureController',async () => {
   describe('/api/coi/disclosure/:id/submit', async () => {
     it('should submit disclosure if auto approve is false ', async function () {
       await updateConfig(false, false);
-      await changeDisclosureStatus(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
+      await changeDisclosureStatus(DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
       const response = await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
         .set('Authorization', `Bearer ${user}`)
@@ -238,14 +244,14 @@ describe('DisclosureController',async () => {
         .where({person_id: userId});
 
       assert.equal(false, projectPersons[0].new);
-      assert.equal(submittedDisclosure[0].status_cd, COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
+      assert.equal(submittedDisclosure[0].status_cd, DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
       assert.equal(submittedDisclosure[0].submitted_by, `User ${user}`);
       assert.equal(formatDate(submittedDisclosure[0].submitted_date), formatDate(today));
     });
 
     it('should submit disclosure if auto approve is true but there are financial entities ', async function () {
       await updateConfig(true, false);
-      await changeDisclosureStatus(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
+      await changeDisclosureStatus(DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
       await addFinancialEntity(disclosureId);
       const response = await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
@@ -266,7 +272,7 @@ describe('DisclosureController',async () => {
         .select('status_cd','submitted_by', 'submitted_date')
         .where({id: disclosure.id});
 
-      assert.equal(submittedDisclosure[0].status_cd, COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
+      assert.equal(submittedDisclosure[0].status_cd, DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
       assert.equal(submittedDisclosure[0].submitted_by, `User ${user}`);
       assert.equal(formatDate(submittedDisclosure[0].submitted_date), formatDate(today));
 
@@ -275,7 +281,7 @@ describe('DisclosureController',async () => {
 
     it('should submit and approve disclosure if auto approve is true but there are no financial entities ', async function () {
       await updateConfig(true, false);
-      await changeDisclosureStatus(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
+      await changeDisclosureStatus(DISCLOSURE_STATUS.IN_PROGRESS, disclosureId);
       const response = await request(app.run())
         .get(`/api/coi/disclosures/${disclosureId}`)
         .set('Authorization', `Bearer ${user}`)
@@ -295,7 +301,7 @@ describe('DisclosureController',async () => {
         .select('status_cd','submitted_by', 'submitted_date', 'expired_date')
         .where({id: disclosure.id});
 
-      assert.equal(submittedDisclosure[0].status_cd, COIConstants.DISCLOSURE_STATUS.UP_TO_DATE);
+      assert.equal(submittedDisclosure[0].status_cd, DISCLOSURE_STATUS.UP_TO_DATE);
       assert.equal(submittedDisclosure[0].submitted_by, `User ${user}`);
       assert(new Date(submittedDisclosure[0].expired_date) > today);
 
@@ -303,7 +309,7 @@ describe('DisclosureController',async () => {
         .select('*')
         .where({disclosure_id: disclosureId});
 
-      assert.equal(disclosureArchive[0].approved_by, COIConstants.SYSTEM_USER);
+      assert.equal(disclosureArchive[0].approved_by, SYSTEM_USER);
       assert.equal(formatDate(disclosureArchive[0].approved_date), formatDate(today));
     });
   });
@@ -313,7 +319,7 @@ describe('DisclosureController',async () => {
     let disclosure;
     before(async () => {
       await updateConfig(false, true);
-      discId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS), hashCode('cate'));
+      discId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.IN_PROGRESS), hashCode('cate'));
     });
 
     it('should return accepted status', async () => {
@@ -337,7 +343,7 @@ describe('DisclosureController',async () => {
     let disclosure;
     before(async () => {
       await updateConfig(false, true);
-      discId = await insertDisclosure(knex, createDisclosure(COIConstants.DISCLOSURE_STATUS.IN_PROGRESS), hashCode('reviewer1'));
+      discId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.IN_PROGRESS), hashCode('reviewer1'));
     });
 
     it('should return accepted status', async () => {

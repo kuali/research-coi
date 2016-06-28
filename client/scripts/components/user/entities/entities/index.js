@@ -26,7 +26,7 @@ import {EntityForm} from '../entity-form';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import { DisclosureStore } from '../../../../stores/disclosure-store';
 import {Instructions} from '../../instructions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {INSTRUCTION_STEP} from '../../../../../../coi-constants';
 import {Toggle} from '../../toggle';
 import {BlueButton} from '../../../blue-button';
 import AddSection from '../../../add-section';
@@ -153,14 +153,14 @@ export class Entities extends React.Component {
       );
     }
 
-    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES];
+    const instructionText = config.general.instructions[INSTRUCTION_STEP.FINANCIAL_ENTITIES];
     const contentState = config.general.richTextInstructions ?
-      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES] :
+      config.general.richTextInstructions[INSTRUCTION_STEP.FINANCIAL_ENTITIES] :
       undefined;
     const instructions = (
       <Instructions
         text={instructionText}
-        collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.FINANCIAL_ENTITIES]}
+        collapsed={!this.props.instructionsShowing[INSTRUCTION_STEP.FINANCIAL_ENTITIES]}
         contentState={contentState}
       />
     );

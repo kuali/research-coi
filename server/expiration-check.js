@@ -21,7 +21,7 @@
  no-console
  */
 import Log from './log';
-import {COIConstants} from '../coi-constants';
+import {DISCLOSURE_STATUS} from '../coi-constants';
 import moment from 'moment';
 import { createAndSendExpirationNotification, createAndSendExpirationReminderNotification } from './services/notification-service/notification-service';
 let getKnex;
@@ -88,7 +88,7 @@ catch (err) {
 }
 
 async function handleNotifications() {
-  const notifications = await expirationCheck(COIConstants.DISCLOSURE_STATUS.EXPIRED);
+  const notifications = await expirationCheck(DISCLOSURE_STATUS.EXPIRED);
   await notifications.expirationNotifications.map(async disclosure => {
     try {
       return await createAndSendExpirationNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);

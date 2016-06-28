@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {COIConstants} from '../../../coi-constants';
+import {ROLES} from '../../../coi-constants';
 import hashCode from '../../../hash';
 
 export function authView(req, res) {
@@ -53,7 +53,7 @@ export function getUserInfo(dbInfo, hostname, token) {
         lastName: token,
         phone: '801-322-3323',
         schoolId: hashCode(token),
-        coiRole: COIConstants.ROLES.ADMIN,
+        coiRole: ROLES.ADMIN,
         impersonatedBy: impersonator,
         mock: true
       });
@@ -71,7 +71,7 @@ export function getUserInfo(dbInfo, hostname, token) {
         lastName: token,
         phone: '801-322-3323',
         schoolId: hashCode(token),
-        coiRole: COIConstants.ROLES.REVIEWER,
+        coiRole: ROLES.REVIEWER,
         impersonatedBy: impersonator,
         mock: true
       });
@@ -88,7 +88,7 @@ export function getUserInfo(dbInfo, hostname, token) {
         lastName: token,
         phone: '801-322-3323',
         schoolId: hashCode(token),
-        coiRole: COIConstants.ROLES.USER,
+        coiRole: ROLES.USER,
         impersonatedBy: impersonator,
         mock: true
       });

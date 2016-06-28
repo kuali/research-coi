@@ -20,7 +20,7 @@ import styles from './style';
 import React from 'react';
 import ConfigActions from '../../../../actions/config-actions';
 import DoneLink from '../../done-link';
-import {COIConstants} from '../../../../../../coi-constants';
+import {RETURN_KEY} from '../../../../../../coi-constants';
 
 export default class NewType extends React.Component {
   constructor() {
@@ -32,7 +32,7 @@ export default class NewType extends React.Component {
   }
 
   lookForEnter(evt) {
-    if (evt.keyCode === COIConstants.RETURN_KEY) {
+    if (evt.keyCode === RETURN_KEY) {
       this.done();
     }
   }

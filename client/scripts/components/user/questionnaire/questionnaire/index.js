@@ -20,7 +20,7 @@ import styles from './style';
 import React from 'react';
 import {Question} from '../question';
 import {Instructions} from '../../instructions';
-import {COIConstants} from '../../../../../../coi-constants';
+import {QUESTION_TYPE, INSTRUCTION_STEP} from '../../../../../../coi-constants';
 
 export class Questionnaire extends React.Component {
   constructor() {
@@ -58,7 +58,7 @@ export class Questionnaire extends React.Component {
       }).map((question, index) => {
         const answer = this.getAnswer(question.id);
         let subQuestions = [];
-        if (question.question.type === COIConstants.QUESTION_TYPE.YESNO) {
+        if (question.question.type === QUESTION_TYPE.YESNO) {
           subQuestions = this.props.questions.filter(subQuestion => {
             return subQuestion.parent === question.id;
           }).map(subQuestion => {
@@ -85,15 +85,15 @@ export class Questionnaire extends React.Component {
       });
     }
 
-    const instructionText = config.general.instructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
+    const instructionText = config.general.instructions[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE];
     const contentState = config.general.richTextInstructions ?
-      config.general.richTextInstructions[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] :
+      config.general.richTextInstructions[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE] :
       undefined;
     return (
       <div className={`${styles.container} ${this.props.className}`}>
         <Instructions
           text={instructionText}
-          collapsed={!this.props.instructionsShowing[COIConstants.INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]}
+          collapsed={!this.props.instructionsShowing[INSTRUCTION_STEP.SCREENING_QUESTIONNAIRE]}
           contentState={contentState}
         />
 

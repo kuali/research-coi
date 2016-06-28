@@ -16,7 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {COIConstants} from '../../coi-constants';
+import {
+  ROLES,
+  DISCLOSURE_STEP,
+  RELATIONSHIP_STATUS,
+  FILE_TYPE,
+  DISCLOSURE_STATUS
+} from '../../coi-constants';
 import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
 import * as DisclosureDB from './disclosure-db';
 
@@ -65,7 +71,7 @@ async function updatePIResponseComment(dbInfo, userInfo, disclosureId, targetTyp
     text: comment,
     user_id: userInfo.schoolId,
     author: `${userInfo.firstName} ${userInfo.lastName}`,
-    user_role: COIConstants.ROLES.USER,
+    user_role: ROLES.USER,
     editable: false,
     date: new Date(),
     pi_visible: true,
@@ -209,10 +215,10 @@ const getComments = (knex, disclosureId, topicIDs, section) => {
     .andWhere('topic_id', 'in', topicIDs)
     .andWhere(function() {
       this.whereNot({
-        user_role: COIConstants.ROLES.USER
+        user_role: ROLES.USER
       }).orWhere(function() {
         this.where({
-          user_role: COIConstants.ROLES.USER,
+          user_role: ROLES.USER,
           current: true
         });
       });
@@ -220,20 +226,20 @@ const getComments = (knex, disclosureId, topicIDs, section) => {
 };
 
 const getQuestionnaireComments = (knex, disclosureId, topicIDs) => {
-  return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE);
+  return getComments(knex, disclosureId, topicIDs, DISCLOSURE_STEP.QUESTIONNAIRE);
 };
 
 const getEntityComments = (knex, disclosureId, topicIDs) => {
-  return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.ENTITIES);
+  return getComments(knex, disclosureId, topicIDs, DISCLOSURE_STEP.ENTITIES);
 };
 
 const getDeclarationComments = (knex, disclosureId, topicIDs) => {
-  return getComments(knex, disclosureId, topicIDs, COIConstants.DISCLOSURE_STEP.PROJECTS);
+  return getComments(knex, disclosureId, topicIDs, DISCLOSURE_STEP.PROJECTS);
 };
 
 const setAdminCommentsForTopics = (topics, comments) => {
   comments.filter(comment => {
-    return comment.userRole !== COIConstants.ROLES.USER;
+    return comment.userRole !== ROLES.USER;
   }).forEach(comment => {
     const topic = topics.find(topicToTest => {
       return topicToTest.id === comment.topicId;
@@ -250,7 +256,7 @@ const setAdminCommentsForTopics = (topics, comments) => {
 
 const setPIResponseForTopics = (topics, comments, currentUserId) => {
   comments.filter(comment => {
-    return comment.userId === currentUserId && comment.userRole === COIConstants.ROLES.USER;
+    return comment.userId === currentUserId && comment.userRole === ROLES.USER;
   }).forEach(comment => {
     const topic = topics.find(topicToTest => {
       return topicToTest.id === comment.topicId;
@@ -318,7 +324,7 @@ export const reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, new
       .innerJoin('fin_entity_answer as fea', 'pr.target_id', 'fea.fin_entity_id')
       .innerJoin('questionnaire_answer as qa', 'fea.questionnaire_answer_id', 'qa.id')
       .where({
-        'pr.target_type': COIConstants.DISCLOSURE_STEP.ENTITIES,
+        'pr.target_type': DISCLOSURE_STEP.ENTITIES,
         'pr.id': reviewId,
         'qa.question_id': questionId
       })
@@ -354,7 +360,7 @@ export const reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
         'da.questionnaire_answer_id': 'qa.id'
       })
       .where({
-        'pr.target_type': COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE,
+        'pr.target_type': DISCLOSURE_STEP.QUESTIONNAIRE,
         'pr.id': reviewId
       })
       .then(rows => {
@@ -402,7 +408,7 @@ const getRelationships = (knex, entityIDs) => {
     )
     .from('relationship as r')
     .where('fin_entity_id', 'in', entityIDs)
-    .andWhereNot('status', COIConstants.RELATIONSHIP_STATUS.PENDING)
+    .andWhereNot('status', RELATIONSHIP_STATUS.PENDING)
     .then(relationships => {
       return knex('travel_relationship')
       .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
@@ -423,7 +429,7 @@ const getFiles = (knex, entityIds) => {
   return knex.select('id', 'name', 'key', 'ref_id as refId')
     .from('file')
     .whereIn('ref_id', entityIds)
-    .andWhere('file_type', COIConstants.FILE_TYPE.FINANCIAL_ENTITY);
+    .andWhere('file_type', FILE_TYPE.FINANCIAL_ENTITY);
 };
 
 const setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
@@ -613,17 +619,17 @@ export const getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
           return Promise.all([
             getQuestionsToReview(knex, disclosureId, userInfo.schoolId,
               rows.filter(row => {
-                return row.targetType === COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE;
+                return row.targetType === DISCLOSURE_STEP.QUESTIONNAIRE;
               })
             ),
             getEntitiesToReview(knex, disclosureId, userInfo.schoolId,
               rows.filter(row => {
-                return row.targetType === COIConstants.DISCLOSURE_STEP.ENTITIES;
+                return row.targetType === DISCLOSURE_STEP.ENTITIES;
               })
             ),
             getDeclarationsToReview(knex, disclosureId, userInfo.schoolId,
               rows.filter(row => {
-                return row.targetType === COIConstants.DISCLOSURE_STEP.PROJECTS;
+                return row.targetType === DISCLOSURE_STEP.PROJECTS;
               })
             ),
             knex('disclosure').select('config_id as configId').where('id', disclosureId)
@@ -662,7 +668,7 @@ export const addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => 
           type_cd: !newRelationship.typeCd ? null : newRelationship.typeCd,
           amount_cd: !newRelationship.amountCd ? null : newRelationship.amountCd,
           comments: newRelationship.comments,
-          status: COIConstants.RELATIONSHIP_STATUS.IN_PROGRESS
+          status: RELATIONSHIP_STATUS.IN_PROGRESS
         }, 'id')
         .then(() => {
           return Promise.all([
@@ -758,7 +764,7 @@ export const reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
       if (isSubmitter) {
         return knex('disclosure')
           .update({
-            status_cd: COIConstants.DISCLOSURE_STATUS.RESUBMITTED
+            status_cd: DISCLOSURE_STATUS.RESUBMITTED
           })
           .where({
             id: disclosureId

@@ -21,7 +21,11 @@
 import assert from 'assert';
 import * as app from '../../../server/app';
 import request from 'supertest';
-import {COIConstants} from '../../../coi-constants';
+import {
+  DISCLOSURE_STATUS,
+  DISCLOSURE_TYPE,
+  DISCLOSURE_STEP
+} from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { OK, FORBIDDEN} from '../../../http-status-codes';
 
@@ -47,8 +51,8 @@ describe('PIControllerTest', () => {
 
   before(async function() {
     const disclosure = await knex('disclosure').insert({
-      type_cd: COIConstants.DISCLOSURE_TYPE.ANNUAL,
-      status_cd: COIConstants.DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+      type_cd: DISCLOSURE_TYPE.ANNUAL,
+      status_cd: DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
       user_id: userId,
       start_date: today,
       config_id: 1}, 'id');
@@ -58,7 +62,7 @@ describe('PIControllerTest', () => {
     const piReview = await knex('pi_review').insert({
       disclosure_id: disclosureId,
       target_id: 1,
-      target_type: COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE
+      target_type: DISCLOSURE_STEP.QUESTIONNAIRE
     }, 'id');
 
     piReviewId = piReview[0];
@@ -82,7 +86,7 @@ describe('PIControllerTest', () => {
 
       const review = response.body[0];
       assert.equal(review.targetId, 1);
-      assert.equal(review.targetType, COIConstants.DISCLOSURE_STEP.QUESTIONNAIRE);
+      assert.equal(review.targetType, DISCLOSURE_STEP.QUESTIONNAIRE);
     });
 
     it('user should not be able to retrieve responses ', async function () {

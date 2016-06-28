@@ -19,7 +19,7 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {COIConstants} from '../../../../../../coi-constants';
+import {QUESTION_TYPE} from '../../../../../../coi-constants';
 import {RadioControl} from '../radio-control';
 import {TextAreaControl} from '../text-area-control';
 import {NumericControl} from '../numeric-control';
@@ -64,7 +64,7 @@ export class Question extends React.Component {
 
   getControl(question, answer) {
     switch (question.question.type) {
-      case COIConstants.QUESTION_TYPE.YESNO:
+      case QUESTION_TYPE.YESNO:
         return (
           <RadioControl
             readonly={this.props.readonly}
@@ -75,7 +75,7 @@ export class Question extends React.Component {
             invalid={this.props.invalid}
           />
         );
-      case COIConstants.QUESTION_TYPE.YESNONA:
+      case QUESTION_TYPE.YESNONA:
         return (
           <RadioControl
             readonly={this.props.readonly}
@@ -86,7 +86,7 @@ export class Question extends React.Component {
             invalid={this.props.invalid}
           />
         );
-      case COIConstants.QUESTION_TYPE.TEXTAREA:
+      case QUESTION_TYPE.TEXTAREA:
         return (
           <TextAreaControl
             readonly={this.props.readonly}
@@ -96,7 +96,7 @@ export class Question extends React.Component {
             invalid={this.props.invalid}
           />
         );
-      case COIConstants.QUESTION_TYPE.MULTISELECT:
+      case QUESTION_TYPE.MULTISELECT:
         return (
           <CheckboxControl
             readonly={this.props.readonly}
@@ -107,7 +107,7 @@ export class Question extends React.Component {
             invalid={this.props.invalid}
           />
         );
-      case COIConstants.QUESTION_TYPE.NUMBER:
+      case QUESTION_TYPE.NUMBER:
         return (
           <NumericControl
             readonly={this.props.readonly}
@@ -117,7 +117,7 @@ export class Question extends React.Component {
             invalid={this.props.invalid}
           />
         );
-      case COIConstants.QUESTION_TYPE.DATE:
+      case QUESTION_TYPE.DATE:
         return (
           <DateControl
             readonly={this.props.readonly}
