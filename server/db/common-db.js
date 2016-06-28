@@ -16,14 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
+import getKnex from './connection-manager';
 
 export async function isDisclosureUsers(dbInfo, disclosureId, userId) {
   const knex = getKnex(dbInfo);

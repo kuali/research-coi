@@ -39,6 +39,7 @@ import {
   STATE_TYPE
 } from '../../coi-constants';
 import Log from '../log';
+import getKnex from './connection-manager';
 
 const MILLIS = 1000;
 const SECONDS = 60;
@@ -46,15 +47,12 @@ const MINUTES = 60;
 const HOURS = 24;
 const ONE_DAY = MILLIS * SECONDS * MINUTES * HOURS;
 
-let getKnex;
 let lane; // eslint-disable-line no-unused-vars
 try {
   const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
   lane = extensions.config.lane;
 }
 catch (err) {
-  getKnex = require('./connection-manager').default;
   lane = process.env.LANE || LANES.PRODUCTION;
 }
 

@@ -62,6 +62,15 @@ const knexInstance = knex({
   useNullAsDefault
 });
 
-export default () => {
-  return knexInstance;
-};
+let getKnex;
+try {
+  const extensions = require('research-extensions').default;
+  getKnex = extensions.getKnex;
+}
+catch (err) {
+  getKnex = () => {
+    return knexInstance;
+  };
+}
+
+export default getKnex;

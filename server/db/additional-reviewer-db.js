@@ -17,15 +17,7 @@
  */
 
 import { DATE_TYPE } from '../../coi-constants';
-
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
+import getKnex from './connection-manager';
 
 export async function getAdditionalReviewer(dbInfo, id) {
   try {
