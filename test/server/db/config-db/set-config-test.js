@@ -16,20 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/*global describe, it */
-/* eslint-disable no-magic-numbers, camelcase */
-
 import assert from 'assert';
 import * as ConfigDB from '../../../../server/db/config-db';
+import getKnex from '../../../../server/db/connection-manager';
 
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('../../../server/db/connection-manager').default;
-}
 const knex = getKnex({});
 
 describe('setConfig', () => {

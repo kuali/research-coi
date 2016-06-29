@@ -19,16 +19,14 @@
 /* eslint-disable camelcase */
 
 import { LANES } from '../../coi-constants';
+import getKnex from '../db/connection-manager';
 
-let getKnex;
 let lane;
 try {
   const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
   lane = extensions.config.lane;
 }
 catch (err) {
-  getKnex = require('../db/connection-manager').default;
   lane = process.env.LANE || LANES.PRODUCTION;
 }
 

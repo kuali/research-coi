@@ -16,8 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/* eslint-disable no-magic-numbers, camelcase */
-
 import assert from 'assert';
 import * as app from '../../../server/app';
 import request from 'supertest';
@@ -28,15 +26,8 @@ import {
 } from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { OK, FORBIDDEN, INTERNAL_SERVER_ERROR } from '../../../http-status-codes';
+import getKnex from '../../../server/db/connection-manager';
 
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('../../../server/db/connection-manager').default;
-}
 const knex = getKnex({});
 
 function getReviewer(disclosureId, user) {

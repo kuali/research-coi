@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*global describe, it */
 import assert from 'assert';
 import _ from 'lodash';
 

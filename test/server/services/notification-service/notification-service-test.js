@@ -16,22 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/*
-eslint-disable camelcase
- */
-
 import assert from 'assert';
 import * as NotificationService from '../../../../server/services/notification-service/notification-service';
 import { DISCLOSURE_STATUS, DISCLOSURE_TYPE, DATE_TYPE } from '../../../../coi-constants';
 import { formatDate } from '../../../../server/date-utils';
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('../../../server/db/connection-manager').default;
-}
+import getKnex from '../../../../server/db/connection-manager';
+
 const knex = getKnex({});
 
 const populatedTemplates = [

@@ -16,23 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*global describe, it */
-/* eslint-disable no-magic-numbers */
-
 import assert from 'assert';
 import * as DisclosureDB from '../../../server/db/disclosure-db';
 import { DISCLOSURE_STATUS } from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { insertDisclosure, createDisclosure, insertComment, getComment } from '../../test-utils';
+import getKnex from '../../../server/db/connection-manager';
 
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('../../../server/db/connection-manager').default;
-}
 const knex = getKnex({});
 
 describe('Disclosure', () => {

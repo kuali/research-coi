@@ -16,21 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/* eslint-disable no-magic-numbers, camelcase */
-
 import assert from 'assert';
 import * as app from '../../../../server/app';
 import request from 'supertest';
 import { DISCLOSURE_STATUS, DISCLOSURE_TYPE } from '../../../../coi-constants';
 import { ACCEPTED } from '../../../../http-status-codes';
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('../../../server/db/connection-manager').default;
-}
+import getKnex from '../../../../server/db/connection-manager';
+
 const knex = getKnex({});
 
 async function insertDisclosure(disclosure, user_id) {
