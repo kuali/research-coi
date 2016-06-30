@@ -23,16 +23,14 @@ Enhancements
 * Ability to add Data Variable for Annual Disposition in Approval Notification
 * COI Admin can view reviewer-recommended dispositions after disclosure is approved
 * On auto-assign of COI reviewer, system will not assign reviewer if the COI reviewer is the same as the reporter
+* First iteration of ability for COI Admin to set Reviewer's comment as visible to reporter
 
 Other improvements:
 * Adjustment to the user interface so that the COI Review comment panel better aligns with the section where the comment applies
+* Display of impersonated user in COI for upcoming core auth impersonation feature
 
 In-progress features behind a Feature Flag:
 * Ability to filter admin list view whether a disclose is with an assigned reviewer
-* Ability for COI Admin to set Reviewer's comment as visible to reporter
-
-Features behind a Feature Flag:
-* Display of impersonated user in COI for upcoming core auth impersonation feature
 
 ##coi-1605
 
