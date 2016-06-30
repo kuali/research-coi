@@ -52,22 +52,22 @@ if (process.env.USE_NULL_AS_DEFAULT) {
   useNullAsDefault = process.env.USE_NULL_AS_DEFAULT;
 }
 
-const knexInstance = knex({
-  client: process.env.DB_PACKAGE || 'strong-oracle',
-  connection: connectionOptions,
-  pool: {
-    min: 2,
-    max: process.env.CONNECTION_POOL_SIZE || DEFAULT_CONNECTION_POOL_SIZE
-  },
-  useNullAsDefault
-});
-
 let getKnex;
 try {
   const extensions = require('research-extensions').default;
   getKnex = extensions.getKnex;
 }
 catch (err) {
+  const knexInstance = knex({
+    client: process.env.DB_PACKAGE || 'strong-oracle',
+    connection: connectionOptions,
+    pool: {
+      min: 2,
+      max: process.env.CONNECTION_POOL_SIZE || DEFAULT_CONNECTION_POOL_SIZE
+    },
+    useNullAsDefault
+  });
+
   getKnex = () => {
     return knexInstance;
   };
