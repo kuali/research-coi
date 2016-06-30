@@ -156,9 +156,9 @@ System configuration for COI is done with environment variables. Environment var
 >: If, and only if, set to true usage statistics will be sent to segment.
 >*Default*:  false
 >
->**USE_NULL_AS_DEFAULT
+>**USE_NULL_AS_DEFAULT**
 >: Defaults undefined properties to NULL when inserting new rows.
->*Default*: false
+>*Default*: true
 
 -------
 
