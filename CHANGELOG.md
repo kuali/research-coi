@@ -1,3 +1,39 @@
+##coi-1606
+
+Issues Fixed: 
+* 500 error when trying to save configuration after adding disposition that is greater than 50 characters
+* Several buttons on formatting editor grayed out even though they are active
+* Correct disposition not displaying in projects in the Kuali monolith modules
+* Disposition filter is treating all disclosures as "No Disposition"
+* Project and FE-project disposition not displaying in archived disclosure after approval
+* Review Assigned email not getting sent when the disclosure is auto-assigned to reviewers
+* On update of an Update-to-Date disclosure after auto-approval, previous answers to questions displayed and the certification was checked even though they should not 
+* Reviewer could see other reviewer's comment 
+* When removing an additional reviewer the other (still assigned) reviewer was removed from the screen initially
+* 403 Error when reviewer attempts to filter by Submitted By in Review list
+* Warning message for disclosure update not appearing on COI dashboard when Configuration Option "Do not require researchers with no entities to update their annual disclosure" is enabled 
+* Client error thrown when no sponsor is on a project
+* Scheduled job for expired disclosures failing with oracle error
+
+Enhancements
+* Reporter's previous responses in a Sent Back/Resubmitted disclosure are displayed to the COI admin and reviewers
+* If a protocol has multiple sponsors, all are now being displayed in the protocol in  Project Declarations 
+* Reporter can view disclosure that is submitted for review
+* Reviewer name rather than the Reporter name had been appearing in the Needs Review list on the Reviewer’s dashboard
+* Ability to add Data Variable for Annual Disposition in Approval Notification
+* COI Admin can view reviewer-recommended dispositions after disclosure is approved
+* On auto-assign of COI reviewer, system will not assign reviewer if the COI reviewer is the same as the reporter
+
+Other improvements:
+* Adjustment to the user interface so that the COI Review comment panel better aligns with the section where the comment applies
+
+In-progress features behind a Feature Flag:
+* Ability to filter admin list view whether a disclose is with an assigned reviewer
+* Ability for COI Admin to set Reviewer's comment as visible to reporter
+
+Features behind a Feature Flag:
+* Display of impersonated user in COI for upcoming core auth impersonation feature
+
 ##coi-1605
 
 
