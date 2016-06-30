@@ -19,15 +19,7 @@
 import * as FileService from '../services/file-service/file-service';
 import {ROLES, FILE_TYPE} from '../../coi-constants';
 import {isDisclosureUsers} from './common-db';
-
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
+import getKnex from './connection-manager';
 
 export const getFile = (dbInfo, userInfo, id) => {
   const knex = getKnex(dbInfo);

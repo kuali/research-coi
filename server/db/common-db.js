@@ -16,157 +16,57 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {camelizeJson, snakeizeJson} from './json-utils';
-import _ from 'lodash';
+import getKnex from './connection-manager';
 
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
-
-export const saveSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
+export async function isDisclosureUsers(dbInfo, disclosureId, userId) {
   const knex = getKnex(dbInfo);
-
-  const recordId = record[camelizeJson(tableProps.pk)];
-  if (recordId) {
-    throw new Error(`Record already has an ${tableProps.pk} ${recordId} for table ${tableProps.table}`);
-  }
-
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
-  }
-  else {
-    query = knex;
-  }
-  return query.insert(snakeizeJson(record), tableProps.pk)
-    .into(tableProps.table)
-    .then(result => {
-      const updatedRecord = _.clone(record);
-      updatedRecord[camelizeJson(tableProps).pk] = result[0];
-      return updatedRecord;
-    });
-};
-
-export const getExistingSingleRecord = (dbInfo, recordId, tableProps, optionalTrx) => {
-  const knex = getKnex(dbInfo);
-
-  if (!recordId) {
-    throw new Error(`Record does not have an ${tableProps.pk} for table ${tableProps.table}`);
-  }
-
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
-  }
-  else {
-    query = knex;
-  }
-
-  return query.select('*')
-    .from(tableProps.table)
-    .where(tableProps.pk, recordId)
-    .then(result => {
-      return camelizeJson(result);
-    });
-};
-
-export const saveExistingSingleRecord = (dbInfo, record, tableProps, optionalTrx) => {
-  const knex = getKnex(dbInfo);
-
-  const recordId = record[camelizeJson(tableProps).pk];
-  if (!recordId) {
-    throw new Error(`Record does not have an ${tableProps.pk} for table ${tableProps.table}`);
-  }
-
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
-  }
-  else {
-    query = knex;
-  }
-  return query.update(snakeizeJson(record))
-    .table(tableProps.table)
-    .where(tableProps.pk, recordId)
-    .then(() => {
-      const updatedRecord = _.clone(record);
-      return updatedRecord;
-    });
-};
-
-export const deleteExistingSingleRecord = (dbInfo, recordId, tableProps, optionalTrx) => {
-  const knex = getKnex(dbInfo);
-
-  if (!recordId) {
-    throw new Error(`Record does not have an ${tableProps.pk} for table ${tableProps.table}`);
-  }
-
-  let query;
-  if (optionalTrx) {
-    query = knex.transacting(optionalTrx);
-  }
-  else {
-    query = knex;
-  }
-  return query.delete()
-    .from(tableProps.table)
-    .where(tableProps.pk, recordId);
-};
-
-export const isDisclosureUsers = (dbInfo, disclosureId, userId) => {
-  const knex = getKnex(dbInfo);
-  return knex.select('user_id')
+  const result = await knex
+    .select('user_id')
     .from('disclosure')
     .where({
       id: disclosureId,
       user_id: userId
-    })
-    .then(result => {
-      return result.length > 0;
     });
-};
+  
+  return result.length > 0;
+}
 
-export const isFinancialEntityUsers = (dbInfo, id, userId) => {
+export async function isFinancialEntityUsers(dbInfo, id, userId) {
   const knex = getKnex(dbInfo);
-  return knex.select('d.user_id')
+  const result = await knex
+    .select('d.user_id')
     .from('fin_entity as fe')
     .innerJoin('disclosure as d', 'd.id', 'fe.disclosure_id')
     .where({
       'fe.id': id,
       'd.user_id': userId
-    })
-    .then(result => {
-      return result.length > 0;
     });
-};
 
-export function getDisclosureForFinancialEntity(dbInfo, id) {
-  const knex = getKnex(dbInfo);
-  return knex('fin_entity')
-    .select('disclosure_id as disclosureId')
-    .where({id})
-    .then(entity => {
-      return entity[0].disclosureId;
-    });
+  return result.length > 0;
 }
 
-export const verifyRelationshipIsUsers = (dbInfo, userId, relationshipId) => {
+export async function getDisclosureForFinancialEntity(dbInfo, id) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('')
-  .from('relationship as r')
-  .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
-  .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
-  .where({
-    'd.user_id': userId,
-    'r.id': relationshipId
-  })
-  .then(rows => {
-    return rows.length > 0;
-  });
-};
+  const entity = await knex('fin_entity')
+    .select('disclosure_id as disclosureId')
+    .where({id});
+
+  return entity[0].disclosureId;
+}
+
+export async function verifyRelationshipIsUsers(dbInfo, userId, relationshipId) {
+  const knex = getKnex(dbInfo);
+
+  const rows = await knex
+    .select('')
+    .from('relationship as r')
+    .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
+    .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
+    .where({
+      'd.user_id': userId,
+      'r.id': relationshipId
+    });
+
+  return rows.length > 0;
+}

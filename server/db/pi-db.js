@@ -17,16 +17,9 @@
 */
 
 import { ROLES } from '../../coi-constants';
-const MAX_ROWS = 10;
+import getKnex from './connection-manager';
 
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
+const MAX_ROWS = 10;
 
 const queryUsingIndex = (knex, term) => {
   return knex.distinct('submitted_by as value')

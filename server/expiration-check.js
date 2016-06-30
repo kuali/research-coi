@@ -24,7 +24,7 @@ import Log from './log';
 import {DISCLOSURE_STATUS} from '../coi-constants';
 import moment from 'moment';
 import { createAndSendExpirationNotification, createAndSendExpirationReminderNotification } from './services/notification-service/notification-service';
-let getKnex;
+import getKnex from './db/connection-manager';
 
 const MILLIS_IN_A_DAY = 86400000;
 const REMINDER_TEMPLATE_ID = 9;
@@ -83,7 +83,6 @@ try {
   expirationCheck = extensions.expirationCheck;
 }
 catch (err) {
-  getKnex = require('./db/connection-manager').default;
   expirationCheck = checkForExpiredDisclosures;
 }
 

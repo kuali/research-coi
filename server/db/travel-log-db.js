@@ -25,15 +25,7 @@ import {
 } from '../../coi-constants';
 import {verifyRelationshipIsUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';
-
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
+import getKnex from './connection-manager';
 
 export const getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, filter) => {
   const knex = getKnex(dbInfo);

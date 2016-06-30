@@ -25,15 +25,7 @@ import {
 } from '../../coi-constants';
 import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
 import * as DisclosureDB from './disclosure-db';
-
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
+import getKnex from './connection-manager';
 
 export const verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
   const knex = getKnex(dbInfo);

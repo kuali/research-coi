@@ -16,8 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/* eslint-disable no-magic-numbers, camelcase */
-
 import assert from 'assert';
 import * as app from '../../../../server/app';
 import request from 'supertest';
@@ -40,15 +38,8 @@ import {
   createEntity,
   insertEntity
 } from '../../../test-utils';
+import getKnex from '../../../../server/db/connection-manager';
 
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('../../../server/db/connection-manager').default;
-}
 const knex = getKnex({});
 
 describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => {

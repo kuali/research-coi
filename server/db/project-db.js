@@ -27,14 +27,7 @@ import * as ProjectService from '../services/project-service/project-service';
 import { getGeneralConfig } from '../db/config-db';
 import Log from '../log';
 import { createAndSendNewProjectNotification } from '../services/notification-service/notification-service';
-let getKnex;
-try {
-  const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
-}
-catch (err) {
-  getKnex = require('./connection-manager').default;
-}
+import getKnex from './connection-manager';
 
 export async function getProjects (dbInfo, userId, trx) {
   let knex;

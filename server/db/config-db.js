@@ -19,18 +19,16 @@
 import {camelizeJson, snakeizeJson} from './json-utils';
 import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
 import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
+import getKnex from './connection-manager';
 
-let getKnex;
 let getNotificationsInfo;
 let lane;
 try {
   const extensions = require('research-extensions').default;
-  getKnex = extensions.getKnex;
   getNotificationsInfo = extensions.getNotificationsInfo;
   lane = extensions.config.lane;
 }
 catch (err) {
-  getKnex = require('./connection-manager').default;
   lane = process.env.LANE || LANES.PRODUCTION;
   getNotificationsInfo = () => {
     return {
