@@ -196,8 +196,8 @@ export default class DeclarationSummary extends React.Component {
           styles.container,
           {[styles.highlighted]: changedByPI},
           className
-        )}
-      >
+        )
+      }>
         <div>
           <span className={styles.entityName} style={{fontWeight: 'bold'}}>
             {declaration.entityName}
