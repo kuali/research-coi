@@ -945,6 +945,7 @@ export async function getSummariesForReview(dbInfo, sortColumn, sortDirection, s
           'd.id',
           'ar.disclosure_id'
         );
+        query.where('ar.active', true);
       }
     }
     else if (!reviewStatus.assigned && reviewStatus.notAssigned) {
@@ -954,7 +955,9 @@ export async function getSummariesForReview(dbInfo, sortColumn, sortDirection, s
           'd.id',
           'ar.disclosure_id'
         );
-        query.whereNull('ar.id');
+        query.where(function() {
+          this.whereNull('ar.id').orWhere('ar.active', false);
+        });
       }
     }
   }
