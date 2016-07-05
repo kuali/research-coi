@@ -84,7 +84,6 @@
   padding: 5px 25px;
   font-size: 20px;
   min-width: 433px;
-  vertical-align: middle;
 }
 
 .days {
@@ -109,7 +108,6 @@
   margin-right: 100px;
   padding: 25px 35px;
   font-size: 20px;
-  vertical-align: middle;
 }
 
 :global(.color-blind) .infoBanner {

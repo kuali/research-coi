@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-require('css-modules-require-hook');
+require('css-modules-require-hook/preset');
 require('babel-register');
 
 var jsdom = require('jsdom'); // eslint-disable-line no-var

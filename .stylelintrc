@@ -6,6 +6,10 @@
   "rules": {
     "color-hex-case": null,
     "color-hex-length": null,
-    "block-no-empty": null
+    "block-no-empty": null,
+    "selector-pseudo-class-no-unknown": [true, {
+      ignorePseudoClasses: ["global"]
+    }],
+    "shorthand-property-no-redundant-values": null
   }
 }
