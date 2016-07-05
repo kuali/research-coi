@@ -349,4 +349,13 @@ export const init = app => {
     res.status(ACCEPTED).end();
     await DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body);
   }));
+
+  app.get('/api/coi/archived-disclosures/:archiveId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    const results = await DisclosureDB.getArchivedDisclosure(
+      req.dbInfo,
+      req.params.archiveId
+    );
+    const archive = JSON.parse(results[0].disclosure);
+    res.send(archive);
+  }));
 };

@@ -852,6 +852,17 @@ class _AdminStore {
       .send({dispositionTypeCd})
       .end(processResponse(() => {}));
   }
+
+  showArchivedDisclosure(id) {
+    this.currentArchiveId = id;
+
+    createRequest()
+      .get(`/api/coi/archived-disclosures/${id}`)
+      .end(processResponse((err, archivedDisclosure) => {
+        this.currentArchivedDisclosure = archivedDisclosure.body;
+        this.emitChange();
+      }));
+  }
 }
 
 export const AdminStore = alt.createStore(_AdminStore, 'AdminStore');
