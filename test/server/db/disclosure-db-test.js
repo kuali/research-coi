@@ -62,6 +62,7 @@ describe('Comments', () => {
     });
 
     afterEach(async () => {
+      await knex('pi_review').where('disclosure_id', disclosureId).delete();
       await knex('comment').where('id', comment.id).delete();
       comment = undefined;
     });
@@ -83,6 +84,7 @@ describe('Comments', () => {
     });
 
     afterEach(async () => {
+      await knex('pi_review').where('disclosure_id', disclosureId).delete();
       await knex('comment').where('id', comment.id).delete();
       comment = undefined;
     });
@@ -92,8 +94,33 @@ describe('Comments', () => {
       await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
       comment = await getComment(knex, comment.id);
 
-      assert.equal(comment.pi_visible, true);
+      assert.equal(comment.piVisible, true);
       assert.equal(comment.author, 'cate');
+    });
+
+    it('should flag the comment as needing review by the PI', async () => {
+      comment.piVisible = true;
+      await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
+
+      const results = await knex('pi_review').where('disclosure_id', disclosureId).count();
+      const piReviewCount = results[0]['count(*)'];
+      assert.equal(piReviewCount, 1);
+    });
+
+    context('and the comment is already visisble to the PI', async() => {
+      beforeEach(async() => {
+        comment.piVisible = true;
+        await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
+      });
+
+      it('should remove the pi_review flag if the comment is no longer visisble to the PI', async() => {
+        comment.piVisible = false;
+        await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
+
+        const results = await knex('pi_review').where('disclosure_id', disclosureId).count();
+        const piReviewCount = results[0]['count(*)'];
+        assert.equal(piReviewCount, 0);
+      });
     });
   });
 });

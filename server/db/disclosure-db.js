@@ -513,6 +513,29 @@ const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
     });
 };
 
+const unflagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
+  const knex = getKnex(dbInfo);
+  return knex('comment').count()
+    .where({
+      disclosure_id: disclosureId,
+      topic_section: section,
+      topic_id: id,
+      pi_visible: true
+    })
+    .then(result => {
+      const count = result[0]['count(*)'];
+
+      if (count == 0) {
+        return knex('pi_review').delete()
+          .where({
+            disclosure_id: disclosureId,
+            target_type: section,
+            target_id: id
+          });
+      }
+    });
+};
+
 export const addComment = (dbInfo, userInfo, comment) => {
   const knex = getKnex(dbInfo);
   return knex('comment')
@@ -551,6 +574,13 @@ export const updateComment = (dbInfo, userInfo, comment) => {
     })
     .where({
       id: comment.id
+    })
+    .then(() => {
+      if (comment.piVisible) {
+        return flagPIReviewNeeded(dbInfo, comment.disclosureId, comment.topicSection, comment.topicId);
+      }
+
+      return unflagPIReviewNeeded(dbInfo, comment.disclosureId, comment.topicSection, comment.topicId);
     })
     .then(() => {
       return retrieveComments(dbInfo, userInfo, comment.disclosureId);
@@ -934,7 +964,7 @@ export async function getSummariesForReview(dbInfo, sortColumn, sortDirection, s
   let reviewJoinMade = false;
   if (filters.reviewStatus) {
     const {reviewStatus} = filters;
-    
+
     if (!reviewStatus.assigned && !reviewStatus.notAssigned) {
       query.where('status_cd', -99999999); // return no rows
     }

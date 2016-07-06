@@ -138,7 +138,24 @@ export async function insertComment(knex, disclosure_id, user, text) {
 }
 
 export async function getComment(knex, id) {
-  const comments = await knex('comment').select().where('id', id);
+  const comments = await knex('comment')
+    .select(
+      'id',
+      'disclosure_id as disclosureId',
+      'topic_section as topicSection',
+      'topic_id as topicId',
+      'text',
+      'user_id as userId',
+      'author',
+      'date',
+      'pi_visible as piVisible',
+      'reviewer_visible as reviewerVisible',
+      'user_role as userRole',
+      'editable',
+      'current'
+    )
+    .where('id', id);
+
   return comments[0];
 }
 
