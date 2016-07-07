@@ -24,8 +24,8 @@ import {
   getProjectTypeString,
   getDeclarationTypeString,
   getDispositionTypeString
-} from '../../../stores/config-store';
-import getConfig from '../../../get-config';
+} from '../../stores/config-store';
+import getConfig from '../../get-config';
 
 export default class DeclarationsSummary extends React.Component {
   getUniqueProjects(declarations) {

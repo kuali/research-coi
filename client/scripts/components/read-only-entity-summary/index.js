@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {QUESTION_TYPE} from '../../../../../coi-constants';
-import {formatDate} from '../../../format-date';
-import EntityRelationshipSummary from '../../entity-relationship-summary';
+import {QUESTION_TYPE} from '../../../../coi-constants';
+import {formatDate} from '../../format-date';
+import EntityRelationshipSummary from '../entity-relationship-summary';
 
 function getQuestionAnswer(questionId, entity, type) {
   const theAnswer = entity.answers.find(answer => {

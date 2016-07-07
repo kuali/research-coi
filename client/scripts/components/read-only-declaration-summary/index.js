@@ -19,8 +19,8 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {getDispositionTypeString} from '../../../stores/config-store';
-import getConfig from '../../../get-config';
+import {getDispositionTypeString} from '../../stores/config-store';
+import getConfig from '../../get-config';
 
 export default function DeclarationSummary(props, {configState}) {
   const config = getConfig(configState, props.configId);
