@@ -86,5 +86,6 @@ export const AdminActions = alt.generateActions(
   'updateAdminRelationship',
   'updateReviewerRelationship',
   'recommendProjectDisposition',
-  'showArchivedDisclosure'
+  'showArchivedDisclosure',
+  'closeArchivedDisclosureModal'
 );

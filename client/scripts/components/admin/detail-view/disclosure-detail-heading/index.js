@@ -18,13 +18,14 @@
 
 import styles from './style';
 import React from 'react';
+import {get} from 'lodash';
 import {
   getAdminDisclosureStatusString,
   getDispositionsEnabled,
   getDisclosureTypeString
 } from '../../../../stores/config-store';
 import {formatDate, formatDateTime} from '../../../../format-date';
-import {DISCLOSURE_STATUS} from '../../../../../../coi-constants';
+import {DISCLOSURE_STATUS, LANES} from '../../../../../../coi-constants';
 import Dropdown from '../../../dropdown';
 import {BlueButton} from '../../../blue-button';
 import {AdminActions} from '../../../../actions/admin-actions';
@@ -38,13 +39,20 @@ export class DisclosureDetailHeading extends React.Component {
   }
 
   archiveChosen(id) {
+    let idToUse = id;
+    if (id === '') {
+      idToUse = undefined;
+    }
+
     this.setState({
-      archiveId: id
+      archiveId: idToUse
     });
   }
 
   showArchive() {
-    AdminActions.showArchivedDisclosure(this.state.archiveId);
+    if (get(this.state, 'archiveId') !== undefined) {
+      AdminActions.showArchivedDisclosure(this.state.archiveId);
+    }
   }
 
   render() {
@@ -122,36 +130,40 @@ export class DisclosureDetailHeading extends React.Component {
 
     let versionPicker;
     let versionOptions;
-    if (disclosure.archivedVersions.length > 0) {
-      versionOptions = disclosure.archivedVersions.map(version => {
-        return {
-          label: `Approved ${formatDateTime(version.approvedDate)}`,
-          value: version.id
-        };
-      });
 
-      versionPicker = (
-        <div>
-          <Dropdown
-            options={versionOptions}
-            className={styles.dropDown}
-            id={'archivedVersionPicker'}
-            onChange={this.archiveChosen}
-          />
-          <BlueButton
-            style={{minWidth: 'initial', fontSize: 10, padding: '4px 9px 3px 9px'}}
-            onClick={this.showArchive}
-          >
-            View
-          </BlueButton>
-        </div>
-      );
-    } else {
-      versionPicker = (
-        <div className={styles.noVersions} id="archivedVersionPicker">
-          NONE FOUND
-        </div>
-      );
+    if (configState.config.lane === LANES.TEST) {
+      if (disclosure.archivedVersions.length > 0) {
+        versionOptions = disclosure.archivedVersions.map(version => {
+          return {
+            label: `Approved ${formatDateTime(version.approvedDate)}`,
+            value: version.id
+          };
+        });
+
+        versionPicker = (
+          <div>
+            <Dropdown
+              options={versionOptions}
+              className={styles.dropDown}
+              id={'archivedVersionPicker'}
+              onChange={this.archiveChosen}
+            />
+            <BlueButton
+              style={{minWidth: 'initial', fontSize: 10, padding: '4px 9px 3px 9px'}}
+              onClick={this.showArchive}
+              disabled={get(this.state, 'archiveId') === undefined}
+            >
+              View
+            </BlueButton>
+          </div>
+        );
+      } else {
+        versionPicker = (
+          <div className={styles.noVersions} id="archivedVersionPicker">
+            NONE FOUND
+          </div>
+        );
+      }
     }
 
     return (

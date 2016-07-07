@@ -16,15 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import styles from './style';
-import classNames from 'classnames';
+import ReactModal from 'react-modal';
 import React from 'react';
+import styles from './style';
 
-export const GreyButton = props => (
-  <button
-    {...props}
-    className={classNames(styles.container, props.className)}
-  >
-    {props.children}
-  </button>
-);
+export default function(props) {
+  return (
+    <ReactModal
+      isOpen={props.isOpen !== undefined ? props.isOpen : true}
+      onRequestClose={props.onRequestClose !== undefined ? props.onRequestClose : () => {}}
+      className={styles.modal}
+      overlayClassName={styles.overlay}
+      style={props.style !== undefined ? props.style : undefined}
+    >
+      {props.children ? props.children : null}
+    </ReactModal>
+  );
+}
