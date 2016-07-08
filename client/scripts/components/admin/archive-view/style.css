@@ -16,37 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.modal {
-  position: absolute;
-  top: 80px;
-  left: 40px;
-  right: 40px;
-  bottom: 40px;
-  border: 1px solid #ccc;
-  background: #fff;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 4px;
-  outline: none;
-  padding: 0 25px 25px 25px;
+.container {
+  padding-bottom: 0;
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(60, 60, 60, 0.9);
+.override.files {
+  margin-bottom: 25px;
 }
 
-.closeIcon {
-  padding-bottom: 11px;
-  font-size: 22px;
-  margin: 1px -20px 0 0;
-  cursor: pointer;
+.override.questionnaire {
+  margin-bottom: 25px;
 }
 
-.top {
-  text-align: right;
+.override.entities {
+  margin-bottom: 25px;
+}
+
+.declarations {
+  padding-bottom: 50px;
 }

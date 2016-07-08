@@ -34,11 +34,13 @@
 .entityName {
   width: 25%;
   display: inline-block;
+  vertical-align: top;
 }
 
 .conflict {
   width: 25%;
   display: inline-block;
+  vertical-align: top;
 }
 
 .adminRelationship {

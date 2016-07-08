@@ -21,14 +21,22 @@ import React from 'react';
 import styles from './style';
 
 export default function(props) {
+  const onClose = props.onRequestClose !== undefined ? props.onRequestClose : () => {};
   return (
     <ReactModal
       isOpen={props.isOpen !== undefined ? props.isOpen : true}
-      onRequestClose={props.onRequestClose !== undefined ? props.onRequestClose : () => {}}
+      onRequestClose={onClose}
       className={styles.modal}
       overlayClassName={styles.overlay}
       style={props.style !== undefined ? props.style : undefined}
     >
+      <div className={styles.top}>
+        <i
+          className={`fa fa-times ${styles.closeIcon}`}
+          aria-hidden="true"
+          onClick={onClose}
+        />
+      </div>
       {props.children ? props.children : null}
     </ReactModal>
   );

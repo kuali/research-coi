@@ -16,37 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.modal {
-  position: absolute;
-  top: 80px;
-  left: 40px;
-  right: 40px;
-  bottom: 40px;
-  border: 1px solid #ccc;
-  background: #fff;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 4px;
-  outline: none;
-  padding: 0 25px 25px 25px;
+.container {
+  background-color: white;
+  box-shadow: 0 0 8px #AAA;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(60, 60, 60, 0.9);
+.heading {
+  border-bottom: 1px solid #999;
+  font-size: 25px;
+  color: black;
+  padding: 10px;
 }
 
-.closeIcon {
-  padding-bottom: 11px;
-  font-size: 22px;
-  margin: 1px -20px 0 0;
-  cursor: pointer;
+.body {
+  padding: 13px 20px;
 }
 
-.top {
-  text-align: right;
+.link {
+  color: #0095A0;
+  border-bottom: 1px dotted #0095A0;
+}
+
+.type {
+  font-style: italic;
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.file {
+  padding: 5px 0;
 }

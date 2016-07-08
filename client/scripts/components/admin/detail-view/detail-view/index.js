@@ -31,6 +31,7 @@ import GeneralAttachmentsPanel from '../general-attachments-panel';
 import UploadAttachmentsPanel from '../upload-attachments-panel';
 import {DISCLOSURE_STATUS, FILE_TYPE} from '../../../../../../coi-constants';
 import {AppHeader} from '../../../app-header';
+import ArchiveView from '../../archive-view';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -211,7 +212,9 @@ export class DetailView extends React.Component {
           isOpen={this.state.applicationState.currentArchiveId !== undefined}
           onRequestClose={AdminActions.closeArchivedDisclosureModal}
         >
-          Hi!
+          <ArchiveView
+            disclosure={this.state.applicationState.currentArchivedDisclosure}
+          />
         </Modal>
 
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
