@@ -43,7 +43,8 @@
   color: #666;
 }
 
-.answer {
+.answer,
+.comment {
   font-size: 13px;
   margin-left: 20px;
   font-weight: bold;
@@ -56,11 +57,23 @@
   font-size: 15px;
 }
 
-.answerLabel {
+.commentSection {
+  margin: -10px 0 15px 0;
+}
+
+.answerLabel,
+.commentsLabel {
   color: #0095A0;
   padding-bottom: 3px;
 }
 
-:global(.color-blind) .answerLabel {
+:global(.color-blind) .answerLabel,
+:global(.color-blind) .commentsLabel {
   color: black;
+}
+
+.commentText {
+  font-style: italic;
+  font-weight: normal;
+  margin-left: 5px;
 }

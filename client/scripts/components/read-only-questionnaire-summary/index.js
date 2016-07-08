@@ -21,6 +21,18 @@ import classNames from 'classnames';
 import React from 'react';
 import QuestionSummary from '../read-only-question-summary';
 
+function getCommentsForQuestion(comments, id) {
+  if (!comments || comments.length === 0) {
+    return [];
+  }
+
+  return comments.filter(comment => {
+    return comment.topicId === id;
+  }).sort((a, b) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
+}
+
 export default function QuestionnaireSummary(props) {
   let questions;
   if (props.questions !== undefined) {
@@ -35,6 +47,7 @@ export default function QuestionnaireSummary(props) {
           key={question.id}
           question={question}
           answer={props.answers[question.id].answer.value}
+          comments={getCommentsForQuestion(props.comments, question.id)}
         />
       );
     });

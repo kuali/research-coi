@@ -75,3 +75,28 @@
   color: black;
   border-bottom: 1px dashed black;
 }
+
+.commentSection {
+  margin: 3px 0 15px 0;
+}
+
+.commentsLabel {
+  color: #0095A0;
+  padding-bottom: 3px;
+}
+
+:global(.color-blind) .commentsLabel {
+  color: black;
+}
+
+.commentText {
+  font-style: italic;
+  font-weight: normal;
+  margin-left: 5px;
+}
+
+.comment {
+  font-size: 13px;
+  margin-left: 20px;
+  font-weight: bold;
+}

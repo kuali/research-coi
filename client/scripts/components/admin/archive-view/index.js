@@ -23,6 +23,7 @@ import DeclarationsSummary from '../../read-only-declarations-summary';
 import EntitiesSummary from '../../read-only-entities-summary';
 import QuestionnaireSummary from '../../read-only-questionnaire-summary';
 import AttachmentSummary from '../../read-only-attachment-summary';
+import {DISCLOSURE_STEP} from '../../../../../coi-constants';
 
 function getAnswerMap(answers) {
   if (!answers || !Array.isArray(answers)) {
@@ -33,6 +34,28 @@ function getAnswerMap(answers) {
     theMap[answer.questionId] = answer;
     return theMap;
   }, {});
+}
+
+function getCommentsForSection(comments, section) {
+  if (!comments || comments.length === 0) {
+    return [];
+  }
+
+  return comments.filter(comment => {
+    return comment.topicSection === section;
+  });
+}
+
+function getQuestionnaireComments(comments) {
+  return getCommentsForSection(comments, DISCLOSURE_STEP.QUESTIONNAIRE);
+}
+
+function getEntitiesComments(comments) {
+  return getCommentsForSection(comments, DISCLOSURE_STEP.ENTITIES);
+}
+
+function getDeclarationsComments(comments) {
+  return getCommentsForSection(comments, DISCLOSURE_STEP.PROJECTS);
 }
 
 export default function ArchiveView ({disclosure}, {configState}) {
@@ -56,11 +79,13 @@ export default function ArchiveView ({disclosure}, {configState}) {
           questions={config.questions.screening}
           answers={getAnswerMap(disclosure.answers)}
           className={`${styles.override} ${styles.questionnaire}`}
+          comments={getQuestionnaireComments(disclosure.comments)}
         />
         <EntitiesSummary
           entities={disclosure.entities}
           className={`${styles.override} ${styles.entities}`}
           questions={config.questions.entities}
+          comments={getEntitiesComments(disclosure.comments)}
         />
         <DeclarationsSummary
           declarations={disclosure.declarations}
@@ -69,6 +94,7 @@ export default function ArchiveView ({disclosure}, {configState}) {
           showDispositions={true}
           recommendedProjectDispositions={disclosure.recommendedProjectDispositions}
           className={styles.declarations}
+          comments={getDeclarationsComments(disclosure.comments)}
         />
       </div>
     </div>

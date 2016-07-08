@@ -21,6 +21,18 @@ import classNames from 'classnames';
 import React from 'react';
 import EntitySummary from '../read-only-entity-summary';
 
+function getCommentsForEntity(comments, id) {
+  if (!comments || comments.length === 0) {
+    return [];
+  }
+
+  return comments.filter(comment => {
+    return comment.topicId === id;
+  }).sort((a, b) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
+}
+
 export default function EntitiesSummary(props) {
   let entities;
   if (props.entities !== undefined) {
@@ -33,6 +45,7 @@ export default function EntitiesSummary(props) {
           isLast={index === array.length - 1}
           questions={props.questions}
           entity={entity}
+          comments={getCommentsForEntity(props.comments, entity.id)}
         />
       );
     });

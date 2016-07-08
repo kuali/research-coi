@@ -66,6 +66,25 @@ export default function DeclarationSummary(props, {configState}) {
     commentClass = classNames(styles.comments, styles.shortComment);
   }
 
+  let commentsJsx;
+  if (props.comments && props.comments.length > 0) {
+    let individualComments = props.comments.map(comment => {
+      return (
+        <div key={comment.id} className={styles.comment}>
+          {comment.author}:
+          <span className={styles.commentText}>{comment.text}</span>
+        </div>
+      );
+    });
+
+    commentsJsx = (
+      <div className={styles.commentSection}>
+        <div className={styles.commentsLabel}>COMMENTS:</div>
+        {individualComments}
+      </div>
+    );
+  }
+
   return (
     <div className={classNames(styles.container, className)}>
       <div>
@@ -80,6 +99,7 @@ export default function DeclarationSummary(props, {configState}) {
           {declaration.comments}
         </span>
       </div>
+      {commentsJsx}
     </div>
   );
 }

@@ -28,6 +28,18 @@ import {
 import getConfig from '../../get-config';
 import RecommendationLink from '../recommendation-link';
 
+function getCommentsForDeclaration(comments, id) {
+  if (!comments || comments.length === 0) {
+    return [];
+  }
+
+  return comments.filter(comment => {
+    return comment.topicId === id;
+  }).sort((a, b) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
+}
+
 export default class DeclarationsSummary extends React.Component {
   getUniqueProjects(declarations) {
     const projects = [];
@@ -72,7 +84,8 @@ export default class DeclarationsSummary extends React.Component {
       configId,
       showDispositions,
       recommendedProjectDispositions,
-      className
+      className,
+      comments
     } = this.props;
     const {configState} = this.context;
 
@@ -104,6 +117,7 @@ export default class DeclarationsSummary extends React.Component {
               configId={configId}
               disposition={declarationType}
               showDispositions={showDispositions}
+              comments={getCommentsForDeclaration(comments, declaration.id)}
             />
           );
         });
