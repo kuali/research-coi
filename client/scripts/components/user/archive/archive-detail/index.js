@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import DeclarationsSummary from '../../read-only-declarations-summary';
-import EntitiesSummary from '../../read-only-entities-summary';
-import QuestionnaireSummary from '../../read-only-questionnaire-summary';
+import DeclarationsSummary from '../../../read-only-declarations-summary';
+import EntitiesSummary from '../../../read-only-entities-summary';
+import QuestionnaireSummary from '../../../read-only-questionnaire-summary';
 import getConfig from '../../../../get-config';
 
 export default class ArchiveDetail extends React.Component {

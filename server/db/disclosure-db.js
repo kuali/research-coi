@@ -665,6 +665,15 @@ async function getDeclarations(knex, disclosureId) {
   return declarations;
 }
 
+function getArchivedVersionList(knex, disclosureId) {
+  return knex.select(
+      'id',
+      'approved_date as approvedDate'
+    ).from('disclosure_archive')
+    .where('disclosure_id', disclosureId)
+    .orderBy('approvedDate', 'DESC');
+}
+
 export const get = (dbInfo, userInfo, disclosureId, trx) => {
   let disclosure;
   let knex;
@@ -708,7 +717,8 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
         });
       }),
     isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId),
-    knex('config').select('id').limit(1).orderBy('id', 'desc')
+    knex('config').select('id').limit(1).orderBy('id', 'desc'),
+    getArchivedVersionList(knex, disclosureId)
   ]).then(([
     disclosureRecords,
     entityRecords,
@@ -719,7 +729,8 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     managementPlans,
     additionalReviewers,
     isOwner,
-    latestConfig
+    latestConfig,
+    archivedVersions
   ]) => {
     const { coiRole } = userInfo;
     if (coiRole !== ROLES.ADMIN && coiRole !== ROLES.REVIEWER) {
@@ -733,6 +744,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
     disclosure.entities = entityRecords;
     disclosure.answers = answerRecords;
     disclosure.declarations = declarationRecords;
+    disclosure.archivedVersions = archivedVersions;
     if (coiRole === ROLES.REVIEWER) {
       phaseTwoSteps.push(
         knex.select(
@@ -1490,6 +1502,14 @@ export const getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {
   .limit(1)
   .orderBy('approved_date', 'desc');
 };
+
+export function getArchivedDisclosure(dbInfo, archiveId) {
+  const knex = getKnex(dbInfo);
+  return knex
+    .select('disclosure')
+    .from('disclosure_archive')
+    .where('id', archiveId);
+}
 
 export const deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {
   const knex = getKnex(dbInfo);

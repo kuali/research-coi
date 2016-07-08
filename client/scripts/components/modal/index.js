@@ -16,51 +16,28 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.container {
-  margin-bottom: 10px;
-}
+import ReactModal from 'react-modal';
+import React from 'react';
+import styles from './style';
 
-.highlighted {
-  border-left: 10px solid #F57C00;
-  margin-left: -20px;
-  padding-left: 10px;
-}
-
-:global(.color-blind) .highlighted {
-  border-left: 10px solid black;
-}
-
-.number {
-  width: 50px;
-  font-size: 31px;
-  color: #666;
-}
-
-.subQuestionNumber {
-  width: 130px;
-  font-size: 31px;
-  padding-left: 50px;
-  color: #666;
-}
-
-.answer {
-  font-size: 13px;
-  margin-left: 20px;
-  font-weight: bold;
-}
-
-.answerSection {
-  display: inline-block;
-  padding-bottom: 12px;
-  margin: 7px 5px 15px 0;
-  font-size: 15px;
-}
-
-.answerLabel {
-  color: #0095A0;
-  padding-bottom: 3px;
-}
-
-:global(.color-blind) .answerLabel {
-  color: black;
+export default function(props) {
+  const onClose = props.onRequestClose !== undefined ? props.onRequestClose : () => {};
+  return (
+    <ReactModal
+      isOpen={props.isOpen !== undefined ? props.isOpen : true}
+      onRequestClose={onClose}
+      className={styles.modal}
+      overlayClassName={styles.overlay}
+      style={props.style !== undefined ? props.style : undefined}
+    >
+      <div className={styles.top}>
+        <i
+          className={`fa fa-times ${styles.closeIcon}`}
+          aria-hidden="true"
+          onClick={onClose}
+        />
+      </div>
+      {props.children ? props.children : null}
+    </ReactModal>
+  );
 }

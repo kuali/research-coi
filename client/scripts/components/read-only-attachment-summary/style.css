@@ -16,15 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import styles from './style';
-import classNames from 'classnames';
-import React from 'react';
+.container {
+  background-color: white;
+  box-shadow: 0 0 8px #AAA;
+  border-radius: 5px;
+  overflow: hidden;
+}
 
-export const GreyButton = props => (
-  <button
-    {...props}
-    className={classNames(styles.container, props.className)}
-  >
-    {props.children}
-  </button>
-);
+.heading {
+  border-bottom: 1px solid #999;
+  font-size: 25px;
+  color: black;
+  padding: 10px;
+}
+
+.body {
+  padding: 13px 20px;
+}
+
+.link {
+  color: #0095A0;
+  border-bottom: 1px dotted #0095A0;
+}
+
+.type {
+  font-style: italic;
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.file {
+  padding: 5px 0;
+}

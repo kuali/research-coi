@@ -16,15 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import styles from './style';
-import classNames from 'classnames';
-import React from 'react';
+.container {
+  padding-bottom: 0;
+}
 
-export const GreyButton = props => (
-  <button
-    {...props}
-    className={classNames(styles.container, props.className)}
-  >
-    {props.children}
-  </button>
-);
+.override.files {
+  margin-bottom: 25px;
+}
+
+.override.questionnaire {
+  margin-bottom: 25px;
+}
+
+.override.entities {
+  margin-bottom: 25px;
+}
+
+.declarations {
+  padding-bottom: 50px;
+}

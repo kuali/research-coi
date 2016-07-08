@@ -49,7 +49,7 @@ describe('DetailView', () => {
     );
 
     const vdom = tree.getRenderOutput();
-    const sidePanelContainer = vdom.props.children[1].props.children[2];
+    const sidePanelContainer = vdom.props.children[2].props.children[2];
     assert.equal(sidePanelContainer.props.children, undefined);
     assert.equal(vdom.props.className.endsWith('listShowing'), true);
   });
@@ -61,7 +61,7 @@ describe('DetailView', () => {
       selectedDisclosure: {files: []}
     });
 
-    const sidePanelContainer = vdom.props.children[1].props.children[2];
+    const sidePanelContainer = vdom.props.children[2].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'UploadAttachmentsPanel');
     assert.equal(vdom.props.className.endsWith('listShowing'), false);
   });
@@ -72,7 +72,7 @@ describe('DetailView', () => {
       generalAttachmentsShowing: true,
       selectedDisclosure: {files: []}
     });
-    const sidePanelContainer = vdom.props.children[1].props.children[2];
+    const sidePanelContainer = vdom.props.children[2].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'GeneralAttachmentsPanel');
     assert.equal(vdom.props.className.endsWith('listShowing'), false);
   });
@@ -83,7 +83,7 @@ describe('DetailView', () => {
       commentingPanelShowing: true,
       selectedDisclosure: {files: []}
     });
-    const sidePanelContainer = vdom.props.children[1].props.children[2];
+    const sidePanelContainer = vdom.props.children[2].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'CommentingPanel');
     assert.equal(vdom.props.className.endsWith('listShowing'), false);
   });
@@ -94,7 +94,7 @@ describe('DetailView', () => {
       additionalReviewShowing: true,
       selectedDisclosure: {files: []}
     });
-    const sidePanelContainer = vdom.props.children[1].props.children[2];
+    const sidePanelContainer = vdom.props.children[2].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'AdditionalReviewPanel');
     assert.equal(vdom.props.className.endsWith('listShowing'), false);
   });
@@ -105,7 +105,7 @@ describe('DetailView', () => {
       commentSummaryShowing: true,
       selectedDisclosure: {files: []}
     });
-    const sidePanelContainer = vdom.props.children[1].props.children[2];
+    const sidePanelContainer = vdom.props.children[2].props.children[2];
     assert.equal(sidePanelContainer.props.children.type.name.toString(),'CommentSummary');
     assert.equal(vdom.props.className.endsWith('listShowing'), false);
   });

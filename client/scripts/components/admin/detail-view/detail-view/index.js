@@ -18,6 +18,8 @@
 
 import styles from './style';
 import React from 'react';
+import classNames from 'classnames';
+import Modal from '../../../modal';
 import {AdminStore} from '../../../../stores/admin-store';
 import {DisclosureDetail} from '../disclosure-detail';
 import {DisclosureList} from '../disclosure-list';
@@ -29,7 +31,7 @@ import GeneralAttachmentsPanel from '../general-attachments-panel';
 import UploadAttachmentsPanel from '../upload-attachments-panel';
 import {DISCLOSURE_STATUS, FILE_TYPE} from '../../../../../../coi-constants';
 import {AppHeader} from '../../../app-header';
-import classNames from 'classnames';
+import ArchiveView from '../../archive-view';
 
 export class DetailView extends React.Component {
   constructor() {
@@ -206,6 +208,15 @@ export class DetailView extends React.Component {
         className={`flexbox column ${classNames({[styles.listShowing]: this.state.applicationState.listShowing})}`}
         style={{minHeight: '100%', overflowX: 'hidden'}}
       >
+        <Modal
+          isOpen={this.state.applicationState.currentArchiveId !== undefined}
+          onRequestClose={AdminActions.closeArchivedDisclosureModal}
+        >
+          <ArchiveView
+            disclosure={this.state.applicationState.currentArchivedDisclosure}
+          />
+        </Modal>
+
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`flexbox row fill ${classNames(styles.container, this.props.className)}`}>
           <DisclosureList

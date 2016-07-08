@@ -19,45 +19,87 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {getDispositionTypeString} from '../../../stores/config-store';
-import getConfig from '../../../get-config';
+import {getDispositionTypeString} from '../../stores/config-store';
+import getConfig from '../../get-config';
+import RecommendationLink from '../recommendation-link';
 
 export default function DeclarationSummary(props, {configState}) {
-  const config = getConfig(configState, props.configId);
+  const {configId, showDispositions, declaration, className, disposition} = props;
+  const config = getConfig(configState, configId);
   if (config === null) {
     return null;
   }
 
   let adminRelationship;
   let commentClass = styles.comments;
-  if (config.general.adminRelationshipEnabled && props.showDispositions) {
+  if (config.general.adminRelationshipEnabled && showDispositions) {
     const dispositionType = getDispositionTypeString(
       configState,
-      props.declaration.adminRelationshipCd,
-      props.configId
+      declaration.adminRelationshipCd,
+      configId
     );
+
+    let recommendationLink;
+    if (declaration.recommendations) {
+      const recommendations = declaration.recommendations.map(decl => {
+        return Object.assign(decl, {
+          disposition: decl.dispositionTypeCd
+        });
+      });
+
+      recommendationLink = (
+        <div>
+          <RecommendationLink
+            recommendations={recommendations}
+            configId={configId}
+          />
+        </div>
+      );
+    }
+
     adminRelationship = (
       <span className={styles.adminRelationship}>
-        {dispositionType}
+        <div>{dispositionType}</div>
+        {recommendationLink}
       </span>
     );
     commentClass = classNames(styles.comments, styles.shortComment);
   }
 
+  let commentsJsx;
+  if (props.comments && props.comments.length > 0) {
+    let individualComments = props.comments.map(comment => {
+      return (
+        <div key={comment.id} className={styles.comment}>
+          {comment.author}:
+          <span className={styles.commentText}>{comment.text}</span>
+        </div>
+      );
+    });
+
+    commentsJsx = (
+      <div className={styles.commentSection}>
+        <div className={styles.commentsLabel}>COMMENTS:</div>
+        {individualComments}
+      </div>
+    );
+  }
+
   return (
-    <div className={classNames(styles.container, props.className)}>
+    <div className={classNames(styles.container, className)}>
       <div>
         <span className={styles.entityName} style={{fontWeight: 'bold'}}>
-          {props.declaration.entityName}
+          {declaration.entityName}
         </span>
         <span className={styles.conflict} style={{fontWeight: 'bold'}}>
-          {props.disposition}
+          {disposition}
         </span>
         {adminRelationship}
         <span className={commentClass} style={{fontStyle: 'italic'}}>
-          {props.declaration.comments}
+          {declaration.comments}
         </span>
       </div>
+      {commentsJsx}
     </div>
   );
 }

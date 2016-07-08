@@ -17,7 +17,6 @@
 */
 
 .container {
-  font-size: 12px;
   margin-bottom: 10px;
 }
 
@@ -31,45 +30,50 @@
   border-left: 10px solid black;
 }
 
-.entityName {
-  width: 25%;
+.number {
+  width: 50px;
+  font-size: 31px;
+  color: #666;
+}
+
+.subQuestionNumber {
+  width: 130px;
+  font-size: 31px;
+  padding-left: 50px;
+  color: #666;
+}
+
+.answer,
+.comment {
+  font-size: 13px;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.answerSection {
   display: inline-block;
+  padding-bottom: 12px;
+  margin: 7px 5px 15px 0;
+  font-size: 15px;
 }
 
-.conflict {
-  width: 25%;
-  display: inline-block;
+.commentSection {
+  margin: -10px 0 15px 0;
 }
 
-.adminRelationship {
-  width: 25%;
-  display: inline-block;
-}
-
-.comments {
-  width: 50%;
-  display: inline-block;
-  vertical-align: top;
-}
-
-.shortComment {
-  width: 25%;
-}
-
-.commentLink {
-  font-size: 14px;
-  cursor: pointer;
-  margin: 14px 0 34px 0;
-  text-align: right;
-}
-
-.commentLabel {
+.answerLabel,
+.commentsLabel {
   color: #0095A0;
-  border-bottom: 1px dashed #0095A0;
   padding-bottom: 3px;
 }
 
-:global(.color-blind) .commentLabel {
+:global(.color-blind) .answerLabel,
+:global(.color-blind) .commentsLabel {
   color: black;
-  border-bottom: 1px dashed black;
+}
+
+.commentText {
+  font-style: italic;
+  font-weight: normal;
+  margin-left: 5px;
 }

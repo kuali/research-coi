@@ -19,22 +19,33 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import QuestionSummary from '../read-only-question-summary';
+import EntitySummary from '../read-only-entity-summary';
 
-export default function QuestionnaireSummary(props) {
-  let questions;
-  if (props.questions !== undefined) {
-    questions = props.questions.filter(question => {
-      return props.answers[question.id] !== undefined;
-    }).sort((a, b) => {
-      return String(a.question.numberToShow).localeCompare(String(b.question.numberToShow));
-    });
-    questions = questions.map(question => {
+function getCommentsForEntity(comments, id) {
+  if (!comments || comments.length === 0) {
+    return [];
+  }
+
+  return comments.filter(comment => {
+    return comment.topicId === id;
+  }).sort((a, b) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
+}
+
+export default function EntitiesSummary(props) {
+  let entities;
+  if (props.entities !== undefined) {
+    entities = props.entities.filter(entity => {
+      return entity.active;
+    }).map((entity, index, array) => {
       return (
-        <QuestionSummary
-          key={question.id}
-          question={question}
-          answer={props.answers[question.id].answer.value}
+        <EntitySummary
+          key={entity.id}
+          isLast={index === array.length - 1}
+          questions={props.questions}
+          entity={entity}
+          comments={getCommentsForEntity(props.comments, entity.id)}
         />
       );
     });
@@ -42,9 +53,9 @@ export default function QuestionnaireSummary(props) {
 
   return (
     <div className={classNames(styles.container, props.className)} >
-      <div className={styles.heading}>QUESTIONNAIRE</div>
+      <div className={styles.heading}>FINANCIAL ENTITIES</div>
       <div className={styles.body}>
-        {questions}
+        {entities}
       </div>
     </div>
   );

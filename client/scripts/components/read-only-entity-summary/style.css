@@ -64,15 +64,6 @@
   padding-right: 4px;
 }
 
-.commentLink {
-  font-size: 14px;
-  cursor: pointer;
-  text-align: right;
-  vertical-align: bottom;
-  width: 30%;
-  display: inline-block;
-}
-
 .relationshipsLabel {
   margin-bottom: 8px;
   color: #888;
@@ -98,13 +89,23 @@
   display: inline-block;
 }
 
-.commentLabel {
-  color: #0095A0;
-  border-bottom: 1px dashed #0095A0;
+.commentSection {
+  margin: -10px 0 15px 0;
+}
+
+.commentsLabel,
+.attachmentsLabel {
   padding-bottom: 3px;
 }
 
-:global(.color-blind) .commentLabel {
-  color: black;
-  border-bottom: 1px dashed black;
+.comment {
+  font-size: 13px;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.commentText {
+  font-style: italic;
+  font-weight: normal;
+  margin-left: 5px;
 }

@@ -56,3 +56,22 @@
 .details {
   font-size: 15px;
 }
+
+.archivedList {
+  float: right;
+  margin-right: 12px;
+  font-size: 15px;
+}
+
+.dropDown {
+  border: 1px solid #AAA;
+  border-radius: 5px;
+  font-size: 10px;
+  height: 18px;
+  margin-right: 5px;
+}
+
+.noVersions {
+  font-weight: bold;
+  font-size: 14px;
+}

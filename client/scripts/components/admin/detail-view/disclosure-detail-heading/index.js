@@ -17,110 +17,183 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
+import {get} from 'lodash';
 import {
   getAdminDisclosureStatusString,
   getDispositionsEnabled,
   getDisclosureTypeString
 } from '../../../../stores/config-store';
 import {formatDate, formatDateTime} from '../../../../format-date';
-import {DISCLOSURE_STATUS} from '../../../../../../coi-constants';
+import {DISCLOSURE_STATUS, LANES} from '../../../../../../coi-constants';
+import Dropdown from '../../../dropdown';
+import {BlueButton} from '../../../blue-button';
+import {AdminActions} from '../../../../actions/admin-actions';
 
-export function DisclosureDetailHeading(props, {configState}) {
-  const disclosure = props.disclosure;
+export class DisclosureDetailHeading extends React.Component {
+  constructor() {
+    super();
 
-  let submittedDate;
-  if (disclosure.revisedDate) {
-    const disclosureStatus = getAdminDisclosureStatusString(
-      configState,
-      disclosure.statusCd,
-      props.disclosure.configId
-    );
-    submittedDate = (
-      <div className={styles.details}>
-        <span className={styles.label}>Revised On:</span>
-        <span className={styles.value}>
-          <span style={{marginRight: 3}}>{formatDate(disclosure.revisedDate)}</span>
-          <span style={{marginRight: 3}}>•</span>
-          {disclosureStatus}
-        </span>
-      </div>
-    );
-  }
-  else {
-    const disclosureStatus = getAdminDisclosureStatusString(
-      configState,
-      disclosure.statusCd,
-      props.disclosure.configId
-    );
-    submittedDate = (
-      <div className={styles.details}>
-        <span className={styles.label}>Submitted On:</span>
-        <span className={styles.value}>
-          <span style={{marginRight: 3}}>{formatDate(disclosure.submittedDate)}</span>
-          <span style={{marginRight: 3}}>•</span>
-          {disclosureStatus}
-        </span>
-      </div>
-    );
+    this.archiveChosen = this.archiveChosen.bind(this);
+    this.showArchive = this.showArchive.bind(this);
   }
 
-  let approvedDate;
-  if (
-    (disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE ||
-    disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED) &&
-    disclosure.lastReviewDate
-  ) {
-    approvedDate = (
-      <div className={styles.details}>
-        <span className={styles.label}>Approved On:</span>
-        <span className={styles.value}>{formatDateTime(disclosure.lastReviewDate)}</span>
-      </div>
-    );
+  archiveChosen(id) {
+    let idToUse = id;
+    if (id === '') {
+      idToUse = undefined;
+    }
+
+    this.setState({
+      archiveId: idToUse
+    });
   }
 
-  let disposition;
-  if (
-    getDispositionsEnabled(configState) &&
-    disclosure.disposition
-  ) {
-    disposition = (
-      <span>
-        <span style={{margin: '0 3px'}}>•</span>
-        {disclosure.disposition}
-      </span>
-    );
+  showArchive() {
+    if (get(this.state, 'archiveId') !== undefined) {
+      AdminActions.showArchivedDisclosure(this.state.archiveId);
+    }
   }
 
-  const disclosureType = getDisclosureTypeString(
-    configState,
-    disclosure.typeCd,
-    props.disclosure.configId
-  );
-  return (
-    <div className={classNames(styles.container, props.className)} >
-      <span>
-        <div className={styles.heading}>
-          <span className={styles.disclosure}>
-            <span style={{marginRight: 3}}>
-              {disclosureType}
-            </span>
-            •
-          </span>
-          <span>ID</span>
-          <span className={styles.id}>#{disclosure.id}</span>
-          {disposition}
-        </div>
+  render() {
+    const {disclosure} = this.props;
+    const {configState} = this.context;
+
+    let submittedDate;
+    if (disclosure.revisedDate) {
+      const disclosureStatus = getAdminDisclosureStatusString(
+        configState,
+        disclosure.statusCd,
+        disclosure.configId
+      );
+      submittedDate = (
         <div className={styles.details}>
-          <span className={styles.label}>Submitted By:</span>
-          <span className={styles.value}>{disclosure.submittedBy}</span>
+          <span className={styles.label}>Revised On:</span>
+          <span className={styles.value}>
+            <span style={{marginRight: 3}}>{formatDate(disclosure.revisedDate)}</span>
+            <span style={{marginRight: 3}}>•</span>
+            {disclosureStatus}
+          </span>
         </div>
-        {submittedDate}
-        {approvedDate}
-      </span>
-    </div>
-  );
+      );
+    }
+    else {
+      const disclosureStatus = getAdminDisclosureStatusString(
+        configState,
+        disclosure.statusCd,
+        disclosure.configId
+      );
+      submittedDate = (
+        <div className={styles.details}>
+          <span className={styles.label}>Submitted On:</span>
+          <span className={styles.value}>
+            <span style={{marginRight: 3}}>{formatDate(disclosure.submittedDate)}</span>
+            <span style={{marginRight: 3}}>•</span>
+            {disclosureStatus}
+          </span>
+        </div>
+      );
+    }
+
+    let approvedDate;
+    if (
+      (disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE ||
+      disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED) &&
+      disclosure.lastReviewDate
+    ) {
+      approvedDate = (
+        <div className={styles.details}>
+          <span className={styles.label}>Approved On:</span>
+          <span className={styles.value}>{formatDateTime(disclosure.lastReviewDate)}</span>
+        </div>
+      );
+    }
+
+    let disposition;
+    if (
+      getDispositionsEnabled(configState) &&
+      disclosure.disposition
+    ) {
+      disposition = (
+        <span>
+          <span style={{margin: '0 3px'}}>•</span>
+          {disclosure.disposition}
+        </span>
+      );
+    }
+
+    const disclosureType = getDisclosureTypeString(
+      configState,
+      disclosure.typeCd,
+      disclosure.configId
+    );
+
+    let versionPicker;
+    let versionOptions;
+
+    if (configState.config.lane === LANES.TEST) {
+      if (disclosure.archivedVersions.length > 0) {
+        versionOptions = disclosure.archivedVersions.map(version => {
+          return {
+            label: `Approved ${formatDateTime(version.approvedDate)}`,
+            value: version.id
+          };
+        });
+
+        versionPicker = (
+          <div>
+            <Dropdown
+              options={versionOptions}
+              className={styles.dropDown}
+              id={'archivedVersionPicker'}
+              onChange={this.archiveChosen}
+            />
+            <BlueButton
+              style={{minWidth: 'initial', fontSize: 10, padding: '4px 9px 3px 9px'}}
+              onClick={this.showArchive}
+              disabled={get(this.state, 'archiveId') === undefined}
+            >
+              View
+            </BlueButton>
+          </div>
+        );
+      } else {
+        versionPicker = (
+          <div className={styles.noVersions} id="archivedVersionPicker">
+            NONE FOUND
+          </div>
+        );
+      }
+    }
+
+    return (
+      <div className={styles.container} >
+        <span>
+          <div className={styles.heading}>
+            <span className={styles.disclosure}>
+              <span style={{marginRight: 3}}>
+                {disclosureType}
+              </span>
+              •
+            </span>
+            <span>ID</span>
+            <span className={styles.id}>#{disclosure.id}</span>
+            {disposition}
+          </div>
+          <div className={styles.details}>
+            <span className={styles.label}>Submitted By:</span>
+            <span className={styles.value}>{disclosure.submittedBy}</span>
+          </div>
+          {submittedDate}
+          {approvedDate}
+        </span>
+        <span className={styles.archivedList}>
+          <label htmlFor="archivedVersionPicker">Previous Versions:</label>
+          {versionPicker}
+        </span>
+      </div>
+    );
+  }
 }
 
 DisclosureDetailHeading.contextTypes = {

@@ -33,3 +33,10 @@
   background-color: #333;
   border-bottom: 2px solid black;
 }
+
+.container:disabled {
+  color: #6b6b6b;
+  text-shadow: 1px 1px 6px #ececec;
+  background-color: #c7c7c7;
+  border-bottom: 2px solid #a0a0a0;
+}

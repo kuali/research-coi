@@ -18,25 +18,45 @@
 
 import styles from './style';
 import React from 'react';
-import {formatDate} from '../../../format-date';
-import {QUESTION_TYPE} from '../../../../../coi-constants';
+import {formatDate} from '../../format-date';
+import {QUESTION_TYPE} from '../../../../coi-constants';
 
-export default function QuestionSummary(props) {
+export default function QuestionSummary({className, question, answer, comments}) {
+  let commentsJsx;
+  if (comments && comments.length > 0) {
+    let individualComments = comments.map(comment => {
+      return (
+        <div key={comment.id} className={styles.comment}>
+          {comment.author}:
+          <span className={styles.commentText}>{comment.text}</span>
+        </div>
+      );
+    });
+
+    commentsJsx = (
+      <div className={styles.commentSection}>
+        <div className={styles.commentsLabel}>COMMENTS:</div>
+        {individualComments}
+      </div>
+    );
+  }
+
   return (
-    <div className={`${styles.container} flexbox row ${props.className}`}>
-      <span className={props.question.parent ? styles.subQuestionNumber : styles.number}>
-        <div>{props.question.question.numberToShow}</div>
+    <div className={`${styles.container} flexbox row ${className}`}>
+      <span className={question.parent ? styles.subQuestionNumber : styles.number}>
+        <div>{question.question.numberToShow}</div>
       </span>
       <span className={'fill'} style={{display: 'inline-block'}}>
-        <div style={{fontSize: 14}}>{props.question.question.text}</div>
+        <div style={{fontSize: 14}}>{question.question.text}</div>
         <div className={'flexbox row'}>
           <span className={`fill ${styles.answerSection}`}>
             <div className={styles.answerLabel}>ANSWER:</div>
             <div className={styles.answer}>
-              {props.question.question.type === QUESTION_TYPE.DATE ? formatDate(props.answer) : props.answer}
+              {question.question.type === QUESTION_TYPE.DATE ? formatDate(answer) : answer}
             </div>
           </span>
         </div>
+        {commentsJsx}
       </span>
     </div>
   );

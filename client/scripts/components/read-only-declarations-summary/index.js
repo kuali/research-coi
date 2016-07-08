@@ -24,8 +24,21 @@ import {
   getProjectTypeString,
   getDeclarationTypeString,
   getDispositionTypeString
-} from '../../../stores/config-store';
-import getConfig from '../../../get-config';
+} from '../../stores/config-store';
+import getConfig from '../../get-config';
+import RecommendationLink from '../recommendation-link';
+
+function getCommentsForDeclaration(comments, id) {
+  if (!comments || comments.length === 0) {
+    return [];
+  }
+
+  return comments.filter(comment => {
+    return comment.topicId === id;
+  }).sort((a, b) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
+}
 
 export default class DeclarationsSummary extends React.Component {
   getUniqueProjects(declarations) {
@@ -51,7 +64,8 @@ export default class DeclarationsSummary extends React.Component {
           sourceIdentifier: declaration.sourceIdentifier,
           role: declaration.roleCd,
           sponsor,
-          dispositionTypeCd: declaration.dispositionTypeCd
+          dispositionTypeCd: declaration.dispositionTypeCd,
+          projectPersonId: declaration.projectPersonId
         });
         alreadyAdded[declaration.projectId] = true;
       }
@@ -65,53 +79,83 @@ export default class DeclarationsSummary extends React.Component {
   }
 
   render() {
+    const {
+      declarations,
+      configId,
+      showDispositions,
+      recommendedProjectDispositions,
+      className,
+      comments
+    } = this.props;
+    const {configState} = this.context;
+
     let projects = [];
-    if (this.props.declarations !== undefined) {
-      const config = getConfig(this.context.configState, this.props.configId);
+    if (declarations !== undefined) {
+      const config = getConfig(configState, configId);
       if (config === null) {
         return null;
       }
 
-      const uniqueProjects = this.getUniqueProjects(this.props.declarations);
+      const uniqueProjects = this.getUniqueProjects(declarations);
 
       projects = uniqueProjects.map((project, index) => {
-        const declarations = this.props.declarations.filter(declaration => {
-          return declaration.projectId === project.id && declaration.finEntityActive === 1;
+        const declarationsJsx = declarations.filter(declaration => {
+          return (
+            declaration.projectId === project.id &&
+            declaration.finEntityActive === 1
+          );
         }).map(declaration => {
           const declarationType = getDeclarationTypeString(
-            this.context.configState,
+            configState,
             declaration.typeCd,
-            this.props.configId
+            configId
           );
           return (
             <DeclarationSummary
               key={declaration.id}
               declaration={declaration}
-              configId={this.props.configId}
+              configId={configId}
               disposition={declarationType}
-              showDispositions={this.props.showDispositions}
+              showDispositions={showDispositions}
+              comments={getCommentsForDeclaration(comments, declaration.id)}
             />
           );
         });
 
         let dispositionType;
-        if (config.general.dispositionsEnabled && this.props.showDispositions) {
+        if (config.general.dispositionsEnabled && showDispositions) {
           const dispositionTypeString = getDispositionTypeString(
-            this.context.configState,
+            configState,
             project.dispositionTypeCd,
-            this.props.configId
+            configId
           );
+
+          let recommendationLink;
+          if (recommendedProjectDispositions && recommendedProjectDispositions.length > 0) {
+            const recommendations = recommendedProjectDispositions.filter(recommendation => {
+              return recommendation.projectPersonId === project.projectPersonId;
+            });
+
+            recommendationLink = (
+              <RecommendationLink
+                recommendations={recommendations}
+                configId={configId}
+              />
+            );
+          }
+
           dispositionType = (
             <div className={styles.field}>
               <label className={styles.label}>Project Disposition:</label>
               <span style={{fontWeight: 'bold'}}>{dispositionTypeString}</span>
+              {recommendationLink}
             </div>
           );
         }
 
         let commentClass = styles.comment;
         let adminRelationship;
-        if (config.general.adminRelationshipEnabled && this.props.showDispositions) {
+        if (config.general.adminRelationshipEnabled && showDispositions) {
           adminRelationship = (
             <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
           );
@@ -153,14 +197,14 @@ export default class DeclarationsSummary extends React.Component {
               {adminRelationship}
               <span className={commentClass}>REPORTER COMMENTS</span>
             </div>
-            {declarations}
+            {declarationsJsx}
           </div>
         );
       });
     }
 
     return (
-      <div className={classNames(styles.container, this.props.className)} >
+      <div className={classNames(styles.container, className)} >
         <div className={styles.heading}>PROJECT DECLARATIONS</div>
         <div className={styles.body}>
           {projects}

@@ -19,9 +19,9 @@
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
-import {QUESTION_TYPE} from '../../../../../coi-constants';
-import {formatDate} from '../../../format-date';
-import EntityRelationshipSummary from '../../entity-relationship-summary';
+import {QUESTION_TYPE} from '../../../../coi-constants';
+import {formatDate} from '../../format-date';
+import EntityRelationshipSummary from '../entity-relationship-summary';
 
 function getQuestionAnswer(questionId, entity, type) {
   const theAnswer = entity.answers.find(answer => {
@@ -119,10 +119,29 @@ export default function EntitySummary(props) {
   if (files.length > 0) {
     attachmentSection = (
       <div className={styles.bottomLeft}>
-        <div style={{color: window.colorBlindModeOn ? 'black' : '#888', fontSize: 12}}>
+        <div className={styles.attachmentsLabel}>
           ATTACHMENTS
         </div>
         {files}
+      </div>
+    );
+  }
+
+  let commentsJsx;
+  if (props.comments && props.comments.length > 0) {
+    let individualComments = props.comments.map(comment => {
+      return (
+        <div key={comment.id} className={styles.comment}>
+          {comment.author}:
+          <span className={styles.commentText}>{comment.text}</span>
+        </div>
+      );
+    });
+
+    commentsJsx = (
+      <div className={styles.commentSection}>
+        <div className={styles.commentsLabel}>COMMENTS:</div>
+        {individualComments}
       </div>
     );
   }
@@ -141,6 +160,7 @@ export default function EntitySummary(props) {
         <div className={styles.bottom}>
           {attachmentSection}
         </div>
+        {commentsJsx}
       </div>
     </div>
   );
