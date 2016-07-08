@@ -670,7 +670,8 @@ function getArchivedVersionList(knex, disclosureId) {
       'id',
       'approved_date as approvedDate'
     ).from('disclosure_archive')
-    .where('disclosure_id', disclosureId);
+    .where('disclosure_id', disclosureId)
+    .orderBy('approvedDate', 'DESC');
 }
 
 export const get = (dbInfo, userInfo, disclosureId, trx) => {
