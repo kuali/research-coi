@@ -86,7 +86,12 @@ async function shouldUpdateStatus(trx, disclosureId) {
     return true;
   }
 
-  const entities = await trx('fin_entity').select('id').where({disclosure_id: disclosureId});
+  const entities = await trx('fin_entity')
+    .select('id')
+    .where({
+      disclosure_id: disclosureId,
+      active: true
+    });
 
   if (entities && entities.length > 0) {
     return true;
