@@ -55,7 +55,9 @@ export default class DeclarationsSummary extends React.Component {
 
         let sponsor = 'None';
         if (Array.isArray(declaration.sponsors) && declaration.sponsors.length > 0) {
-          sponsor = declaration.sponsors.join(', ');
+          sponsor = declaration.sponsors
+            .map(s => s.sponsorName)
+            .join(', ');
         }
         projects.push({
           id: declaration.projectId,

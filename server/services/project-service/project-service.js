@@ -191,7 +191,8 @@ async function getRequiredSponsors(researchCoreUrl, coiHierarchy, authHeader) {
     if (requiredSponsors) {
       return Promise.resolve(requiredSponsors);
     }
-    const response = await request.get(`${researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${coiHierarchy}`)
+    const response = await request
+      .get(`${researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${coiHierarchy}`)
       .set('Authorization', `Bearer ${getAuthToken(authHeader)}`);
 
     requiredSponsors = response.body.map(sponsor => {
@@ -219,13 +220,18 @@ async function getRequirements(dbInfo, authHeader) {
 }
 
 export function isRequired(requirements, project) {
-  const isTypeRequired = requirements.types.findIndex(type => type.typeCd == project.typeCd) > -1; // eslint-disable-line eqeqeq
-  const isRoleRequired = requirements.roles.findIndex(role => {
-    return role.projectTypeCd == project.typeCd && role.sourceRoleCd == project.roleCd; // eslint-disable-line eqeqeq
-  }) > -1;
-  const isStatusRequired = requirements.statuses.findIndex(status => {
-    return status.projectTypeCd == project.typeCd && status.sourceStatusCd == project.statusCd; // eslint-disable-line eqeqeq
-  }) > -1;
+  const isTypeRequired = requirements.types.some(
+    type => type.typeCd == project.typeCd
+  );
+  const isRoleRequired = requirements.roles.some(role => {
+    return role.projectTypeCd == project.typeCd && role.sourceRoleCd == project.roleCd;
+  });
+  const isStatusRequired = requirements.statuses.some(status => {
+    return (
+      status.projectTypeCd == project.typeCd &&
+      status.sourceStatusCd == project.statusCd
+    );
+  });
 
   let isSponsorRequired = true;
   if (requirements.sponsors) {
@@ -239,11 +245,52 @@ export function isRequired(requirements, project) {
   return isTypeRequired && isRoleRequired && isStatusRequired && isSponsorRequired;
 }
 
+export function isDeclarationRequired(requirements, declaration) {
+  const isTypeRequired = requirements.types.some(
+    type => type.typeCd == declaration.projectTypeCd
+  );
+  const isRoleRequired = requirements.roles.some(role => {
+    return (
+      role.projectTypeCd == declaration.projectTypeCd &&
+      role.sourceRoleCd == declaration.roleCd
+    );
+  });
+  const isStatusRequired = requirements.statuses.some(status => {
+    return (
+      status.projectTypeCd == declaration.projectTypeCd &&
+      status.sourceStatusCd == declaration.statusCd
+    );
+  });
+
+  let isSponsorRequired = true;
+  if (requirements.sponsors) {
+    if (declaration.sponsors) {
+      isSponsorRequired = declaration.sponsors.some(sponsor => {
+        return requirements.sponsors.includes(sponsor.sponsorCode);
+      });
+    }
+  }
+
+  return isTypeRequired && isRoleRequired && isStatusRequired && isSponsorRequired;
+}
+
 export async function filterProjects(dbInfo, projects, authHeader) {
   try {
     const requirements = await getRequirements(dbInfo, authHeader);
     const result = projects.filter(project => {
       return isRequired(requirements, project);
+    });
+    return Promise.resolve(result);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+export async function filterDeclarations(dbInfo, declarations, authHeader) {
+  try {
+    const requirements = await getRequirements(dbInfo, authHeader);
+    const result = declarations.filter(declaration => {
+      return isDeclarationRequired(requirements, declaration);
     });
     return Promise.resolve(result);
   } catch (err) {

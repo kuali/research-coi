@@ -83,7 +83,9 @@ export class AdminDeclarationsSummary extends React.Component {
 
         let sponsors;
         if (declaration.sponsors && Array.isArray(declaration.sponsors)) {
-          sponsors = declaration.sponsors.join(', ');
+          sponsors = declaration.sponsors
+            .map(sponsor => sponsor.sponsorName)
+            .join(', ');
         }
 
         projects.push({
