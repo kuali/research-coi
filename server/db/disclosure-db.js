@@ -682,9 +682,14 @@ function getArchivedVersionList(knex, disclosureId) {
     .orderBy('approvedDate', 'DESC');
 }
 
-export const get = (dbInfo, userInfo, disclosureId, authHeader) => {
+export const get = (dbInfo, userInfo, disclosureId, authHeader, trx) => {
   let disclosure;
-  const knex = getKnex(dbInfo);
+  let knex;
+  if (trx) {
+    knex = trx;
+  } else {
+    knex = getKnex(dbInfo);
+  }
 
   return Promise.all([
     getDisclosure(knex, userInfo, disclosureId),
@@ -916,7 +921,7 @@ export const get = (dbInfo, userInfo, disclosureId, authHeader) => {
   });
 };
 
-export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
+export async function getAnnualDisclosure(dbInfo, userInfo, piName, authHeader) {
   const knex = getKnex(dbInfo);
   const result = await knex('disclosure')
     .select('id as id')
@@ -924,7 +929,7 @@ export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
     .andWhere('user_id', userInfo.schoolId);
 
   if (result.length >= 1) {
-    return get(dbInfo, userInfo, result[0].id);
+    return get(dbInfo, userInfo, result[0].id, authHeader);
   }
 
   const config = await knex('config').max('id as id');
@@ -1417,7 +1422,7 @@ export async function submit(dbInfo, userInfo, disclosureId, authHeader, hostNam
     await updateEntitiesAndRelationshipsStatuses(trx, disclosureId, RELATIONSHIP_STATUS.IN_PROGRESS, RELATIONSHIP_STATUS.DISCLOSED);
     await updateProjects(trx, userInfo.schoolId);
 
-    const disclosure = await get(dbInfo, userInfo, disclosureId, trx);
+    const disclosure = await get(dbInfo, userInfo, disclosureId, authHeader, trx);
     const config = await trx('config').select('config').where({id: disclosure.configId});
 
     const generalConfig = JSON.parse(config[0].config).general;

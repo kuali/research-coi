@@ -85,7 +85,12 @@ export const init = app => {
     User can only see their own annual disclosure
   */
   app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.getAnnualDisclosure(req.dbInfo, req.userInfo, req.userInfo.name);
+    const result = await DisclosureDB.getAnnualDisclosure(
+      req.dbInfo,
+      req.userInfo,
+      req.userInfo.name,
+      req.headers.authorization
+    );
     res.send(result);
   }));
 
