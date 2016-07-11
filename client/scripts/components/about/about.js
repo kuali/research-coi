@@ -30,7 +30,7 @@ class App extends SizeAwareComponent {
   constructor() {
     super();
     this.state = {
-      version: '',
+      version: UserInfoStore.getState().userInfo ? UserInfoStore.getState().userInfo.version : '',
       configState: ConfigStore.getState(),
       userInfoState: UserInfoStore.getState()
     };
