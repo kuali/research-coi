@@ -20,7 +20,10 @@ import { values, uniq } from 'lodash';
 import {isDisclosureUsers} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
-import { filterProjects } from '../services/project-service/project-service';
+import {
+  filterProjects,
+  filterDeclarations
+} from '../services/project-service/project-service';
 import * as FileService from '../services/file-service/file-service';
 import {
   createAndSendReviewerAssignedNotification
@@ -615,7 +618,9 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
     .where(criteria);
 };
 
-async function getDeclarations(knex, disclosureId) {
+async function getDeclarations(dbInfo, disclosureId, authHeader) {
+  const knex = getKnex(dbInfo);
+
   const declarations = await knex.select(
       'd.id as id',
       'd.project_id as projectId',
@@ -630,7 +635,8 @@ async function getDeclarations(knex, disclosureId) {
       'pp.role_cd as roleCd',
       'fe.active as finEntityActive',
       'pp.id as projectPersonId',
-      'pp.disposition_type_cd as dispositionTypeCd'
+      'pp.disposition_type_cd as dispositionTypeCd',
+      'p.source_status as statusCd'
     )
     .from('declaration as d')
     .innerJoin('project as p', 'p.id', 'd.project_id')
@@ -650,19 +656,21 @@ async function getDeclarations(knex, disclosureId) {
   projectIds = uniq(projectIds);
 
   const sponsors = await knex
-    .distinct('sponsor_name as sponsorName', 'project_id as projectId')
+    .distinct(
+      'sponsor_name as sponsorName',
+      'project_id as projectId',
+      'sponsor_cd as sponsorCode'
+    )
     .from('project_sponsor')
     .whereIn('project_id', projectIds);
 
   declarations.forEach(declaration => {
-    const matchingSponsors = sponsors.filter(sponsor => {
+    declaration.sponsors = sponsors.filter(sponsor => {
       return sponsor.projectId === declaration.projectId;
-    }).map(sponsor => sponsor.sponsorName);
-
-    declaration.sponsors = matchingSponsors;
+    });
   });
 
-  return declarations;
+  return filterDeclarations(dbInfo, declarations, authHeader);
 }
 
 function getArchivedVersionList(knex, disclosureId) {
@@ -674,7 +682,7 @@ function getArchivedVersionList(knex, disclosureId) {
     .orderBy('approvedDate', 'DESC');
 }
 
-export const get = (dbInfo, userInfo, disclosureId, trx) => {
+export const get = (dbInfo, userInfo, disclosureId, authHeader, trx) => {
   let disclosure;
   let knex;
   if (trx) {
@@ -693,7 +701,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
       .from('disclosure_answer as da')
       .innerJoin('questionnaire_answer as qa', 'qa.id', 'da.questionnaire_answer_id')
       .where('da.disclosure_id', disclosureId),
-    getDeclarations(knex, disclosureId),
+    getDeclarations(dbInfo, disclosureId, authHeader),
     retrieveComments(dbInfo, userInfo, disclosureId),
     knex.select('id', 'name', 'key', 'file_type as fileType')
       .from('file')
@@ -913,7 +921,7 @@ export const get = (dbInfo, userInfo, disclosureId, trx) => {
   });
 };
 
-export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
+export async function getAnnualDisclosure(dbInfo, userInfo, piName, authHeader) {
   const knex = getKnex(dbInfo);
   const result = await knex('disclosure')
     .select('id as id')
@@ -921,7 +929,7 @@ export async function getAnnualDisclosure(dbInfo, userInfo, piName) {
     .andWhere('user_id', userInfo.schoolId);
 
   if (result.length >= 1) {
-    return get(dbInfo, userInfo, result[0].id);
+    return get(dbInfo, userInfo, result[0].id, authHeader);
   }
 
   const config = await knex('config').max('id as id');
@@ -1414,7 +1422,7 @@ export async function submit(dbInfo, userInfo, disclosureId, authHeader, hostNam
     await updateEntitiesAndRelationshipsStatuses(trx, disclosureId, RELATIONSHIP_STATUS.IN_PROGRESS, RELATIONSHIP_STATUS.DISCLOSED);
     await updateProjects(trx, userInfo.schoolId);
 
-    const disclosure = await get(dbInfo, userInfo, disclosureId, trx);
+    const disclosure = await get(dbInfo, userInfo, disclosureId, authHeader, trx);
     const config = await trx('config').select('config').where({id: disclosure.configId});
 
     const generalConfig = JSON.parse(config[0].config).general;

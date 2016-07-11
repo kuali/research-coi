@@ -85,7 +85,12 @@ export const init = app => {
     User can only see their own annual disclosure
   */
   app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.getAnnualDisclosure(req.dbInfo, req.userInfo, req.userInfo.name);
+    const result = await DisclosureDB.getAnnualDisclosure(
+      req.dbInfo,
+      req.userInfo,
+      req.userInfo.name,
+      req.headers.authorization
+    );
     res.send(result);
   }));
 
@@ -94,15 +99,25 @@ export const init = app => {
     Reviewer can only see ones where they are a reviewer
   */
   app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
-      if (!reviewerDisclosures.includes(req.params.id)) {
+    const {dbInfo, userInfo, params, headers} = req;
+
+    if (userInfo.coiRole === ROLES.REVIEWER) {
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(
+        dbInfo,
+        userInfo.schoolId
+      );
+      if (!reviewerDisclosures.includes(params.id)) {
         res.sendStatus(FORBIDDEN);
         return;
       }
     }
 
-    const result = await DisclosureDB.get(req.dbInfo, req.userInfo, req.params.id);
+    const result = await DisclosureDB.get(
+      dbInfo,
+      userInfo,
+      params.id,
+      headers.authorization
+    );
     res.send(result);
   }));
 

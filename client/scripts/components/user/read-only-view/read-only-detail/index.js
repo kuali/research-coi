@@ -39,12 +39,12 @@ export default function ReadOnlyDetail(props, {configState}) {
   let detail;
 
   if (!disclosure || !disclosure.configId) {
-    return null;
+    return <span />;
   }
 
   const config = getConfig(configState, disclosure.configId);
   if (config === null) {
-    return null;
+    return <span />;
   }
 
   if (disclosure) {
