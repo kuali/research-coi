@@ -85,9 +85,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
       const disclosure1Id = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),4);
       await insertEntity(knex, createEntity(disclosure1Id,RELATIONSHIP_STATUS.IN_PROGRESS, true));
       await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),5);
-    });
 
-    it('should return OK status', async () => {
       const response = await request(app.run())
         .get('/api/coi/project-disclosure-statuses/KC-PD/1/')
         .set('Authorization', 'Bearer admin')

@@ -93,8 +93,6 @@ describe('POST api/coi/projects', () => {
     let project;
     before(async () => {
       await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '1');
-    });
-    it('should return an OK status', async function() {
       const response = await post(createProject(1));
       project = response.body;
     });
@@ -143,7 +141,7 @@ describe('POST api/coi/projects', () => {
 
     it('should return a project person with an id', async function() {
       assert.equal('TEST TITLE', project.title);
-      assert.equal(1,project.persons.length);
+      assert.equal(1, project.persons.length);
       assert(project.persons[0].id !== undefined);
       assert(project.id !== undefined);
     });
