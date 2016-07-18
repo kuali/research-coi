@@ -162,11 +162,12 @@ async function disableAllPersonsForProject(trx, projectId, req) {
     .update('active', false)
     .where('project_id', projectId);
 
-  const reverts = existingPersons.map(async person => {
-    return await revertDisclosureStatus(trx, person, req, projectId);
-  });
-
-  await Promise.all(reverts);
+  if (Array.isArray(existingPersons)) {
+    for (let i = 0; i < existingPersons.length; i++) {
+      const person = existingPersons[i];
+      await revertDisclosureStatus(trx, person, req, projectId);
+    }
+  }
 }
 
 async function updateProjectPerson(trx, person, project, isRequired, isNew, req) {
@@ -218,43 +219,58 @@ async function deactivateProjectPerson(trx, person, projectId, req) {
 }
 
 async function deactivateProjectPersons(trx, existingPersons, persons, projectId, req) {
-  return existingPersons.filter(pr => {
+  const filtered = existingPersons.filter(pr => {
     return persons.find(person => {
       return person.personId === pr.personId && person.sourcePersonType === pr.source_person_type;
     }) === undefined;
-  }).map(async result => { // eslint-disable-line array-callback-return
-    await deactivateProjectPerson(trx, result, projectId, req);
   });
+  
+  for (let i = 0; i < filtered.length; i++) {
+    const result = filtered[i];
+    await deactivateProjectPerson(trx, result, projectId, req);
+  }
 }
 
 async function saveProjectPersons(trx, project, req) {
+  Log.info('pre project_person select');
+
   const existingPersons = await trx('project_person')
     .select('person_id as personId', 'source_person_type', 'new')
     .where('project_id', project.id);
+
+  Log.info('post project_person select');
+
   if (project.persons && project.persons.length > 0) {
-    let queries = project.persons.map(async person => {
+    const queries = project.persons.map(async (person) => {
+      Log.info('pre isProjectRequired');
       const isRequired = await isProjectRequired(req, project, person);
+      Log.info('post isProjectRequired');
       const existingPerson = existingPersons.find(pr => {
         return pr.personId === person.personId && pr.source_person_type === person.sourcePersonType;
       });
 
       if (existingPerson) {
+        Log.info('pre updateProjectPerson');
         return await updateProjectPerson(trx, person, project, isRequired, existingPerson.new, req);
       }
+      Log.info('pre insertProjectPerson');
       return await insertProjectPerson(trx, person, project, isRequired, req);
     });
 
-    const deactiveQueries = await deactivateProjectPersons(trx, existingPersons, project.persons, project.id, req);
-    if (deactiveQueries && deactiveQueries.length > 0) {
-      queries = queries.concat(deactiveQueries);
-    }
+    Log.info('pre deactivateProjectPersons');
+    await deactivateProjectPersons(trx, existingPersons, project.persons, project.id, req);
+    Log.info('post deactivateProjectPersons');
 
+    Log.info('pre queries');
     await Promise.all(queries);
+    Log.info('post queries');
     return;
   }
 
   if (existingPersons.length > 0) {
+    Log.info('pre disableAllPersonsForProject');
     await disableAllPersonsForProject(trx, project.id, req);
+    Log.info('post disableAllPersonsForProject');
   }
 }
 
@@ -276,19 +292,26 @@ async function insertProject(trx, project) {
 }
 
 async function saveNewProjects(trx, project, req) {
+  Log.info('pre insertProject');
   project.id = await insertProject(trx, project);
+  Log.info('post insertProject');
 
   if (project.sponsors) {
+    Log.info('pre updateProjectSponsors');
     await updateProjectSponsors(trx, project.id, project.sponsors);
+    Log.info('post updateProjectSponsors');
   }
 
-  if (project.persons) {
-    const inserts = project.persons.map(async (person) => { // eslint-disable-line array-callback-return
+  if (project.persons && Array.isArray(project.persons)) {
+    for (let i = 0; i < project.persons.length; i++) {
+      const person = project.persons[i];
+      Log.info('pre isProjectRequired');
       const isRequired = await isProjectRequired(req, project, person);
+      Log.info('post isProjectRequired');
       const id = await insertProjectPerson(trx, person, project, isRequired, req);
+      Log.info('post insertProjectPerson');
       person.id = id;
-    });
-    await Promise.all(inserts);
+    }
   }
   return project;
 }
@@ -305,17 +328,21 @@ async function saveExistingProjects(trx, project, authHeader) {
     end_date: new Date(project.endDate)
   }).where('id', project.id);
 
+  Log.info('update project table complete');
+
   await updateProjectSponsors(trx, project.id, project.sponsors);
   await saveProjectPersons(trx, project, authHeader);
 }
 
 async function getExistingProjectId(trx, project) {
+  Log.info('pre existing project query');
   const existingProject = await trx.select('id')
     .from('project')
     .where({
       source_system: project.sourceSystem,
       source_identifier: project.sourceIdentifier
     });
+  Log.info('got existing project');
   if (existingProject && existingProject.length > 0) {
     return existingProject[0].id;
   }
@@ -325,11 +352,15 @@ export async function saveProjects(req, project) {
   const knex = getKnex(req.dbInfo);
 
   return knex.transaction(async function(trx) {
+    Log.info('Transaction started');
     const existingProjectId = await getExistingProjectId(trx, project);
+    Log.info(`existingProjectId = ${existingProjectId}`);
     if (existingProjectId) {
       project.id = existingProjectId;
+      Log.info('Pre saveExistingProjects');
       return await saveExistingProjects(trx, project, req);
     }
+    Log.info('Pre saveNewProjects');
     return await saveNewProjects(trx, project, req);
   });
 }
@@ -429,11 +460,14 @@ export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier,
     const knex = getKnex(dbInfo);
     return knex.transaction(async function(trx) {
       const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier);
-      const queries = projectPersons.map(async projectPerson => {
-        return await getStatus(trx, projectPerson, dbInfo, authHeader);
-      });
-
-      return Promise.all(queries);
+      const results = [];
+      if (Array.isArray(projectPersons)) {
+        for (let i = 0; i < projectPersons.length; i++) {
+          const projectPerson = projectPersons[i];
+          results.push(await getStatus(trx, projectPerson, dbInfo, authHeader));
+        }
+      }
+      return results;
     });
   } catch (err) {
     return Promise.reject(err);
@@ -469,6 +503,7 @@ export async function updateProjectPersonDispositionType(dbInfo, projectPerson, 
 }
 
 async function updateProjectSponsors(trx, projectId, sponsors) {
+  Log.info('beginning updateProjectSponsors');
   if (!isNumber) {
     throw new Error('invalid project id');
   }
@@ -488,6 +523,8 @@ async function updateProjectSponsors(trx, projectId, sponsors) {
       project_id: projectId
     });
 
+  Log.info('existingSponsors query complete');
+
   const toDelete = [];
   existingSponsors.forEach(existingSponsor => {
     const stillExists = sponsors.some(sponsor => {
@@ -504,6 +541,7 @@ async function updateProjectSponsors(trx, projectId, sponsors) {
     }
   });
 
+  Log.info('pre project_sponsor delete');
   if (toDelete.length > 0) {
     await trx('project_sponsor')
       .whereIn('id', toDelete)
@@ -512,6 +550,7 @@ async function updateProjectSponsors(trx, projectId, sponsors) {
       })
       .del();
   }
+  Log.info('post project_sponsor delete');
 
   const toAdd = [];
   sponsors.forEach(sponsor => {
@@ -535,7 +574,11 @@ async function updateProjectSponsors(trx, projectId, sponsors) {
     }
   });
 
+  Log.info('pre project_sponsor insert');
+
   if (toAdd.length > 0) {
     await trx('project_sponsor').insert(toAdd);
   }
+
+  Log.info('post project_sponsor insert');
 }
