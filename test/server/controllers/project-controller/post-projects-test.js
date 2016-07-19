@@ -93,7 +93,7 @@ describe('POST api/coi/projects', () => {
     let project;
     before(async () => {
       await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '1');
-      const response = await post(createProject(1));
+      const response = await post(createProject('1'));
       project = response.body;
     });
 
@@ -121,7 +121,7 @@ describe('POST api/coi/projects', () => {
         '2'
       );
 
-      const newProject = createProject(2);
+      const newProject = createProject('2');
       newProject.persons = [
         createPerson('2','PI')
       ];
@@ -135,7 +135,7 @@ describe('POST api/coi/projects', () => {
 
     it('should return a project with an id', async function() {
       assert.equal('TEST TITLE', project.title);
-      assert.equal(1,project.persons.length);
+      assert.equal(1, project.persons.length);
       assert(project.id !== undefined);
     });
 
@@ -163,7 +163,7 @@ describe('POST api/coi/projects', () => {
     let projectId;
     let project;
     before(async () => {
-      project = createProject(3);
+      project = createProject('3');
       projectId = await insertProject(knex, project);
       await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '3');
     });
@@ -188,7 +188,7 @@ describe('POST api/coi/projects', () => {
     let project;
     let response;
     before(async () => {
-      project = createProject(4);
+      project = createProject('4');
       projectId = await insertProject(knex, project);
       await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '4');
 
@@ -219,7 +219,7 @@ describe('POST api/coi/projects', () => {
     let project;
     let projectPerson;
     before(async () => {
-      project = createProject(5);
+      project = createProject('5');
       projectId = await insertProject(knex, project);
       projectPerson = createPerson('5','PI', true);
       await insertProjectPerson(knex, projectPerson, projectId, null, true);
@@ -252,7 +252,7 @@ describe('POST api/coi/projects', () => {
     let project;
     let projectPerson;
     before(async () => {
-      project = createProject(6);
+      project = createProject('6');
       projectId = await insertProject(knex, project);
       projectPerson = createPerson('6','PI', true);
       await insertProjectPerson(knex, projectPerson, projectId, null, true);
@@ -287,7 +287,7 @@ describe('POST api/coi/projects', () => {
     let projectPerson1;
     let projectPersonId1;
     before(async () => {
-      project = createProject(7);
+      project = createProject('7');
       projectId = await insertProject(knex, project);
       projectPerson = createPerson('7','PI', true);
       projectPersonId = await insertProjectPerson(knex, projectPerson, projectId, null, true);
@@ -338,7 +338,7 @@ describe('POST api/coi/projects', () => {
     let project;
     let projectPerson;
     before(async () => {
-      project = createProject(9);
+      project = createProject('9');
       projectId = await insertProject(knex, project);
       projectPerson = createPerson('9','PI', false);
       await insertProjectPerson(knex, projectPerson, projectId, null, true);
@@ -369,7 +369,7 @@ describe('POST api/coi/projects', () => {
     let projectId;
     let project;
     before(async () => {
-      project = createProject(10);
+      project = createProject('10');
       projectId = await insertProject(knex, project);
       await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL), '10');
     });
@@ -399,7 +399,7 @@ describe('POST api/coi/projects', () => {
     let project;
     let projectPerson;
     before(async () => {
-      project = createProject(11);
+      project = createProject('11');
       projectId = await insertProject(knex, project);
       projectPerson = createPerson('11','PI', false);
       await insertProjectPerson(knex, projectPerson, projectId, null, false);
@@ -439,7 +439,7 @@ describe('POST api/coi/projects', () => {
       });
 
       it('should return a OK status', async function() {
-        const newProject = createProject(12);
+        const newProject = createProject('12');
         newProject.persons = [createPerson('12','PI')];
         const response = await post(newProject);
         project = response.body;
@@ -479,7 +479,7 @@ describe('POST api/coi/projects', () => {
       });
 
       it('should return a OK status', async function() {
-        const newProject = createProject(13);
+        const newProject = createProject('13');
         newProject.persons = [createPerson('13','PI')];
         const response = await post(newProject);
         project = response.body;

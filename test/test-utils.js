@@ -27,7 +27,7 @@ export function createProject(sourceIdentifier) {
     typeCode: 1,
     sourceSystem: 'KC-PD',
     sourceIdentifier,
-    sourceStatus: 1,
+    sourceStatus: '1',
     sponsors: [
       {
         sponsorCode: '000340',
