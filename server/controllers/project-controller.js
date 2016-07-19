@@ -18,14 +18,21 @@
 
 import * as ProjectDB from '../db/project-db';
 import { ROLES } from '../../coi-constants';
-import { OK } from '../../http-status-codes';
+import { OK, BAD_REQUEST } from '../../http-status-codes';
 const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { filterProjects } from '../services/project-service/project-service';
 import wrapAsync from './wrap-async';
+import projectIsValid from '../validators/project';
 
 export const init = app => {
   app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+    if (!projectIsValid(req.body)) {
+      res.status(BAD_REQUEST);
+      res.json(projectIsValid.errors);
+      return;
+    }
+
     const result = await ProjectDB.saveProjects(req, req.body);
     if (!result) {
       res.sendStatus(OK);

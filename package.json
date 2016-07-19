@@ -36,6 +36,7 @@
   },
   "homepage": "https://github.com/kuali/research-coi",
   "dependencies": {
+    "ajv": "4.1.7",
     "alt": "0.18.4",
     "archiver": "0.21.0",
     "babel-core": "6.10.4",
