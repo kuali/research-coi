@@ -89,37 +89,37 @@ const updateReviewRecord = (knex, reviewId, values) => {
     });
 };
 
-export const recordPIResponse = (dbInfo, userInfo, reviewId, comment) => {
+export async function recordPIResponse(dbInfo, userInfo, reviewId, comment) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('disclosure_id as disclosureId', 'target_type as targetType', 'target_id as targetId')
+  const reviewItem = await knex.select(
+      'disclosure_id as disclosureId',
+      'target_type as targetType',
+      'target_id as targetId'
+    )
     .from('pi_review')
-    .where('id', reviewId)
-    .then(reviewItem => {
-      return isDisclosureUsers(dbInfo, reviewItem[0].disclosureId, userInfo.schoolId)
-        .then(isSubmitter => {
-          if (isSubmitter) {
-            return Promise.all([
-              updateReviewRecord(knex, reviewId, {
-                respondedTo: true
-              }),
-              updatePIResponseComment(
-                dbInfo,
-                userInfo,
-                reviewItem[0].disclosureId,
-                reviewItem[0].targetType,
-                reviewItem[0].targetId,
-                comment
-              )
-            ]).then(() => {
-              return;
-            });
-          }
+    .where('id', reviewId);
 
-          return 'Unauthorized';
-        });
-    });
-};
+  const isSubmitter = await isDisclosureUsers(
+    dbInfo,
+    reviewItem[0].disclosureId,
+    userInfo.schoolId
+  );
+  if (!isSubmitter) {
+    return 'Unauthorized';
+  }
+
+  await updateReviewRecord(knex, reviewId, {respondedTo: true});
+
+  await updatePIResponseComment(
+    dbInfo,
+    userInfo,
+    reviewItem[0].disclosureId,
+    reviewItem[0].targetType,
+    reviewItem[0].targetId,
+    comment
+  );
+}
 
 const extractTargetIDs = reviewItems => {
   return reviewItems.reduce((previous, current) => {

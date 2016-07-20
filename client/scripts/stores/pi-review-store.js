@@ -28,7 +28,8 @@ class _PIReviewStore {
 
     this.applicationState = {
       canSubmit: false,
-      showingCertification: false
+      showingCertification: false,
+      pendingResponses: []
     };
   }
 
@@ -176,12 +177,11 @@ class _PIReviewStore {
     });
 
     this.updateCanSubmit();
-    createRequest().post(`/api/coi/pi-response/${reviewId}`)
-      .send({
-        comment
-      })
-      .end(processResponse(() => {
-      }));
+
+    this.applicationState.pendingResponses.push({
+      reviewId,
+      comment
+    });
   }
 
   revise([reviewId, newAnswer]) {
@@ -350,6 +350,9 @@ class _PIReviewStore {
 
   confirm(disclosureId) {
     createRequest().put(`/api/coi/pi-revise/${disclosureId}/submit`)
+      .send({
+        responses: this.applicationState.pendingResponses
+      })
       .end(processResponse(() => {
         document.location = '/coi/';
       }));

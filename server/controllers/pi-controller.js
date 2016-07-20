@@ -18,6 +18,7 @@
 
 import * as PIDB from '../db/pi-db';
 import * as PIReviewDB from '../db/pi-review-db';
+import {isDisclosureUsers} from '../db/common-db';
 import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
@@ -216,7 +217,30 @@ export const init = app => {
     '/api/coi/pi-revise/:disclosureId/submit',
     allowedRoles('ANY'),
     wrapAsync(async (req, res) => {
-      const {dbInfo, params, userInfo, hostname, headers} = req;
+      const {dbInfo, params, userInfo, hostname, headers, body} = req;
+
+      const isSubmitter = isDisclosureUsers(
+        dbInfo,
+        params.disclosureId,
+        userInfo.schoolId
+      );
+
+      if (!isSubmitter) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      if (body && Array.isArray(body.responses)) {
+        for (const response of body.responses) {
+          await PIReviewDB.recordPIResponse(
+            dbInfo,
+            userInfo,
+            response.reviewId,
+            response.comment
+          );
+        }
+      }
+
       await PIReviewDB.reSubmitDisclosure(
         dbInfo,
         userInfo,
