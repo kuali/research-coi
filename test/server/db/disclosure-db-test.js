@@ -69,7 +69,7 @@ describe('Comments', () => {
 
     it('should update the comment', async () => {
       comment.text = 'I really like it.';
-      await DisclosureDB.updateComment(knex, {coiRole: 'reviewer'}, comment);
+      await DisclosureDB.updateComment(knex, {coiRole: 'reviewer', schoolId: '1234'}, comment);
       comment = await getComment(knex, comment.id);
       assert.equal(comment.text, 'I really like it.');
     });
