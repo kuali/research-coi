@@ -107,7 +107,7 @@ export default class NotificationPanels extends React.Component {
             if (template.error) {
               templateContent = (
                 <div style={{color: 'red'}}>
-                  Notification Service is down please contanct system admin
+                  Notification Service is down please contact system admin
                 </div>
               );
             } else {
