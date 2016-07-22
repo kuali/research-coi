@@ -68,6 +68,14 @@ export default function ArchiveView ({disclosure}, {configState}) {
     return <span />;
   }
 
+  if (disclosure.managementPlan) {
+    if (!disclosure.files) {
+      disclosure.files = [];
+    }
+
+    disclosure.files = disclosure.files.concat(disclosure.managementPlan);
+  }
+
   return (
     <div className={styles.container}>
       <div>
