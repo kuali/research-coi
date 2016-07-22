@@ -27,25 +27,34 @@ export default class RelationshipDateField extends RelationshipTextField {
     this.props.onChange(newDate);
   }
 
-  getInputStyle(invalid, style) {
-    return invalid === true ? merge(style, {borderBottom: '3px solid red'}) : style;
+  getInputStyle(invalid, validation, style) {
+    return validation && invalid !== undefined ? merge(style, {borderBottom: '3px solid red'}) : style;
   }
 
   render() {
+    let requiredFieldError;
+    if (this.props.invalid && this.props.validation) {
+      requiredFieldError = (
+          <div className={styles.invalidError}>{this.props.invalid}</div>
+      );
+    }
+
     return (
       <div className={styles.container}>
-        <div style={this.getLabelStyle(this.props.invalid)}>{this.props.label}</div>
+        <div style={this.getLabelStyle(this.props.invalid, this.props.validation)}>{this.props.label}</div>
         <DatePicker
-          textFieldStyle={this.getInputStyle(this.props.invalid, {
-            padding: 6,
-            width: '100%',
-            borderRadius: 0,
-            fontSize: 16,
-            border: '1px solid #B0B0B0'
-          })}
+          textFieldStyle={this.getInputStyle(this.props.invalid, this.props.validation,
+            {
+              padding: 6,
+              width: '100%',
+              borderRadius: 0,
+              fontSize: 16,
+              border: '1px solid #B0B0B0'
+            })}
           onChange={this.onChange}
           value={this.props.value}
         />
+        {requiredFieldError}
       </div>
     );
   }

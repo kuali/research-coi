@@ -33,3 +33,9 @@
 .invalid {
   border-bottom: 3px solid red;
 }
+
+.invalidError {
+  font-size: 10px;
+  margin-top: 2px;
+  color: red;
+}
