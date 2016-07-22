@@ -18,6 +18,7 @@
 
 import * as DisclosureDB from '../db/disclosure-db';
 import * as PIReviewDB from '../db/pi-review-db';
+import {isDisclosureUsers} from '../db/common-db';
 import wrapAsync from './wrap-async';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
@@ -96,7 +97,7 @@ export const init = app => {
 
   /**
     Admin can see any, User can only see their own,
-    Reviewer can only see ones where they are a reviewer
+    Reviewer can only see ones where they are a reviewer or their own
   */
   app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
     const {dbInfo, userInfo, params, headers} = req;
@@ -107,8 +108,16 @@ export const init = app => {
         userInfo.schoolId
       );
       if (!reviewerDisclosures.includes(params.id)) {
-        res.sendStatus(FORBIDDEN);
-        return;
+        const isSubmitter = await isDisclosureUsers(
+          dbInfo,
+          params.id,
+          userInfo.schoolId
+        );
+
+        if (!isSubmitter) {
+          res.sendStatus(FORBIDDEN);
+          return;
+        }
       }
     }
 
