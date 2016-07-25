@@ -378,12 +378,11 @@ export async function saveExistingDeclaration(dbInfo, userInfo, disclosureId, de
   }
 
   const knex = getKnex(dbInfo);
-
   return knex('declaration')
     .update({
       type_cd: record.typeCd,
       comments: record.comments,
-      admin_relationship_cd: record.adminRelationshipCd
+      admin_relationship_cd: record.adminRelationshipCd ? record.adminRelationshipCd : null
     })
     .where({
       disclosure_id: disclosureId,
