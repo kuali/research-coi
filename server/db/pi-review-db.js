@@ -748,24 +748,35 @@ export const deleteAnswers = (dbInfo, userInfo, reviewId, toDelete) => {
     });
 };
 
-export const reSubmitDisclosure = (dbInfo, userInfo, disclosureId) => {
+export async function reSubmitDisclosure(dbInfo, {schoolId}, disclosureId) {
   const knex = getKnex(dbInfo);
 
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (isSubmitter) {
-        return knex('disclosure')
-          .update({
-            status_cd: DISCLOSURE_STATUS.RESUBMITTED
-          })
-          .where({
-            id: disclosureId
-          });
-      }
+  const isSubmitter = await isDisclosureUsers(
+    dbInfo,
+    disclosureId,
+    schoolId
+  );
+  if (!isSubmitter) {
+    return 'Unauthorized';
+  }
 
-      return 'Unauthorized';
-    });
-};
+  await knex.transaction(async (trx) => {
+    await trx('disclosure')
+      .update({
+        status_cd: DISCLOSURE_STATUS.RESUBMITTED
+      })
+      .where({
+        id: disclosureId
+      });
+
+    await trx('pi_review')
+      .update({
+        revised: null,
+        responded_to: null
+      })
+      .where({disclosure_id: disclosureId});
+  });
+}
 
 export const getPIResponseInfo = (dbInfo, disclosureId) => {
   const knex = getKnex(dbInfo);
