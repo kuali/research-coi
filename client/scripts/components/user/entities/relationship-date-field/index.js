@@ -35,7 +35,7 @@ export default class RelationshipDateField extends RelationshipTextField {
     let requiredFieldError;
     if (this.props.invalid && this.props.validation) {
       requiredFieldError = (
-          <div className={styles.invalidError}>{this.props.invalid}</div>
+        <div className={styles.invalidError}>{this.props.invalid}</div>
       );
     }
 

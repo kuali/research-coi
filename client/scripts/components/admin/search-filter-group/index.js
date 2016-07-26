@@ -79,7 +79,7 @@ export default function SearchFilterGroup(props, context) {
 
     if (!isReviewer) {
       reviewStatusFilter = (
-          <DisclosureFilterByReviewStatus activeFilters={filters.reviewStatus}/>
+        <DisclosureFilterByReviewStatus activeFilters={filters.reviewStatus}/>
       );
     }
   }
