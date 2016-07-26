@@ -20,7 +20,31 @@ import PIReviewActions from '../actions/pi-review-actions';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
-import {FILE_TYPE} from '../../../coi-constants';
+import {FILE_TYPE, ROLES} from '../../../coi-constants';
+
+function updateComment(reviewItem, comment, commentFieldName = 'comments') {
+  if (reviewItem.piResponse) {
+    const commentToEdit = reviewItem[commentFieldName].find(
+      commentToTest => commentToTest.id === 'temp'
+    );
+    
+    if (commentToEdit) {
+      commentToEdit.text = comment;
+    }
+  }
+  else {
+    if (!Array.isArray(reviewItem[commentFieldName])) {
+      reviewItem[commentFieldName] = [];
+    }
+    reviewItem[commentFieldName].push({
+      date: new Date(),
+      text: comment,
+      topicId: reviewItem.reviewId,
+      userRole: ROLES.USER,
+      id: 'temp'
+    });
+  }
+}
 
 class _PIReviewStore {
   constructor() {
@@ -150,6 +174,7 @@ class _PIReviewStore {
     });
     if (questionToRespondTo) {
       questionToRespondTo.reviewedOn = new Date();
+      updateComment(questionToRespondTo, comment);
       questionToRespondTo.piResponse = {
         text: comment
       };
@@ -160,6 +185,7 @@ class _PIReviewStore {
     });
     if (entityToRespondTo) {
       entityToRespondTo.reviewedOn = new Date();
+      updateComment(entityToRespondTo, comment);
       entityToRespondTo.piResponse = {
         text: comment
       };
@@ -169,6 +195,7 @@ class _PIReviewStore {
       project.entities.forEach(entity => {
         if (entity.reviewId === reviewId) {
           entity.reviewedOn = new Date();
+          updateComment(entity, comment, 'adminComments');
           entity.piResponse = {
             text: comment
           };
@@ -177,11 +204,22 @@ class _PIReviewStore {
     });
 
     this.updateCanSubmit();
+    this.updatePendingResponses(reviewId, comment);
+  }
 
-    this.applicationState.pendingResponses.push({
-      reviewId,
-      comment
-    });
+  updatePendingResponses(reviewId, comment) {
+    const toEdit = this.applicationState.pendingResponses.find(
+      response => response.reviewId === reviewId
+    );
+
+    if (toEdit) {
+      toEdit.comment = comment;
+    } else {
+      this.applicationState.pendingResponses.push({
+        reviewId,
+        comment
+      });
+    }
   }
 
   revise([reviewId, newAnswer]) {

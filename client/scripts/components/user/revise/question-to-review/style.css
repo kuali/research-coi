@@ -49,6 +49,14 @@
   margin: 15px 10px;
 }
 
+.piComment {
+  text-align: right;
+  background-color: #edf9fb;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 15px 2px;
+}
+
 .commentTitle {
   font-weight: bold;
   font-size: 15px;
