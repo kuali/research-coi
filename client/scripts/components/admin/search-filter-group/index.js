@@ -26,9 +26,9 @@ import {DisclosureFilterByPI} from '../disclosure-filter-by-pi';
 import {DisclosureFilterByDisposition} from '../disclosure-filter-by-disposition';
 import {DisclosureFilterByReviewer} from '../disclosure-filter-by-reviewer';
 import {DisclosureFilterByReviewStatus} from '../disclosure-filter-by-review-status';
-import { LANES } from '../../../../../coi-constants';
+import { LANES, ROLES } from '../../../../../coi-constants';
 
-export default function SearchFilterGroup(props) {
+export default function SearchFilterGroup(props, context) {
   const {
     className,
     visible,
@@ -69,16 +69,19 @@ export default function SearchFilterGroup(props) {
 
   let reviewerFilter;
   let reviewStatusFilter;
-  if (props.lane === LANES.TEST) {
+  const isReviewer = context.userInfo.coiRole === ROLES.REVIEWER;
+  if (props.lane === LANES.TEST && !isReviewer) {
     reviewerFilter = (
       <DisclosureFilterByReviewer
         reviewers={props.reviewerFilterValues}
       />
     );
 
-    reviewStatusFilter = (
-      <DisclosureFilterByReviewStatus activeFilters={filters.reviewStatus} />
-    );
+    if (!isReviewer) {
+      reviewStatusFilter = (
+          <DisclosureFilterByReviewStatus activeFilters={filters.reviewStatus}/>
+      );
+    }
   }
 
   return (
@@ -102,3 +105,7 @@ export default function SearchFilterGroup(props) {
     </div>
   );
 }
+
+SearchFilterGroup.contextTypes = {
+  userInfo: React.PropTypes.object
+};
