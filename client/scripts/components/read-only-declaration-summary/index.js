@@ -24,7 +24,7 @@ import getConfig from '../../get-config';
 import RecommendationLink from '../recommendation-link';
 
 export default function DeclarationSummary(props, {configState}) {
-  const {configId, showDispositions, declaration, className, disposition} = props;
+  const {configId, showDispositions, declaration, className, disposition, displayRecommendation} = props;
   const config = getConfig(configState, configId);
   if (config === null) {
     return null;
@@ -40,7 +40,7 @@ export default function DeclarationSummary(props, {configState}) {
     );
 
     let recommendationLink;
-    if (declaration.recommendations) {
+    if (declaration.recommendations && displayRecommendation) {
       const recommendations = declaration.recommendations.map(decl => {
         return Object.assign(decl, {
           disposition: decl.dispositionTypeCd

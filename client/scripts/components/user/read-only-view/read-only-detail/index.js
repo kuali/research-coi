@@ -65,6 +65,7 @@ export default function ReadOnlyDetail(props, {configState}) {
           id={disclosure.id}
           configId={config.id}
           showDispositions={false}
+          displayRecommendation={false}
         />
       </div>
     );

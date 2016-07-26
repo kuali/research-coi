@@ -87,7 +87,8 @@ export default class DeclarationsSummary extends React.Component {
       showDispositions,
       recommendedProjectDispositions,
       className,
-      comments
+      comments,
+      displayRecommendation
     } = this.props;
     const {configState} = this.context;
 
@@ -120,6 +121,7 @@ export default class DeclarationsSummary extends React.Component {
               disposition={declarationType}
               showDispositions={showDispositions}
               comments={getCommentsForDeclaration(comments, declaration.id)}
+              displayRecommendation={displayRecommendation}
             />
           );
         });

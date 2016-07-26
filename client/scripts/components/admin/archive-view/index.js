@@ -103,6 +103,7 @@ export default function ArchiveView ({disclosure}, {configState}) {
           recommendedProjectDispositions={disclosure.recommendedProjectDispositions}
           className={styles.declarations}
           comments={getDeclarationsComments(disclosure.comments)}
+          displayRecommendation={true}
         />
       </div>
     </div>
