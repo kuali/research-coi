@@ -45,7 +45,7 @@ export default function ReadOnlyAttachmentSummary({className, files}) {
           </a>
           <span className={styles.type}>
             (Type:
-              <span style={{marginLeft: 3}}>{getFileType(file.fileType)}</span>
+            <span style={{marginLeft: 3}}>{getFileType(file.fileType)}</span>
             )
           </span>
         </div>

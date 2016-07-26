@@ -48,7 +48,7 @@ export default class RelationshipTextField extends React.Component {
     let requiredFieldError;
     if (this.props.invalid && this.props.validation) {
       requiredFieldError = (
-          <div className={styles.invalidError}>{this.props.invalid}</div>
+        <div className={styles.invalidError}>{this.props.invalid}</div>
       );
     }
 
