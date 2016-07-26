@@ -132,6 +132,7 @@ export class DisclosureDetailHeading extends React.Component {
     let versionOptions;
 
     if (configState.config.lane === LANES.TEST) {
+      let versionControls;
       if (disclosure.archivedVersions.length > 0) {
         versionOptions = disclosure.archivedVersions.map(version => {
           return {
@@ -140,7 +141,7 @@ export class DisclosureDetailHeading extends React.Component {
           };
         });
 
-        versionPicker = (
+        versionControls = (
           <div>
             <Dropdown
               options={versionOptions}
@@ -158,12 +159,19 @@ export class DisclosureDetailHeading extends React.Component {
           </div>
         );
       } else {
-        versionPicker = (
+        versionControls = (
           <div className={styles.noVersions} id="archivedVersionPicker">
             NONE FOUND
           </div>
         );
       }
+
+      versionPicker = (
+        <span className={styles.archivedList}>
+          <label htmlFor="archivedVersionPicker">Previous Versions:</label>
+          {versionControls}
+        </span>
+      );
     }
 
     return (
@@ -187,10 +195,7 @@ export class DisclosureDetailHeading extends React.Component {
           {submittedDate}
           {approvedDate}
         </span>
-        <span className={styles.archivedList}>
-          <label htmlFor="archivedVersionPicker">Previous Versions:</label>
-          {versionPicker}
-        </span>
+        {versionPicker}
       </div>
     );
   }
