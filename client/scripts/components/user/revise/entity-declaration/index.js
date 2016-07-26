@@ -18,11 +18,12 @@
 
 import styles from './style';
 import React from 'react';
+import classNames from 'classnames';
 import {formatDate} from '../../../../format-date';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import {getDeclarationTypeString} from '../../../../stores/config-store';
-import { COI_ADMIN } from '../../../../../../coi-constants';
+import { COI_ADMIN, ROLES } from '../../../../../../coi-constants';
 
 export default class EntityDeclaration extends React.Component {
   constructor(props) {
@@ -95,10 +96,16 @@ export default class EntityDeclaration extends React.Component {
 
   render() {
     const comments = this.props.entity.adminComments.map(comment => {
+      const commentClasses = classNames(
+        {[styles.piComment]: comment.userRole === ROLES.USER},
+        styles.comment
+      );
+
+      const author = comment.userRole === ROLES.USER ? 'you' : COI_ADMIN;
       return (
-        <div className={styles.comment} key={comment.id}>
+        <div className={commentClasses} key={comment.id}>
           <div className={styles.commentTitle}>Comment from
-            <span style={{marginLeft: 3}}>{COI_ADMIN}</span>:
+            <span style={{marginLeft: 3}}>{author}</span>:
           </div>
           <div className={styles.commentText}>{comment.text}</div>
           <div className={styles.commentDate}>{formatDate(comment.date)}</div>

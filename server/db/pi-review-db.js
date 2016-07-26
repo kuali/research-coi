@@ -197,24 +197,22 @@ const getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
 };
 
 const getComments = (knex, disclosureId, topicIDs, section) => {
-  return knex.select('id', 'topic_id as topicId', 'text', 'author', 'date', 'user_id as userId', 'user_role as userRole')
+  return knex.select(
+      'id',
+      'topic_id as topicId',
+      'text',
+      'author',
+      'date',
+      'user_id as userId',
+      'user_role as userRole'
+    )
     .from('comment as c')
     .where({
       disclosure_id: disclosureId,
       topic_section: section,
       pi_visible: true
     })
-    .andWhere('topic_id', 'in', topicIDs)
-    .andWhere(function() {
-      this.whereNot({
-        user_role: ROLES.USER
-      }).orWhere(function() {
-        this.where({
-          user_role: ROLES.USER,
-          current: true
-        });
-      });
-    });
+    .andWhere('topic_id', 'in', topicIDs);
 };
 
 const getQuestionnaireComments = (knex, disclosureId, topicIDs) => {
@@ -230,9 +228,7 @@ const getDeclarationComments = (knex, disclosureId, topicIDs) => {
 };
 
 const setAdminCommentsForTopics = (topics, comments) => {
-  comments.filter(comment => {
-    return comment.userRole !== ROLES.USER;
-  }).forEach(comment => {
+  comments.forEach(comment => {
     const topic = topics.find(topicToTest => {
       return topicToTest.id === comment.topicId;
     });
@@ -242,20 +238,6 @@ const setAdminCommentsForTopics = (topics, comments) => {
         topic.comments = [];
       }
       topic.comments.push(comment);
-    }
-  });
-};
-
-const setPIResponseForTopics = (topics, comments, currentUserId) => {
-  comments.filter(comment => {
-    return comment.userId === currentUserId && comment.userRole === ROLES.USER;
-  }).forEach(comment => {
-    const topic = topics.find(topicToTest => {
-      return topicToTest.id === comment.topicId;
-    });
-
-    if (topic) {
-      topic.piResponse = comment;
     }
   });
 };
@@ -300,7 +282,6 @@ const getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
   ])
   .then(([questions, comments, subQuestions]) => {
     associateSubQuestions(questions, subQuestions);
-    setPIResponseForTopics(questions, comments, userId);
     setAdminCommentsForTopics(questions, comments);
     setPIReviewDataForTopics(questions, reviewItems);
     return questions;
@@ -482,7 +463,6 @@ const getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
   ])
   .then(([entities, entityQuestionAnswers, comments, relationships, files]) => {
     setQuestionAnswersForEntities(entities, entityQuestionAnswers);
-    setPIResponseForTopics(entities, comments, userId);
     setRelationshipsForEntities(entities, relationships);
     setAdminCommentsForTopics(entities, comments);
     setPIReviewDataForTopics(entities, reviewItems);
@@ -556,14 +536,6 @@ const getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
         }).sort((a, b) => {
           return a.date - b.date;
         });
-
-        const piResponse = comments.find(comment => {
-          return comment.topicId === declaration.id && comment.userId === userId;
-        });
-
-        if (piResponse) {
-          entity.piResponse = piResponse;
-        }
 
         setPIReviewDataForDeclaration(entity, declaration, reviewItems);
       }
@@ -778,13 +750,14 @@ export async function reSubmitDisclosure(dbInfo, {schoolId}, disclosureId) {
   });
 }
 
-export const getPIResponseInfo = (dbInfo, disclosureId) => {
+export async function getPIResponseInfo(dbInfo, disclosureId) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('target_id as targetId', 'target_type as targetType', 'reviewed_on as reviewedOn')
+  return await knex.select(
+      'target_id as targetId',
+      'target_type as targetType',
+      'reviewed_on as reviewedOn'
+    )
     .from('pi_review')
-    .where('disclosure_id', disclosureId)
-    .then(reviewRecords => {
-      return reviewRecords;
-    });
-};
+    .where('disclosure_id', disclosureId);
+}
