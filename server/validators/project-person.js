@@ -22,20 +22,16 @@ export const schema = {
   type: 'object',
   properties: {
     id: {
-      type: 'integer',
-      minimum: 0
+      anyOf: [{type: 'integer', minimum: 0}, {type: 'null'}]
     },
     projectId: {
-      type: 'integer',
-      minimum: 0
+      anyOf: [{type: 'integer', minimum: 0}, {type: 'null'}]
     },
     sourceSystem: {
-      type: 'string',
-      maxLength: 20
+      anyOf: [{type: 'string', maxLength: 20}, {type: 'null'}]
     },
     sourceIdentifier: {
-      type: 'string',
-      maxLength: 50
+      anyOf: [{type: 'string', maxLength: 50}, {type: 'null'}]
     },
     personId: {
       type: 'string',
@@ -50,13 +46,13 @@ export const schema = {
       maxLength: 50
     },
     active: {
-      type: 'boolean'
+      anyOf: [{type: 'boolean'}, {type: 'null'}]
     },
     new: {
-      type: 'boolean'
+      anyOf: [{type: 'boolean'}, {type: 'null'}]
     },
     dispositionTypeCd: {
-      type: 'integer'
+      anyOf: [{type: 'integer'}, {type: 'null'}]
     }
   },
   required: [

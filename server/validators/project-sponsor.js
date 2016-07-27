@@ -22,12 +22,10 @@ export const schema = {
   type: 'object',
   properties: {
     id: {
-      type: 'integer',
-      minimum: 0
+      anyOf: [{type: 'integer', minimum: 0}, {type: 'null'}]
     },
     projectId: {
-      type: 'integer',
-      minimum: 0
+      anyOf: [{type: 'integer', minimum: 0}, {type: 'null'}]
     },
     sourceSystem: {
       type: 'string',
@@ -38,12 +36,10 @@ export const schema = {
       maxLength: 50
     },
     sponsorCode: {
-      type: 'string',
-      maxLength: 6
+      anyOf: [{type: 'string', maxLength: 6}, {type: 'null'}]
     },
     sponsorName: {
-      type: 'string',
-      maxLength: 200
+      anyOf: [{type: 'string', maxLength: 200}, {type: 'null'}]
     }
   },
   required: [
