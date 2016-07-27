@@ -24,12 +24,17 @@ import { allowedRoles } from '../middleware/role-check';
 import { filterProjects } from '../services/project-service/project-service';
 import wrapAsync from './wrap-async';
 import projectIsValid from '../validators/project';
+import Log from '../log';
 
 export const init = app => {
   app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     if (!projectIsValid(req.body)) {
       res.status(BAD_REQUEST);
       res.json(projectIsValid.errors);
+      Log.error(
+        `An invalid project was pushed to /api/coi/projects
+        ${JSON.stringify(projectIsValid.errors)}`
+      );
       return;
     }
 
