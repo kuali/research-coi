@@ -74,11 +74,7 @@ export const schema = {
   required: [
     'typeCode',
     'sourceSystem',
-    'sourceIdentifier',
-    'sourceStatus',
-    'startDate',
-    'endDate',
-    'title'
+    'sourceIdentifier'
   ]
 };
 
