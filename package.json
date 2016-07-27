@@ -1,6 +1,6 @@
 {
   "name": "research-coi",
-  "version": "1607.47.0",
+  "version": "1607.50.0",
   "description": "KualiCo Research Conflict of Interest",
   "main": "server/app.js",
   "scripts": {
