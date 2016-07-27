@@ -24,8 +24,7 @@ export const schema = {
   type: 'object',
   properties: {
     id: {
-      type: 'integer',
-      minimum: 0
+      anyOf: [{type: 'integer', minimum: 0}, {type: 'null'}]
     },
     typeCode: {
       type: 'integer'
@@ -39,36 +38,28 @@ export const schema = {
       maxLength: 50
     },
     sourceStatus: {
-      type: 'string',
-      maxLength: 75
+      anyOf: [{type: 'string', maxLength: 75}, {type: 'null'}]
     },
     persons: {
-      type: 'array',
-      items: personSchema
+      anyOf: [{type: 'array', items: personSchema}, {type: 'null'}]
     },
     sponsors: {
-      type: 'array',
-      items: sponsorSchema
+      anyOf: [{type: 'array', items: sponsorSchema}, {type: 'null'}]
     },
     startDate: {
-      type: 'string',
-      minimum: 0
+      anyOf: [{type: 'string', minimum: 0}, {type: 'null'}]
     },
     endDate: {
-      type: 'string',
-      minimum: 0
+      anyOf: [{type: 'string', minimum: 0}, {type: 'null'}]
     },
     title: {
-      type: 'string',
-      maxLength: 2000
+      anyOf: [{type: 'string', maxLength: 2000}, {type: 'null'}]
     },
     sponsorCode: {
-      type: 'string',
-      maxLength: 6
+      anyOf: [{type: 'string', maxLength: 6}, {type: 'null'}]
     },
     sponsorName: {
-      type: 'string',
-      maxLength: 200
+      anyOf: [{type: 'string', maxLength: 200}, {type: 'null'}]
     }
   },
   required: [
