@@ -58,11 +58,11 @@ exports.up = function(knex) {
     table.integer('status_cd').notNullable().references('status_cd').inTable('disclosure_status');
     table.string('user_id', 40).notNullable();
     table.string('submitted_by', 200).index();
-    table.dateTime('submitted_date').index();
-    table.dateTime('revised_date').index();
-    table.dateTime('start_date').notNullable();
-    table.dateTime('expired_date');
-    table.dateTime('last_review_date');
+    table.dateTime('submitted_date', true).index();
+    table.dateTime('revised_date', true).index();
+    table.dateTime('start_date', true).notNullable();
+    table.dateTime('expired_date', true);
+    table.dateTime('last_review_date', true);
     table.integer('config_id').unsigned().notNullable().index().references('id').inTable('config');
     table.engine('InnoDB');
   })
@@ -70,7 +70,7 @@ exports.up = function(knex) {
     table.increments('id').notNullable();
     table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
     table.string('approved_by', 200).notNullable();
-    table.dateTime('approved_date').notNullable();
+    table.dateTime('approved_date', true).notNullable();
     table.text('disclosure').notNullable();
     table.engine('InnoDB');
   })
@@ -124,7 +124,7 @@ exports.up = function(knex) {
     table.string('comments', 4000);
     table.boolean('active').notNullable().defaultTo(true);
     table.string('status', 40).notNullable();
-    table.dateTime('disclosed_date');
+    table.dateTime('disclosed_date', true);
     table.engine('InnoDB');
   })
   .createTable('project_type', function(table) {
@@ -143,8 +143,8 @@ exports.up = function(knex) {
     table.string('source_status', 75);
     table.string('sponsor_cd', 6);
     table.string('sponsor_name', 200);
-    table.dateTime('start_date');
-    table.dateTime('end_date');
+    table.dateTime('start_date', true);
+    table.dateTime('end_date', true);
     table.engine('InnoDB');
   })
   .createTable('project_person', function(table) {
@@ -233,7 +233,7 @@ exports.up = function(knex) {
     table.string('name').notNullable();
     table.string('user_id', 40).notNullable();
     table.string('uploaded_by').notNullable();
-    table.dateTime('upload_date');
+    table.dateTime('upload_date', true);
   })
   .createTable('comment', function(table) {
     table.increments('id').notNullable();
@@ -243,7 +243,7 @@ exports.up = function(knex) {
     table.text('text').notNullable();
     table.string('user_id', 40).notNullable();
     table.string('author', 50).notNullable();
-    table.dateTime('date').notNullable();
+    table.dateTime('date', true).notNullable();
     table.boolean('pi_visible').notNullable();
     table.boolean('reviewer_visible').notNullable();
   })
@@ -252,7 +252,7 @@ exports.up = function(knex) {
     table.integer('disclosure_id').unsigned().notNullable().index().references('id').inTable('disclosure');
     table.string('target_type', 25).notNullable();
     table.integer('target_id').unsigned().notNullable();
-    table.dateTime('reviewed_on');
+    table.dateTime('reviewed_on', true);
     table.boolean('revised');
     table.boolean('responded_to');
   }).then(function() {

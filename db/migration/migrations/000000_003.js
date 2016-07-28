@@ -26,7 +26,7 @@ exports.up = function(knex) {
     table.string('user_name', 100);
   })
   .table('config', function(table) {
-    table.dateTime('updated_date');
+    table.dateTime('updated_date', true);
   });
 };
 

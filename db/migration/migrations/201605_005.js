@@ -21,7 +21,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable('impersonation_audit', function(table) {
     table.increments('id').notNullable();
-    table.dateTime('timestamp').notNullable();
+    table.dateTime('timestamp', true).notNullable();
     table.string('auth_id', 40).notNullable();
     table.string('school_id', 40).notNullable();
     table.string('username', 40).notNullable();
