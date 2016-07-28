@@ -31,6 +31,7 @@ import cookieParser from 'cookie-parser';
 import authentication from './middleware/authentication';
 import apiAuthentication from './middleware/api-authentication';
 import renderView from './middleware/render-view';
+import {noCache} from './middleware/cache';
 import Log from './log';
 import methodChecker from './middleware/method-checker';
 import ErrorLogger from './middleware/error-logger';
@@ -101,7 +102,7 @@ export function run() {
 
   app.use('/coi', express.static('client'));
   app.use('/coi/build', (req, res) => { res.sendStatus(NOT_FOUND); }); // Static files that weren't found
-
+  app.use('/api', noCache);
   app.use(methodChecker);
   app.use(cookieParser());
   app.use('/coi/auth', renderView('auth'));
