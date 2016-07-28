@@ -37,7 +37,7 @@ export default function Questionnaire(props, {configState}) {
   let configSection;
   if (applicationState) {
     configSection = (
-      <span className={'fill'} style={{display: 'inline-block'}}>
+      <span className={`fill ${styles.configSection}`} style={{display: 'inline-block'}}>
         <InstructionEditor
           step={INSTRUCTION_STEP.FINANCIAL_ENTITIES}
           value={instructionText}

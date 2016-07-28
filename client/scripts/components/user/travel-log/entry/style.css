@@ -35,7 +35,7 @@
 
 .actionButtonContainer {
   display: inline-block;
-  width: 150px;
+  min-width: 150px;
   text-align: right;
   position: relative;
 }

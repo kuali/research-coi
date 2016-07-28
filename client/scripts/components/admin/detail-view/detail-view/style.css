@@ -34,7 +34,7 @@
 }
 
 .override.list {
-  width: 320px;
+  min-width: 320px;
 }
 
 .sidePanel {
@@ -42,10 +42,12 @@
   background-color: #DADADA;
   color: black;
   height: 100%;
+  min-width: 570px;
   width: 570px;
   transform: translateX(-250px);
   transition: transform 0.2s ease-in-out;
   z-index: 2;
+  right: -570px;
 }
 
 .listShowing .sidePanel {

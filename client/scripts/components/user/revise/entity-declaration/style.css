@@ -21,7 +21,7 @@
 }
 
 .statusIcon {
-  width: 45px;
+  min-width: 45px;
 }
 
 .commentTitle {
@@ -40,7 +40,7 @@
 }
 
 .commentSection {
-  width: 300px;
+  min-width: 300px;
 }
 
 .comments {
@@ -90,7 +90,7 @@
 }
 
 .responseText {
-  width: 100%;
+  min-width: 100%;
   height: 120px;
   border-radius: 5px;
   border: 1px solid #AAA;
@@ -102,13 +102,13 @@
 
 .entityName {
   display: inline-block;
-  width: 250px;
+  min-width: 250px;
   font-size: 14px;
 }
 
 .relationship {
   display: inline-block;
-  width: 230px;
+  min-width: 230px;
   font-size: 14px;
 }
 

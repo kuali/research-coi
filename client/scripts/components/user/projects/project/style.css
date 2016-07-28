@@ -60,7 +60,7 @@
 
 .override.button {
   margin: 7px 10px 7px 0;
-  width: 100px;
+  min-width: 100px;
   font-size: 12px;
 }
 

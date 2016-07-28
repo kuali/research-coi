@@ -20,7 +20,7 @@
 }
 
 .statusIcon {
-  width: 45px;
+  min-width: 45px;
 }
 
 .commentTitle {
@@ -39,7 +39,7 @@
 }
 
 .commentSection {
-  width: 300px;
+  min-width: 300px;
 }
 
 .comments {

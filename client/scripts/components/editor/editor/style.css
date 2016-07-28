@@ -24,7 +24,7 @@
   position: absolute;
   top: calc(100% + 5px);
   left: 0;
-  width: 260px;
+  min-width: 260px;
   background: none #fdfdfd;
   border: 1px solid #999;
   border-radius: 2px;

@@ -32,7 +32,7 @@
 .entityName {
   display: inline-block;
   margin-right: 20px;
-  width: 275px;
+  min-width: 275px;
   color: inherit;
 }
 

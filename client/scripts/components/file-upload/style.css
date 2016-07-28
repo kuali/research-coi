@@ -69,13 +69,13 @@
 
 .override.button {
   padding: 3px;
-  width: 90px;
+  min-width: 90px;
   font-size: 11px;
 }
 
 .override.downloadButton {
   padding: 1px;
-  width: 90px;
+  min-width: 90px;
   font-weight: 300;
   font-size: 10px;
   margin-right: 7px;
@@ -83,7 +83,7 @@
 
 .override.deleteButton {
   padding: 1px;
-  width: 90px;
+  min-width: 90px;
   font-weight: 300;
   font-size: 10px;
   box-shadow: 0 -1px 5px #D0D0D0;

@@ -18,13 +18,14 @@
 
 .container {
   padding: 0 20px 0 35px;
-  width: 235px;
+  min-width: 235px;
 }
 
 .saveAndUndo {
   position: fixed;
   transition: opacity 0.1s linear;
   opacity: 0;
+  width: 210px;
 }
 
 .visible .saveAndUndo {

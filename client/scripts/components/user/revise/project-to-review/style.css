@@ -34,13 +34,13 @@
 
 .entityName {
   display: inline-block;
-  width: 250px;
+  min-width: 250px;
   font-size: 14px;
 }
 
 .relationship {
   display: inline-block;
-  width: 230px;
+  min-width: 230px;
   font-size: 14px;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .commentFiller {
-  width: 300px;
+  min-width: 300px;
 }
 
 .borderArea {

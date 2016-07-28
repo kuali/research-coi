@@ -22,14 +22,14 @@
 }
 
 .radio {
-  width: 22px;
+  min-width: 22px;
   height: 4em;
   vertical-align: middle;
 }
 
 .label {
   cursor: pointer;
-  width: 80px;
+  min-width: 80px;
   display: inline-block;
   vertical-align: middle;
   font-weight: bold;

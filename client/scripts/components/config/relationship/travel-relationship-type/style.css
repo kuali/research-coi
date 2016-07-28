@@ -42,7 +42,7 @@
 
 .left {
   padding-right: 25px;
-  width: 200px;
+  min-width: 200px;
 }
 
 .checkboxLabel {

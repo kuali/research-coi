@@ -68,7 +68,7 @@
 }
 
 .buttonCell {
-  width: 268px;
+  min-width: 268px;
 }
 
 .relationshipLabel {

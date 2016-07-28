@@ -59,6 +59,7 @@
 }
 
 .override.checkmark {
+  min-width: 15px;
   width: 15px;
   height: 18px;
   vertical-align: middle;
