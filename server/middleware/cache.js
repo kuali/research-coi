@@ -16,47 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.container {
-  margin-top: 44px;
-  background-color: white;
-  padding: 15px 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px #C0C0C0;
-}
-
-.entityName {
-  display: inline-block;
-  width: 95%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 24px;
-}
-
-.actionButtonContainer {
-  display: inline-block;
-  min-width: 150px;
-  text-align: right;
-  position: relative;
-}
-
-.editingActionButtons {
-  text-align: right;
-  border-top: 1px solid #CCC;
-  padding: 13px 10px 0 0;
-}
-
-.data {
-  font-weight: bold;
-  margin-left: 5px;
-}
-
-.override.button {
-  margin-bottom: 3px;
-}
-
-.override.archiveButton {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+export function noCache(req, res, next) {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
 }

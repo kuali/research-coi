@@ -27,7 +27,7 @@
   background-color: #999999;
   color: white;
   font-size: 7px;
-  width: 42px;
+  min-width: 42px;
   display: inline-block;
   border-radius: 9px;
   padding: 4px;
@@ -47,7 +47,7 @@
 .slider {
   position: absolute;
   height: 16px;
-  width: 16px;
+  min-width: 16px;
   background-color: #F2F2F2;
   border-radius: 8px;
   top: 0;

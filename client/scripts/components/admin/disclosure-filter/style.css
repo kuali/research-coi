@@ -49,7 +49,7 @@
 
 .clear {
   display: inline-block;
-  width: 40px;
+  min-width: 40px;
   font-weight: bold;
   vertical-align: middle;
   color: white;

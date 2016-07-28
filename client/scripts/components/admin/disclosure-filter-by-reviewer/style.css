@@ -20,7 +20,7 @@
   white-space: nowrap;
   color: black;
   padding: 10px 0 10px 10px;
-  width: 300px;
+  min-width: 300px;
 }
 
 .override.clearButton {
@@ -29,7 +29,7 @@
   border-bottom: 3px solid #717171;
   float: right;
   padding: 4px 7px;
-  width: 135px;
+  min-width: 135px;
   margin: 10px 0;
 }
 

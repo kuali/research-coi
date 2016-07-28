@@ -20,7 +20,7 @@
 .left {
   float: left;
   height: 175px;
-  width: 200px;
+  min-width: 200px;
 }
 
 .right {

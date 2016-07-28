@@ -18,7 +18,7 @@
 
 .container {
   display: inline-block;
-  width: 145px;
+  min-width: 145px;
   height: 145px;
   background-color: white;
   color: white;
@@ -60,7 +60,7 @@
 
 .override.img {
   height: 42px;
-  width: 42px;
+  min-width: 42px;
 }
 
 :global(.color-blind) .override.img {

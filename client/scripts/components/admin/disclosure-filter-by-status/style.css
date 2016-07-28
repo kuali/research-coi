@@ -19,7 +19,7 @@
 .container {
   white-space: nowrap;
   color: black;
-  width: 238px;
+  min-width: 238px;
 }
 
 .checkbox {
@@ -34,7 +34,7 @@
   border-bottom: 3px solid #717171;
   float: right;
   padding: 4px 7px;
-  width: 135px;
+  min-width: 135px;
   margin: 10px 0;
 }
 

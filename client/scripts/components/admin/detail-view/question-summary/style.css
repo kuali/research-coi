@@ -31,13 +31,13 @@
 }
 
 .number {
-  width: 50px;
+  min-width: 50px;
   font-size: 31px;
   color: #666;
 }
 
 .subQuestionNumber {
-  width: 130px;
+  min-width: 130px;
   font-size: 31px;
   padding-left: 50px;
   color: #666;
@@ -51,7 +51,7 @@
 
 .commentLink {
   display: inline-block;
-  width: 102px;
+  min-width: 102px;
   font-size: 14px;
   cursor: pointer;
   margin-top: 7px;

@@ -21,16 +21,16 @@
 }
 
 .statusIcon {
-  width: 45px;
+  min-width: 45px;
 }
 
 .questionNumber {
-  width: 60px;
+  min-width: 60px;
   font-size: 22px;
 }
 
 .commentSection {
-  width: 300px;
+  min-width: 300px;
 }
 
 .comments {

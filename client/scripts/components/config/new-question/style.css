@@ -28,7 +28,7 @@
 .dropdown {
   border: 1px solid #AAA;
   border-radius: 5px;
-  width: 150px;
+  min-width: 150px;
   font-size: 17px;
   height: 28px;
 }

@@ -20,7 +20,7 @@
 }
 
 .select {
-  width: 150px;
+  min-width: 150px;
   height: 27px;
   font-size: 14px;
   border-bottom: 1px solid #aaa;

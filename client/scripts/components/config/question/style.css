@@ -44,7 +44,7 @@
   background-color: #0095A0;
   vertical-align: top;
   display: inline-block;
-  width: 25px;
+  min-width: 25px;
 }
 
 :global(.color-blind) .gripper {
@@ -92,13 +92,13 @@
   float: right;
   margin: 4px 0 3px 10px;
   height: 27px;
-  width: 124px;
+  min-width: 124px;
 }
 
 .override.nonFloatButton {
   margin: 4px 0 3px 10px;
   height: 27px;
-  width: 124px;
+  min-width: 124px;
 }
 
 .dropdown {

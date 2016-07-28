@@ -29,6 +29,7 @@
   background-color: #F2F2F2;
   box-shadow: 2px 8px 8px #ccc inset;
   min-height: 0;
+  min-width: 200px;
 }
 
 .stepTitle {

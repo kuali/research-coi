@@ -19,7 +19,7 @@
 .container {
   color: black;
   font-size: 15px;
-  width: 235px;
+  min-width: 235px;
   background-color: white;
   padding: 20px 24px;
   box-shadow: 0 0 10px 2px #CCC;
@@ -31,7 +31,7 @@
   margin-bottom: 10px;
   padding: 5px 10px;
   border-bottom: 2px solid #717171;
-  width: 135px;
+  min-width: 135px;
   background-color: #DFDFDF;
 }
 
@@ -47,7 +47,7 @@
   background-color: #0095A0;
   color: white;
   border-bottom: 2px solid #717171;
-  width: 135px;
+  min-width: 135px;
   font-weight: 300;
   text-shadow: 1px 1px 6px #777;
 }

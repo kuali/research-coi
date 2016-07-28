@@ -24,14 +24,14 @@
   margin: 0 5px;
   border: 1px solid #aaa;
   height: 24px;
-  width: 80px;
+  min-width: 80px;
 }
 
 .warningPeriod {
   margin-right: 5px;
   border: 1px solid #aaa;
   height: 24px;
-  width: 80px;
+  min-width: 80px;
 }
 
 .send {

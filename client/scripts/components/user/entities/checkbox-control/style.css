@@ -22,7 +22,7 @@
 }
 
 .radio {
-  width: 22px;
+  min-width: 22px;
 }
 
 .label {

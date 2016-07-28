@@ -19,6 +19,6 @@
 .container {
   position: relative;
   text-align: center;
-  width: 120px;
+  min-width: 120px;
   height: 120px;
 }

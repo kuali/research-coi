@@ -37,6 +37,7 @@
 }
 
 .override.icon {
+  min-width: 15px;
   width: 15px;
   height: 15px;
   vertical-align: middle;
