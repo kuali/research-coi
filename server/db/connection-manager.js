@@ -32,13 +32,13 @@ if (process.env.DB_PACKAGE === 'mysql') {
 }
 else {
   connectionOptions = {
-    hostname: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'coi'
   };
   if (process.env.DB_PORT) {
-    connectionOptions.port = process.env.DB_PORT;
+    connectionOptions.host = `${connectionOptions.host}:${process.env.DB_PORT}`;
   }
 }
 
