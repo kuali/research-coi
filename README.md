@@ -17,8 +17,8 @@ npm install
 
 If using Oracle:
   npm uninstall mysql
-  npm install strong-oracle --save
-  Go through the install process listed for [strong-oracle](https://github.com/strongloop/strong-oracle), including drivers.
+  npm install oracledb --save
+  Go through the install process listed for [node-oracle-db](https://github.com/oracle/node-oracledb#-installation), including drivers.
 ```
 ----------
 **Step 4**: Create Database
@@ -60,7 +60,7 @@ For Oracle:
 
 module.exports = {
   kc_coi: {
-    client: 'strong-oracle',
+    client: 'oracledb',
     connection: {
       database: '<sid>',
       host: '<host name or ip>',
@@ -101,7 +101,7 @@ System configuration for COI is done with environment variables. Environment var
 
 >**DB_PACKAGE**
 >: The node db package to use
->*Default*: strong-oracle
+>*Default*: oracledb
 
 >**DB_HOST**
 >: The host name for the database.
@@ -226,12 +226,12 @@ npm run build_babel_to <the target directory>
 
 If you've transpiled in place run
 ```
-DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm run start_prod
+DB_NAME=<db_name> DB_PACKAGE=<oracledb/mysql> npm run start_prod
 ```
 
 If you've transpiled to a different directory run
 ```
-DB_NAME=<db_name> DB_PACKAGE=<strong-oracle/mysql> npm run start_prod <the directory>
+DB_NAME=<db_name> DB_PACKAGE=<oracledb/mysql> npm run start_prod <the directory>
 ```
 
 **Step 11**: Navigate to hostname:port/coi/
