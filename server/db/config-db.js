@@ -432,13 +432,20 @@ export const archiveConfig = (dbInfo, userId, userName, config) => {
   }, 'id');
 };
 
+const cachedConfigs = {};
 export async function getArchivedConfig(dbInfo, id) {
+  if (cachedConfigs[id]) {
+    return cachedConfigs[id];
+  }
+
   const knex = getKnex(dbInfo);
   const results = await knex('config').select('config', 'id').where('id', id);
   const config = JSON.parse(results[0].config);
   config.lane = lane;
   config.id = results[0].id;
-  return Promise.resolve(config);
+
+  cachedConfigs[id] = config;
+  return config;
 }
 
 export function getRequiredProjectRoles(dbInfo) {
