@@ -15,14 +15,12 @@ Issues Fixed:
 * Old project appearing in Submitted disclosure 
 * COI version number is not displaying
 * COI disclosure status is not picking up when an FE has been inactivated when config set to not to require update if reporter has no entities
-* 
 
 Enhancements
 * Ability for Reporter to see previous responses after disclosure sent back and resubmitted multiple times
 * Filter for disclosures assigned to reviewers
 * Approved and Archived Disclosures for Admins 
 * Allow Admin to set the reviewer's comment as visible to the Reporter
-
 
 Other improvements:
 * Increase character length of disposition field 
