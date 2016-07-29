@@ -1,3 +1,35 @@
+##coi-16067
+
+Issues Fixed: 
+* Internet Explorer and MS Edge rendering fixed
+* IE:  Sign out is hidden by instructions
+* Reviewer should not see filters for Reviewer and Review Status
+* Reviewer Recommended Relationships determinations should not be seen by the reporter 
+* "Previous Versions:"  label appears in non-test lane even though it is part of a feature that is behind a feature flag
+* Reporter revise and respond not reset after sent back again 
+* 500 error when Admin changes FE-Project determination to SELECT (none) in an updated disclosure 
+* Validations on Travel relationship in Financial Entity are not displayed when user added invalid data
+* COI reviewer gets 403 error message with view disclosure and view disclosure archives
+* Management Plan is not viewable in Archived disclosure for Admin
+* In Sent Back disclosure, Reporter response is recorded as a Reporter comment when user clicks done rather than on submit of revised disclosure
+* Old project appearing in Submitted disclosure 
+* COI version number is not displaying
+* COI disclosure status is not picking up when an FE has been inactivated when config set to not to require update if reporter has no entities
+
+Enhancements
+* Ability for Reporter to see previous responses after disclosure sent back and resubmitted multiple times
+* Filter for disclosures assigned to reviewers
+* Approved and Archived Disclosures for Admins 
+* Allow Admin to set the reviewer's comment as visible to the Reporter
+
+Other improvements:
+* Increase character length of disposition field 
+
+In-progress features behind a Feature Flag:
+* Ability to filter admin list view whether a disclose is with an assigned reviewer
+* Approved and Archived Disclosures for Admins 
+* Filter for disclosures assigned to reviewers
+
 ##coi-1606
 
 Issues Fixed: 
