@@ -27,6 +27,8 @@ Other improvements:
 
 In-progress features behind a Feature Flag:
 * Ability to filter admin list view whether a disclose is with an assigned reviewer
+* Approved and Archived Disclosures for Admins 
+* Filter for disclosures assigned to reviewers
 
 ##coi-1606
 
