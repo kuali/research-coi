@@ -59,7 +59,7 @@ try {
 }
 catch (err) {
   const knexInstance = knex({
-    client: process.env.DB_PACKAGE || 'strong-oracle',
+    client: process.env.DB_PACKAGE || 'oracledb',
     connection: connectionOptions,
     pool: {
       min: 2,

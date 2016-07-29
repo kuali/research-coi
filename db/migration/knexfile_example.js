@@ -19,7 +19,7 @@
 
 module.exports = {
   kc_coi: {
-    client: 'strong-oracle',
+    client: 'oracledb',
     connection: {
       hostname: 'localhost',
       database: 'coi',
