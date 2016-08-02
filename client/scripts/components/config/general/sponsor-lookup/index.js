@@ -41,8 +41,20 @@ export default class SponsorLookup extends React.Component {
     return (
       <div className={classNames(styles.container, this.props.className)}>
         <div>
-          <input ref="checkbox" id="sponsorLookupToggle" type="checkbox" checked={this.props.enabled} className={styles.checkbox} onChange={this.toggle} />
-          <label htmlFor="sponsorLookupToggle" style={{verticalAlign: 'middle'}}>Lookup financial entities from legacy system?</label>
+          <input
+            ref="checkbox"
+            id="sponsorLookupToggle"
+            type="checkbox"
+            checked={this.props.enabled}
+            className={styles.checkbox}
+            onChange={this.toggle}
+          />
+          <label
+            htmlFor="sponsorLookupToggle"
+            style={{verticalAlign: 'middle'}}
+          >
+            Lookup financial entities from legacy system?
+          </label>
         </div>
       </div>
     );

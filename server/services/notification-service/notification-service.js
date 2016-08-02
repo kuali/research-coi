@@ -245,7 +245,7 @@ async function getProject(dbInfo, hostname, project, person) {
   return projectInfo;
 }
 
-async function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
+function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
   const url = getRequestInfo(dbInfo, hostname).url;
   let variables = VariableService.getDefaultVariables(url);
   variables = VariableService.getDisclosureVariables(disclosure, url, variables);

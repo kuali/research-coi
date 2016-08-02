@@ -91,7 +91,7 @@ export default function AdditionalReviewPanel(props) {
     <div className={classNames(styles.container, props.className)}>
       <div style={{paddingBottom: 20}}>
         <span className={styles.close} onClick={AdminActions.hideAdditionalReviewPanel}>
-          <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
+          <i className="fa fa-times" style={{fontSize: 23}} /> CLOSE
         </span>
         <span className={styles.title}>ADDITIONAL REVIEW</span>
       </div>

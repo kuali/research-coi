@@ -178,7 +178,13 @@ export default class NewQuestion extends React.Component {
           <span className={styles.span}>
             <label className={styles.label} htmlFor="questionType">QUESTION TYPE</label>
             <div>
-              <select className={styles.dropdown} value={this.props.question.question.type} ref="typeDropdown" onChange={this.typeChosen} id="questionType">
+              <select
+                className={styles.dropdown}
+                value={this.props.question.question.type}
+                ref="typeDropdown"
+                onChange={this.typeChosen}
+                id="questionType"
+              >
                 <option>Select</option>
                 {questionTypes}
               </select>

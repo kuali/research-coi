@@ -60,7 +60,15 @@ export class EntityFormNameStep extends React.Component {
           <span className={styles.entityName}>
             <label htmlFor={htmlId} className={styles.nameLabel}>ENTITY NAME</label>
             <div>
-              <input id={htmlId} required onChange={this.updateName} value={this.props.entityName} ref="entityName" type="text" className={styles.name} />
+              <input
+                id={htmlId}
+                required
+                onChange={this.updateName}
+                value={this.props.entityName}
+                ref="entityName"
+                type="text"
+                className={styles.name}
+              />
             </div>
             {requiredFieldError}
           </span>

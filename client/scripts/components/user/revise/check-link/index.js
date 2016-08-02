@@ -22,7 +22,7 @@ import React from 'react';
 
 export default function CheckLink(props) {
   const check = (
-    <i className={`fa fa-check ${styles.checkmark}`}></i>
+    <i className={`fa fa-check ${styles.checkmark}`} />
   );
 
   const classes = classNames(

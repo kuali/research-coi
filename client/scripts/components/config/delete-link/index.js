@@ -34,7 +34,7 @@ export default class DeleteLink extends React.Component {
   render() {
     return (
       <span onClick={this.props.onClick} className={classNames(styles.container, this.props.className)}>
-        <i className={`fa fa-times-circle ${styles.icon}`}></i>
+        <i className={`fa fa-times-circle ${styles.icon}`} />
         <span className={styles.linkText}>Delete</span>
       </span>
     );

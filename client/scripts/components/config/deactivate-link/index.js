@@ -34,7 +34,7 @@ export default class DeactivateLink extends React.Component {
   render() {
     return (
       <span onClick={this.props.onClick} className={classNames(styles.container, this.props.className)}>
-        <i className={`fa fa-chain-broken ${styles.icon}`}></i>
+        <i className={`fa fa-chain-broken ${styles.icon}`} />
         <span className={styles.linkText}>Deactivate</span>
       </span>
     );

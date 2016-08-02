@@ -56,7 +56,7 @@ export default class EntityRelationshipSummary extends React.Component {
     if (!this.props.readonly) {
       removeButton = (
         <button onClick={this.remove} className={styles.removeButton}>
-          <i className={`fa fa-times ${styles.x}`}></i>
+          <i className={`fa fa-times ${styles.x}`} />
         </button>
       );
     }

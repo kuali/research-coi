@@ -90,7 +90,7 @@ export default class EditableItem extends React.Component {
     else {
       content = (
         <div className={classNames(styles.container, this.props.className)}>
-          <i className={`fa fa-pencil ${styles.editIcon}`} onClick={this.edit}></i>
+          <i className={`fa fa-pencil ${styles.editIcon}`} onClick={this.edit} />
           <span className={styles.deleteIcon} onClick={this.delete}>X</span>
           <span className={styles.text}>{this.props.children}</span>
         </div>

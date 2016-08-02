@@ -97,7 +97,7 @@ describe('POST api/coi/projects', () => {
       project = response.body;
     });
 
-    it('should return a project with an id', async function() {
+    it('should return a project with an id', () => {
       assert.equal('TEST TITLE', project.title);
       assert(project.id !== undefined);
     });
@@ -129,17 +129,17 @@ describe('POST api/coi/projects', () => {
       project = response.body;
     });
 
-    it('should return a OK status', async function() {
+    it('should return a OK status', () => {
       assert.notEqual(response, undefined);
     });
 
-    it('should return a project with an id', async function() {
+    it('should return a project with an id', () => {
       assert.equal('TEST TITLE', project.title);
       assert.equal(1, project.persons.length);
       assert(project.id !== undefined);
     });
 
-    it('should return a project person with an id', async function() {
+    it('should return a project person with an id', () => {
       assert.equal('TEST TITLE', project.title);
       assert.equal(1, project.persons.length);
       assert(project.persons[0].id !== undefined);
@@ -197,7 +197,7 @@ describe('POST api/coi/projects', () => {
       response = await post(project);
     });
 
-    it('should return an OK status with no content', async function() {
+    it('should return an OK status with no content', () => {
       assert.deepEqual({},response.body);
     });
 
@@ -445,13 +445,13 @@ describe('POST api/coi/projects', () => {
         project = response.body;
       });
 
-      it('should return a project with an id', async function() {
+      it('should return a project with an id', () => {
         assert.equal('TEST TITLE', project.title);
         assert.equal(1,project.persons.length);
         assert(project.id !== undefined);
       });
 
-      it('should return a project person with an id', async function() {
+      it('should return a project person with an id', () => {
         assert.equal('TEST TITLE', project.title);
         assert.equal(1,project.persons.length);
         assert(project.persons[0].id !== undefined);
@@ -485,13 +485,13 @@ describe('POST api/coi/projects', () => {
         project = response.body;
       });
 
-      it('should return a project with an id', async function() {
+      it('should return a project with an id', () => {
         assert.equal('TEST TITLE', project.title);
         assert.equal(1,project.persons.length);
         assert(project.id !== undefined);
       });
 
-      it('should return a project person with an id', async function() {
+      it('should return a project person with an id', () => {
         assert.equal('TEST TITLE', project.title);
         assert.equal(1,project.persons.length);
         assert(project.persons[0].id !== undefined);

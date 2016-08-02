@@ -23,7 +23,10 @@
 import Log from './log';
 import {DISCLOSURE_STATUS} from '../coi-constants';
 import moment from 'moment';
-import { createAndSendExpirationNotification, createAndSendExpirationReminderNotification } from './services/notification-service/notification-service';
+import {
+  createAndSendExpirationNotification,
+  createAndSendExpirationReminderNotification
+} from './services/notification-service/notification-service';
 import getKnex from './db/connection-manager';
 
 const MILLIS_IN_A_DAY = 86400000;
@@ -88,7 +91,7 @@ catch (err) {
 
 async function handleNotifications() {
   const notifications = await expirationCheck(DISCLOSURE_STATUS.EXPIRED);
-  await notifications.expirationNotifications.map(async disclosure => {
+  await notifications.expirationNotifications.map(async (disclosure) => {
     try {
       return await createAndSendExpirationNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
     } catch (err) {
@@ -97,7 +100,7 @@ async function handleNotifications() {
     }
   });
 
-  await notifications.expirationReminders.map(async disclosure => {
+  await notifications.expirationReminders.map(async (disclosure) => {
     try {
       return await createAndSendExpirationReminderNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
     } catch (err) {
@@ -106,7 +109,7 @@ async function handleNotifications() {
     }
   });
 }
-export default async function scheduleExpirationCheck() {
+export default function scheduleExpirationCheck() {
   const waitUntilToRun = Math.random() * MILLIS_IN_A_DAY;
   setTimeout(async () => {
     Log.info('Scheduled the expired disclosures check to run every 24 hours from now');

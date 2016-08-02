@@ -33,7 +33,7 @@ export default class ActiveProjectType extends React.Component {
   render() {
     return (
       <div className={styles.container}>
-        <i className={`fa fa-check-circle-o ${styles.icon}`}></i>
+        <i className={`fa fa-check-circle-o ${styles.icon}`} />
         <div className={styles.content}>
           <div className={styles.description}>
             {this.props.description}

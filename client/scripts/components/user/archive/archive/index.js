@@ -184,7 +184,7 @@ export class Archive extends React.Component {
     }
     else {
       header = (
-        <div style={{height: 57}}></div>
+        <div style={{height: 57}} />
       );
 
       detail = (

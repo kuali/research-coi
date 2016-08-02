@@ -106,7 +106,7 @@ export function getAuthLink(req) {
   return `/coi/auth?return_to=${returnToValue}`;
 }
 
-export async function getAdmins(dbInfo, authToken) {//eslint-disable-line no-unused-vars
+export function getAdmins(dbInfo, authToken) {//eslint-disable-line no-unused-vars
   return Promise.resolve([
     {
       userId: hashCode('admin1'),

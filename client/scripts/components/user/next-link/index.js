@@ -29,7 +29,7 @@ export default function NextLink(props) {
 
   return (
     <div id='nextStep' onClick={props.onClick} className={classes}>
-      <i className={`fa fa-arrow-circle-right ${styles.icon}`}></i>
+      <i className={`fa fa-arrow-circle-right ${styles.icon}`} />
       <span className={styles.stepLabel}>
         NEXT STEP
       </span>

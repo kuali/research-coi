@@ -113,7 +113,7 @@ export class ProjectRelationDialog extends React.Component {
         navButtons.push(
           <GreyButton key='previous' onClick={this.onPrevious} className={`${styles.override} ${styles.button}`}>
             Previous Project
-            <i className={'fa fa-caret-up'} style={{marginLeft: 5}}></i>
+            <i className={'fa fa-caret-up'} style={{marginLeft: 5}} />
           </GreyButton>
         );
       }
@@ -121,7 +121,7 @@ export class ProjectRelationDialog extends React.Component {
         navButtons.push(
           <GreyButton key='next' onClick={this.onNext} className={`${styles.override} ${styles.button}`}>
             Next Project
-            <i className={'fa fa-caret-down'} style={{marginLeft: 5}}></i>
+            <i className={'fa fa-caret-down'} style={{marginLeft: 5}} />
           </GreyButton>
         );
       }

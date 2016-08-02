@@ -1317,7 +1317,7 @@ async function resetProjectDispositions(knex, disclosureId) {
     });
 }
 
-async function resetAdminRelationships(knex, disclosureId) {
+function resetAdminRelationships(knex, disclosureId) {
   return knex('declaration')
     .update({
       admin_relationship_cd: null
@@ -1478,7 +1478,14 @@ export const getArchivedDisclosures = (dbInfo, userId) => {
   const knex = getKnex(dbInfo);
 
   return Promise.all([
-    knex.select('da.id', 'da.disclosure_id as disclosureId', 'da.approved_by as approvedBy', 'da.approved_date as approvedDate', 'da.disclosure as disclosure')
+    knex
+      .select(
+        'da.id',
+        'da.disclosure_id as disclosureId',
+        'da.approved_by as approvedBy',
+        'da.approved_date as approvedDate',
+        'da.disclosure as disclosure'
+      )
       .from('disclosure_archive as da')
       .innerJoin('disclosure as d', 'd.id', 'da.disclosure_id')
       .where('d.user_id', userId)

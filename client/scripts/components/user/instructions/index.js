@@ -44,7 +44,7 @@ export function Instructions(props) {
   return (
     <VerticalSlider collapsed={props.collapsed}>
       <div className={`${styles.container} ${props.className}`}>
-        <div className={styles.arrow}></div>
+        <div className={styles.arrow} />
         {instruction}
         <div className={styles.buttons}>
           <GreyButton

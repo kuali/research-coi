@@ -22,7 +22,7 @@ import React from 'react';
 
 export function PlusIcon(props) {
   return (
-    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 500 500" enable-background="new 0 0 100 100" aria-label="Plus Icon">
+    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 500 500" enableBackground="new 0 0 100 100" aria-label="Plus Icon">
       <path opacity="0.2" d="M-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2C-351.7,342.2-351.7,342.1-351.7,342.2c-0.1,0-0.1-0.1-0.1-0.1c0,0,0,0,0,0c0,0,0,0-0.1-0.1c0,0,0,0,0,0c0,0,0,0,0.1,0.1C-351.8,342.1-351.8,342.1-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2z"/>
       <path opacity="0.2" d="M-351.7,342.2L-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2C-351.7,342.2-351.7,342.2-351.7,342.2z"/>
       <polygon opacity="0.2" points="-351.7,342.2 -351.7,342.2 -351.7,342.2 "/>

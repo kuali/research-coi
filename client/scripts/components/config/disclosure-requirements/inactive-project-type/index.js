@@ -22,7 +22,7 @@ import React from 'react';
 export default function Panel(props) {
   return (
     <div className={styles.container}>
-      <i className={`fa fa-times-circle-o ${styles.icon}`}></i>
+      <i className={`fa fa-times-circle-o ${styles.icon}`} />
       <div className={styles.content}>
         <div className={styles.description}>
           {props.description}

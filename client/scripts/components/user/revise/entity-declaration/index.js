@@ -116,12 +116,12 @@ export default class EntityDeclaration extends React.Component {
     let icon;
     if (this.props.entity.reviewedOn !== null) {
       icon = (
-        <i className={`fa fa-check-circle ${styles.completed}`}></i>
+        <i className={`fa fa-check-circle ${styles.completed}`} />
       );
     }
     else {
       icon = (
-        <i className={`fa fa-exclamation-circle ${styles.incomplete}`}></i>
+        <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
       );
     }
 

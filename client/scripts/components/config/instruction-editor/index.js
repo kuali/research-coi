@@ -82,7 +82,7 @@ export default class InstructionEditor extends React.Component {
           {this.props.step}
           <span style={{marginLeft: 3}}>Instructions</span>
           <span className={styles.flipper}>
-            <i className={'fa fa-caret-down'}></i>
+            <i className={'fa fa-caret-down'} />
           </span>
         </div>
         <div style={{overflow: 'hidden'}}>

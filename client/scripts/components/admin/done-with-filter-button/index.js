@@ -24,7 +24,7 @@ export default function DoneWithFilterButton(props) {
   return (
     <div className={classNames(styles.container, props.className)} onClick={props.onClick}>
       <span className={styles.closeLink}>
-        <i className={classNames('fa', 'fa-times', styles.x)}></i>
+        <i className={classNames('fa', 'fa-times', styles.x)} />
         CLOSE
       </span>
     </div>

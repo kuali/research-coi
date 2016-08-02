@@ -126,10 +126,10 @@ export default class DeclarationType extends React.Component {
       <div ref="container" className={classes}>
         <div style={{width: '50px', float: 'left'}}>
           <div style={{display: 'inline-block', width: '45%'}}>
-            <button className={styles.button} style={upSytle} onClick={this.moveUp}> <i className={'fa fa-arrow-up'}></i></button>
+            <button className={styles.button} style={upSytle} onClick={this.moveUp}> <i className={'fa fa-arrow-up'} /></button>
           </div>
           <div style={{display: 'inline-block', width: '45%'}}>
-            <button className={styles.button} style={downStyle} onClick={this.moveDown}><i className={'fa fa-arrow-down'}></i></button>
+            <button className={styles.button} style={downStyle} onClick={this.moveDown}><i className={'fa fa-arrow-down'} /></button>
           </div>
         </div>
         <div style={{width: 'auto', overflow: 'hidden'}}>

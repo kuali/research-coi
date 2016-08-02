@@ -32,7 +32,7 @@ export default function ActionButtons(props) {
         style={{borderBottom: '1px solid grey', paddingBottom: 10}}
         onClick={AdminActions.showGeneralAttachmentsPanel}
       >
-        <i className={`fa fa-eye ${styles.icon}`}></i>
+        <i className={`fa fa-eye ${styles.icon}`} />
         <span className={styles.label}>VIEW GENERAL<br/>ATTACHMENTS</span>
       </div>
     );
@@ -47,7 +47,7 @@ export default function ActionButtons(props) {
         className={styles.button}
         onClick={AdminActions.toggleApprovalConfirmation}
       >
-        <i className={`fa fa-check ${styles.icon}`}></i>
+        <i className={`fa fa-check ${styles.icon}`} />
         <span className={styles.label}>APPROVE</span>
       </div>
     );
@@ -58,7 +58,7 @@ export default function ActionButtons(props) {
         className={styles.button}
         onClick={AdminActions.toggleRejectionConfirmation}
       >
-        <i className={`fa fa-times ${styles.icon} ${styles.sendBackIcon}`}></i>
+        <i className={`fa fa-times ${styles.icon} ${styles.sendBackIcon}`} />
         <span className={styles.label}>SEND BACK</span>
       </div>
     );
@@ -73,7 +73,7 @@ export default function ActionButtons(props) {
         className={styles.button}
         onClick={AdminActions.showAdditionalReviewPanel}
       >
-        <i className={`fa fa-eye ${styles.icon}`}></i>
+        <i className={`fa fa-eye ${styles.icon}`} />
         <span className={styles.label}>
           <div>ADDITIONAL REVIEW</div>
         </span>
@@ -86,7 +86,7 @@ export default function ActionButtons(props) {
         className={styles.button}
         onClick={AdminActions.showUploadAttachmentsPanel}
       >
-        <i className={`fa fa-download ${styles.icon}`}></i>
+        <i className={`fa fa-download ${styles.icon}`} />
         <span className={styles.label}>
           <div>UPLOAD ATTACHMENTS</div>
         </span>
@@ -103,7 +103,7 @@ export default function ActionButtons(props) {
         className={styles.button}
         onClick={AdminActions.completeReview}
       >
-        <i className={`fa fa-check ${styles.icon}`}></i>
+        <i className={`fa fa-check ${styles.icon}`} />
         <span className={styles.label}>COMPLETE REVIEW</span>
       </div>
     );
@@ -121,7 +121,7 @@ export default function ActionButtons(props) {
         className={styles.button}
         onClick={AdminActions.showCommentSummary}
       >
-        <i className={`fa fa-binoculars ${styles.icon}`}></i>
+        <i className={`fa fa-binoculars ${styles.icon}`} />
         <span className={styles.label}>
           <div>REVIEW COMMENTS</div>
         </span>

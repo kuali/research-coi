@@ -37,7 +37,7 @@ export default class EditorButton extends React.Component {
 
     return (
       <button className={className} onMouseDown={this.onToggle}>
-        <i className={`fa ${this.props.icon}`}></i>
+        <i className={`fa ${this.props.icon}`} />
       </button>
     );
   }

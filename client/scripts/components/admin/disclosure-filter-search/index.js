@@ -48,7 +48,7 @@ export class DisclosureFilterSearch extends React.Component {
     const currentValue = this.props.query || '';
     return (
       <div className={classNames(styles.container, this.props.className)}>
-        <i className={classNames('fa', 'fa-search', styles.magnifyingGlass)} onClick={this.search}></i>
+        <i className={classNames('fa', 'fa-search', styles.magnifyingGlass)} onClick={this.search} />
         <input
           aria-label="Search"
           placeholder="Search"

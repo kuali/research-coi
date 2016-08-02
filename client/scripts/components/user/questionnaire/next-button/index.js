@@ -50,7 +50,7 @@ export class NextButton extends React.Component {
     return (
       <div className={classes} onClick={this.submit}>
         <span className={styles.text}>NEXT</span>
-        <i className={`fa fa-arrow-right ${styles.icon}`} style={{color: iconColor}}></i>
+        <i className={`fa fa-arrow-right ${styles.icon}`} style={{color: iconColor}} />
       </div>
     );
   }

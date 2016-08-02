@@ -110,7 +110,13 @@ export default class Entry extends React.Component {
       disclosedDate = (
         <div style={{marginTop: 3}}>
           <div className={styles.label}>Disclosure Date:</div>
-          <div name="Disclosure Date" data-for={this.props.travelLog.entityName} className={styles.data}>{formatDate(this.props.travelLog.disclosedDate)}</div>
+          <div
+            name="Disclosure Date"
+            data-for={this.props.travelLog.entityName}
+            className={styles.data}
+          >
+            {formatDate(this.props.travelLog.disclosedDate)}
+          </div>
         </div>
       );
     }

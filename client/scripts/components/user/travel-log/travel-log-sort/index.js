@@ -51,7 +51,7 @@ export default class TravelLogSort extends React.Component {
             <option value="destination">Destination</option>
             <option value="amount">Amount</option>
           </select>
-          <span className={styles.label}></span>
+          <span className={styles.label} />
           <select className={styles.select} onChange={this.sortDirectionChanged}>
             <option value="ASCENDING">Ascending</option>
             <option value="DESCENDING">Descending</option>

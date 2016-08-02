@@ -23,7 +23,7 @@ import ConfigActions from '../../../actions/config-actions';
 export default function UndoButton(props) {
   return (
     <div className={`flexbox row ${styles.container} ${props.className}`} onClick={ConfigActions.undoAll}>
-      <i className={`fa fa-times-circle ${styles.undoIcon}`}></i>
+      <i className={`fa fa-times-circle ${styles.undoIcon}`} />
       <span className={`fill ${styles.undoText}`}>CANCEL AND UNDO CHANGES</span>
     </div>
   );

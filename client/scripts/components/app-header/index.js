@@ -47,14 +47,14 @@ export class AppHeader extends React.Component {
     if (userInfo && userInfo.mock === true) {
       signOut = (
         <a className={styles.menuItem} href="#" onClick={this.logOut}>
-          <i className={`fa fa-sign-out ${styles.icon}`}></i>
+          <i className={`fa fa-sign-out ${styles.icon}`} />
           SIGN OUT
         </a>
       );
     } else {
       signOut = (
         <a className={styles.menuItem} href="/auth/signout?return_to=/coi">
-          <i className={`fa fa-sign-out ${styles.icon}`}></i>
+          <i className={`fa fa-sign-out ${styles.icon}`} />
           SIGN OUT
         </a>
       );

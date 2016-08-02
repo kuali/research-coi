@@ -32,7 +32,7 @@ export class TableHeading extends React.Component {
         onClick={this.props.sort}
       >
         <span className={styles.label}>{this.props.children}</span>
-        {this.props.active ? sortArrow : <span></span>}
+        {this.props.active ? sortArrow : <span />}
       </span>
     );
   }

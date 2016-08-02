@@ -131,7 +131,7 @@ export default class EditableList extends React.Component {
     else {
       addAnother = (
         <div onClick={this.add} className={styles.addAnother}>
-          <i className={`fa fa-plus ${styles.plus}`}></i>Add Another
+          <i className={`fa fa-plus ${styles.plus}`} />Add Another
         </div>
       );
     }

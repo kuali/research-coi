@@ -85,13 +85,13 @@ export default class SidePanel extends React.Component {
         <div>
           <div className={styles.message}>{message}</div>
           <div className={styles.submit} onClick={PIReviewActions.submit}>
-            <i className={`fa fa-arrow-circle-right ${styles.submitIcon}`}></i>
+            <i className={`fa fa-arrow-circle-right ${styles.submitIcon}`} />
             SUBMIT
           </div>
 
           <Link to={'/coi/dashboard'}>
             <div className={styles.cancel}>
-              <i className={`fa fa-times-circle ${styles.cancelIcon}`}></i>
+              <i className={`fa fa-times-circle ${styles.cancelIcon}`} />
               CANCEL
             </div>
           </Link>

@@ -22,7 +22,7 @@ import React from 'react';
 export default function PreviousLink(props) {
   return (
     <div onClick={props.onClick} className={`${styles.container} ${props.className}`}>
-      <i className={`fa fa-arrow-circle-left ${styles.icons}`}></i>
+      <i className={`fa fa-arrow-circle-left ${styles.icons}`} />
       <span className={styles.stepLabel}>
         {props.label}
       </span>

@@ -104,7 +104,7 @@ export class FileUpload extends React.Component {
         >
           <div className={'not-hovering'}>
             <span className={styles.left}>
-              <i className={`fa fa-upload ${styles.icon}`}></i>
+              <i className={`fa fa-upload ${styles.icon}`} />
             </span>
             <span className={`${styles.middle} ${this.props.className}`}>
               {this.props.children}
@@ -117,7 +117,7 @@ export class FileUpload extends React.Component {
             <i
               className={'fa fa-file-text'}
               style={{color: 'white', marginRight: 15, fontSize: 20}}
-            ></i>
+            />
             <span style={{fontSize: 19}}>Drop Me Here!</span>
           </div>
         </Dropzone>

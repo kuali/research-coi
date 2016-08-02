@@ -77,7 +77,7 @@ export default class ConfiguringPanel extends React.Component {
 
     return (
       <div>
-        <i className={`fa fa-chevron-left ${styles.icon}`}></i>
+        <i className={`fa fa-chevron-left ${styles.icon}`} />
         <button className={styles.link} onClick={this.returnToProjectTypes}>BACK TO PROJECT TYPES</button>
         <div className={styles.title}>
           {this.props.projectType.description}

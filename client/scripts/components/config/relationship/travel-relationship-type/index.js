@@ -95,7 +95,13 @@ export default class TravelRelationshipType extends RelationshipType {
           </div>
           <div className={`flexbox row ${styles.amountSection}`}>
             <span className={styles.left}>
-              <input id="reasonCheckbox" type="checkbox" ref="reasonEnabled" checked={this.props.reasonEnabled === 1} onChange={this.reasonEnabledChanged} />
+              <input
+                id="reasonCheckbox"
+                type="checkbox"
+                ref="reasonEnabled"
+                checked={this.props.reasonEnabled === 1}
+                onChange={this.reasonEnabledChanged}
+              />
               <label htmlFor="reasonCheckbox" className={styles.checkboxLabel}>Reason</label>
             </span>
           </div>

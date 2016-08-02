@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {TravelLogActions} from '../actions/travel-log-actions.js';
+import {TravelLogActions} from '../actions/travel-log-actions';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 

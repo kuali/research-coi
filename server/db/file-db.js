@@ -48,7 +48,7 @@ export const getFile = (dbInfo, userInfo, id) => {
   });
 };
 
-export async function getFiles(dbInfo, userInfo, refId, fileType) {
+export function getFiles(dbInfo, userInfo, refId, fileType) {
   const knex = getKnex(dbInfo);
   const criteria = {
     file_type: fileType,

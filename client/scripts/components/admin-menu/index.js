@@ -51,21 +51,21 @@ export default class AdminMenu extends React.Component {
       menu = (
         <div className={classes} onClick={this.toggle}>
           <div>
-            <i className={'fa fa-bars'}></i>
+            <i className={'fa fa-bars'} />
             <span style={{marginLeft: 15}}>ADMIN MENU</span>
           </div>
           <div style={{overflowY: 'hidden'}}>
             <div className={styles.menuItems}>
               <a href="/coi/admin" className={styles.menuItem}>
-                <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+                <i className={`fa fa-chevron-left ${styles.arrowIcon}`} />
                 Admin Dashboard
               </a>
               <a href="/coi/config" className={styles.menuItem}>
-                <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+                <i className={`fa fa-chevron-left ${styles.arrowIcon}`} />
                 Configuration
               </a>
               <a href="/coi/" className={styles.menuItem}>
-                <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+                <i className={`fa fa-chevron-left ${styles.arrowIcon}`} />
                 Researcher Dashboard
               </a>
             </div>
@@ -76,15 +76,14 @@ export default class AdminMenu extends React.Component {
       menu = (
         <div className={styles.container}>
           <a href="/coi/" className={styles.menuItem}>
-            <i className={`fa fa-chevron-left ${styles.arrowIcon}`}></i>
+            <i className={`fa fa-chevron-left ${styles.arrowIcon}`}/>
             Researcher Dashboard
           </a>
         </div>
       );
     } else {
       menu = (
-        <div className={styles.container}>
-        </div>
+        <div className={styles.container} />
       );
     }
 

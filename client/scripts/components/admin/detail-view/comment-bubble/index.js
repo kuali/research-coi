@@ -73,7 +73,7 @@ export default class CommentBubble extends React.Component {
         <div className={styles.editSection}>
 
           <button className={styles.editButton} onClick={this.editComment}>
-            <i className={'fa fa-edit'} style={{marginRight: 5}}></i>
+            <i className={'fa fa-edit'} style={{marginRight: 5}} />
             EDIT COMMENT
           </button>
         </div>
