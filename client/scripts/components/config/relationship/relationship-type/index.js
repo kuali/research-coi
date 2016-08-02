@@ -106,7 +106,13 @@ export default class RelationshipType extends React.Component {
           </div>
           <div className={`flexbox row ${styles.amountSection}`}>
             <span className={styles.left}>
-              <input id="amountCheckbox" type="checkbox" ref="amountEnabled" checked={this.props.amountEnabled === 1} onChange={this.amountEnabledChanged} />
+              <input
+                id="amountCheckbox"
+                type="checkbox"
+                ref="amountEnabled"
+                checked={this.props.amountEnabled === 1}
+                onChange={this.amountEnabledChanged}
+              />
               <label htmlFor="amountCheckbox" className={styles.checkboxLabel}>Amount</label>
             </span>
             <span className={'fill'}>

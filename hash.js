@@ -20,7 +20,7 @@
       no-var
 */
 
-module.exports = function hashCode(toHash) {
+function hashCode(toHash) {
   var hash = 0;
   if (toHash.length === 0) { return hash; }
   for (var i = 0; i < toHash.length; i++) {
@@ -29,4 +29,7 @@ module.exports = function hashCode(toHash) {
     hash = hash & hash; // Convert to 32bit integer
   }
   return hash;
-};
+}
+
+module.exports = hashCode;
+export default hashCode;

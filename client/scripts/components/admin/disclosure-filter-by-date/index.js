@@ -89,7 +89,7 @@ export class DisclosureFilterByDate extends DisclosureFilter {
         {sortFields}
         <div>
           <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
-            <i className={classNames('fa', 'fa-times', styles.x)}></i>
+            <i className={classNames('fa', 'fa-times', styles.x)} />
             CLEAR FILTER
           </GreyButton>
         </div>

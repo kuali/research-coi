@@ -25,7 +25,7 @@ import getKnex from '../../../server/db/connection-manager';
 
 const knex = getKnex({});
 
-async function updateProjectTypes() {
+function updateProjectTypes() {
   return knex('project_type')
   .update({
     req_disclosure: true
@@ -33,7 +33,7 @@ async function updateProjectTypes() {
   .where({type_cd: 1});
 }
 
-async function insertProjectRoles(projectTypeCd) {
+function insertProjectRoles(projectTypeCd) {
   return knex('project_role').insert([
     {
       project_type_cd: projectTypeCd,
@@ -59,7 +59,7 @@ async function insertProjectRoles(projectTypeCd) {
   ]);
 }
 
-async function insertProjectStatuses(projectTypeCd) {
+function insertProjectStatuses(projectTypeCd) {
   return knex('project_status').insert([
     {
       project_type_cd: projectTypeCd,

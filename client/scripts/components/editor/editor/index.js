@@ -159,10 +159,10 @@ export default class _Editor extends React.Component {
           />
           <div style={{display: 'inline-block', width: '30%', paddingLeft: '5px'}}>
             <button onMouseDown={this.confirmLink}>
-              <i className={'fa fa-check'}></i>
+              <i className={'fa fa-check'} />
             </button>
             <button onMouseDown={this.cancelLink}>
-              <i className={'fa fa-times'}></i>
+              <i className={'fa fa-times'} />
             </button>
           </div>
         </div>
@@ -184,13 +184,13 @@ export default class _Editor extends React.Component {
             onMouseDown={this.promptForLink}
             className={styles.button}
           >
-            <i className={'fa fa-link'}></i>
+            <i className={'fa fa-link'} />
           </button>
           <button
             onMouseDown={this.removeLink}
             className={styles.button}
           >
-            <i className={'fa fa-unlink'}></i>
+            <i className={'fa fa-unlink'} />
           </button>
           {urlInput}
         </div>

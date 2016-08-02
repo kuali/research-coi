@@ -27,7 +27,7 @@ export default function UploadAttachmentsPanel(props) {
     <div name='Upload Attachments Panel' className={classNames(styles.container, props.className)}>
       <div className={styles.header}>
         <span className={styles.close} onClick={AdminActions.hideUploadAttachmentsPanel}>
-          <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
+          <i className="fa fa-times" style={{fontSize: 23}} /> CLOSE
         </span>
         <span className={styles.title}>UPLOAD ATTACHMENTS</span>
       </div>

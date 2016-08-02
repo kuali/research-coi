@@ -30,8 +30,7 @@ export default function DisclosureTypes(props) {
           <DisclosureType type={props.types[1]} canToggle={true} />
           <DisclosureType type={props.types[3]} canToggle={true} />
         </div>
-        <div className={styles.optionRow}>
-        </div>
+        <div className={styles.optionRow} />
       </div>
     );
   }

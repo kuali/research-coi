@@ -39,8 +39,8 @@ export default function ProjectToReview(props) {
   if (!props.last) {
     bottomBorder = (
       <div className={'flexbox row'}>
-        <span className={`fill ${styles.borderArea}`}></span>
-        <span className={styles.commentFiller}></span>
+        <span className={`fill ${styles.borderArea}`} />
+        <span className={styles.commentFiller} />
       </div>
     );
   }
@@ -54,7 +54,7 @@ export default function ProjectToReview(props) {
           <span className={styles.relationship}>REPORTER RELATIONSHIP</span>
           <span className={styles.comment}>REPORTER COMMENTS</span>
         </span>
-        <span className={styles.commentFiller}></span>
+        <span className={styles.commentFiller} />
       </div>
       {entityDeclarations}
 

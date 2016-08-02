@@ -37,7 +37,7 @@ function getRequestInfo(req) {
   return '';
 }
 
-export default async function(req, res, next) {
+export default function(req, res, next) {
   try {
     if (lane === LANES.TEST && req.userInfo.impersonatedBy) {
       console.info(getRequestInfo(req)); //eslint-disable-line no-console

@@ -45,7 +45,7 @@ export default class ViewableByReporterButton extends React.Component {
     if (this.props.role === ROLES.ADMIN && !this.props.disclosureReadonly) {
       viewableButton = (
         <button className={styles.viewableByReporterButton} id="viewableByReporterButton" onClick={this.toggleViewableByReporter}>
-          <i className={`fa ${toggleIconClass}`} aria-hidden="true"></i>
+          <i className={`fa ${toggleIconClass}`} aria-hidden="true" />
           {toggleText}
         </button>
       );

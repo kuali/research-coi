@@ -153,7 +153,7 @@ export default class CommentingPanel extends React.Component {
       <div className={classNames('flexbox', 'column', styles.container, this.props.className)}>
         <div className={styles.heading}>
           <span className={styles.close} onClick={AdminActions.hideCommentingPanel}>
-            <i className="fa fa-times" style={{fontSize: 23}}></i> CLOSE
+            <i className="fa fa-times" style={{fontSize: 23}} /> CLOSE
           </span>
           <span className={styles.topic}>{this.props.comment.title}</span>
         </div>

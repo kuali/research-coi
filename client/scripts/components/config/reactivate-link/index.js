@@ -34,7 +34,7 @@ export default class ReactivateLink extends React.Component {
   render() {
     return (
       <span onClick={this.props.onClick} className={classNames(styles.container, this.props.className)}>
-        <i className={`fa fa-power-off ${styles.icon}`}></i>
+        <i className={`fa fa-power-off ${styles.icon}`} />
         <span className={styles.linkText}>Reactivate</span>
       </span>
     );

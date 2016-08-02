@@ -34,7 +34,7 @@ export default function GeneralAttachmentsPanel(props) {
     <div className={classNames(styles.container, props.className)}>
       <div className={styles.heading}>
         <span className={styles.close} onClick={AdminActions.hideGeneralAttachmentsPanel}>
-          <i className={'fa fa-times'} style={{fontSize: 23}}></i> CLOSE
+          <i className={'fa fa-times'} style={{fontSize: 23}} /> CLOSE
         </span>
         <span className={styles.title}>ATTACHMENTS</span>
       </div>

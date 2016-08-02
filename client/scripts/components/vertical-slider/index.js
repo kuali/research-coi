@@ -60,7 +60,7 @@ export default class VerticalSlider extends React.Component {
         <div ref="content" className={styles.content}>
           {this.props.children}
         </div>
-        <div className={styles.spacer} style={{height}}></div>
+        <div className={styles.spacer} style={{height}} />
       </div>
     );
   }

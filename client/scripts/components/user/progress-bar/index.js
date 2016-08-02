@@ -35,7 +35,7 @@ export function ProgressBar(props, {configState}) {
   };
   return (
     <div style={merge(styles.container, props.style)} onClick={props.onClick}>
-      <div style={styles.bar}></div>
+      <div style={styles.bar} />
     </div>
   );
 }

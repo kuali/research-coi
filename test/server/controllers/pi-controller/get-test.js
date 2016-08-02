@@ -53,7 +53,7 @@ describe('GET api/coi/pi', () => {
         .expect(OK);
     });
 
-    it('should return all results', async function() {
+    it('should return all results', () => {
       assert.equal(3, response.body.length);
     });
   });
@@ -68,7 +68,7 @@ describe('GET api/coi/pi', () => {
         .expect(OK);
     });
 
-    it('should return only one result', async function() {
+    it('should return only one result', () => {
       assert.equal(1, response.body.length);
       assert.equal('a1', response.body[0].value);
     });

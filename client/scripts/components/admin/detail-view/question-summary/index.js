@@ -43,8 +43,7 @@ export default class QuestionSummary extends React.Component {
     if (this.props.question.parent) {
       commentLink = (
         <span style={{width: 125}}>
-          <span>
-          </span>
+          <span />
         </span>
       );
     }

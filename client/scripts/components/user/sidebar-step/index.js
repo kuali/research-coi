@@ -63,7 +63,7 @@ export class SidebarStep extends React.Component {
         if (this.props.visited) {
           return (
             <li className={classNames(styles.container, styles.clickable, this.props.className)} onClick={this.navigate}>
-              <i className={`fa fa-circle ${styles.futureIcon}`}></i>
+              <i className={`fa fa-circle ${styles.futureIcon}`} />
               <span className={styles.stepName}>{this.props.label}</span>
             </li>
           );

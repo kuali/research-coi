@@ -37,7 +37,7 @@ export default class Reviewer extends React.Component {
       <div className={styles.container}>
         {this.props.value}
         <button onClick={this.onClick} className={styles.button}>
-          <i className={classNames('fa', 'fa-times')}></i>
+          <i className={classNames('fa', 'fa-times')} />
         </button>
       </div>
     );

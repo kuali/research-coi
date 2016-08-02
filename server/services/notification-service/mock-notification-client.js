@@ -27,7 +27,7 @@ export function createDisplayName(hostname, description) {
   return `COI-${hostname}-${description}`;
 }
 
-export async function getTemplates(dbInfo, hostname) {
+export function getTemplates(dbInfo, hostname) {
   return [
     {
       id: '1',
@@ -71,11 +71,11 @@ export async function updateTemplateData(dbInfo, hostname, notificationTemplate)
   // no-op
 }
 
-export async function createNewTemplate(dbInfo, hostname, notificationTemplate) {
+export function createNewTemplate(dbInfo, hostname, notificationTemplate) {
   return Math.ceil(Math.random() * 50);
 }
 
-export async function sendNotification(dbInfo, hostname, notification) {
+export function sendNotification(dbInfo, hostname, notification) {
   return notification;
 }
 

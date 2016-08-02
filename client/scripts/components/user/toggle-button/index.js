@@ -35,7 +35,7 @@ export default class ToggleButton extends React.Component {
     let arrow;
     if (this.props.isSelected) {
       arrow = (
-        <div className={styles.arrow}></div>
+        <div className={styles.arrow} />
       );
     }
 

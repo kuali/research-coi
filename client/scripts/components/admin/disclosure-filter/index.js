@@ -87,13 +87,13 @@ export default class DisclosureFilter extends React.Component {
     if (this.state.active) {
       clearButton = (
         <span onClick={this.clear} className={styles.clear}>
-          <i className={'fa fa-times'}></i>
+          <i className={'fa fa-times'} />
         </span>
       );
     }
     else {
       clearButton = (
-        <span className={styles.clear}></span>
+        <span className={styles.clear} />
       );
     }
 
@@ -111,7 +111,7 @@ export default class DisclosureFilter extends React.Component {
           {clearButton}
         </div>
         <div ref="root" className={styles.popOut}>
-          <span className={styles.arrow}></span>
+          <span className={styles.arrow} />
           {this.renderFilter()}
         </div>
       </div>

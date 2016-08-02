@@ -55,7 +55,7 @@ export default class ToggleSwitch extends React.Component {
           <span className={styles.base}>
             <span className={styles.label}>OFF</span>
             <span className={styles.label}>ON</span>
-            <span className={styles.slider}></span>
+            <span className={styles.slider} />
           </span>
         </span>
         <span style={{verticalAlign: 'middle'}}>{this.props.label}</span>

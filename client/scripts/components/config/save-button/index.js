@@ -24,7 +24,7 @@ export default function SaveButton(props) {
   return (
     <div className={`flexbox row ${styles.container} ${props.className}`} onClick={ConfigActions.saveAll}>
       <span>
-        <i className={`fa fa-check-circle ${styles.saveIcon}`}></i>
+        <i className={`fa fa-check-circle ${styles.saveIcon}`} />
       </span>
       <span className={`fill ${styles.saveText}`}>SAVE CHANGES</span>
     </div>

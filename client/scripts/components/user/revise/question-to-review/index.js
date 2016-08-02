@@ -45,12 +45,12 @@ export default function QuestionToReview(props) {
   let icon;
   if (props.question.reviewedOn !== null) {
     icon = (
-      <i className={`fa fa-check-circle ${styles.completed}`}></i>
+      <i className={`fa fa-check-circle ${styles.completed}`} />
     );
   }
   else {
     icon = (
-      <i className={`fa fa-exclamation-circle ${styles.incomplete}`}></i>
+      <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
     );
   }
 

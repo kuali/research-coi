@@ -72,7 +72,7 @@ export class DisclosureFilterByType extends DisclosureFilter {
         <DoneWithFilterButton onClick={this.close} />
         {options}
         <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
-          <i className={classNames('fa', 'fa-times', styles.x)}></i>
+          <i className={classNames('fa', 'fa-times', styles.x)} />
           CLEAR FILTER
         </GreyButton>
       </div>

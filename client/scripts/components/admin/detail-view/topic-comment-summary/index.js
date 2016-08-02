@@ -40,7 +40,7 @@ export default function TopicCommentSummary(props) {
   return (
     <div className={classNames(styles.container, props.className)}>
       <div className={styles.topicName}>{props.topicName}</div>
-      <div style={{width: '50%', borderBottom: '1px solid black', marginBottom: 15}}></div>
+      <div style={{width: '50%', borderBottom: '1px solid black', marginBottom: 15}} />
       <div>
         {comments}
       </div>

@@ -104,8 +104,7 @@ export default class ProgressIndicator extends React.Component {
 
   render() {
     return (
-      <canvas className={`${styles.container} ${this.props.className}`} width="200" height="200" ref="theCanvas">
-      </canvas>
+      <canvas className={`${styles.container} ${this.props.className}`} width="200" height="200" ref="theCanvas" />
     );
   }
 }

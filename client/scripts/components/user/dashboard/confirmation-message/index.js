@@ -25,7 +25,7 @@ export class ConfirmationMessage extends React.Component {
     return (
       <div className={`${styles.container} ${this.props.className}`}>
         <span className={styles.close} onClick={DisclosureActions.toggleConfirmationMessage}>
-          <i className={`fa fa-times ${styles.x}`}></i>
+          <i className={`fa fa-times ${styles.x}`} />
         </span>
         <div>Awesome, you have successfully submitted your disclosure!</div>
       </div>

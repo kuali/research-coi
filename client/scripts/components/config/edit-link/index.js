@@ -34,7 +34,7 @@ export default class EditLink extends React.Component {
   render() {
     return (
       <span onClick={this.onClick} className={classNames(styles.container, this.props.className)}>
-        <i className={`fa fa-pencil ${styles.icon}`}></i>
+        <i className={`fa fa-pencil ${styles.icon}`} />
         <span className={styles.linkText}>EDIT</span>
       </span>
     );

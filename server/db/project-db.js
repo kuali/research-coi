@@ -348,7 +348,7 @@ async function getExistingProjectId(trx, project) {
   }
 }
 
-export async function saveProjects(req, project) {
+export function saveProjects(req, project) {
   const knex = getKnex(req.dbInfo);
 
   return knex.transaction(async function(trx) {
@@ -455,7 +455,7 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
   return projectPersons;
 }
 
-export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier, authHeader) {
+export function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier, authHeader) {
   try {
     const knex = getKnex(dbInfo);
     return knex.transaction(async function(trx) {
@@ -474,7 +474,7 @@ export async function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier,
   }
 }
 
-export async function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, personId, authHeader) {
+export function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, personId, authHeader) {
   try {
     const knex = getKnex(dbInfo);
     return knex.transaction(async function(trx) {
@@ -491,7 +491,7 @@ export async function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, p
   }
 }
 
-export async function updateProjectPersonDispositionType(dbInfo, projectPerson, id) {
+export function updateProjectPersonDispositionType(dbInfo, projectPerson, id) {
   try {
     const knex = getKnex(dbInfo);
     return knex('project_person').update({

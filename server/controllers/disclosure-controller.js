@@ -202,7 +202,13 @@ export const init = app => {
     User can only edit entities which are associated with their disclosure
   */
   app.put('/api/coi/disclosures/:id/financial-entities/:entityId', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveExistingFinancialEntity(req.dbInfo, req.userInfo, req.params.entityId, JSON.parse(req.body.entity), req.files);
+    const result = await DisclosureDB.saveExistingFinancialEntity(
+      req.dbInfo,
+      req.userInfo,
+      req.params.entityId,
+      JSON.parse(req.body.entity),
+      req.files
+    );
     res.send(result);
   }));
 
