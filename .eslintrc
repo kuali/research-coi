@@ -8,7 +8,9 @@
         "comma-style": 2,
         "complexity": ["error", { "max": 22 }],
         "constructor-super": 2,
+        "contains/contains": [2, { "toFind": "GNU Affero General Public License", "errorMessage": "No license found"} ],
         "curly": 2,
+        "custom/allowed-roles": 2,
         "dot-notation": 2,
         "import/extensions": 2,
         "import/no-unresolved": "off",
@@ -126,6 +128,8 @@
         }
     },
     "plugins": [
+        "contains",
+        "custom",
         "react",
         "module-name"
     ],
