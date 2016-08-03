@@ -12,6 +12,7 @@
         "curly": 2,
         "custom/allowed-roles": 2,
         "dot-notation": 2,
+        "import/default": "off",
         "import/extensions": 2,
         "import/no-unresolved": "off",
         "indent": [

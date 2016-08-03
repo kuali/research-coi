@@ -32,4 +32,3 @@ function hashCode(toHash) {
 }
 
 module.exports = hashCode;
-export default hashCode;
