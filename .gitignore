@@ -27,6 +27,9 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
+# knex migration file
+db/migration/knexfile.js
+
 client/build
 
 .DS_Store
