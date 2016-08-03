@@ -25,7 +25,7 @@ import {
   getDisclosureTypeString
 } from '../../../../stores/config-store';
 import {formatDate, formatDateTime} from '../../../../format-date';
-import {DISCLOSURE_STATUS, LANES} from '../../../../../../coi-constants';
+import {DISCLOSURE_STATUS, LANES, ROLES} from '../../../../../../coi-constants';
 import Dropdown from '../../../dropdown';
 import {BlueButton} from '../../../blue-button';
 import {AdminActions} from '../../../../actions/admin-actions';
@@ -131,7 +131,8 @@ export class DisclosureDetailHeading extends React.Component {
     let versionPicker;
     let versionOptions;
 
-    if (configState.config.lane === LANES.TEST) {
+    const isAdmin = this.context.userInfo.coiRole === ROLES.ADMIN;
+    if (configState.config.lane === LANES.TEST && isAdmin) {
       let versionControls;
       if (disclosure.archivedVersions.length > 0) {
         versionOptions = disclosure.archivedVersions.map(version => {
@@ -202,5 +203,6 @@ export class DisclosureDetailHeading extends React.Component {
 }
 
 DisclosureDetailHeading.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
 };
