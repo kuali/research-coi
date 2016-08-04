@@ -20,6 +20,7 @@ import {camelizeJson, snakeizeJson} from './json-utils';
 import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
 import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
 import getKnex from './connection-manager';
+import Log from '../log';
 
 let getNotificationsInfo;
 let lane;
@@ -29,6 +30,9 @@ try {
   lane = extensions.config.lane;
 }
 catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') {
+    Log.error(err);
+  }
   lane = process.env.LANE || LANES.PRODUCTION;
   getNotificationsInfo = () => {
     return {

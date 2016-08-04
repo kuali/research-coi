@@ -86,6 +86,9 @@ try {
   expirationCheck = extensions.expirationCheck;
 }
 catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') {
+    Log.error(err);
+  }
   expirationCheck = checkForExpiredDisclosures;
 }
 

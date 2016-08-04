@@ -17,6 +17,7 @@
 */
 
 import knex from 'knex';
+import Log from '../log';
 
 const DEFAULT_CONNECTION_POOL_SIZE = 70;
 
@@ -58,15 +59,21 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
-  const knexInstance = knex({
-    client: process.env.DB_PACKAGE || 'oracledb',
-    connection: connectionOptions,
-    pool: {
-      min: 2,
-      max: process.env.CONNECTION_POOL_SIZE || DEFAULT_CONNECTION_POOL_SIZE
-    },
-    useNullAsDefault
-  });
+  let knexInstance;
+  if (err.code !== 'MODULE_NOT_FOUND') {
+    Log.error(err);
+  }
+  else {
+    knexInstance = knex({
+      client: process.env.DB_PACKAGE || 'oracledb',
+      connection: connectionOptions,
+      pool: {
+        min: 2,
+        max: process.env.CONNECTION_POOL_SIZE || DEFAULT_CONNECTION_POOL_SIZE
+      },
+      useNullAsDefault
+    });
+  }
 
   getKnex = () => {
     return knexInstance;

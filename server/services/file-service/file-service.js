@@ -17,6 +17,7 @@
 */
 
 import * as localClient from './local-client';
+import Log from '../../log';
 
 let client;
 try {
@@ -24,6 +25,9 @@ try {
   client = extensions.client ? extensions.client : localClient;
 }
 catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') {
+    Log.error(err);
+  }
   client = localClient;
 }
 

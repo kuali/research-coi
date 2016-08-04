@@ -38,6 +38,9 @@ try {
   upload = extensions.storage;
 }
 catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') {
+    Log.error(err);
+  }
   upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 }
 

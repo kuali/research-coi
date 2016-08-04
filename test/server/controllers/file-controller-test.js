@@ -29,6 +29,7 @@ import {
 } from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { OK, FORBIDDEN, ACCEPTED } from '../../../http-status-codes';
+import Log from '../../../server/log';
 
 let getKnex;
 try {
@@ -36,6 +37,9 @@ try {
   getKnex = extensions.getKnex;
 }
 catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') {
+    Log.error(err);
+  }
   getKnex = require('../../../server/db/connection-manager').default;
 }
 const knex = getKnex({});

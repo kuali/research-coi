@@ -15,6 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
+
+import Log from '../../log';
+
 let client;
 try {
   const extensions = require('research-extensions').default; // eslint-disable-line no-unused-vars
@@ -24,6 +27,9 @@ try {
     client = require('./auth-client');
   }
 } catch (e) {
+  if (e.code !== 'MODULE_NOT_FOUND') {
+    Log.error(e);
+  }
   client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? require('./auth-client') : require('./mock-auth-client');
 }
 

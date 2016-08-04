@@ -25,6 +25,10 @@ try {
   reportError = extensions.reportError;
   logLevel = extensions.config.logLevel;
 } catch (e) {
+  if (e.code !== 'MODULE_NOT_FOUND') {
+    console.error(e);
+  }
+
   logLevel = process.env.LOG_LEVEL;
 }
 

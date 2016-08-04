@@ -19,12 +19,16 @@
 import request from 'superagent';
 import { getUserInfosByQuery, getAdmins } from '../auth-service/auth-service';
 import { NOTIFICATIONS_MODE } from '../../../coi-constants';
+import Log from '../../log';
 
 let getNotificationsInfo;
 try {
   const extensions = require('research-extensions').default;
   getNotificationsInfo = extensions.getNotificationsInfo;
 } catch (e) {
+  if (e.code !== 'MODULE_NOT_FOUND') {
+    Log.error(e);
+  }
   getNotificationsInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
       notificationsUrl: process.env.NOTIFICATIONS_URL || 'https://uit.kuali.dev/res',

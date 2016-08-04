@@ -94,8 +94,13 @@ export function run() {
     config = extensions.config;
     logLevel = config.logLevel;
   } catch (e) {
-    logLevel = process.env.LOG_LEVEL;
-    Log.info('extensions not found');
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      Log.error(e);
+    }
+    else {
+      logLevel = process.env.LOG_LEVEL;
+      Log.info('extensions not found');
+    }
   }
 
   conditionallyLogRequests(app, logLevel);
