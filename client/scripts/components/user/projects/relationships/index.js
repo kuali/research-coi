@@ -127,69 +127,108 @@ export class Relationships extends React.Component {
   }
 
   render() {
+    const {
+      projects,
+      entities,
+      declarationTypes,
+      view,
+      instructionsShowing,
+      className
+    } = this.props;
     const {config} = this.context.configState;
-    const projectView = this.props.view === 0;
+    const projectView = view === 0;
     const relationshipNodes = [];
     let declarations;
-    if (projectView) {
-      for (let i = 0; i < this.props.projects.length; i++) {
-        declarations = this.getProjectDeclarations(this.props.projects[i].id);
-
-        const projectType = getProjectTypeString(
-          this.context.configState,
-          this.props.projects[i].typeCd,
-          this.context.configState.config.id
-        );
-
-        let sponsorNames = ['None'];
-        if (Array.isArray(this.props.projects[i].sponsors)) {
-          sponsorNames = uniq(this.props.projects[i].sponsors.map(sponsor => {
-            return sponsor.sponsorName;
-          }));
-        }
-        relationshipNodes.push(
-          <Project
-            declarations={declarations}
-            entities={this.props.entities}
-            title={this.props.projects[i].name}
-            type={projectType}
-            role={this.props.projects[i].roleCd}
-            sponsorNames={sponsorNames}
-            sourceIdentifier={this.props.projects[i].sourceIdentifier}
-            projectId={this.props.projects[i].id}
-            declarationTypes={this.props.declarationTypes}
-            open={this.isProjectDeclarationOpen(this.props.projects[i].id)}
-            onNext={this.openNext}
-            id={i}
-            projectCount={this.props.projects.length}
-            onPrevious={this.openPrevious}
-            key={this.props.projects[i].id}
-          />
-        );
-      }
+    let skipStepMessage;
+    let toggle;
+    if (!Array.isArray(entities) || entities.length === 0) {
+      skipStepMessage = (
+        <div className={styles.skipStepMessage}>
+          You can proceed to the next step because
+          you have no financial entities to report.
+        </div>
+      );
+    }
+    else if (!Array.isArray(projects) || projects.length === 0) {
+      skipStepMessage = (
+        <div className={styles.skipStepMessage}>
+          You can proceed to the next step because
+          you have no projects.
+        </div>
+      );
     }
     else {
-      this.props.entities.filter(entity => {
-        return entity.active === 1;
-      }).forEach((entity, index) => {
-        declarations = this.getEntityDeclarations(entity.id);
-
-        relationshipNodes.push(
-          <Entity
-            entity={entity}
-            declarations={declarations}
-            projects={this.props.projects}
-            title={entity.name}
-            declarationTypes={this.props.declarationTypes}
-            open={this.isEntityDeclarationOpen(entity.id)}
-            onNext={this.openNext}
-            onPrevious={this.openPrevious}
-            id={index}
-            entityCount={this.props.entities.length}
-            key={entity.id}
+      toggle = (
+        <div style={{textAlign: 'right'}}>
+          <Toggle
+            values={[{code: 0, description: 'Project View'}, {code: 1, description: 'SFI View'}]}
+            selected={view}
+            onChange={this.viewChanged}
+            className={`${styles.override} ${styles.toggle}`}
           />
-        );
-      });
+        </div>
+      );
+
+      if (projectView) {
+        for (let i = 0; i < projects.length; i++) {
+          declarations = this.getProjectDeclarations(projects[i].id);
+
+          const projectType = getProjectTypeString(
+            this.context.configState,
+            projects[i].typeCd,
+            this.context.configState.config.id
+          );
+
+          let sponsorNames = ['None'];
+          if (Array.isArray(projects[i].sponsors)) {
+            sponsorNames = uniq(projects[i].sponsors.map(sponsor => {
+              return sponsor.sponsorName;
+            }));
+          }
+          relationshipNodes.push(
+            <Project
+              declarations={declarations}
+              entities={entities}
+              title={projects[i].name}
+              type={projectType}
+              role={projects[i].roleCd}
+              sponsorNames={sponsorNames}
+              sourceIdentifier={projects[i].sourceIdentifier}
+              projectId={projects[i].id}
+              declarationTypes={declarationTypes}
+              open={this.isProjectDeclarationOpen(projects[i].id)}
+              onNext={this.openNext}
+              id={i}
+              projectCount={projects.length}
+              onPrevious={this.openPrevious}
+              key={projects[i].id}
+            />
+          );
+        }
+      }
+      else {
+        this.props.entities.filter(entity => {
+          return entity.active === 1;
+        }).forEach((entity, index) => {
+          declarations = this.getEntityDeclarations(entity.id);
+
+          relationshipNodes.push(
+            <Entity
+              entity={entity}
+              declarations={declarations}
+              projects={this.props.projects}
+              title={entity.name}
+              declarationTypes={this.props.declarationTypes}
+              open={this.isEntityDeclarationOpen(entity.id)}
+              onNext={this.openNext}
+              onPrevious={this.openPrevious}
+              id={index}
+              entityCount={this.props.entities.length}
+              key={entity.id}
+            />
+          );
+        });
+      }
     }
 
     const instructionText = config.general.instructions[INSTRUCTION_STEP.PROJECT_DECLARATIONS];
@@ -199,25 +238,18 @@ export class Relationships extends React.Component {
     const instructions = (
       <Instructions
         text={instructionText}
-        collapsed={!this.props.instructionsShowing[INSTRUCTION_STEP.PROJECT_DECLARATIONS]}
+        collapsed={!instructionsShowing[INSTRUCTION_STEP.PROJECT_DECLARATIONS]}
         contentState={contentState}
       />
     );
 
     return (
-      <div className={`${styles.container} ${this.props.className}`}>
+      <div className={`${styles.container} ${className}`}>
         {instructions}
 
         <div className={styles.content}>
-          <div style={{textAlign: 'right'}}>
-            <Toggle
-              values={[{code: 0, description: 'Project View'}, {code: 1, description: 'SFI View'}]}
-              selected={this.props.view}
-              onChange={this.viewChanged}
-              className={`${styles.override} ${styles.toggle}`}
-            />
-          </div>
-
+          {toggle}
+          {skipStepMessage}
           {relationshipNodes}
         </div>
       </div>

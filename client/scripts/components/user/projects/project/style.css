@@ -70,7 +70,7 @@
 }
 
 .attention {
-  color: #D3121C;
+  color: red;
   text-transform: capitalize;
   margin-bottom: 28px;
 }

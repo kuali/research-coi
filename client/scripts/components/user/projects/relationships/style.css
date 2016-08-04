@@ -27,3 +27,8 @@
 .override.toggle {
   margin-bottom: 18px;
 }
+
+.skipStepMessage {
+  text-align: center;
+  margin-top: 80px;
+}
