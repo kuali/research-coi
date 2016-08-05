@@ -93,6 +93,18 @@ export default class CommentBubble extends React.Component {
       );
     }
 
+    let viewableByReporterButton;
+    if (!this.props.readOnly) {
+      viewableByReporterButton = (
+        <ViewableByReporterButton
+          id={this.props.id}
+          piVisible={this.props.piVisible}
+          role={this.props.role}
+          disclosureReadonly={this.props.disclosureReadonly}
+        />
+      );
+    }
+
     return (
       <div className={classes}>
         <span className={styles.comment}>
@@ -114,12 +126,7 @@ export default class CommentBubble extends React.Component {
 
         </span>
         {editButton}
-        <ViewableByReporterButton
-          id={this.props.id}
-          piVisible={this.props.piVisible}
-          role={this.props.role}
-          disclosureReadonly={this.props.disclosureReadonly}
-        />
+        {viewableByReporterButton}
       </div>
     );
   }
