@@ -38,13 +38,13 @@ export default class CommentingPanel extends React.Component {
   }
 
   render() {
+    const {coiRole: role} = this.context.userInfo;
     let comments;
     if (this.props.comments) {
       comments = this.props.comments.map(comment => {
         return (
           <CommentBubble
             {...comment}
-            role={this.props.role}
             readOnly={this.props.editingComment}
             key={comment.id}
             className={`${styles.override} ${styles.comment}`}
@@ -56,7 +56,7 @@ export default class CommentingPanel extends React.Component {
 
     let visibleChecks;
 
-    if (this.props.role === ROLES.ADMIN) {
+    if (role === ROLES.ADMIN) {
       visibleChecks = (
         <span className={styles.left}>
           <div>
@@ -115,12 +115,12 @@ export default class CommentingPanel extends React.Component {
 
       const adminWarningClasses = classNames(
         styles.adminWarning,
-        {[styles.showing]: this.props.comment.piVisible === 0 && this.props.comment.reviewerVisible === 0 && this.props.role === ROLES.ADMIN}
+        {[styles.showing]: this.props.comment.piVisible === 0 && this.props.comment.reviewerVisible === 0 && role === ROLES.ADMIN}
       );
 
       const commentClasses = classNames(
         styles.commentText,
-        {[styles.adminCommentText]: this.props.role === ROLES.ADMIN}
+        {[styles.adminCommentText]: role === ROLES.ADMIN}
       );
 
       commentForm = (
@@ -168,3 +168,7 @@ export default class CommentingPanel extends React.Component {
     );
   }
 }
+
+CommentingPanel.contextTypes = {
+  userInfo: React.PropTypes.object
+};

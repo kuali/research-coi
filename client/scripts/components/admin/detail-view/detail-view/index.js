@@ -124,7 +124,6 @@ export class DetailView extends React.Component {
           comment={this.state.applicationState.comment}
           editingComment={this.state.applicationState.editingComment}
           disclosureId={this.state.applicationState.selectedDisclosure.id}
-          role={userInfo.coiRole}
           readonly={this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
            || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.REVISION_REQUIRED
            || this.state.applicationState.selectedDisclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED}
@@ -157,7 +156,6 @@ export class DetailView extends React.Component {
     else if (this.state.applicationState.commentSummaryShowing) {
       sidePanel = (
         <CommentSummary
-          role={userInfo.coiRole}
           disclosure={this.state.applicationState.selectedDisclosure}
           configId={this.state.applicationState.selectedDisclosure.configId}
         />

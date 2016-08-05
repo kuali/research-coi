@@ -36,42 +36,65 @@ export default class CommentBubble extends React.Component {
   }
 
   render() {
+    const {
+      date,
+      isCurrentUser,
+      className,
+      piVisible,
+      reviewerVisible,
+      editable,
+      readOnly,
+      userRole: commentersRole,
+      id,
+      disclosureReadonly,
+      author,
+      text
+    } = this.props;
+    const {coiRole: role} = this.context.userInfo;
+
     let theDate;
-    if (this.props.date) {
-      theDate = formatDate(this.props.date);
+    if (date) {
+      theDate = formatDate(date);
     }
 
     const classes = classNames(
       styles.container,
-      {[styles.isUser]: this.props.isCurrentUser},
+      {[styles.isUser]: isCurrentUser},
       {[styles.new]: this.props.new},
-      this.props.className
+      className
     );
 
-    let reviewerBubble;
     let reporterBubble;
-
-    if (Number(this.props.piVisible) === 1 && [ROLES.ADMIN, ROLES.REVIEWER].includes(String(this.props.role))) {
+    if (
+      Number(piVisible) === 1 &&
+      [ROLES.ADMIN, ROLES.REVIEWER].includes(String(role))
+    ) {
       reporterBubble = (
-        <div id='reporterBubble' className={classNames(styles.blue, styles.bubble)}>
+        <div
+          id='reporterBubble'
+          className={classNames(styles.blue, styles.bubble)}
+        >
           Reporter
         </div>
       );
     }
 
-    if (Number(this.props.reviewerVisible) === 1 && String(this.props.role) === ROLES.ADMIN) {
+    let reviewerBubble;
+    if (Number(reviewerVisible) === 1 && String(role) === ROLES.ADMIN) {
       reviewerBubble = (
-        <div id='reviewerBubble' className={classNames(styles.blue, styles.bubble)}>
+        <div
+          id='reviewerBubble'
+          className={classNames(styles.blue, styles.bubble)}
+        >
           Reviewer
         </div>
       );
     }
 
     let editButton;
-    if (this.props.editable && !this.props.readOnly && this.props.isCurrentUser) {
+    if (editable && !readOnly && isCurrentUser) {
       editButton = (
         <div className={styles.editSection}>
-
           <button className={styles.editButton} onClick={this.editComment}>
             <i className={'fa fa-edit'} style={{marginRight: 5}} />
             EDIT COMMENT
@@ -81,11 +104,11 @@ export default class CommentBubble extends React.Component {
     }
 
     let visibleTo;
-    if ((reporterBubble || reviewerBubble) && this.props.userRole !== ROLES.USER) {
+    if ((reporterBubble || reviewerBubble) && commentersRole !== ROLES.USER) {
       visibleTo = (
         <div>
           <span className={styles.from}>
-                  VISIBLE TO:
+            VISIBLE TO:
           </span>
           {reporterBubble}
           {reviewerBubble}
@@ -94,13 +117,13 @@ export default class CommentBubble extends React.Component {
     }
 
     let viewableByReporterButton;
-    if (!this.props.readOnly) {
+    if (!readOnly) {
       viewableByReporterButton = (
         <ViewableByReporterButton
-          id={this.props.id}
-          piVisible={this.props.piVisible}
-          role={this.props.role}
-          disclosureReadonly={this.props.disclosureReadonly}
+          id={id}
+          piVisible={piVisible}
+          role={role}
+          disclosureReadonly={disclosureReadonly}
         />
       );
     }
@@ -110,20 +133,17 @@ export default class CommentBubble extends React.Component {
         <span className={styles.comment}>
           <div>
             <span className={styles.date}>{theDate}</span>
-            <span className={styles.from}>
-                FROM:
-            </span>
+            <span className={styles.from}>FROM:</span>
             <span className={styles.author}>
-               {this.props.author}
+              {author}
             </span>
           </div>
           <div>
             {visibleTo}
           </div>
           <div className={styles.text}>
-            {this.props.text}
+            {text}
           </div>
-
         </span>
         {editButton}
         {viewableByReporterButton}
@@ -131,3 +151,7 @@ export default class CommentBubble extends React.Component {
     );
   }
 }
+
+CommentBubble.contextTypes = {
+  userInfo: React.PropTypes.object
+};

@@ -88,7 +88,6 @@ export default class CommentSummary extends React.Component {
       const topicName = `${COMMENT_TITLES.QUESTION} ${questionNumber}`;
       return (
         <TopicCommentSummary
-          role={this.props.role}
           key={`qt${topicId}`}
           topicName={topicName}
           comments={comments}
@@ -140,7 +139,6 @@ export default class CommentSummary extends React.Component {
       const topicName = `${COMMENT_TITLES.ENTITY} ${this.getEntityName(topicId)}`;
       return (
         <TopicCommentSummary
-          role={this.props.role}
           key={`et${topicId}`}
           topicName={topicName}
           comments={comments}
@@ -168,7 +166,6 @@ export default class CommentSummary extends React.Component {
       const topicName = `${COMMENT_TITLES.DECLARATION} ${this.getDeclarationName(topicId)}`;
       return (
         <TopicCommentSummary
-          role={this.props.role}
           key={`et${topicId}`}
           topicName={topicName}
           comments={comments}
