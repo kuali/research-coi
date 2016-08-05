@@ -19,7 +19,7 @@
 import cache from '../../lru-cache';
 import { ROLES, SYSTEM_USER } from '../../../coi-constants';
 import request from 'superagent';
-import LOG from '../../log';
+import Log from '../../log';
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const REVIEWER_CACHE_KEY = 'reviewers';
 const ADMIN_CACHE_KEY = 'admins';
@@ -29,6 +29,9 @@ try {
   const extensions = require('research-extensions').default;
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
+  if (e.code !== 'MODULE_NOT_FOUND') {
+    Log.error(e);
+  }
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
       adminRole: process.env.COI_ADMIN_ROLE || 'KC-COIDISCLOSURE:COI%20Administrator',
@@ -53,7 +56,7 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
     }
     return Promise.resolve(false);
   } catch (err) {
-    LOG.warn(`user ${schoolId} is not a member of the ${role} role`);
+    Log.warn(`user ${schoolId} is not a member of the ${role} role`);
     return Promise.resolve(false);
   }
 }

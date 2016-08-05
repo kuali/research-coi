@@ -27,6 +27,9 @@ try {
   const extensions = require('research-extensions').default;
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
+  if (e.code !== 'MODULE_NOT_FOUND') {
+    Log.error(e);
+  }
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
       researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res',

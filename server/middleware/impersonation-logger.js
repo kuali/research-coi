@@ -20,6 +20,7 @@
 
 import { LANES } from '../../coi-constants';
 import getKnex from '../db/connection-manager';
+import Log from '../log';
 
 let lane;
 try {
@@ -27,6 +28,9 @@ try {
   lane = extensions.config.lane;
 }
 catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') {
+    Log.error(err);
+  }
   lane = process.env.LANE || LANES.PRODUCTION;
 }
 
