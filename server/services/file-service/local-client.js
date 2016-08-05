@@ -21,8 +21,12 @@ import path from 'path';
 
 const filePath = process.env.LOCAL_FILE_DESTINATION || 'uploads/';
 
+function cleanKey(key) {
+  return key.replace(/(\.\.)|\/|\\/g, '');
+}
+
 export function getFile(dbInfo, key, callback) {
-  const stream = fs.createReadStream(path.join(filePath, key));
+  const stream = fs.createReadStream(path.join(filePath, cleanKey(key)));
   stream.on('error', err => {
     callback(err);
   });
@@ -30,7 +34,7 @@ export function getFile(dbInfo, key, callback) {
 }
 
 export function deleteFile(key, callback) {
-  fs.unlink(path.join(filePath, key), err => {
+  fs.unlink(path.join(filePath, cleanKey(key)), err => {
     callback(err);
   });
 }
