@@ -16,76 +16,150 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
+import {get, isString} from 'lodash';
 import { formatDate } from '../../date-utils';
 import { DATE_TYPE } from '../../../coi-constants';
 const LEFT = '{{';
 const RIGHT = '}}';
 
-function formatDateIfAvailable(date) {
+export function formatDateIfAvailable(date) {
   return date ? formatDate(date) : '';
 }
+
 export function getDefaultVariables(url) {
-  const variables = {};
-  variables[`${LEFT}ADMIN_DASHBOARD${RIGHT}`] = `${url}/coi/admin`;
-  variables[`${LEFT}REPORTER_DASHBOARD${RIGHT}`] = `${url}/coi`;
-  variables[`${LEFT}NOW${RIGHT}`] = formatDate(new Date());
-  return variables;
+  if (!isString(url)) {
+    throw Error('invalid url');
+  }
+
+  const result = {};
+  result[`${LEFT}ADMIN_DASHBOARD${RIGHT}`] = `${url}/coi/admin`;
+  result[`${LEFT}REPORTER_DASHBOARD${RIGHT}`] = `${url}/coi`;
+  result[`${LEFT}NOW${RIGHT}`] = formatDate(new Date());
+  return result;
 }
 
-function getNamePartsFromString(approver) {
-  if (approver && approver.indexOf(',') > -1) {
-    const array = approver.split(',');
+export function getNamePartsFromString(approver) {
+  if (!approver) {
+    return {};
+  }
+
+  const names = approver.split(',');
+  if (names.length > 2) {
+    const result = {
+      lastName: names.shift().trim()
+    };
+    result.firstName = names.join(',').trim();
+    return result;
+  }
+  if (names.length > 1) {
     return {
-      firstName: array[1].trim(),
-      lastName: array[0].trim()
+      firstName: names[1].trim(),
+      lastName: names[0].trim()
     };
   }
-  return {};
+
+  return {
+    firstName: names[0].trim()
+  };
 }
 
 export function getDisclosureVariables(disclosure, url, variables) {
-  variables[`${LEFT}ADMIN_DETAIL_VIEW${RIGHT}`] = `${url}/coi/admin/detailview/${disclosure.id}/${disclosure.statusCd}`;
-  variables[`${LEFT}SUBMISSION_DATE${RIGHT}`] = formatDateIfAvailable(disclosure.submittedDate);
-  variables[`${LEFT}APPROVAL_DATE${RIGHT}`] = formatDateIfAvailable(disclosure.approvedDate);
-  variables[`${LEFT}EXPIRATION_DATE${RIGHT}`] = formatDateIfAvailable(disclosure.expiredDate);
-  variables[`${LEFT}REPORTER_FIRST_NAME${RIGHT}`] = disclosure.reporterInfo.firstName;
-  variables[`${LEFT}REPORTER_LAST_NAME${RIGHT}`] = disclosure.reporterInfo.lastName;
-  const approver = getNamePartsFromString(disclosure.approvedBy);
-  variables[`${LEFT}APPROVER_FIRST_NAME${RIGHT}`] = approver.firstName;
-  variables[`${LEFT}APPROVER_LAST_NAME${RIGHT}`] = approver.lastName;
-  variables[`${LEFT}DISPOSITION${RIGHT}`] = disclosure.disposition;
+  if (!disclosure) {
+    throw Error('disclosure is required');
+  }
+  if (!url) {
+    throw Error('url is required');
+  }
+  const result = Object.assign({}, variables);
 
-  return variables;
+  result[`${LEFT}ADMIN_DETAIL_VIEW${RIGHT}`] =
+    `${url}/coi/admin/detailview/${disclosure.id}/${disclosure.statusCd}`;
+  result[`${LEFT}SUBMISSION_DATE${RIGHT}`] = formatDateIfAvailable(
+    disclosure.submittedDate
+  );
+  result[`${LEFT}APPROVAL_DATE${RIGHT}`] = formatDateIfAvailable(
+    disclosure.approvedDate
+  );
+  result[`${LEFT}EXPIRATION_DATE${RIGHT}`] = formatDateIfAvailable(
+    disclosure.expiredDate
+  );
+  result[`${LEFT}REPORTER_FIRST_NAME${RIGHT}`] = get(
+    disclosure,
+    'reporterInfo.firstName'
+  );
+  result[`${LEFT}REPORTER_LAST_NAME${RIGHT}`] = get(
+    disclosure,
+    'reporterInfo.lastName'
+  );
+  const approver = getNamePartsFromString(disclosure.approvedBy);
+  result[`${LEFT}APPROVER_FIRST_NAME${RIGHT}`] = get(approver, 'firstName');
+  result[`${LEFT}APPROVER_LAST_NAME${RIGHT}`] = get(approver, 'lastName');
+  result[`${LEFT}DISPOSITION${RIGHT}`] = get(disclosure, 'disposition');
+
+  return result;
 }
 
-function getDate(dates, type) {
+export function getDate(dates, type) {
+  if (!dates || !type) {
+    return;
+  }
+
   const date = dates.find(d => d.type === type);
   return date ? date.date : undefined;
 }
+
 export function getReviewerVariables(reviewer, variables) {
+  if (!reviewer) {
+    throw Error('reviewer is required');
+  }
+  const result = Object.assign({}, variables);
+
   const assigner = getNamePartsFromString(reviewer.assignedBy);
-  variables[`${LEFT}REVIEW_ASSIGNED${RIGHT}`] = formatDateIfAvailable(getDate(reviewer.dates, DATE_TYPE.ASSIGNED));
-  variables[`${LEFT}REVIEW_COMPLETED${RIGHT}`] = formatDateIfAvailable(getDate(reviewer.dates, DATE_TYPE.COMPLETED));
-  variables[`${LEFT}ASSIGNER_FIRST_NAME${RIGHT}`] = assigner.firstName;
-  variables[`${LEFT}ASSIGNER_LAST_NAME${RIGHT}`] = assigner.lastName;
-  variables[`${LEFT}REVIEWER_FIRST_NAME${RIGHT}`] = reviewer.reviewerInfo.firstName;
-  variables[`${LEFT}REVIEWER_LAST_NAME${RIGHT}`] = reviewer.reviewerInfo.lastName;
-  return variables;
+  result[`${LEFT}REVIEW_ASSIGNED${RIGHT}`] = formatDateIfAvailable(
+    getDate(reviewer.dates, DATE_TYPE.ASSIGNED)
+  );
+  result[`${LEFT}REVIEW_COMPLETED${RIGHT}`] = formatDateIfAvailable(
+    getDate(reviewer.dates, DATE_TYPE.COMPLETED)
+  );
+  result[`${LEFT}ASSIGNER_FIRST_NAME${RIGHT}`] = assigner.firstName;
+  result[`${LEFT}ASSIGNER_LAST_NAME${RIGHT}`] = assigner.lastName;
+  result[`${LEFT}REVIEWER_FIRST_NAME${RIGHT}`] = get(
+    reviewer,
+    'reviewerInfo.firstName'
+  );
+  result[`${LEFT}REVIEWER_LAST_NAME${RIGHT}`] = get(
+    reviewer,
+    'reviewerInfo.lastName'
+  );
+  return result;
 }
 
 export function getProjectVariables(project, variables) {
-  variables[`${LEFT}PROJECT_TITLE${RIGHT}`] = project.title;
-  variables[`${LEFT}PROJECT_TYPE${RIGHT}`] = project.type;
-  variables[`${LEFT}PROJECT_ROLE${RIGHT}`] = project.person.roleCode;
+  if (!project) {
+    throw Error('project is required');
+  }
+  const results = Object.assign({}, variables);
+
+  results[`${LEFT}PROJECT_TITLE${RIGHT}`] = get(project, 'title');
+  results[`${LEFT}PROJECT_TYPE${RIGHT}`] = get(project, 'type');
+  results[`${LEFT}PROJECT_ROLE${RIGHT}`] = get(project, 'person.roleCode');
   if (project.sponsors && Array.isArray(project.sponsors)) {
     const names = project.sponsors.map(sponsor => sponsor.sponsorName);
-    variables[`${LEFT}PROJECT_SPONSOR${RIGHT}`] = names.join(', ');
+    results[`${LEFT}PROJECT_SPONSOR${RIGHT}`] = names.join(', ');
+  } else {
+    results[`${LEFT}PROJECT_SPONSOR${RIGHT}`] = '';
   }
-  variables[`${LEFT}PROJECT_NUMBER${RIGHT}`] = project.sourceIdentifier;
-  variables[`${LEFT}PROJECT_PERSON_FIRST_NAME${RIGHT}`] = project.person.info.firstName;
-  variables[`${LEFT}PROJECT_PERSON_LAST_NAME${RIGHT}`] = project.person.info.lastName;
-  variables[`${LEFT}PI_FIRST_NAME${RIGHT}`] = project.piInfo.firstName;
-  variables[`${LEFT}PI_LAST_NAME${RIGHT}`] = project.piInfo.lastName;
+  results[`${LEFT}PROJECT_NUMBER${RIGHT}`] = get(project, 'sourceIdentifier');
+  results[`${LEFT}PROJECT_PERSON_FIRST_NAME${RIGHT}`] = get(
+    project,
+    'person.info.firstName'
+  );
+  results[`${LEFT}PROJECT_PERSON_LAST_NAME${RIGHT}`] = get(
+    project,
+    'person.info.lastName'
+  );
+  results[`${LEFT}PI_FIRST_NAME${RIGHT}`] = get(project, 'piInfo.firstName');
+  results[`${LEFT}PI_LAST_NAME${RIGHT}`] = get(project, 'piInfo.lastName');
 
-  return variables;
+  return results;
 }
