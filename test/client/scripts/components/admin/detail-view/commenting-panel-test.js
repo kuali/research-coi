@@ -36,9 +36,9 @@ describe('CommentingPanel', () => {
   it('should not display any visible to options if viewing as reviewer', () => {
     const wrapper = shallow(
       <CommentingPanel
-        role={ROLES.REVIEWER}
         comment={createComment(ROLES.ADMIN, 0, 0)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.REVIEWER}}}
     );
 
     assert.equal(0, wrapper.find('#reviewerCheck').length);
@@ -48,9 +48,9 @@ describe('CommentingPanel', () => {
   it('should render visible to check if viewing as admin', () => {
     const wrapper = shallow(
       <CommentingPanel
-        role={ROLES.ADMIN}
         comment={createComment(ROLES.ADMIN, 1, 1)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.ADMIN}}}
     );
 
     assert.equal(1, wrapper.find('#reviewerCheck').length);

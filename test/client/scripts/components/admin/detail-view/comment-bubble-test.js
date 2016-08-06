@@ -36,9 +36,9 @@ describe('CommentBubble', () => {
   it('should display reporter and reviewer if viewing as admin and is visible to reporter and reviewer', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.ADMIN}
         {...createComment(ROLES.ADMIN,1,1)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.ADMIN}}}
     );
 
     assert.equal(wrapper.find('#reporterBubble').length, 1);
@@ -48,9 +48,9 @@ describe('CommentBubble', () => {
   it('should not render any bubbles if only visible to admin', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.ADMIN}
         {...createComment(ROLES.ADMIN,0,0)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.ADMIN}}}
     );
 
     assert.equal(wrapper.find('#reporterBubble').length, 0);
@@ -60,9 +60,9 @@ describe('CommentBubble', () => {
   it('should render reporter bubble if visible to reporter and viewing as admin', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.ADMIN}
         {...createComment(ROLES.ADMIN,1,0)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.ADMIN}}}
     );
 
     assert.equal(wrapper.find('#reporterBubble').length, 1);
@@ -72,9 +72,9 @@ describe('CommentBubble', () => {
   it('should render reviewer bubble if visible to reviewer and viewing as admin', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.ADMIN}
         {...createComment(ROLES.ADMIN,0,1)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.ADMIN}}}
     );
 
     assert.equal(wrapper.find('#reporterBubble').length, 0);
@@ -84,9 +84,9 @@ describe('CommentBubble', () => {
   it('should render no render anything if visible to reviewer and viewing as reviewer', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.REVIEWER}
         {...createComment(ROLES.ADMIN,0,1)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.REVIEWER}}}
     );
 
     assert.equal(wrapper.find('#reporterBubble').length, 0);
@@ -96,9 +96,9 @@ describe('CommentBubble', () => {
   it('should render reporter bubble if visible to reporter and viewing as reviewer', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.REVIEWER}
         {...createComment(ROLES.ADMIN,1,1)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.REVIEWER}}}
     );
 
     assert.equal(wrapper.find('#reporterBubble').length, 1);
@@ -108,9 +108,9 @@ describe('CommentBubble', () => {
   it('should not dispaly visible to if from user', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.ADMIN}
         {...createComment(ROLES.USER,1,1)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.ADMIN}}}
     );
 
     assert.equal(wrapper.find('#reporterBubble').length, 0);
@@ -120,9 +120,9 @@ describe('CommentBubble', () => {
   it('should render the ViewableByReporterButton component', () => {
     const wrapper = shallow(
       <CommentBubble
-        role={ROLES.ADMIN}
         {...createComment(ROLES.USER,1,1)}
-      />
+      />,
+      {context: {userInfo: {coiRole: ROLES.ADMIN}}}
     );
 
     assert.equal(wrapper.find('ViewableByReporterButton').length, 1);
