@@ -123,10 +123,16 @@ export class AdminDeclarationsSummary extends React.Component {
   }
 
   render() {
-    const { declarations, readonly, className } = this.props;
+    const {
+      declarations,
+      readonly,
+      className,
+      configId,
+      projectRecommendations
+    } = this.props;
 
     let projects = [];
-    if (this.props.declarations !== undefined) {
+    if (Array.isArray(declarations) && declarations.length > 0) {
       const uniqueProjects = this.getUniqueProjects(declarations);
 
       let dispositionTypeOptions;
@@ -156,7 +162,7 @@ export class AdminDeclarationsSummary extends React.Component {
             <DeclarationSummary
               key={`decl${declaration.id}`}
               declaration={declaration}
-              configId={this.props.configId}
+              configId={configId}
               readonly={readonly}
               options={dispositionTypeOptions}
               commentCount={this.getCommentCount(declaration.id)}
@@ -169,14 +175,14 @@ export class AdminDeclarationsSummary extends React.Component {
 
         if (isAdmin && config.general.dispositionsEnabled) {
           let recommendationLink;
-          if (this.props.projectRecommendations) {
-            const recommendations = this.props.projectRecommendations.filter(recommendation => {
+          if (projectRecommendations) {
+            const recommendations = projectRecommendations.filter(recommendation => {
               return recommendation.projectPersonId === project.projectPersonId;
             }).map(recommendation => {
               const answer = getDispositionTypeString(
                 this.context.configState,
                 recommendation.disposition,
-                this.props.configId
+                configId
               );
               return (
                 <div key={recommendation.usersName}>
@@ -205,7 +211,7 @@ export class AdminDeclarationsSummary extends React.Component {
             let dispositionType = getDispositionTypeString(
               this.context.configState,
               project.dispositionTypeCd,
-              this.props.configId
+              configId
             );
             if (dispositionType === null || dispositionType.length === 0) {
               dispositionType = 'None';
@@ -314,6 +320,13 @@ export class AdminDeclarationsSummary extends React.Component {
           </div>
         );
       });
+    }
+    else {
+      projects = (
+        <div className={styles.noProjects}>
+          No projects on disclosure
+        </div>
+      );
     }
 
     return (

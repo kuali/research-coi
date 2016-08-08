@@ -35,7 +35,7 @@ function getCommentsForEntity(comments, id) {
 
 export default function EntitiesSummary(props) {
   let entities;
-  if (props.entities !== undefined) {
+  if (Array.isArray(props.entities) && props.entities.length > 0) {
     entities = props.entities.filter(entity => {
       return entity.active;
     }).map((entity, index, array) => {
@@ -49,6 +49,11 @@ export default function EntitiesSummary(props) {
         />
       );
     });
+  }
+  else {
+    entities = (
+      <div className={styles.noEntities}>No active financial entities</div>
+    );
   }
 
   return (
