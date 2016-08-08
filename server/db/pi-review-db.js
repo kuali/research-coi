@@ -471,15 +471,21 @@ const getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
   });
 };
 
-const getProjects = (knex, declarationIDs, disclosureId) => {
-  return knex.distinct('p.title', 'p.id')
+function getProjects(knex, declarationIDs, disclosureId) {
+  return knex.distinct(
+      'p.title',
+      'p.id',
+      'p.source_identifier as sourceIdentifier',
+      'type.description as projectType'
+    )
     .from('declaration as d')
     .innerJoin('project as p', 'p.id', 'd.project_id')
+    .innerJoin('project_type as type', 'p.type_cd', 'type.type_cd')
     .whereIn('d.id', declarationIDs)
     .andWhere({
       'd.disclosure_id': disclosureId
     });
-};
+}
 
 const getEntitesWithTheseDeclarations = (knex, declarationIDs, disclosureId) => {
   return knex.distinct('fe.name', 'fe.id', 'd.project_id as projectId')

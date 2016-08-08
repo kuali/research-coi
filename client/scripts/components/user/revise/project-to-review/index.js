@@ -20,10 +20,10 @@ import styles from './style';
 import React from 'react';
 import EntityDeclaration from '../entity-declaration';
 
-export default function ProjectToReview(props) {
+export default function ProjectToReview({project, last, className}) {
   let entityDeclarations;
-  if (props.project.entities) {
-    entityDeclarations = props.project.entities.map(entityDeclaration => {
+  if (project.entities) {
+    entityDeclarations = project.entities.map(entityDeclaration => {
       return (
         <EntityDeclaration
           key={entityDeclaration.id}
@@ -36,7 +36,7 @@ export default function ProjectToReview(props) {
   }
 
   let bottomBorder;
-  if (!props.last) {
+  if (!last) {
     bottomBorder = (
       <div className={'flexbox row'}>
         <span className={`fill ${styles.borderArea}`} />
@@ -46,8 +46,13 @@ export default function ProjectToReview(props) {
   }
 
   return (
-    <div className={`${styles.container} ${props.className}`}>
-      <div className={styles.projectTitle}>{props.project.name}</div>
+    <div className={`${styles.container} ${className}`}>
+      <div className={styles.projectTitle}>
+        <span className={styles.titleSegment}>{project.sourceIdentifier}</span>
+        <span className={styles.titleSegment}>-</span>
+        <span className={styles.titleSegment}>{project.projectType}</span>
+        <span className={styles.titleSegment}>({project.title})</span>
+      </div>
       <div className={'flexbox row'}>
         <span className={`fill ${styles.headings}`}>
           <span className={styles.entityName}>FINANCIAL ENTITY</span>
