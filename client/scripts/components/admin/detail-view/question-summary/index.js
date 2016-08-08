@@ -23,6 +23,20 @@ import {formatDate} from '../../../../format-date';
 import {DISCLOSURE_STEP, QUESTION_TYPE} from '../../../../../../coi-constants';
 import {AdminActions} from '../../../../actions/admin-actions';
 
+function formatAnswer(type, answer) {
+  switch (type) {
+    case QUESTION_TYPE.DATE:
+      return formatDate(answer);
+    case QUESTION_TYPE.MULTISELECT:
+      if (Array.isArray(answer)) {
+        return answer.join(', ');
+      }
+      return answer;
+    default:
+      return answer;
+  }
+}
+
 export default class QuestionSummary extends React.Component {
   constructor() {
     super();
@@ -39,8 +53,16 @@ export default class QuestionSummary extends React.Component {
   }
 
   render() {
+    const {
+      question,
+      commentCount,
+      changedByPI,
+      className,
+      answer
+    } = this.props;
+
     let commentLink;
-    if (this.props.question.parent) {
+    if (question.parent) {
       commentLink = (
         <span style={{width: 125}}>
           <span />
@@ -51,7 +73,7 @@ export default class QuestionSummary extends React.Component {
       commentLink = (
         <span className={styles.commentLink} onClick={this.showComments}>
           <span className={styles.commentLabel}>
-            COMMENT ({this.props.commentCount})
+            COMMENT ({commentCount})
           </span>
         </span>
       );
@@ -61,22 +83,24 @@ export default class QuestionSummary extends React.Component {
       styles.container,
       'flexbox',
       'row',
-      this.props.className,
-      {[styles.highlighted]: this.props.changedByPI}
+      className,
+      {[styles.highlighted]: changedByPI}
     );
 
     return (
       <div className={classes}>
-        <span className={this.props.question.parent ? styles.subQuestionNumber : styles.number}>
-          <div>{this.props.question.numberToShow}</div>
+        <span
+          className={question.parent ? styles.subQuestionNumber : styles.number}
+        >
+          <div>{question.numberToShow}</div>
         </span>
         <span className={'fill'} style={{display: 'inline-block'}}>
-          <div style={{paddingRight: 125, fontSize: 14}}>{this.props.question.text}</div>
+          <div style={{paddingRight: 125, fontSize: 14}}>{question.text}</div>
           <div className={'flexbox row'}>
             <span className={`fill ${styles.answerSection}`}>
               <div className={styles.answerLabel}>ANSWER:</div>
               <div className={styles.answer}>
-                {this.props.question.type === QUESTION_TYPE.DATE ? formatDate(this.props.answer) : this.props.answer}
+                {formatAnswer(question.type, answer)}
               </div>
             </span>
             {commentLink}

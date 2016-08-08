@@ -21,6 +21,20 @@ import React from 'react';
 import {formatDate} from '../../format-date';
 import {QUESTION_TYPE} from '../../../../coi-constants';
 
+function formatAnswer(type, answer) {
+  switch (type) {
+    case QUESTION_TYPE.DATE:
+      return formatDate(answer);
+    case QUESTION_TYPE.MULTISELECT:
+      if (Array.isArray(answer)) {
+        return answer.join(', ');
+      }
+      return answer;
+    default:
+      return answer;
+  }
+}
+
 export default function QuestionSummary({className, question, answer, comments}) {
   let commentsJsx;
   if (comments && comments.length > 0) {
@@ -43,7 +57,9 @@ export default function QuestionSummary({className, question, answer, comments})
 
   return (
     <div className={`${styles.container} flexbox row ${className}`}>
-      <span className={question.parent ? styles.subQuestionNumber : styles.number}>
+      <span
+        className={question.parent ? styles.subQuestionNumber : styles.number}
+      >
         <div>{question.question.numberToShow}</div>
       </span>
       <span className={'fill'} style={{display: 'inline-block'}}>
@@ -52,7 +68,7 @@ export default function QuestionSummary({className, question, answer, comments})
           <span className={`fill ${styles.answerSection}`}>
             <div className={styles.answerLabel}>ANSWER:</div>
             <div className={styles.answer}>
-              {question.question.type === QUESTION_TYPE.DATE ? formatDate(answer) : answer}
+              {formatAnswer(question.question.type, answer)}
             </div>
           </span>
         </div>

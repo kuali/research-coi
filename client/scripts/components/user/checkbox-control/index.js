@@ -32,7 +32,7 @@ export class CheckboxControl extends React.Component {
   }
 
   componentDidMount() {
-    const validity = this.isValid(this.props.answer);
+    const validity = this.isValid(this.props.answer, this.props.required);
     this.props.onValidityChange(this.props.questionId, validity);
   }
 
