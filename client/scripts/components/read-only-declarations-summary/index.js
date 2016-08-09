@@ -93,7 +93,7 @@ export default class DeclarationsSummary extends React.Component {
     const {configState} = this.context;
 
     let projects = [];
-    if (declarations !== undefined) {
+    if (Array.isArray(declarations) && declarations.length > 0) {
       const config = getConfig(configState, configId);
       if (config === null) {
         return null;
@@ -205,6 +205,13 @@ export default class DeclarationsSummary extends React.Component {
           </div>
         );
       });
+    }
+    else {
+      projects = (
+        <div className={styles.noProjects}>
+          No projects on disclosure
+        </div>
+      );
     }
 
     return (

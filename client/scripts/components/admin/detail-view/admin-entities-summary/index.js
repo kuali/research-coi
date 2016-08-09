@@ -46,7 +46,7 @@ export class AdminEntitiesSummary extends React.Component {
 
   render() {
     let entities;
-    if (this.props.entities !== undefined) {
+    if (Array.isArray(this.props.entities) && this.props.entities.length > 0) {
       entities = this.props.entities.filter(entity => {
         return entity.active === 1;
       })
@@ -62,6 +62,11 @@ export class AdminEntitiesSummary extends React.Component {
           />
         );
       });
+    }
+    else {
+      entities = (
+        <div className={styles.noEntities}>No active financial entities</div>
+      );
     }
 
     return (

@@ -96,3 +96,9 @@
   width: 100%;
   padding: 0 0 10px 10px;
 }
+
+.noProjects {
+  margin: 1px 0 7px 0;
+  font-size: 15px;
+  color: #444;
+}
