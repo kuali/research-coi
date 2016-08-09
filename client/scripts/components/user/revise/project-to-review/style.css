@@ -21,8 +21,12 @@
 }
 
 .projectTitle {
-  font-size: 20px;
-  margin: 20px 0 20px 45px;
+  font-size: 22px;
+  margin: 20px 0 20px 0;
+}
+
+.titleSegment {
+  margin-left: 5px;
 }
 
 .headings {

@@ -27,22 +27,28 @@ import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
 import * as DisclosureDB from './disclosure-db';
 import getKnex from './connection-manager';
 
-export const verifyReviewIsForUser = (dbInfo, reviewId, userId) => {
+export async function verifyReviewIsForUser(dbInfo, reviewId, userId) {
   const knex = getKnex(dbInfo);
 
-  return knex.count('d.user_id as theCount')
+  const rows = await knex.count('d.user_id as theCount')
     .from('pi_review as p')
     .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
     .where({
       'p.id': reviewId,
       'd.user_id': userId
-    })
-    .then(rows => {
-      return rows[0].theCount === 1;
     });
-};
 
-async function updatePIResponseComment(dbInfo, userInfo, disclosureId, targetType, targetId, comment) {
+  return rows[0].theCount === 1;
+}
+
+async function updatePIResponseComment(
+  dbInfo,
+  userInfo,
+  disclosureId,
+  targetType,
+  targetId,
+  comment
+) {
   const knex = getKnex(dbInfo);
 
   await knex('comment as c')
@@ -72,7 +78,7 @@ async function updatePIResponseComment(dbInfo, userInfo, disclosureId, targetTyp
   }, 'id');
 }
 
-const updateReviewRecord = (knex, reviewId, values) => {
+async function updateReviewRecord(knex, reviewId, values) {
   const newValues = {
     reviewed_on: new Date()
   };
@@ -83,11 +89,12 @@ const updateReviewRecord = (knex, reviewId, values) => {
     newValues.responded_to = true;
   }
 
-  return knex('pi_review')
-    .update(newValues).where({
+  return await knex('pi_review')
+    .update(newValues)
+    .where({
       id: reviewId
     });
-};
+}
 
 export async function recordPIResponse(dbInfo, userInfo, reviewId, comment) {
   const knex = getKnex(dbInfo);
@@ -121,83 +128,77 @@ export async function recordPIResponse(dbInfo, userInfo, reviewId, comment) {
   );
 }
 
-const extractTargetIDs = reviewItems => {
+function extractTargetIDs(reviewItems) {
   return reviewItems.reduce((previous, current) => {
     previous.push(current.targetId);
     return previous;
   }, []);
-};
+}
 
-const getQuestions = (knex, disclosureId, questionIDs) => {
-  return knex('disclosure')
+async function getQuestions(knex, disclosureId, questionIDs) {
+  const disclosure = await knex('disclosure')
     .select('config_id as configId')
-    .where('id', disclosureId)
-    .then(disclosure => {
-      return knex.select('*')
-      .from('questionnaire_answer as qa')
-      .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
-      .where('da.disclosure_id', disclosureId)
-      .then(answers => {
-        return knex('config')
-        .select('config')
-        .where('id', disclosure[0].configId)
-        .then(config => {
-          const parsedConfig = JSON.parse(config[0].config);
-          return parsedConfig.questions.screening.filter(question => {
-            return !question.parent && questionIDs.includes(question.id);
-          }).map(question => {
-            const questionAnwer = answers.find(answer => {
-              return answer.question_id === question.id;
-            });
-            const retVal = {};
-            retVal.id = question.id;
-            retVal.question = question.question;
-            retVal.answer = questionAnwer.answer;
-            return retVal;
-          });
-        });
-      });
-    });
-};
+    .where('id', disclosureId);
 
-const getSubQuestions = (knex, disclosureId, potentialParentIDs) => {
-  return knex('disclosure')
+  const answers = await knex.select('*')
+    .from('questionnaire_answer as qa')
+    .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
+    .where('da.disclosure_id', disclosureId);
+
+  const config = await knex('config')
+    .select('config')
+    .where('id', disclosure[0].configId);
+
+  const parsedConfig = JSON.parse(config[0].config);
+  return parsedConfig.questions.screening.filter(question => {
+    return !question.parent && questionIDs.includes(question.id);
+  }).map(question => {
+    const questionAnwer = answers.find(answer => {
+      return answer.question_id === question.id;
+    });
+    const retVal = {};
+    retVal.id = question.id;
+    retVal.question = question.question;
+    retVal.answer = questionAnwer.answer;
+    return retVal;
+  });
+}
+
+async function getSubQuestions(knex, disclosureId, potentialParentIDs) {
+  const disclosure = await knex('disclosure')
   .select('config_id as configId')
-  .where('id', disclosureId)
-  .then(disclosure => {
-    return knex.select('*')
+  .where('id', disclosureId);
+
+  const answers = await knex.select('*')
     .from('questionnaire_answer as qa')
     .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
     .where(function() {
       this.where('da.disclosure_id', disclosureId)
       .orWhereNull('da.disclosure_id');
-    })
-    .then(answers => {
-      return knex('config')
-      .select('config')
-      .where('id', disclosure[0].configId)
-      .then(config => {
-        const parsedConfig = JSON.parse(config[0].config);
-        return parsedConfig.questions.screening.filter(question => {
-          return potentialParentIDs.includes(question.parent);
-        }).map(question => {
-          const questionAnwer = answers.find(answer => {
-            return answer.question_id === question.id;
-          });
-          const retVal = {};
-          retVal.id = question.id;
-          retVal.question = question.question;
-          retVal.parent = question.parent;
-          retVal.answer = questionAnwer ? questionAnwer.answer : undefined;
-          return retVal;
-        });
-      });
     });
-  });
-};
 
-const getComments = (knex, disclosureId, topicIDs, section) => {
-  return knex.select(
+  const config = await knex('config')
+      .select('config')
+      .where('id', disclosure[0].configId);
+
+  const parsedConfig = JSON.parse(config[0].config);
+  return parsedConfig.questions.screening.filter(question => {
+    return potentialParentIDs.includes(question.parent);
+  }).map(question => {
+    const questionAnwer = answers.find(answer => {
+      return answer.question_id === question.id;
+    });
+    const retVal = {};
+    retVal.id = question.id;
+    retVal.question = question.question;
+    retVal.parent = question.parent;
+    retVal.answer = questionAnwer ? questionAnwer.answer : undefined;
+    return retVal;
+  });
+}
+
+async function getComments(knex, disclosureId, topicIDs, section) {
+  return await knex.select(
       'id',
       'topic_id as topicId',
       'text',
@@ -213,21 +214,36 @@ const getComments = (knex, disclosureId, topicIDs, section) => {
       pi_visible: true
     })
     .andWhere('topic_id', 'in', topicIDs);
-};
+}
 
-const getQuestionnaireComments = (knex, disclosureId, topicIDs) => {
-  return getComments(knex, disclosureId, topicIDs, DISCLOSURE_STEP.QUESTIONNAIRE);
-};
+async function getQuestionnaireComments(knex, disclosureId, topicIDs) {
+  return await getComments(
+    knex,
+    disclosureId,
+    topicIDs,
+    DISCLOSURE_STEP.QUESTIONNAIRE
+  );
+}
 
-const getEntityComments = (knex, disclosureId, topicIDs) => {
-  return getComments(knex, disclosureId, topicIDs, DISCLOSURE_STEP.ENTITIES);
-};
+async function getEntityComments(knex, disclosureId, topicIDs) {
+  return await getComments(
+    knex,
+    disclosureId,
+    topicIDs,
+    DISCLOSURE_STEP.ENTITIES
+  );
+}
 
-const getDeclarationComments = (knex, disclosureId, topicIDs) => {
-  return getComments(knex, disclosureId, topicIDs, DISCLOSURE_STEP.PROJECTS);
-};
+async function getDeclarationComments(knex, disclosureId, topicIDs) {
+  return await getComments(
+    knex,
+    disclosureId,
+    topicIDs,
+    DISCLOSURE_STEP.PROJECTS
+  );
+}
 
-const setAdminCommentsForTopics = (topics, comments) => {
+function setAdminCommentsForTopics(topics, comments) {
   comments.forEach(comment => {
     const topic = topics.find(topicToTest => {
       return topicToTest.id === comment.topicId;
@@ -240,9 +256,9 @@ const setAdminCommentsForTopics = (topics, comments) => {
       topic.comments.push(comment);
     }
   });
-};
+}
 
-const setPIReviewDataForTopics = (topics, reviewItems) => {
+function setPIReviewDataForTopics(topics, reviewItems) {
   topics.forEach(topic => {
     const piReviewRecord = reviewItems.find(item => {
       return item.targetId === topic.id;
@@ -255,9 +271,9 @@ const setPIReviewDataForTopics = (topics, reviewItems) => {
       topic.respondedTo = piReviewRecord.respondedTo;
     }
   });
-};
+}
 
-const associateSubQuestions = (questions, subQuestions) => {
+function associateSubQuestions(questions, subQuestions) {
   subQuestions.forEach(subQuestion => {
     const parent = questions.find(question => {
       return question.id === subQuestion.parent;
@@ -270,32 +286,45 @@ const associateSubQuestions = (questions, subQuestions) => {
       parent.subQuestions.push(subQuestion);
     }
   });
-};
+}
 
-const getQuestionsToReview = (knex, disclosureId, userId, reviewItems) => {
+async function getQuestionsToReview (knex, disclosureId, userId, reviewItems) {
   const questionIDs = extractTargetIDs(reviewItems);
 
-  return Promise.all([
+  const [questions, comments, subQuestions] = await Promise.all([
     getQuestions(knex, disclosureId, questionIDs),
     getQuestionnaireComments(knex, disclosureId, questionIDs),
     getSubQuestions(knex, disclosureId, questionIDs)
-  ])
-  .then(([questions, comments, subQuestions]) => {
-    associateSubQuestions(questions, subQuestions);
-    setAdminCommentsForTopics(questions, comments);
-    setPIReviewDataForTopics(questions, reviewItems);
-    return questions;
-  });
-};
+  ]);
 
-export const reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, newAnswer) => {
+  associateSubQuestions(questions, subQuestions);
+  setAdminCommentsForTopics(questions, comments);
+  setPIReviewDataForTopics(questions, reviewItems);
+  return questions;
+}
+
+export function reviseEntityQuestion(
+  dbInfo,
+  userInfo,
+  reviewId,
+  questionId,
+  newAnswer
+) {
   const knex = getKnex(dbInfo);
 
   return Promise.all([
     knex.select('qa.id')
       .from('pi_review as pr')
-      .innerJoin('fin_entity_answer as fea', 'pr.target_id', 'fea.fin_entity_id')
-      .innerJoin('questionnaire_answer as qa', 'fea.questionnaire_answer_id', 'qa.id')
+      .innerJoin(
+        'fin_entity_answer as fea',
+        'pr.target_id',
+        'fea.fin_entity_id'
+      )
+      .innerJoin(
+        'questionnaire_answer as qa',
+        'fea.questionnaire_answer_id',
+        'qa.id'
+      )
       .where({
         'pr.target_type': DISCLOSURE_STEP.ENTITIES,
         'pr.id': reviewId,
@@ -318,9 +347,9 @@ export const reviseEntityQuestion = (dbInfo, userInfo, reviewId, questionId, new
       }),
     updateReviewRecord(knex, reviewId, {revised: true})
   ]);
-};
+}
 
-export const reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
+export function reviseQuestion(dbInfo, userInfo, reviewId, answer) {
   const knex = getKnex(dbInfo);
 
   return Promise.all([
@@ -353,24 +382,28 @@ export const reviseQuestion = (dbInfo, userInfo, reviewId, answer) => {
       }),
     updateReviewRecord(knex, reviewId, {revised: true})
   ]);
-};
+}
 
-const getEntityNames = (knex, entityIDs) => {
+function getEntityNames(knex, entityIDs) {
   return knex.select('fe.id', 'fe.name', 'fe.disclosure_id as disclosureId')
     .from('fin_entity as fe')
     .where('fe.id', 'in', entityIDs);
-};
+}
 
-const getEntitiesAnswers = (knex, entityIDs) => {
-  return knex.select('qq.id as questionId', 'qa.answer', 'fa.fin_entity_id as finEntityId')
+function getEntitiesAnswers(knex, entityIDs) {
+  return knex.select(
+      'qq.id as questionId',
+      'qa.answer',
+      'fa.fin_entity_id as finEntityId'
+    )
     .from('questionnaire_question as qq')
     .innerJoin('questionnaire_answer as qa', 'qa.question_id', 'qq.id')
     .innerJoin('fin_entity_answer as fa', 'fa.questionnaire_answer_id', 'qa.id')
     .where('fa.fin_entity_id', 'in', entityIDs);
-};
+}
 
-const getRelationships = (knex, entityIDs) => {
-  return knex
+async function getRelationships(knex, entityIDs) {
+  const relationships = await knex
     .select('r.id',
       'r.comments as comments',
       'r.relationship_cd as relationshipCd',
@@ -381,31 +414,39 @@ const getRelationships = (knex, entityIDs) => {
     )
     .from('relationship as r')
     .where('fin_entity_id', 'in', entityIDs)
-    .andWhereNot('status', RELATIONSHIP_STATUS.PENDING)
-    .then(relationships => {
-      return knex('travel_relationship')
-      .select('amount', 'destination', 'start_date as startDate', 'end_date as endDate', 'reason', 'relationship_id as relationshipId')
-      .whereIn('relationship_id', relationships.map(relationship => { return relationship.id; }))
-      .then(travels => {
-        relationships.forEach(relationship => {
-          const travel = travels.find(item => {
-            return item.relationshipId === relationship.id;
-          });
-          relationship.travel = travel ? travel : {};
-        });
-        return relationships;
-      });
-    });
-};
+    .andWhereNot('status', RELATIONSHIP_STATUS.PENDING);
 
-const getFiles = (knex, entityIds) => {
+  const travels = await knex('travel_relationship')
+    .select(
+      'amount',
+      'destination',
+      'start_date as startDate',
+      'end_date as endDate',
+      'reason',
+      'relationship_id as relationshipId'
+    )
+    .whereIn(
+      'relationship_id',
+      relationships.map(relationship => { return relationship.id; })
+    );
+
+  relationships.forEach(relationship => {
+    const travel = travels.find(item => {
+      return item.relationshipId === relationship.id;
+    });
+    relationship.travel = travel ? travel : {};
+  });
+  return relationships;
+}
+
+function getFiles(knex, entityIds) {
   return knex.select('id', 'name', 'key', 'ref_id as refId')
     .from('file')
     .whereIn('ref_id', entityIds)
     .andWhere('file_type', FILE_TYPE.FINANCIAL_ENTITY);
-};
+}
 
-const setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
+function setQuestionAnswersForEntities(entities, entityQuestionAnswers) {
   entityQuestionAnswers.forEach(answer => {
     const targetEntity = entities.find(entity => {
       return entity.id === answer.finEntityId;
@@ -419,9 +460,9 @@ const setQuestionAnswersForEntities = (entities, entityQuestionAnswers) => {
       targetEntity.answers.push(answer);
     }
   });
-};
+}
 
-const setRelationshipsForEntities = (entities, relationships) => {
+function setRelationshipsForEntities(entities, relationships) {
   relationships.forEach(relationship => {
     const entity = entities.find(entityToTest => {
       return entityToTest.id === relationship.finEntityId;
@@ -434,9 +475,9 @@ const setRelationshipsForEntities = (entities, relationships) => {
       entity.relationships.push(relationship);
     }
   });
-};
+}
 
-const setFilesForEntities = (entities, files) => {
+function setFilesForEntities(entities, files) {
   files.forEach(file => {
     const entity = entities.find(entityToTest => {
       return entityToTest.id === file.refId;
@@ -449,39 +490,45 @@ const setFilesForEntities = (entities, files) => {
       entity.files.push(file);
     }
   });
-};
+}
 
-const getEntitiesToReview = (knex, disclosureId, userId, reviewItems) => {
+async function getEntitiesToReview(knex, disclosureId, userId, reviewItems) {
   const entityIDs = extractTargetIDs(reviewItems);
 
-  return Promise.all([
-    getEntityNames(knex, entityIDs),
-    getEntitiesAnswers(knex, entityIDs),
-    getEntityComments(knex, disclosureId, entityIDs),
-    getRelationships(knex, entityIDs),
-    getFiles(knex, entityIDs)
-  ])
-  .then(([entities, entityQuestionAnswers, comments, relationships, files]) => {
-    setQuestionAnswersForEntities(entities, entityQuestionAnswers);
-    setRelationshipsForEntities(entities, relationships);
-    setAdminCommentsForTopics(entities, comments);
-    setPIReviewDataForTopics(entities, reviewItems);
-    setFilesForEntities(entities, files);
-    return entities;
-  });
-};
+  const [entities, entityQuestionAnswers, comments, relationships, files] =
+    await Promise.all([
+      getEntityNames(knex, entityIDs),
+      getEntitiesAnswers(knex, entityIDs),
+      getEntityComments(knex, disclosureId, entityIDs),
+      getRelationships(knex, entityIDs),
+      getFiles(knex, entityIDs)
+    ]);
 
-const getProjects = (knex, declarationIDs, disclosureId) => {
-  return knex.distinct('p.title', 'p.id')
+  setQuestionAnswersForEntities(entities, entityQuestionAnswers);
+  setRelationshipsForEntities(entities, relationships);
+  setAdminCommentsForTopics(entities, comments);
+  setPIReviewDataForTopics(entities, reviewItems);
+  setFilesForEntities(entities, files);
+  return entities;
+}
+
+function getProjects(knex, declarationIDs, disclosureId) {
+  return knex.distinct(
+      'p.title',
+      'p.id',
+      'p.source_identifier as sourceIdentifier',
+      'type.description as projectType'
+    )
     .from('declaration as d')
     .innerJoin('project as p', 'p.id', 'd.project_id')
+    .innerJoin('project_type as type', 'p.type_cd', 'type.type_cd')
     .whereIn('d.id', declarationIDs)
     .andWhere({
       'd.disclosure_id': disclosureId
     });
-};
+}
 
-const getEntitesWithTheseDeclarations = (knex, declarationIDs, disclosureId) => {
+function getEntitesWithTheseDeclarations(knex, declarationIDs, disclosureId) {
   return knex.distinct('fe.name', 'fe.id', 'd.project_id as projectId')
     .from('declaration as d')
     .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
@@ -489,16 +536,22 @@ const getEntitesWithTheseDeclarations = (knex, declarationIDs, disclosureId) => 
     .andWhere({
       'd.disclosure_id': disclosureId
     });
-};
+}
 
-const getDeclarations = (knex, declarationIDs, disclosureId) => {
-  return knex.select('d.id', 'd.fin_entity_id as finEntityId', 'd.project_id as projectId', 'd.type_cd as typeCd', 'd.comments')
+function getDeclarations (knex, declarationIDs, disclosureId) {
+  return knex.select(
+      'd.id',
+      'd.fin_entity_id as finEntityId',
+      'd.project_id as projectId',
+      'd.type_cd as typeCd',
+      'd.comments'
+    )
     .from('declaration as d')
     .whereIn('d.id', declarationIDs)
     .andWhere({
       'd.disclosure_id': disclosureId
     });
-};
+}
 
 const setPIReviewDataForDeclaration = (target, declaration, reviewItems) => {
   const piReviewRecord = reviewItems.find(item => {
@@ -513,212 +566,267 @@ const setPIReviewDataForDeclaration = (target, declaration, reviewItems) => {
   }
 };
 
-const getDeclarationsToReview = (knex, disclosureId, userId, reviewItems) => {
+async function getDeclarationsToReview(
+  knex,
+  disclosureId,
+  userId,
+  reviewItems
+) {
   const declarationIDs = extractTargetIDs(reviewItems);
 
-  return Promise.all([
+  const [projects, entities, comments, declarations] = await Promise.all([
     getProjects(knex, declarationIDs, disclosureId),
     getEntitesWithTheseDeclarations(knex, declarationIDs, disclosureId),
     getDeclarationComments(knex, disclosureId, declarationIDs),
     getDeclarations(knex, declarationIDs, disclosureId)
-  ]).then(([projects, entities, comments, declarations]) => {
-    entities.forEach(entity => {
-      const declaration = declarations.find(declarationToTest => {
-        return declarationToTest.finEntityId === entity.id && declarationToTest.projectId === entity.projectId;
-      });
+  ]);
 
-      if (declaration) {
-        entity.comments = declaration.comments;
-        entity.relationshipCd = declaration.typeCd;
-
-        entity.adminComments = comments.filter(comment => {
-          return comment.topicId === declaration.id && comment.userId !== userId;
-        }).sort((a, b) => {
-          return a.date - b.date;
-        });
-
-        setPIReviewDataForDeclaration(entity, declaration, reviewItems);
-      }
-
-      const project = projects.find(projectToCheck => {
-        return projectToCheck.id === entity.projectId;
-      });
-
-      if (project) {
-        if (project.entities === undefined) {
-          project.entities = [];
-        }
-        project.entities.push(entity);
-      }
+  entities.forEach(entity => {
+    const declaration = declarations.find(declarationToTest => {
+      return (
+        declarationToTest.finEntityId === entity.id &&
+        declarationToTest.projectId === entity.projectId
+      );
     });
 
-    return projects;
+    if (declaration) {
+      entity.comments = declaration.comments;
+      entity.relationshipCd = declaration.typeCd;
+
+      entity.adminComments = comments.filter(comment => {
+        return comment.topicId === declaration.id && comment.userId !== userId;
+      }).sort((a, b) => {
+        return a.date - b.date;
+      });
+
+      setPIReviewDataForDeclaration(entity, declaration, reviewItems);
+    }
+
+    const project = projects.find(projectToCheck => {
+      return projectToCheck.id === entity.projectId;
+    });
+
+    if (project) {
+      if (project.entities === undefined) {
+        project.entities = [];
+      }
+      project.entities.push(entity);
+    }
   });
-};
 
-export const getPIReviewItems = (dbInfo, userInfo, disclosureId) => {
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by ${userInfo.username} to access pi-review-items for disclosure ${disclosureId} which isnt theirs`);
-      }
+  return projects;
+}
 
-      const knex = getKnex(dbInfo);
+export async function getPIReviewItems(dbInfo, userInfo, disclosureId) {
+  const isSubmitter = await isDisclosureUsers(
+    dbInfo,
+    disclosureId,
+    userInfo.schoolId
+  );
 
-      return knex.select(
-          'p.id',
-          'p.target_type as targetType',
-          'p.target_id as targetId',
-          'p.reviewed_on as reviewedOn',
-          'p.revised',
-          'p.responded_to as respondedTo'
-        )
-        .from('pi_review as p')
-        .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
-        .where({
-          'p.disclosure_id': disclosureId,
-          'd.user_id': userInfo.schoolId
-        })
-        .then(rows => {
-          return Promise.all([
-            getQuestionsToReview(knex, disclosureId, userInfo.schoolId,
-              rows.filter(row => {
-                return row.targetType === DISCLOSURE_STEP.QUESTIONNAIRE;
-              })
-            ),
-            getEntitiesToReview(knex, disclosureId, userInfo.schoolId,
-              rows.filter(row => {
-                return row.targetType === DISCLOSURE_STEP.ENTITIES;
-              })
-            ),
-            getDeclarationsToReview(knex, disclosureId, userInfo.schoolId,
-              rows.filter(row => {
-                return row.targetType === DISCLOSURE_STEP.PROJECTS;
-              })
-            ),
-            knex('disclosure').select('config_id as configId').where('id', disclosureId)
-          ]).then(([questions, entities, declarations, config]) => {
-            return {
-              questions,
-              entities,
-              declarations,
-              configId: config[0].configId
-            };
-          });
-        });
+  if (!isSubmitter) {
+    throw Error(`Attempt by ${userInfo.username} to access pi-review-items for disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
+  }
+
+  const knex = getKnex(dbInfo);
+
+  const rows = await knex.select(
+      'p.id',
+      'p.target_type as targetType',
+      'p.target_id as targetId',
+      'p.reviewed_on as reviewedOn',
+      'p.revised',
+      'p.responded_to as respondedTo'
+    )
+    .from('pi_review as p')
+    .innerJoin('disclosure as d', 'd.id', 'p.disclosure_id')
+    .where({
+      'p.disclosure_id': disclosureId,
+      'd.user_id': userInfo.schoolId
     });
-};
 
-const getReviewTarget = (knex, reviewId) => {
-  return knex.select('target_type as targetType', 'target_id as targetId')
+  const [questions, entities, declarations, config] = await Promise.all([
+    getQuestionsToReview(
+      knex,
+      disclosureId,
+      userInfo.schoolId,
+      rows.filter(row => row.targetType === DISCLOSURE_STEP.QUESTIONNAIRE)
+    ),
+    getEntitiesToReview(
+      knex,
+      disclosureId,
+      userInfo.schoolId,
+      rows.filter(row => row.targetType === DISCLOSURE_STEP.ENTITIES)
+    ),
+    getDeclarationsToReview(
+      knex,
+      disclosureId,
+      userInfo.schoolId,
+      rows.filter(row => row.targetType === DISCLOSURE_STEP.PROJECTS)
+    ),
+    knex('disclosure').select('config_id as configId').where('id', disclosureId)
+  ]);
+
+  return {
+    questions,
+    entities,
+    declarations,
+    configId: config[0].configId
+  };
+}
+
+async function getReviewTarget(knex, reviewId) {
+  const rows = await knex.select(
+      'target_type as targetType',
+      'target_id as targetId'
+    )
     .from('pi_review as p')
     .where({
       'p.id': reviewId
-    }).then(rows => {
-      return rows[0];
     });
-};
 
-export const addRelationship = (dbInfo, userInfo, reviewId, newRelationship) => {
+  return rows[0];
+}
+
+export async function addRelationship(
+  dbInfo,
+  userInfo,
+  reviewId,
+  newRelationship
+) {
   const knex = getKnex(dbInfo);
 
-  return getReviewTarget(knex, reviewId)
-    .then(reviewTarget => {
-      return knex('relationship')
-        .insert({
-          fin_entity_id: reviewTarget.targetId,
-          relationship_cd: newRelationship.relationshipCd,
-          person_cd: newRelationship.personCd,
-          type_cd: !newRelationship.typeCd ? null : newRelationship.typeCd,
-          amount_cd: !newRelationship.amountCd ? null : newRelationship.amountCd,
-          comments: newRelationship.comments,
-          status: RELATIONSHIP_STATUS.IN_PROGRESS
-        }, 'id')
-        .then(() => {
-          return Promise.all([
-            getRelationships(knex, [reviewTarget.targetId]),
-            updateReviewRecord(knex, reviewId, {revised: true})
-          ])
-          .then(([relationships]) => {
-            return relationships;
-          });
-        });
-    });
-};
+  const reviewTarget = await getReviewTarget(knex, reviewId);
 
-export const removeRelationship = (dbInfo, userInfo, reviewId, relationshipId) => {
+  await knex('relationship')
+    .insert({
+      fin_entity_id: reviewTarget.targetId,
+      relationship_cd: newRelationship.relationshipCd,
+      person_cd: newRelationship.personCd,
+      type_cd: !newRelationship.typeCd ? null : newRelationship.typeCd,
+      amount_cd: !newRelationship.amountCd ? null : newRelationship.amountCd,
+      comments: newRelationship.comments,
+      status: RELATIONSHIP_STATUS.IN_PROGRESS
+    }, 'id');
+
+  const [relationships] = await Promise.all([
+    getRelationships(knex, [reviewTarget.targetId]),
+    updateReviewRecord(knex, reviewId, {revised: true})
+  ]);
+
+  return relationships;
+}
+
+export async function removeRelationship(
+  dbInfo,
+  userInfo,
+  reviewId,
+  relationshipId
+) {
   const knex = getKnex(dbInfo);
 
-  return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, relationshipId)
-    .then(isAllowed => {
-      if (isAllowed) {
-        return Promise.all([
-          updateReviewRecord(knex, reviewId, {revised: true}),
-          knex('relationship')
-            .where('id', relationshipId)
-            .del()
-        ]);
-      }
+  const isAllowed = await verifyRelationshipIsUsers(
+    dbInfo,
+    userInfo.schoolId,
+    relationshipId
+  );
 
-      return 'Unauthorized';
-    });
-};
+  if (isAllowed) {
+    return await Promise.all([
+      updateReviewRecord(knex, reviewId, {revised: true}),
+      knex('relationship')
+        .where('id', relationshipId)
+        .del()
+    ]);
+  }
 
-export const reviseDeclaration = (dbInfo, userInfo, reviewId, declaration) => {
+  return 'Unauthorized';
+}
+
+export async function reviseDeclaration(
+  dbInfo,
+  userInfo,
+  reviewId,
+  declaration
+) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('target_id as targetId')
+  const targetIds = await knex.select('target_id as targetId')
     .from('pi_review')
-    .where('id', reviewId)
-    .then(targetIds => {
-      return Promise.all([
-        knex('declaration')
-          .update({
-            comments: declaration.comment,
-            type_cd: declaration.disposition
-          })
-          .where({
-            id: targetIds[0].targetId
-          }),
-        updateReviewRecord(knex, reviewId, {revised: true})
-      ]);
-    });
-};
+    .where('id', reviewId);
 
-export const reviseSubQuestion = (dbInfo, userInfo, reviewId, subQuestionId, answer) => {
+  return await Promise.all([
+    knex('declaration')
+      .update({
+        comments: declaration.comment,
+        type_cd: declaration.disposition
+      })
+      .where({
+        id: targetIds[0].targetId
+      }),
+    updateReviewRecord(knex, reviewId, {revised: true})
+  ]);
+}
+
+export async function reviseSubQuestion(
+  dbInfo,
+  userInfo,
+  reviewId,
+  subQuestionId,
+  answer
+) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('disclosure_id as disclosureId', 'target_id as targetId')
+  const rows = await knex
+    .select('disclosure_id as disclosureId', 'target_id as targetId')
     .from('pi_review as p')
     .where({
       'p.id': reviewId
-    }).then(rows => {
-      return Promise.all([
-        knex.count('* as answerCount').from('questionnaire_answer').where('question_id', subQuestionId),
-        updateReviewRecord(knex, reviewId, {revised: true})
-      ]).then(([rowCount]) => {
-        if (rowCount[0].answerCount > 0) {
-          return DisclosureDB.saveExistingQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, subQuestionId, answer);
-        }
-
-        return DisclosureDB.saveNewQuestionAnswer(dbInfo, userInfo.schoolId, rows[0].disclosureId, {
-          questionId: subQuestionId,
-          answer
-        });
-      });
     });
-};
+    
+  const [rowCount] = await Promise.all([
+    knex
+      .count('* as answerCount')
+      .from('questionnaire_answer')
+      .where('question_id', subQuestionId),
+    updateReviewRecord(knex, reviewId, {revised: true})
+  ]);
 
-export const deleteAnswers = (dbInfo, userInfo, reviewId, toDelete) => {
+  if (rowCount[0].answerCount > 0) {
+    return DisclosureDB.saveExistingQuestionAnswer(
+      dbInfo,
+      userInfo.schoolId,
+      rows[0].disclosureId,
+      subQuestionId,
+      answer
+    );
+  }
+
+  return DisclosureDB.saveNewQuestionAnswer(
+    dbInfo,
+    userInfo.schoolId,
+    rows[0].disclosureId,
+    {
+      questionId: subQuestionId,
+      answer
+    }
+  );
+}
+
+export async function deleteAnswers(dbInfo, userInfo, reviewId, toDelete) {
   const knex = getKnex(dbInfo);
 
-  return knex.select('p.disclosure_id as disclosureId')
+  const rows = await knex.select('p.disclosure_id as disclosureId')
     .from('pi_review as p')
-    .where('id', reviewId)
-    .then(rows => {
-      return DisclosureDB.deleteAnswers(dbInfo, userInfo, rows[0].disclosureId, toDelete);
-    });
-};
+    .where('id', reviewId);
+
+  return DisclosureDB.deleteAnswers(
+    dbInfo,
+    userInfo,
+    rows[0].disclosureId,
+    toDelete
+  );
+}
 
 export async function reSubmitDisclosure(dbInfo, {schoolId}, disclosureId) {
   const knex = getKnex(dbInfo);
