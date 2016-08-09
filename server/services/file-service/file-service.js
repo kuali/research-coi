@@ -22,7 +22,7 @@ import Log from '../../log';
 let client;
 try {
   const extensions = require('research-extensions').default;
-  client = extensions.client ? extensions.client : localClient;
+  client = extensions.client;
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
@@ -32,10 +32,18 @@ catch (err) {
 }
 
 export function getFile(dbInfo, key, callback) {
+  if (!client) {
+    Log.error('No file service configured');
+    return;
+  }
   return client.getFile(dbInfo, key, callback);
 }
 
 export function deleteFile(key, callback) {
+  if (!client) {
+    Log.error('No file service configured');
+    return;
+  }
   client.deleteFile(key, callback);
 }
 
