@@ -224,6 +224,13 @@ async function getQuestionnaireComments(knex, disclosureId, topicIDs) {
     DISCLOSURE_STEP.QUESTIONNAIRE
   );
 }
+export const getDeclarationWithProjectId = (dbInfo, projectId) => {
+  const knex = getKnex(dbInfo);
+  return knex.select('id', 'fin_entity_id as finEntityId', 'project_id as projectId',
+      'type_cd as typeCd', 'comments', 'admin_relationship_cd as adminRelationshipCd')
+      .from('declaration')
+      .where({project_id: projectId});
+};
 
 async function getEntityComments(knex, disclosureId, topicIDs) {
   return await getComments(

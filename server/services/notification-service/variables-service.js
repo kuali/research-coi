@@ -99,6 +99,11 @@ export function getDisclosureVariables(disclosure, url, variables) {
   return result;
 }
 
+export function addProjectInformation(projectInformation, variables) {
+  variables[`${LEFT}PROJECT_INFORMATION${RIGHT}`] = projectInformation;
+  return variables;
+}
+
 export function getDate(dates, type) {
   if (!dates || !type) {
     return;

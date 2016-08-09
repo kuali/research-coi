@@ -21,7 +21,9 @@ import {
   getProjectTypeDescription
 } from '../../db/config-db';
 import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
+import { getProjects } from '../../db/project-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
+import { getDeclarationWithProjectId } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import Log from '../../log';
 import * as VariableService from './variables-service';
@@ -245,6 +247,32 @@ async function getProject(dbInfo, hostname, project, person) {
   return projectInfo;
 }
 
+async function getProjectsInformation(dbinfo, hostname, disclosure) {
+  const projects = await getProjects(dbinfo, disclosure.userId);
+  let projectInformation = '<table><tr><th>Name</th><th>Sponsors</th><th>Project type</th><th>Project Disposition</th></tr>';
+  for (const project of projects) {
+    let sponsorString = '';
+    let projectType;
+    let declaration;
+    project.sponsors.forEach(sponsor => {
+      sponsorString += `${sponsor.sponsorName}, `;
+    });
+    sponsorString = sponsorString.replace(/, $/, '');
+
+    try {
+      projectType = await getProjectTypeDescription(dbinfo, project.typeCd);
+      declaration = await getDeclarationWithProjectId(dbinfo, project.id);
+      const adminRelationshipCd = declaration.adminRelationshipCd ? declaration.adminRelationshipCd : '';
+      projectInformation += `<tr><td>${project.name}</td><td>${sponsorString}</td>`;
+      projectInformation += `<td>${projectType}</td><td> ${adminRelationshipCd}</td></tr>`;
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+  projectInformation += '</table>';
+  return projectInformation;
+}
+
 function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
   const url = getRequestInfo(dbInfo, hostname).url;
   let variables = VariableService.getDefaultVariables(url);
@@ -286,7 +314,9 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
       return Promise.resolve();
     }
     const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
-    const variables = await getVariables(dbInfo, hostname, disclosure);
+    let variables = await getVariables(dbInfo, hostname, disclosure);
+    const projectInformation = await getProjectsInformation(dbInfo, hostname, disclosure);
+    variables = VariableService.addProjectInformation(projectInformation, variables);
     const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
     return await sendNotification(dbInfo, hostname, notification);
