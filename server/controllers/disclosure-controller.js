@@ -23,7 +23,7 @@ import wrapAsync from './wrap-async';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
 import Log from '../log';
-import { ROLES, ADMIN_PAGE_SIZE } from '../../coi-constants';
+import { ROLES, ADMIN_PAGE_SIZE,LANES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import {FORBIDDEN, ACCEPTED, BAD_REQUEST, NO_CONTENT} from '../../http-status-codes';
@@ -32,16 +32,19 @@ import {
   createAndSendApproveNotification,
   createAndSendSentBackNotification
 } from '../services/notification-service/notification-service';
-let upload;
+
+let upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 try {
   const extensions = require('research-extensions').default;
-  upload = extensions.storage;
+  
+  if (extensions.config.lane !== LANES.TEST) {
+    upload = extensions.storage;
+  }
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
     Log.error(err);
   }
-  upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 }
 
 function validateComment(comment) {
