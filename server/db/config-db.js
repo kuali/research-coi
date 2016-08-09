@@ -22,6 +22,8 @@ import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
 import getKnex from './connection-manager';
 import Log from '../log';
 
+const cachedConfigs = {};
+
 let getNotificationsInfo;
 let lane;
 try {
@@ -201,10 +203,33 @@ async function getQuestions(query) {
 }
 
 export async function getGeneralConfig(query) {
-  const general = await query('config').select('config', 'id').limit(1).orderBy('id', 'desc');
+  const mostRecentId = (await query('config').max('id as id'))[0].id;
+
+  if (cachedConfigs[mostRecentId]) {
+    return {
+      config: cachedConfigs[mostRecentId].general,
+      id: mostRecentId
+    };
+  }
+
+  const generalConfigRecords = await query
+    .select('config')
+    .from('config')
+    .where({id: mostRecentId});
+
+  if (!generalConfigRecords || generalConfigRecords.length === 0) {
+    return {
+      config: {},
+      id: mostRecentId
+    };
+  }
+
+  const parsedConfig = JSON.parse(generalConfigRecords[0].config);
+  cachedConfigs[mostRecentId] = parsedConfig;
+
   return {
-    config: JSON.parse(general[0].config).general,
-    id: general[0].id
+    config: parsedConfig.general,
+    id: mostRecentId
   };
 }
 
@@ -436,7 +461,6 @@ export const archiveConfig = (dbInfo, userId, userName, config) => {
   }, 'id');
 };
 
-const cachedConfigs = {};
 export async function getArchivedConfig(dbInfo, id) {
   if (cachedConfigs[id]) {
     return cachedConfigs[id];
