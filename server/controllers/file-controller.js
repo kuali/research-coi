@@ -19,7 +19,7 @@
 import * as FileService from '../services/file-service/file-service';
 import { isDisclosureUsers, isFinancialEntityUsers, getDisclosureForFinancialEntity } from '../db/common-db';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
-import { ROLES, FILE_TYPE } from '../../coi-constants';
+import { ROLES, FILE_TYPE, LANES } from '../../coi-constants';
 import * as FileDb from '../db/file-db';
 import multer from 'multer';
 import Log from '../log';
@@ -28,16 +28,18 @@ import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import archiver from 'archiver';
 
-let upload;
+let upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 try {
   const extensions = require('research-extensions').default;
-  upload = extensions.storage;
+  
+  if (extensions.config.lane !== LANES.TEST) {
+    upload = extensions.storage;
+  }
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
     Log.error(err);
   }
-  upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 }
 
 function handleDuplicateFileName(name, count) {

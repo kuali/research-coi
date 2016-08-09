@@ -18,17 +18,20 @@
 
 import * as localClient from './local-client';
 import Log from '../../log';
+import {LANES} from '../../../coi-constants';
 
-let client;
+let client = localClient;
 try {
   const extensions = require('research-extensions').default;
-  client = extensions.client;
+
+  if (extensions.config.lane !== LANES.TEST) {
+    client = extensions.client;
+  }
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
     Log.error(err);
   }
-  client = localClient;
 }
 
 export function getFile(dbInfo, key, callback) {
