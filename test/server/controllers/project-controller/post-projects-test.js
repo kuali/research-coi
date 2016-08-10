@@ -429,7 +429,7 @@ describe('POST api/coi/projects', () => {
       config = JSON.parse(configs[0].config);
       config.general.disableNewProjectStatusUpdateWhenNoEntities = true;
 
-      await knex('config').update({config: JSON.stringify(config)});
+      await knex('config').insert({config: JSON.stringify(config)});
     });
 
     describe('new project with persons no fe', () => {
@@ -513,7 +513,7 @@ describe('POST api/coi/projects', () => {
 
     after(async() => {
       config.general.disableNewProjectStatusUpdateWhenNoEntities = false;
-      await knex('config').update({config: JSON.stringify(config)});
+      await knex('config').insert({config: JSON.stringify(config)});
     });
   });
 
