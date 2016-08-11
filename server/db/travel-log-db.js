@@ -27,7 +27,7 @@ import {verifyRelationshipIsUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';
 import getKnex from './connection-manager';
 
-export const getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, filter) => {
+export function getTravelLogEntries(dbInfo, userId, sortColumn, sortDirection, filter) {
   const knex = getKnex(dbInfo);
 
   let dbSortColumn;
@@ -83,9 +83,9 @@ export const getTravelLogEntries = (dbInfo, userId, sortColumn, sortDirection, f
   }
 
   return query;
-};
+}
 
-const createAnnualDisclosure = (knex, userInfo) => {
+function createAnnualDisclosure(knex, userInfo) {
   return knex('config').max('id as id')
   .then(config => {
     return knex('disclosure')
@@ -98,18 +98,18 @@ const createAnnualDisclosure = (knex, userInfo) => {
         config_id: config[0].id
       }, 'id');
   });
-};
+}
 
-const createNewEntity = (knex, disclosureId, entry, status) => {
+function createNewEntity(knex, disclosureId, entry, status) {
   return knex('fin_entity').insert({
     disclosure_id: disclosureId,
     name: entry.entityName,
     active: true,
     status
   }, 'id');
-};
+}
 
-const createNewRelationship = (knex, entityId, entry, status) => {
+function createNewRelationship(knex, entityId, entry, status) {
   return knex('relationship').insert({
     fin_entity_id: entityId,
     relationship_cd: ENTITY_RELATIONSHIP.TRAVEL,
@@ -129,23 +129,23 @@ const createNewRelationship = (knex, entityId, entry, status) => {
       return entry;
     });
   });
-};
+}
 
-const isSubmitted = (status) => {
+function isSubmitted(status) {
   if (EDITABLE_STATUSES.includes(status)) {
     return false;
   }
 
   return true;
-};
+}
 
-const getExistingFinancialEntity = (trx, entityName, disclosureId) => {
+function getExistingFinancialEntity(trx, entityName, disclosureId) {
   return trx('fin_entity')
   .select('id')
   .where({name: entityName, disclosure_id: disclosureId});
-};
+}
 
-const handleTravelLogEntry = (trx, disclosureId, entry, status) => {
+function handleTravelLogEntry(trx, disclosureId, entry, status) {
   return getExistingFinancialEntity(trx, entry.entityName, disclosureId)
   .then(entity => {
     if (entity[0]) {
@@ -157,16 +157,16 @@ const handleTravelLogEntry = (trx, disclosureId, entry, status) => {
       return createNewRelationship(trx, newEntityId, entry, status);
     });
   });
-};
+}
 
-const getAnnualDisclosureForUser = (trx, schoolId) => {
+function getAnnualDisclosureForUser(trx, schoolId) {
   return trx('disclosure').select('status_cd', 'id').where({
     user_id: schoolId,
     type_cd: DISCLOSURE_TYPE.ANNUAL
   });
-};
+}
 
-export const createTravelLogEntry = (dbInfo, entry, userInfo) => {
+export function createTravelLogEntry(dbInfo, entry, userInfo) {
   const knex = getKnex(dbInfo);
   return knex.transaction(trx => {
     return getAnnualDisclosureForUser(trx, userInfo.schoolId)
@@ -186,30 +186,30 @@ export const createTravelLogEntry = (dbInfo, entry, userInfo) => {
       });
     });
   });
-};
+}
 
-const getRelationshipsEntity = (trx, id) => {
+function getRelationshipsEntity(trx, id) {
   return trx('relationship')
     .select('fin_entity_id')
     .where('id', id)
     .then(relationship => {
       return relationship[0].fin_entity_id;
     });
-};
+}
 
-const deleteTravelRelationship = (trx, id) => {
+function deleteTravelRelationship(trx, id) {
   return trx('travel_relationship')
     .del()
     .where('relationship_id', id);
-};
+}
 
-const deleteRelationship = (trx, id) => {
+function deleteRelationship(trx, id) {
   return trx('relationship')
   .del()
   .where('id', id);
-};
+}
 
-const getQuestionnaireAnswerIds = (trx, id) => {
+function getQuestionnaireAnswerIds(trx, id) {
   return trx('fin_entity_answer')
   .select('questionnaire_answer_id')
   .where('fin_entity_id', id)
@@ -218,47 +218,47 @@ const getQuestionnaireAnswerIds = (trx, id) => {
       return answer.questionnaire_answer_id;
     });
   });
-};
+}
 
-const deleteFinEntityAnswers = (trx, id) => {
+function deleteFinEntityAnswers(trx, id) {
   return trx('fin_entity_answer')
   .del()
   .where('fin_entity_id', id);
-};
+}
 
-const deleteQuestionnaireAnswers = (trx, answerIds) => {
+function deleteQuestionnaireAnswers(trx, answerIds) {
   return trx('questionnaire_answer')
   .del()
   .whereIn('id', answerIds);
-};
+}
 
-const deleteEntityAnswers = (trx, id) => {
+function deleteEntityAnswers(trx, id) {
   return getQuestionnaireAnswerIds(trx, id).then(answerIds => {
     return deleteFinEntityAnswers(trx, id).then(() => {
       return deleteQuestionnaireAnswers(trx, answerIds);
     });
   });
-};
+}
 
-const getEntityFiles = (trx, id) => {
+function getEntityFiles(trx, id) {
   return trx('file')
   .select('id', 'key')
   .where({
     ref_id: id,
     file_type: FILE_TYPE.FINANCIAL_ENTITY
   });
-};
+}
 
-const deleteDbFiles = (trx, id) => {
+function deleteDbFiles(trx, id) {
   return trx('file')
   .del()
   .where({
     ref_id: id,
     file_type: FILE_TYPE.FINANCIAL_ENTITY
   });
-};
+}
 
-const deleteFileData = (dbInfo, files) => {
+function deleteFileData(dbInfo, files) {
   return Promise.all(
     files.map(file => {
       return new Promise((resolve, reject) => {
@@ -272,23 +272,23 @@ const deleteFileData = (dbInfo, files) => {
       });
     })
   );
-};
+}
 
-const deleteEntityFiles = (trx, dbInfo, id) => {
+function deleteEntityFiles(trx, dbInfo, id) {
   return getEntityFiles(trx, id).then(files => {
     return deleteDbFiles(trx, id).then(() => {
       return deleteFileData(dbInfo, files);
     });
   });
-};
+}
 
-const deleteEntity = (trx, id) => {
+function deleteEntity(trx, id) {
   return trx('fin_entity')
   .del()
   .where('id', id);
-};
+}
 
-const deleteEntityIfAllRelationshipsAreDelete = (dbInfo, trx, entityId) => {
+function deleteEntityIfAllRelationshipsAreDelete(dbInfo, trx, entityId) {
   return trx('relationship')
     .select('id')
     .where('fin_entity_id', entityId)
@@ -301,9 +301,9 @@ const deleteEntityIfAllRelationshipsAreDelete = (dbInfo, trx, entityId) => {
         });
       }
     });
-};
+}
 
-export const deleteTravelLogEntry = (dbInfo, id, userInfo) => {
+export function deleteTravelLogEntry(dbInfo, id, userInfo) {
   const knex = getKnex(dbInfo);
   return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
     .then(isAllowed => {
@@ -321,9 +321,9 @@ export const deleteTravelLogEntry = (dbInfo, id, userInfo) => {
 
       throw new Error(`${userInfo.userName} is unauthorized to edit this record`);
     });
-};
+}
 
-const createTravelRelationshipFromEntry = (entry) => {
+function createTravelRelationshipFromEntry(entry) {
   const travelRelationship = {};
   if (entry.amount) {
     travelRelationship.amount = entry.amount;
@@ -345,17 +345,17 @@ const createTravelRelationshipFromEntry = (entry) => {
     travelRelationship.destination = entry.destination;
   }
   return travelRelationship;
-};
+}
 
-const createRelationshipFromEntry = (entry) => {
+function createRelationshipFromEntry(entry) {
   const relationship = {};
   if (entry.active !== undefined) {
     relationship.active = entry.active;
   }
   return relationship;
-};
+}
 
-const updateTravelRelationship = (trx, entry, id) => {
+function updateTravelRelationship(trx, entry, id) {
   const travelRelationship = createTravelRelationshipFromEntry(entry);
   if (Object.keys(travelRelationship).length > 0) {
     return trx('travel_relationship')
@@ -364,9 +364,9 @@ const updateTravelRelationship = (trx, entry, id) => {
   }
 
   return undefined;
-};
+}
 
-const updateRelationship = (trx, entry, id) => {
+function updateRelationship(trx, entry, id) {
   const relationship = createRelationshipFromEntry(entry);
   if (Object.keys(relationship).length > 0) {
     return trx('relationship')
@@ -375,22 +375,22 @@ const updateRelationship = (trx, entry, id) => {
   }
 
   return undefined;
-};
+}
 
-const handleOldEntity = (trx, dbInfo, entityId) => {
+function handleOldEntity(trx, dbInfo, entityId) {
   return deleteEntityIfAllRelationshipsAreDelete(dbInfo, trx, entityId);
-};
+}
 
-const getEntityNameFromId = (trx, id) => {
+function getEntityNameFromId(trx, id) {
   return trx('fin_entity')
   .select('name')
   .where('id', id)
   .then(entity => {
     return entity[0].name;
   });
-};
+}
 
-const getEntityIdFromName = (trx, name, disclosureId) => {
+function getEntityIdFromName(trx, name, disclosureId) {
   return trx('fin_entity')
   .select('id')
   .where({
@@ -404,21 +404,21 @@ const getEntityIdFromName = (trx, name, disclosureId) => {
 
     return undefined;
   });
-};
+}
 
-const getRelationship = (trx, id) => {
+function getRelationship(trx, id) {
   return trx('relationship')
   .select('fin_entity_id')
   .where('id', id);
-};
+}
 
-const updateRelationshipEntityId = (trx, id, entityId) => {
+function updateRelationshipEntityId(trx, id, entityId) {
   return trx('relationship')
   .update({fin_entity_id: entityId})
   .where('id', id);
-};
+}
 
-const updateEntity = (trx, dbInfo, entry, id, schoolId) => {
+function updateEntity(trx, dbInfo, entry, id, schoolId) {
   return getRelationship(trx, id).then(relationship => {
     return getEntityNameFromId(trx, relationship[0].fin_entity_id).then(entityName => {
       if (entry.entityName === entityName || !entry.entityName) {
@@ -442,9 +442,9 @@ const updateEntity = (trx, dbInfo, entry, id, schoolId) => {
       });
     });
   });
-};
+}
 
-export const updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
+export function updateTravelLogEntry(dbInfo, entry, id, userInfo) {
   const knex = getKnex(dbInfo);
   return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
   .then(isAllowed => {
@@ -462,4 +462,4 @@ export const updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
 
     throw new Error(`${userInfo.userName} is unauthorized to edit this record`);
   });
-};
+}

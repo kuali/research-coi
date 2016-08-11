@@ -21,7 +21,7 @@ import {ROLES, FILE_TYPE} from '../../coi-constants';
 import {isDisclosureUsers} from './common-db';
 import getKnex from './connection-manager';
 
-export const getFile = (dbInfo, userInfo, id) => {
+export function getFile(dbInfo, userInfo, id) {
   const knex = getKnex(dbInfo);
   const criteria = {
     id
@@ -46,7 +46,7 @@ export const getFile = (dbInfo, userInfo, id) => {
       user_id: userInfo.schoolId
     });
   });
-};
+}
 
 export function getFiles(dbInfo, userInfo, refId, fileType) {
   const knex = getKnex(dbInfo);
@@ -78,7 +78,7 @@ export function getFiles(dbInfo, userInfo, refId, fileType) {
   });
 }
 
-export const saveNewFiles = (dbInfo, body, files, userInfo) => {
+export function saveNewFiles(dbInfo, body, files, userInfo) {
   if (body.type !== FILE_TYPE.DISCLOSURE &&
     body.type !== FILE_TYPE.MANAGEMENT_PLAN &&
     body.type !== FILE_TYPE.FINANCIAL_ENTITY &&
@@ -126,9 +126,9 @@ export const saveNewFiles = (dbInfo, body, files, userInfo) => {
         return fileData;
       });
     });
-};
+}
 
-export const deleteFiles = (dbInfo, userInfo, fileId) => {
+export function deleteFiles(dbInfo, userInfo, fileId) {
   const knex = getKnex(dbInfo);
 
   const criteria = {
@@ -158,4 +158,4 @@ export const deleteFiles = (dbInfo, userInfo, fileId) => {
           });
         });
     });
-};
+}

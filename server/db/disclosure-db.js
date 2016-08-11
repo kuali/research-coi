@@ -62,7 +62,7 @@ catch (err) {
   lane = process.env.LANE || LANES.PRODUCTION;
 }
 
-export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financialEntity, files) => {
+export function saveNewFinancialEntity(dbInfo, userInfo, disclosureId, financialEntity, files) {
   const knex = getKnex(dbInfo);
 
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
@@ -160,9 +160,9 @@ export const saveNewFinancialEntity = (dbInfo, userInfo, disclosureId, financial
             });
         });
     });
-};
+}
 
-const isEntityUsers = (knex, entityId, userId) => {
+function isEntityUsers(knex, entityId, userId) {
   return knex.select('e.id')
     .from('fin_entity as e')
     .innerJoin('disclosure as d', 'd.id', 'e.disclosure_id')
@@ -173,9 +173,9 @@ const isEntityUsers = (knex, entityId, userId) => {
     .then(rows => {
       return rows.length > 0;
     });
-};
+}
 
-export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, files) => {
+export function saveExistingFinancialEntity(dbInfo, userInfo, entityId, body, files) {
   const knex = getKnex(dbInfo);
 
   const financialEntity = body;
@@ -350,9 +350,9 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
             });
         });
     });
-};
+}
 
-export const saveDeclaration = (dbInfo, userId, disclosureId, record) => {
+export function saveDeclaration(dbInfo, userId, disclosureId, record) {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
@@ -372,7 +372,7 @@ export const saveDeclaration = (dbInfo, userId, disclosureId, record) => {
           return record;
         });
     });
-};
+}
 
 export async function saveExistingDeclaration(dbInfo, userInfo, disclosureId, declarationId, record) {
   const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId);
@@ -393,7 +393,7 @@ export async function saveExistingDeclaration(dbInfo, userInfo, disclosureId, de
     });
 }
 
-export const saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
+export function saveNewQuestionAnswer(dbInfo, userId, disclosureId, body) {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
@@ -419,9 +419,9 @@ export const saveNewQuestionAnswer = (dbInfo, userId, disclosureId, body) => {
             });
         });
     });
-};
+}
 
-export const saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questionId, body) => {
+export function saveExistingQuestionAnswer(dbInfo, userId, disclosureId, questionId, body) {
   return isDisclosureUsers(dbInfo, disclosureId, userId)
     .then(isSubmitter => {
       if (!isSubmitter) {
@@ -443,7 +443,7 @@ export const saveExistingQuestionAnswer = (dbInfo, userId, disclosureId, questio
             });
         });
     });
-};
+}
 
 async function retrieveComments(dbInfo, userInfo, disclosureId) {
   const knex = getKnex(dbInfo);
@@ -492,7 +492,7 @@ async function retrieveComments(dbInfo, userInfo, disclosureId) {
   return comments;
 }
 
-const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
+function flagPIReviewNeeded(dbInfo, disclosureId, section, id) {
   const knex = getKnex(dbInfo);
   return knex.select('*')
     .from('pi_review')
@@ -516,9 +516,9 @@ const flagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
         target_id: id
       }, 'id');
     });
-};
+}
 
-const unflagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
+function unflagPIReviewNeeded(dbInfo, disclosureId, section, id) {
   const knex = getKnex(dbInfo);
   return knex('comment').count()
     .where({
@@ -539,9 +539,9 @@ const unflagPIReviewNeeded = (dbInfo, disclosureId, section, id) => {
           });
       }
     });
-};
+}
 
-export const addComment = (dbInfo, userInfo, comment) => {
+export function addComment(dbInfo, userInfo, comment) {
   const knex = getKnex(dbInfo);
   return knex('comment')
     .insert({
@@ -566,9 +566,9 @@ export const addComment = (dbInfo, userInfo, comment) => {
       }
       return Promise.all(statements);
     });
-};
+}
 
-export const updateComment = (dbInfo, userInfo, comment) => {
+export function updateComment(dbInfo, userInfo, comment) {
   const knex = getKnex(dbInfo);
   return knex('comment')
     .update({
@@ -590,9 +590,9 @@ export const updateComment = (dbInfo, userInfo, comment) => {
     .then(() => {
       return retrieveComments(dbInfo, userInfo, comment.disclosureId);
     });
-};
+}
 
-const getDisclosure = (knex, userInfo, disclosureId) => {
+function getDisclosure(knex, userInfo, disclosureId) {
   const criteria = {
     id: disclosureId
   };
@@ -618,7 +618,7 @@ const getDisclosure = (knex, userInfo, disclosureId) => {
     )
     .from('disclosure as de')
     .where(criteria);
-};
+}
 
 async function getDeclarations(dbInfo, disclosureId, authHeader) {
   const knex = getKnex(dbInfo);
@@ -684,7 +684,7 @@ function getArchivedVersionList(knex, disclosureId) {
     .orderBy('approvedDate', 'DESC');
 }
 
-export const get = (dbInfo, userInfo, disclosureId, authHeader, trx) => {
+export function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
   let disclosure;
   let knex;
   if (trx) {
@@ -921,7 +921,7 @@ export const get = (dbInfo, userInfo, disclosureId, authHeader, trx) => {
       return disclosure;
     });
   });
-};
+}
 
 export async function getAnnualDisclosure(dbInfo, userInfo, piName, authHeader) {
   const knex = getKnex(dbInfo);
@@ -1121,7 +1121,7 @@ export async function getSummariesForReviewCount(dbInfo, filters) {
   return Promise.resolve([{rowcount: results.length}]);
 }
 
-export const getSummariesForUser = async (dbInfo, userId) => {
+export async function getSummariesForUser(dbInfo, userId) {
   const knex = getKnex(dbInfo);
   const summaries = await knex.select(
       'expired_date',
@@ -1147,9 +1147,9 @@ export const getSummariesForUser = async (dbInfo, userId) => {
     summary.entityCount = count ? count.entityCount : 0;
     return summary;
   });
-};
+}
 
-const updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, newStatus) => {
+function updateEntitiesAndRelationshipsStatuses(knex, disclosureId, oldStatus, newStatus) {
   return knex('fin_entity')
     .update({status: newStatus})
     .where('disclosure_id', disclosureId)
@@ -1175,9 +1175,9 @@ const updateEntitiesAndRelationshipsStatuses = (knex, disclosureId, oldStatus, n
           );
         });
     });
-};
+}
 
-export const getExpirationDate = (date, isRolling, dueDate) => {
+export function getExpirationDate(date, isRolling, dueDate) {
   if (isRolling === true) {
     return new Date(date.setFullYear(date.getFullYear() + 1));
   }
@@ -1190,9 +1190,9 @@ export const getExpirationDate = (date, isRolling, dueDate) => {
   }
 
   return new Date(dueDate.setFullYear(date.getFullYear() + 1));
-};
+}
 
-const approveDisclosure = (knex, disclosureId, expiredDate, userId, dbInfo, authHeader) => {
+function approveDisclosure(knex, disclosureId, expiredDate, userId, dbInfo, authHeader) {
   return knex('disclosure').select('user_id as userId').where({id: disclosureId}).then(disclosure => {
     return getProjects(undefined, disclosure[0].userId, knex).then(projects => {
       return filterProjects(dbInfo, projects, authHeader).then(requiredProjects => {
@@ -1215,7 +1215,7 @@ const approveDisclosure = (knex, disclosureId, expiredDate, userId, dbInfo, auth
       });
     });
   });
-};
+}
 
 async function getDisclosureDisposition(knex, declarations, id) {
   const config = await knex('config')
@@ -1263,13 +1263,13 @@ async function archiveDisclosure(knex, disclosureId, approverName, disclosure) {
     }, 'id');
 }
 
-const deleteComments = (knex, disclosureId) => {
+function deleteComments(knex, disclosureId) {
   return knex('comment')
     .del()
     .where('disclosure_id', disclosureId);
-};
+}
 
-const deleteAnswersForDisclosure = (knex, disclosureId) => {
+function deleteAnswersForDisclosure(knex, disclosureId) {
   return knex('disclosure_answer').select('questionnaire_answer_id').where('disclosure_id', disclosureId)
     .then((result) => {
       return knex('disclosure_answer').del().where('disclosure_id', disclosureId)
@@ -1280,13 +1280,13 @@ const deleteAnswersForDisclosure = (knex, disclosureId) => {
           return knex('questionnaire_answer').del().whereIn('id', idsToDelete);
         });
     });
-};
+}
 
-const deletePIReviewsForDisclsoure = (knex, disclosureId) => {
+function deletePIReviewsForDisclsoure(knex, disclosureId) {
   return knex('pi_review')
     .del()
     .where('disclosure_id', disclosureId);
-};
+}
 
 async function deleteAdditionalReviewers(knex, disclosureId) {
   await knex('reviewer_recommendation')
@@ -1330,7 +1330,7 @@ function resetAdminRelationships(knex, disclosureId) {
     });
 }
 
-export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeader, trx) => {
+export function approve(dbInfo, disclosure, displayName, disclosureId, authHeader, trx) {
   let knex;
   if (trx) {
     knex = trx;
@@ -1357,9 +1357,9 @@ export const approve = (dbInfo, disclosure, displayName, disclosureId, authHeade
       return archivedDisclosure[0];
     });
   });
-};
+}
 
-const updateStatus = (knex, name, disclosureId) => {
+function updateStatus(knex, name, disclosureId) {
   return knex('disclosure')
   .update({
     status_cd: DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
@@ -1367,7 +1367,7 @@ const updateStatus = (knex, name, disclosureId) => {
     submitted_date: new Date()
   })
   .where('id', disclosureId);
-};
+}
 
 function updateProjects(trx, schoolId) {
   return trx('project_person')
@@ -1463,7 +1463,7 @@ async function updateEditableComments(trx, disclosureId) {
     .where({disclosure_id: disclosureId});
 }
 
-export const reject = (dbInfo, userInfo, disclosureId) => {
+export function reject(dbInfo, userInfo, disclosureId) {
   const knex = getKnex(dbInfo);
   return knex.transaction(trx => {
     return trx('disclosure')
@@ -1475,9 +1475,9 @@ export const reject = (dbInfo, userInfo, disclosureId) => {
         return updateEditableComments(trx, disclosureId);
       });
   });
-};
+}
 
-export const getArchivedDisclosures = (dbInfo, userId) => {
+export function getArchivedDisclosures(dbInfo, userId) {
   const knex = getKnex(dbInfo);
 
   return Promise.all([
@@ -1509,16 +1509,16 @@ export const getArchivedDisclosures = (dbInfo, userId) => {
 
     return archives;
   });
-};
+}
 
-export const getLatestArchivedDisclosure = (dbInfo, userId, disclosureId) => {
+export function getLatestArchivedDisclosure(dbInfo, userId, disclosureId) {
   const knex = getKnex(dbInfo);
   return knex.select('disclosure')
   .from('disclosure_archive')
   .where('disclosure_id', disclosureId)
   .limit(1)
   .orderBy('approved_date', 'desc');
-};
+}
 
 export function getArchivedDisclosure(dbInfo, archiveId) {
   const knex = getKnex(dbInfo);
@@ -1528,7 +1528,7 @@ export function getArchivedDisclosure(dbInfo, archiveId) {
     .where('id', archiveId);
 }
 
-export const deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) => {
+export function deleteAnswers(dbInfo, userInfo, disclosureId, answersToDelete) {
   const knex = getKnex(dbInfo);
 
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
@@ -1561,9 +1561,9 @@ export const deleteAnswers = (dbInfo, userInfo, disclosureId, answersToDelete) =
             });
         });
     });
-};
+}
 
-export const getCurrentState = (dbInfo, userInfo, disclosureId) => {
+export function getCurrentState(dbInfo, userInfo, disclosureId) {
   return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter) {
@@ -1585,9 +1585,9 @@ export const getCurrentState = (dbInfo, userInfo, disclosureId) => {
           return JSON.parse(stateFound[0].state);
         });
     });
-};
+}
 
-export const saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
+export function saveCurrentState(dbInfo, userInfo, disclosureId, state) {
   return getCurrentState(dbInfo, userInfo, disclosureId)
     .then(currentState => {
       const knex = getKnex(dbInfo);
@@ -1614,7 +1614,7 @@ export const saveCurrentState = (dbInfo, userInfo, disclosureId, state) => {
           return;
         });
     });
-};
+}
 
 export async function getDisclosureInfoForNotifications(dbInfo, id) {
   const knex = getKnex(dbInfo);

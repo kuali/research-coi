@@ -21,19 +21,19 @@ import getKnex from './connection-manager';
 
 const MAX_ROWS = 10;
 
-const queryUsingIndex = (knex, term) => {
+function queryUsingIndex(knex, term) {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `${term}%`)
     .limit(MAX_ROWS);
-};
+}
 
-const queryWithoutIndex = (knex, term) => {
+function queryWithoutIndex(knex, term) {
   return knex.distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `%${term}%`)
     .limit(MAX_ROWS);
-};
+}
 
 function addReviewerCriteria(query, schoolId) {
   return query

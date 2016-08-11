@@ -46,7 +46,7 @@ catch (err) {
 const SCREENING_QUESTIONNAIRE_TYPE_CD = 1;
 const FIN_ENTITY_QUESTIONNAIRE_TYPE_CD = 2;
 
-const createDeleteQueries = (query, collection, tableProps) => {
+function createDeleteQueries(query, collection, tableProps) {
   let sel = query(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where);
@@ -66,9 +66,9 @@ const createDeleteQueries = (query, collection, tableProps) => {
       })
     );
   });
-};
+}
 
-const createInsertQueries = (query, collection, tableProps) => {
+function createInsertQueries(query, collection, tableProps) {
   return Promise.all(
     collection.map(line => {
       const tmpId = line.tmpId;
@@ -86,9 +86,9 @@ const createInsertQueries = (query, collection, tableProps) => {
         });
     })
   );
-};
+}
 
-const createUpdateQueries = (query, collection, tableProps) => {
+function createUpdateQueries(query, collection, tableProps) {
   return Promise.all(
     collection.map(line => {
       delete line.tmpId;
@@ -98,9 +98,9 @@ const createUpdateQueries = (query, collection, tableProps) => {
         .where(tableProps.pk, line[tableProps.pk]);
     })
   );
-};
+}
 
-const createCollectionQueries = (query, collection, tableProps) => {
+function createCollectionQueries(query, collection, tableProps) {
   const updates = [];
   const inserts = [];
   collection.forEach(line => {
@@ -127,9 +127,9 @@ const createCollectionQueries = (query, collection, tableProps) => {
       return line;
     });
   });
-};
+}
 
-const convertQuestionFormat = (questions, questionnaireId) => {
+function convertQuestionFormat(questions, questionnaireId) {
   return questions.map(question => {
     question.question = JSON.stringify(question.question);
     question.questionnaire_id = questionnaireId;
@@ -139,9 +139,9 @@ const convertQuestionFormat = (questions, questionnaireId) => {
     }
     return question;
   });
-};
+}
 
-const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) => {
+function getNotificationTemplates(query, dbInfo, hostname, notificationsMode) {
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
     return query.select('template_id as templateId', 'description', 'type', 'active', 'core_template_id as coreTemplateId', 'value', 'period')
       .from('notification_template')
@@ -157,7 +157,7 @@ const getNotificationTemplates = (query, dbInfo, hostname, notificationsMode) =>
       });
   }
   return Promise.resolve([]);
-};
+}
 
 async function createMatrixTypes(query) {
   const categories = await query.select('*').from('relationship_category_type');
@@ -451,7 +451,7 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
   });
 }
 
-export const archiveConfig = (dbInfo, userId, userName, config) => {
+export function archiveConfig(dbInfo, userId, userName, config) {
   const knex = getKnex(dbInfo);
   return knex('config').insert({
     config: JSON.stringify(config),
@@ -459,7 +459,7 @@ export const archiveConfig = (dbInfo, userId, userName, config) => {
     user_name: userName,
     updated_date: new Date()
   }, 'id');
-};
+}
 
 export async function getArchivedConfig(dbInfo, id) {
   if (cachedConfigs[id]) {
