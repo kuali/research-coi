@@ -111,6 +111,31 @@ describe('POST api/coi/projects', () => {
     });
   });
 
+  describe('new project no dates', () => {
+    let project;
+    before(async () => {
+      await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.UP_TO_DATE), '20');
+      const newProject = createProject('20');
+      newProject.startDate = null;
+      newProject.endDate = null;
+      const response = await post(newProject);
+      project = response.body;
+    });
+
+    it('should return a project with an id', () => {
+      assert.equal('TEST TITLE', project.title);
+      assert(project.id !== undefined);
+    });
+
+    it('should insert a new project', async function() {
+      await testProject(project.id, 'TEST TITLE');
+    });
+
+    it('should not update disclosure status', async function() {
+      await testDisclosureStatus('20', DISCLOSURE_STATUS.UP_TO_DATE);
+    });
+  });
+
   describe('new project with persons', () => {
     let project;
     let response;
