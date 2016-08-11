@@ -35,8 +35,7 @@ function wrapWithUpdateLink(dom, type) {
   return (
     <Link
       style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
-      to={"/coi/disclosure"}
-      query={{type}}
+      to={{pathname: '/coi/disclosure', query: {type}}}
     >
       {dom}
     </Link>
@@ -47,7 +46,7 @@ function wrapWithReviseLink(dom, disclosureId) {
   return (
     <Link
       style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
-      to={`/coi/revise/${disclosureId}`}
+      to={{pathname: `/coi/revise/${disclosureId}`}}
     >
       {dom}
     </Link>
@@ -58,7 +57,7 @@ function wrapWithReadOnlyLink(dom, disclosureId) {
   return (
     <Link
       style={{color: window.colorBlindModeOn ? 'black' : '#0095A0'}}
-      to={`/coi/readonly/${disclosureId}`}
+      to={{pathname: `/coi/readonly/${disclosureId}`}}
     >
       {dom}
     </Link>

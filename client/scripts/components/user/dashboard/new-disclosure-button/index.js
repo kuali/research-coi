@@ -25,8 +25,7 @@ import {DISCLOSURE_TYPE} from '../../../../../../coi-constants';
 export function NewDisclosureButton(props, {configState}) {
   return (
     <Link
-      to={"/coi/disclosure"}
-      query={{type: props.type}}
+      to={{pathname: '/coi/disclosure', query: {type: props.type}}}
       className={`${styles.container} ${props.className}`}
     >
       <div>

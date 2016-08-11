@@ -126,7 +126,7 @@ export default class ReadOnly extends React.Component {
           }
         >
           <span className={styles.sidebar}>
-            <Link to={"/coi/dashboard"}>
+            <Link to={{pathname: '/coi/dashboard'}}>
               <div className={`${styles.sidebarButton} ${styles.firstButton}`}>
                 <div className={styles.sidebarTopText}>Back To</div>
                 <div className={styles.sidebarBottomText}>Dashboard</div>

@@ -59,7 +59,7 @@ export class DisclosureTableRow extends React.Component {
     return (
       <div role="row" className={classNames(styles.container, this.props.className)}>
         <span role="gridcell" className={classNames(styles.value, styles.firstColumn)}>
-          <Link to={`/coi/admin/detailview/${this.props.id}/${this.props.statusCd}`}>
+          <Link to={{pathname: `/coi/admin/detailview/${this.props.id}/${this.props.statusCd}`}}>
             {this.highlightSearchTerm(this.props.submittedBy)}
           </Link>
         </span>

@@ -29,7 +29,10 @@ export function TravelLogButton(props, {configState}) {
     configState.config.id
   );
   return (
-    <Link to={'/coi/travelLog'} className={`${styles.container} ${props.className}`}>
+    <Link
+      to={{pathname: '/coi/travelLog'}}
+      className={`${styles.container} ${props.className}`}
+    >
       <div>
         <span>
           <div className={styles.primary}>Update</div>

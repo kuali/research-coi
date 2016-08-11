@@ -18,7 +18,7 @@
 
 import ReactDOM from 'react-dom';
 import React from 'react';
-import {Router, Route} from 'react-router';
+import {Router, Route, browserHistory} from 'react-router';
 import {Dashboard} from './dashboard/dashboard';
 import {Disclosure} from './disclosure';
 import TravelLog from './travel-log/travel-log';
@@ -29,7 +29,6 @@ import {SizeAwareComponent} from '../size-aware-component';
 import UserInfoStore from '../../stores/user-info-store';
 import ConfigStore from '../../stores/config-store';
 import ColorStore from '../../stores/color-store'; // eslint-disable-line no-unused-vars
-import history from '../../history';
 
 function latestState() {
   return {
@@ -37,6 +36,18 @@ function latestState() {
     userInfoState: UserInfoStore.getState()
   };
 }
+
+const router = (
+  <Router history={browserHistory}>
+    <Route path="/coi/readonly/:id" component={ReadOnlyView} />
+    <Route path="/coi/archiveview" component={Archive} />
+    <Route path="/coi/dashboard" component={Dashboard} />
+    <Route path="/coi/disclosure" component={Disclosure} />
+    <Route path="/coi/travelLog" component={TravelLog} />
+    <Route path="/coi/revise/:id" component={Revise} />
+    <Route path="/coi/*" component={Dashboard} />
+  </Router>
+);
 
 class App extends SizeAwareComponent {
   constructor() {
@@ -77,17 +88,7 @@ class App extends SizeAwareComponent {
         </div>
       );
     }
-    return (
-      <Router history={history}>
-        <Route path="/coi/readonly/:id" component={ReadOnlyView} />
-        <Route path="/coi/archiveview" component={Archive} />
-        <Route path="/coi/dashboard" component={Dashboard} />
-        <Route path="/coi/disclosure" component={Disclosure} />
-        <Route path="/coi/travelLog" component={TravelLog} />
-        <Route path="/coi/revise/:id" component={Revise} />
-        <Route path="/coi/*" component={Dashboard} />
-      </Router>
-    );
+    return router;
   }
 }
 

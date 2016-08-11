@@ -79,7 +79,7 @@ export default function Sidebar(props, {configState}) {
     );
 
     return (
-      <Link key={index} to={step.link} className={classes}>
+      <Link key={index} to={{pathname: step.link}} className={classes}>
         <div className={styles.firstWord}>{firstPart}</div>
         <div className={styles.rest}>{rest}</div>
       </Link>

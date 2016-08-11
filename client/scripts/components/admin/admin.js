@@ -18,14 +18,23 @@
 
 import React from 'react'; // eslint-disable-line no-unused-vars
 import ReactDOM from 'react-dom';
-import {Router, Route} from 'react-router';
+import {Router, Route, browserHistory} from 'react-router';
 import {DetailView} from './detail-view/detail-view';
 import {ListView} from './list-view/list-view';
 import {SizeAwareComponent} from '../size-aware-component';
 import UserInfoStore from '../../stores/user-info-store';
 import ConfigStore from '../../stores/config-store';
 import ColorStore from '../../stores/color-store'; // eslint-disable-line no-unused-vars
-import history from '../../history';
+
+const router = (
+  <Router history={browserHistory}>
+    <Route path="/coi/admin/detailview" component={DetailView}>
+      <Route path="/coi/admin/detailview/:id/:statusCd" component={DetailView}/>
+    </Route>
+    <Route path="/coi/admin/listview" component={ListView} />
+    <Route path="/coi/admin*" component={ListView} />
+  </Router>
+);
 
 function latestState() {
   return {
@@ -73,15 +82,7 @@ class App extends SizeAwareComponent {
         </div>
       );
     }
-    return (
-      <Router history={history}>
-        <Route path="/coi/admin/detailview" component={DetailView}>
-          <Route path="/coi/admin/detailview/:id/:statusCd" component={DetailView}/>
-        </Route>
-        <Route path="/coi/admin/listview" component={ListView} />
-        <Route path="/coi/admin*" component={ListView} />
-      </Router>
-    );
+    return router;
   }
 }
 
