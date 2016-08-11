@@ -26,7 +26,14 @@ export function getFile(dbInfo, userInfo, id) {
   const criteria = {
     id
   };
-  const query = knex.select('name', 'key', 'file_type').from('file').where(criteria);
+  const query = knex
+    .select(
+      'name',
+      'key',
+      'file_type'
+    )
+    .from('file')
+    .where(criteria);
   if (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER) {
     return query;
   }
@@ -83,13 +90,15 @@ export function saveNewFiles(dbInfo, body, files, userInfo) {
     body.type !== FILE_TYPE.MANAGEMENT_PLAN &&
     body.type !== FILE_TYPE.FINANCIAL_ENTITY &&
     body.type !== FILE_TYPE.ADMIN) {
-    throw Error(`Attempt by ${userInfo.username} to upload an unknown file type`);
+    throw Error(
+      `Attempt by ${userInfo.username} to upload an unknown file type`
+    );
   }
 
   return isDisclosureUsers(dbInfo, body.disclosureId, userInfo.schoolId)
     .then(isSubmitter => {
       if (!isSubmitter && userInfo.coiRole !== ROLES.ADMIN) {
-        throw Error(`Attempt by ${userInfo.username} to upload a file for disclosure ${body.disclosureId} which isnt theirs`);
+        throw Error(`Attempt by ${userInfo.username} to upload a file for disclosure ${body.disclosureId} which isnt theirs`); // eslint-disable-line max-len
       }
 
       const knex = getKnex(dbInfo);

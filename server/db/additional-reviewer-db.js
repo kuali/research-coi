@@ -86,7 +86,11 @@ export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
   });
 }
 
-export function getReviewerForDisclosureAndUser(dbInfo, schoolId, disclosureId) {
+export function getReviewerForDisclosureAndUser(
+  dbInfo,
+  schoolId,
+  disclosureId
+) {
   const knex = getKnex(dbInfo);
   const criteria = {
     disclosure_id: disclosureId
@@ -158,7 +162,13 @@ async function findAdditionalReviewer(dbInfo, userId, disclosureId) {
     });
 }
 
-export async function saveRecommendation(dbInfo, schoolId, disclosureId, declarationId, dispositionType) {
+export async function saveRecommendation(
+  dbInfo,
+  schoolId,
+  disclosureId,
+  declarationId,
+  dispositionType
+) {
   const knex = getKnex(dbInfo);
   const additionalReviewer = await findAdditionalReviewer(
     dbInfo,
@@ -168,7 +178,7 @@ export async function saveRecommendation(dbInfo, schoolId, disclosureId, declara
 
   if (!additionalReviewer) {
     throw new Error(
-      `Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`
+      `Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}` // eslint-disable-line max-len
     );
   }
   
@@ -197,7 +207,13 @@ export async function saveRecommendation(dbInfo, schoolId, disclosureId, declara
   });
 }
 
-export async function saveProjectRecommendation(dbInfo, schoolId, disclosureId, projectPersonId, dispositionType) {
+export async function saveProjectRecommendation(
+  dbInfo,
+  schoolId,
+  disclosureId,
+  projectPersonId,
+  dispositionType
+) {
   const knex = getKnex(dbInfo);
   const additionalReviewer = await findAdditionalReviewer(
     dbInfo,
@@ -207,7 +223,7 @@ export async function saveProjectRecommendation(dbInfo, schoolId, disclosureId, 
 
   if (!additionalReviewer) {
     throw new Error(
-      `Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}`
+      `Attempt was made to save a recommendation for a user that isn't a reviewer on disclosure id ${disclosureId}` // eslint-disable-line max-len
     );
   }
   

@@ -17,7 +17,10 @@
 */
 
 import {camelizeJson, snakeizeJson} from './json-utils';
-import { populateTemplateData, handleTemplates } from '../services/notification-service/notification-service';
+import {
+  populateTemplateData,
+  handleTemplates
+} from '../services/notification-service/notification-service';
 import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
 import getKnex from './connection-manager';
 import Log from '../log';
@@ -38,7 +41,9 @@ catch (err) {
   lane = process.env.LANE || LANES.PRODUCTION;
   getNotificationsInfo = () => {
     return {
-      notificationsMode: process.env.NOTIFICATIONS_MODE || NOTIFICATIONS_MODE.OFF
+      notificationsMode: (
+        process.env.NOTIFICATIONS_MODE || NOTIFICATIONS_MODE.OFF
+      )
     };
   };
 }
@@ -56,7 +61,10 @@ function createDeleteQueries(query, collection, tableProps) {
     Promise.all(
       results.filter(result => {
         const match = collection.find(item => {
-          return item[tableProps.pk] && (item[tableProps.pk] === result[tableProps.pk]);
+          return (
+            item[tableProps.pk] &&
+            item[tableProps.pk] === result[tableProps.pk]
+          );
         });
         return !match;
       }).map(result => {
@@ -119,7 +127,9 @@ function createCollectionQueries(query, collection, tableProps) {
     const insertResults = results[1];
     return collection.map(line => {
       if (insertResults) {
-        const insert = insertResults.find(result => result.tmpId === line.tmpId);
+        const insert = insertResults.find(
+          result => result.tmpId === line.tmpId
+        );
         if (insert) {
           line.id = insert.id;
         }
@@ -143,26 +153,43 @@ function convertQuestionFormat(questions, questionnaireId) {
 
 function getNotificationTemplates(query, dbInfo, hostname, notificationsMode) {
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-    return query.select('template_id as templateId', 'description', 'type', 'active', 'core_template_id as coreTemplateId', 'value', 'period')
+    return query.select(
+        'template_id as templateId',
+        'description',
+        'type',
+        'active',
+        'core_template_id as coreTemplateId',
+        'value',
+        'period'
+      )
       .from('notification_template')
       .then(templates => {
-        return populateTemplateData(dbInfo, hostname, templates).then(results => {
-          return results;
-        }).catch(() => {
-          return Promise.resolve(templates.map(template => {
-            template.error = true;
-            return template;
-          }));
-        });
+        return populateTemplateData(dbInfo, hostname, templates)
+          .then(results => {
+            return results;
+          }).catch(() => {
+            return Promise.resolve(templates.map(template => {
+              template.error = true;
+              return template;
+            }));
+          });
       });
   }
   return Promise.resolve([]);
 }
 
 async function createMatrixTypes(query) {
-  const categories = await query.select('*').from('relationship_category_type');
-  const relationshipTypes = await query.select('*').from('relationship_type').where('active', true);
-  const amountTypes = await query.select('*').from('relationship_amount_type').where('active', true);
+  const categories = await query
+    .select('*')
+    .from('relationship_category_type');
+  const relationshipTypes = await query
+    .select('*')
+    .from('relationship_type')
+    .where('active', true);
+  const amountTypes = await query
+    .select('*')
+    .from('relationship_amount_type')
+    .where('active', true);
   return categories.map(type => {
     type.typeOptions = relationshipTypes.filter(relationType => {
       return relationType.relationship_cd === type.type_cd;
@@ -175,9 +202,17 @@ async function createMatrixTypes(query) {
 }
 
 async function getQuestionnaireQuestions(query, typeCd) {
-  const questionnaire = await query.select('id').from('questionnaire').limit(1).where('type_cd', typeCd).orderBy('version', 'desc');
+  const questionnaire = await query
+    .select('id')
+    .from('questionnaire')
+    .limit(1)
+    .where('type_cd', typeCd)
+    .orderBy('version', 'desc');
   if (questionnaire[0]) {
-    const questions = await query.select('*').from('questionnaire_question as qq').where({questionnaire_id: questionnaire[0].id, active: true});
+    const questions = await query
+      .select('*')
+      .from('questionnaire_question as qq')
+      .where({questionnaire_id: questionnaire[0].id, active: true});
     return questions.map(question => {
       question.question = JSON.parse(question.question);
       return question;
@@ -186,11 +221,17 @@ async function getQuestionnaireQuestions(query, typeCd) {
 }
 
 async function getScreeningQuestions(query) {
-  return await getQuestionnaireQuestions(query, SCREENING_QUESTIONNAIRE_TYPE_CD);
+  return await getQuestionnaireQuestions(
+    query,
+    SCREENING_QUESTIONNAIRE_TYPE_CD
+  );
 }
 
 async function getEntityQuestions(query) {
-  return await getQuestionnaireQuestions(query, FIN_ENTITY_QUESTIONNAIRE_TYPE_CD);
+  return await getQuestionnaireQuestions(
+    query,
+    FIN_ENTITY_QUESTIONNAIRE_TYPE_CD
+  );
 }
 
 async function getQuestions(query) {
@@ -247,16 +288,33 @@ export async function getConfig(dbInfo, hostname, optionalTrx) {
     }
 
     config.matrixTypes = await createMatrixTypes(query);
-    config.relationshipPersonTypes = await query.select('*').from('relationship_person_type').where('active', true);
-    config.declarationTypes = await query.select('*').from('declaration_type').orderBy('order');
-    config.dispositionTypes = await query.select('*').from('disposition_type').orderBy('order');
+    config.relationshipPersonTypes = await query
+      .select('*')
+      .from('relationship_person_type')
+      .where('active', true);
+  
+    config.declarationTypes = await query
+      .select('*')
+      .from('declaration_type')
+      .orderBy('order');
+  
+    config.dispositionTypes = await query
+      .select('*')
+      .from('disposition_type')
+      .orderBy('order');
+  
     config.disclosureTypes = await query.select('*').from('disclosure_type');
     config.questions = await getQuestions(query);
     config.disclosureStatus = await query.select('*').from('disclosure_status');
     config.projectTypes = await query.select('*').from('project_type');
     config.projectRoles = await query.select('*').from('project_role');
     config.projectStatuses = await query.select('*').from('project_status');
-    config.notificationTemplates = await getNotificationTemplates(query, dbInfo, hostname, notificationsMode);
+    config.notificationTemplates = await getNotificationTemplates(
+      query,
+      dbInfo,
+      hostname,
+      notificationsMode
+    );
     config.notificationsMode = notificationsMode;
     config.lane = lane;
     config = camelizeJson(config);
@@ -292,7 +350,10 @@ export async function saveScreeningQuestionnaire(query, questions) {
     .where('type_cd', 1)
     .orderBy('version', 'desc');
 
-  const convertedQuestions = convertQuestionFormat(questions, questionnaire[0].id);
+  const convertedQuestions = convertQuestionFormat(
+    questions,
+    questionnaire[0].id
+  );
   const parents = convertedQuestions.filter(question => !question.parent);
   const children = convertedQuestions.filter(question => question.parent);
 
@@ -308,17 +369,21 @@ export async function saveScreeningQuestionnaire(query, questions) {
     }
   });
 
-  await createCollectionQueries(query, updateParentIdOnChildren(children, updatedParents), {
-    pk: 'id',
-    table: 'questionnaire_question',
-    where() {
-      this
-        .whereNotNull('parent')
-        .andWhere({
-          questionnaire_id: questionnaire[0].id}
-        );
+  await createCollectionQueries(
+    query,
+    updateParentIdOnChildren(children, updatedParents),
+    {
+      pk: 'id',
+      table: 'questionnaire_question',
+      where() {
+        this
+          .whereNotNull('parent')
+          .andWhere({
+            questionnaire_id: questionnaire[0].id}
+          );
+      }
     }
-  });
+  );
 }
 
 export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
@@ -340,7 +405,7 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
 
   return knex.transaction(async (query) => {
     if (optionalTrx) {
-      query = knex.transacting(optionalTrx); // eslint-disable-line no-param-reassign
+      query = knex.transacting(optionalTrx); // eslint-disable-line no-param-reassign, max-len
     }
 
     const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
@@ -377,11 +442,19 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
     });
 
     queries.push(
-      createCollectionQueries(query, config.declaration_types, {pk: 'type_cd', table: 'declaration_type'})
+      createCollectionQueries(
+        query,
+        config.declaration_types,
+        {pk: 'type_cd', table: 'declaration_type'}
+      )
     );
 
     queries.push(
-      createCollectionQueries(query, config.disposition_types, {pk: 'type_cd', table: 'disposition_type'})
+      createCollectionQueries(
+        query,
+        config.disposition_types,
+        {pk: 'type_cd', table: 'disposition_type'}
+      )
     );
 
     queries.push(
@@ -392,48 +465,87 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
     );
 
     queries.push(
-      createCollectionQueries(query, config.disclosure_types, {pk: 'type_cd', table: 'disclosure_type'})
+      createCollectionQueries(
+        query,
+        config.disclosure_types,
+        {pk: 'type_cd', table: 'disclosure_type'}
+      )
     );
 
     queries.push(
-      createCollectionQueries(query, config.project_types, {pk: 'type_cd', table: 'project_type'})
+      createCollectionQueries(
+        query,
+        config.project_types,
+        {pk: 'type_cd', table: 'project_type'}
+      )
     );
 
     queries.push(
-      createCollectionQueries(query, config.project_roles, {pk: 'type_cd', table: 'project_role'})
+      createCollectionQueries(
+        query,
+        config.project_roles,
+        {pk: 'type_cd', table: 'project_role'}
+      )
     );
 
     queries.push(
-      createCollectionQueries(query, config.project_statuses, {pk: 'type_cd', table: 'project_status'})
+      createCollectionQueries(
+        query,
+        config.project_statuses,
+        {pk: 'type_cd', table: 'project_status'}
+      )
     );
 
     await saveScreeningQuestionnaire(query, config.questions.screening);
 
     queries.push(
-      query.select('*').from('questionnaire').limit(1).where('type_cd', 2).orderBy('version', 'desc')
+      query
+        .select('*')
+        .from('questionnaire')
+        .limit(1)
+        .where('type_cd', 2)
+        .orderBy('version', 'desc')
         .then(result => {
           if (result[0]) {
-            return createCollectionQueries(query, convertQuestionFormat(config.questions.entities, result[0].id), {
-              pk: 'id',
-              table: 'questionnaire_question',
-              where: {questionnaire_id: result[0].id}
-            });
+            return createCollectionQueries(
+              query,
+              convertQuestionFormat(config.questions.entities, result[0].id),
+              {
+                pk: 'id',
+                table: 'questionnaire_question',
+                where: {questionnaire_id: result[0].id}
+              }
+            );
           }
-          return query('questionnaire').insert({version: 1, type_cd: 2}, 'id').then(id => {
-            return createCollectionQueries(query, convertQuestionFormat(config.questions.entities, id[0]), {
-              pk: 'id',
-              table: 'questionnaire_question',
-              where: {questionnaire_id: id[0]}
+          return query('questionnaire')
+            .insert({version: 1, type_cd: 2}, 'id')
+            .then(id => {
+              return createCollectionQueries(
+                query,
+                convertQuestionFormat(config.questions.entities, id[0]),
+                {
+                  pk: 'id',
+                  table: 'questionnaire_question',
+                  where: {questionnaire_id: id[0]}
+                }
+              );
             });
-          });
         })
     );
 
     if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-      return handleTemplates(dbInfo, hostname, config.notification_templates).then(results => {
+      return handleTemplates(
+        dbInfo,
+        hostname,
+        config.notification_templates
+      ).then(results => {
         return Promise.all(results).then(templates => {
           queries.push(
-            createCollectionQueries(query, templates, {pk: 'template_id', table: 'notification_template'})
+            createCollectionQueries(
+              query,
+              templates,
+              {pk: 'template_id', table: 'notification_template'}
+            )
           );
         }).then(() => {
           return Promise.all(queries)
@@ -486,7 +598,10 @@ export function getRequiredProjectRoles(dbInfo) {
 export function getRequiredProjectStatuses(dbInfo) {
   const knex = getKnex(dbInfo);
   return knex('project_status')
-    .select('source_status_cd as sourceStatusCd','project_type_cd as projectTypeCd')
+    .select(
+      'source_status_cd as sourceStatusCd',
+      'project_type_cd as projectTypeCd'
+    )
     .where({req_disclosure: true});
 }
 

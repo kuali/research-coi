@@ -55,7 +55,11 @@ export async function getDisclosureForFinancialEntity(dbInfo, id) {
   return entity[0].disclosureId;
 }
 
-export async function verifyRelationshipIsUsers(dbInfo, userId, relationshipId) {
+export async function verifyRelationshipIsUsers(
+  dbInfo,
+  userId,
+  relationshipId
+) {
   const knex = getKnex(dbInfo);
 
   const rows = await knex

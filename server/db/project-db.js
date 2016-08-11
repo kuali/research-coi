@@ -26,7 +26,9 @@ import {
 import * as ProjectService from '../services/project-service/project-service';
 import { getGeneralConfig } from '../db/config-db';
 import Log from '../log';
-import { createAndSendNewProjectNotification } from '../services/notification-service/notification-service';
+import {
+  createAndSendNewProjectNotification
+} from '../services/notification-service/notification-service';
 import getKnex from './connection-manager';
 
 export async function getProjects (dbInfo, userId, trx) {
@@ -80,7 +82,9 @@ export async function getProjects (dbInfo, userId, trx) {
 async function shouldUpdateStatus(trx, disclosureId) {
   const generalConfig = await getGeneralConfig(trx);
 
-  const shouldUpdate = !generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities;
+  const shouldUpdate = (
+    !generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities
+  );
 
   if (shouldUpdate) {
     return true;
@@ -107,13 +111,24 @@ async function updateDisclosureStatus(trx, person, project, req) {
       type_cd: DISCLOSURE_TYPE.ANNUAL
     });
 
-  if (disclosure.length > 0 && await shouldUpdateStatus(trx, disclosure[0].id) && disclosure[0].statusCd === DISCLOSURE_STATUS.UP_TO_DATE) {
+  if (
+    disclosure.length > 0 &&
+    await shouldUpdateStatus(trx, disclosure[0].id) &&
+    disclosure[0].statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+  ) {
     await trx('disclosure')
       .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
       .where({id: disclosure[0].id});
 
     try {
-      createAndSendNewProjectNotification(req.dbInfo, req.hostname, req.userInfo, disclosure[0].id, project, person);
+      createAndSendNewProjectNotification(
+        req.dbInfo,
+        req.hostname,
+        req.userInfo,
+        disclosure[0].id,
+        project,
+        person
+      );
     } catch (err) {
       Log.error(err);
     }
@@ -134,7 +149,10 @@ async function revertDisclosureStatus(trx, person, req, projectId) {
         type_cd: DISCLOSURE_TYPE.ANNUAL
       });
 
-    if (disclosure.length > 0 && disclosure[0].statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED) {
+    if (
+      disclosure.length > 0 &&
+      disclosure[0].statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+    ) {
       await trx('disclosure')
         .update({status_cd: DISCLOSURE_STATUS.UP_TO_DATE})
         .where({id: disclosure[0].id});
@@ -150,7 +168,11 @@ async function isProjectRequired(req, project, person) {
     sponsors: project.sponsors
   };
 
-  return await ProjectService.isProjectRequired(req.dbInfo, projectData, req.headers.authorization);
+  return await ProjectService.isProjectRequired(
+    req.dbInfo,
+    projectData,
+    req.headers.authorization
+  );
 }
 
 async function disableAllPersonsForProject(trx, projectId, req) {
@@ -170,7 +192,14 @@ async function disableAllPersonsForProject(trx, projectId, req) {
   }
 }
 
-async function updateProjectPerson(trx, person, project, isRequired, isNew, req) {
+async function updateProjectPerson(
+  trx,
+  person,
+  project,
+  isRequired,
+  isNew,
+  req
+) {
   await trx('project_person')
     .update({
       active: true,
@@ -218,10 +247,19 @@ async function deactivateProjectPerson(trx, person, projectId, req) {
   await revertDisclosureStatus(trx, person, req, projectId);
 }
 
-async function deactivateProjectPersons(trx, existingPersons, persons, projectId, req) {
+async function deactivateProjectPersons(
+  trx,
+  existingPersons,
+  persons,
+  projectId,
+  req
+) {
   const filtered = existingPersons.filter(pr => {
     return persons.find(person => {
-      return person.personId === pr.personId && person.sourcePersonType === pr.source_person_type;
+      return (
+        person.personId === pr.personId &&
+        person.sourcePersonType === pr.source_person_type
+      );
     }) === undefined;
   });
   
@@ -246,19 +284,35 @@ async function saveProjectPersons(trx, project, req) {
       const isRequired = await isProjectRequired(req, project, person);
       Log.info('post isProjectRequired');
       const existingPerson = existingPersons.find(pr => {
-        return pr.personId === person.personId && pr.source_person_type === person.sourcePersonType;
+        return (
+          pr.personId === person.personId &&
+          pr.source_person_type === person.sourcePersonType
+        );
       });
 
       if (existingPerson) {
         Log.info('pre updateProjectPerson');
-        return await updateProjectPerson(trx, person, project, isRequired, existingPerson.new, req);
+        return await updateProjectPerson(
+          trx,
+          person,
+          project,
+          isRequired,
+          existingPerson.new,
+          req
+        );
       }
       Log.info('pre insertProjectPerson');
       return await insertProjectPerson(trx, person, project, isRequired, req);
     });
 
     Log.info('pre deactivateProjectPersons');
-    await deactivateProjectPersons(trx, existingPersons, project.persons, project.id, req);
+    await deactivateProjectPersons(
+      trx,
+      existingPersons,
+      project.persons,
+      project.id,
+      req
+    );
     Log.info('post deactivateProjectPersons');
 
     Log.info('pre queries');
@@ -308,7 +362,13 @@ async function saveNewProjects(trx, project, req) {
       Log.info('pre isProjectRequired');
       const isRequired = await isProjectRequired(req, project, person);
       Log.info('post isProjectRequired');
-      const id = await insertProjectPerson(trx, person, project, isRequired, req);
+      const id = await insertProjectPerson(
+        trx,
+        person,
+        project,
+        isRequired,
+        req
+      );
       Log.info('post insertProjectPerson');
       person.id = id;
     }
@@ -366,28 +426,35 @@ export function saveProjects(req, project) {
 }
 
 async function getStatus(trx, projectPerson, dbInfo, authHeader) {
+  const {disposition, person_id, disclosureId, projectId} = projectPerson;
   const disclosureStatus = {
-    userId: projectPerson.person_id,
-    disposition: projectPerson.disposition ? projectPerson.disposition : NO_DISPOSITION_DESCRIPTION
+    userId: person_id,
+    disposition: disposition ? disposition : NO_DISPOSITION_DESCRIPTION
   };
 
-  const isRequired = await ProjectService.isProjectRequired(dbInfo, projectPerson, authHeader);
+  const isRequired = await ProjectService.isProjectRequired(
+    dbInfo,
+    projectPerson,
+    authHeader
+  );
 
   if (!isRequired) {
-    disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED;
+    disclosureStatus.status = (
+      PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED
+    );
     return disclosureStatus;
   }
 
   const disclosure = await trx('disclosure as d')
     .select('ds.description as status', 'd.id')
     .innerJoin('disclosure_status as ds', 'ds.status_cd', 'd.status_cd')
-    .where({user_id: projectPerson.person_id});
+    .where({user_id: person_id});
 
   const declaration = await trx('declaration')
     .select('disclosure_id')
     .where({
-      project_id: projectPerson.projectId,
-      disclosure_id: projectPerson.disclosureId
+      project_id: projectId,
+      disclosure_id: disclosureId
     });
 
   if (disclosure[0]) {
@@ -406,7 +473,12 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
   return disclosureStatus;
 }
 
-async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) {
+async function getProjectPersons(
+  trx,
+  sourceSystem,
+  sourceIdentifier,
+  personId
+) {
   const criteria = {
     'p.source_system': sourceSystem,
     'p.source_identifier': sourceIdentifier
@@ -443,7 +515,9 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
     .whereIn('project_id', projectIds);
 
   sponsors.forEach(sponsor => {
-    const project = projectPersons.find(prj => prj.projectId === sponsor.projectId);
+    const project = projectPersons.find(
+      prj => prj.projectId === sponsor.projectId
+    );
     if (project) {
       if (!project.sponsors) {
         project.sponsors = [];
@@ -455,11 +529,20 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
   return projectPersons;
 }
 
-export function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier, authHeader) {
+export function getProjectStatuses(
+  dbInfo,
+  sourceSystem,
+  sourceIdentifier,
+  authHeader
+) {
   try {
     const knex = getKnex(dbInfo);
     return knex.transaction(async function(trx) {
-      const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier);
+      const projectPersons = await getProjectPersons(
+        trx,
+        sourceSystem,
+        sourceIdentifier
+      );
       const results = [];
       if (Array.isArray(projectPersons)) {
         for (let i = 0; i < projectPersons.length; i++) {
@@ -474,11 +557,22 @@ export function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier, authH
   }
 }
 
-export function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, personId, authHeader) {
+export function getProjectStatus(
+  dbInfo,
+  sourceSystem,
+  sourceIdentifier,
+  personId,
+  authHeader
+) {
   try {
     const knex = getKnex(dbInfo);
     return knex.transaction(async function(trx) {
-      const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier, personId);
+      const projectPersons = await getProjectPersons(
+        trx,
+        sourceSystem,
+        sourceIdentifier,
+        personId
+      );
 
       if (projectPersons[0]) {
         return await getStatus(trx, projectPersons[0], dbInfo, authHeader);
@@ -492,10 +586,11 @@ export function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, personI
 }
 
 export function updateProjectPersonDispositionType(dbInfo, projectPerson, id) {
+  const {dispositionTypeCd} = projectPerson;
   try {
     const knex = getKnex(dbInfo);
     return knex('project_person').update({
-      disposition_type_cd: projectPerson.dispositionTypeCd ? projectPerson.dispositionTypeCd : null
+      disposition_type_cd: dispositionTypeCd ? dispositionTypeCd : null
     }).where({id});
   } catch (err) {
     return Promise.reject(err);

@@ -27,7 +27,13 @@ import {verifyRelationshipIsUsers} from './common-db';
 import * as FileService from '../services/file-service/file-service';
 import getKnex from './connection-manager';
 
-export function getTravelLogEntries(dbInfo, userId, sortColumn, sortDirection, filter) {
+export function getTravelLogEntries(
+  dbInfo,
+  userId,
+  sortColumn,
+  sortDirection,
+  filter
+) {
   const knex = getKnex(dbInfo);
 
   let dbSortColumn;
@@ -69,10 +75,17 @@ export function getTravelLogEntries(dbInfo, userId, sortColumn, sortDirection, f
 
   switch (filter) {
     case 'disclosed':
-      query.andWhere('r.active', true).andWhere('r.status', RELATIONSHIP_STATUS.DISCLOSED);
+      query
+        .andWhere('r.active', true)
+        .andWhere('r.status', RELATIONSHIP_STATUS.DISCLOSED);
       break;
     case 'notYetDisclosed':
-      query.whereIn('r.status', [RELATIONSHIP_STATUS.IN_PROGRESS, RELATIONSHIP_STATUS.PENDING]).andWhere('r.active', true);
+      query
+        .whereIn(
+          'r.status',
+          [RELATIONSHIP_STATUS.IN_PROGRESS, RELATIONSHIP_STATUS.PENDING]
+        )
+        .andWhere('r.active', true);
       break;
     case 'archived':
       query.andWhere('r.active', false);
@@ -173,15 +186,35 @@ export function createTravelLogEntry(dbInfo, entry, userInfo) {
     .then(disclosure => {
       if (disclosure[0]) {
         if (isSubmitted(disclosure[0].status_cd) === true) {
-          return handleTravelLogEntry(trx, disclosure[0].id, entry, RELATIONSHIP_STATUS.PENDING);
+          return handleTravelLogEntry(
+            trx,
+            disclosure[0].id,
+            entry,
+            RELATIONSHIP_STATUS.PENDING
+          );
         }
 
-        return handleTravelLogEntry(trx, disclosure[0].id, entry, RELATIONSHIP_STATUS.IN_PROGRESS);
+        return handleTravelLogEntry(
+          trx,
+          disclosure[0].id,
+          entry,
+          RELATIONSHIP_STATUS.IN_PROGRESS
+        );
       }
 
       return createAnnualDisclosure(trx, userInfo).then(disclosureId => {
-        return createNewEntity(trx, disclosureId, entry, RELATIONSHIP_STATUS.IN_PROGRESS).then(entityId => {
-          return createNewRelationship(trx, entityId, entry, RELATIONSHIP_STATUS.IN_PROGRESS);
+        return createNewEntity(
+          trx,
+          disclosureId,
+          entry,
+          RELATIONSHIP_STATUS.IN_PROGRESS
+        ).then(entityId => {
+          return createNewRelationship(
+            trx,
+            entityId,
+            entry,
+            RELATIONSHIP_STATUS.IN_PROGRESS
+          );
         });
       });
     });
@@ -319,7 +352,9 @@ export function deleteTravelLogEntry(dbInfo, id, userInfo) {
         });
       }
 
-      throw new Error(`${userInfo.userName} is unauthorized to edit this record`);
+      throw new Error(
+        `${userInfo.userName} is unauthorized to edit this record`
+      );
     });
 }
 
@@ -420,27 +455,45 @@ function updateRelationshipEntityId(trx, id, entityId) {
 
 function updateEntity(trx, dbInfo, entry, id, schoolId) {
   return getRelationship(trx, id).then(relationship => {
-    return getEntityNameFromId(trx, relationship[0].fin_entity_id).then(entityName => {
-      if (entry.entityName === entityName || !entry.entityName) {
-        return undefined;
-      }
+    return getEntityNameFromId(trx, relationship[0].fin_entity_id)
+      .then(entityName => {
+        if (entry.entityName === entityName || !entry.entityName) {
+          return undefined;
+        }
 
-      return getAnnualDisclosureForUser(trx, schoolId).then(disclosure => {
-        return getEntityIdFromName(trx, entry.entityName, disclosure[0].id).then(entityId => {
-          if (entityId) {
-            return updateRelationshipEntityId(trx, id, entityId).then(() => {
-              return handleOldEntity(trx, dbInfo, relationship[0].fin_entity_id);
-            });
-          }
+        return getAnnualDisclosureForUser(trx, schoolId)
+          .then(disclosure => {
+            return getEntityIdFromName(trx, entry.entityName, disclosure[0].id)
+              .then(entityId => {
+                if (entityId) {
+                  return updateRelationshipEntityId(trx, id, entityId)
+                    .then(() => {
+                      return handleOldEntity(
+                        trx,
+                        dbInfo,
+                        relationship[0].fin_entity_id
+                      );
+                    });
+                }
 
-          return createNewEntity(trx, disclosure[0].id, entry, RELATIONSHIP_STATUS.IN_PROGRESS).then(newEntityId => {
-            return updateRelationshipEntityId(trx, id, newEntityId).then(() => {
-              return handleOldEntity(trx, dbInfo, relationship[0].fin_entity_id);
-            });
+                return createNewEntity(
+                  trx,
+                  disclosure[0].id,
+                  entry,
+                  RELATIONSHIP_STATUS.IN_PROGRESS
+                ).then(newEntityId => {
+                  return updateRelationshipEntityId(trx, id, newEntityId)
+                    .then(() => {
+                      return handleOldEntity(
+                        trx,
+                        dbInfo,
+                        relationship[0].fin_entity_id
+                      );
+                    });
+                });
+              });
           });
-        });
       });
-    });
   });
 }
 
