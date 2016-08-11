@@ -74,7 +74,7 @@ export class DisclosureListItem extends React.Component {
       disclosure.configId
     );
     return (
-      <Link to={`/coi/admin/detailview/${this.props.disclosure.id}/${disclosure.statusCd}`}>
+      <Link to={{pathname: `/coi/admin/detailview/${this.props.disclosure.id}/${disclosure.statusCd}`}}>
         <li className={classes}>
           {/*<div className={styles.disclosureType}>
             {this.highlightSearchTerm(disclosure.type)}

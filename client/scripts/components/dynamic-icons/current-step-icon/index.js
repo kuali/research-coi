@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/* eslint-disable */
+/* eslint-disable react/jsx-closing-bracket-location, max-len */
 
 import React from 'react';
 
 export function CurrentStepIcon(props) {
   return (
-    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 42 42" enable-background="new 0 0 42 42" role="img" aria-labelledby="title">
+    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 42 42" enableBackground="new 0 0 42 42" role="img" aria-labelledby="title">
       <title id="title">Current Step Icon</title>
       <g>
         <circle fill={props.color} cx="21" cy="20.9" r="6.1"/>

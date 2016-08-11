@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import {browserHistory} from 'react-router';
 import {DisclosureActions} from '../actions/disclosure-actions';
 import alt from '../alt';
 import {
@@ -31,7 +32,6 @@ import {
 } from '../../../coi-constants';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
-import history from '../history';
 import ConfigStore from './config-store';
 
 const cloneObject = original => {
@@ -1383,7 +1383,7 @@ class _DisclosureStore {
           this.resetDisclosure();
           this.toggleConfirmationMessage();
           // this.emitChange();
-          history.replaceState(null, '/coi/dashboard');
+          browserHistory.replace('/coi/dashboard');
         }
       }));
   }

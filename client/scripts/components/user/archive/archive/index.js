@@ -202,10 +202,10 @@ export class Archive extends React.Component {
     let updateDisclosureLink;
     if (isEditable) {
       updateDisclosureLink = (
-        <Link
-          to={"/coi/disclosure"}
-          query={{type: DISCLOSURE_TYPE.ANNUAL}}
-        >
+        <Link to={{
+          pathname: '/coi/disclosure',
+          query: {type: DISCLOSURE_TYPE.ANNUAL}
+        }}>
           <div className={`${styles.sidebarButton} ${styles.firstButton}`}>
             <div className={styles.sidebarTopText}>Update</div>
             <div className={styles.sidebarBottomText}>Annual Disclosure</div>
@@ -225,7 +225,7 @@ export class Archive extends React.Component {
         <div className={`flexbox row fill ${styles.container} ${this.props.className}`}>
           <span className={styles.sidebar}>
             {updateDisclosureLink}
-            <Link to={"/coi/dashboard"}>
+            <Link to={{pathname: '/coi/dashboard'}}>
               <div className={linkClasses}>
                 <div className={styles.sidebarTopText}>Back To</div>
                 <div className={styles.sidebarBottomText}>Dashboard</div>

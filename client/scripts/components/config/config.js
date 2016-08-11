@@ -18,7 +18,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route} from 'react-router';
+import {Router, Route, browserHistory} from 'react-router';
 import GeneralConfiguration from './general/general';
 import QuestionnaireCustomization from './questionnaire/questionnaire';
 import EntitiesQuestionnaire from './entities/questionnaire';
@@ -30,7 +30,20 @@ import ConfigStore from '../../stores/config-store';
 import ColorStore from '../../stores/color-store'; // eslint-disable-line no-unused-vars
 import DisclosureRequirements from './disclosure-requirements/disclosure-requirements';
 import CustomizeNotifications from './customize-notifications/customize-notifications';
-import history from '../../history';
+
+const router = (
+  <Router history={browserHistory}>
+    <Route path="/coi/config/general" component={GeneralConfiguration} />
+    <Route path="/coi/config/customize-notifications" component={CustomizeNotifications} />
+    <Route path="/coi/config/disclosure-requirements" component={DisclosureRequirements} />
+    <Route path="/coi/config/questionnaire" component={QuestionnaireCustomization} />
+    <Route path="/coi/config/entities" component={EntitiesQuestionnaire} />
+    <Route path="/coi/config/relationship" component={RelationshipCustomization} />
+    <Route path="/coi/config/declarations" component={DeclarationsCustomization} />
+    <Route path="/coi/config/certification" component={CertificationCustomization} />
+    <Route path="/coi/config*" component={GeneralConfiguration} />
+  </Router>
+);
 
 function latestState() {
   return {
@@ -79,19 +92,7 @@ class App extends React.Component {
         </div>
       );
     }
-    return (
-      <Router history={history}>
-        <Route path="/coi/config/general" component={GeneralConfiguration} />
-        <Route path="/coi/config/customize-notifications" component={CustomizeNotifications} />
-        <Route path="/coi/config/disclosure-requirements" component={DisclosureRequirements} />
-        <Route path="/coi/config/questionnaire" component={QuestionnaireCustomization} />
-        <Route path="/coi/config/entities" component={EntitiesQuestionnaire} />
-        <Route path="/coi/config/relationship" component={RelationshipCustomization} />
-        <Route path="/coi/config/declarations" component={DeclarationsCustomization} />
-        <Route path="/coi/config/certification" component={CertificationCustomization} />
-        <Route path="/coi/config*" component={GeneralConfiguration} />
-      </Router>
-    );
+    return router;
   }
 }
 

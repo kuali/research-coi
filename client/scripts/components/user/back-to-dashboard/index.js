@@ -22,7 +22,7 @@ import {Link} from 'react-router';
 
 export default function BackToDashboard(props) {
   return (
-    <Link to={"/coi/dashboard"}>
+    <Link to={{pathname: '/coi/dashboard'}}>
       <div className={`${styles.container} ${props.className}`}>
         <div>
           <i className={'fa fa-arrow-left'} />
