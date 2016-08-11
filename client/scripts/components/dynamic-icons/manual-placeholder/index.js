@@ -22,7 +22,7 @@ import React from 'react';
 
 export function ManualPlaceholder(props) {
   return (
-    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 350 350" enable-background="new 0 0 350 350">
+    <svg className={props.className} version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 350 350" enableBackground="new 0 0 350 350">
       <g>
         <path fill={props.colorOne} d="M328.4,173.8c0,3.9-0.1,7.8-0.4,11.6c0,0.1,0,0.1,0,0.2c0,0,0,0.1,0,0.1c-6.1,79.3-72.3,141.7-153.1,141.7
               c-4.7,0-9.4-0.2-14-0.6c-2-0.2-3.9-0.4-5.9-0.6c-75.4-9.8-133.7-74.2-133.7-152.3C21.2,89,90,20.2,174.8,20.2
