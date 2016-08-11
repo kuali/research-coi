@@ -18,7 +18,7 @@
 
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import ShallowTestUtils from 'react-shallow-testutils';
+import {findWithType} from 'react-shallow-testutils';
 import assert from 'assert';
 import AutoApproveDisclosure from '../../../../../../client/scripts/components/config/general/auto-approve-disclosure';
 
@@ -31,7 +31,7 @@ describe('UploadAttachmentsPanel', () => {
       />
     );
     const component = renderer.getRenderOutput();
-    assert.equal(ShallowTestUtils.findWithType(component,'input').props.checked, false);
+    assert.equal(findWithType(component,'input').props.checked, false);
   });
 
   it('should render unchecked if checked is false', () => {
@@ -42,7 +42,7 @@ describe('UploadAttachmentsPanel', () => {
       />
     );
     const component = renderer.getRenderOutput();
-    assert.equal(ShallowTestUtils.findWithType(component,'input').props.checked, false);
+    assert.equal(findWithType(component,'input').props.checked, false);
   });
 
   it('should render checked if checked is true', () => {
@@ -53,6 +53,6 @@ describe('UploadAttachmentsPanel', () => {
       />
     );
     const component = renderer.getRenderOutput();
-    assert.equal(ShallowTestUtils.findWithType(component,'input').props.checked, true);
+    assert.equal(findWithType(component,'input').props.checked, true);
   });
 });

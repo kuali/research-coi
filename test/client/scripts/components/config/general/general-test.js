@@ -18,7 +18,7 @@
 
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
-import ShallowTestUtils from 'react-shallow-testutils';
+import {findWithType, findAllWithType} from 'react-shallow-testutils';
 import General from '../../../../../../client/scripts/components/config/general/general';
 import Panel from '../../../../../../client/scripts/components/config/panel';
 import DisclosureTypes from '../../../../../../client/scripts/components/config/general/disclosure-types';
@@ -31,8 +31,8 @@ describe('General', () => {
     const renderer = TestUtils.createRenderer();
     renderer.render(<General/>, configState);
     const component = renderer.getRenderOutput();
-    assert(ShallowTestUtils.findWithType(component,DisclosureTypes));
-    assert.equal(ShallowTestUtils.findAllWithType(component,Panel).length,4);
-    assert.equal(ShallowTestUtils.findAllWithType(component,Checkbox).length,6);
+    assert(findWithType(component,DisclosureTypes));
+    assert.equal(findAllWithType(component,Panel).length,4);
+    assert.equal(findAllWithType(component,Checkbox).length,6);
   });
 });
