@@ -18,7 +18,8 @@
 
 import {
   getCoreTemplateIdByTemplateId,
-  getProjectTypeDescription
+  getProjectTypeDescription,
+  getConfig
 } from '../../db/config-db';
 import { getDisclosureInfoForNotifications, getArchivedDisclosureInfoForNotifications } from '../../db/disclosure-db';
 import { getProjects } from '../../db/project-db';
@@ -249,7 +250,8 @@ async function getProject(dbInfo, hostname, project, person) {
 
 async function getProjectsInformation(dbinfo, hostname, disclosure) {
   const projects = await getProjects(dbinfo, disclosure.userId);
-  let projectInformation = '<table><tr><th>Name</th><th>Sponsors</th><th>Project type</th><th>Project Disposition</th></tr>';
+  const config = await getConfig(dbinfo, hostname);
+  let projectInformation = '<table><tr><th>Project Number</th><th>Title</th><th>Sponsors</th><th>Project Type</th><th>Project Disposition</th></tr>';
   for (const project of projects) {
     let sponsorString = '';
     let projectType;
@@ -262,9 +264,10 @@ async function getProjectsInformation(dbinfo, hostname, disclosure) {
     try {
       projectType = await getProjectTypeDescription(dbinfo, project.typeCd);
       declaration = await getDeclarationWithProjectId(dbinfo, project.id);
-      const adminRelationshipCd = declaration.adminRelationshipCd ? declaration.adminRelationshipCd : '';
-      projectInformation += `<tr><td>${project.name}</td><td>${sponsorString}</td>`;
-      projectInformation += `<td>${projectType}</td><td> ${adminRelationshipCd}</td></tr>`;
+      const dispositionTypes = config.dispositionTypes.filter(type => type.typeCd === declaration[0].adminRelationshipCd);
+      const dispositionType = dispositionTypes[0].description ? dispositionTypes[0].description : '';
+      projectInformation += `<tr><td>${project.sourceIdentifier}</td><td>${project.name}</td><td>${sponsorString}</td>`;
+      projectInformation += `<td>${projectType}</td><td> ${dispositionType}</td></tr>`;
     } catch (err) {
       return Promise.reject(err);
     }

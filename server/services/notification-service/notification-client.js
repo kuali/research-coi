@@ -63,7 +63,6 @@ export function getRecipients(dbInfo, recipients) {
 export async function getTemplates(dbInfo, hostname) {
   try {
     const notificationsInfo = getNotificationsInfo(dbInfo);
-
     const url = notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname;
     const response = await request.get(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
       .set('Authorization',`Bearer ${notificationsInfo.systemAuthToken}`);
