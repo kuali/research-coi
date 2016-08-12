@@ -33,7 +33,7 @@ export function getFile(dbInfo, key, callback) {
   return stream;
 }
 
-export function deleteFile(key, callback) {
+export function deleteFile(dbInfo, key, callback) {
   fs.unlink(path.join(filePath, cleanKey(key)), err => {
     callback(err);
   });

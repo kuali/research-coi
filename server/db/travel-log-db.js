@@ -258,11 +258,11 @@ const deleteDbFiles = (trx, id) => {
   });
 };
 
-const deleteFileData = (files) => {
+const deleteFileData = (dbInfo, files) => {
   return Promise.all(
     files.map(file => {
       return new Promise((resolve, reject) => {
-        FileService.deleteFile(file.key, err => {
+        FileService.deleteFile(dbInfo, file.key, err => {
           if (err) {
             reject(err);
           } else {
@@ -274,10 +274,10 @@ const deleteFileData = (files) => {
   );
 };
 
-const deleteEntityFiles = (trx, id) => {
+const deleteEntityFiles = (trx, dbInfo, id) => {
   return getEntityFiles(trx, id).then(files => {
     return deleteDbFiles(trx, id).then(() => {
-      return deleteFileData(files);
+      return deleteFileData(dbInfo, files);
     });
   });
 };
@@ -288,14 +288,14 @@ const deleteEntity = (trx, id) => {
   .where('id', id);
 };
 
-const deleteEntityIfAllRelationshipsAreDelete = (trx, entityId) => {
+const deleteEntityIfAllRelationshipsAreDelete = (dbInfo, trx, entityId) => {
   return trx('relationship')
     .select('id')
     .where('fin_entity_id', entityId)
     .then(rows => {
       if (!rows.length) {
         return deleteEntityAnswers(trx, entityId).then(() => {
-          return deleteEntityFiles(trx, entityId).then(() => {
+          return deleteEntityFiles(trx, dbInfo, entityId).then(() => {
             return deleteEntity(trx, entityId);
           });
         });
@@ -312,7 +312,7 @@ export const deleteTravelLogEntry = (dbInfo, id, userInfo) => {
           return getRelationshipsEntity(trx, id).then(entityId => {
             return deleteTravelRelationship(trx, id).then(() => {
               return deleteRelationship(trx, id).then(() => {
-                return deleteEntityIfAllRelationshipsAreDelete(trx, entityId);
+                return deleteEntityIfAllRelationshipsAreDelete(dbInfo, trx, entityId);
               });
             });
           });
@@ -377,8 +377,8 @@ const updateRelationship = (trx, entry, id) => {
   return undefined;
 };
 
-const handleOldEntity = (trx, entityId) => {
-  return deleteEntityIfAllRelationshipsAreDelete(trx, entityId);
+const handleOldEntity = (trx, dbInfo, entityId) => {
+  return deleteEntityIfAllRelationshipsAreDelete(dbInfo, trx, entityId);
 };
 
 const getEntityNameFromId = (trx, id) => {
@@ -418,7 +418,7 @@ const updateRelationshipEntityId = (trx, id, entityId) => {
   .where('id', id);
 };
 
-const updateEntity = (trx, entry, id, schoolId) => {
+const updateEntity = (trx, dbInfo, entry, id, schoolId) => {
   return getRelationship(trx, id).then(relationship => {
     return getEntityNameFromId(trx, relationship[0].fin_entity_id).then(entityName => {
       if (entry.entityName === entityName || !entry.entityName) {
@@ -429,13 +429,13 @@ const updateEntity = (trx, entry, id, schoolId) => {
         return getEntityIdFromName(trx, entry.entityName, disclosure[0].id).then(entityId => {
           if (entityId) {
             return updateRelationshipEntityId(trx, id, entityId).then(() => {
-              return handleOldEntity(trx, relationship[0].fin_entity_id);
+              return handleOldEntity(trx, dbInfo, relationship[0].fin_entity_id);
             });
           }
 
           return createNewEntity(trx, disclosure[0].id, entry, RELATIONSHIP_STATUS.IN_PROGRESS).then(newEntityId => {
             return updateRelationshipEntityId(trx, id, newEntityId).then(() => {
-              return handleOldEntity(trx, relationship[0].fin_entity_id);
+              return handleOldEntity(trx, dbInfo, relationship[0].fin_entity_id);
             });
           });
         });
@@ -453,7 +453,7 @@ export const updateTravelLogEntry = (dbInfo, entry, id, userInfo) => {
         return Promise.all([
           updateTravelRelationship(trx, entry, id),
           updateRelationship(trx, entry, id),
-          updateEntity(trx, entry, id, userInfo.schoolId)
+          updateEntity(trx, dbInfo, entry, id, userInfo.schoolId)
         ]).then(() => {
           return entry;
         });

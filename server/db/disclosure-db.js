@@ -307,7 +307,7 @@ export const saveExistingFinancialEntity = (dbInfo, userInfo, entityId, body, fi
                           .del()
                           .then(() => {
                             return new Promise((resolve, reject) => {
-                              FileService.deleteFile(result.key, err => {
+                              FileService.deleteFile(dbInfo, result.key, err => {
                                 if (err) {
                                   reject(err);
                                 } else {

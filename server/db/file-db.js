@@ -148,7 +148,7 @@ export const deleteFiles = (dbInfo, userInfo, fileId) => {
         .where(criteria)
         .then(() => {
           return new Promise((resolve, reject) => {
-            FileService.deleteFile(file[0].key, err => {
+            FileService.deleteFile(dbInfo, file[0].key, err => {
               if (err) {
                 reject(err);
               } else {
