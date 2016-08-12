@@ -42,11 +42,11 @@ export function getFile(dbInfo, key, callback) {
   return client.getFile(dbInfo, key, callback);
 }
 
-export function deleteFile(key, callback) {
+export function deleteFile(dbInfo, key, callback) {
   if (!client) {
     Log.error('No file service configured');
     return;
   }
-  client.deleteFile(key, callback);
+  client.deleteFile(dbInfo, key, callback);
 }
 
