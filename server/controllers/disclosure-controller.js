@@ -423,8 +423,12 @@ export const init = app => {
   /**
     User can only retrieve items if this disclosure is theirs
   */
-  app.get('/api/coi/disclosures/:id/pi-review-items', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await PIReviewDB.getPIReviewItems(req.dbInfo, req.userInfo, req.params.id);
+  app.get('/api/coi/disclosures/:id/pi-review-items', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await PIReviewDB.getPIReviewItems(
+      req.knex,
+      req.userInfo,
+      req.params.id
+    );
     res.send(result);
   }));
 

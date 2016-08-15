@@ -278,7 +278,7 @@ async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
 
     try {
       projectType = await getProjectTypeDescription(knex, project.typeCd);
-      declaration = await getDeclarationWithProjectId(dbinfo, project.id);
+      declaration = await getDeclarationWithProjectId(knex, project.id);
       const dispositionTypes = config.dispositionTypes.filter(type => type.typeCd === declaration[0].adminRelationshipCd);
       const dispositionType = dispositionTypes[0].description ? dispositionTypes[0].description : '';
       projectInformation += `<tr><td>${project.sourceIdentifier}</td><td>${project.name}</td><td>${sponsorString}</td>`;

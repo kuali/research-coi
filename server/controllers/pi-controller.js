@@ -31,9 +31,9 @@ import wrapAsync from './wrap-async';
 import Log from '../log';
 import useKnex from '../middleware/request-knex';
 
-async function verifyReviewIsForUser({dbInfo, params, userInfo}, res, next) {
+async function verifyReviewIsForUser({knex, params, userInfo}, res, next) {
   const isAllowed = await PIReviewDB.verifyReviewIsForUser(
-    dbInfo,
+    knex,
     params.reviewId,
     userInfo.schoolId
   );
@@ -66,11 +66,12 @@ export const init = app => {
   app.post(
     '/api/coi/pi-response/:reviewId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) =>
+    wrapAsync(async ({knex, params, userInfo, body}, res) =>
     {
       const result = await PIReviewDB.recordPIResponse(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         body.comment
@@ -85,10 +86,11 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
       const result = await PIReviewDB.reviseQuestion(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         body.answer
@@ -103,10 +105,11 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId/entity-question/:questionId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
       const result = await PIReviewDB.reviseEntityQuestion(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         params.questionId,
@@ -123,10 +126,11 @@ export const init = app => {
   app.post(
     '/api/coi/pi-revise/:reviewId/entity-relationship',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
       const result = await PIReviewDB.addRelationship(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         body
@@ -142,10 +146,11 @@ export const init = app => {
   app.delete(
     '/api/coi/pi-revise/:reviewId/entity-relationship/:relationshipId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo}, res) => {
+    wrapAsync(async ({knex, params, userInfo}, res) => {
       await PIReviewDB.removeRelationship(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         params.relationshipId
@@ -161,10 +166,11 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId/declaration',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
       await PIReviewDB.reviseDeclaration(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         body
@@ -180,10 +186,11 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId/subquestion-answer/:subQuestionId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
       await PIReviewDB.reviseSubQuestion(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         params.subQuestionId,
@@ -200,10 +207,11 @@ export const init = app => {
   app.delete(
     '/api/coi/pi-revise/:reviewId/question-answers',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
       await PIReviewDB.deleteAnswers(
-        dbInfo,
+        knex,
         userInfo,
         params.reviewId,
         body.toDelete
@@ -220,10 +228,10 @@ export const init = app => {
     allowedRoles('ANY'),
     useKnex,
     wrapAsync(async (req, res) => {
-      const {dbInfo, params, userInfo, hostname, headers, body} = req;
+      const {dbInfo, params, userInfo, hostname, headers, body, knex} = req;
 
       const isSubmitter = isDisclosureUsers(
-        req.knex,
+        knex,
         params.disclosureId,
         userInfo.schoolId
       );
@@ -236,7 +244,7 @@ export const init = app => {
       if (body && Array.isArray(body.responses)) {
         for (const response of body.responses) {
           await PIReviewDB.recordPIResponse(
-            dbInfo,
+            knex,
             userInfo,
             response.reviewId,
             response.comment
@@ -245,7 +253,7 @@ export const init = app => {
       }
 
       await PIReviewDB.reSubmitDisclosure(
-        dbInfo,
+        knex,
         userInfo,
         params.disclosureId
       );
@@ -272,7 +280,7 @@ export const init = app => {
     '/api/coi/disclosures/:id/pi-responses',
     allowedRoles([ADMIN, REVIEWER]),
     useKnex,
-    wrapAsync(async ({dbInfo, params, userInfo, knex}, res) => {
+    wrapAsync(async ({knex, params, userInfo}, res) => {
       if (userInfo.coiRole === ROLES.REVIEWER) {
         const reviewerDisclosureIds = await getDisclosureIdsForReviewer(
           knex,
@@ -285,7 +293,7 @@ export const init = app => {
       }
 
       const result = await PIReviewDB.getPIResponseInfo(
-        dbInfo,
+        knex,
         params.id
       );
       res.send(result);
