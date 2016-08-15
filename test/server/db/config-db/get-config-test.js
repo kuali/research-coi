@@ -45,7 +45,7 @@ describe('getConfig', () => {
       active: 1
     });
 
-    config = await ConfigDB.getConfig({}, 'goblins-tst.kuali.dev');
+    config = await ConfigDB.getConfig({}, knex, 'goblins-tst.kuali.dev');
   });
 
   describe('matrixTypes', () => {

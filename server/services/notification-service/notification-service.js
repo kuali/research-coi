@@ -212,7 +212,8 @@ async function getTemplate(dbInfo, templateId) {
   if (!areNotificationsEnabled(dbInfo)) {
     return Promise.resolve();
   }
-  const template = await getCoreTemplateIdByTemplateId(dbInfo, templateId);
+  const knex = getKnex(dbInfo);
+  const template = await getCoreTemplateIdByTemplateId(knex, templateId);
 
   if (template.active === 0) {
     return Promise.resolve();
@@ -243,8 +244,9 @@ async function getReviewer(dbInfo, hostname, reviewerId) {
 }
 
 async function getProject(dbInfo, hostname, project, person) {
+  const knex = getKnex(dbInfo);
   const projectInfo = JSON.parse(JSON.stringify(project));
-  projectInfo.type = await getProjectTypeDescription(dbInfo, project.typeCode);
+  projectInfo.type = await getProjectTypeDescription(knex, project.typeCode);
   projectInfo.person = JSON.parse(JSON.stringify(person));
   projectInfo.person.info = await getUserInfo(dbInfo, hostname, person.personId);
   const pi = projectInfo.persons.find(p => p.roleCode === PI_ROLE_CODE);
@@ -252,9 +254,9 @@ async function getProject(dbInfo, hostname, project, person) {
   return projectInfo;
 }
 
-async function getProjectsInformation(dbinfo, hostname, disclosure) {
+async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
   const projects = await getProjects(dbinfo, disclosure.userId);
-  const config = await getConfig(dbinfo, hostname);
+  const config = await getConfig(dbinfo, knex, hostname);
   let projectInformation = '<table><tr><th>Project Number</th><th>Title</th><th>Sponsors</th><th>Project Type</th><th>Project Disposition</th></tr>';
   for (const project of projects) {
     let sponsorString = '';
@@ -266,7 +268,7 @@ async function getProjectsInformation(dbinfo, hostname, disclosure) {
     sponsorString = sponsorString.replace(/, $/, '');
 
     try {
-      projectType = await getProjectTypeDescription(dbinfo, project.typeCd);
+      projectType = await getProjectTypeDescription(knex, project.typeCd);
       declaration = await getDeclarationWithProjectId(dbinfo, project.id);
       const dispositionTypes = config.dispositionTypes.filter(type => type.typeCd === declaration[0].adminRelationshipCd);
       const dispositionType = dispositionTypes[0].description ? dispositionTypes[0].description : '';
@@ -314,7 +316,7 @@ export async function createAndSendResubmitNotification(dbInfo, hostname, authHe
   return await createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, NOTIFICATION_TEMPLATES.RESUBMITTED.ID);
 }
 
-export async function createAndSendApproveNotification(dbInfo, hostname, userInfo, archiveId) {
+export async function createAndSendApproveNotification(dbInfo, knex, hostname, userInfo, archiveId) {
   try {
     const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.APPROVED.ID);
     if (!template) {
@@ -322,7 +324,7 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
     }
     const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
     let variables = await getVariables(dbInfo, hostname, disclosure);
-    const projectInformation = await getProjectsInformation(dbInfo, hostname, disclosure);
+    const projectInformation = await getProjectsInformation(dbInfo, knex, hostname, disclosure);
     variables = VariableService.addProjectInformation(projectInformation, variables);
     const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);

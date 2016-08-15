@@ -22,7 +22,6 @@ import {
   handleTemplates
 } from '../services/notification-service/notification-service';
 import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
-import getKnex from './connection-manager';
 import Log from '../log';
 
 const cachedConfigs = {};
@@ -276,10 +275,9 @@ export async function getGeneralConfig(knex) {
   };
 }
 
-export async function getConfig(dbInfo, hostname) {
+export async function getConfig(dbInfo, knex, hostname) {
   try {
     let config = {};
-    const knex = getKnex(dbInfo);
     const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
 
     config.matrixTypes = await createMatrixTypes(knex);
@@ -412,8 +410,7 @@ export async function saveEntityQuestionnaire(knex, questions) {
   );
 }
 
-export async function setConfig(dbInfo, userId, body, hostname) {
-  const knex = getKnex(dbInfo);
+export async function setConfig(dbInfo, knex, userId, body, hostname) {
   const config = snakeizeJson(body);
 
   if (config.disposition_types && Array.isArray(config.disposition_types)) {
@@ -541,8 +538,7 @@ export async function setConfig(dbInfo, userId, body, hostname) {
   return camelizeJson(config);
 }
 
-export function archiveConfig(dbInfo, userId, userName, config) {
-  const knex = getKnex(dbInfo);
+export function archiveConfig(knex, userId, userName, config) {
   return knex('config').insert({
     config: JSON.stringify(config),
     user_id: userId,
@@ -551,12 +547,11 @@ export function archiveConfig(dbInfo, userId, userName, config) {
   }, 'id');
 }
 
-export async function getArchivedConfig(dbInfo, id) {
+export async function getArchivedConfig(knex, id) {
   if (cachedConfigs[id]) {
     return cachedConfigs[id];
   }
 
-  const knex = getKnex(dbInfo);
   const result = await knex('config')
     .first(
       'config',
@@ -572,15 +567,13 @@ export async function getArchivedConfig(dbInfo, id) {
   return config;
 }
 
-export function getRequiredProjectRoles(dbInfo) {
-  const knex = getKnex(dbInfo);
+export function getRequiredProjectRoles(knex) {
   return knex('project_role')
     .select('source_role_cd as sourceRoleCd','project_type_cd as projectTypeCd')
     .where({req_disclosure: true});
 }
 
-export function getRequiredProjectStatuses(dbInfo) {
-  const knex = getKnex(dbInfo);
+export function getRequiredProjectStatuses(knex) {
   return knex('project_status')
     .select(
       'source_status_cd as sourceStatusCd',
@@ -589,16 +582,13 @@ export function getRequiredProjectStatuses(dbInfo) {
     .where({req_disclosure: true});
 }
 
-export function getRequiredProjectTypes(dbInfo) {
-  const knex = getKnex(dbInfo);
+export function getRequiredProjectTypes(knex) {
   return knex('project_type')
     .select('type_cd as typeCd')
     .where({req_disclosure: true});
 }
 
-export async function getProjectTypeDescription(dbInfo, typeCd) {
-  const knex = getKnex(dbInfo);
-
+export async function getProjectTypeDescription(knex, typeCd) {
   const projectType = await knex('project_type')
     .first('description')
     .where({type_cd: typeCd});
@@ -606,8 +596,7 @@ export async function getProjectTypeDescription(dbInfo, typeCd) {
   return projectType.description;
 }
 
-export async function getCoreTemplateIdByTemplateId(dbInfo, templateId) {
-  const knex = getKnex(dbInfo);
+export async function getCoreTemplateIdByTemplateId(knex, templateId) {
   const template = await knex('notification_template')
     .first('core_template_id as coreTemplateId', 'active')
     .where({template_id: templateId});

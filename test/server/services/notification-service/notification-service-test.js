@@ -311,7 +311,13 @@ describe('NotificationService', () => {
 
       archiveId = archiveIds[0];
 
-      results = await NotificationService.createAndSendApproveNotification({},'test.com', {id: '5678'}, archiveId);
+      results = await NotificationService.createAndSendApproveNotification(
+        {},
+        knex,
+        'test.com',
+        {id: '5678'},
+        archiveId
+      );
     });
 
     it('should pull the correct core template id from the db', () => {

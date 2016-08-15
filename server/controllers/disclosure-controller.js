@@ -277,10 +277,16 @@ export const init = app => {
     res.sendStatus(ACCEPTED);
   }));
 
-  app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+  app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
     const archiveId = await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id, req.headers.authorization);
     try {
-      createAndSendApproveNotification(req.dbInfo, req.hostname, req.userInfo, archiveId);
+      createAndSendApproveNotification(
+        req.dbInfo,
+        req.knex,
+        req.hostname,
+        req.userInfo,
+        archiveId
+      );
     } catch (err) {
       Log.error(err, req);
     }

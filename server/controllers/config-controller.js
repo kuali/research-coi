@@ -25,26 +25,37 @@ import { getProjectData } from '../services/project-service/project-service';
 import useKnex from '../middleware/request-knex';
 
 export async function saveConfig(req, res) {
-  await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body, req.hostname);
-  const config = await ConfigDB.getConfig(req.dbInfo, req.hostname);
+  await ConfigDB.setConfig(
+    req.dbInfo,
+    req.knex,
+    req.userInfo.schoolId,
+    req.body,
+    req.hostname
+  );
+  const config = await ConfigDB.getConfig(req.dbInfo, req.knex, req.hostname);
   config.general = req.body.general;
-  await ConfigDB.archiveConfig(req.dbInfo, req.userInfo.schoolId, req.userInfo.username, config);
+  await ConfigDB.archiveConfig(
+    req.knex,
+    req.userInfo.schoolId,
+    req.userInfo.username,
+    config
+  );
 
   res.send(config);
 }
 
 export const init = app => {
-  app.get('/api/coi/config', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await ConfigDB.getConfig(req.dbInfo, req.hostname);
+  app.get('/api/coi/config', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await ConfigDB.getConfig(req.dbInfo, req.knex, req.hostname);
     res.send(result);
   }));
 
-  app.get('/api/coi/archived-config/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await ConfigDB.getArchivedConfig(req.dbInfo, req.params.id);
+  app.get('/api/coi/archived-config/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await ConfigDB.getArchivedConfig(req.knex, req.params.id);
     res.send(result);
   }));
 
-  app.post('/api/coi/config/', allowedRoles(ADMIN), wrapAsync(saveConfig));
+  app.post('/api/coi/config/', allowedRoles(ADMIN), useKnex, wrapAsync(saveConfig));
 
   app.get('/api/coi/new-project-data/:projectTypeCd', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
     const result = await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);

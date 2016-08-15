@@ -30,7 +30,7 @@ describe('setConfig', () => {
     let parent;
     let child;
     before(async () => {
-      config = await ConfigDB.getConfig({}, 'goblins-tst.kuali.dev');
+      config = await ConfigDB.getConfig({}, knex, 'goblins-tst.kuali.dev');
       config.questions.screening.push({
         question: 'parent',
         active: 1,
@@ -44,7 +44,7 @@ describe('setConfig', () => {
         question: 'child'
       });
 
-      config = await ConfigDB.setConfig({}, '1234', config, 'goblins1-tst.kuali.dev');
+      config = await ConfigDB.setConfig({}, knex, '1234', config, 'goblins1-tst.kuali.dev');
       parent = config.questions.screening.find(question => question.tmpId === 'TMP1234');
       child = config.questions.screening.find(question => question.tmpId === 'TMP5678');
       parentId = parent.id;
@@ -67,10 +67,10 @@ describe('setConfig', () => {
     let config;
     let parent;
     before(async () => {
-      config = await ConfigDB.getConfig({}, 'goblins-tst.kuali.dev');
+      config = await ConfigDB.getConfig({}, knex, 'goblins-tst.kuali.dev');
       parent = config.questions.screening.find(question => question.id === parentId);
       parent.question = 'parent1234';
-      config = await ConfigDB.setConfig({}, '1234', config, 'goblins1-tst.kuali.dev');
+      config = await ConfigDB.setConfig({}, knex, '1234', config, 'goblins1-tst.kuali.dev');
       parent = config.questions.screening.find(question => question.id === parentId);
     });
 
@@ -82,12 +82,12 @@ describe('setConfig', () => {
   describe('deactivate question', async () => {
     let config;
     before(async () => {
-      config = await ConfigDB.getConfig({}, 'goblins-tst.kuali.dev');
+      config = await ConfigDB.getConfig({}, knex, 'goblins-tst.kuali.dev');
       const parentIndex = config.questions.screening.findIndex(question => {
         return String(question.id) === String(parentId);
       });
       config.questions.screening.splice(parentIndex,1);
-      config = await ConfigDB.setConfig({}, '1234', config, 'goblins1-tst.kuali.dev');
+      config = await ConfigDB.setConfig({}, knex, '1234', config, 'goblins1-tst.kuali.dev');
     });
 
     it('it should update the parent to be inactive', async () => {
