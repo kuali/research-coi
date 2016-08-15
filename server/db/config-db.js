@@ -276,18 +276,12 @@ export async function getGeneralConfig(query) {
   };
 }
 
-export async function getConfig(dbInfo, hostname, optionalTrx) {
+export async function getConfig(dbInfo, hostname) {
   try {
     let config = {};
     const knex = getKnex(dbInfo);
     const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
-    let query;
-    if (optionalTrx) {
-      query = knex.transacting(optionalTrx);
-    }
-    else {
-      query = knex;
-    }
+    const query = knex;
 
     config.matrixTypes = await createMatrixTypes(query);
     config.relationshipPersonTypes = await query
@@ -419,7 +413,7 @@ export async function saveEntityQuestionnaire(knex, questions) {
   );
 }
 
-export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
+export async function setConfig(dbInfo, userId, body, hostname) {
   const knex = getKnex(dbInfo);
   const config = snakeizeJson(body);
 
@@ -437,10 +431,6 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
   }
 
   return knex.transaction(async (query) => {
-    if (optionalTrx) {
-      query = knex.transacting(optionalTrx); // eslint-disable-line no-param-reassign, max-len
-    }
-
     const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
     const queries = [];
 
