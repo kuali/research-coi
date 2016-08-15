@@ -264,7 +264,7 @@ async function getProject(dbInfo, hostname, project, person) {
 }
 
 async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
-  const projects = await getProjects(dbinfo, disclosure.userId);
+  const projects = await getProjects(knex, disclosure.userId);
   const config = await getConfig(dbinfo, knex, hostname);
   let projectInformation = '<table><tr><th>Project Number</th><th>Title</th><th>Sponsors</th><th>Project Type</th><th>Project Disposition</th></tr>';
   for (const project of projects) {

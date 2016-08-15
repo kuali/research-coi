@@ -1309,9 +1309,8 @@ async function approveDisclosure(
     .where({id: disclosureId});
 
   const projects = await getProjects(
-    undefined,
-    disclosure.userId,
-    knex
+    knex,
+    disclosure.userId
   );
 
   const requiredProjects = await filterProjects(dbInfo, projects, authHeader);
