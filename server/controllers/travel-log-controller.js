@@ -53,11 +53,14 @@ export const init = app => {
    User can only add travel logs associated with their entities
    */
   app.post('/api/coi/travel-log-entries', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const result = await TravelLogDB.createTravelLogEntry(
-      req.knex,
-      req.body,
-      req.userInfo
-    );
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await TravelLogDB.createTravelLogEntry(
+        knex,
+        req.body,
+        req.userInfo
+      );
+    });
     res.send(result);
   }));
 
@@ -65,12 +68,14 @@ export const init = app => {
    User can only delete travel logs associated with their entities
    */
   app.delete('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    await TravelLogDB.deleteTravelLogEntry(
-      req.dbInfo,
-      req.knex,
-      req.params.id,
-      req.userInfo
-    );
+    await req.knex.transaction(async (knex) => {
+      await TravelLogDB.deleteTravelLogEntry(
+        req.dbInfo,
+        knex,
+        req.params.id,
+        req.userInfo
+      );
+    });
     res.sendStatus(OK);
   }));
 
@@ -78,13 +83,16 @@ export const init = app => {
    User can only update travel logs associated with their entities
    */
   app.put('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const result = await TravelLogDB.updateTravelLogEntry(
-      req.dbInfo,
-      req.knex,
-      req.body,
-      req.params.id,
-      req.userInfo
-    );
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await TravelLogDB.updateTravelLogEntry(
+        req.dbInfo,
+        knex,
+        req.body,
+        req.params.id,
+        req.userInfo
+      );
+    });
     res.send(result);
   }));
 };

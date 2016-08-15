@@ -72,6 +72,15 @@ describe('ConfigController', () => {
         },
         body: {
           message: 'hello!'
+        },
+        knex: {
+          transaction(cb) {
+            return new Promise((resolve) => {
+              cb().then(() => {
+                resolve();
+              });
+            });
+          }
         }
       };
 

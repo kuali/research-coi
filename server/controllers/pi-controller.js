@@ -70,12 +70,15 @@ export const init = app => {
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) =>
     {
-      const result = await PIReviewDB.recordPIResponse(
-        knex,
-        userInfo,
-        params.reviewId,
-        body.comment
-      );
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.recordPIResponse(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body.comment
+        );
+      });
       res.send(result);
     }
   ));
@@ -89,12 +92,15 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const result = await PIReviewDB.reviseQuestion(
-        knex,
-        userInfo,
-        params.reviewId,
-        body.answer
-      );
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.reviseQuestion(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body.answer
+        );
+      });
       res.send(result);
     }
   ));
@@ -108,13 +114,16 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const result = await PIReviewDB.reviseEntityQuestion(
-        knex,
-        userInfo,
-        params.reviewId,
-        params.questionId,
-        body.answer
-      );
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.reviseEntityQuestion(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          params.questionId,
+          body.answer
+        );
+      });
       res.send(result);
     }
   ));
@@ -129,12 +138,15 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const result = await PIReviewDB.addRelationship(
-        knex,
-        userInfo,
-        params.reviewId,
-        body
-      );
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.addRelationship(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body
+        );
+      });
       res.send(result);
     }
   ));
@@ -149,12 +161,14 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo}, res) => {
-      await PIReviewDB.removeRelationship(
-        knex,
-        userInfo,
-        params.reviewId,
-        params.relationshipId
-      );
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.removeRelationship(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          params.relationshipId
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -169,12 +183,14 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      await PIReviewDB.reviseDeclaration(
-        knex,
-        userInfo,
-        params.reviewId,
-        body
-      );
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.reviseDeclaration(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -189,13 +205,15 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      await PIReviewDB.reviseSubQuestion(
-        knex,
-        userInfo,
-        params.reviewId,
-        params.subQuestionId,
-        body
-      );
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.reviseSubQuestion(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          params.subQuestionId,
+          body
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -210,12 +228,14 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      await PIReviewDB.deleteAnswers(
-        knex,
-        userInfo,
-        params.reviewId,
-        body.toDelete
-      );
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.deleteAnswers(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body.toDelete
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -241,34 +261,37 @@ export const init = app => {
         return;
       }
 
-      if (body && Array.isArray(body.responses)) {
-        for (const response of body.responses) {
-          await PIReviewDB.recordPIResponse(
-            knex,
-            userInfo,
-            response.reviewId,
-            response.comment
-          );
+      let result;
+      await knex.transaction(async (transKnex) => {
+        if (body && Array.isArray(body.responses)) {
+          for (const response of body.responses) {
+            await PIReviewDB.recordPIResponse(
+              transKnex,
+              userInfo,
+              response.reviewId,
+              response.comment
+            );
+          }
         }
-      }
 
-      await PIReviewDB.reSubmitDisclosure(
-        knex,
-        userInfo,
-        params.disclosureId
-      );
-      try {
-        createAndSendResubmitNotification(
-          dbInfo,
-          hostname,
-          headers.authorization,
+        await PIReviewDB.reSubmitDisclosure(
+          transKnex,
           userInfo,
           params.disclosureId
         );
-      } catch (err) {
-        Log.error(err, req);
-      }
-      const result = {success: true};
+        try {
+          createAndSendResubmitNotification(
+            dbInfo,
+            hostname,
+            headers.authorization,
+            userInfo,
+            params.disclosureId
+          );
+        } catch (err) {
+          Log.error(err, req);
+        }
+        result = {success: true};
+      });
       res.send(result);
     }
   ));

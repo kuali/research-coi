@@ -33,65 +33,80 @@ import useKnex from '../middleware/request-knex';
 
 export const init = app => {
   app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    const result = await AdditionalReviewerDB.createAdditionalReviewer(
-      req.knex,
-      req.body,
-      req.userInfo
-    );
-    try {
-      createAndSendReviewerAssignedNotification(
-        req.dbInfo,
-        req.hostname,
-        req.userInfo,
-        result.id
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await AdditionalReviewerDB.createAdditionalReviewer(
+        knex,
+        req.body,
+        req.userInfo
       );
-    } catch (err) {
-      Log.error(err,req);
-    }
+      try {
+        createAndSendReviewerAssignedNotification(
+          req.dbInfo,
+          req.hostname,
+          req.userInfo,
+          result.id
+        );
+      } catch (err) {
+        Log.error(err,req);
+      }
+    });
     res.send(result);
   }));
 
   app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    try {
-      createAndSendReviewerUnassignNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
-    } catch (err) {
-      Log.error(err,req);
-    }
-    await AdditionalReviewerDB.deleteAdditionalReviewer(req.knex, req.params.id);
+    await req.knex.transaction(async (knex) => {
+      try {
+        createAndSendReviewerUnassignNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
+      } catch (err) {
+        Log.error(err,req);
+      }
+      await AdditionalReviewerDB.deleteAdditionalReviewer(knex, req.params.id);
+    });
     res.sendStatus(OK);
   }));
 
   app.put('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    await AdditionalReviewerDB.updateAdditionalReviewer(
-      req.knex,
-      req.params.id,
-      req.body
-    );
+    await req.knex.transaction(async (knex) => {
+      await AdditionalReviewerDB.updateAdditionalReviewer(
+        knex,
+        req.params.id,
+        req.body
+      );
+    });
     res.sendStatus(OK);
   }));
 
   app.put('/api/coi/additional-reviewers/complete-review/:disclosureId', allowedRoles(REVIEWER), useKnex, wrapAsync(async (req, res) => {
-    const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(
-      req.knex,
-      req.userInfo.schoolId,
-      req.params.disclosureId
-    );
-    const dates = JSON.parse(additionalReviewer[0].dates);
-    dates.push({type: DATE_TYPE.COMPLETED, date: new Date()});
-    const updates = {
-      active: false,
-      dates
-    };
-    await AdditionalReviewerDB.updateAdditionalReviewer(
-      req.knex,
-      additionalReviewer[0].id,
-      updates
-    );
-    try {
-      createAndSendReviewCompleteNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, additionalReviewer[0].id);
-    } catch (err) {
-      Log.error(err,req);
-    }
+    await req.knex.transaction(async (knex) => {
+      const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(
+        knex,
+        req.userInfo.schoolId,
+        req.params.disclosureId
+      );
+      const dates = JSON.parse(additionalReviewer[0].dates);
+      dates.push({type: DATE_TYPE.COMPLETED, date: new Date()});
+      const updates = {
+        active: false,
+        dates
+      };
+      await AdditionalReviewerDB.updateAdditionalReviewer(
+        knex,
+        additionalReviewer[0].id,
+        updates
+      );
+      try {
+        createAndSendReviewCompleteNotification(
+          req.dbInfo,
+          req.hostname,
+          req.headers.authorization,
+          req.userInfo,
+          additionalReviewer[0].id
+        );
+      } catch (err) {
+        Log.error(err,req);
+      }
+    });
     res.sendStatus(OK);
   }));
 
@@ -128,24 +143,28 @@ export const init = app => {
   }));
 
   app.put('/api/coi/reviewers/:disclosureId/recommend/:declarationId', allowedRoles([REVIEWER]), useKnex, wrapAsync(async (req, res) => {
-    await AdditionalReviewerDB.saveRecommendation(
-      req.knex,
-      req.userInfo.schoolId,
-      req.params.disclosureId,
-      req.params.declarationId,
-      req.body.dispositionCd
-    );
+    await req.knex.transaction(async (knex) => {
+      await AdditionalReviewerDB.saveRecommendation(
+        knex,
+        req.userInfo.schoolId,
+        req.params.disclosureId,
+        req.params.declarationId,
+        req.body.dispositionCd
+      );
+    });
     res.sendStatus(ACCEPTED);
   }));
 
   app.put('/api/coi/reviewers/:disclosureId/recommendProject/:projectPersonId', allowedRoles([REVIEWER]), useKnex, wrapAsync(async (req, res) => {
-    await AdditionalReviewerDB.saveProjectRecommendation(
-      req.knex,
-      req.userInfo.schoolId,
-      req.params.disclosureId,
-      req.params.projectPersonId,
-      req.body.dispositionTypeCd
-    );
+    await req.knex.transaction(async (knex) => {
+      await AdditionalReviewerDB.saveProjectRecommendation(
+        knex,
+        req.userInfo.schoolId,
+        req.params.disclosureId,
+        req.params.projectPersonId,
+        req.body.dispositionTypeCd
+      );
+    });
     res.sendStatus(ACCEPTED);
   }));
 };

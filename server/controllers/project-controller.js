@@ -39,11 +39,14 @@ export const init = app => {
       return;
     }
 
-    const result = await ProjectDB.saveProjects(req.knex, req, req.body);
-    if (!result) {
-      res.sendStatus(OK);
-      return;
-    }
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await ProjectDB.saveProjects(knex, req, req.body);
+      if (!result) {
+        res.sendStatus(OK);
+        return;
+      }
+    });
     res.send(result);
   }));
 
@@ -65,11 +68,13 @@ export const init = app => {
   }));
 
   app.put('/api/coi/project-persons-disposition-types/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    await ProjectDB.updateProjectPersonDispositionType(
-      req.knex,
-      req.body,
-      req.params.id
-    );
+    await req.knex.transaction(async (knex) => {
+      await ProjectDB.updateProjectPersonDispositionType(
+        knex,
+        req.body,
+        req.params.id
+      );
+    });
     res.sendStatus(OK);
   }));
 

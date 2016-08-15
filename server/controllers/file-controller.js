@@ -166,12 +166,15 @@ export const init = app => {
     @Role: Admin or user for their own disclosures
   */
   app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), useKnex, wrapAsync(async (req, res) => {
-    const result = await FileDb.saveNewFiles(
-      req.knex,
-      JSON.parse(req.body.data),
-      req.files,
-      req.userInfo
-    );
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await FileDb.saveNewFiles(
+        knex,
+        JSON.parse(req.body.data),
+        req.files,
+        req.userInfo
+      );
+    });
     res.send(result);
   }));
 
@@ -179,7 +182,9 @@ export const init = app => {
     @Role: admin or user for their own files
   */
   app.delete('/api/coi/files/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    await FileDb.deleteFiles(req.dbInfo, req.knex, req.userInfo, req.params.id);
+    await req.knex.transaction(async (knex) => {
+      await FileDb.deleteFiles(req.dbInfo, knex, req.userInfo, req.params.id);
+    });
     res.sendStatus(ACCEPTED);
   }));
 };

@@ -103,13 +103,16 @@ export const init = app => {
     User can only see their own annual disclosure
   */
   app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.getAnnualDisclosure(
-      req.dbInfo,
-      req.knex,
-      req.userInfo,
-      req.userInfo.name,
-      req.headers.authorization
-    );
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await DisclosureDB.getAnnualDisclosure(
+        req.dbInfo,
+        knex,
+        req.userInfo,
+        req.userInfo.name,
+        req.headers.authorization
+      );
+    });
     res.send(result);
   }));
 
@@ -232,14 +235,17 @@ export const init = app => {
     upload.array('attachments'),
     useKnex,
     wrapAsync(async (req, res) => {
-      const result = await DisclosureDB.saveExistingFinancialEntity(
-        req.dbInfo,
-        req.knex,
-        req.userInfo,
-        req.params.entityId,
-        JSON.parse(req.body.entity),
-        req.files
-      );
+      let result;
+      await req.knex.transaction(async (knex) => {
+        result = await DisclosureDB.saveExistingFinancialEntity(
+          req.dbInfo,
+          knex,
+          req.userInfo,
+          req.params.entityId,
+          JSON.parse(req.body.entity),
+          req.files
+        );
+      });
       res.send(result);
     }
   ));
@@ -248,7 +254,16 @@ export const init = app => {
     User can only add entities to disclosures which are theirs
   */
   app.post('/api/coi/disclosures/:id/financial-entities', allowedRoles('ANY'), upload.array('attachments'), useKnex, wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveNewFinancialEntity(req.knex, req.userInfo, req.params.id, JSON.parse(req.body.entity), req.files);
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await DisclosureDB.saveNewFinancialEntity(
+        knex,
+        req.userInfo,
+        req.params.id,
+        JSON.parse(req.body.entity),
+        req.files
+      );
+    });
     res.send(result);
   }));
 
@@ -257,12 +272,15 @@ export const init = app => {
   */
   app.post('/api/coi/disclosures/:id/declarations', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
-    const result = await DisclosureDB.saveDeclaration(
-      req.knex,
-      req.userInfo.schoolId,
-      req.params.id,
-      req.body
-    );
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await DisclosureDB.saveDeclaration(
+        knex,
+        req.userInfo.schoolId,
+        req.params.id,
+        req.body
+      );
+    });
     res.send(result);
   }));
 
@@ -270,13 +288,15 @@ export const init = app => {
     User can only edit declarations on disclosures which are theirs
   */
   app.put('/api/coi/disclosures/:id/declarations/:declarationId', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    await DisclosureDB.saveExistingDeclaration(
-      req.knex,
-      req.userInfo,
-      req.params.id,
-      req.params.declarationId,
-      req.body
-    );
+    await req.knex.transaction(async (knex) => {
+      await DisclosureDB.saveExistingDeclaration(
+        knex,
+        req.userInfo,
+        req.params.id,
+        req.params.declarationId,
+        req.body
+      );
+    });
     res.sendStatus(ACCEPTED);
   }));
 
@@ -284,12 +304,15 @@ export const init = app => {
     User can only answer questions on disclosures which are theirs
   */
   app.post('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveNewQuestionAnswer(
-      req.knex,
-      req.userInfo.schoolId,
-      req.params.id,
-      req.body
-    );
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await DisclosureDB.saveNewQuestionAnswer(
+        knex,
+        req.userInfo.schoolId,
+        req.params.id,
+        req.body
+      );
+    });
     res.send(result);
   }));
 
@@ -297,13 +320,16 @@ export const init = app => {
     User can only answer questions on disclosures which are theirs
   */
   app.put('/api/coi/disclosures/:id/question-answers/:questionId', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveExistingQuestionAnswer(
-      req.knex,
-      req.userInfo.schoolId,
-      req.params.id,
-      req.params.questionId,
-      req.body
-    );
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await DisclosureDB.saveExistingQuestionAnswer(
+        knex,
+        req.userInfo.schoolId,
+        req.params.id,
+        req.params.questionId,
+        req.body
+      );
+    });
     res.send(result);
   }));
 
@@ -311,53 +337,58 @@ export const init = app => {
     User can only submit disclosures which are theirs
   */
   app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    await DisclosureDB.submit(
-      req.dbInfo,
-      req.knex,
-      req.userInfo,
-      req.params.id,
-      req.headers.authorization,
-      req.hostname
-    );
-    try {
-      createAndSendSubmitNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, req.params.id);
-    } catch (err) {
-      Log.error(err, req);
-    }
-
+    await req.knex.transaction(async (knex) => {
+      await DisclosureDB.submit(
+        req.dbInfo,
+        knex,
+        req.userInfo,
+        req.params.id,
+        req.headers.authorization,
+        req.hostname
+      );
+      try {
+        createAndSendSubmitNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, req.params.id);
+      } catch (err) {
+        Log.error(err, req);
+      }
+    });
     res.sendStatus(ACCEPTED);
   }));
 
   app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    const archiveId = await DisclosureDB.approve(
-      req.dbInfo,
-      req.knex,
-      req.body,
-      req.userInfo.name,
-      req.params.id,
-      req.headers.authorization
-    );
-    try {
-      createAndSendApproveNotification(
+    await req.knex.transaction(async (knex) => {
+      const archiveId = await DisclosureDB.approve(
         req.dbInfo,
-        req.knex,
-        req.hostname,
-        req.userInfo,
-        archiveId
+        knex,
+        req.body,
+        req.userInfo.name,
+        req.params.id,
+        req.headers.authorization
       );
-    } catch (err) {
-      Log.error(err, req);
-    }
+      try {
+        createAndSendApproveNotification(
+          req.dbInfo,
+          req.knex,
+          req.hostname,
+          req.userInfo,
+          archiveId
+        );
+      } catch (err) {
+        Log.error(err, req);
+      }
+    });
     res.sendStatus(ACCEPTED);
   }));
 
   app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    await DisclosureDB.reject(req.knex, req.userInfo, req.params.id);
-    try {
-      createAndSendSentBackNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
-    } catch (err) {
-      Log.error(err, req);
-    }
+    await req.knex.transaction(async (knex) => {
+      await DisclosureDB.reject(knex, req.userInfo, req.params.id);
+      try {
+        createAndSendSentBackNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
+      } catch (err) {
+        Log.error(err, req);
+      }
+    });
     res.sendStatus(ACCEPTED);
   }));
 
@@ -365,59 +396,63 @@ export const init = app => {
     Admin can add any, Reviewer can only add ones where they are a reviewer
   */
   app.post('/api/coi/disclosures/:id/comments', allowedRoles([ADMIN, REVIEWER]), useKnex, wrapAsync(async (req, res, next) => {
-    if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosureIdsForReviewer(
-        req.knex,
-        req.userInfo.schoolId
-      );
-      if (!reviewerDisclosures.includes(req.params.id)) {
-        res.sendStatus(FORBIDDEN);
-        return;
+    await req.knex.transaction(async (knex) => {
+      if (req.userInfo.coiRole === ROLES.REVIEWER) {
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          knex,
+          req.userInfo.schoolId
+        );
+        if (!reviewerDisclosures.includes(req.params.id)) {
+          res.sendStatus(FORBIDDEN);
+          return;
+        }
       }
-    }
 
-    const comment = req.body;
-    comment.disclosureId = req.params.id;
+      const comment = req.body;
+      comment.disclosureId = req.params.id;
 
-    if (validateComment(comment)) {
-      const result = await DisclosureDB.addComment(
-        req.knex,
-        req.userInfo,
-        comment
-      );
-      res.send(result[0]);
-    } else {
-      next(new Error('invalid comment body'));
-    }
+      if (validateComment(comment)) {
+        const result = await DisclosureDB.addComment(
+          knex,
+          req.userInfo,
+          comment
+        );
+        res.send(result[0]);
+      } else {
+        next(new Error('invalid comment body'));
+      }
+    });
   }));
 
   /**
     Admin can add any, Reviewer can only add ones where they are a reviewer
   */
   app.put('/api/coi/disclosures/:disclosureId/comments/:id', allowedRoles([ADMIN, REVIEWER]), useKnex, wrapAsync(async (req, res, next) => {
-    if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosureIdsForReviewer(
-        req.knex,
-        req.userInfo.schoolId
-      );
-      if (!reviewerDisclosures.includes(req.params.disclosureId)) {
-        res.sendStatus(FORBIDDEN);
-        return;
+    await req.knex.transaction(async (knex) => {
+      if (req.userInfo.coiRole === ROLES.REVIEWER) {
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          knex,
+          req.userInfo.schoolId
+        );
+        if (!reviewerDisclosures.includes(req.params.disclosureId)) {
+          res.sendStatus(FORBIDDEN);
+          return;
+        }
       }
-    }
 
-    const comment = req.body;
+      const comment = req.body;
 
-    if (validateComment(comment)) {
-      const result = await DisclosureDB.updateComment(
-        req.knex,
-        req.userInfo,
-        comment
-      );
-      res.send(result);
-    } else {
-      next(new Error('invalid comment body'));
-    }
+      if (validateComment(comment)) {
+        const result = await DisclosureDB.updateComment(
+          knex,
+          req.userInfo,
+          comment
+        );
+        res.send(result);
+      } else {
+        next(new Error('invalid comment body'));
+      }
+    });
   }));
 
   /**
@@ -447,18 +482,20 @@ export const init = app => {
       });
     }
 
-    if (toDelete.length > 0) {
-      await DisclosureDB.deleteAnswers(
-        req.knex,
-        req.userInfo,
-        req.params.id,
-        toDelete
-      );
-      res.status(NO_CONTENT).end();
-    }
-    else {
-      res.status(BAD_REQUEST).end();
-    }
+    await req.knex.transaction(async (knex) => {
+      if (toDelete.length > 0) {
+        await DisclosureDB.deleteAnswers(
+          knex,
+          req.userInfo,
+          req.params.id,
+          toDelete
+        );
+        res.status(NO_CONTENT).end();
+      }
+      else {
+        res.status(BAD_REQUEST).end();
+      }
+    });
   }));
 
   /**

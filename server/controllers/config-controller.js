@@ -25,21 +25,24 @@ import { getProjectData } from '../services/project-service/project-service';
 import useKnex from '../middleware/request-knex';
 
 export async function saveConfig(req, res) {
-  await ConfigDB.setConfig(
-    req.dbInfo,
-    req.knex,
-    req.userInfo.schoolId,
-    req.body,
-    req.hostname
-  );
-  const config = await ConfigDB.getConfig(req.dbInfo, req.knex, req.hostname);
-  config.general = req.body.general;
-  await ConfigDB.archiveConfig(
-    req.knex,
-    req.userInfo.schoolId,
-    req.userInfo.username,
-    config
-  );
+  let config;
+  await req.knex.transaction(async (knex) => {
+    await ConfigDB.setConfig(
+      req.dbInfo,
+      knex,
+      req.userInfo.schoolId,
+      req.body,
+      req.hostname
+    );
+    config = await ConfigDB.getConfig(req.dbInfo, knex, req.hostname);
+    config.general = req.body.general;
+    await ConfigDB.archiveConfig(
+      knex,
+      req.userInfo.schoolId,
+      req.userInfo.username,
+      config
+    );
+  });
 
   res.send(config);
 }
