@@ -51,34 +51,34 @@ catch (err) {
 const SCREENING_QUESTIONNAIRE_TYPE_CD = 1;
 const FIN_ENTITY_QUESTIONNAIRE_TYPE_CD = 2;
 
-function createDeleteQueries(query, collection, tableProps) {
+async function createDeleteQueries(query, collection, tableProps) {
   let sel = query(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where);
   }
 
-  return sel.then(results => {
-    Promise.all(
-      results.filter(result => {
-        const match = collection.find(item => {
-          return (
-            item[tableProps.pk] &&
-            item[tableProps.pk] === result[tableProps.pk]
-          );
-        });
-        return !match;
-      }).map(result => {
-        return query(tableProps.table)
+  const results = await sel;
+
+  await Promise.all(
+    results.filter(result => {
+      const match = collection.find(item => {
+        return (
+          item[tableProps.pk] &&
+          item[tableProps.pk] === result[tableProps.pk]
+        );
+      });
+      return !match;
+    }).map(result => {
+      return query(tableProps.table)
         .update({active: false})
         .where(tableProps.pk, result[tableProps.pk]);
-      })
-    );
-  });
+    })
+  );
 }
 
-function createInsertQueries(query, collection, tableProps) {
-  return Promise.all(
-    collection.map(line => {
+async function createInsertQueries(query, collection, tableProps) {
+  return await Promise.all(
+    collection.map(async (line) => {
       const tmpId = line.tmpId;
       delete line.tmpId;
       delete line.tmp_id;
@@ -86,12 +86,11 @@ function createInsertQueries(query, collection, tableProps) {
       if (tableProps.parent) {
         line[tableProps.parent.key] = tableProps.parent.value;
       }
-      return query(tableProps.table)
-        .insert(line, tableProps.pk).then(result => {
-          line[tableProps.pk] = result[0];
-          line.tmpId = tmpId;
-          return line;
-        });
+      const result = await query(tableProps.table).insert(line, tableProps.pk);
+
+      line[tableProps.pk] = result[0];
+      line.tmpId = tmpId;
+      return line;
     })
   );
 }
@@ -108,7 +107,7 @@ function createUpdateQueries(query, collection, tableProps) {
   );
 }
 
-function createCollectionQueries(query, collection, tableProps) {
+async function createCollectionQueries(query, collection, tableProps) {
   const updates = [];
   const inserts = [];
   collection.forEach(line => {
@@ -119,23 +118,23 @@ function createCollectionQueries(query, collection, tableProps) {
     }
   });
 
-  return Promise.all([
+  const results = await Promise.all([
     createDeleteQueries(query, collection, tableProps),
     createInsertQueries(query, inserts, tableProps),
     createUpdateQueries(query, updates, tableProps)
-  ]).then((results) => {
-    const insertResults = results[1];
-    return collection.map(line => {
-      if (insertResults) {
-        const insert = insertResults.find(
-          result => result.tmpId === line.tmpId
-        );
-        if (insert) {
-          line.id = insert.id;
-        }
+  ]);
+
+  const insertResults = results[1];
+  return collection.map(line => {
+    if (insertResults) {
+      const insert = insertResults.find(
+        result => result.tmpId === line.tmpId
+      );
+      if (insert) {
+        line.id = insert.id;
       }
-      return line;
-    });
+    }
+    return line;
   });
 }
 
@@ -151,9 +150,9 @@ function convertQuestionFormat(questions, questionnaireId) {
   });
 }
 
-function getNotificationTemplates(query, dbInfo, hostname, notificationsMode) {
+async function getNotificationTemplates(query, dbInfo, hostname, notificationsMode) {
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-    return query.select(
+    const templates = await query.select(
         'template_id as templateId',
         'description',
         'type',
@@ -162,20 +161,18 @@ function getNotificationTemplates(query, dbInfo, hostname, notificationsMode) {
         'value',
         'period'
       )
-      .from('notification_template')
-      .then(templates => {
-        return populateTemplateData(dbInfo, hostname, templates)
-          .then(results => {
-            return results;
-          }).catch(() => {
-            return Promise.resolve(templates.map(template => {
-              template.error = true;
-              return template;
-            }));
-          });
+      .from('notification_template');
+
+    try {
+      return await populateTemplateData(dbInfo, hostname, templates);
+    } catch (err) {
+      return templates.map(template => {
+        template.error = true;
+        return template;
       });
+    }
   }
-  return Promise.resolve([]);
+  return [];
 }
 
 async function createMatrixTypes(query) {
@@ -203,16 +200,16 @@ async function createMatrixTypes(query) {
 
 async function getQuestionnaireQuestions(query, typeCd) {
   const questionnaire = await query
-    .select('id')
+    .first('id')
     .from('questionnaire')
-    .limit(1)
     .where('type_cd', typeCd)
     .orderBy('version', 'desc');
-  if (questionnaire[0]) {
+
+  if (questionnaire) {
     const questions = await query
       .select('*')
       .from('questionnaire_question as qq')
-      .where({questionnaire_id: questionnaire[0].id, active: true});
+      .where({questionnaire_id: questionnaire.id, active: true});
     return questions.map(question => {
       question.question = JSON.parse(question.question);
       return question;
@@ -243,8 +240,13 @@ async function getQuestions(query) {
   };
 }
 
+export async function getLatestConfigsId(knex) {
+  const record = await knex('config').max('id as id');
+  return record[0].id;
+}
+
 export async function getGeneralConfig(query) {
-  const mostRecentId = (await query('config').max('id as id'))[0].id;
+  const mostRecentId = await getLatestConfigsId(query);
 
   if (cachedConfigs[mostRecentId]) {
     return {
@@ -254,18 +256,18 @@ export async function getGeneralConfig(query) {
   }
 
   const generalConfigRecords = await query
-    .select('config')
+    .first('config')
     .from('config')
     .where({id: mostRecentId});
 
-  if (!generalConfigRecords || generalConfigRecords.length === 0) {
+  if (!generalConfigRecords) {
     return {
       config: {},
       id: mostRecentId
     };
   }
 
-  const parsedConfig = JSON.parse(generalConfigRecords[0].config);
+  const parsedConfig = JSON.parse(generalConfigRecords.config);
   cachedConfigs[mostRecentId] = parsedConfig;
 
   return {
@@ -344,15 +346,14 @@ function updateParentIdOnChildren(children, updatedParents) {
 
 export async function saveScreeningQuestionnaire(query, questions) {
   const questionnaire = await query
-    .select('id')
+    .first('id')
     .from('questionnaire')
-    .limit(1)
     .where('type_cd', 1)
     .orderBy('version', 'desc');
 
   const convertedQuestions = convertQuestionFormat(
     questions,
-    questionnaire[0].id
+    questionnaire.id
   );
   const parents = convertedQuestions.filter(question => !question.parent);
   const children = convertedQuestions.filter(question => question.parent);
@@ -364,7 +365,7 @@ export async function saveScreeningQuestionnaire(query, questions) {
       this
         .whereNull('parent')
         .andWhere({
-          questionnaire_id: questionnaire[0].id
+          questionnaire_id: questionnaire.id
         });
     }
   });
@@ -379,9 +380,41 @@ export async function saveScreeningQuestionnaire(query, questions) {
         this
           .whereNotNull('parent')
           .andWhere({
-            questionnaire_id: questionnaire[0].id}
+            questionnaire_id: questionnaire.id}
           );
       }
+    }
+  );
+}
+
+export async function saveEntityQuestionnaire(knex, questions) {
+  const result = await knex
+    .first('*')
+    .from('questionnaire')
+    .where('type_cd', 2)
+    .orderBy('version', 'desc');
+
+  let idToUse;
+  if (result) {
+    idToUse = result.id;
+  }
+  else {
+    const id = await knex('questionnaire')
+      .insert({
+        version: 1,
+        type_cd: 2
+      }, 'id');
+    
+    idToUse = id[0];
+  }
+
+  return await createCollectionQueries(
+    knex,
+    convertQuestionFormat(questions, idToUse),
+    {
+      pk: 'id',
+      table: 'questionnaire_question',
+      where: {questionnaire_id: idToUse}
     }
   );
 }
@@ -497,69 +530,26 @@ export async function setConfig(dbInfo, userId, body, hostname, optionalTrx) {
     );
 
     await saveScreeningQuestionnaire(query, config.questions.screening);
-
-    queries.push(
-      query
-        .select('*')
-        .from('questionnaire')
-        .limit(1)
-        .where('type_cd', 2)
-        .orderBy('version', 'desc')
-        .then(result => {
-          if (result[0]) {
-            return createCollectionQueries(
-              query,
-              convertQuestionFormat(config.questions.entities, result[0].id),
-              {
-                pk: 'id',
-                table: 'questionnaire_question',
-                where: {questionnaire_id: result[0].id}
-              }
-            );
-          }
-          return query('questionnaire')
-            .insert({version: 1, type_cd: 2}, 'id')
-            .then(id => {
-              return createCollectionQueries(
-                query,
-                convertQuestionFormat(config.questions.entities, id[0]),
-                {
-                  pk: 'id',
-                  table: 'questionnaire_question',
-                  where: {questionnaire_id: id[0]}
-                }
-              );
-            });
-        })
-    );
+    await saveEntityQuestionnaire(query, config.questions.entities);
 
     if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-      return handleTemplates(
+      const results = await handleTemplates(
         dbInfo,
         hostname,
         config.notification_templates
-      ).then(results => {
-        return Promise.all(results).then(templates => {
-          queries.push(
-            createCollectionQueries(
-              query,
-              templates,
-              {pk: 'template_id', table: 'notification_template'}
-            )
-          );
-        }).then(() => {
-          return Promise.all(queries)
-            .then(() => {
-              return camelizeJson(config);
-            });
-        });
-      });
+      );
+      const templates = await Promise.all(results);
+      queries.push(
+        createCollectionQueries(
+          query,
+          templates,
+          {pk: 'template_id', table: 'notification_template'}
+        )
+      );
     }
 
-    return Promise.all(queries)
-      .then(() => {
-        return camelizeJson(config);
-      });
+    await Promise.all(queries);
+    return camelizeJson(config);
   });
 }
 
@@ -579,10 +569,16 @@ export async function getArchivedConfig(dbInfo, id) {
   }
 
   const knex = getKnex(dbInfo);
-  const results = await knex('config').select('config', 'id').where('id', id);
-  const config = JSON.parse(results[0].config);
+  const result = await knex('config')
+    .first(
+      'config',
+      'id'
+    )
+    .where('id', id);
+
+  const config = JSON.parse(result.config);
   config.lane = lane;
-  config.id = results[0].id;
+  config.id = result.id;
 
   cachedConfigs[id] = config;
   return config;
@@ -616,17 +612,17 @@ export async function getProjectTypeDescription(dbInfo, typeCd) {
   const knex = getKnex(dbInfo);
 
   const projectType = await knex('project_type')
-    .select('description')
+    .first('description')
     .where({type_cd: typeCd});
 
-  return projectType[0].description;
+  return projectType.description;
 }
 
 export async function getCoreTemplateIdByTemplateId(dbInfo, templateId) {
   const knex = getKnex(dbInfo);
   const template = await knex('notification_template')
-    .select('core_template_id as coreTemplateId', 'active')
+    .first('core_template_id as coreTemplateId', 'active')
     .where({template_id: templateId});
 
-  return template[0];
+  return template;
 }

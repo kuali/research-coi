@@ -22,14 +22,16 @@ import getKnex from './connection-manager';
 const MAX_ROWS = 10;
 
 function queryUsingIndex(knex, term) {
-  return knex.distinct('submitted_by as value')
+  return knex
+    .distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `${term}%`)
     .limit(MAX_ROWS);
 }
 
 function queryWithoutIndex(knex, term) {
-  return knex.distinct('submitted_by as value')
+  return knex
+    .distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `%${term}%`)
     .limit(MAX_ROWS);
@@ -40,6 +42,7 @@ function addReviewerCriteria(query, schoolId) {
     .leftJoin('additional_reviewer as ar', 'ar.disclosure_id', 'd.id')
     .andWhere({'ar.user_id': schoolId});
 }
+
 export async function getSuggestions(dbInfo, term, userInfo) {
   try {
     const knex = getKnex(dbInfo);

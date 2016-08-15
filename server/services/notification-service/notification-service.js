@@ -234,7 +234,9 @@ async function getDisclosure(dbInfo, hostname, disclosureId) {
 
 async function getReviewer(dbInfo, hostname, reviewerId) {
   const reviewer = await getAdditionalReviewer(dbInfo, reviewerId);
-  reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
+  if (reviewer) {
+    reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
+  }
   return reviewer;
 }
 
@@ -377,6 +379,9 @@ export async function createAndSendReviewerNotification(dbInfo, hostname, userIn
 
     const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
 
+    if (!reviewer) {
+      return;
+    }
     const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
     const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
     const recipients = getRecipients(dbInfo, reviewer.email);
@@ -404,6 +409,9 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
 
     const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
 
+    if (!reviewer) {
+      return;
+    }
     const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
     const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
     const recipients = await getAdminRecipients(dbInfo, authHeader);

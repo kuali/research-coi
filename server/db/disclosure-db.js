@@ -20,6 +20,7 @@ import { values, uniq } from 'lodash';
 import {isDisclosureUsers} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
+import { getLatestConfigsId } from './config-db';
 import {
   filterProjects,
   filterDeclarations
@@ -62,7 +63,87 @@ catch (err) {
   lane = process.env.LANE || LANES.PRODUCTION;
 }
 
-export function saveNewFinancialEntity(
+async function saveEntityRelationship(knex, relationship) {
+  const relationshipId = await knex('relationship')
+    .insert({
+      fin_entity_id: relationship.finEntityId,
+      relationship_cd: relationship.relationshipCd,
+      person_cd: relationship.personCd,
+      type_cd: !relationship.typeCd ? null : relationship.typeCd,
+      amount_cd: !relationship.amountCd ? null : relationship.amountCd,
+      comments: relationship.comments,
+      status: RELATIONSHIP_STATUS.IN_PROGRESS
+    }, 'id');
+
+  relationship.id = relationshipId[0];
+
+  if (relationship.relationshipCd === ENTITY_RELATIONSHIP.TRAVEL) {
+    await knex('travel_relationship')
+      .insert({
+        relationship_id: relationshipId[0],
+        amount: relationship.travel.amount,
+        destination: relationship.travel.destination,
+        start_date: new Date(relationship.travel.startDate),
+        end_date: new Date(relationship.travel.endDate),
+        reason: relationship.travel.reason
+      }, 'id');
+  }
+}
+
+async function saveEntityAnswer(knex, answer, entityId) {
+  const result = await knex('questionnaire_answer')
+    .insert({
+      question_id: answer.questionId,
+      answer: JSON.stringify(answer.answer)
+    }, 'id');
+
+  answer.id = result[0];
+
+  await knex('fin_entity_answer')
+    .insert({
+      fin_entity_id: entityId,
+      questionnaire_answer_id: result[0]
+    }, 'id');
+}
+
+async function saveEntityFile(knex, file, entityId, userInfo) {
+  const fileData = {
+    file_type: FILE_TYPE.FINANCIAL_ENTITY,
+    ref_id: entityId,
+    type: file.mimetype,
+    key: file.filename,
+    name: file.originalname,
+    user_id: userInfo.schoolId,
+    uploaded_by: userInfo.name,
+    upload_date: new Date()
+  };
+
+  const fileId = await knex('file')
+      .insert(fileData, 'id');
+
+  fileData.id = fileId[0];
+  return fileData;
+}
+
+async function deleteEntityFile(knex, dbInfo, fileId, fileKey) {
+  await knex('file')
+    .where('id', fileId)
+    .del();
+
+  await new Promise((resolve, rejectDelete) => {
+    FileService.deleteFile(dbInfo, fileKey, err => {
+      if (err) {
+        Log.error(`Failed to delete file ${fileKey}`);
+        Log.error(err);
+        rejectDelete();
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+export async function saveNewFinancialEntity(
   dbInfo,
   userInfo,
   disclosureId,
@@ -71,119 +152,77 @@ export function saveNewFinancialEntity(
 ) {
   const knex = getKnex(dbInfo);
 
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(
-          `Attempt by ${userInfo.username} to associate an entity with disclosure ${disclosureId} that isnt the users` // eslint-disable-line max-len
-        );
-      }
+  const isSubmitter = await isDisclosureUsers(
+    dbInfo,
+    disclosureId,
+    userInfo.schoolId
+  );
+  if (!isSubmitter) {
+    throw Error(
+      `Attempt by ${userInfo.username} to associate an entity with disclosure ${disclosureId} that isnt the users` // eslint-disable-line max-len
+    );
+  }
 
-      resetAdminRelationships(knex, disclosureId).then();
-      resetProjectDispositions(knex, disclosureId).then();
+  await resetAdminRelationships(knex, disclosureId);
+  await resetProjectDispositions(knex, disclosureId);
 
-      return knex('fin_entity')
-        .insert({
-          disclosure_id: disclosureId,
-          active: financialEntity.active,
-          name: financialEntity.name,
-          status: RELATIONSHIP_STATUS.IN_PROGRESS
-        }, 'id')
-        .then(id => {
-          financialEntity.id = id[0];
-          const queries = [];
-          financialEntity.relationships.forEach(relationship => {
-            relationship.finEntityId = id[0];
-            queries.push(
-              knex('relationship')
-                .insert({
-                  fin_entity_id: id[0],
-                  relationship_cd: relationship.relationshipCd,
-                  person_cd: relationship.personCd,
-                  type_cd: !relationship.typeCd ? null : relationship.typeCd,
-                  amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-                  comments: relationship.comments,
-                  status: RELATIONSHIP_STATUS.IN_PROGRESS
-                }, 'id')
-                .then(relationshipId => {
-                  relationship.id = relationshipId[0];
-                  if (relationship.relationshipCd === ENTITY_RELATIONSHIP.TRAVEL) {
-                    return knex('travel_relationship')
-                      .insert({
-                        relationship_id: relationshipId[0],
-                        amount: relationship.travel.amount,
-                        destination: relationship.travel.destination,
-                        start_date: new Date(relationship.travel.startDate),
-                        end_date: new Date(relationship.travel.endDate),
-                        reason: relationship.travel.reason
-                      }, 'id');
-                  }
-                })
-            );
-          });
+  const id = await knex('fin_entity')
+    .insert({
+      disclosure_id: disclosureId,
+      active: financialEntity.active,
+      name: financialEntity.name,
+      status: RELATIONSHIP_STATUS.IN_PROGRESS
+    }, 'id');
 
-          financialEntity.answers.forEach(answer => {
-            queries.push(
-              knex('questionnaire_answer')
-                .insert({
-                  question_id: answer.questionId,
-                  answer: JSON.stringify(answer.answer)
-                }, 'id')
-                .then(result => {
-                  answer.id = result[0];
-                  return knex('fin_entity_answer')
-                    .insert({
-                      fin_entity_id: id[0],
-                      questionnaire_answer_id: result[0]
-                    }, 'id');
-                })
-            );
-          });
+  financialEntity.id = id[0];
 
-          financialEntity.files = [];
-          files.forEach(file => {
-            const fileData = {
-              file_type: FILE_TYPE.FINANCIAL_ENTITY,
-              ref_id: financialEntity.id,
-              type: file.mimetype,
-              key: file.filename,
-              name: file.originalname,
-              user_id: userInfo.schoolId,
-              uploaded_by: userInfo.name,
-              upload_date: new Date()
-            };
-            queries.push(
-              knex('file')
-                .insert(fileData, 'id')
-                .then(fileId => {
-                  fileData.id = fileId[0];
-                  financialEntity.files.push(fileData);
-                })
-            );
-          });
+  for (const relationship of financialEntity.relationships) {
+    relationship.finEntityId = financialEntity.id;
+    await saveEntityRelationship(knex, relationship);
+  }
 
-          return Promise.all(queries)
-            .then(() => {
-              return financialEntity;
-            });
-        });
-    });
+  for (const answer of financialEntity.answers) {
+    await saveEntityAnswer(knex, answer, financialEntity.id);
+  }
+
+  financialEntity.files = [];
+
+  for (const file of files) {
+    const fileData = await saveEntityFile(
+      knex,
+      file,
+      financialEntity.id,
+      userInfo
+    );
+    financialEntity.files.push(fileData);
+  }
+
+  return financialEntity;
 }
 
-function isEntityUsers(knex, entityId, userId) {
-  return knex.select('e.id')
+async function isEntityUsers(knex, entityId, userId) {
+  const rows = await knex.select('e.id')
     .from('fin_entity as e')
     .innerJoin('disclosure as d', 'd.id', 'e.disclosure_id')
     .where({
       'e.id': entityId,
       'd.user_id': userId
-    })
-    .then(rows => {
-      return rows.length > 0;
     });
+
+  return rows.length > 0;
 }
 
-export function saveExistingFinancialEntity(
+async function deleteEntityRelationship(knex, relationshipId) {
+  await knex('travel_relationship')
+    .del()
+    .where('relationship_id', relationshipId);
+
+  await knex('relationship')
+    .del()
+    .where('id', relationshipId);
+}
+
+export async function saveExistingFinancialEntity(
   dbInfo,
   userInfo,
   entityId,
@@ -191,201 +230,110 @@ export function saveExistingFinancialEntity(
   files
 ) {
   const knex = getKnex(dbInfo);
-
   const financialEntity = body;
 
-  return isEntityUsers(knex, entityId, userInfo.schoolId)
-    .then(isOwner => {
-      if (!isOwner) {
-        throw Error(`Attempt by ${userInfo.username} to update entity ${entityId} not owned by user`); // eslint-disable-line max-len
-      }
+  const isOwner = await isEntityUsers(knex, entityId, userInfo.schoolId);
 
-      knex
-        .select('disclosure_id as disclosureId')
-        .from('fin_entity')
-        .where({
-          id: entityId
-        }).then(entityRecord => {
-          resetAdminRelationships(knex, entityRecord.disclosureId).then();
-          resetProjectDispositions(knex, entityRecord.disclosureId).then();
-        });
+  if (!isOwner) {
+    throw Error(`Attempt by ${userInfo.username} to update entity ${entityId} not owned by user`); // eslint-disable-line max-len
+  }
 
-      return knex('fin_entity')
-        .where('id', entityId)
-        .update({
-          active: financialEntity.active,
-          name: financialEntity.name
-        })
-        .then(() => {
-          const queries = [];
-
-          queries.push(
-            knex('relationship')
-              .select('*')
-              .where('fin_entity_id', entityId)
-              .then(dbRelationships => {
-                return Promise.all(
-                  dbRelationships.filter(dbRelationship => {
-                    const match = financialEntity.relationships.some(
-                      relationship => relationship.id === dbRelationship.id
-                    );
-                    return !match;
-                  }).map(dbRelationship => {
-                    return knex('travel_relationship')
-                      .del()
-                      .where('relationship_id', dbRelationship.id)
-                      .then(() => {
-                        return knex('relationship')
-                          .del()
-                          .where('id', dbRelationship.id);
-                      });
-                  })
-                );
-              })
-          );
-
-          financialEntity.relationships.forEach(relationship => {
-            if (isNaN(relationship.id)) {
-              relationship.finEntityId = entityId;
-              queries.push(
-                knex('relationship')
-                  .insert({
-                    fin_entity_id: entityId,
-                    relationship_cd: relationship.relationshipCd,
-                    person_cd: relationship.personCd,
-                    type_cd: !relationship.typeCd ? null : relationship.typeCd,
-                    amount_cd: !relationship.amountCd ? null : relationship.amountCd,
-                    comments: relationship.comments,
-                    status: RELATIONSHIP_STATUS.IN_PROGRESS
-                  }, 'id')
-                  .then(relationshipId => {
-                    relationship.id = relationshipId[0];
-                    if (relationship.relationshipCd === ENTITY_RELATIONSHIP.TRAVEL) {
-                      return knex('travel_relationship')
-                        .insert({
-                          relationship_id: relationshipId[0],
-                          amount: relationship.travel.amount,
-                          destination: relationship.travel.destination,
-                          start_date: new Date(relationship.travel.startDate),
-                          end_date: new Date(relationship.travel.endDate),
-                          reason: relationship.travel.reason
-                        }, 'id');
-                    }
-                  })
-              );
-            }
-          });
-
-          financialEntity.answers.forEach(answer => {
-            if (answer.id) {
-              queries.push(
-                knex('questionnaire_answer').update({
-                  question_id: answer.questionId,
-                  answer: JSON.stringify(answer.answer)
-                })
-                .where('id', answer.id)
-              );
-            } else {
-              queries.push(
-                knex('questionnaire_answer').insert({
-                  question_id: answer.questionId,
-                  answer: JSON.stringify(answer.answer)
-                }, 'id').then(result => {
-                  answer.id = result[0];
-                  return knex('fin_entity_answer').insert({
-                    fin_entity_id: entityId,
-                    questionnaire_answer_id: result[0]
-                  }, 'id');
-                })
-              );
-            }
-          });
-
-          queries.push(
-            knex.select('*')
-              .from('file')
-              .where({
-                ref_id: entityId,
-                file_type: FILE_TYPE.FINANCIAL_ENTITY
-              })
-              .then(results => {
-                if (results) {
-                  results.forEach(result => {
-                    const match = financialEntity.files.find(file => {
-                      return result.id === file.id;
-                    });
-                    if (!match) {
-                      queries.push(
-                        knex('file')
-                          .where('id', result.id)
-                          .del()
-                          .then(() => {
-                            return new Promise((resolve, rejectDelete) => {
-                              FileService.deleteFile(dbInfo, result.key, err => {
-                                if (err) {
-                                  rejectDelete(err);
-                                } else {
-                                  resolve();
-                                }
-                              });
-                            });
-                          })
-                      );
-                    }
-                  });
-                }
-              })
-          );
-
-          files.forEach(file => {
-            const fileData = {
-              file_type: FILE_TYPE.FINANCIAL_ENTITY,
-              ref_id: entityId,
-              type: file.mimetype,
-              key: file.filename,
-              name: file.originalname,
-              user_id: userInfo.schoolId,
-              uploaded_by: userInfo.name,
-              upload_date: new Date()
-            };
-            queries.push(
-              knex('file')
-                .insert(fileData, 'id')
-                .then(id => {
-                  fileData.id = id[0];
-                  financialEntity.files.push(fileData);
-                })
-            );
-          });
-
-          return Promise.all(queries)
-            .then(() => {
-              return financialEntity;
-            });
-        });
+  const entityRecord = await knex
+    .first('disclosure_id as disclosureId')
+    .from('fin_entity')
+    .where({
+      id: entityId
     });
+
+  await resetAdminRelationships(knex, entityRecord.disclosureId);
+  await resetProjectDispositions(knex, entityRecord.disclosureId);
+
+  await knex('fin_entity')
+    .where('id', entityId)
+    .update({
+      active: financialEntity.active,
+      name: financialEntity.name
+    });
+
+  const dbRelationships = await knex('relationship')
+    .select('*')
+    .where('fin_entity_id', entityId);
+
+  const filteredRelationships = dbRelationships.filter(dbRelationship => {
+    const match = financialEntity.relationships.some(
+      relationship => relationship.id === dbRelationship.id
+    );
+    return !match;
+  });
+  
+  for (const dbRelationship of filteredRelationships) {
+    deleteEntityRelationship(knex, dbRelationship.id);
+  }
+
+  for (const relationship of financialEntity.relationships) {
+    if (isNaN(relationship.id)) {
+      relationship.finEntityId = entityId;
+      await saveEntityRelationship(knex, relationship);
+    }
+  }
+
+  for (const answer of financialEntity.answers) {
+    if (answer.id) {
+      await knex('questionnaire_answer')
+        .update({
+          question_id: answer.questionId,
+          answer: JSON.stringify(answer.answer)
+        })
+        .where('id', answer.id);
+    } else {
+      await saveEntityAnswer(knex, answer, entityId);
+    }
+  }
+
+  const results = await knex.select('*')
+    .from('file')
+    .where({
+      ref_id: entityId,
+      file_type: FILE_TYPE.FINANCIAL_ENTITY
+    });
+
+  if (results) {
+    for (const result of results) {
+      const match = financialEntity.files.find(file => {
+        return result.id === file.id;
+      });
+      if (!match) {
+        await deleteEntityFile(knex, dbInfo, result.id, result.key);
+      }
+    }
+  }
+
+  for (const file of files) {
+    const fileData = await saveEntityFile(knex, file, entityId, userInfo);
+    financialEntity.files.push(fileData);
+  }
+
+  return financialEntity;
 }
 
-export function saveDeclaration(dbInfo, userId, disclosureId, record) {
-  return isDisclosureUsers(dbInfo, disclosureId, userId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by user id ${userId} to create a declaration for disclosure ${disclosureId} which isnt the users`); // eslint-disable-line max-len
-      }
+export async function saveDeclaration(dbInfo, userId, disclosureId, record) {
+  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userId);
+  if (!isSubmitter) {
+    throw Error(`Attempt by user id ${userId} to create a declaration for disclosure ${disclosureId} which isnt the users`); // eslint-disable-line max-len
+  }
 
-      const knex = getKnex(dbInfo);
-      return knex('declaration')
-        .insert({
-          project_id: record.projectId,
-          disclosure_id: disclosureId,
-          fin_entity_id: record.finEntityId,
-          type_cd: record.typeCd,
-          comments: record.comments ? record.comments : null
-        }, 'id').then(id => {
-          record.id = id[0];
-          return record;
-        });
-    });
+  const knex = getKnex(dbInfo);
+  const id = await knex('declaration')
+    .insert({
+      project_id: record.projectId,
+      disclosure_id: disclosureId,
+      fin_entity_id: record.finEntityId,
+      type_cd: record.typeCd,
+      comments: record.comments ? record.comments : null
+    }, 'id');
+
+  record.id = id[0];
+  return record;
 }
 
 export async function saveExistingDeclaration(
@@ -406,7 +354,7 @@ export async function saveExistingDeclaration(
   }
 
   const knex = getKnex(dbInfo);
-  return knex('declaration')
+  return await knex('declaration')
     .update({
       type_cd: typeCd,
       comments,
@@ -418,66 +366,60 @@ export async function saveExistingDeclaration(
     });
 }
 
-export function saveNewQuestionAnswer(dbInfo, userId, disclosureId, body) {
-  return isDisclosureUsers(dbInfo, disclosureId, userId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
-      }
+export async function saveNewQuestionAnswer(dbInfo, userId, disclosureId, body) {
+  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userId);
+  if (!isSubmitter) {
+    throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
+  }
 
-      const knex = getKnex(dbInfo);
-      const answer = body;
-      return knex('questionnaire_answer')
-        .insert({
-          question_id: body.questionId,
-          answer: JSON.stringify(body.answer)
-        }, 'id')
-        .then(result => {
-          answer.id = result[0];
-          return knex('disclosure_answer')
-            .insert({
-              disclosure_id: disclosureId,
-              questionnaire_answer_id: result[0]
-            }, 'id')
-            .then(() => {
-              return body;
-            });
-        });
-    });
+  const knex = getKnex(dbInfo);
+  const answer = body;
+  const result = await knex('questionnaire_answer')
+    .insert({
+      question_id: body.questionId,
+      answer: JSON.stringify(body.answer)
+    }, 'id');
+
+  answer.id = result[0];
+  await knex('disclosure_answer')
+    .insert({
+      disclosure_id: disclosureId,
+      questionnaire_answer_id: result[0]
+    }, 'id');
+
+  return body;
 }
 
-export function saveExistingQuestionAnswer(
+export async function saveExistingQuestionAnswer(
   dbInfo,
   userId,
   disclosureId,
   questionId,
   body
 ) {
-  return isDisclosureUsers(dbInfo, disclosureId, userId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
-      }
+  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userId);
 
-      const knex = getKnex(dbInfo);
-      return knex.select('qa.id')
-        .from('disclosure_answer as da')
-        .innerJoin(
-          'questionnaire_answer as qa',
-          'da.questionnaire_answer_id',
-          'qa.id'
-        )
-        .where('da.disclosure_id', disclosureId)
-        .andWhere('qa.question_id', questionId)
-        .then(result => {
-          return knex('questionnaire_answer')
-            .where('id', result[0].id)
-            .update('answer', JSON.stringify(body.answer))
-            .then(() => {
-              return body;
-            });
-        });
-    });
+  if (!isSubmitter) {
+    throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
+  }
+
+  const knex = getKnex(dbInfo);
+  const result = await knex
+    .first('qa.id')
+    .from('disclosure_answer as da')
+    .innerJoin(
+      'questionnaire_answer as qa',
+      'da.questionnaire_answer_id',
+      'qa.id'
+    )
+    .where('da.disclosure_id', disclosureId)
+    .andWhere('qa.question_id', questionId);
+
+  await knex('questionnaire_answer')
+    .where('id', result.id)
+    .update('answer', JSON.stringify(body.answer));
+
+  return body;
 }
 
 async function retrieveComments(dbInfo, userInfo, disclosureId) {
@@ -527,58 +469,58 @@ async function retrieveComments(dbInfo, userInfo, disclosureId) {
   return comments;
 }
 
-function flagPIReviewNeeded(dbInfo, disclosureId, section, id) {
+async function flagPIReviewNeeded(dbInfo, disclosureId, section, id) {
   const knex = getKnex(dbInfo);
-  return knex.select('*')
+  const rows = await knex.select('*')
     .from('pi_review')
     .where({
       disclosure_id: disclosureId,
       target_type: section,
       target_id: id
-    }).then(rows => {
-      if (rows.length > 0) {
-        return knex('pi_review').update({
-          reviewed_on: null
-        }).where({
-          disclosure_id: disclosureId,
-          target_type: section,
-          target_id: id
-        });
-      }
-      return knex('pi_review').insert({
-        disclosure_id: disclosureId,
-        target_type: section,
-        target_id: id
-      }, 'id');
     });
+    
+  if (rows.length > 0) {
+    return await knex('pi_review').update({
+      reviewed_on: null
+    }).where({
+      disclosure_id: disclosureId,
+      target_type: section,
+      target_id: id
+    });
+  }
+  return await knex('pi_review').insert({
+    disclosure_id: disclosureId,
+    target_type: section,
+    target_id: id
+  }, 'id');
 }
 
-function unflagPIReviewNeeded(dbInfo, disclosureId, section, id) {
+async function unflagPIReviewNeeded(dbInfo, disclosureId, section, id) {
   const knex = getKnex(dbInfo);
-  return knex('comment').count()
+  const result = await knex('comment')
+    .count()
     .where({
       disclosure_id: disclosureId,
       topic_section: section,
       topic_id: id,
       pi_visible: true
-    })
-    .then(result => {
-      const count = result[0]['count(*)'];
-
-      if (count == 0) {
-        return knex('pi_review').delete()
-          .where({
-            disclosure_id: disclosureId,
-            target_type: section,
-            target_id: id
-          });
-      }
     });
+
+  const count = result[0]['count(*)'];
+
+  if (count == 0) {
+    return await knex('pi_review').delete()
+      .where({
+        disclosure_id: disclosureId,
+        target_type: section,
+        target_id: id
+      });
+  }
 }
 
-export function addComment(dbInfo, userInfo, comment) {
+export async function addComment(dbInfo, userInfo, comment) {
   const knex = getKnex(dbInfo);
-  return knex('comment')
+  await knex('comment')
     .insert({
       disclosure_id: comment.disclosureId,
       topic_section: comment.topicSection,
@@ -593,27 +535,27 @@ export function addComment(dbInfo, userInfo, comment) {
         userInfo.coiRole === ROLES.ADMIN &&
         comment.reviewerVisible
       )
-    }, 'id').then(() => {
-      const statements = [
-        retrieveComments(dbInfo, userInfo, comment.disclosureId)
-      ];
-      if (comment.piVisible) {
-        statements.push(
-          flagPIReviewNeeded(
-            dbInfo,
-            comment.disclosureId,
-            comment.topicSection,
-            comment.topicId
-          )
-        );
-      }
-      return Promise.all(statements);
-    });
+    }, 'id');
+
+  const statements = [
+    retrieveComments(dbInfo, userInfo, comment.disclosureId)
+  ];
+  if (comment.piVisible) {
+    statements.push(
+      flagPIReviewNeeded(
+        dbInfo,
+        comment.disclosureId,
+        comment.topicSection,
+        comment.topicId
+      )
+    );
+  }
+  return await Promise.all(statements);
 }
 
-export function updateComment(dbInfo, userInfo, comment) {
+export async function updateComment(dbInfo, userInfo, comment) {
   const knex = getKnex(dbInfo);
-  return knex('comment')
+  await knex('comment')
     .update({
       text: comment.text,
       date: new Date(),
@@ -625,41 +567,39 @@ export function updateComment(dbInfo, userInfo, comment) {
     })
     .where({
       id: comment.id
-    })
-    .then(() => {
-      if (comment.piVisible) {
-        return flagPIReviewNeeded(
-          dbInfo,
-          comment.disclosureId,
-          comment.topicSection,
-          comment.topicId
-        );
-      }
-
-      return unflagPIReviewNeeded(
-        dbInfo,
-        comment.disclosureId,
-        comment.topicSection,
-        comment.topicId
-      );
-    })
-    .then(() => {
-      return retrieveComments(dbInfo, userInfo, comment.disclosureId);
     });
+
+  if (comment.piVisible) {
+    await flagPIReviewNeeded(
+      dbInfo,
+      comment.disclosureId,
+      comment.topicSection,
+      comment.topicId
+    );
+  }
+  else {
+    await unflagPIReviewNeeded(
+      dbInfo,
+      comment.disclosureId,
+      comment.topicSection,
+      comment.topicId
+    );
+  }
+
+  return await retrieveComments(dbInfo, userInfo, comment.disclosureId);
 }
 
-function getDisclosure(knex, userInfo, disclosureId) {
+async function getDisclosure(knex, userInfo, disclosureId) {
   const criteria = {
     id: disclosureId
   };
 
-  if (userInfo.coiRole !== ROLES.ADMIN &&
-    userInfo.coiRole !== ROLES.REVIEWER) {
+  if (userInfo.coiRole !== ROLES.ADMIN && userInfo.coiRole !== ROLES.REVIEWER) {
     criteria.user_id = userInfo.schoolId;
   }
 
-  return knex
-    .select(
+  return await knex
+    .first(
       'de.id',
       'de.type_cd as typeCd',
       'de.title',
@@ -731,8 +671,8 @@ async function getDeclarations(dbInfo, disclosureId, authHeader) {
   return filterDeclarations(dbInfo, declarations, authHeader);
 }
 
-function getArchivedVersionList(knex, disclosureId) {
-  return knex.select(
+async function getArchivedVersionList(knex, disclosureId) {
+  return await knex.select(
       'id',
       'approved_date as approvedDate'
     ).from('disclosure_archive')
@@ -740,8 +680,257 @@ function getArchivedVersionList(knex, disclosureId) {
     .orderBy('approvedDate', 'DESC');
 }
 
-export function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
-  let disclosure;
+async function getEntities(knex, disclosureId) {
+  return await knex.select(
+      'e.id',
+      'e.disclosure_id as disclosureId',
+      'e.active',
+      'e.name'
+    )
+    .from('fin_entity as e')
+    .where('disclosure_id', disclosureId)
+    .andWhereNot('status', RELATIONSHIP_STATUS.PENDING);
+}
+
+async function getQuestionAnswers(knex, disclosureId) {
+  return await knex.select(
+      'qa.id as id',
+      'qa.question_id as questionId',
+      'qa.answer as answer'
+    )
+    .from('disclosure_answer as da')
+    .innerJoin(
+      'questionnaire_answer as qa',
+      'qa.id',
+      'da.questionnaire_answer_id'
+    )
+    .where('da.disclosure_id', disclosureId);
+}
+
+async function getFileRecords(knex, disclosureId) {
+  return await knex.select('id', 'name', 'key', 'file_type as fileType')
+    .from('file')
+    .whereIn('file_type', [FILE_TYPE.DISCLOSURE, FILE_TYPE.ADMIN])
+    .andWhere({
+      ref_id: disclosureId
+    });
+}
+
+async function getManagementPlans(knex, disclosureId) {
+  return await knex.select('id', 'name', 'key')
+    .from('file')
+    .where({
+      ref_id: disclosureId,
+      file_type: FILE_TYPE.MANAGEMENT_PLAN
+    });
+}
+
+async function addRecommendationsForReviewer(knex, disclosure, userId) {
+  const recommendations = await knex.select(
+      'r.declaration_id as declarationId',
+      'r.project_person_id as projectPersonId',
+      'r.disposition_type_id as dispositionTypeId'
+    )
+    .from('reviewer_recommendation as r')
+    .innerJoin(
+      'additional_reviewer as a',
+      'r.additional_reviewer_id',
+      'a.id'
+    )
+    .where({
+      'a.user_id': userId,
+      'a.disclosure_id': disclosure.id
+    });
+
+  recommendations.forEach(recommendation => {
+    if (recommendation.projectPersonId) {
+      if (!disclosure.recommendedProjectDispositions) {
+        disclosure.recommendedProjectDispositions = [];
+      }
+
+      disclosure.recommendedProjectDispositions.push({
+        projectPersonId: recommendation.projectPersonId,
+        disposition: recommendation.dispositionTypeId
+      });
+    } else {
+      const decl = disclosure.declarations.find(declaration => {
+        return declaration.id === recommendation.declarationId;
+      });
+      if (decl) {
+        decl.reviewerRelationshipCd = recommendation.dispositionTypeId;
+      }
+    }
+  });
+
+  return disclosure;
+}
+
+async function addRecommendationsForAdmin(knex, disclosure) {
+  const recommendations = await knex.select(
+      'r.declaration_id as declarationId',
+      'r.project_person_id as projectPersonId',
+      'r.disposition_type_id as dispositionTypeId',
+      'a.name as usersName'
+    )
+    .from('reviewer_recommendation as r')
+    .innerJoin(
+      'additional_reviewer as a',
+      'r.additional_reviewer_id',
+      'a.id'
+    )
+    .where({
+      'a.disclosure_id': disclosure.id
+    })
+    .orderBy('r.disposition_type_id');
+
+  recommendations.forEach(recommendation => {
+    let decl;
+    if (recommendation.declarationId) {
+      decl = disclosure.declarations.find(declaration => {
+        return declaration.id === recommendation.declarationId;
+      });
+
+      if (decl) {
+        if (!decl.recommendations) {
+          decl.recommendations = [];
+        }
+
+        decl.recommendations.push({
+          usersName: recommendation.usersName,
+          dispositionTypeCd: recommendation.dispositionTypeId
+        });
+      }
+    } else if (recommendation.projectPersonId) {
+      if (!disclosure.recommendedProjectDispositions) {
+        disclosure.recommendedProjectDispositions = [];
+      }
+
+      disclosure.recommendedProjectDispositions.push({
+        usersName: recommendation.usersName,
+        projectPersonId: recommendation.projectPersonId,
+        disposition: recommendation.dispositionTypeId
+      });
+    }
+  });
+
+  return disclosure;
+}
+
+async function getAdditionalReviewers(knex, disclosureId) {
+  const reviewers = await knex('additional_reviewer')
+    .select(
+      'id',
+      'disclosure_id as disclosureId',
+      'user_id as userId',
+      'name',
+      'email',
+      'title',
+      'unit_name as unitName',
+      'active',
+      'dates'
+    )
+    .where({disclosure_id: disclosureId});
+
+  return reviewers.map(reviewer => {
+    reviewer.dates = JSON.parse(reviewer.dates);
+    return reviewer;
+  });
+}
+
+async function addRelationships(knex, disclosure) {
+  const relationships = await knex.select(
+      'r.id',
+      'r.fin_entity_id as finEntityId',
+      'r.relationship_cd as relationshipCd',
+      'r.person_cd as personCd',
+      'r.type_cd as typeCd',
+      'r.amount_cd as amountCd',
+      'r.comments'
+    )
+    .from('relationship as r')
+    .whereIn('fin_entity_id', disclosure.entities.map(entity => entity.id))
+    .andWhereNot('status', RELATIONSHIP_STATUS.PENDING);
+
+  const travels = await knex('travel_relationship')
+    .select(
+      'amount',
+      'destination',
+      'start_date as startDate',
+      'end_date as endDate',
+      'reason',
+      'relationship_id as relationshipId'
+    )
+    .whereIn(
+      'relationship_id',
+      relationships.map(relationship => { return relationship.id; })
+    );
+
+  disclosure.entities.forEach(entity => {
+    entity.relationships = relationships.filter(relationship => {
+      return relationship.finEntityId === entity.id;
+    }).map(relationship => {
+      const travel = travels.find(item => {
+        return item.relationshipId === relationship.id;
+      });
+      relationship.travel = travel ? travel : {};
+      return relationship;
+    });
+  });
+
+  return disclosure;
+}
+
+async function addEntityFileRecords(knex, disclosure) {
+  const files = await knex.select('*')
+    .from('file')
+    .whereIn('ref_id', disclosure.entities.map(entity => entity.id))
+    .andWhere('file_type', FILE_TYPE.FINANCIAL_ENTITY);
+
+  disclosure.entities.forEach(entity => {
+    entity.files = files.filter(file => {
+      return file.ref_id === entity.id;
+    });
+  });
+
+  return disclosure;
+}
+
+async function updateDisclosuresConfig(knex, disclosure) {
+  await knex('disclosure')
+      .update({config_id: disclosure.configId})
+      .where({id: disclosure.id});
+}
+
+async function addEntityQuestionAnswers(knex, disclosure) {
+  const answers = await knex.select(
+      'qa.question_id as questionId',
+      'qa.answer as answer',
+      'fea.fin_entity_id as finEntityId'
+    )
+    .from('questionnaire_answer as qa' )
+    .innerJoin(
+      'fin_entity_answer as fea',
+      'fea.questionnaire_answer_id',
+      'qa.id'
+    )
+    .whereIn(
+      'fea.fin_entity_id',
+      disclosure.entities.map(entity => entity.id)
+    );
+
+  disclosure.entities.forEach(entity => {
+    entity.answers = answers.filter(answer => {
+      return answer.finEntityId === entity.id;
+    }).map(answer => {
+      answer.answer = JSON.parse(answer.answer);
+      return answer;
+    });
+  });
+
+  return disclosure;
+}
+
+export async function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
   let knex;
   if (trx) {
     knex = trx;
@@ -749,62 +938,8 @@ export function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
     knex = getKnex(dbInfo);
   }
 
-  return Promise.all([
-    getDisclosure(knex, userInfo, disclosureId),
-    knex.select('e.id', 'e.disclosure_id as disclosureId', 'e.active', 'e.name')
-      .from('fin_entity as e')
-      .where('disclosure_id', disclosureId)
-      .andWhereNot('status', RELATIONSHIP_STATUS.PENDING),
-    knex.select(
-        'qa.id as id',
-        'qa.question_id as questionId',
-        'qa.answer as answer'
-      )
-      .from('disclosure_answer as da')
-      .innerJoin(
-        'questionnaire_answer as qa',
-        'qa.id',
-        'da.questionnaire_answer_id'
-      )
-      .where('da.disclosure_id', disclosureId),
-    getDeclarations(dbInfo, disclosureId, authHeader),
-    retrieveComments(dbInfo, userInfo, disclosureId),
-    knex.select('id', 'name', 'key', 'file_type as fileType')
-      .from('file')
-      .whereIn('file_type', [FILE_TYPE.DISCLOSURE, FILE_TYPE.ADMIN])
-      .andWhere({
-        ref_id: disclosureId
-      }),
-    knex.select('id', 'name', 'key')
-      .from('file')
-      .where({
-        ref_id: disclosureId,
-        file_type: FILE_TYPE.MANAGEMENT_PLAN
-      }),
-    knex('additional_reviewer')
-      .select(
-        'id',
-        'disclosure_id as disclosureId',
-        'user_id as userId',
-        'name',
-        'email',
-        'title',
-        'unit_name as unitName',
-        'active',
-        'dates'
-      )
-      .where({disclosure_id: disclosureId})
-      .then(reviewers => {
-        return reviewers.map(reviewer => {
-          reviewer.dates = JSON.parse(reviewer.dates);
-          return reviewer;
-        });
-      }),
-    isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId),
-    knex('config').select('id').limit(1).orderBy('id', 'desc'),
-    getArchivedVersionList(knex, disclosureId)
-  ]).then(([
-    disclosureRecords,
+  const [
+    disclosureRecord,
     entityRecords,
     answerRecords,
     declarationRecords,
@@ -813,219 +948,74 @@ export function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
     managementPlans,
     additionalReviewers,
     isOwner,
-    latestConfig,
+    latestConfigId,
     archivedVersions
-  ]) => {
-    const { coiRole } = userInfo;
-    if (coiRole !== ROLES.ADMIN && coiRole !== ROLES.REVIEWER) {
-      if (!isOwner) {
-        throw Error(`Attempt by ${userInfo.username} to load disclosure ${disclosureId} which is not theirs`); // eslint-disable-line max-len
-      }
+  ] = await Promise.all([
+    getDisclosure(knex, userInfo, disclosureId),
+    getEntities(knex, disclosureId),
+    getQuestionAnswers(knex, disclosureId),
+    getDeclarations(dbInfo, disclosureId, authHeader),
+    retrieveComments(dbInfo, userInfo, disclosureId),
+    getFileRecords(knex, disclosureId),
+    getManagementPlans(knex, disclosureId),
+    getAdditionalReviewers(knex, disclosureId),
+    isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId),
+    getLatestConfigsId(knex),
+    getArchivedVersionList(knex, disclosureId)
+  ]);
+
+  const { coiRole } = userInfo;
+  if (coiRole !== ROLES.ADMIN && coiRole !== ROLES.REVIEWER) {
+    if (!isOwner) {
+      throw Error(`Attempt by ${userInfo.username} to load disclosure ${disclosureId} which is not theirs`); // eslint-disable-line max-len
     }
+  }
 
-    const phaseTwoSteps = [];
-    disclosure = disclosureRecords[0];
-    disclosure.entities = entityRecords;
-    disclosure.answers = answerRecords;
-    disclosure.declarations = declarationRecords;
-    disclosure.archivedVersions = archivedVersions;
-    if (coiRole === ROLES.REVIEWER) {
-      phaseTwoSteps.push(
-        knex.select(
-            'r.declaration_id as declarationId',
-            'r.project_person_id as projectPersonId',
-            'r.disposition_type_id as dispositionTypeId'
-          )
-          .from('reviewer_recommendation as r')
-          .innerJoin(
-            'additional_reviewer as a',
-            'r.additional_reviewer_id',
-            'a.id'
-          )
-          .where({
-            'a.user_id': userInfo.schoolId,
-            'a.disclosure_id': disclosureId
-          })
-          .then(recommendations => {
-            recommendations.forEach(recommendation => {
-              if (recommendation.projectPersonId) {
-                if (!disclosure.recommendedProjectDispositions) {
-                  disclosure.recommendedProjectDispositions = [];
-                }
-
-                disclosure.recommendedProjectDispositions.push({
-                  projectPersonId: recommendation.projectPersonId,
-                  disposition: recommendation.dispositionTypeId
-                });
-              } else {
-                const decl = disclosure.declarations.find(declaration => {
-                  return declaration.id === recommendation.declarationId;
-                });
-                if (decl) {
-                  decl.reviewerRelationshipCd = recommendation.dispositionTypeId;
-                }
-              }
-            });
-          })
-      );
-    } else if (coiRole === ROLES.ADMIN) {
-      phaseTwoSteps.push(
-        knex.select(
-            'r.declaration_id as declarationId',
-            'r.project_person_id as projectPersonId',
-            'r.disposition_type_id as dispositionTypeId',
-            'a.name as usersName'
-          )
-          .from('reviewer_recommendation as r')
-          .innerJoin(
-            'additional_reviewer as a',
-            'r.additional_reviewer_id',
-            'a.id'
-          )
-          .where({
-            'a.disclosure_id': disclosureId
-          })
-          .orderBy('r.disposition_type_id')
-          .then(recommendations => {
-            recommendations.forEach(recommendation => {
-              let decl;
-              if (recommendation.declarationId) {
-                decl = disclosure.declarations.find(declaration => {
-                  return declaration.id === recommendation.declarationId;
-                });
-
-                if (decl) {
-                  if (!decl.recommendations) {
-                    decl.recommendations = [];
-                  }
-
-                  decl.recommendations.push({
-                    usersName: recommendation.usersName,
-                    dispositionTypeCd: recommendation.dispositionTypeId
-                  });
-                }
-              } else if (recommendation.projectPersonId) {
-                if (!disclosure.recommendedProjectDispositions) {
-                  disclosure.recommendedProjectDispositions = [];
-                }
-
-                disclosure.recommendedProjectDispositions.push({
-                  usersName: recommendation.usersName,
-                  projectPersonId: recommendation.projectPersonId,
-                  disposition: recommendation.dispositionTypeId
-                });
-              }
-            });
-          })
-      );
-    }
-    disclosure.comments = commentRecords;
-    disclosure.files = fileRecords;
-    disclosure.managementPlan = managementPlans;
-    disclosure.reviewers = additionalReviewers;
-    disclosure.answers.forEach(answer => {
-      answer.answer = JSON.parse(answer.answer);
-    });
-
-    if (disclosure.answers.length < 1) {
-      disclosure.configId = latestConfig[0].id;
-    }
-
+  const phaseTwoSteps = [];
+  const disclosure = disclosureRecord;
+  disclosure.entities = entityRecords;
+  disclosure.answers = answerRecords;
+  disclosure.declarations = declarationRecords;
+  disclosure.archivedVersions = archivedVersions;
+  if (coiRole === ROLES.REVIEWER) {
     phaseTwoSteps.push(
-      knex.select(
-          'r.id',
-          'r.fin_entity_id as finEntityId',
-          'r.relationship_cd as relationshipCd',
-          'r.person_cd as personCd',
-          'r.type_cd as typeCd',
-          'r.amount_cd as amountCd',
-          'r.comments'
-        )
-        .from('relationship as r')
-        .whereIn('fin_entity_id', disclosure.entities.map(entity => entity.id))
-        .andWhereNot('status', RELATIONSHIP_STATUS.PENDING)
-        .then(relationships => {
-          return knex('travel_relationship')
-            .select(
-              'amount',
-              'destination',
-              'start_date as startDate',
-              'end_date as endDate',
-              'reason',
-              'relationship_id as relationshipId'
-            )
-            .whereIn(
-              'relationship_id',
-              relationships.map(relationship => { return relationship.id; })
-            )
-            .then(travels => {
-              disclosure.entities.forEach(entity => {
-                entity.relationships = relationships.filter(relationship => {
-                  return relationship.finEntityId === entity.id;
-                }).map(relationship => {
-                  const travel = travels.find(item => {
-                    return item.relationshipId === relationship.id;
-                  });
-                  relationship.travel = travel ? travel : {};
-                  return relationship;
-                });
-              });
-            });
-        })
+      addRecommendationsForReviewer(knex, disclosure, userInfo.schoolId)
     );
-
+  } else if (coiRole === ROLES.ADMIN) {
     phaseTwoSteps.push(
-      knex.select(
-          'qa.question_id as questionId',
-          'qa.answer as answer',
-          'fea.fin_entity_id as finEntityId'
-        )
-        .from('questionnaire_answer as qa' )
-        .innerJoin(
-          'fin_entity_answer as fea',
-          'fea.questionnaire_answer_id',
-          'qa.id'
-        )
-        .whereIn(
-          'fea.fin_entity_id',
-          disclosure.entities.map(entity => entity.id)
-        )
-        .then(answers => {
-          disclosure.entities.forEach(entity => {
-            entity.answers = answers.filter(answer => {
-              return answer.finEntityId === entity.id;
-            }).map(answer => {
-              answer.answer = JSON.parse(answer.answer);
-              return answer;
-            });
-          });
-        })
+      addRecommendationsForAdmin(knex, disclosure)
     );
-
-    phaseTwoSteps.push(
-      knex.select('*')
-        .from('file')
-        .whereIn('ref_id', disclosure.entities.map(entity => entity.id))
-        .andWhere('file_type', FILE_TYPE.FINANCIAL_ENTITY)
-        .then(files => {
-          disclosure.entities.forEach(entity => {
-            entity.files = files.filter(file => {
-              return file.ref_id === entity.id;
-            });
-          });
-        })
-    );
-
-    phaseTwoSteps.push(
-      knex('disclosure')
-        .update({config_id: disclosure.configId})
-        .where({id: disclosure.id})
-    );
-
-    return Promise.all(phaseTwoSteps).then(() => {
-      return disclosure;
-    });
+  }
+  disclosure.comments = commentRecords;
+  disclosure.files = fileRecords;
+  disclosure.managementPlan = managementPlans;
+  disclosure.reviewers = additionalReviewers;
+  disclosure.answers.forEach(answer => {
+    answer.answer = JSON.parse(answer.answer);
   });
+
+  if (disclosure.answers.length < 1) {
+    disclosure.configId = latestConfigId;
+  }
+
+  phaseTwoSteps.push(
+    addRelationships(knex, disclosure)
+  );
+
+  phaseTwoSteps.push(
+    addEntityQuestionAnswers(knex, disclosure)
+  );
+
+  phaseTwoSteps.push(
+    addEntityFileRecords(knex, disclosure)
+  );
+
+  phaseTwoSteps.push(
+    updateDisclosuresConfig(knex, disclosure)
+  );
+
+  await Promise.all(phaseTwoSteps);
+  return disclosure;
 }
 
 export async function getAnnualDisclosure(
@@ -1036,28 +1026,29 @@ export async function getAnnualDisclosure(
 ) {
   const knex = getKnex(dbInfo);
   const result = await knex('disclosure')
-    .select('id as id')
+    .first('id as id')
     .where('type_cd', 2)
     .andWhere('user_id', userInfo.schoolId);
 
-  if (result.length >= 1) {
-    return get(dbInfo, userInfo, result[0].id, authHeader);
+  if (result) {
+    return get(dbInfo, userInfo, result.id, authHeader);
   }
 
-  const config = await knex('config').max('id as id');
+  const configId = await getLatestConfigsId(knex);
   const newDisclosure = {
     type_cd: 2,
     status_cd: 1,
     start_date: new Date(),
     user_id: userInfo.schoolId,
     submitted_by: piName,
-    config_id: config[0].id
+    config_id: configId
   };
   const id = await knex('disclosure').insert(newDisclosure, 'id');
   newDisclosure.id = id[0];
   newDisclosure.answers = [];
   newDisclosure.entities = [];
   newDisclosure.declarations = [];
+
   return camelizeJson(newDisclosure);
 }
 
@@ -1277,37 +1268,35 @@ export async function getSummariesForUser(dbInfo, userId) {
   });
 }
 
-function updateEntitiesAndRelationshipsStatuses(
+async function updateEntitiesAndRelationshipsStatuses(
   knex,
   disclosureId,
   oldStatus,
   newStatus
 ) {
-  return knex('fin_entity')
+  await knex('fin_entity')
     .update({status: newStatus})
     .where('disclosure_id', disclosureId)
-    .andWhere('status', oldStatus)
-    .then(() => {
-      return knex('fin_entity')
-        .select('id')
-        .where('disclosure_id', disclosureId)
-        .then(results => {
-          return Promise.all(
-            results.map(result => {
-              const update = {};
-              update.status = newStatus;
-              if (newStatus === RELATIONSHIP_STATUS.DISCLOSED) {
-                update.disclosed_date = new Date();
-              }
+    .andWhere('status', oldStatus);
 
-              return knex('relationship')
-                .update(update)
-                .where('fin_entity_id', result.id)
-                .andWhere('status', oldStatus);
-            })
-          );
-        });
-    });
+  const results = await knex('fin_entity')
+    .select('id')
+    .where('disclosure_id', disclosureId);
+
+  await Promise.all(
+    results.map(result => {
+      const update = {};
+      update.status = newStatus;
+      if (newStatus === RELATIONSHIP_STATUS.DISCLOSED) {
+        update.disclosed_date = new Date();
+      }
+
+      return knex('relationship')
+        .update(update)
+        .where('fin_entity_id', result.id)
+        .andWhere('status', oldStatus);
+    })
+  );
 }
 
 export function getExpirationDate(date, isRolling, dueDate) {
@@ -1325,7 +1314,7 @@ export function getExpirationDate(date, isRolling, dueDate) {
   return new Date(dueDate.setFullYear(date.getFullYear() + 1));
 }
 
-function approveDisclosure(
+async function approveDisclosure(
   knex,
   disclosureId,
   expiredDate,
@@ -1333,44 +1322,42 @@ function approveDisclosure(
   dbInfo,
   authHeader
 ) {
-  return knex('disclosure')
-    .select('user_id as userId')
-    .where({id: disclosureId})
-    .then(disclosure => {
-      return getProjects(
-        undefined,
-        disclosure[0].userId,
-        knex
-      ).then(projects => {
-        return filterProjects(dbInfo, projects, authHeader)
-          .then(requiredProjects => {
-            const newActiveProjects = requiredProjects.filter(project => {
-              return project.new === 1;
-            });
-            let status = DISCLOSURE_STATUS.UP_TO_DATE;
+  const disclosure = await knex('disclosure')
+    .first('user_id as userId')
+    .where({id: disclosureId});
 
-            if (newActiveProjects && newActiveProjects.length > 0) {
-              status = DISCLOSURE_STATUS.UPDATE_REQUIRED;
-            }
+  const projects = await getProjects(
+    undefined,
+    disclosure.userId,
+    knex
+  );
 
-            return knex('disclosure')
-              .update({
-                expired_date: expiredDate,
-                status_cd: status,
-                last_review_date: new Date()
-              })
-              .where('id', disclosureId);
-          });
-      });
-    });
+  const requiredProjects = await filterProjects(dbInfo, projects, authHeader);
+
+  const newActiveProjects = requiredProjects.filter(project => {
+    return project.new === 1;
+  });
+  let status = DISCLOSURE_STATUS.UP_TO_DATE;
+
+  if (newActiveProjects && newActiveProjects.length > 0) {
+    status = DISCLOSURE_STATUS.UPDATE_REQUIRED;
+  }
+
+  await knex('disclosure')
+    .update({
+      expired_date: expiredDate,
+      status_cd: status,
+      last_review_date: new Date()
+    })
+    .where('id', disclosureId);
 }
 
 async function getDisclosureDisposition(knex, declarations, id) {
   const config = await knex('config')
-    .select('config')
+    .first('config')
     .where({id});
 
-  const dispositionTypes = JSON.parse(config[0].config).dispositionTypes;
+  const {dispositionTypes} = JSON.parse(config.config);
   if (dispositionTypes && dispositionTypes.length > 0) {
     dispositionTypes.sort((a,b) => {
       return b.order - a.order;
@@ -1417,27 +1404,28 @@ async function archiveDisclosure(knex, disclosureId, approverName, disclosure) {
     }, 'id');
 }
 
-function deleteComments(knex, disclosureId) {
-  return knex('comment')
+async function deleteComments(knex, disclosureId) {
+  await knex('comment')
     .del()
     .where('disclosure_id', disclosureId);
 }
 
-function deleteAnswersForDisclosure(knex, disclosureId) {
-  return knex('disclosure_answer')
+async function deleteAnswersForDisclosure(knex, disclosureId) {
+  const result = await knex('disclosure_answer')
     .select('questionnaire_answer_id')
-    .where('disclosure_id', disclosureId)
-    .then((result) => {
-      return knex('disclosure_answer')
-        .del()
-        .where('disclosure_id', disclosureId)
-        .then(() => {
-          const idsToDelete = result.map(disclosureAnswer => {
-            return disclosureAnswer.questionnaire_answer_id;
-          });
-          return knex('questionnaire_answer').del().whereIn('id', idsToDelete);
-        });
-    });
+    .where('disclosure_id', disclosureId);
+
+  await knex('disclosure_answer')
+    .del()
+    .where('disclosure_id', disclosureId);
+
+  const idsToDelete = result.map(disclosureAnswer => {
+    return disclosureAnswer.questionnaire_answer_id;
+  });
+
+  await knex('questionnaire_answer')
+    .del()
+    .whereIn('id', idsToDelete);
 }
 
 function deletePIReviewsForDisclsoure(knex, disclosureId) {
@@ -1464,7 +1452,7 @@ async function deleteAdditionalReviewers(knex, disclosureId) {
 
 async function resetProjectDispositions(knex, disclosureId) {
   const disclosure = await knex('disclosure')
-    .select('user_id')
+    .first('user_id')
     .where({
       id: disclosureId
     });
@@ -1474,7 +1462,7 @@ async function resetProjectDispositions(knex, disclosureId) {
       disposition_type_cd: null
     })
     .where({
-      person_id: disclosure[0].user_id
+      person_id: disclosure.user_id
     });
 }
 
@@ -1488,7 +1476,7 @@ function resetAdminRelationships(knex, disclosureId) {
     });
 }
 
-export function approve(
+export async function approve(
   dbInfo,
   disclosure,
   displayName,
@@ -1506,8 +1494,8 @@ export function approve(
   disclosure.statusCd = DISCLOSURE_STATUS.UP_TO_DATE;
   disclosure.lastReviewDate = new Date();
 
-  return Promise.all([
-    knex('config').select('config').limit(1).orderBy('id', 'desc'),
+  const [config, archivedDisclosure] = await Promise.all([
+    knex('config').first('config').orderBy('id', 'desc'),
     archiveDisclosure(knex, disclosureId, displayName, disclosure),
     deleteComments(knex, disclosureId),
     deleteAnswersForDisclosure(knex, disclosureId),
@@ -1519,25 +1507,24 @@ export function approve(
       RELATIONSHIP_STATUS.PENDING,
       RELATIONSHIP_STATUS.IN_PROGRESS
     )
-  ])
-  .then(([config, archivedDisclosure]) => {
-    const generalConfig = JSON.parse(config[0].config).general;
-    const expiredDate = getExpirationDate(
-      new Date(disclosure.submittedDate),
-      generalConfig.isRollingDueDate,
-      new Date(generalConfig.dueDate)
-    );
-    return approveDisclosure(
-      knex,
-      disclosureId,
-      expiredDate,
-      disclosure.userId,
-      dbInfo,
-      authHeader
-    ).then(() => {
-      return archivedDisclosure[0];
-    });
-  });
+  ]);
+
+  const generalConfig = JSON.parse(config.config).general;
+  const expiredDate = getExpirationDate(
+    new Date(disclosure.submittedDate),
+    generalConfig.isRollingDueDate,
+    new Date(generalConfig.dueDate)
+  );
+  await approveDisclosure(
+    knex,
+    disclosureId,
+    expiredDate,
+    disclosure.userId,
+    dbInfo,
+    authHeader
+  );
+
+  return archivedDisclosure[0];
 }
 
 function updateStatus(knex, name, disclosureId) {
@@ -1550,8 +1537,8 @@ function updateStatus(knex, name, disclosureId) {
   .where('id', disclosureId);
 }
 
-function updateProjects(trx, schoolId) {
-  return trx('project_person')
+async function updateProjects(trx, schoolId) {
+  await trx('project_person')
     .update({
       new: false
     })
@@ -1559,6 +1546,31 @@ function updateProjects(trx, schoolId) {
       person_id: schoolId,
       active: true
     });
+}
+
+async function addAdditionalReviewer(knex, reviewer, disclosureId) {
+  try {
+    const newId = await knex('additional_reviewer')
+      .insert({
+        user_id: reviewer.userId,
+        disclosure_id: disclosureId,
+        name: reviewer.value,
+        email: reviewer.email,
+        active: true,
+        dates: JSON.stringify([{
+          type: DATE_TYPE.ASSIGNED,
+          date: new Date()
+        }]),
+        assigned_by: SYSTEM_USER
+      }, 'id');
+
+    return newId[0];
+  } catch (err) {
+    Log.info(
+      `reviewer ${reviewer.userId} already added to disclosure ${disclosureId}`
+    );
+    return null;
+  }
 }
 
 async function addAdditionalReviewers(
@@ -1577,26 +1589,9 @@ async function addAdditionalReviewers(
   return await Promise.all(
     reviewers.filter(reviewer => {
       return reviewer.userId !== userInfo.schoolId;
-    }).map(reviewer => {
-      return trx('additional_reviewer').insert({
-        user_id: reviewer.userId,
-        disclosure_id: disclosureId,
-        name: reviewer.value,
-        email: reviewer.email,
-        active: true,
-        dates: JSON.stringify([{
-          type: DATE_TYPE.ASSIGNED,
-          date: new Date()
-        }]),
-        assigned_by: SYSTEM_USER
-      }, 'id').then(newId => {
-        return Promise.resolve(newId[0]);
-      }).catch(() => {
-        Log.info(
-          `reviewer ${reviewer.userId} already added to disclosure ${disclosureId}`
-        );
-        return Promise.resolve(null);
-      });
+    })
+    .map(reviewer => {
+      return addAdditionalReviewer(trx, reviewer, disclosureId);
     })
   );
 }
@@ -1620,7 +1615,7 @@ export async function submit(
   }
 
   let reviewerIds;
-  return knex.transaction( async (trx) => {
+  await knex.transaction( async (trx) => {
     await updateStatus(trx, userInfo.name, disclosureId);
     await updateEntitiesAndRelationshipsStatuses(
       trx,
@@ -1638,10 +1633,10 @@ export async function submit(
       trx
     );
     const config = await trx('config')
-      .select('config')
+      .first('config')
       .where({id: disclosure.configId});
 
-    const generalConfig = JSON.parse(config[0].config).general;
+    const generalConfig = JSON.parse(config.config).general;
 
     if (generalConfig.autoAddAdditionalReviewer) {
       reviewerIds = await addAdditionalReviewers(
@@ -1656,7 +1651,11 @@ export async function submit(
     if (generalConfig.autoApprove) {
       const count = await trx('fin_entity')
         .count('id as count')
-        .where({active: true, disclosure_id: disclosureId});
+        .where({
+          active: true,
+          disclosure_id: disclosureId
+        });
+
       if (count[0].count === 0) {
         await approve(
           dbInfo,
@@ -1668,22 +1667,22 @@ export async function submit(
         );
       }
     }
-  }).then(async () => {
-    if (Array.isArray(reviewerIds)) {
-      for (let i = 0; i < reviewerIds.length; i++) {
-        if (reviewerIds[i] === null) {
-          continue;
-        }
-
-        await createAndSendReviewerAssignedNotification(
-          dbInfo,
-          hostName,
-          userInfo,
-          reviewerIds[i]
-        );
-      }
-    }
   });
+
+  if (Array.isArray(reviewerIds)) {
+    for (let i = 0; i < reviewerIds.length; i++) {
+      if (reviewerIds[i] === null) {
+        continue;
+      }
+
+      await createAndSendReviewerAssignedNotification(
+        dbInfo,
+        hostName,
+        userInfo,
+        reviewerIds[i]
+      );
+    }
+  }
 }
 
 async function updateEditableComments(trx, disclosureId) {
@@ -1692,24 +1691,24 @@ async function updateEditableComments(trx, disclosureId) {
     .where({disclosure_id: disclosureId});
 }
 
-export function reject(dbInfo, userInfo, disclosureId) {
+export async function reject(dbInfo, userInfo, disclosureId) {
   const knex = getKnex(dbInfo);
-  return knex.transaction(trx => {
-    return trx('disclosure')
+  await knex.transaction(async (trx) => {
+    await trx('disclosure')
       .update({
         status_cd: DISCLOSURE_STATUS.REVISION_REQUIRED,
         last_review_date: new Date()
       })
-      .where('id', disclosureId).then(() => {
-        return updateEditableComments(trx, disclosureId);
-      });
+      .where('id', disclosureId);
+
+    return updateEditableComments(trx, disclosureId);
   });
 }
 
-export function getArchivedDisclosures(dbInfo, userId) {
+export async function getArchivedDisclosures(dbInfo, userId) {
   const knex = getKnex(dbInfo);
 
-  return Promise.all([
+  const [archives, configs] = await Promise.all([
     knex
       .select(
         'da.id',
@@ -1722,141 +1721,142 @@ export function getArchivedDisclosures(dbInfo, userId) {
       .innerJoin('disclosure as d', 'd.id', 'da.disclosure_id')
       .where('d.user_id', userId)
       .orderBy('da.id', 'desc'),
-    knex.select('id', 'config')
+    knex
+      .select(
+        'id',
+        'config'
+      )
       .from('config as c')
-  ]).then(([archives, configs]) => {
-    archives.forEach(archive => {
-      const archivesConfigId = JSON.parse(archive.disclosure).configId;
-      const theConfig = configs.find(config => {
-        return config.id === archivesConfigId;
-      });
+  ]);
 
-      if (theConfig) {
-        archive.config = theConfig.config;
-      }
+  archives.forEach(archive => {
+    const archivesConfigId = JSON.parse(archive.disclosure).configId;
+    const theConfig = configs.find(config => {
+      return config.id === archivesConfigId;
     });
 
-    return archives;
+    if (theConfig) {
+      archive.config = theConfig.config;
+    }
   });
+
+  return archives;
 }
 
 export function getLatestArchivedDisclosure(dbInfo, userId, disclosureId) {
   const knex = getKnex(dbInfo);
-  return knex.select('disclosure')
-  .from('disclosure_archive')
-  .where('disclosure_id', disclosureId)
-  .limit(1)
-  .orderBy('approved_date', 'desc');
+  return knex
+    .first('disclosure')
+    .from('disclosure_archive')
+    .where('disclosure_id', disclosureId)
+    .orderBy('approved_date', 'desc');
 }
 
 export function getArchivedDisclosure(dbInfo, archiveId) {
   const knex = getKnex(dbInfo);
   return knex
-    .select('disclosure')
+    .first('disclosure')
     .from('disclosure_archive')
     .where('id', archiveId);
 }
 
-export function deleteAnswers(dbInfo, userInfo, disclosureId, answersToDelete) {
+export async function deleteAnswers(dbInfo, userInfo, disclosureId, answersToDelete) {
   const knex = getKnex(dbInfo);
 
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by ${userInfo.username} to delete answers from disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
-      }
+  const isSubmitter = await isDisclosureUsers(
+    dbInfo,
+    disclosureId,
+    userInfo.schoolId
+  );
 
-      return knex.select(
-        'qa.id as questionnaireAnswerId',
-        'da.id as disclosureAnswerId'
-      )
-        .from('disclosure_answer as da')
-        .innerJoin(
-          'questionnaire_answer as qa',
-          'qa.id',
-          'da.questionnaire_answer_id'
-        )
-        .whereIn('qa.question_id', answersToDelete)
-        .andWhere('da.disclosure_id', disclosureId)
-        .then(results => {
-          const questionnaireAnswerIds = results.map(row => {
-            return row.questionnaireAnswerId;
-          });
-          const disclosureAnswerIds = results.map(row => {
-            return row.disclosureAnswerId;
-          });
+  if (!isSubmitter) {
+    throw Error(`Attempt by ${userInfo.username} to delete answers from disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
+  }
 
-          return knex('disclosure_answer')
-            .whereIn('id', disclosureAnswerIds)
-            .del()
-            .then(() => {
-              return knex('questionnaire_answer')
-                .whereIn('id', questionnaireAnswerIds)
-                .del()
-                .then(() => { return; });
-            });
-        });
-    });
+  const results = await knex.select(
+      'qa.id as questionnaireAnswerId',
+      'da.id as disclosureAnswerId'
+    )
+    .from('disclosure_answer as da')
+    .innerJoin(
+      'questionnaire_answer as qa',
+      'qa.id',
+      'da.questionnaire_answer_id'
+    )
+    .whereIn('qa.question_id', answersToDelete)
+    .andWhere('da.disclosure_id', disclosureId);
+
+  const questionnaireAnswerIds = results.map(row => {
+    return row.questionnaireAnswerId;
+  });
+  const disclosureAnswerIds = results.map(row => {
+    return row.disclosureAnswerId;
+  });
+
+  await knex('disclosure_answer')
+    .whereIn('id', disclosureAnswerIds)
+    .del();
+
+  await knex('questionnaire_answer')
+    .whereIn('id', questionnaireAnswerIds)
+    .del();
 }
 
-export function getCurrentState(dbInfo, userInfo, disclosureId) {
-  return isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (!isSubmitter) {
-        throw Error(`Attempt by user id ${userInfo.schoolId} to retrieve state of disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
-      }
+export async function getCurrentState(dbInfo, userInfo, disclosureId) {
+  const isSubmitter = await isDisclosureUsers(
+    dbInfo,
+    disclosureId,
+    userInfo.schoolId
+  );
 
-      const knex = getKnex(dbInfo);
-      return knex
-        .select('state')
-        .from('state')
-        .where({
-          key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
-          user_id: userInfo.schoolId
-        })
-        .then(stateFound => {
-          if (stateFound.length === 0) {
-            return '';
-          }
-          return JSON.parse(stateFound[0].state);
-        });
+  if (!isSubmitter) {
+    throw Error(`Attempt by user id ${userInfo.schoolId} to retrieve state of disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
+  }
+
+  const knex = getKnex(dbInfo);
+  const stateFound = await knex
+    .first('state')
+    .from('state')
+    .where({
+      key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+      user_id: userInfo.schoolId
     });
+
+  if (!stateFound) {
+    return '';
+  }
+  return JSON.parse(stateFound.state);
 }
 
-export function saveCurrentState(dbInfo, userInfo, disclosureId, state) {
-  return getCurrentState(dbInfo, userInfo, disclosureId)
-    .then(currentState => {
-      const knex = getKnex(dbInfo);
+export async function saveCurrentState(dbInfo, userInfo, disclosureId, state) {
+  const currentState = await getCurrentState(dbInfo, userInfo, disclosureId);
+  const knex = getKnex(dbInfo);
 
-      if (currentState !== '') {
-        return knex('state')
-          .update({
-            state: JSON.stringify(state)
-          })
-          .where({
-            key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
-            user_id: userInfo.schoolId
-          }).then(() => {
-            return;
-          });
-      }
+  if (currentState !== '') {
+    await knex('state')
+      .update({
+        state: JSON.stringify(state)
+      })
+      .where({
+        key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+        user_id: userInfo.schoolId
+      });
+    return;
+  }
 
-      return knex('state')
-        .insert({
-          key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
-          user_id: userInfo.schoolId,
-          state: JSON.stringify(state)
-        }, 'id').then(() => {
-          return;
-        });
-    });
+  await knex('state')
+    .insert({
+      key: STATE_TYPE.ANNUAL_DISCLOSURE_STATE,
+      user_id: userInfo.schoolId,
+      state: JSON.stringify(state)
+    }, 'id');
 }
 
 export async function getDisclosureInfoForNotifications(dbInfo, id) {
   const knex = getKnex(dbInfo);
 
   const disclosure = await knex('disclosure')
-    .select(
+    .first(
       'id',
       'status_cd as statusCd',
       'submitted_date as submittedDate',
@@ -1865,14 +1865,14 @@ export async function getDisclosureInfoForNotifications(dbInfo, id) {
     )
     .where({id});
 
-  return disclosure[0];
+  return disclosure;
 }
 
 export async function getArchivedDisclosureInfoForNotifications(dbInfo, id) {
   const knex = getKnex(dbInfo);
 
   const results = await knex('disclosure_archive as da')
-    .select(
+    .first(
       'd.user_id as userId',
       'da.approved_date as approvedDate',
       'da.approved_by as approvedBy',
@@ -1881,9 +1881,9 @@ export async function getArchivedDisclosureInfoForNotifications(dbInfo, id) {
     .innerJoin('disclosure as d', 'da.disclosure_id', 'd.id')
     .where({'da.id': id});
 
-  const disclosure = JSON.parse(results[0].disclosure);
-  disclosure.approvedDate = results[0].approvedDate;
-  disclosure.approvedBy = results[0].approvedBy;
-  disclosure.userId = results[0].userId;
+  const disclosure = JSON.parse(results.disclosure);
+  disclosure.approvedDate = results.approvedDate;
+  disclosure.approvedBy = results.approvedBy;
+  disclosure.userId = results.userId;
   return disclosure;
 }

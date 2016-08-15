@@ -63,8 +63,8 @@ export const init = app => {
     user can only see their own
   */
   app.get('/api/coi/archived-disclosures/:id/latest', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const results = await DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id);
-    const disclosure = JSON.parse(results[0].disclosure);
+    const result = await DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id);
+    const disclosure = JSON.parse(result.disclosure);
     if (req.userInfo.coiRole !== ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
       res.sendStatus(FORBIDDEN);
       return;
@@ -387,11 +387,11 @@ export const init = app => {
   }));
 
   app.get('/api/coi/archived-disclosures/:archiveId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    const results = await DisclosureDB.getArchivedDisclosure(
+    const result = await DisclosureDB.getArchivedDisclosure(
       req.dbInfo,
       req.params.archiveId
     );
-    const archive = JSON.parse(results[0].disclosure);
+    const archive = JSON.parse(result.disclosure);
     res.send(archive);
   }));
 };

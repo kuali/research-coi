@@ -110,30 +110,37 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
 
     it('should return not required', () => {
       assert.equal(2, status.userId);
-      assert.equal(PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED, status.status);
+      assert.equal(
+        PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED,
+        status.status
+      );
       assert.equal('test', status.disposition);
     });
   });
 
   describe('get status for undeclared project', () => {
-    let status;
     before(async () => {
       const projectId = await insertProject(knex, createProject(3));
       await insertProjectPerson(knex, createPerson(3, 'PI', true), projectId);
-      const disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),3);
-      await insertEntity(knex, createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true));
+      const disclosureId = await insertDisclosure(
+        knex,
+        createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),
+        3
+      );
+      await insertEntity(
+        knex,
+        createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true)
+      );
     });
 
-    it('should return OK status', async () => {
+    it('should return update needed', async () => {
       const response = await request(app.run())
         .get('/api/coi/project-disclosure-statuses/KC-PD/3/3')
         .set('Authorization', 'Bearer admin')
         .expect(OK);
 
-      status = response.body;
-    });
+      const status = response.body;
 
-    it('should return update needed', () => {
       assert.equal(3, status.userId);
       assert.equal(PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED, status.status);
       assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);

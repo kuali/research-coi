@@ -23,7 +23,7 @@ export async function getAdditionalReviewer(dbInfo, id) {
   try {
     const knex = getKnex(dbInfo);
     const reviewer = await knex('additional_reviewer')
-      .select(
+      .first(
         'name',
         'user_id as userId',
         'email',
@@ -35,10 +35,10 @@ export async function getAdditionalReviewer(dbInfo, id) {
         'assigned_by as assignedBy'
       )
       .where({id});
-    if (reviewer[0] && reviewer[0].dates) {
-      reviewer[0].dates = JSON.parse(reviewer[0].dates);
+    if (reviewer && reviewer.dates) {
+      reviewer.dates = JSON.parse(reviewer.dates);
     }
-    return reviewer[0];
+    return reviewer;
   } catch (err) {
     return Promise.reject(err);
   }
@@ -46,7 +46,7 @@ export async function getAdditionalReviewer(dbInfo, id) {
 
 export async function getDisclosuresForReviewer(dbInfo, schoolId) {
   const knex = getKnex(dbInfo);
-  const reviewers = await knex('additional_reviewer as ar')
+  return await knex('additional_reviewer as ar')
     .select(
       'd.type_cd as typeCd',
       'd.status_cd as statusCd',
@@ -68,7 +68,6 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
       'ar.user_id': schoolId,
       'ar.active': true
     });
-  return reviewers;
 }
 
 export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {

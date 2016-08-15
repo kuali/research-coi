@@ -39,7 +39,8 @@ export async function getProjects (dbInfo, userId, trx) {
     knex = getKnex(dbInfo);
   }
 
-  const projects = await knex.select(
+  const projects = await knex
+    .select(
       'p.id as id',
       'p.source_identifier as sourceIdentifier',
       'p.title as name',
@@ -58,7 +59,8 @@ export async function getProjects (dbInfo, userId, trx) {
   let projectIds = projects.map(project => project.id);
   projectIds = uniq(projectIds);
 
-  const sponsors = await knex.select(
+  const sponsors = await knex
+    .select(
       'project_id as projectId',
       'sponsor_cd as sponsorCode',
       'sponsor_name as sponsorName'
@@ -90,42 +92,39 @@ async function shouldUpdateStatus(trx, disclosureId) {
     return true;
   }
 
-  const entities = await trx('fin_entity')
-    .select('id')
+  const entity = await trx('fin_entity')
+    .first('id')
     .where({
       disclosure_id: disclosureId,
       active: true
     });
 
-  if (entities && entities.length > 0) {
-    return true;
-  }
-  return false;
+  return entity !== undefined;
 }
 
 async function updateDisclosureStatus(trx, person, project, req) {
   const disclosure = await trx('disclosure')
-    .select('status_cd as statusCd', 'id')
+    .first('status_cd as statusCd', 'id')
     .where({
       user_id: person.personId,
       type_cd: DISCLOSURE_TYPE.ANNUAL
     });
 
   if (
-    disclosure.length > 0 &&
-    await shouldUpdateStatus(trx, disclosure[0].id) &&
-    disclosure[0].statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+    disclosure &&
+    await shouldUpdateStatus(trx, disclosure.id) &&
+    disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
   ) {
     await trx('disclosure')
       .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
-      .where({id: disclosure[0].id});
+      .where({id: disclosure.id});
 
     try {
       createAndSendNewProjectNotification(
         req.dbInfo,
         req.hostname,
         req.userInfo,
-        disclosure[0].id,
+        disclosure.id,
         project,
         person
       );
@@ -143,19 +142,19 @@ async function revertDisclosureStatus(trx, person, req, projectId) {
 
   if (otherRequiredProjects.length === 0) {
     const disclosure = await trx('disclosure')
-      .select('status_cd as statusCd', 'id')
+      .first('status_cd as statusCd', 'id')
       .where({
         user_id: person.personId,
         type_cd: DISCLOSURE_TYPE.ANNUAL
       });
 
     if (
-      disclosure.length > 0 &&
-      disclosure[0].statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+      disclosure &&
+      disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
     ) {
       await trx('disclosure')
         .update({status_cd: DISCLOSURE_STATUS.UP_TO_DATE})
-        .where({id: disclosure[0].id});
+        .where({id: disclosure.id});
     }
   }
 }
@@ -396,15 +395,16 @@ async function saveExistingProjects(trx, project, authHeader) {
 
 async function getExistingProjectId(trx, project) {
   Log.info('pre existing project query');
-  const existingProject = await trx.select('id')
+  const existingProject = await trx
+    .first('id')
     .from('project')
     .where({
       source_system: project.sourceSystem,
       source_identifier: project.sourceIdentifier
     });
   Log.info('got existing project');
-  if (existingProject && existingProject.length > 0) {
-    return existingProject[0].id;
+  if (existingProject) {
+    return existingProject.id;
   }
 }
 
@@ -446,9 +446,11 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
   }
 
   const disclosure = await trx('disclosure as d')
-    .select('ds.description as status', 'd.id')
+    .first('ds.description as status', 'd.id')
     .innerJoin('disclosure_status as ds', 'ds.status_cd', 'd.status_cd')
-    .where({user_id: person_id});
+    .where({
+      user_id: person_id
+    });
 
   const declaration = await trx('declaration')
     .select('disclosure_id')
@@ -457,13 +459,15 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
       disclosure_id: disclosureId
     });
 
-  if (disclosure[0]) {
-    const entities = await trx('fin_entity')
-      .select('id')
-      .where({disclosure_id: disclosure[0].id});
+  if (disclosure) {
+    const entity = await trx('fin_entity')
+      .first('id')
+      .where({
+        disclosure_id: disclosure.id
+      });
 
-    if (declaration[0] || entities.length === 0) {
-      disclosureStatus.status = disclosure[0].status;
+    if (declaration[0] || !entity) {
+      disclosureStatus.status = disclosure.status;
     } else {
       disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
     }

@@ -24,6 +24,7 @@ import {
   FILE_TYPE
 } from '../../coi-constants';
 import {verifyRelationshipIsUsers} from './common-db';
+import {getLatestConfigsId} from './config-db';
 import * as FileService from '../services/file-service/file-service';
 import getKnex from './connection-manager';
 
@@ -98,23 +99,22 @@ export function getTravelLogEntries(
   return query;
 }
 
-function createAnnualDisclosure(knex, userInfo) {
-  return knex('config').max('id as id')
-  .then(config => {
-    return knex('disclosure')
-      .insert({
-        type_cd: 2,
-        status_cd: 1,
-        start_date: new Date(),
-        user_id: userInfo.schoolId,
-        submitted_by: userInfo.name,
-        config_id: config[0].id
-      }, 'id');
-  });
+async function createAnnualDisclosure(knex, userInfo) {
+  const latestConfigId = await getLatestConfigsId(knex);
+
+  return await knex('disclosure')
+    .insert({
+      type_cd: 2,
+      status_cd: 1,
+      start_date: new Date(),
+      user_id: userInfo.schoolId,
+      submitted_by: userInfo.name,
+      config_id: latestConfigId
+    }, 'id');
 }
 
-function createNewEntity(knex, disclosureId, entry, status) {
-  return knex('fin_entity').insert({
+async function createNewEntity(knex, disclosureId, entry, status) {
+  return await knex('fin_entity').insert({
     disclosure_id: disclosureId,
     name: entry.entityName,
     active: true,
@@ -122,26 +122,26 @@ function createNewEntity(knex, disclosureId, entry, status) {
   }, 'id');
 }
 
-function createNewRelationship(knex, entityId, entry, status) {
-  return knex('relationship').insert({
+async function createNewRelationship(knex, entityId, entry, status) {
+  const relationshipId = await knex('relationship').insert({
     fin_entity_id: entityId,
     relationship_cd: ENTITY_RELATIONSHIP.TRAVEL,
     person_cd: 1,
     status
-  }, 'id').then(relationshipId => {
-    return knex('travel_relationship').insert({
-      relationship_id: relationshipId[0],
-      amount: entry.amount,
-      destination: entry.destination,
-      start_date: new Date(entry.startDate),
-      end_date: new Date(entry.endDate),
-      reason: entry.reason
-    }, 'id').then(travelRelationshipId => {
-      entry.id = travelRelationshipId[0];
-      entry.relationshipId = relationshipId[0];
-      return entry;
-    });
-  });
+  }, 'id');
+
+  const travelRelationshipId = await knex('travel_relationship').insert({
+    relationship_id: relationshipId[0],
+    amount: entry.amount,
+    destination: entry.destination,
+    start_date: new Date(entry.startDate),
+    end_date: new Date(entry.endDate),
+    reason: entry.reason
+  }, 'id');
+
+  entry.id = travelRelationshipId[0];
+  entry.relationshipId = relationshipId[0];
+  return entry;
 }
 
 function isSubmitted(status) {
@@ -154,80 +154,85 @@ function isSubmitted(status) {
 
 function getExistingFinancialEntity(trx, entityName, disclosureId) {
   return trx('fin_entity')
-  .select('id')
-  .where({name: entityName, disclosure_id: disclosureId});
+    .first('id')
+    .where({
+      name: entityName,
+      disclosure_id: disclosureId
+    });
 }
 
-function handleTravelLogEntry(trx, disclosureId, entry, status) {
-  return getExistingFinancialEntity(trx, entry.entityName, disclosureId)
-  .then(entity => {
-    if (entity[0]) {
-      return createNewRelationship(trx, entity[0].id, entry, status);
-    }
+async function handleTravelLogEntry(trx, disclosureId, entry, status) {
+  const entity = await getExistingFinancialEntity(
+    trx,
+    entry.entityName,
+    disclosureId
+  );
 
-    return createNewEntity(trx, disclosureId, entry, status)
-    .then(newEntityId => {
-      return createNewRelationship(trx, newEntityId, entry, status);
-    });
-  });
+  if (entity) {
+    return await createNewRelationship(trx, entity.id, entry, status);
+  }
+
+  const newEntityId = await createNewEntity(trx, disclosureId, entry, status);
+  return await createNewRelationship(trx, newEntityId, entry, status);
 }
 
 function getAnnualDisclosureForUser(trx, schoolId) {
-  return trx('disclosure').select('status_cd', 'id').where({
-    user_id: schoolId,
-    type_cd: DISCLOSURE_TYPE.ANNUAL
-  });
+  return trx('disclosure')
+    .first(
+      'status_cd',
+      'id'
+    )
+    .where({
+      user_id: schoolId,
+      type_cd: DISCLOSURE_TYPE.ANNUAL
+    });
 }
 
-export function createTravelLogEntry(dbInfo, entry, userInfo) {
+export async function createTravelLogEntry(dbInfo, entry, userInfo) {
   const knex = getKnex(dbInfo);
-  return knex.transaction(trx => {
-    return getAnnualDisclosureForUser(trx, userInfo.schoolId)
-    .then(disclosure => {
-      if (disclosure[0]) {
-        if (isSubmitted(disclosure[0].status_cd) === true) {
-          return handleTravelLogEntry(
-            trx,
-            disclosure[0].id,
-            entry,
-            RELATIONSHIP_STATUS.PENDING
-          );
-        }
-
-        return handleTravelLogEntry(
+  return await knex.transaction(async (trx) => {
+    const disclosure = await getAnnualDisclosureForUser(trx, userInfo.schoolId);
+    if (disclosure) {
+      if (isSubmitted(disclosure.status_cd) === true) {
+        return await handleTravelLogEntry(
           trx,
-          disclosure[0].id,
+          disclosure.id,
           entry,
-          RELATIONSHIP_STATUS.IN_PROGRESS
+          RELATIONSHIP_STATUS.PENDING
         );
       }
 
-      return createAnnualDisclosure(trx, userInfo).then(disclosureId => {
-        return createNewEntity(
-          trx,
-          disclosureId,
-          entry,
-          RELATIONSHIP_STATUS.IN_PROGRESS
-        ).then(entityId => {
-          return createNewRelationship(
-            trx,
-            entityId,
-            entry,
-            RELATIONSHIP_STATUS.IN_PROGRESS
-          );
-        });
-      });
-    });
+      return await handleTravelLogEntry(
+        trx,
+        disclosure.id,
+        entry,
+        RELATIONSHIP_STATUS.IN_PROGRESS
+      );
+    }
+
+    const disclosureId = await createAnnualDisclosure(trx, userInfo);
+    const entityId = await createNewEntity(
+      trx,
+      disclosureId,
+      entry,
+      RELATIONSHIP_STATUS.IN_PROGRESS
+    );
+
+    return await createNewRelationship(
+      trx,
+      entityId,
+      entry,
+      RELATIONSHIP_STATUS.IN_PROGRESS
+    );
   });
 }
 
-function getRelationshipsEntity(trx, id) {
-  return trx('relationship')
-    .select('fin_entity_id')
-    .where('id', id)
-    .then(relationship => {
-      return relationship[0].fin_entity_id;
-    });
+async function getRelationshipsEntity(trx, id) {
+  const relationship = await trx('relationship')
+    .first('fin_entity_id')
+    .where('id', id);
+
+  return relationship.fin_entity_id;
 }
 
 function deleteTravelRelationship(trx, id) {
@@ -242,14 +247,13 @@ function deleteRelationship(trx, id) {
   .where('id', id);
 }
 
-function getQuestionnaireAnswerIds(trx, id) {
-  return trx('fin_entity_answer')
-  .select('questionnaire_answer_id')
-  .where('fin_entity_id', id)
-  .then(answers => {
-    return answers.map(answer => {
-      return answer.questionnaire_answer_id;
-    });
+async function getQuestionnaireAnswerIds(trx, id) {
+  const answers = await trx('fin_entity_answer')
+    .select('questionnaire_answer_id')
+    .where('fin_entity_id', id);
+
+  return answers.map(answer => {
+    return answer.questionnaire_answer_id;
   });
 }
 
@@ -261,34 +265,32 @@ function deleteFinEntityAnswers(trx, id) {
 
 function deleteQuestionnaireAnswers(trx, answerIds) {
   return trx('questionnaire_answer')
-  .del()
-  .whereIn('id', answerIds);
+    .del()
+    .whereIn('id', answerIds);
 }
 
-function deleteEntityAnswers(trx, id) {
-  return getQuestionnaireAnswerIds(trx, id).then(answerIds => {
-    return deleteFinEntityAnswers(trx, id).then(() => {
-      return deleteQuestionnaireAnswers(trx, answerIds);
-    });
-  });
+async function deleteEntityAnswers(trx, id) {
+  const answerIds = await getQuestionnaireAnswerIds(trx, id);
+  await deleteFinEntityAnswers(trx, id);
+  return await deleteQuestionnaireAnswers(trx, answerIds);
 }
 
 function getEntityFiles(trx, id) {
   return trx('file')
-  .select('id', 'key')
-  .where({
-    ref_id: id,
-    file_type: FILE_TYPE.FINANCIAL_ENTITY
-  });
+    .select('id', 'key')
+    .where({
+      ref_id: id,
+      file_type: FILE_TYPE.FINANCIAL_ENTITY
+    });
 }
 
 function deleteDbFiles(trx, id) {
   return trx('file')
-  .del()
-  .where({
-    ref_id: id,
-    file_type: FILE_TYPE.FINANCIAL_ENTITY
-  });
+    .del()
+    .where({
+      ref_id: id,
+      file_type: FILE_TYPE.FINANCIAL_ENTITY
+    });
 }
 
 function deleteFileData(dbInfo, files) {
@@ -307,55 +309,54 @@ function deleteFileData(dbInfo, files) {
   );
 }
 
-function deleteEntityFiles(trx, dbInfo, id) {
-  return getEntityFiles(trx, id).then(files => {
-    return deleteDbFiles(trx, id).then(() => {
-      return deleteFileData(dbInfo, files);
-    });
-  });
+async function deleteEntityFiles(trx, dbInfo, id) {
+  const files = await getEntityFiles(trx, id);
+  await deleteDbFiles(trx, id);
+  return await deleteFileData(dbInfo, files);
 }
 
 function deleteEntity(trx, id) {
   return trx('fin_entity')
-  .del()
-  .where('id', id);
+    .del()
+    .where('id', id);
 }
 
-function deleteEntityIfAllRelationshipsAreDelete(dbInfo, trx, entityId) {
-  return trx('relationship')
-    .select('id')
-    .where('fin_entity_id', entityId)
-    .then(rows => {
-      if (!rows.length) {
-        return deleteEntityAnswers(trx, entityId).then(() => {
-          return deleteEntityFiles(trx, dbInfo, entityId).then(() => {
-            return deleteEntity(trx, entityId);
-          });
-        });
-      }
-    });
+async function deleteEntityIfAllRelationshipsAreDeleted(dbInfo, trx, entityId) {
+  const row = await trx('relationship')
+    .first('id')
+    .where('fin_entity_id', entityId);
+
+  if (!row) {
+    await deleteEntityAnswers(trx, entityId);
+    await deleteEntityFiles(trx, dbInfo, entityId);
+    return await deleteEntity(trx, entityId);
+  }
 }
 
-export function deleteTravelLogEntry(dbInfo, id, userInfo) {
+export async function deleteTravelLogEntry(dbInfo, id, userInfo) {
   const knex = getKnex(dbInfo);
-  return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
-    .then(isAllowed => {
-      if (isAllowed) {
-        return knex.transaction(trx => {
-          return getRelationshipsEntity(trx, id).then(entityId => {
-            return deleteTravelRelationship(trx, id).then(() => {
-              return deleteRelationship(trx, id).then(() => {
-                return deleteEntityIfAllRelationshipsAreDelete(dbInfo, trx, entityId);
-              });
-            });
-          });
-        });
-      }
+  const isAllowed = await verifyRelationshipIsUsers(
+    dbInfo,
+    userInfo.schoolId,
+    id
+  );
 
-      throw new Error(
-        `${userInfo.userName} is unauthorized to edit this record`
+  if (isAllowed) {
+    await knex.transaction(async (trx) => {
+      const entityId = await getRelationshipsEntity(trx, id);
+      await deleteTravelRelationship(trx, id);
+      await deleteRelationship(trx, id);
+      return await deleteEntityIfAllRelationshipsAreDeleted(
+        dbInfo,
+        trx,
+        entityId
       );
     });
+  }
+
+  throw new Error(
+    `${userInfo.userName} is unauthorized to edit this record`
+  );
 }
 
 function createTravelRelationshipFromEntry(entry) {
@@ -394,8 +395,8 @@ function updateTravelRelationship(trx, entry, id) {
   const travelRelationship = createTravelRelationshipFromEntry(entry);
   if (Object.keys(travelRelationship).length > 0) {
     return trx('travel_relationship')
-    .update(travelRelationship)
-    .where('relationship_id', id);
+      .update(travelRelationship)
+      .where('relationship_id', id);
   }
 
   return undefined;
@@ -405,114 +406,110 @@ function updateRelationship(trx, entry, id) {
   const relationship = createRelationshipFromEntry(entry);
   if (Object.keys(relationship).length > 0) {
     return trx('relationship')
-    .update(relationship)
-    .where('id', id);
+      .update(relationship)
+      .where('id', id);
   }
 
   return undefined;
 }
 
 function handleOldEntity(trx, dbInfo, entityId) {
-  return deleteEntityIfAllRelationshipsAreDelete(dbInfo, trx, entityId);
+  return deleteEntityIfAllRelationshipsAreDeleted(dbInfo, trx, entityId);
 }
 
-function getEntityNameFromId(trx, id) {
-  return trx('fin_entity')
-  .select('name')
-  .where('id', id)
-  .then(entity => {
-    return entity[0].name;
-  });
+async function getEntityNameFromId(trx, id) {
+  const entity = await trx('fin_entity')
+    .first('name')
+    .where('id', id);
+  return entity.name;
 }
 
-function getEntityIdFromName(trx, name, disclosureId) {
-  return trx('fin_entity')
-  .select('id')
-  .where({
-    name,
-    disclosure_id: disclosureId
-  })
-  .then(entity => {
-    if (entity[0]) {
-      return entity[0].id;
-    }
+async function getEntityIdFromName(trx, name, disclosureId) {
+  const entity = await trx('fin_entity')
+    .first('id')
+    .where({
+      name,
+      disclosure_id: disclosureId
+    });
 
-    return undefined;
-  });
+  if (entity) {
+    return entity.id;
+  }
+
+  return undefined;
 }
 
 function getRelationship(trx, id) {
   return trx('relationship')
-  .select('fin_entity_id')
-  .where('id', id);
+    .first('fin_entity_id')
+    .where('id', id);
 }
 
 function updateRelationshipEntityId(trx, id, entityId) {
   return trx('relationship')
-  .update({fin_entity_id: entityId})
-  .where('id', id);
+    .update({fin_entity_id: entityId})
+    .where('id', id);
 }
 
-function updateEntity(trx, dbInfo, entry, id, schoolId) {
-  return getRelationship(trx, id).then(relationship => {
-    return getEntityNameFromId(trx, relationship[0].fin_entity_id)
-      .then(entityName => {
-        if (entry.entityName === entityName || !entry.entityName) {
-          return undefined;
-        }
+async function updateEntity(trx, dbInfo, entry, id, schoolId) {
+  const relationship = await getRelationship(trx, id);
 
-        return getAnnualDisclosureForUser(trx, schoolId)
-          .then(disclosure => {
-            return getEntityIdFromName(trx, entry.entityName, disclosure[0].id)
-              .then(entityId => {
-                if (entityId) {
-                  return updateRelationshipEntityId(trx, id, entityId)
-                    .then(() => {
-                      return handleOldEntity(
-                        trx,
-                        dbInfo,
-                        relationship[0].fin_entity_id
-                      );
-                    });
-                }
+  const entityName = await getEntityNameFromId(
+    trx,
+    relationship.fin_entity_id
+  );
+  if (entry.entityName === entityName || !entry.entityName) {
+    return undefined;
+  }
 
-                return createNewEntity(
-                  trx,
-                  disclosure[0].id,
-                  entry,
-                  RELATIONSHIP_STATUS.IN_PROGRESS
-                ).then(newEntityId => {
-                  return updateRelationshipEntityId(trx, id, newEntityId)
-                    .then(() => {
-                      return handleOldEntity(
-                        trx,
-                        dbInfo,
-                        relationship[0].fin_entity_id
-                      );
-                    });
-                });
-              });
-          });
-      });
-  });
+  const disclosure = await getAnnualDisclosureForUser(trx, schoolId);
+  const entityId = await getEntityIdFromName(
+    trx,
+    entry.entityName, disclosure.id
+  );
+  if (entityId) {
+    await updateRelationshipEntityId(trx, id, entityId);
+    return await handleOldEntity(
+      trx,
+      dbInfo,
+      relationship.fin_entity_id
+    );
+  }
+
+  const newEntityId = await createNewEntity(
+    trx,
+    disclosure.id,
+    entry,
+    RELATIONSHIP_STATUS.IN_PROGRESS
+  );
+
+  await updateRelationshipEntityId(trx, id, newEntityId);
+  return await handleOldEntity(
+    trx,
+    dbInfo,
+    relationship.fin_entity_id
+  );
 }
 
-export function updateTravelLogEntry(dbInfo, entry, id, userInfo) {
+export async function updateTravelLogEntry(dbInfo, entry, id, userInfo) {
   const knex = getKnex(dbInfo);
-  return verifyRelationshipIsUsers(dbInfo, userInfo.schoolId, id)
-  .then(isAllowed => {
-    if (isAllowed) {
-      return knex.transaction(trx => {
-        return Promise.all([
-          updateTravelRelationship(trx, entry, id),
-          updateRelationship(trx, entry, id),
-          updateEntity(trx, dbInfo, entry, id, userInfo.schoolId)
-        ]).then(() => {
-          return entry;
-        });
-      });
-    }
+  const isAllowed = await verifyRelationshipIsUsers(
+    dbInfo,
+    userInfo.schoolId,
+    id
+  );
 
-    throw new Error(`${userInfo.userName} is unauthorized to edit this record`);
-  });
+  if (isAllowed) {
+    await knex.transaction(async (trx) => {
+      await Promise.all([
+        updateTravelRelationship(trx, entry, id),
+        updateRelationship(trx, entry, id),
+        updateEntity(trx, dbInfo, entry, id, userInfo.schoolId)
+      ]);
+
+      return entry;
+    });
+  }
+
+  throw new Error(`${userInfo.userName} is unauthorized to edit this record`);
 }

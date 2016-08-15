@@ -91,13 +91,13 @@ export const init = app => {
   */
   app.get('/api/coi/files/:id', allowedRoles('ANY'), wrapAsync(async (req, res, next) => {
     const result = await FileDb.getFile(req.dbInfo, req.userInfo, req.params.id);
-    if (result.length < 1) {
+    if (!result) {
       res.sendStatus(FORBIDDEN);
       return;
     }
 
-    res.setHeader('Content-disposition', `attachment; filename="${result[0].name}"`);
-    FileService.getFile(req.dbInfo, result[0].key, error => {
+    res.setHeader('Content-disposition', `attachment; filename="${result.name}"`);
+    FileService.getFile(req.dbInfo, result.key, error => {
       if (error) {
         Log.error(error, req);
         next(error);
