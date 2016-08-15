@@ -51,8 +51,8 @@ catch (err) {
 const SCREENING_QUESTIONNAIRE_TYPE_CD = 1;
 const FIN_ENTITY_QUESTIONNAIRE_TYPE_CD = 2;
 
-async function createDeleteQueries(query, collection, tableProps) {
-  let sel = query(tableProps.table).select(tableProps.pk);
+async function createDeleteQueries(knex, collection, tableProps) {
+  let sel = knex(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where);
   }
@@ -69,14 +69,14 @@ async function createDeleteQueries(query, collection, tableProps) {
       });
       return !match;
     }).map(result => {
-      return query(tableProps.table)
+      return knex(tableProps.table)
         .update({active: false})
         .where(tableProps.pk, result[tableProps.pk]);
     })
   );
 }
 
-async function createInsertQueries(query, collection, tableProps) {
+async function createInsertQueries(knex, collection, tableProps) {
   return await Promise.all(
     collection.map(async (line) => {
       const tmpId = line.tmpId;
@@ -86,7 +86,7 @@ async function createInsertQueries(query, collection, tableProps) {
       if (tableProps.parent) {
         line[tableProps.parent.key] = tableProps.parent.value;
       }
-      const result = await query(tableProps.table).insert(line, tableProps.pk);
+      const result = await knex(tableProps.table).insert(line, tableProps.pk);
 
       line[tableProps.pk] = result[0];
       line.tmpId = tmpId;
@@ -95,19 +95,19 @@ async function createInsertQueries(query, collection, tableProps) {
   );
 }
 
-function createUpdateQueries(query, collection, tableProps) {
+function createUpdateQueries(knex, collection, tableProps) {
   return Promise.all(
     collection.map(line => {
       delete line.tmpId;
       delete line.tmp_id;
-      return query(tableProps.table)
+      return knex(tableProps.table)
         .update(line)
         .where(tableProps.pk, line[tableProps.pk]);
     })
   );
 }
 
-async function createCollectionQueries(query, collection, tableProps) {
+async function createCollectionQueries(knex, collection, tableProps) {
   const updates = [];
   const inserts = [];
   collection.forEach(line => {
@@ -119,9 +119,9 @@ async function createCollectionQueries(query, collection, tableProps) {
   });
 
   const results = await Promise.all([
-    createDeleteQueries(query, collection, tableProps),
-    createInsertQueries(query, inserts, tableProps),
-    createUpdateQueries(query, updates, tableProps)
+    createDeleteQueries(knex, collection, tableProps),
+    createInsertQueries(knex, inserts, tableProps),
+    createUpdateQueries(knex, updates, tableProps)
   ]);
 
   const insertResults = results[1];
@@ -150,9 +150,9 @@ function convertQuestionFormat(questions, questionnaireId) {
   });
 }
 
-async function getNotificationTemplates(query, dbInfo, hostname, notificationsMode) {
+async function getNotificationTemplates(knex, dbInfo, hostname, notificationsMode) {
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-    const templates = await query.select(
+    const templates = await knex.select(
         'template_id as templateId',
         'description',
         'type',
@@ -175,15 +175,15 @@ async function getNotificationTemplates(query, dbInfo, hostname, notificationsMo
   return [];
 }
 
-async function createMatrixTypes(query) {
-  const categories = await query
+async function createMatrixTypes(knex) {
+  const categories = await knex
     .select('*')
     .from('relationship_category_type');
-  const relationshipTypes = await query
+  const relationshipTypes = await knex
     .select('*')
     .from('relationship_type')
     .where('active', true);
-  const amountTypes = await query
+  const amountTypes = await knex
     .select('*')
     .from('relationship_amount_type')
     .where('active', true);
@@ -198,15 +198,15 @@ async function createMatrixTypes(query) {
   });
 }
 
-async function getQuestionnaireQuestions(query, typeCd) {
-  const questionnaire = await query
+async function getQuestionnaireQuestions(knex, typeCd) {
+  const questionnaire = await knex
     .first('id')
     .from('questionnaire')
     .where('type_cd', typeCd)
     .orderBy('version', 'desc');
 
   if (questionnaire) {
-    const questions = await query
+    const questions = await knex
       .select('*')
       .from('questionnaire_question as qq')
       .where({questionnaire_id: questionnaire.id, active: true});
@@ -217,23 +217,23 @@ async function getQuestionnaireQuestions(query, typeCd) {
   }
 }
 
-async function getScreeningQuestions(query) {
+async function getScreeningQuestions(knex) {
   return await getQuestionnaireQuestions(
-    query,
+    knex,
     SCREENING_QUESTIONNAIRE_TYPE_CD
   );
 }
 
-async function getEntityQuestions(query) {
+async function getEntityQuestions(knex) {
   return await getQuestionnaireQuestions(
-    query,
+    knex,
     FIN_ENTITY_QUESTIONNAIRE_TYPE_CD
   );
 }
 
-async function getQuestions(query) {
-  const screening = await getScreeningQuestions(query);
-  const entities = await getEntityQuestions(query);
+async function getQuestions(knex) {
+  const screening = await getScreeningQuestions(knex);
+  const entities = await getEntityQuestions(knex);
   return {
     screening,
     entities
@@ -245,8 +245,8 @@ export async function getLatestConfigsId(knex) {
   return record[0].id;
 }
 
-export async function getGeneralConfig(query) {
-  const mostRecentId = await getLatestConfigsId(query);
+export async function getGeneralConfig(knex) {
+  const mostRecentId = await getLatestConfigsId(knex);
 
   if (cachedConfigs[mostRecentId]) {
     return {
@@ -255,7 +255,7 @@ export async function getGeneralConfig(query) {
     };
   }
 
-  const generalConfigRecords = await query
+  const generalConfigRecords = await knex
     .first('config')
     .from('config')
     .where({id: mostRecentId});
@@ -281,32 +281,31 @@ export async function getConfig(dbInfo, hostname) {
     let config = {};
     const knex = getKnex(dbInfo);
     const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
-    const query = knex;
 
-    config.matrixTypes = await createMatrixTypes(query);
-    config.relationshipPersonTypes = await query
+    config.matrixTypes = await createMatrixTypes(knex);
+    config.relationshipPersonTypes = await knex
       .select('*')
       .from('relationship_person_type')
       .where('active', true);
   
-    config.declarationTypes = await query
+    config.declarationTypes = await knex
       .select('*')
       .from('declaration_type')
       .orderBy('order');
   
-    config.dispositionTypes = await query
+    config.dispositionTypes = await knex
       .select('*')
       .from('disposition_type')
       .orderBy('order');
   
-    config.disclosureTypes = await query.select('*').from('disclosure_type');
-    config.questions = await getQuestions(query);
-    config.disclosureStatus = await query.select('*').from('disclosure_status');
-    config.projectTypes = await query.select('*').from('project_type');
-    config.projectRoles = await query.select('*').from('project_role');
-    config.projectStatuses = await query.select('*').from('project_status');
+    config.disclosureTypes = await knex.select('*').from('disclosure_type');
+    config.questions = await getQuestions(knex);
+    config.disclosureStatus = await knex.select('*').from('disclosure_status');
+    config.projectTypes = await knex.select('*').from('project_type');
+    config.projectRoles = await knex.select('*').from('project_role');
+    config.projectStatuses = await knex.select('*').from('project_status');
     config.notificationTemplates = await getNotificationTemplates(
-      query,
+      knex,
       dbInfo,
       hostname,
       notificationsMode
@@ -314,7 +313,7 @@ export async function getConfig(dbInfo, hostname) {
     config.notificationsMode = notificationsMode;
     config.lane = lane;
     config = camelizeJson(config);
-    const generalConfig = await getGeneralConfig(query);
+    const generalConfig = await getGeneralConfig(knex);
     config.id = generalConfig.id;
     config.general = generalConfig.config;
     return Promise.resolve(config);
@@ -338,8 +337,8 @@ function updateParentIdOnChildren(children, updatedParents) {
   });
 }
 
-export async function saveScreeningQuestionnaire(query, questions) {
-  const questionnaire = await query
+export async function saveScreeningQuestionnaire(knex, questions) {
+  const questionnaire = await knex
     .first('id')
     .from('questionnaire')
     .where('type_cd', 1)
@@ -352,7 +351,7 @@ export async function saveScreeningQuestionnaire(query, questions) {
   const parents = convertedQuestions.filter(question => !question.parent);
   const children = convertedQuestions.filter(question => question.parent);
 
-  const updatedParents = await createCollectionQueries(query, parents, {
+  const updatedParents = await createCollectionQueries(knex, parents, {
     pk: 'id',
     table: 'questionnaire_question',
     where() {
@@ -365,7 +364,7 @@ export async function saveScreeningQuestionnaire(query, questions) {
   });
 
   await createCollectionQueries(
-    query,
+    knex,
     updateParentIdOnChildren(children, updatedParents),
     {
       pk: 'id',
@@ -430,13 +429,13 @@ export async function setConfig(dbInfo, userId, body, hostname) {
     }
   }
 
-  return knex.transaction(async (query) => {
-    const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
-    const queries = [];
+  const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
+  const queries = [];
 
-    config.matrix_types.forEach(type => {
-      queries.push(
-        query('relationship_category_type').update({
+  config.matrix_types.forEach(type => {
+    queries.push(
+      knex('relationship_category_type')
+        .update({
           enabled: type.enabled,
           type_enabled: type.type_enabled,
           amount_enabled: type.amount_enabled,
@@ -444,103 +443,102 @@ export async function setConfig(dbInfo, userId, body, hostname) {
           date_enabled: type.date_enabled,
           reason_enabled: type.reason_enabled
         })
-          .where('type_cd', type.type_cd)
-      );
-
-      queries.push(
-        createCollectionQueries(query, type.type_options, {
-          pk: 'type_cd',
-          table: 'relationship_type',
-          where: {relationship_cd: type.type_cd}
-        })
-      );
-
-      queries.push(
-        createCollectionQueries(query, type.amount_options, {
-          pk: 'type_cd',
-          table: 'relationship_amount_type',
-          where: {relationship_cd: type.type_cd}
-        })
-      );
-    });
-
-    queries.push(
-      createCollectionQueries(
-        query,
-        config.declaration_types,
-        {pk: 'type_cd', table: 'declaration_type'}
-      )
+        .where('type_cd', type.type_cd)
     );
 
     queries.push(
-      createCollectionQueries(
-        query,
-        config.disposition_types,
-        {pk: 'type_cd', table: 'disposition_type'}
-      )
-    );
-
-    queries.push(
-      createCollectionQueries(query, config.relationship_person_types, {
+      createCollectionQueries(knex, type.type_options, {
         pk: 'type_cd',
-        table: 'relationship_person_type'
+        table: 'relationship_type',
+        where: {relationship_cd: type.type_cd}
       })
     );
 
     queries.push(
-      createCollectionQueries(
-        query,
-        config.disclosure_types,
-        {pk: 'type_cd', table: 'disclosure_type'}
-      )
+      createCollectionQueries(knex, type.amount_options, {
+        pk: 'type_cd',
+        table: 'relationship_amount_type',
+        where: {relationship_cd: type.type_cd}
+      })
     );
-
-    queries.push(
-      createCollectionQueries(
-        query,
-        config.project_types,
-        {pk: 'type_cd', table: 'project_type'}
-      )
-    );
-
-    queries.push(
-      createCollectionQueries(
-        query,
-        config.project_roles,
-        {pk: 'type_cd', table: 'project_role'}
-      )
-    );
-
-    queries.push(
-      createCollectionQueries(
-        query,
-        config.project_statuses,
-        {pk: 'type_cd', table: 'project_status'}
-      )
-    );
-
-    await saveScreeningQuestionnaire(query, config.questions.screening);
-    await saveEntityQuestionnaire(query, config.questions.entities);
-
-    if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
-      const results = await handleTemplates(
-        dbInfo,
-        hostname,
-        config.notification_templates
-      );
-      const templates = await Promise.all(results);
-      queries.push(
-        createCollectionQueries(
-          query,
-          templates,
-          {pk: 'template_id', table: 'notification_template'}
-        )
-      );
-    }
-
-    await Promise.all(queries);
-    return camelizeJson(config);
   });
+
+  queries.push(
+    createCollectionQueries(
+      knex,
+      config.declaration_types,
+      {pk: 'type_cd', table: 'declaration_type'}
+    )
+  );
+
+  queries.push(
+    createCollectionQueries(
+      knex,
+      config.disposition_types,
+      {pk: 'type_cd', table: 'disposition_type'}
+    )
+  );
+
+  queries.push(
+    createCollectionQueries(knex, config.relationship_person_types, {
+      pk: 'type_cd',
+      table: 'relationship_person_type'
+    })
+  );
+
+  queries.push(
+    createCollectionQueries(
+      knex,
+      config.disclosure_types,
+      {pk: 'type_cd', table: 'disclosure_type'}
+    )
+  );
+
+  queries.push(
+    createCollectionQueries(
+      knex,
+      config.project_types,
+      {pk: 'type_cd', table: 'project_type'}
+    )
+  );
+
+  queries.push(
+    createCollectionQueries(
+      knex,
+      config.project_roles,
+      {pk: 'type_cd', table: 'project_role'}
+    )
+  );
+
+  queries.push(
+    createCollectionQueries(
+      knex,
+      config.project_statuses,
+      {pk: 'type_cd', table: 'project_status'}
+    )
+  );
+
+  await saveScreeningQuestionnaire(knex, config.questions.screening);
+  await saveEntityQuestionnaire(knex, config.questions.entities);
+
+  if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
+    const results = await handleTemplates(
+      dbInfo,
+      hostname,
+      config.notification_templates
+    );
+    const templates = await Promise.all(results);
+    queries.push(
+      createCollectionQueries(
+        knex,
+        templates,
+        {pk: 'template_id', table: 'notification_template'}
+      )
+    );
+  }
+
+  await Promise.all(queries);
+  return camelizeJson(config);
 }
 
 export function archiveConfig(dbInfo, userId, userName, config) {
