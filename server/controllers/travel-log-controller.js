@@ -20,6 +20,7 @@ import * as TravelLogDB from '../db/travel-log-db';
 import {OK} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
+import useKnex from '../middleware/request-knex';
 
 export const init = app => {
   /**

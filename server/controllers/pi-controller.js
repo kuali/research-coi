@@ -29,6 +29,7 @@ import {
 } from '../services/notification-service/notification-service';
 import wrapAsync from './wrap-async';
 import Log from '../log';
+import useKnex from '../middleware/request-knex';
 
 async function verifyReviewIsForUser({dbInfo, params, userInfo}, res, next) {
   const isAllowed = await PIReviewDB.verifyReviewIsForUser(
@@ -268,10 +269,11 @@ export const init = app => {
   app.get(
     '/api/coi/disclosures/:id/pi-responses',
     allowedRoles([ADMIN, REVIEWER]),
-    wrapAsync(async ({dbInfo, params, userInfo}, res) => {
+    useKnex,
+    wrapAsync(async ({dbInfo, params, userInfo, knex}, res) => {
       if (userInfo.coiRole === ROLES.REVIEWER) {
         const reviewerDisclosureIds = await getDisclosureIdsForReviewer(
-          dbInfo,
+          knex,
           userInfo.schoolId
         );
         if (!reviewerDisclosureIds.includes(params.id)) {

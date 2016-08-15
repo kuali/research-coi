@@ -17,11 +17,9 @@
  */
 
 import { DATE_TYPE } from '../../coi-constants';
-import getKnex from './connection-manager';
 
-export async function getAdditionalReviewer(dbInfo, id) {
+export async function getAdditionalReviewer(knex, id) {
   try {
-    const knex = getKnex(dbInfo);
     const reviewer = await knex('additional_reviewer')
       .first(
         'name',
@@ -44,8 +42,7 @@ export async function getAdditionalReviewer(dbInfo, id) {
   }
 }
 
-export async function getDisclosuresForReviewer(dbInfo, schoolId) {
-  const knex = getKnex(dbInfo);
+export async function getDisclosuresForReviewer(knex, schoolId) {
   return await knex('additional_reviewer as ar')
     .select(
       'd.type_cd as typeCd',
@@ -70,9 +67,7 @@ export async function getDisclosuresForReviewer(dbInfo, schoolId) {
     });
 }
 
-export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
-  const knex = getKnex(dbInfo);
-
+export async function getDisclosureIdsForReviewer(knex, schoolId) {
   const reviewers = await knex('additional_reviewer')
     .select('disclosure_id as disclosureId')
     .where({
@@ -85,12 +80,7 @@ export async function getDisclosureIdsForReviewer(dbInfo, schoolId) {
   });
 }
 
-export function getReviewerForDisclosureAndUser(
-  dbInfo,
-  schoolId,
-  disclosureId
-) {
-  const knex = getKnex(dbInfo);
+export function getReviewerForDisclosureAndUser(knex, schoolId, disclosureId) {
   const criteria = {
     disclosure_id: disclosureId
   };
@@ -104,9 +94,7 @@ export function getReviewerForDisclosureAndUser(
     .where(criteria);
 }
 
-export async function createAdditionalReviewer(dbInfo, reviewer, userInfo) {
-  const knex = getKnex(dbInfo);
-
+export async function createAdditionalReviewer(knex, reviewer, userInfo) {
   reviewer.dates = [
     {
       type: DATE_TYPE.ASSIGNED,
@@ -131,14 +119,11 @@ export async function createAdditionalReviewer(dbInfo, reviewer, userInfo) {
   return reviewer;
 }
 
-export function deleteAdditionalReviewer(dbInfo, id) {
-  const knex = getKnex(dbInfo);
+export function deleteAdditionalReviewer(knex, id) {
   return knex('additional_reviewer').del().where({id});
 }
 
-export function updateAdditionalReviewer(dbInfo, id, updates) {
-  const knex = getKnex(dbInfo);
-
+export function updateAdditionalReviewer(knex, id, updates) {
   if (updates.dates) {
     updates.dates = JSON.stringify(updates.dates);
   }
@@ -151,8 +136,7 @@ export function updateAdditionalReviewer(dbInfo, id, updates) {
     .where({id});
 }
 
-async function findAdditionalReviewer(dbInfo, userId, disclosureId) {
-  const knex = getKnex(dbInfo);
+async function findAdditionalReviewer(knex, userId, disclosureId) {
   return await knex('additional_reviewer')
     .first('id')
     .where({
@@ -162,15 +146,14 @@ async function findAdditionalReviewer(dbInfo, userId, disclosureId) {
 }
 
 export async function saveRecommendation(
-  dbInfo,
+  knex,
   schoolId,
   disclosureId,
   declarationId,
   dispositionType
 ) {
-  const knex = getKnex(dbInfo);
   const additionalReviewer = await findAdditionalReviewer(
-    dbInfo,
+    knex,
     schoolId,
     disclosureId
   );
@@ -207,15 +190,14 @@ export async function saveRecommendation(
 }
 
 export async function saveProjectRecommendation(
-  dbInfo,
+  knex,
   schoolId,
   disclosureId,
   projectPersonId,
   dispositionType
 ) {
-  const knex = getKnex(dbInfo);
   const additionalReviewer = await findAdditionalReviewer(
-    dbInfo,
+    knex,
     schoolId,
     disclosureId
   );

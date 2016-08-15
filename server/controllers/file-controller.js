@@ -27,6 +27,7 @@ import {FORBIDDEN, ACCEPTED} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import archiver from 'archiver';
+import useKnex from '../middleware/request-knex';
 
 let upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 try {
@@ -59,7 +60,10 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
 
       if (req.userInfo.coiRole === ROLES.REVIEWER) {
         const disclosureId = await getDisclosureForFinancialEntity(req.dbInfo, refId);
-        const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          req.knex,
+          req.userInfo.schoolId
+        );
         if (!reviewerDisclosures.includes(String(disclosureId))) {
           return Promise.resolve(false);
         }
@@ -73,7 +77,10 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
       }
 
       if (req.userInfo.coiRole === ROLES.REVIEWER) {
-        const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          req.knex,
+          req.userInfo.schoolId
+        );
         if (!reviewerDisclosures.includes(String(refId))) {
           return Promise.resolve(false);
         }
@@ -105,7 +112,7 @@ export const init = app => {
     }).pipe(res);
   }));
 
-  app.get('/api/coi/files/:fileType/:refId', allowedRoles('ANY'), wrapAsync(async (req, res, next) => {
+  app.get('/api/coi/files/:fileType/:refId', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res, next) => {
     const fileType = req.params.fileType;
     const refId = req.params.refId;
 

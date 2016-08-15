@@ -29,11 +29,12 @@ import {
   createAndSendReviewCompleteNotification,
   createAndSendReviewerUnassignNotification
 } from '../services/notification-service/notification-service';
+import useKnex from '../middleware/request-knex';
 
 export const init = app => {
-  app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+  app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
     const result = await AdditionalReviewerDB.createAdditionalReviewer(
-      req.dbInfo,
+      req.knex,
       req.body,
       req.userInfo
     );
@@ -50,30 +51,42 @@ export const init = app => {
     res.send(result);
   }));
 
-  app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+  app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
     try {
       createAndSendReviewerUnassignNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
     } catch (err) {
       Log.error(err,req);
     }
-    await AdditionalReviewerDB.deleteAdditionalReviewer(req.dbInfo, req.params.id);
+    await AdditionalReviewerDB.deleteAdditionalReviewer(req.knex, req.params.id);
     res.sendStatus(OK);
   }));
 
-  app.put('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    await AdditionalReviewerDB.updateAdditionalReviewer(req.dbInfo, req.params.id, req.body);
+  app.put('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
+    await AdditionalReviewerDB.updateAdditionalReviewer(
+      req.knex,
+      req.params.id,
+      req.body
+    );
     res.sendStatus(OK);
   }));
 
-  app.put('/api/coi/additional-reviewers/complete-review/:disclosureId', allowedRoles(REVIEWER), wrapAsync(async (req, res) => {
-    const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, req.userInfo.schoolId, req.params.disclosureId);
+  app.put('/api/coi/additional-reviewers/complete-review/:disclosureId', allowedRoles(REVIEWER), useKnex, wrapAsync(async (req, res) => {
+    const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(
+      req.knex,
+      req.userInfo.schoolId,
+      req.params.disclosureId
+    );
     const dates = JSON.parse(additionalReviewer[0].dates);
     dates.push({type: DATE_TYPE.COMPLETED, date: new Date()});
     const updates = {
       active: false,
       dates
     };
-    await AdditionalReviewerDB.updateAdditionalReviewer(req.dbInfo, additionalReviewer[0].id, updates);
+    await AdditionalReviewerDB.updateAdditionalReviewer(
+      req.knex,
+      additionalReviewer[0].id,
+      updates
+    );
     try {
       createAndSendReviewCompleteNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, additionalReviewer[0].id);
     } catch (err) {
@@ -87,21 +100,25 @@ export const init = app => {
     res.send(results);
   }));
 
-  app.get('/api/coi/reviewers/disclosures', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+  app.get('/api/coi/reviewers/disclosures', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
     const results = await AdditionalReviewerDB.getDisclosuresForReviewer(
-      req.dbInfo,
+      req.knex,
       req.userInfo.schoolId
     );
     res.send(results);
   }));
 
-  app.get('/api/coi/reviewers/:disclosureId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+  app.get('/api/coi/reviewers/:disclosureId', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
     if (!req.query.term) {
       res.send([]);
       return;
     }
     const results = await getReviewers(req.dbInfo, req.headers.authorization);
-    const existingReviewers = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(req.dbInfo, undefined, req.params.disclosureId);
+    const existingReviewers = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(
+      req.knex,
+      undefined,
+      req.params.disclosureId
+    );
     res.send(results.filter(result => {
       return result.value.toLowerCase().indexOf(req.query.term.toLowerCase()) >= 0 &&
           !existingReviewers.map(reviewer => {
@@ -110,9 +127,9 @@ export const init = app => {
     }));
   }));
 
-  app.put('/api/coi/reviewers/:disclosureId/recommend/:declarationId', allowedRoles([REVIEWER]), wrapAsync(async (req, res) => {
+  app.put('/api/coi/reviewers/:disclosureId/recommend/:declarationId', allowedRoles([REVIEWER]), useKnex, wrapAsync(async (req, res) => {
     await AdditionalReviewerDB.saveRecommendation(
-      req.dbInfo,
+      req.knex,
       req.userInfo.schoolId,
       req.params.disclosureId,
       req.params.declarationId,
@@ -121,9 +138,9 @@ export const init = app => {
     res.sendStatus(ACCEPTED);
   }));
 
-  app.put('/api/coi/reviewers/:disclosureId/recommendProject/:projectPersonId', allowedRoles([REVIEWER]), wrapAsync(async (req, res) => {
+  app.put('/api/coi/reviewers/:disclosureId/recommendProject/:projectPersonId', allowedRoles([REVIEWER]), useKnex, wrapAsync(async (req, res) => {
     await AdditionalReviewerDB.saveProjectRecommendation(
-      req.dbInfo,
+      req.knex,
       req.userInfo.schoolId,
       req.params.disclosureId,
       req.params.projectPersonId,

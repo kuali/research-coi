@@ -22,6 +22,7 @@ const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import { getProjectData } from '../services/project-service/project-service';
+import useKnex from '../middleware/request-knex';
 
 export async function saveConfig(req, res) {
   await ConfigDB.setConfig(req.dbInfo, req.userInfo.schoolId, req.body, req.hostname);

@@ -28,6 +28,7 @@ import { getDeclarationWithProjectId } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import Log from '../../log';
 import * as VariableService from './variables-service';
+import getKnex from '../../db/connection-manager';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
@@ -233,7 +234,8 @@ async function getDisclosure(dbInfo, hostname, disclosureId) {
 }
 
 async function getReviewer(dbInfo, hostname, reviewerId) {
-  const reviewer = await getAdditionalReviewer(dbInfo, reviewerId);
+  const knex = getKnex(dbInfo);
+  const reviewer = await getAdditionalReviewer(knex, reviewerId);
   if (reviewer) {
     reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
   }

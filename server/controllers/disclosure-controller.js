@@ -32,6 +32,7 @@ import {
   createAndSendApproveNotification,
   createAndSendSentBackNotification
 } from '../services/notification-service/notification-service';
+import useKnex from '../middleware/request-knex';
 
 let upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 try {
@@ -105,12 +106,12 @@ export const init = app => {
     Admin can see any, User can only see their own,
     Reviewer can only see ones where they are a reviewer or their own
   */
-  app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+  app.get('/api/coi/disclosures/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
     const {dbInfo, userInfo, params, headers} = req;
 
     if (userInfo.coiRole === ROLES.REVIEWER) {
       const reviewerDisclosures = await getDisclosureIdsForReviewer(
-        dbInfo,
+        req.knex,
         userInfo.schoolId
       );
       if (!reviewerDisclosures.includes(params.id)) {
@@ -139,10 +140,13 @@ export const init = app => {
   /**
     Admin can see any, Reviewer can only see ones where they are a reviewer
   */
-  app.get('/api/coi/disclosure-summaries', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
+  app.get('/api/coi/disclosure-summaries', allowedRoles([ADMIN, REVIEWER]), useKnex, wrapAsync(async (req, res, next) => {
     let reviewerDisclosureIds;
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      reviewerDisclosureIds = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
+      reviewerDisclosureIds = await getDisclosureIdsForReviewer(
+        req.knex,
+        req.userInfo.schoolId
+      );
     }
 
     let sortColumn = 'DATE_SUBMITTED';
@@ -296,9 +300,12 @@ export const init = app => {
   /**
     Admin can add any, Reviewer can only add ones where they are a reviewer
   */
-  app.post('/api/coi/disclosures/:id/comments', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
+  app.post('/api/coi/disclosures/:id/comments', allowedRoles([ADMIN, REVIEWER]), useKnex, wrapAsync(async (req, res, next) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(
+        req.knex,
+        req.userInfo.schoolId
+      );
       if (!reviewerDisclosures.includes(req.params.id)) {
         res.sendStatus(FORBIDDEN);
         return;
@@ -319,9 +326,12 @@ export const init = app => {
   /**
     Admin can add any, Reviewer can only add ones where they are a reviewer
   */
-  app.put('/api/coi/disclosures/:disclosureId/comments/:id', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res, next) => {
+  app.put('/api/coi/disclosures/:disclosureId/comments/:id', allowedRoles([ADMIN, REVIEWER]), useKnex, wrapAsync(async (req, res, next) => {
     if (req.userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(
+        req.knex,
+        req.userInfo.schoolId
+      );
       if (!reviewerDisclosures.includes(req.params.disclosureId)) {
         res.sendStatus(FORBIDDEN);
         return;

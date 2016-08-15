@@ -19,6 +19,7 @@
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import Log from '../log';
+import useKnex from '../middleware/request-knex';
 
 let getAuthorizationInfo;
 try {

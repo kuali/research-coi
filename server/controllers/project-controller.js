@@ -25,6 +25,7 @@ import { filterProjects } from '../services/project-service/project-service';
 import wrapAsync from './wrap-async';
 import projectIsValid from '../validators/project';
 import Log from '../log';
+import useKnex from '../middleware/request-knex';
 
 export const init = app => {
   app.post('/api/coi/projects', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
