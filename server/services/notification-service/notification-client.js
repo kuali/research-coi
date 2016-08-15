@@ -134,7 +134,12 @@ export async function createNewTemplate(dbInfo, hostname, notificationTemplate) 
 
 export async function getUserInfo(dbInfo, hostname, userId) {
   const notificationsInfo = getNotificationsInfo(dbInfo);
-  const userInfos = await getUserInfosByQuery(dbInfo, hostname, notificationsInfo.systemAuthToken, userId);
+  const userInfos = await getUserInfosByQuery(
+    dbInfo,
+    hostname,
+    notificationsInfo.systemAuthToken,
+    userId
+  );
   //user info query can bring back multiple results we want the one that has the userId
   return userInfos.find(user => user.schoolId === userId);
 }

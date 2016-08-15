@@ -16,25 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import getKnex from './connection-manager';
-
-export async function isDisclosureUsers(dbInfo, disclosureId, userId) {
-  const knex = getKnex(dbInfo);
+export async function isDisclosureUsers(knex, disclosureId, userId) {
   const result = await knex
-    .select('user_id')
+    .first('user_id')
     .from('disclosure')
     .where({
       id: disclosureId,
       user_id: userId
     });
   
-  return result.length > 0;
+  return result !== undefined;
 }
 
-export async function isFinancialEntityUsers(dbInfo, id, userId) {
-  const knex = getKnex(dbInfo);
+export async function isFinancialEntityUsers(knex, id, userId) {
   const result = await knex
-    .select('d.user_id')
+    .first('d.user_id')
     .from('fin_entity as fe')
     .innerJoin('disclosure as d', 'd.id', 'fe.disclosure_id')
     .where({
@@ -42,24 +38,20 @@ export async function isFinancialEntityUsers(dbInfo, id, userId) {
       'd.user_id': userId
     });
 
-  return result.length > 0;
+  return result !== undefined;
 }
 
-export async function getDisclosureForFinancialEntity(dbInfo, id) {
-  const knex = getKnex(dbInfo);
-
+export async function getDisclosureForFinancialEntity(knex, id) {
   const entity = await knex('fin_entity')
-    .select('disclosure_id as disclosureId')
+    .first('disclosure_id as disclosureId')
     .where({id});
 
-  return entity[0].disclosureId;
+  return entity.disclosureId;
 }
 
-export async function verifyRelationshipIsUsers(dbInfo, userId, relationshipId) {
-  const knex = getKnex(dbInfo);
-
+export async function verifyRelationshipIsUsers(knex, userId, relationshipId) {
   const rows = await knex
-    .select('')
+    .first('r.id')
     .from('relationship as r')
     .innerJoin('fin_entity as f', 'f.id', 'r.fin_entity_id')
     .innerJoin('disclosure as d', 'd.id', 'f.disclosure_id')
@@ -68,5 +60,5 @@ export async function verifyRelationshipIsUsers(dbInfo, userId, relationshipId) 
       'r.id': relationshipId
     });
 
-  return rows.length > 0;
+  return rows !== undefined;
 }

@@ -26,18 +26,13 @@ import {
 import * as ProjectService from '../services/project-service/project-service';
 import { getGeneralConfig } from '../db/config-db';
 import Log from '../log';
-import { createAndSendNewProjectNotification } from '../services/notification-service/notification-service';
-import getKnex from './connection-manager';
+import {
+  createAndSendNewProjectNotification
+} from '../services/notification-service/notification-service';
 
-export async function getProjects (dbInfo, userId, trx) {
-  let knex;
-  if (trx) {
-    knex = trx;
-  } else {
-    knex = getKnex(dbInfo);
-  }
-
-  const projects = await knex.select(
+export async function getProjects (knex, userId) {
+  const projects = await knex
+    .select(
       'p.id as id',
       'p.source_identifier as sourceIdentifier',
       'p.title as name',
@@ -56,7 +51,8 @@ export async function getProjects (dbInfo, userId, trx) {
   let projectIds = projects.map(project => project.id);
   projectIds = uniq(projectIds);
 
-  const sponsors = await knex.select(
+  const sponsors = await knex
+    .select(
       'project_id as projectId',
       'sponsor_cd as sponsorCode',
       'sponsor_name as sponsorName'
@@ -77,67 +73,80 @@ export async function getProjects (dbInfo, userId, trx) {
   return Promise.resolve(projects);
 }
 
-async function shouldUpdateStatus(trx, disclosureId) {
-  const generalConfig = await getGeneralConfig(trx);
+async function shouldUpdateStatus(knex, disclosureId) {
+  const generalConfig = await getGeneralConfig(knex);
 
-  const shouldUpdate = !generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities;
+  const shouldUpdate = (
+    !generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities
+  );
 
   if (shouldUpdate) {
     return true;
   }
 
-  const entities = await trx('fin_entity')
-    .select('id')
+  const entity = await knex('fin_entity')
+    .first('id')
     .where({
       disclosure_id: disclosureId,
       active: true
     });
 
-  if (entities && entities.length > 0) {
-    return true;
-  }
-  return false;
+  return entity !== undefined;
 }
 
-async function updateDisclosureStatus(trx, person, project, req) {
-  const disclosure = await trx('disclosure')
-    .select('status_cd as statusCd', 'id')
+async function updateDisclosureStatus(knex, person, project, req) {
+  const disclosure = await knex('disclosure')
+    .first('status_cd as statusCd', 'id')
     .where({
       user_id: person.personId,
       type_cd: DISCLOSURE_TYPE.ANNUAL
     });
 
-  if (disclosure.length > 0 && await shouldUpdateStatus(trx, disclosure[0].id) && disclosure[0].statusCd === DISCLOSURE_STATUS.UP_TO_DATE) {
-    await trx('disclosure')
+  if (
+    disclosure &&
+    await shouldUpdateStatus(knex, disclosure.id) &&
+    disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+  ) {
+    await knex('disclosure')
       .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
-      .where({id: disclosure[0].id});
+      .where({id: disclosure.id});
 
     try {
-      createAndSendNewProjectNotification(req.dbInfo, req.hostname, req.userInfo, disclosure[0].id, project, person);
+      createAndSendNewProjectNotification(
+        req.dbInfo,
+        req.hostname,
+        req.userInfo,
+        disclosure.id,
+        project,
+        person
+      );
     } catch (err) {
       Log.error(err);
     }
   }
 }
 
-async function revertDisclosureStatus(trx, person, req, projectId) {
-  const projects = await getProjects(req.dbInfo, person.personId, trx);
+async function revertDisclosureStatus(knex, person, req, projectId) {
+  const projects = await getProjects(knex, person.personId);
   const otherProjects = projects.filter(project => project.id !== projectId);
   const otherRequiredProjects = await ProjectService
     .filterProjects(req.dbInfo, otherProjects , req.headers.authorization);
 
   if (otherRequiredProjects.length === 0) {
-    const disclosure = await trx('disclosure')
-      .select('status_cd as statusCd', 'id')
+    const disclosure = await knex('disclosure')
+      .first('status_cd as statusCd', 'id')
       .where({
         user_id: person.personId,
         type_cd: DISCLOSURE_TYPE.ANNUAL
       });
 
-    if (disclosure.length > 0 && disclosure[0].statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED) {
-      await trx('disclosure')
+    if (
+      disclosure &&
+      disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+    ) {
+      await knex('disclosure')
         .update({status_cd: DISCLOSURE_STATUS.UP_TO_DATE})
-        .where({id: disclosure[0].id});
+        .where({id: disclosure.id});
     }
   }
 }
@@ -150,28 +159,39 @@ async function isProjectRequired(req, project, person) {
     sponsors: project.sponsors
   };
 
-  return await ProjectService.isProjectRequired(req.dbInfo, projectData, req.headers.authorization);
+  return await ProjectService.isProjectRequired(
+    req.dbInfo,
+    projectData,
+    req.headers.authorization
+  );
 }
 
-async function disableAllPersonsForProject(trx, projectId, req) {
-  const existingPersons = await trx('project_person')
+async function disableAllPersonsForProject(knex, projectId, req) {
+  const existingPersons = await knex('project_person')
     .select('person_id as personId')
     .where({project_id: projectId});
 
-  await trx('project_person')
+  await knex('project_person')
     .update('active', false)
     .where('project_id', projectId);
 
   if (Array.isArray(existingPersons)) {
     for (let i = 0; i < existingPersons.length; i++) {
       const person = existingPersons[i];
-      await revertDisclosureStatus(trx, person, req, projectId);
+      await revertDisclosureStatus(knex, person, req, projectId);
     }
   }
 }
 
-async function updateProjectPerson(trx, person, project, isRequired, isNew, req) {
-  await trx('project_person')
+async function updateProjectPerson(
+  knex,
+  person,
+  project,
+  isRequired,
+  isNew,
+  req
+) {
+  await knex('project_person')
     .update({
       active: true,
       role_cd: person.roleCode
@@ -184,15 +204,15 @@ async function updateProjectPerson(trx, person, project, isRequired, isNew, req)
 
   if (isNew === 1) {
     if (isRequired) {
-      await updateDisclosureStatus(trx, person, project, req);
+      await updateDisclosureStatus(knex, person, project, req);
     } else {
-      await revertDisclosureStatus(trx, person, req);
+      await revertDisclosureStatus(knex, person, req);
     }
   }
 }
 
-async function insertProjectPerson(trx, person, project, isRequired, req) {
-  const id = await trx('project_person')
+async function insertProjectPerson(knex, person, project, isRequired, req) {
+  const id = await knex('project_person')
     .insert({
       active: true,
       role_cd: person.roleCode,
@@ -202,39 +222,48 @@ async function insertProjectPerson(trx, person, project, isRequired, req) {
     }, 'id');
 
   if (isRequired) {
-    await updateDisclosureStatus(trx, person, project, req);
+    await updateDisclosureStatus(knex, person, project, req);
   }
   return id[0];
 }
 
-async function deactivateProjectPerson(trx, person, projectId, req) {
-  await trx('project_person')
+async function deactivateProjectPerson(knex, person, projectId, req) {
+  await knex('project_person')
     .update('active', false)
     .where({
       person_id: person.personId,
       source_person_type: person.source_person_type,
       project_id: projectId
     });
-  await revertDisclosureStatus(trx, person, req, projectId);
+  await revertDisclosureStatus(knex, person, req, projectId);
 }
 
-async function deactivateProjectPersons(trx, existingPersons, persons, projectId, req) {
+async function deactivateProjectPersons(
+  knex,
+  existingPersons,
+  persons,
+  projectId,
+  req
+) {
   const filtered = existingPersons.filter(pr => {
     return persons.find(person => {
-      return person.personId === pr.personId && person.sourcePersonType === pr.source_person_type;
+      return (
+        person.personId === pr.personId &&
+        person.sourcePersonType === pr.source_person_type
+      );
     }) === undefined;
   });
   
   for (let i = 0; i < filtered.length; i++) {
     const result = filtered[i];
-    await deactivateProjectPerson(trx, result, projectId, req);
+    await deactivateProjectPerson(knex, result, projectId, req);
   }
 }
 
-async function saveProjectPersons(trx, project, req) {
+async function saveProjectPersons(knex, project, req) {
   Log.info('pre project_person select');
 
-  const existingPersons = await trx('project_person')
+  const existingPersons = await knex('project_person')
     .select('person_id as personId', 'source_person_type', 'new')
     .where('project_id', project.id);
 
@@ -246,19 +275,35 @@ async function saveProjectPersons(trx, project, req) {
       const isRequired = await isProjectRequired(req, project, person);
       Log.info('post isProjectRequired');
       const existingPerson = existingPersons.find(pr => {
-        return pr.personId === person.personId && pr.source_person_type === person.sourcePersonType;
+        return (
+          pr.personId === person.personId &&
+          pr.source_person_type === person.sourcePersonType
+        );
       });
 
       if (existingPerson) {
         Log.info('pre updateProjectPerson');
-        return await updateProjectPerson(trx, person, project, isRequired, existingPerson.new, req);
+        return await updateProjectPerson(
+          knex,
+          person,
+          project,
+          isRequired,
+          existingPerson.new,
+          req
+        );
       }
       Log.info('pre insertProjectPerson');
-      return await insertProjectPerson(trx, person, project, isRequired, req);
+      return await insertProjectPerson(knex, person, project, isRequired, req);
     });
 
     Log.info('pre deactivateProjectPersons');
-    await deactivateProjectPersons(trx, existingPersons, project.persons, project.id, req);
+    await deactivateProjectPersons(
+      knex,
+      existingPersons,
+      project.persons,
+      project.id,
+      req
+    );
     Log.info('post deactivateProjectPersons');
 
     Log.info('pre queries');
@@ -269,16 +314,16 @@ async function saveProjectPersons(trx, project, req) {
 
   if (existingPersons.length > 0) {
     Log.info('pre disableAllPersonsForProject');
-    await disableAllPersonsForProject(trx, project.id, req);
+    await disableAllPersonsForProject(knex, project.id, req);
     Log.info('post disableAllPersonsForProject');
   }
 }
 
-async function insertProject(trx, project) {
+async function insertProject(knex, project) {
   if (!project.title) {
     throw Error('title is a required field');
   }
-  const id = await trx('project').insert({
+  const id = await knex('project').insert({
     title: project.title,
     type_cd: project.typeCode,
     source_system: project.sourceSystem,
@@ -291,14 +336,14 @@ async function insertProject(trx, project) {
   return id[0];
 }
 
-async function saveNewProjects(trx, project, req) {
+async function saveNewProjects(knex, project, req) {
   Log.info('pre insertProject');
-  project.id = await insertProject(trx, project);
+  project.id = await insertProject(knex, project);
   Log.info('post insertProject');
 
   if (project.sponsors) {
     Log.info('pre updateProjectSponsors');
-    await updateProjectSponsors(trx, project.id, project.sponsors);
+    await updateProjectSponsors(knex, project.id, project.sponsors);
     Log.info('post updateProjectSponsors');
   }
 
@@ -308,7 +353,13 @@ async function saveNewProjects(trx, project, req) {
       Log.info('pre isProjectRequired');
       const isRequired = await isProjectRequired(req, project, person);
       Log.info('post isProjectRequired');
-      const id = await insertProjectPerson(trx, person, project, isRequired, req);
+      const id = await insertProjectPerson(
+        knex,
+        person,
+        project,
+        isRequired,
+        req
+      );
       Log.info('post insertProjectPerson');
       person.id = id;
     }
@@ -316,11 +367,11 @@ async function saveNewProjects(trx, project, req) {
   return project;
 }
 
-async function saveExistingProjects(trx, project, authHeader) {
+async function saveExistingProjects(knex, project, authHeader) {
   if (!project.title) {
     throw Error('title is a required field');
   }
-  await trx('project').update({
+  await knex('project').update({
     title: project.title,
     type_cd: project.typeCode,
     source_status: project.sourceStatus,
@@ -330,73 +381,80 @@ async function saveExistingProjects(trx, project, authHeader) {
 
   Log.info('update project table complete');
 
-  await updateProjectSponsors(trx, project.id, project.sponsors);
-  await saveProjectPersons(trx, project, authHeader);
+  await updateProjectSponsors(knex, project.id, project.sponsors);
+  await saveProjectPersons(knex, project, authHeader);
 }
 
-async function getExistingProjectId(trx, project) {
+async function getExistingProjectId(knex, project) {
   Log.info('pre existing project query');
-  const existingProject = await trx.select('id')
+  const existingProject = await knex
+    .first('id')
     .from('project')
     .where({
       source_system: project.sourceSystem,
       source_identifier: project.sourceIdentifier
     });
   Log.info('got existing project');
-  if (existingProject && existingProject.length > 0) {
-    return existingProject[0].id;
+  if (existingProject) {
+    return existingProject.id;
   }
 }
 
-export function saveProjects(req, project) {
-  const knex = getKnex(req.dbInfo);
-
-  return knex.transaction(async function(trx) {
-    Log.info('Transaction started');
-    const existingProjectId = await getExistingProjectId(trx, project);
-    Log.info(`existingProjectId = ${existingProjectId}`);
-    if (existingProjectId) {
-      project.id = existingProjectId;
-      Log.info('Pre saveExistingProjects');
-      return await saveExistingProjects(trx, project, req);
-    }
-    Log.info('Pre saveNewProjects');
-    return await saveNewProjects(trx, project, req);
-  });
+export async function saveProjects(knex, req, project) {
+  const existingProjectId = await getExistingProjectId(knex, project);
+  Log.info(`existingProjectId = ${existingProjectId}`);
+  if (existingProjectId) {
+    project.id = existingProjectId;
+    Log.info('Pre saveExistingProjects');
+    return await saveExistingProjects(knex, project, req);
+  }
+  Log.info('Pre saveNewProjects');
+  return await saveNewProjects(knex, project, req);
 }
 
-async function getStatus(trx, projectPerson, dbInfo, authHeader) {
+async function getStatus(knex, projectPerson, dbInfo, authHeader) {
+  const {disposition, person_id, disclosureId, projectId} = projectPerson;
   const disclosureStatus = {
-    userId: projectPerson.person_id,
-    disposition: projectPerson.disposition ? projectPerson.disposition : NO_DISPOSITION_DESCRIPTION
+    userId: person_id,
+    disposition: disposition ? disposition : NO_DISPOSITION_DESCRIPTION
   };
 
-  const isRequired = await ProjectService.isProjectRequired(dbInfo, projectPerson, authHeader);
+  const isRequired = await ProjectService.isProjectRequired(
+    dbInfo,
+    projectPerson,
+    authHeader
+  );
 
   if (!isRequired) {
-    disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED;
+    disclosureStatus.status = (
+      PROJECT_DISCLOSURE_STATUSES.DISCLOSURE_NOT_REQUIRED
+    );
     return disclosureStatus;
   }
 
-  const disclosure = await trx('disclosure as d')
-    .select('ds.description as status', 'd.id')
+  const disclosure = await knex('disclosure as d')
+    .first('ds.description as status', 'd.id')
     .innerJoin('disclosure_status as ds', 'ds.status_cd', 'd.status_cd')
-    .where({user_id: projectPerson.person_id});
-
-  const declaration = await trx('declaration')
-    .select('disclosure_id')
     .where({
-      project_id: projectPerson.projectId,
-      disclosure_id: projectPerson.disclosureId
+      user_id: person_id
     });
 
-  if (disclosure[0]) {
-    const entities = await trx('fin_entity')
-      .select('id')
-      .where({disclosure_id: disclosure[0].id});
+  const declaration = await knex('declaration')
+    .select('disclosure_id')
+    .where({
+      project_id: projectId,
+      disclosure_id: disclosureId
+    });
 
-    if (declaration[0] || entities.length === 0) {
-      disclosureStatus.status = disclosure[0].status;
+  if (disclosure) {
+    const entity = await knex('fin_entity')
+      .first('id')
+      .where({
+        disclosure_id: disclosure.id
+      });
+
+    if (declaration[0] || !entity) {
+      disclosureStatus.status = disclosure.status;
     } else {
       disclosureStatus.status = PROJECT_DISCLOSURE_STATUSES.UPDATE_NEEDED;
     }
@@ -406,7 +464,12 @@ async function getStatus(trx, projectPerson, dbInfo, authHeader) {
   return disclosureStatus;
 }
 
-async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) {
+async function getProjectPersons(
+  knex,
+  sourceSystem,
+  sourceIdentifier,
+  personId
+) {
   const criteria = {
     'p.source_system': sourceSystem,
     'p.source_identifier': sourceIdentifier
@@ -416,7 +479,7 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
     criteria['pp.person_id'] = personId;
   }
 
-  const projectPersons = await trx('project as p')
+  const projectPersons = await knex('project as p')
     .distinct('pp.person_id')
     .select(
       'p.id as projectId',
@@ -434,7 +497,7 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
   let projectIds = projectPersons.map(project => project.projectId);
   projectIds = uniq(projectIds);
 
-  const sponsors = await trx.select(
+  const sponsors = await knex.select(
       'project_id as projectId',
       'sponsor_cd as sponsorCode',
       'sponsor_name as sponsorName'
@@ -443,7 +506,9 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
     .whereIn('project_id', projectIds);
 
   sponsors.forEach(sponsor => {
-    const project = projectPersons.find(prj => prj.projectId === sponsor.projectId);
+    const project = projectPersons.find(
+      prj => prj.projectId === sponsor.projectId
+    );
     if (project) {
       if (!project.sponsors) {
         project.sponsors = [];
@@ -455,54 +520,70 @@ async function getProjectPersons(trx, sourceSystem, sourceIdentifier, personId) 
   return projectPersons;
 }
 
-export function getProjectStatuses(dbInfo, sourceSystem, sourceIdentifier, authHeader) {
+export async function getProjectStatuses(
+  dbInfo,
+  knex,
+  sourceSystem,
+  sourceIdentifier,
+  authHeader
+) {
   try {
-    const knex = getKnex(dbInfo);
-    return knex.transaction(async function(trx) {
-      const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier);
-      const results = [];
-      if (Array.isArray(projectPersons)) {
-        for (let i = 0; i < projectPersons.length; i++) {
-          const projectPerson = projectPersons[i];
-          results.push(await getStatus(trx, projectPerson, dbInfo, authHeader));
-        }
+    const projectPersons = await getProjectPersons(
+      knex,
+      sourceSystem,
+      sourceIdentifier
+    );
+    const results = [];
+    if (Array.isArray(projectPersons)) {
+      for (let i = 0; i < projectPersons.length; i++) {
+        const projectPerson = projectPersons[i];
+        results.push(await getStatus(knex, projectPerson, dbInfo, authHeader));
       }
-      return results;
-    });
+    }
+    return results;
   } catch (err) {
     return Promise.reject(err);
   }
 }
 
-export function getProjectStatus(dbInfo, sourceSystem, sourceIdentifier, personId, authHeader) {
+export async function getProjectStatus(
+  dbInfo,
+  knex,
+  sourceSystem,
+  sourceIdentifier,
+  personId,
+  authHeader
+) {
   try {
-    const knex = getKnex(dbInfo);
-    return knex.transaction(async function(trx) {
-      const projectPersons = await getProjectPersons(trx, sourceSystem, sourceIdentifier, personId);
+    const projectPersons = await getProjectPersons(
+      knex,
+      sourceSystem,
+      sourceIdentifier,
+      personId
+    );
 
-      if (projectPersons[0]) {
-        return await getStatus(trx, projectPersons[0], dbInfo, authHeader);
-      }
+    if (projectPersons[0]) {
+      return await getStatus(knex, projectPersons[0], dbInfo, authHeader);
+    }
 
-      return {};
-    });
+    return {};
   } catch (err) {
     return Promise.reject(err);
   }
 }
 
-export function updateProjectPersonDispositionType(dbInfo, projectPerson, id) {
+export function updateProjectPersonDispositionType(knex, projectPerson, id) {
+  const {dispositionTypeCd} = projectPerson;
   try {
-    const knex = getKnex(dbInfo);
     return knex('project_person').update({
-      disposition_type_cd: projectPerson.dispositionTypeCd ? projectPerson.dispositionTypeCd : null
+      disposition_type_cd: dispositionTypeCd ? dispositionTypeCd : null
     }).where({id});
   } catch (err) {
     return Promise.reject(err);
   }
 }
 
-async function updateProjectSponsors(trx, projectId, sponsors) {
+async function updateProjectSponsors(knex, projectId, sponsors) {
   Log.info('beginning updateProjectSponsors');
   if (!isNumber) {
     throw new Error('invalid project id');
@@ -512,7 +593,7 @@ async function updateProjectSponsors(trx, projectId, sponsors) {
     throw new Error('invalid sponsors array');
   }
 
-  const existingSponsors = await trx.select(
+  const existingSponsors = await knex.select(
       'id',
       'source_system as sourceSystem',
       'source_identifier as sourceIdentifier',
@@ -543,7 +624,7 @@ async function updateProjectSponsors(trx, projectId, sponsors) {
 
   Log.info('pre project_sponsor delete');
   if (toDelete.length > 0) {
-    await trx('project_sponsor')
+    await knex('project_sponsor')
       .whereIn('id', toDelete)
       .andWhere({
         project_id: projectId
@@ -577,7 +658,7 @@ async function updateProjectSponsors(trx, projectId, sponsors) {
   Log.info('pre project_sponsor insert');
 
   if (toAdd.length > 0) {
-    await trx('project_sponsor').insert(toAdd);
+    await knex('project_sponsor').insert(toAdd);
   }
 
   Log.info('post project_sponsor insert');

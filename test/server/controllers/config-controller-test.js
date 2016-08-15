@@ -29,7 +29,7 @@ let config;
 let archiveCalled;
 
 function stubSetConfig(sandbox) {
-  sandbox.stub(ConfigDB, 'setConfig', (dbInfo, schoolId, newConfig) => {
+  sandbox.stub(ConfigDB, 'setConfig', (dbInfo, knex, schoolId, newConfig) => {
     return new Promise(resolve => {
       config = newConfig;
       resolve();
@@ -72,6 +72,15 @@ describe('ConfigController', () => {
         },
         body: {
           message: 'hello!'
+        },
+        knex: {
+          transaction(cb) {
+            return new Promise((resolve) => {
+              cb().then(() => {
+                resolve();
+              });
+            });
+          }
         }
       };
 

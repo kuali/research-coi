@@ -18,9 +18,14 @@
 
 import { getAuthToken } from '../auth-service/auth-service';
 import request from 'superagent';
-import { getRequiredProjectTypes, getRequiredProjectStatuses, getRequiredProjectRoles } from '../../db/config-db';
+import {
+  getRequiredProjectTypes,
+  getRequiredProjectStatuses,
+  getRequiredProjectRoles
+} from '../../db/config-db';
 import Log from '../../log';
 import cache from '../../lru-cache';
+import getKnex from '../../db/connection-manager';
 
 let getAuthorizationInfo;
 try {
@@ -211,11 +216,12 @@ async function getRequiredSponsors(researchCoreUrl, coiHierarchy, authHeader) {
 }
 
 async function getRequirements(dbInfo, authHeader) {
+  const knex = getKnex(dbInfo);
   const authInfo = getAuthorizationInfo(dbInfo);
   const requirements = {};
-  requirements.types = await getRequiredProjectTypes(dbInfo);
-  requirements.roles = await getRequiredProjectRoles(dbInfo);
-  requirements.statuses = await getRequiredProjectStatuses(dbInfo);
+  requirements.types = await getRequiredProjectTypes(knex);
+  requirements.roles = await getRequiredProjectRoles(knex);
+  requirements.statuses = await getRequiredProjectStatuses(knex);
   requirements.sponsors = process.env.NODE_ENV === 'test' ?
     ['000340','000500'] :
     await getRequiredSponsors(authInfo.researchCoreUrl, authInfo.coiHierarchy, authHeader);

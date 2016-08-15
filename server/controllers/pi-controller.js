@@ -29,10 +29,11 @@ import {
 } from '../services/notification-service/notification-service';
 import wrapAsync from './wrap-async';
 import Log from '../log';
+import useKnex from '../middleware/request-knex';
 
-async function verifyReviewIsForUser({dbInfo, params, userInfo}, res, next) {
+async function verifyReviewIsForUser({knex, params, userInfo}, res, next) {
   const isAllowed = await PIReviewDB.verifyReviewIsForUser(
-    dbInfo,
+    knex,
     params.reviewId,
     userInfo.schoolId
   );
@@ -47,15 +48,16 @@ export const init = app => {
   app.get(
     '/api/coi/pi',
     allowedRoles([ADMIN, REVIEWER]),
-    wrapAsync(async ({dbInfo, query, userInfo}, res) => {
+    useKnex,
+    wrapAsync(async ({query, userInfo, knex}, res) => {
       const result = await PIDB.getSuggestions(
-        dbInfo,
+        knex,
         query.term,
         userInfo
       );
       res.send(result);
-    }
-  ));
+    })
+  );
 
   /**
     User can only respond to review items which are associated with their
@@ -64,15 +66,19 @@ export const init = app => {
   app.post(
     '/api/coi/pi-response/:reviewId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) =>
+    wrapAsync(async ({knex, params, userInfo, body}, res) =>
     {
-      const result = await PIReviewDB.recordPIResponse(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        body.comment
-      );
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.recordPIResponse(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body.comment
+        );
+      });
       res.send(result);
     }
   ));
@@ -83,14 +89,18 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
-      const result = await PIReviewDB.reviseQuestion(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        body.answer
-      );
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.reviseQuestion(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body.answer
+        );
+      });
       res.send(result);
     }
   ));
@@ -101,15 +111,19 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId/entity-question/:questionId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
-      const result = await PIReviewDB.reviseEntityQuestion(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        params.questionId,
-        body.answer
-      );
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.reviseEntityQuestion(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          params.questionId,
+          body.answer
+        );
+      });
       res.send(result);
     }
   ));
@@ -121,14 +135,18 @@ export const init = app => {
   app.post(
     '/api/coi/pi-revise/:reviewId/entity-relationship',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
-      const result = await PIReviewDB.addRelationship(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        body
-      );
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      let result;
+      await knex.transaction(async (transKnex) => {
+        result = await PIReviewDB.addRelationship(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body
+        );
+      });
       res.send(result);
     }
   ));
@@ -140,14 +158,17 @@ export const init = app => {
   app.delete(
     '/api/coi/pi-revise/:reviewId/entity-relationship/:relationshipId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo}, res) => {
-      await PIReviewDB.removeRelationship(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        params.relationshipId
-      );
+    wrapAsync(async ({knex, params, userInfo}, res) => {
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.removeRelationship(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          params.relationshipId
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -159,14 +180,17 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId/declaration',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
-      await PIReviewDB.reviseDeclaration(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        body
-      );
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.reviseDeclaration(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -178,15 +202,18 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:reviewId/subquestion-answer/:subQuestionId',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
-      await PIReviewDB.reviseSubQuestion(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        params.subQuestionId,
-        body
-      );
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.reviseSubQuestion(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          params.subQuestionId,
+          body
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -198,14 +225,17 @@ export const init = app => {
   app.delete(
     '/api/coi/pi-revise/:reviewId/question-answers',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(verifyReviewIsForUser),
-    wrapAsync(async ({dbInfo, params, userInfo, body}, res) => {
-      await PIReviewDB.deleteAnswers(
-        dbInfo,
-        userInfo,
-        params.reviewId,
-        body.toDelete
-      );
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      await knex.transaction(async (transKnex) => {
+        await PIReviewDB.deleteAnswers(
+          transKnex,
+          userInfo,
+          params.reviewId,
+          body.toDelete
+        );
+      });
       res.status(NO_CONTENT).end();
     }
   ));
@@ -216,11 +246,12 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:disclosureId/submit',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(async (req, res) => {
-      const {dbInfo, params, userInfo, hostname, headers, body} = req;
+      const {dbInfo, params, userInfo, hostname, headers, body, knex} = req;
 
       const isSubmitter = isDisclosureUsers(
-        dbInfo,
+        knex,
         params.disclosureId,
         userInfo.schoolId
       );
@@ -230,34 +261,37 @@ export const init = app => {
         return;
       }
 
-      if (body && Array.isArray(body.responses)) {
-        for (const response of body.responses) {
-          await PIReviewDB.recordPIResponse(
-            dbInfo,
-            userInfo,
-            response.reviewId,
-            response.comment
-          );
+      let result;
+      await knex.transaction(async (transKnex) => {
+        if (body && Array.isArray(body.responses)) {
+          for (const response of body.responses) {
+            await PIReviewDB.recordPIResponse(
+              transKnex,
+              userInfo,
+              response.reviewId,
+              response.comment
+            );
+          }
         }
-      }
 
-      await PIReviewDB.reSubmitDisclosure(
-        dbInfo,
-        userInfo,
-        params.disclosureId
-      );
-      try {
-        createAndSendResubmitNotification(
-          dbInfo,
-          hostname,
-          headers.authorization,
+        await PIReviewDB.reSubmitDisclosure(
+          transKnex,
           userInfo,
           params.disclosureId
         );
-      } catch (err) {
-        Log.error(err, req);
-      }
-      const result = {success: true};
+        try {
+          createAndSendResubmitNotification(
+            dbInfo,
+            hostname,
+            headers.authorization,
+            userInfo,
+            params.disclosureId
+          );
+        } catch (err) {
+          Log.error(err, req);
+        }
+        result = {success: true};
+      });
       res.send(result);
     }
   ));
@@ -268,10 +302,11 @@ export const init = app => {
   app.get(
     '/api/coi/disclosures/:id/pi-responses',
     allowedRoles([ADMIN, REVIEWER]),
-    wrapAsync(async ({dbInfo, params, userInfo}, res) => {
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo}, res) => {
       if (userInfo.coiRole === ROLES.REVIEWER) {
         const reviewerDisclosureIds = await getDisclosureIdsForReviewer(
-          dbInfo,
+          knex,
           userInfo.schoolId
         );
         if (!reviewerDisclosureIds.includes(params.id)) {
@@ -281,7 +316,7 @@ export const init = app => {
       }
 
       const result = await PIReviewDB.getPIResponseInfo(
-        dbInfo,
+        knex,
         params.id
       );
       res.send(result);

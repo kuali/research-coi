@@ -19,49 +19,60 @@
 import * as FileService from '../services/file-service/file-service';
 import {ROLES, FILE_TYPE} from '../../coi-constants';
 import {isDisclosureUsers} from './common-db';
-import getKnex from './connection-manager';
 
-export const getFile = (dbInfo, userInfo, id) => {
-  const knex = getKnex(dbInfo);
+export async function getFile(knex, userInfo, id) {
   const criteria = {
     id
   };
-  const query = knex.select('name', 'key', 'file_type').from('file').where(criteria);
+  const query = knex
+    .first(
+      'name',
+      'key',
+      'file_type'
+    )
+    .from('file')
+    .where(criteria);
+
   if (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER) {
     return query;
   }
 
-  return query.then(file => {
-    if (file[0] && file[0].file_type === FILE_TYPE.MANAGEMENT_PLAN) {
-      return knex.select('f.name', 'f.key')
-        .from('file as f')
-        .innerJoin('disclosure as d', 'd.id', 'f.ref_id')
-        .where(function() {
-          this.where({'f.user_id': userInfo.schoolId})
-            .orWhere({'d.user_id': userInfo.schoolId});
-        })
-        .andWhere({'f.id': id});
-    }
-    return query.andWhere({
-      user_id: userInfo.schoolId
-    });
+  const file = await query;
+  if (file && file.file_type === FILE_TYPE.MANAGEMENT_PLAN) {
+    return await knex
+      .first('f.name', 'f.key')
+      .from('file as f')
+      .innerJoin('disclosure as d', 'd.id', 'f.ref_id')
+      .where(function() {
+        this.where({'f.user_id': userInfo.schoolId})
+          .orWhere({'d.user_id': userInfo.schoolId});
+      })
+      .andWhere({'f.id': id});
+  }
+  return await query.andWhere({
+    user_id: userInfo.schoolId
   });
-};
+}
 
-export function getFiles(dbInfo, userInfo, refId, fileType) {
-  const knex = getKnex(dbInfo);
-  const criteria = {
-    file_type: fileType,
-    ref_id: refId
-  };
+export function getFiles(knex, userInfo, refId, fileType) {
+  const query = knex
+    .select('name', 'key')
+    .from('file')
+    .where({
+      file_type: fileType,
+      ref_id: refId
+    });
 
-  const query = knex.select('name', 'key').from('file').where(criteria);
   if (userInfo.coiRole === ROLES.ADMIN || userInfo.coiRole === ROLES.REVIEWER) {
     return query;
   }
 
   if (fileType === FILE_TYPE.MANAGEMENT_PLAN) {
-    return knex.select('f.name', 'f.key')
+    return knex
+      .select(
+        'f.name',
+        'f.key'
+      )
       .from('file as f')
       .innerJoin('disclosure as d', 'd.id', 'f.ref_id')
       .where(function() {
@@ -78,59 +89,61 @@ export function getFiles(dbInfo, userInfo, refId, fileType) {
   });
 }
 
-export const saveNewFiles = (dbInfo, body, files, userInfo) => {
-  if (body.type !== FILE_TYPE.DISCLOSURE &&
+export async function saveNewFiles(knex, body, files, userInfo) {
+  if (
+    body.type !== FILE_TYPE.DISCLOSURE &&
     body.type !== FILE_TYPE.MANAGEMENT_PLAN &&
     body.type !== FILE_TYPE.FINANCIAL_ENTITY &&
-    body.type !== FILE_TYPE.ADMIN) {
-    throw Error(`Attempt by ${userInfo.username} to upload an unknown file type`);
+    body.type !== FILE_TYPE.ADMIN
+  ) {
+    throw Error(
+      `Attempt by ${userInfo.username} to upload an unknown file type`
+    );
   }
 
-  return isDisclosureUsers(dbInfo, body.disclosureId, userInfo.schoolId)
-    .then(isSubmitter => {
-      if (!isSubmitter && userInfo.coiRole !== ROLES.ADMIN) {
-        throw Error(`Attempt by ${userInfo.username} to upload a file for disclosure ${body.disclosureId} which isnt theirs`);
-      }
+  const isSubmitter = await isDisclosureUsers(
+    knex,
+    body.disclosureId,
+    userInfo.schoolId
+  );
 
-      const knex = getKnex(dbInfo);
-      const fileData = [];
-      return Promise.all(
-        files.map(file => {
-          const fileDatum = {
-            fileType: body.type,
-            refId: body.refId,
-            type: file.mimetype,
-            key: file.filename,
-            name: file.originalname,
-            userId: userInfo.schoolId,
-            uploadedBy: userInfo.name,
-            uploadDate: new Date()
-          };
-          return knex('file')
-            .insert({
-              file_type: fileDatum.fileType,
-              ref_id: fileDatum.refId,
-              type: fileDatum.type,
-              key: fileDatum.key,
-              name: fileDatum.name,
-              user_id: fileDatum.userId,
-              uploaded_by: fileDatum.uploadedBy,
-              upload_date: fileDatum.uploadDate
-            }, 'id')
-            .then(fileId => {
-              fileDatum.id = fileId[0];
-              fileData.push(fileDatum);
-            });
-        })
-      ).then(() => {
-        return fileData;
-      });
-    });
-};
+  if (!isSubmitter && userInfo.coiRole !== ROLES.ADMIN) {
+    throw Error(`Attempt by ${userInfo.username} to upload a file for disclosure ${body.disclosureId} which isnt theirs`); // eslint-disable-line max-len
+  }
 
-export const deleteFiles = (dbInfo, userInfo, fileId) => {
-  const knex = getKnex(dbInfo);
+  const fileData = [];
 
+  for (const file of files) {
+    const fileDatum = {
+      fileType: body.type,
+      refId: body.refId,
+      type: file.mimetype,
+      key: file.filename,
+      name: file.originalname,
+      userId: userInfo.schoolId,
+      uploadedBy: userInfo.name,
+      uploadDate: new Date()
+    };
+    const fileId = await knex('file')
+      .insert({
+        file_type: fileDatum.fileType,
+        ref_id: fileDatum.refId,
+        type: fileDatum.type,
+        key: fileDatum.key,
+        name: fileDatum.name,
+        user_id: fileDatum.userId,
+        uploaded_by: fileDatum.uploadedBy,
+        upload_date: fileDatum.uploadDate
+      }, 'id');
+    
+    fileDatum.id = fileId[0];
+    fileData.push(fileDatum);
+  }
+
+  return fileData;
+}
+
+export async function deleteFiles(dbInfo, knex, userInfo, fileId) {
   const criteria = {
     id: fileId
   };
@@ -139,23 +152,21 @@ export const deleteFiles = (dbInfo, userInfo, fileId) => {
     criteria.user_id = userInfo.schoolId;
   }
 
-  return knex('file')
-    .select('key')
-    .where(criteria)
-    .then((file) => {
-      return knex('file')
-        .del()
-        .where(criteria)
-        .then(() => {
-          return new Promise((resolve, reject) => {
-            FileService.deleteFile(dbInfo, file[0].key, err => {
-              if (err) {
-                reject(err);
-              } else {
-                resolve();
-              }
-            });
-          });
-        });
+  const file = await knex('file')
+    .first('key')
+    .where(criteria);
+
+  await knex('file')
+    .del()
+    .where(criteria);
+
+  await new Promise((resolve, reject) => {
+    FileService.deleteFile(dbInfo, file.key, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
     });
-};
+  });
+}

@@ -28,6 +28,7 @@ import { getDeclarationWithProjectId } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import Log from '../../log';
 import * as VariableService from './variables-service';
+import getKnex from '../../db/connection-manager';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
@@ -211,7 +212,8 @@ async function getTemplate(dbInfo, templateId) {
   if (!areNotificationsEnabled(dbInfo)) {
     return Promise.resolve();
   }
-  const template = await getCoreTemplateIdByTemplateId(dbInfo, templateId);
+  const knex = getKnex(dbInfo);
+  const template = await getCoreTemplateIdByTemplateId(knex, templateId);
 
   if (template.active === 0) {
     return Promise.resolve();
@@ -221,26 +223,39 @@ async function getTemplate(dbInfo, templateId) {
 }
 
 async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
-  const disclosure = await getArchivedDisclosureInfoForNotifications(dbInfo, archiveId);
+  const knex = getKnex(dbInfo);
+  const disclosure = await getArchivedDisclosureInfoForNotifications(
+    knex,
+    archiveId
+  );
   disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
   return disclosure;
 }
 
 async function getDisclosure(dbInfo, hostname, disclosureId) {
-  const disclosure = await getDisclosureInfoForNotifications(dbInfo, disclosureId);
+  const knex = getKnex(dbInfo);
+
+  const disclosure = await getDisclosureInfoForNotifications(
+    knex,
+    disclosureId
+  );
   disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
   return disclosure;
 }
 
 async function getReviewer(dbInfo, hostname, reviewerId) {
-  const reviewer = await getAdditionalReviewer(dbInfo, reviewerId);
-  reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
+  const knex = getKnex(dbInfo);
+  const reviewer = await getAdditionalReviewer(knex, reviewerId);
+  if (reviewer) {
+    reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
+  }
   return reviewer;
 }
 
 async function getProject(dbInfo, hostname, project, person) {
+  const knex = getKnex(dbInfo);
   const projectInfo = JSON.parse(JSON.stringify(project));
-  projectInfo.type = await getProjectTypeDescription(dbInfo, project.typeCode);
+  projectInfo.type = await getProjectTypeDescription(knex, project.typeCode);
   projectInfo.person = JSON.parse(JSON.stringify(person));
   projectInfo.person.info = await getUserInfo(dbInfo, hostname, person.personId);
   const pi = projectInfo.persons.find(p => p.roleCode === PI_ROLE_CODE);
@@ -248,9 +263,9 @@ async function getProject(dbInfo, hostname, project, person) {
   return projectInfo;
 }
 
-async function getProjectsInformation(dbinfo, hostname, disclosure) {
-  const projects = await getProjects(dbinfo, disclosure.userId);
-  const config = await getConfig(dbinfo, hostname);
+async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
+  const projects = await getProjects(knex, disclosure.userId);
+  const config = await getConfig(dbinfo, knex, hostname);
   let projectInformation = '<table><tr><th>Project Number</th><th>Title</th><th>Sponsors</th><th>Project Type</th><th>Project Disposition</th></tr>';
   for (const project of projects) {
     let sponsorString = '';
@@ -262,8 +277,8 @@ async function getProjectsInformation(dbinfo, hostname, disclosure) {
     sponsorString = sponsorString.replace(/, $/, '');
 
     try {
-      projectType = await getProjectTypeDescription(dbinfo, project.typeCd);
-      declaration = await getDeclarationWithProjectId(dbinfo, project.id);
+      projectType = await getProjectTypeDescription(knex, project.typeCd);
+      declaration = await getDeclarationWithProjectId(knex, project.id);
       const dispositionTypes = config.dispositionTypes.filter(type => type.typeCd === declaration[0].adminRelationshipCd);
       const dispositionType = dispositionTypes[0].description ? dispositionTypes[0].description : '';
       projectInformation += `<tr><td>${project.sourceIdentifier}</td><td>${project.name}</td><td>${sponsorString}</td>`;
@@ -310,7 +325,7 @@ export async function createAndSendResubmitNotification(dbInfo, hostname, authHe
   return await createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, NOTIFICATION_TEMPLATES.RESUBMITTED.ID);
 }
 
-export async function createAndSendApproveNotification(dbInfo, hostname, userInfo, archiveId) {
+export async function createAndSendApproveNotification(dbInfo, knex, hostname, userInfo, archiveId) {
   try {
     const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.APPROVED.ID);
     if (!template) {
@@ -318,7 +333,7 @@ export async function createAndSendApproveNotification(dbInfo, hostname, userInf
     }
     const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
     let variables = await getVariables(dbInfo, hostname, disclosure);
-    const projectInformation = await getProjectsInformation(dbInfo, hostname, disclosure);
+    const projectInformation = await getProjectsInformation(dbInfo, knex, hostname, disclosure);
     variables = VariableService.addProjectInformation(projectInformation, variables);
     const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
     const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
@@ -377,6 +392,9 @@ export async function createAndSendReviewerNotification(dbInfo, hostname, userIn
 
     const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
 
+    if (!reviewer) {
+      return;
+    }
     const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
     const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
     const recipients = getRecipients(dbInfo, reviewer.email);
@@ -404,6 +422,9 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
 
     const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
 
+    if (!reviewer) {
+      return;
+    }
     const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
     const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
     const recipients = await getAdminRecipients(dbInfo, authHeader);

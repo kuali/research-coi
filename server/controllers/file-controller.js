@@ -27,6 +27,7 @@ import {FORBIDDEN, ACCEPTED} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import archiver from 'archiver';
+import useKnex from '../middleware/request-knex';
 
 let upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 try {
@@ -51,29 +52,42 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
   try {
     if (fileType === FILE_TYPE.FINANCIAL_ENTITY) {
       if (req.userInfo.coiRole === ROLES.USER) {
-        const permitted = await isFinancialEntityUsers(req.dbInfo, refId, req.userInfo.schoolId);
+        const permitted = await isFinancialEntityUsers(req.knex, refId, req.userInfo.schoolId);
         if (!permitted) {
           return Promise.resolve(false);
         }
       }
 
       if (req.userInfo.coiRole === ROLES.REVIEWER) {
-        const disclosureId = await getDisclosureForFinancialEntity(req.dbInfo, refId);
-        const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
+        const disclosureId = await getDisclosureForFinancialEntity(
+          req.knex,
+          refId
+        );
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          req.knex,
+          req.userInfo.schoolId
+        );
         if (!reviewerDisclosures.includes(String(disclosureId))) {
           return Promise.resolve(false);
         }
       }
     } else {
       if (req.userInfo.coiRole === ROLES.USER) {
-        const permitted = await isDisclosureUsers(req.dbInfo, refId, req.userInfo.schoolId);
+        const permitted = await isDisclosureUsers(
+          req.knex,
+          refId,
+          req.userInfo.schoolId
+        );
         if (!permitted) {
           return Promise.resolve(false);
         }
       }
 
       if (req.userInfo.coiRole === ROLES.REVIEWER) {
-        const reviewerDisclosures = await getDisclosureIdsForReviewer(req.dbInfo, req.userInfo.schoolId);
+        const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          req.knex,
+          req.userInfo.schoolId
+        );
         if (!reviewerDisclosures.includes(String(refId))) {
           return Promise.resolve(false);
         }
@@ -89,15 +103,15 @@ export const init = app => {
   /**
     Admin or user for their own files
   */
-  app.get('/api/coi/files/:id', allowedRoles('ANY'), wrapAsync(async (req, res, next) => {
-    const result = await FileDb.getFile(req.dbInfo, req.userInfo, req.params.id);
-    if (result.length < 1) {
+  app.get('/api/coi/files/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res, next) => {
+    const result = await FileDb.getFile(req.knex, req.userInfo, req.params.id);
+    if (!result) {
       res.sendStatus(FORBIDDEN);
       return;
     }
 
-    res.setHeader('Content-disposition', `attachment; filename="${result[0].name}"`);
-    FileService.getFile(req.dbInfo, result[0].key, error => {
+    res.setHeader('Content-disposition', `attachment; filename="${result.name}"`);
+    FileService.getFile(req.dbInfo, result.key, error => {
       if (error) {
         Log.error(error, req);
         next(error);
@@ -105,7 +119,7 @@ export const init = app => {
     }).pipe(res);
   }));
 
-  app.get('/api/coi/files/:fileType/:refId', allowedRoles('ANY'), wrapAsync(async (req, res, next) => {
+  app.get('/api/coi/files/:fileType/:refId', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res, next) => {
     const fileType = req.params.fileType;
     const refId = req.params.refId;
 
@@ -114,7 +128,12 @@ export const init = app => {
       res.sendStatus(FORBIDDEN);
       return;
     }
-    const files = await FileDb.getFiles(req.dbInfo, req.userInfo, refId, fileType);
+    const files = await FileDb.getFiles(
+      req.knex,
+      req.userInfo,
+      refId,
+      fileType
+    );
 
     res.setHeader('Content-disposition', `attachment; filename="${fileType}.zip"`);
 
@@ -146,21 +165,26 @@ export const init = app => {
   /**
     @Role: Admin or user for their own disclosures
   */
-  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async (req, res) => {
-    const result = await FileDb.saveNewFiles(
-      req.dbInfo,
-      JSON.parse(req.body.data),
-      req.files,
-      req.userInfo
-    );
+  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), useKnex, wrapAsync(async (req, res) => {
+    let result;
+    await req.knex.transaction(async (knex) => {
+      result = await FileDb.saveNewFiles(
+        knex,
+        JSON.parse(req.body.data),
+        req.files,
+        req.userInfo
+      );
+    });
     res.send(result);
   }));
 
   /**
     @Role: admin or user for their own files
   */
-  app.delete('/api/coi/files/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    await FileDb.deleteFiles(req.dbInfo, req.userInfo, req.params.id);
+  app.delete('/api/coi/files/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    await req.knex.transaction(async (knex) => {
+      await FileDb.deleteFiles(req.dbInfo, knex, req.userInfo, req.params.id);
+    });
     res.sendStatus(ACCEPTED);
   }));
 };

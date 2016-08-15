@@ -17,33 +17,33 @@
 */
 
 import { ROLES } from '../../coi-constants';
-import getKnex from './connection-manager';
 
 const MAX_ROWS = 10;
 
-const queryUsingIndex = (knex, term) => {
-  return knex.distinct('submitted_by as value')
+function queryUsingIndex(knex, term) {
+  return knex
+    .distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `${term}%`)
     .limit(MAX_ROWS);
-};
+}
 
-const queryWithoutIndex = (knex, term) => {
-  return knex.distinct('submitted_by as value')
+function queryWithoutIndex(knex, term) {
+  return knex
+    .distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `%${term}%`)
     .limit(MAX_ROWS);
-};
+}
 
 function addReviewerCriteria(query, schoolId) {
   return query
     .leftJoin('additional_reviewer as ar', 'ar.disclosure_id', 'd.id')
     .andWhere({'ar.user_id': schoolId});
 }
-export async function getSuggestions(dbInfo, term, userInfo) {
-  try {
-    const knex = getKnex(dbInfo);
 
+export async function getSuggestions(knex, term, userInfo) {
+  try {
     let indexQuery = queryUsingIndex(knex, term);
     let noIndexQuery = queryWithoutIndex(knex, term);
     if (userInfo.coiRole === ROLES.REVIEWER) {
