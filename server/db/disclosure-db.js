@@ -144,14 +144,12 @@ async function deleteEntityFile(knex, dbInfo, fileId, fileKey) {
 }
 
 export async function saveNewFinancialEntity(
-  dbInfo,
+  knex,
   userInfo,
   disclosureId,
   financialEntity,
   files
 ) {
-  const knex = getKnex(dbInfo);
-
   const isSubmitter = await isDisclosureUsers(
     knex,
     disclosureId,
@@ -224,12 +222,12 @@ async function deleteEntityRelationship(knex, relationshipId) {
 
 export async function saveExistingFinancialEntity(
   dbInfo,
+  knex,
   userInfo,
   entityId,
   body,
   files
 ) {
-  const knex = getKnex(dbInfo);
   const financialEntity = body;
 
   const isOwner = await isEntityUsers(knex, entityId, userInfo.schoolId);
@@ -316,8 +314,7 @@ export async function saveExistingFinancialEntity(
   return financialEntity;
 }
 
-export async function saveDeclaration(dbInfo, userId, disclosureId, record) {
-  const knex = getKnex(dbInfo);
+export async function saveDeclaration(knex, userId, disclosureId, record) {
   const isSubmitter = await isDisclosureUsers(knex, disclosureId, userId);
   if (!isSubmitter) {
     throw Error(`Attempt by user id ${userId} to create a declaration for disclosure ${disclosureId} which isnt the users`); // eslint-disable-line max-len
@@ -337,13 +334,12 @@ export async function saveDeclaration(dbInfo, userId, disclosureId, record) {
 }
 
 export async function saveExistingDeclaration(
-  dbInfo,
+  knex,
   userInfo,
   disclosureId,
   declarationId,
   record
 ) {
-  const knex = getKnex(dbInfo);
   const {typeCd, comments, adminRelationshipCd} = record;
   const isSubmitter = await isDisclosureUsers(
     knex,
@@ -366,8 +362,7 @@ export async function saveExistingDeclaration(
     });
 }
 
-export async function saveNewQuestionAnswer(dbInfo, userId, disclosureId, body) {
-  const knex = getKnex(dbInfo);
+export async function saveNewQuestionAnswer(knex, userId, disclosureId, body) {
   const isSubmitter = await isDisclosureUsers(knex, disclosureId, userId);
   if (!isSubmitter) {
     throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
@@ -391,13 +386,12 @@ export async function saveNewQuestionAnswer(dbInfo, userId, disclosureId, body) 
 }
 
 export async function saveExistingQuestionAnswer(
-  dbInfo,
+  knex,
   userId,
   disclosureId,
   questionId,
   body
 ) {
-  const knex = getKnex(dbInfo);
   const isSubmitter = await isDisclosureUsers(knex, disclosureId, userId);
 
   if (!isSubmitter) {
@@ -422,9 +416,7 @@ export async function saveExistingQuestionAnswer(
   return body;
 }
 
-async function retrieveComments(dbInfo, userInfo, disclosureId) {
-  const knex = getKnex(dbInfo);
-
+async function retrieveComments(knex, userInfo, disclosureId) {
   const criteria = {
     disclosure_id: disclosureId
   };
@@ -469,8 +461,7 @@ async function retrieveComments(dbInfo, userInfo, disclosureId) {
   return comments;
 }
 
-async function flagPIReviewNeeded(dbInfo, disclosureId, section, id) {
-  const knex = getKnex(dbInfo);
+async function flagPIReviewNeeded(knex, disclosureId, section, id) {
   const rows = await knex.select('*')
     .from('pi_review')
     .where({
@@ -495,8 +486,7 @@ async function flagPIReviewNeeded(dbInfo, disclosureId, section, id) {
   }, 'id');
 }
 
-async function unflagPIReviewNeeded(dbInfo, disclosureId, section, id) {
-  const knex = getKnex(dbInfo);
+async function unflagPIReviewNeeded(knex, disclosureId, section, id) {
   const result = await knex('comment')
     .count()
     .where({
@@ -518,8 +508,7 @@ async function unflagPIReviewNeeded(dbInfo, disclosureId, section, id) {
   }
 }
 
-export async function addComment(dbInfo, userInfo, comment) {
-  const knex = getKnex(dbInfo);
+export async function addComment(knex, userInfo, comment) {
   await knex('comment')
     .insert({
       disclosure_id: comment.disclosureId,
@@ -538,12 +527,12 @@ export async function addComment(dbInfo, userInfo, comment) {
     }, 'id');
 
   const statements = [
-    retrieveComments(dbInfo, userInfo, comment.disclosureId)
+    retrieveComments(knex, userInfo, comment.disclosureId)
   ];
   if (comment.piVisible) {
     statements.push(
       flagPIReviewNeeded(
-        dbInfo,
+        knex,
         comment.disclosureId,
         comment.topicSection,
         comment.topicId
@@ -553,8 +542,7 @@ export async function addComment(dbInfo, userInfo, comment) {
   return await Promise.all(statements);
 }
 
-export async function updateComment(dbInfo, userInfo, comment) {
-  const knex = getKnex(dbInfo);
+export async function updateComment(knex, userInfo, comment) {
   await knex('comment')
     .update({
       text: comment.text,
@@ -571,7 +559,7 @@ export async function updateComment(dbInfo, userInfo, comment) {
 
   if (comment.piVisible) {
     await flagPIReviewNeeded(
-      dbInfo,
+      knex,
       comment.disclosureId,
       comment.topicSection,
       comment.topicId
@@ -579,14 +567,14 @@ export async function updateComment(dbInfo, userInfo, comment) {
   }
   else {
     await unflagPIReviewNeeded(
-      dbInfo,
+      knex,
       comment.disclosureId,
       comment.topicSection,
       comment.topicId
     );
   }
 
-  return await retrieveComments(dbInfo, userInfo, comment.disclosureId);
+  return await retrieveComments(knex, userInfo, comment.disclosureId);
 }
 
 async function getDisclosure(knex, userInfo, disclosureId) {
@@ -616,9 +604,7 @@ async function getDisclosure(knex, userInfo, disclosureId) {
     .where(criteria);
 }
 
-async function getDeclarations(dbInfo, disclosureId, authHeader) {
-  const knex = getKnex(dbInfo);
-
+async function getDeclarations(dbInfo, knex, disclosureId, authHeader) {
   const declarations = await knex.select(
       'd.id as id',
       'd.project_id as projectId',
@@ -930,14 +916,13 @@ async function addEntityQuestionAnswers(knex, disclosure) {
   return disclosure;
 }
 
-export async function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
-  let knex;
-  if (trx) {
-    knex = trx;
-  } else {
-    knex = getKnex(dbInfo);
-  }
-
+export async function get(
+  dbInfo,
+  knex,
+  userInfo,
+  disclosureId,
+  authHeader
+) {
   const [
     disclosureRecord,
     entityRecords,
@@ -954,8 +939,8 @@ export async function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
     getDisclosure(knex, userInfo, disclosureId),
     getEntities(knex, disclosureId),
     getQuestionAnswers(knex, disclosureId),
-    getDeclarations(dbInfo, disclosureId, authHeader),
-    retrieveComments(dbInfo, userInfo, disclosureId),
+    getDeclarations(dbInfo, knex, disclosureId, authHeader),
+    retrieveComments(knex, userInfo, disclosureId),
     getFileRecords(knex, disclosureId),
     getManagementPlans(knex, disclosureId),
     getAdditionalReviewers(knex, disclosureId),
@@ -1020,18 +1005,18 @@ export async function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
 
 export async function getAnnualDisclosure(
   dbInfo,
+  knex,
   userInfo,
   piName,
   authHeader
 ) {
-  const knex = getKnex(dbInfo);
   const result = await knex('disclosure')
     .first('id as id')
     .where('type_cd', 2)
     .andWhere('user_id', userInfo.schoolId);
 
   if (result) {
-    return get(dbInfo, userInfo, result.id, authHeader);
+    return get(dbInfo, knex, userInfo, result.id, authHeader);
   }
 
   const configId = await getLatestConfigsId(knex);
@@ -1053,7 +1038,7 @@ export async function getAnnualDisclosure(
 }
 
 export async function getSummariesForReview(
-  dbInfo,
+  knex,
   sortColumn,
   sortDirection,
   start,
@@ -1061,7 +1046,6 @@ export async function getSummariesForReview(
   reviewerDisclosures,
   pageSize
 ) {
-  const knex = getKnex(dbInfo);
   const query = knex('disclosure as d');
   const columnsToSelect = [
     'd.submitted_by',
@@ -1227,9 +1211,9 @@ export async function getSummariesForReview(
   return queryResult;
 }
 
-export async function getSummariesForReviewCount(dbInfo, filters) {
+export async function getSummariesForReviewCount(knex, filters) {
   const results = await getSummariesForReview(
-    dbInfo,
+    knex,
     null,
     'DESCENDING',
     0,
@@ -1240,8 +1224,7 @@ export async function getSummariesForReviewCount(dbInfo, filters) {
   return Promise.resolve([{rowcount: results.length}]);
 }
 
-export async function getSummariesForUser(dbInfo, userId) {
-  const knex = getKnex(dbInfo);
+export async function getSummariesForUser(knex, userId) {
   const summaries = await knex.select(
       'expired_date',
       'type_cd as type',
@@ -1478,19 +1461,12 @@ function resetAdminRelationships(knex, disclosureId) {
 
 export async function approve(
   dbInfo,
+  knex,
   disclosure,
   displayName,
   disclosureId,
-  authHeader,
-  trx
+  authHeader
 ) {
-  let knex;
-  if (trx) {
-    knex = trx;
-  } else {
-    knex = getKnex(dbInfo);
-  }
-
   disclosure.statusCd = DISCLOSURE_STATUS.UP_TO_DATE;
   disclosure.lastReviewDate = new Date();
 
@@ -1537,8 +1513,8 @@ function updateStatus(knex, name, disclosureId) {
   .where('id', disclosureId);
 }
 
-async function updateProjects(trx, schoolId) {
-  await trx('project_person')
+async function updateProjects(knex, schoolId) {
+  await knex('project_person')
     .update({
       new: false
     })
@@ -1574,7 +1550,7 @@ async function addAdditionalReviewer(knex, reviewer, disclosureId) {
 }
 
 async function addAdditionalReviewers(
-  trx,
+  knex,
   dbInfo,
   authHeader,
   disclosureId,
@@ -1591,19 +1567,19 @@ async function addAdditionalReviewers(
       return reviewer.userId !== userInfo.schoolId;
     })
     .map(reviewer => {
-      return addAdditionalReviewer(trx, reviewer, disclosureId);
+      return addAdditionalReviewer(knex, reviewer, disclosureId);
     })
   );
 }
 
 export async function submit(
   dbInfo,
+  knex,
   userInfo,
   disclosureId,
   authHeader,
   hostName
 ) {
-  const knex = getKnex(dbInfo);
   const isSubmitter = await isDisclosureUsers(
     knex,
     disclosureId,
@@ -1627,6 +1603,7 @@ export async function submit(
 
   const disclosure = await get(
     dbInfo,
+    knex,
     userInfo,
     disclosureId,
     authHeader,
@@ -1659,6 +1636,7 @@ export async function submit(
     if (count[0].count === 0) {
       await approve(
         dbInfo,
+        knex,
         disclosure,
         SYSTEM_USER,
         disclosureId,
@@ -1684,14 +1662,13 @@ export async function submit(
   }
 }
 
-async function updateEditableComments(trx, disclosureId) {
-  await trx('comment')
+async function updateEditableComments(knex, disclosureId) {
+  await knex('comment')
     .update({editable: false})
     .where({disclosure_id: disclosureId});
 }
 
-export async function reject(dbInfo, userInfo, disclosureId) {
-  const knex = getKnex(dbInfo);
+export async function reject(knex, userInfo, disclosureId) {
   await knex('disclosure')
     .update({
       status_cd: DISCLOSURE_STATUS.REVISION_REQUIRED,
@@ -1702,9 +1679,7 @@ export async function reject(dbInfo, userInfo, disclosureId) {
   return updateEditableComments(knex, disclosureId);
 }
 
-export async function getArchivedDisclosures(dbInfo, userId) {
-  const knex = getKnex(dbInfo);
-
+export async function getArchivedDisclosures(knex, userId) {
   const [archives, configs] = await Promise.all([
     knex
       .select(
@@ -1740,8 +1715,7 @@ export async function getArchivedDisclosures(dbInfo, userId) {
   return archives;
 }
 
-export function getLatestArchivedDisclosure(dbInfo, userId, disclosureId) {
-  const knex = getKnex(dbInfo);
+export function getLatestArchivedDisclosure(knex, userId, disclosureId) {
   return knex
     .first('disclosure')
     .from('disclosure_archive')
@@ -1749,17 +1723,14 @@ export function getLatestArchivedDisclosure(dbInfo, userId, disclosureId) {
     .orderBy('approved_date', 'desc');
 }
 
-export function getArchivedDisclosure(dbInfo, archiveId) {
-  const knex = getKnex(dbInfo);
+export function getArchivedDisclosure(knex, archiveId) {
   return knex
     .first('disclosure')
     .from('disclosure_archive')
     .where('id', archiveId);
 }
 
-export async function deleteAnswers(dbInfo, userInfo, disclosureId, answersToDelete) {
-  const knex = getKnex(dbInfo);
-
+export async function deleteAnswers(knex, userInfo, disclosureId, answersToDelete) {
   const isSubmitter = await isDisclosureUsers(
     knex,
     disclosureId,
@@ -1799,8 +1770,7 @@ export async function deleteAnswers(dbInfo, userInfo, disclosureId, answersToDel
     .del();
 }
 
-export async function getCurrentState(dbInfo, userInfo, disclosureId) {
-  const knex = getKnex(dbInfo);
+export async function getCurrentState(knex, userInfo, disclosureId) {
   const isSubmitter = await isDisclosureUsers(
     knex,
     disclosureId,
@@ -1825,9 +1795,8 @@ export async function getCurrentState(dbInfo, userInfo, disclosureId) {
   return JSON.parse(stateFound.state);
 }
 
-export async function saveCurrentState(dbInfo, userInfo, disclosureId, state) {
-  const currentState = await getCurrentState(dbInfo, userInfo, disclosureId);
-  const knex = getKnex(dbInfo);
+export async function saveCurrentState(knex, userInfo, disclosureId, state) {
+  const currentState = await getCurrentState(knex, userInfo, disclosureId);
 
   if (currentState !== '') {
     await knex('state')
@@ -1849,9 +1818,7 @@ export async function saveCurrentState(dbInfo, userInfo, disclosureId, state) {
     }, 'id');
 }
 
-export async function getDisclosureInfoForNotifications(dbInfo, id) {
-  const knex = getKnex(dbInfo);
-
+export async function getDisclosureInfoForNotifications(knex, id) {
   const disclosure = await knex('disclosure')
     .first(
       'id',
@@ -1865,9 +1832,7 @@ export async function getDisclosureInfoForNotifications(dbInfo, id) {
   return disclosure;
 }
 
-export async function getArchivedDisclosureInfoForNotifications(dbInfo, id) {
-  const knex = getKnex(dbInfo);
-
+export async function getArchivedDisclosureInfoForNotifications(knex, id) {
   const results = await knex('disclosure_archive as da')
     .first(
       'd.user_id as userId',

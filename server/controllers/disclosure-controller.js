@@ -63,8 +63,12 @@ export const init = app => {
   /**
     user can only see their own
   */
-  app.get('/api/coi/archived-disclosures/:id/latest', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.getLatestArchivedDisclosure(req.dbInfo, req.userInfo.schoolid, req.params.id);
+  app.get('/api/coi/archived-disclosures/:id/latest', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await DisclosureDB.getLatestArchivedDisclosure(
+      req.knex,
+      req.userInfo.schoolid,
+      req.params.id
+    );
     const disclosure = JSON.parse(result.disclosure);
     if (req.userInfo.coiRole !== ROLES.ADMIN && disclosure.userId !== req.userInfo.schoolId) {
       res.sendStatus(FORBIDDEN);
@@ -76,25 +80,32 @@ export const init = app => {
   /**
     User can only see disclosures which they submitted
   */
-  app.get('/api/coi/archived-disclosures', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.getArchivedDisclosures(req.dbInfo, req.userInfo.schoolId);
+  app.get('/api/coi/archived-disclosures', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await DisclosureDB.getArchivedDisclosures(
+      req.knex,
+      req.userInfo.schoolId
+    );
     res.send(result);
   }));
 
   /**
     User can only see disclosures which they submitted
   */
-  app.get('/api/coi/disclosure-user-summaries', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.getSummariesForUser(req.dbInfo, req.userInfo.schoolId);
+  app.get('/api/coi/disclosure-user-summaries', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await DisclosureDB.getSummariesForUser(
+      req.knex,
+      req.userInfo.schoolId
+    );
     res.send(result);
   }));
 
   /**
     User can only see their own annual disclosure
   */
-  app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+  app.get('/api/coi/disclosures/annual', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
     const result = await DisclosureDB.getAnnualDisclosure(
       req.dbInfo,
+      req.knex,
       req.userInfo,
       req.userInfo.name,
       req.headers.authorization
@@ -130,6 +141,7 @@ export const init = app => {
 
     const result = await DisclosureDB.get(
       dbInfo,
+      req.knex,
       userInfo,
       params.id,
       headers.authorization
@@ -177,7 +189,7 @@ export const init = app => {
       start = req.query.start;
     }
     const result = await DisclosureDB.getSummariesForReview(
-      req.dbInfo,
+      req.knex,
       sortColumn,
       sortDirection,
       start,
@@ -188,7 +200,7 @@ export const init = app => {
     res.send(result);
   }));
 
-  app.get('/api/coi/disclosure-summaries/count', allowedRoles(ADMIN), wrapAsync(async (req, res, next) => {
+  app.get('/api/coi/disclosure-summaries/count', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res, next) => {
     let filters = {};
     if (req.query.filters) {
       try {
@@ -204,70 +216,109 @@ export const init = app => {
       }
     }
 
-    const result = await DisclosureDB.getSummariesForReviewCount(req.dbInfo, filters);
+    const result = await DisclosureDB.getSummariesForReviewCount(
+      req.knex,
+      filters
+    );
     res.send(result);
   }));
 
   /**
     User can only edit entities which are associated with their disclosure
   */
-  app.put('/api/coi/disclosures/:id/financial-entities/:entityId', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveExistingFinancialEntity(
-      req.dbInfo,
-      req.userInfo,
-      req.params.entityId,
-      JSON.parse(req.body.entity),
-      req.files
-    );
-    res.send(result);
-  }));
+  app.put(
+    '/api/coi/disclosures/:id/financial-entities/:entityId',
+    allowedRoles('ANY'),
+    upload.array('attachments'),
+    useKnex,
+    wrapAsync(async (req, res) => {
+      const result = await DisclosureDB.saveExistingFinancialEntity(
+        req.dbInfo,
+        req.knex,
+        req.userInfo,
+        req.params.entityId,
+        JSON.parse(req.body.entity),
+        req.files
+      );
+      res.send(result);
+    }
+  ));
 
   /**
     User can only add entities to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/financial-entities', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveNewFinancialEntity(req.dbInfo, req.userInfo, req.params.id, JSON.parse(req.body.entity), req.files);
+  app.post('/api/coi/disclosures/:id/financial-entities', allowedRoles('ANY'), upload.array('attachments'), useKnex, wrapAsync(async (req, res) => {
+    const result = await DisclosureDB.saveNewFinancialEntity(req.knex, req.userInfo, req.params.id, JSON.parse(req.body.entity), req.files);
     res.send(result);
   }));
 
   /**
     User can only add declarations to disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/declarations', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+  app.post('/api/coi/disclosures/:id/declarations', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
     req.body.disclosure_id = req.params.id; //eslint-disable-line camelcase
-    const result = await DisclosureDB.saveDeclaration(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body);
+    const result = await DisclosureDB.saveDeclaration(
+      req.knex,
+      req.userInfo.schoolId,
+      req.params.id,
+      req.body
+    );
     res.send(result);
   }));
 
   /**
     User can only edit declarations on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/declarations/:declarationId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    await DisclosureDB.saveExistingDeclaration(req.dbInfo, req.userInfo, req.params.id, req.params.declarationId, req.body);
+  app.put('/api/coi/disclosures/:id/declarations/:declarationId', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    await DisclosureDB.saveExistingDeclaration(
+      req.knex,
+      req.userInfo,
+      req.params.id,
+      req.params.declarationId,
+      req.body
+    );
     res.sendStatus(ACCEPTED);
   }));
 
   /**
     User can only answer questions on disclosures which are theirs
   */
-  app.post('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveNewQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.body);
+  app.post('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await DisclosureDB.saveNewQuestionAnswer(
+      req.knex,
+      req.userInfo.schoolId,
+      req.params.id,
+      req.body
+    );
     res.send(result);
   }));
 
   /**
     User can only answer questions on disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/question-answers/:questionId', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.saveExistingQuestionAnswer(req.dbInfo, req.userInfo.schoolId, req.params.id, req.params.questionId, req.body);
+  app.put('/api/coi/disclosures/:id/question-answers/:questionId', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await DisclosureDB.saveExistingQuestionAnswer(
+      req.knex,
+      req.userInfo.schoolId,
+      req.params.id,
+      req.params.questionId,
+      req.body
+    );
     res.send(result);
   }));
 
   /**
     User can only submit disclosures which are theirs
   */
-  app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    await DisclosureDB.submit(req.dbInfo, req.userInfo, req.params.id, req.headers.authorization, req.hostname);
+  app.put('/api/coi/disclosures/:id/submit', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    await DisclosureDB.submit(
+      req.dbInfo,
+      req.knex,
+      req.userInfo,
+      req.params.id,
+      req.headers.authorization,
+      req.hostname
+    );
     try {
       createAndSendSubmitNotification(req.dbInfo, req.hostname, req.headers.authorization, req.userInfo, req.params.id);
     } catch (err) {
@@ -278,7 +329,14 @@ export const init = app => {
   }));
 
   app.put('/api/coi/disclosures/:id/approve', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    const archiveId = await DisclosureDB.approve(req.dbInfo, req.body, req.userInfo.name, req.params.id, req.headers.authorization);
+    const archiveId = await DisclosureDB.approve(
+      req.dbInfo,
+      req.knex,
+      req.body,
+      req.userInfo.name,
+      req.params.id,
+      req.headers.authorization
+    );
     try {
       createAndSendApproveNotification(
         req.dbInfo,
@@ -293,8 +351,8 @@ export const init = app => {
     res.sendStatus(ACCEPTED);
   }));
 
-  app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    await DisclosureDB.reject(req.dbInfo, req.userInfo, req.params.id);
+  app.put('/api/coi/disclosures/:id/reject', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
+    await DisclosureDB.reject(req.knex, req.userInfo, req.params.id);
     try {
       createAndSendSentBackNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
     } catch (err) {
@@ -322,7 +380,11 @@ export const init = app => {
     comment.disclosureId = req.params.id;
 
     if (validateComment(comment)) {
-      const result = await DisclosureDB.addComment(req.dbInfo, req.userInfo, comment);
+      const result = await DisclosureDB.addComment(
+        req.knex,
+        req.userInfo,
+        comment
+      );
       res.send(result[0]);
     } else {
       next(new Error('invalid comment body'));
@@ -347,7 +409,11 @@ export const init = app => {
     const comment = req.body;
 
     if (validateComment(comment)) {
-      const result = await DisclosureDB.updateComment(req.dbInfo, req.userInfo, comment);
+      const result = await DisclosureDB.updateComment(
+        req.knex,
+        req.userInfo,
+        comment
+      );
       res.send(result);
     } else {
       next(new Error('invalid comment body'));
@@ -365,7 +431,7 @@ export const init = app => {
   /**
     Can only delete answers if this disclosure is theirs
   */
-  app.delete('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+  app.delete('/api/coi/disclosures/:id/question-answers', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
     const toDelete = [];
     const proposedDeletions = req.body.toDelete !== undefined ? req.body.toDelete : [];
 
@@ -378,7 +444,12 @@ export const init = app => {
     }
 
     if (toDelete.length > 0) {
-      await DisclosureDB.deleteAnswers(req.dbInfo, req.userInfo, req.params.id, toDelete);
+      await DisclosureDB.deleteAnswers(
+        req.knex,
+        req.userInfo,
+        req.params.id,
+        toDelete
+      );
       res.status(NO_CONTENT).end();
     }
     else {
@@ -389,22 +460,31 @@ export const init = app => {
   /**
     Can only retrieve state of their disclosure
   */
-  app.get('/api/coi/disclosures/:id/state', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const result = await DisclosureDB.getCurrentState(req.dbInfo, req.userInfo, req.params.id);
+  app.get('/api/coi/disclosures/:id/state', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    const result = await DisclosureDB.getCurrentState(
+      req.knex,
+      req.userInfo,
+      req.params.id
+    );
     res.send(result);
   }));
 
   /**
     Can only save the state of their disclosure
   */
-  app.post('/api/coi/disclosures/:id/state', allowedRoles('ANY'), wrapAsync(async (req, res) => {
+  app.post('/api/coi/disclosures/:id/state', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
     res.status(ACCEPTED).end();
-    await DisclosureDB.saveCurrentState(req.dbInfo, req.userInfo, req.params.id, req.body);
+    await DisclosureDB.saveCurrentState(
+      req.knex,
+      req.userInfo,
+      req.params.id,
+      req.body
+    );
   }));
 
-  app.get('/api/coi/archived-disclosures/:archiveId', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
+  app.get('/api/coi/archived-disclosures/:archiveId', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
     const result = await DisclosureDB.getArchivedDisclosure(
-      req.dbInfo,
+      req.knex,
       req.params.archiveId
     );
     const archive = JSON.parse(result.disclosure);

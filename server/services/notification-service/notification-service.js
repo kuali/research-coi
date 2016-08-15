@@ -223,13 +223,22 @@ async function getTemplate(dbInfo, templateId) {
 }
 
 async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
-  const disclosure = await getArchivedDisclosureInfoForNotifications(dbInfo, archiveId);
+  const knex = getKnex(dbInfo);
+  const disclosure = await getArchivedDisclosureInfoForNotifications(
+    knex,
+    archiveId
+  );
   disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
   return disclosure;
 }
 
 async function getDisclosure(dbInfo, hostname, disclosureId) {
-  const disclosure = await getDisclosureInfoForNotifications(dbInfo, disclosureId);
+  const knex = getKnex(dbInfo);
+
+  const disclosure = await getDisclosureInfoForNotifications(
+    knex,
+    disclosureId
+  );
   disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
   return disclosure;
 }
