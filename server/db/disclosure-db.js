@@ -153,7 +153,7 @@ export async function saveNewFinancialEntity(
   const knex = getKnex(dbInfo);
 
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     disclosureId,
     userInfo.schoolId
   );
@@ -317,12 +317,12 @@ export async function saveExistingFinancialEntity(
 }
 
 export async function saveDeclaration(dbInfo, userId, disclosureId, record) {
-  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userId);
+  const knex = getKnex(dbInfo);
+  const isSubmitter = await isDisclosureUsers(knex, disclosureId, userId);
   if (!isSubmitter) {
     throw Error(`Attempt by user id ${userId} to create a declaration for disclosure ${disclosureId} which isnt the users`); // eslint-disable-line max-len
   }
 
-  const knex = getKnex(dbInfo);
   const id = await knex('declaration')
     .insert({
       project_id: record.projectId,
@@ -343,9 +343,10 @@ export async function saveExistingDeclaration(
   declarationId,
   record
 ) {
+  const knex = getKnex(dbInfo);
   const {typeCd, comments, adminRelationshipCd} = record;
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     disclosureId,
     userInfo.schoolId
   );
@@ -353,7 +354,6 @@ export async function saveExistingDeclaration(
     throw Error(`Attempt by userId ${userInfo.schoolId} to save a declaration on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
   }
 
-  const knex = getKnex(dbInfo);
   return await knex('declaration')
     .update({
       type_cd: typeCd,
@@ -367,12 +367,12 @@ export async function saveExistingDeclaration(
 }
 
 export async function saveNewQuestionAnswer(dbInfo, userId, disclosureId, body) {
-  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userId);
+  const knex = getKnex(dbInfo);
+  const isSubmitter = await isDisclosureUsers(knex, disclosureId, userId);
   if (!isSubmitter) {
     throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
   }
 
-  const knex = getKnex(dbInfo);
   const answer = body;
   const result = await knex('questionnaire_answer')
     .insert({
@@ -397,13 +397,13 @@ export async function saveExistingQuestionAnswer(
   questionId,
   body
 ) {
-  const isSubmitter = await isDisclosureUsers(dbInfo, disclosureId, userId);
+  const knex = getKnex(dbInfo);
+  const isSubmitter = await isDisclosureUsers(knex, disclosureId, userId);
 
   if (!isSubmitter) {
     throw Error(`Attempt by user id ${userId} to save a question answer on disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
   }
 
-  const knex = getKnex(dbInfo);
   const result = await knex
     .first('qa.id')
     .from('disclosure_answer as da')
@@ -959,7 +959,7 @@ export async function get(dbInfo, userInfo, disclosureId, authHeader, trx) {
     getFileRecords(knex, disclosureId),
     getManagementPlans(knex, disclosureId),
     getAdditionalReviewers(knex, disclosureId),
-    isDisclosureUsers(dbInfo, disclosureId, userInfo.schoolId),
+    isDisclosureUsers(knex, disclosureId, userInfo.schoolId),
     getLatestConfigsId(knex),
     getArchivedVersionList(knex, disclosureId)
   ]);
@@ -1605,7 +1605,7 @@ export async function submit(
 ) {
   const knex = getKnex(dbInfo);
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     disclosureId,
     userInfo.schoolId
   );
@@ -1761,7 +1761,7 @@ export async function deleteAnswers(dbInfo, userInfo, disclosureId, answersToDel
   const knex = getKnex(dbInfo);
 
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     disclosureId,
     userInfo.schoolId
   );
@@ -1800,8 +1800,9 @@ export async function deleteAnswers(dbInfo, userInfo, disclosureId, answersToDel
 }
 
 export async function getCurrentState(dbInfo, userInfo, disclosureId) {
+  const knex = getKnex(dbInfo);
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     disclosureId,
     userInfo.schoolId
   );
@@ -1810,7 +1811,6 @@ export async function getCurrentState(dbInfo, userInfo, disclosureId) {
     throw Error(`Attempt by user id ${userInfo.schoolId} to retrieve state of disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
   }
 
-  const knex = getKnex(dbInfo);
   const stateFound = await knex
     .first('state')
     .from('state')

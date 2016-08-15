@@ -116,7 +116,7 @@ export const init = app => {
       );
       if (!reviewerDisclosures.includes(params.id)) {
         const isSubmitter = await isDisclosureUsers(
-          dbInfo,
+          req.knex,
           params.id,
           userInfo.schoolId
         );

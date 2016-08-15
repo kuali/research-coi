@@ -16,10 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import getKnex from './connection-manager';
-
-export async function isDisclosureUsers(dbInfo, disclosureId, userId) {
-  const knex = getKnex(dbInfo);
+export async function isDisclosureUsers(knex, disclosureId, userId) {
   const result = await knex
     .first('user_id')
     .from('disclosure')
@@ -31,8 +28,7 @@ export async function isDisclosureUsers(dbInfo, disclosureId, userId) {
   return result !== undefined;
 }
 
-export async function isFinancialEntityUsers(dbInfo, id, userId) {
-  const knex = getKnex(dbInfo);
+export async function isFinancialEntityUsers(knex, id, userId) {
   const result = await knex
     .first('d.user_id')
     .from('fin_entity as fe')
@@ -45,9 +41,7 @@ export async function isFinancialEntityUsers(dbInfo, id, userId) {
   return result !== undefined;
 }
 
-export async function getDisclosureForFinancialEntity(dbInfo, id) {
-  const knex = getKnex(dbInfo);
-
+export async function getDisclosureForFinancialEntity(knex, id) {
   const entity = await knex('fin_entity')
     .first('disclosure_id as disclosureId')
     .where({id});
@@ -55,13 +49,7 @@ export async function getDisclosureForFinancialEntity(dbInfo, id) {
   return entity.disclosureId;
 }
 
-export async function verifyRelationshipIsUsers(
-  dbInfo,
-  userId,
-  relationshipId
-) {
-  const knex = getKnex(dbInfo);
-
+export async function verifyRelationshipIsUsers(knex, userId, relationshipId) {
   const rows = await knex
     .first('r.id')
     .from('relationship as r')

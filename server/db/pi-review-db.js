@@ -110,7 +110,7 @@ export async function recordPIResponse(dbInfo, userInfo, reviewId, comment) {
     .where('id', reviewId);
 
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     reviewItem.disclosureId,
     userInfo.schoolId
   );
@@ -653,8 +653,9 @@ async function getDeclarationsToReview(
 }
 
 export async function getPIReviewItems(dbInfo, userInfo, disclosureId) {
+  const knex = getKnex(dbInfo);
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     disclosureId,
     userInfo.schoolId
   );
@@ -662,8 +663,6 @@ export async function getPIReviewItems(dbInfo, userInfo, disclosureId) {
   if (!isSubmitter) {
     throw Error(`Attempt by ${userInfo.username} to access pi-review-items for disclosure ${disclosureId} which isnt theirs`); // eslint-disable-line max-len
   }
-
-  const knex = getKnex(dbInfo);
 
   const rows = await knex.select(
       'p.id',
@@ -762,7 +761,7 @@ export async function removeRelationship(
   const knex = getKnex(dbInfo);
 
   const isAllowed = await verifyRelationshipIsUsers(
-    dbInfo,
+    knex,
     userInfo.schoolId,
     relationshipId
   );
@@ -873,7 +872,7 @@ export async function reSubmitDisclosure(dbInfo, {schoolId}, disclosureId) {
   const knex = getKnex(dbInfo);
 
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     disclosureId,
     schoolId
   );

@@ -217,11 +217,12 @@ export const init = app => {
   app.put(
     '/api/coi/pi-revise/:disclosureId/submit',
     allowedRoles('ANY'),
+    useKnex,
     wrapAsync(async (req, res) => {
       const {dbInfo, params, userInfo, hostname, headers, body} = req;
 
       const isSubmitter = isDisclosureUsers(
-        dbInfo,
+        req.knex,
         params.disclosureId,
         userInfo.schoolId
       );

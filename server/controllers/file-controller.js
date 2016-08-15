@@ -52,14 +52,17 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
   try {
     if (fileType === FILE_TYPE.FINANCIAL_ENTITY) {
       if (req.userInfo.coiRole === ROLES.USER) {
-        const permitted = await isFinancialEntityUsers(req.dbInfo, refId, req.userInfo.schoolId);
+        const permitted = await isFinancialEntityUsers(req.knex, refId, req.userInfo.schoolId);
         if (!permitted) {
           return Promise.resolve(false);
         }
       }
 
       if (req.userInfo.coiRole === ROLES.REVIEWER) {
-        const disclosureId = await getDisclosureForFinancialEntity(req.dbInfo, refId);
+        const disclosureId = await getDisclosureForFinancialEntity(
+          req.knex,
+          refId
+        );
         const reviewerDisclosures = await getDisclosureIdsForReviewer(
           req.knex,
           req.userInfo.schoolId
@@ -70,7 +73,11 @@ async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
       }
     } else {
       if (req.userInfo.coiRole === ROLES.USER) {
-        const permitted = await isDisclosureUsers(req.dbInfo, refId, req.userInfo.schoolId);
+        const permitted = await isDisclosureUsers(
+          req.knex,
+          refId,
+          req.userInfo.schoolId
+        );
         if (!permitted) {
           return Promise.resolve(false);
         }

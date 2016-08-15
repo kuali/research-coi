@@ -94,6 +94,7 @@ export function getFiles(dbInfo, userInfo, refId, fileType) {
 }
 
 export async function saveNewFiles(dbInfo, body, files, userInfo) {
+  const knex = getKnex(dbInfo);
   if (
     body.type !== FILE_TYPE.DISCLOSURE &&
     body.type !== FILE_TYPE.MANAGEMENT_PLAN &&
@@ -106,7 +107,7 @@ export async function saveNewFiles(dbInfo, body, files, userInfo) {
   }
 
   const isSubmitter = await isDisclosureUsers(
-    dbInfo,
+    knex,
     body.disclosureId,
     userInfo.schoolId
   );
@@ -115,7 +116,6 @@ export async function saveNewFiles(dbInfo, body, files, userInfo) {
     throw Error(`Attempt by ${userInfo.username} to upload a file for disclosure ${body.disclosureId} which isnt theirs`); // eslint-disable-line max-len
   }
 
-  const knex = getKnex(dbInfo);
   const fileData = [];
 
   for (const file of files) {

@@ -334,7 +334,7 @@ async function deleteEntityIfAllRelationshipsAreDeleted(dbInfo, trx, entityId) {
 export async function deleteTravelLogEntry(dbInfo, id, userInfo) {
   const knex = getKnex(dbInfo);
   const isAllowed = await verifyRelationshipIsUsers(
-    dbInfo,
+    knex,
     userInfo.schoolId,
     id
   );
@@ -490,7 +490,7 @@ async function updateEntity(trx, dbInfo, entry, id, schoolId) {
 export async function updateTravelLogEntry(dbInfo, entry, id, userInfo) {
   const knex = getKnex(dbInfo);
   const isAllowed = await verifyRelationshipIsUsers(
-    dbInfo,
+    knex,
     userInfo.schoolId,
     id
   );
