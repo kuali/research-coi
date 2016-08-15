@@ -881,22 +881,20 @@ export async function reSubmitDisclosure(dbInfo, {schoolId}, disclosureId) {
     return 'Unauthorized';
   }
 
-  await knex.transaction(async (trx) => {
-    await trx('disclosure')
-      .update({
-        status_cd: DISCLOSURE_STATUS.RESUBMITTED
-      })
-      .where({
-        id: disclosureId
-      });
+  await knex('disclosure')
+    .update({
+      status_cd: DISCLOSURE_STATUS.RESUBMITTED
+    })
+    .where({
+      id: disclosureId
+    });
 
-    await trx('pi_review')
-      .update({
-        revised: null,
-        responded_to: null
-      })
-      .where({disclosure_id: disclosureId});
-  });
+  await knex('pi_review')
+    .update({
+      revised: null,
+      responded_to: null
+    })
+    .where({disclosure_id: disclosureId});
 }
 
 export async function getPIResponseInfo(dbInfo, disclosureId) {

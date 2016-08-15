@@ -408,21 +408,18 @@ async function getExistingProjectId(trx, project) {
   }
 }
 
-export function saveProjects(req, project) {
+export async function saveProjects(req, project) {
   const knex = getKnex(req.dbInfo);
 
-  return knex.transaction(async function(trx) {
-    Log.info('Transaction started');
-    const existingProjectId = await getExistingProjectId(trx, project);
-    Log.info(`existingProjectId = ${existingProjectId}`);
-    if (existingProjectId) {
-      project.id = existingProjectId;
-      Log.info('Pre saveExistingProjects');
-      return await saveExistingProjects(trx, project, req);
-    }
-    Log.info('Pre saveNewProjects');
-    return await saveNewProjects(trx, project, req);
-  });
+  const existingProjectId = await getExistingProjectId(knex, project);
+  Log.info(`existingProjectId = ${existingProjectId}`);
+  if (existingProjectId) {
+    project.id = existingProjectId;
+    Log.info('Pre saveExistingProjects');
+    return await saveExistingProjects(knex, project, req);
+  }
+  Log.info('Pre saveNewProjects');
+  return await saveNewProjects(knex, project, req);
 }
 
 async function getStatus(trx, projectPerson, dbInfo, authHeader) {
@@ -533,7 +530,7 @@ async function getProjectPersons(
   return projectPersons;
 }
 
-export function getProjectStatuses(
+export async function getProjectStatuses(
   dbInfo,
   sourceSystem,
   sourceIdentifier,
@@ -541,27 +538,25 @@ export function getProjectStatuses(
 ) {
   try {
     const knex = getKnex(dbInfo);
-    return knex.transaction(async function(trx) {
-      const projectPersons = await getProjectPersons(
-        trx,
-        sourceSystem,
-        sourceIdentifier
-      );
-      const results = [];
-      if (Array.isArray(projectPersons)) {
-        for (let i = 0; i < projectPersons.length; i++) {
-          const projectPerson = projectPersons[i];
-          results.push(await getStatus(trx, projectPerson, dbInfo, authHeader));
-        }
+    const projectPersons = await getProjectPersons(
+      knex,
+      sourceSystem,
+      sourceIdentifier
+    );
+    const results = [];
+    if (Array.isArray(projectPersons)) {
+      for (let i = 0; i < projectPersons.length; i++) {
+        const projectPerson = projectPersons[i];
+        results.push(await getStatus(knex, projectPerson, dbInfo, authHeader));
       }
-      return results;
-    });
+    }
+    return results;
   } catch (err) {
     return Promise.reject(err);
   }
 }
 
-export function getProjectStatus(
+export async function getProjectStatus(
   dbInfo,
   sourceSystem,
   sourceIdentifier,
@@ -570,20 +565,18 @@ export function getProjectStatus(
 ) {
   try {
     const knex = getKnex(dbInfo);
-    return knex.transaction(async function(trx) {
-      const projectPersons = await getProjectPersons(
-        trx,
-        sourceSystem,
-        sourceIdentifier,
-        personId
-      );
+    const projectPersons = await getProjectPersons(
+      knex,
+      sourceSystem,
+      sourceIdentifier,
+      personId
+    );
 
-      if (projectPersons[0]) {
-        return await getStatus(trx, projectPersons[0], dbInfo, authHeader);
-      }
+    if (projectPersons[0]) {
+      return await getStatus(knex, projectPersons[0], dbInfo, authHeader);
+    }
 
-      return {};
-    });
+    return {};
   } catch (err) {
     return Promise.reject(err);
   }

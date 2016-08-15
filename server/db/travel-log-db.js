@@ -190,41 +190,39 @@ function getAnnualDisclosureForUser(trx, schoolId) {
 
 export async function createTravelLogEntry(dbInfo, entry, userInfo) {
   const knex = getKnex(dbInfo);
-  return await knex.transaction(async (trx) => {
-    const disclosure = await getAnnualDisclosureForUser(trx, userInfo.schoolId);
-    if (disclosure) {
-      if (isSubmitted(disclosure.status_cd) === true) {
-        return await handleTravelLogEntry(
-          trx,
-          disclosure.id,
-          entry,
-          RELATIONSHIP_STATUS.PENDING
-        );
-      }
-
+  const disclosure = await getAnnualDisclosureForUser(knex, userInfo.schoolId);
+  if (disclosure) {
+    if (isSubmitted(disclosure.status_cd) === true) {
       return await handleTravelLogEntry(
-        trx,
+        knex,
         disclosure.id,
         entry,
-        RELATIONSHIP_STATUS.IN_PROGRESS
+        RELATIONSHIP_STATUS.PENDING
       );
     }
 
-    const disclosureId = await createAnnualDisclosure(trx, userInfo);
-    const entityId = await createNewEntity(
-      trx,
-      disclosureId,
+    return await handleTravelLogEntry(
+      knex,
+      disclosure.id,
       entry,
       RELATIONSHIP_STATUS.IN_PROGRESS
     );
+  }
 
-    return await createNewRelationship(
-      trx,
-      entityId,
-      entry,
-      RELATIONSHIP_STATUS.IN_PROGRESS
-    );
-  });
+  const disclosureId = await createAnnualDisclosure(knex, userInfo);
+  const entityId = await createNewEntity(
+    knex,
+    disclosureId,
+    entry,
+    RELATIONSHIP_STATUS.IN_PROGRESS
+  );
+
+  return await createNewRelationship(
+    knex,
+    entityId,
+    entry,
+    RELATIONSHIP_STATUS.IN_PROGRESS
+  );
 }
 
 async function getRelationshipsEntity(trx, id) {
@@ -342,16 +340,14 @@ export async function deleteTravelLogEntry(dbInfo, id, userInfo) {
   );
 
   if (isAllowed) {
-    await knex.transaction(async (trx) => {
-      const entityId = await getRelationshipsEntity(trx, id);
-      await deleteTravelRelationship(trx, id);
-      await deleteRelationship(trx, id);
-      return await deleteEntityIfAllRelationshipsAreDeleted(
-        dbInfo,
-        trx,
-        entityId
-      );
-    });
+    const entityId = await getRelationshipsEntity(knex, id);
+    await deleteTravelRelationship(knex, id);
+    await deleteRelationship(knex, id);
+    return await deleteEntityIfAllRelationshipsAreDeleted(
+      dbInfo,
+      knex,
+      entityId
+    );
   }
 
   throw new Error(
@@ -500,15 +496,13 @@ export async function updateTravelLogEntry(dbInfo, entry, id, userInfo) {
   );
 
   if (isAllowed) {
-    await knex.transaction(async (trx) => {
-      await Promise.all([
-        updateTravelRelationship(trx, entry, id),
-        updateRelationship(trx, entry, id),
-        updateEntity(trx, dbInfo, entry, id, userInfo.schoolId)
-      ]);
+    await Promise.all([
+      updateTravelRelationship(knex, entry, id),
+      updateRelationship(knex, entry, id),
+      updateEntity(knex, dbInfo, entry, id, userInfo.schoolId)
+    ]);
 
-      return entry;
-    });
+    return entry;
   }
 
   throw new Error(`${userInfo.userName} is unauthorized to edit this record`);

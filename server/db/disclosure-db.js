@@ -1615,59 +1615,58 @@ export async function submit(
   }
 
   let reviewerIds;
-  await knex.transaction( async (trx) => {
-    await updateStatus(trx, userInfo.name, disclosureId);
-    await updateEntitiesAndRelationshipsStatuses(
-      trx,
-      disclosureId,
-      RELATIONSHIP_STATUS.IN_PROGRESS,
-      RELATIONSHIP_STATUS.DISCLOSED
-    );
-    await updateProjects(trx, userInfo.schoolId);
 
-    const disclosure = await get(
+  await updateStatus(knex, userInfo.name, disclosureId);
+  await updateEntitiesAndRelationshipsStatuses(
+    knex,
+    disclosureId,
+    RELATIONSHIP_STATUS.IN_PROGRESS,
+    RELATIONSHIP_STATUS.DISCLOSED
+  );
+  await updateProjects(knex, userInfo.schoolId);
+
+  const disclosure = await get(
+    dbInfo,
+    userInfo,
+    disclosureId,
+    authHeader,
+    knex
+  );
+  const config = await knex('config')
+    .first('config')
+    .where({id: disclosure.configId});
+
+  const generalConfig = JSON.parse(config.config).general;
+
+  if (generalConfig.autoAddAdditionalReviewer) {
+    reviewerIds = await addAdditionalReviewers(
+      knex,
       dbInfo,
-      userInfo,
-      disclosureId,
       authHeader,
-      trx
+      disclosureId,
+      userInfo
     );
-    const config = await trx('config')
-      .first('config')
-      .where({id: disclosure.configId});
+  }
 
-    const generalConfig = JSON.parse(config.config).general;
+  if (generalConfig.autoApprove) {
+    const count = await knex('fin_entity')
+      .count('id as count')
+      .where({
+        active: true,
+        disclosure_id: disclosureId
+      });
 
-    if (generalConfig.autoAddAdditionalReviewer) {
-      reviewerIds = await addAdditionalReviewers(
-        trx,
+    if (count[0].count === 0) {
+      await approve(
         dbInfo,
-        authHeader,
+        disclosure,
+        SYSTEM_USER,
         disclosureId,
-        userInfo
+        authHeader,
+        knex
       );
     }
-
-    if (generalConfig.autoApprove) {
-      const count = await trx('fin_entity')
-        .count('id as count')
-        .where({
-          active: true,
-          disclosure_id: disclosureId
-        });
-
-      if (count[0].count === 0) {
-        await approve(
-          dbInfo,
-          disclosure,
-          SYSTEM_USER,
-          disclosureId,
-          authHeader,
-          trx
-        );
-      }
-    }
-  });
+  }
 
   if (Array.isArray(reviewerIds)) {
     for (let i = 0; i < reviewerIds.length; i++) {
@@ -1693,16 +1692,14 @@ async function updateEditableComments(trx, disclosureId) {
 
 export async function reject(dbInfo, userInfo, disclosureId) {
   const knex = getKnex(dbInfo);
-  await knex.transaction(async (trx) => {
-    await trx('disclosure')
-      .update({
-        status_cd: DISCLOSURE_STATUS.REVISION_REQUIRED,
-        last_review_date: new Date()
-      })
-      .where('id', disclosureId);
+  await knex('disclosure')
+    .update({
+      status_cd: DISCLOSURE_STATUS.REVISION_REQUIRED,
+      last_review_date: new Date()
+    })
+    .where('id', disclosureId);
 
-    return updateEditableComments(trx, disclosureId);
-  });
+  return updateEditableComments(knex, disclosureId);
 }
 
 export async function getArchivedDisclosures(dbInfo, userId) {
