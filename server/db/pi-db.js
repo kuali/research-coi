@@ -17,7 +17,6 @@
 */
 
 import { ROLES } from '../../coi-constants';
-import getKnex from './connection-manager';
 
 const MAX_ROWS = 10;
 
