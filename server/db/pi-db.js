@@ -43,10 +43,8 @@ function addReviewerCriteria(query, schoolId) {
     .andWhere({'ar.user_id': schoolId});
 }
 
-export async function getSuggestions(dbInfo, term, userInfo) {
+export async function getSuggestions(knex, term, userInfo) {
   try {
-    const knex = getKnex(dbInfo);
-
     let indexQuery = queryUsingIndex(knex, term);
     let noIndexQuery = queryWithoutIndex(knex, term);
     if (userInfo.coiRole === ROLES.REVIEWER) {

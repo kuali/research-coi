@@ -48,15 +48,16 @@ export const init = app => {
   app.get(
     '/api/coi/pi',
     allowedRoles([ADMIN, REVIEWER]),
-    wrapAsync(async ({dbInfo, query, userInfo}, res) => {
+    useKnex,
+    wrapAsync(async ({query, userInfo, knex}, res) => {
       const result = await PIDB.getSuggestions(
-        dbInfo,
+        knex,
         query.term,
         userInfo
       );
       res.send(result);
-    }
-  ));
+    })
+  );
 
   /**
     User can only respond to review items which are associated with their
