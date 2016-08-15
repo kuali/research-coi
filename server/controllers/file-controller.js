@@ -103,8 +103,8 @@ export const init = app => {
   /**
     Admin or user for their own files
   */
-  app.get('/api/coi/files/:id', allowedRoles('ANY'), wrapAsync(async (req, res, next) => {
-    const result = await FileDb.getFile(req.dbInfo, req.userInfo, req.params.id);
+  app.get('/api/coi/files/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res, next) => {
+    const result = await FileDb.getFile(req.knex, req.userInfo, req.params.id);
     if (!result) {
       res.sendStatus(FORBIDDEN);
       return;
@@ -128,7 +128,12 @@ export const init = app => {
       res.sendStatus(FORBIDDEN);
       return;
     }
-    const files = await FileDb.getFiles(req.dbInfo, req.userInfo, refId, fileType);
+    const files = await FileDb.getFiles(
+      req.knex,
+      req.userInfo,
+      refId,
+      fileType
+    );
 
     res.setHeader('Content-disposition', `attachment; filename="${fileType}.zip"`);
 
@@ -160,9 +165,9 @@ export const init = app => {
   /**
     @Role: Admin or user for their own disclosures
   */
-  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), wrapAsync(async (req, res) => {
+  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), useKnex, wrapAsync(async (req, res) => {
     const result = await FileDb.saveNewFiles(
-      req.dbInfo,
+      req.knex,
       JSON.parse(req.body.data),
       req.files,
       req.userInfo
@@ -173,8 +178,8 @@ export const init = app => {
   /**
     @Role: admin or user for their own files
   */
-  app.delete('/api/coi/files/:id', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    await FileDb.deleteFiles(req.dbInfo, req.userInfo, req.params.id);
+  app.delete('/api/coi/files/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
+    await FileDb.deleteFiles(req.dbInfo, req.knex, req.userInfo, req.params.id);
     res.sendStatus(ACCEPTED);
   }));
 };

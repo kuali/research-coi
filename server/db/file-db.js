@@ -19,10 +19,8 @@
 import * as FileService from '../services/file-service/file-service';
 import {ROLES, FILE_TYPE} from '../../coi-constants';
 import {isDisclosureUsers} from './common-db';
-import getKnex from './connection-manager';
 
-export async function getFile(dbInfo, userInfo, id) {
-  const knex = getKnex(dbInfo);
+export async function getFile(knex, userInfo, id) {
   const criteria = {
     id
   };
@@ -56,9 +54,7 @@ export async function getFile(dbInfo, userInfo, id) {
   });
 }
 
-export function getFiles(dbInfo, userInfo, refId, fileType) {
-  const knex = getKnex(dbInfo);
-
+export function getFiles(knex, userInfo, refId, fileType) {
   const query = knex
     .select('name', 'key')
     .from('file')
@@ -93,8 +89,7 @@ export function getFiles(dbInfo, userInfo, refId, fileType) {
   });
 }
 
-export async function saveNewFiles(dbInfo, body, files, userInfo) {
-  const knex = getKnex(dbInfo);
+export async function saveNewFiles(knex, body, files, userInfo) {
   if (
     body.type !== FILE_TYPE.DISCLOSURE &&
     body.type !== FILE_TYPE.MANAGEMENT_PLAN &&
@@ -148,9 +143,7 @@ export async function saveNewFiles(dbInfo, body, files, userInfo) {
   return fileData;
 }
 
-export async function deleteFiles(dbInfo, userInfo, fileId) {
-  const knex = getKnex(dbInfo);
-
+export async function deleteFiles(dbInfo, knex, userInfo, fileId) {
   const criteria = {
     id: fileId
   };

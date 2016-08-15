@@ -43,7 +43,6 @@ import {
   STATE_TYPE
 } from '../../coi-constants';
 import Log from '../log';
-import getKnex from './connection-manager';
 
 const MILLIS = 1000;
 const SECONDS = 60;
