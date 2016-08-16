@@ -417,7 +417,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
     const tooLong = config.disposition_types.some(dispositionType => {
       return (
         dispositionType.description &&
-        dispositionType.description.length > 50
+        dispositionType.description.length > 60
       );
     });
 
