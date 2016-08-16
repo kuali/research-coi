@@ -27,7 +27,6 @@
   font-size: 50px;
   display: inline-block;
   vertical-align: middle;
-
 }
 
 :global(.color-blind) .icon {
