@@ -73,8 +73,8 @@ catch (err) {
       },
       useNullAsDefault
     });
+    knexInstance.dbType = process.env.DB_PACKAGE || 'oracledb';
   }
-
   getKnex = () => {
     return knexInstance;
   };
