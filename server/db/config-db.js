@@ -149,7 +149,12 @@ function convertQuestionFormat(questions, questionnaireId) {
   });
 }
 
-async function getNotificationTemplates(knex, dbInfo, hostname, notificationsMode) {
+async function getNotificationTemplates(
+  knex,
+  dbInfo,
+  hostname,
+  notificationsMode
+) {
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
     const templates = await knex.select(
         'template_id as templateId',

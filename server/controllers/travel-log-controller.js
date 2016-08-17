@@ -16,7 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as TravelLogDB from '../db/travel-log-db';
+import {
+  getTravelLogEntries,
+  createTravelLogEntry,
+  deleteTravelLogEntry,
+  updateTravelLogEntry
+} from '../db/travel-log-db';
 import {OK} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
@@ -26,73 +31,87 @@ export const init = app => {
   /**
     User can only see travel logs associated with their entities
   */
-  app.get('/api/coi/travel-log-entries', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    let sortColumn = 'name';
-    if (req.query.sortColumn) {
-      sortColumn = req.query.sortColumn;
+  app.get(
+    '/api/coi/travel-log-entries',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({query, knex, userInfo}, res) =>
+    {
+      const {
+        sortColumn = 'name',
+        sortDirection = 'ASCENDING',
+        filter = 'all'
+      } = query;
+
+      const result = await getTravelLogEntries(
+        knex,
+        userInfo.schoolId,
+        sortColumn,
+        sortDirection,
+        filter
+      );
+      res.send(result);
     }
-    let sortDirection = 'ASCENDING';
-    if (req.query.sortDirection) {
-      sortDirection = req.query.sortDirection;
-    }
-    let filter = 'all';
-    if (req.query.filter) {
-      filter = req.query.filter;
-    }
-    const result = await TravelLogDB.getTravelLogEntries(
-      req.knex,
-      req.userInfo.schoolId,
-      sortColumn,
-      sortDirection,
-      filter
-    );
-    res.send(result);
-  }));
+  ));
 
   /**
    User can only add travel logs associated with their entities
    */
-  app.post('/api/coi/travel-log-entries', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    let result;
-    await req.knex.transaction(async (knex) => {
-      result = await TravelLogDB.createTravelLogEntry(
-        knex,
-        req.body,
-        req.userInfo
-      );
-    });
-    res.send(result);
-  }));
+  app.post(
+    '/api/coi/travel-log-entries',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, body, userInfo}, res) =>
+    {
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await createTravelLogEntry(knexTrx, body, userInfo);
+      });
+      res.send(result);
+    }
+  ));
 
   /**
    User can only delete travel logs associated with their entities
    */
-  app.delete('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      await TravelLogDB.deleteTravelLogEntry(
-        req.dbInfo,
-        knex,
-        req.params.id,
-        req.userInfo
-      );
-    });
-    res.sendStatus(OK);
-  }));
+  app.delete(
+    '/api/coi/travel-log-entries/:id',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, dbInfo, params, userInfo}, res) =>
+    {
+      await knex.transaction(async (knexTrx) => {
+        await deleteTravelLogEntry(
+          dbInfo,
+          knexTrx,
+          params.id,
+          userInfo
+        );
+      });
+      res.sendStatus(OK);
+    }
+  ));
 
   /**
    User can only update travel logs associated with their entities
    */
-  app.put('/api/coi/travel-log-entries/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    let result;
-    await req.knex.transaction(async (knex) => {
-      result = await TravelLogDB.updateTravelLogEntry(
-        req.dbInfo,
-        knex,
-        req.body,
-        req.params.id,
-        req.userInfo
-      );
-    });
-    res.send(result);
-  }));
+  app.put(
+    '/api/coi/travel-log-entries/:id',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, dbInfo, body, params, userInfo}, res) =>
+    {
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await updateTravelLogEntry(
+          dbInfo,
+          knexTrx,
+          body,
+          params.id,
+          userInfo
+        );
+      });
+      res.send(result);
+    }
+  ));
 };

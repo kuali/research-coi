@@ -16,7 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import * as AdditionalReviewerDB from '../db/additional-reviewer-db';
+import {
+  createAdditionalReviewer,
+  deleteAdditionalReviewer,
+  updateAdditionalReviewer,
+  getReviewerForDisclosureAndUser,
+  getDisclosuresForReviewer,
+  saveRecommendation,
+  saveProjectRecommendation
+} from '../db/additional-reviewer-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { ROLES, DATE_TYPE } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
@@ -32,139 +40,199 @@ import {
 import useKnex from '../middleware/request-knex';
 
 export const init = app => {
-  app.post('/api/coi/additional-reviewers', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    let result;
-    await req.knex.transaction(async (knex) => {
-      result = await AdditionalReviewerDB.createAdditionalReviewer(
-        knex,
-        req.body,
-        req.userInfo
-      );
-      try {
-        createAndSendReviewerAssignedNotification(
-          req.dbInfo,
-          req.hostname,
-          req.userInfo,
-          result.id
-        );
-      } catch (err) {
-        Log.error(err,req);
-      }
-    });
-    res.send(result);
-  }));
+  app.post(
+    '/api/coi/additional-reviewers',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async (req, res) =>
+    {
+      const {knex, body, userInfo, hostname, dbInfo} = req;
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await createAdditionalReviewer(knexTrx, body, userInfo);
 
-  app.delete('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      try {
-        createAndSendReviewerUnassignNotification(req.dbInfo, req.hostname, req.userInfo, req.params.id);
-      } catch (err) {
-        Log.error(err,req);
-      }
-      await AdditionalReviewerDB.deleteAdditionalReviewer(knex, req.params.id);
-    });
-    res.sendStatus(OK);
-  }));
-
-  app.put('/api/coi/additional-reviewers/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      await AdditionalReviewerDB.updateAdditionalReviewer(
-        knex,
-        req.params.id,
-        req.body
-      );
-    });
-    res.sendStatus(OK);
-  }));
-
-  app.put('/api/coi/additional-reviewers/complete-review/:disclosureId', allowedRoles(REVIEWER), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      const additionalReviewer = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(
-        knex,
-        req.userInfo.schoolId,
-        req.params.disclosureId
-      );
-      const dates = JSON.parse(additionalReviewer[0].dates);
-      dates.push({type: DATE_TYPE.COMPLETED, date: new Date()});
-      const updates = {
-        active: false,
-        dates
-      };
-      await AdditionalReviewerDB.updateAdditionalReviewer(
-        knex,
-        additionalReviewer[0].id,
-        updates
-      );
-      try {
-        createAndSendReviewCompleteNotification(
-          req.dbInfo,
-          req.hostname,
-          req.headers.authorization,
-          req.userInfo,
-          additionalReviewer[0].id
-        );
-      } catch (err) {
-        Log.error(err,req);
-      }
-    });
-    res.sendStatus(OK);
-  }));
-
-  app.get('/api/coi/reviewers', allowedRoles([ADMIN, REVIEWER]), wrapAsync(async (req, res) => {
-    const results = await getReviewers(req.dbInfo, req.headers.authorization);
-    res.send(results);
-  }));
-
-  app.get('/api/coi/reviewers/disclosures', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const results = await AdditionalReviewerDB.getDisclosuresForReviewer(
-      req.knex,
-      req.userInfo.schoolId
-    );
-    res.send(results);
-  }));
-
-  app.get('/api/coi/reviewers/:disclosureId', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    if (!req.query.term) {
-      res.send([]);
-      return;
+        try {
+          await createAndSendReviewerAssignedNotification(
+            dbInfo,
+            hostname,
+            userInfo,
+            result.id
+          );
+        } catch (err) {
+          Log.error(err,req);
+        }
+      });
+      res.send(result);
     }
-    const results = await getReviewers(req.dbInfo, req.headers.authorization);
-    const existingReviewers = await AdditionalReviewerDB.getReviewerForDisclosureAndUser(
-      req.knex,
-      undefined,
-      req.params.disclosureId
-    );
-    res.send(results.filter(result => {
-      return result.value.toLowerCase().indexOf(req.query.term.toLowerCase()) >= 0 &&
-          !existingReviewers.map(reviewer => {
-            return reviewer.userId;
-          }).includes(result.userId);
-    }));
-  }));
+  ));
 
-  app.put('/api/coi/reviewers/:disclosureId/recommend/:declarationId', allowedRoles([REVIEWER]), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      await AdditionalReviewerDB.saveRecommendation(
-        knex,
-        req.userInfo.schoolId,
-        req.params.disclosureId,
-        req.params.declarationId,
-        req.body.dispositionCd
-      );
-    });
-    res.sendStatus(ACCEPTED);
-  }));
+  app.delete(
+    '/api/coi/additional-reviewers/:id',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async (req, res) =>
+    {
+      const {knex, dbInfo, hostname, userInfo, params} = req;
+      await knex.transaction(async (knexTrx) => {
+        await deleteAdditionalReviewer(knexTrx, params.id);
 
-  app.put('/api/coi/reviewers/:disclosureId/recommendProject/:projectPersonId', allowedRoles([REVIEWER]), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      await AdditionalReviewerDB.saveProjectRecommendation(
-        knex,
-        req.userInfo.schoolId,
-        req.params.disclosureId,
-        req.params.projectPersonId,
-        req.body.dispositionTypeCd
+        try {
+          await createAndSendReviewerUnassignNotification(
+            dbInfo,
+            hostname,
+            userInfo,
+            params.id
+          );
+        } catch (err) {
+          Log.error(err, req);
+        }
+      });
+      res.sendStatus(OK);
+    }
+  ));
+
+  app.put(
+    '/api/coi/additional-reviewers/:id',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async ({knex, params, body}, res) =>
+    {
+      await knex.transaction(async (knexTrx) => {
+        await updateAdditionalReviewer(knexTrx, params.id, body);
+      });
+      res.sendStatus(OK);
+    }
+  ));
+
+  app.put(
+    '/api/coi/additional-reviewers/complete-review/:disclosureId',
+    allowedRoles(REVIEWER),
+    useKnex,
+    wrapAsync(async (req, res) =>
+    {
+      const {knex, userInfo, params, dbInfo, hostname, headers} = req;
+      await knex.transaction(async (knexTrx) => {
+        const additionalReviewer = await getReviewerForDisclosureAndUser(
+          knexTrx,
+          userInfo.schoolId,
+          params.disclosureId
+        );
+        const dates = JSON.parse(additionalReviewer[0].dates);
+        dates.push({type: DATE_TYPE.COMPLETED, date: new Date()});
+        const updates = {
+          active: false,
+          dates
+        };
+        await updateAdditionalReviewer(
+          knexTrx,
+          additionalReviewer[0].id,
+          updates
+        );
+        try {
+          await createAndSendReviewCompleteNotification(
+            dbInfo,
+            hostname,
+            headers.authorization,
+            userInfo,
+            additionalReviewer[0].id
+          );
+        } catch (err) {
+          Log.error(err, req);
+        }
+      });
+      res.sendStatus(OK);
+    }
+  ));
+
+  app.get(
+    '/api/coi/reviewers',
+    allowedRoles([ADMIN, REVIEWER]),
+    wrapAsync(async ({dbInfo, headers}, res) =>
+    {
+      const results = await getReviewers(dbInfo, headers.authorization);
+      res.send(results);
+    }
+  ));
+
+  app.get(
+    '/api/coi/reviewers/disclosures',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, userInfo}, res) =>
+    {
+      const results = await getDisclosuresForReviewer(knex, userInfo.schoolId);
+      res.send(results);
+    }
+  ));
+
+  app.get(
+    '/api/coi/reviewers/:disclosureId',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async ({query, dbInfo, headers, knex, params}, res) =>
+    {
+      if (!query.term) {
+        res.send([]);
+        return;
+      }
+      const availableReviewers = await getReviewers(
+        dbInfo,
+        headers.authorization
       );
-    });
-    res.sendStatus(ACCEPTED);
-  }));
+
+      const existingReviewerIds = await getReviewerForDisclosureAndUser(
+          knex,
+          undefined,
+          params.disclosureId
+        ).map(reviewer => reviewer.userId);
+
+      const queryTerm = query.term.toLowerCase();
+
+      const matchingReviewers = availableReviewers.filter(potential => {
+        const notFound = !existingReviewerIds.includes(potential.userId);
+        const isMatch = potential.value.toLowerCase().includes(queryTerm);
+        return notFound && isMatch;
+      });
+
+      res.send(matchingReviewers);
+    }
+  ));
+
+  app.put(
+    '/api/coi/reviewers/:disclosureId/recommend/:declarationId',
+    allowedRoles([REVIEWER]),
+    useKnex,
+    wrapAsync(async ({knex, userInfo, params, body}, res) =>
+    {
+      await knex.transaction(async (knexTrx) => {
+        await saveRecommendation(
+          knexTrx,
+          userInfo.schoolId,
+          params.disclosureId,
+          params.declarationId,
+          body.dispositionCd
+        );
+      });
+      res.sendStatus(ACCEPTED);
+    }
+  ));
+
+  app.put(
+    '/api/coi/reviewers/:disclosureId/recommendProject/:projectPersonId',
+    allowedRoles([REVIEWER]),
+    useKnex,
+    wrapAsync(async ({knex, userInfo, params, body}, res) =>
+    {
+      await knex.transaction(async (knexTrx) => {
+        await saveProjectRecommendation(
+          knexTrx,
+          userInfo.schoolId,
+          params.disclosureId,
+          params.projectPersonId,
+          body.dispositionTypeCd
+        );
+      });
+      res.sendStatus(ACCEPTED);
+    }
+  ));
 };

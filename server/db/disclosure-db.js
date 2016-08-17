@@ -1347,7 +1347,7 @@ async function getDisclosureDisposition(knex, declarations, id) {
     const dispositions = declarations.map(declaration => {
       const dispostion = dispositionTypes.find(dispositionType => {
         return (
-          String(dispositionType.typeCd) === String(declaration.dispositionTypeCd)
+          String(dispositionType.typeCd) === String(declaration.dispositionTypeCd) // eslint-disable-line max-len
         );
       });
       return dispostion;
@@ -1728,7 +1728,12 @@ export function getArchivedDisclosure(knex, archiveId) {
     .where('id', archiveId);
 }
 
-export async function deleteAnswers(knex, userInfo, disclosureId, answersToDelete) {
+export async function deleteAnswers(
+  knex,
+  userInfo,
+  disclosureId,
+  answersToDelete
+) {
   const isSubmitter = await isDisclosureUsers(
     knex,
     disclosureId,

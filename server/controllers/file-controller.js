@@ -17,7 +17,11 @@
 */
 
 import * as FileService from '../services/file-service/file-service';
-import { isDisclosureUsers, isFinancialEntityUsers, getDisclosureForFinancialEntity } from '../db/common-db';
+import {
+  isDisclosureUsers,
+  isFinancialEntityUsers,
+  getDisclosureForFinancialEntity
+} from '../db/common-db';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import { ROLES, FILE_TYPE, LANES } from '../../coi-constants';
 import * as FileDb from '../db/file-db';
@@ -48,143 +52,187 @@ function handleDuplicateFileName(name, count) {
   return `${array[0]} (${count}).${array[1]}`;
 }
 
-async function userHasPermissionForMultiFileUpload(req, fileType, refId) {
-  try {
-    if (fileType === FILE_TYPE.FINANCIAL_ENTITY) {
-      if (req.userInfo.coiRole === ROLES.USER) {
-        const permitted = await isFinancialEntityUsers(req.knex, refId, req.userInfo.schoolId);
-        if (!permitted) {
-          return Promise.resolve(false);
-        }
-      }
-
-      if (req.userInfo.coiRole === ROLES.REVIEWER) {
-        const disclosureId = await getDisclosureForFinancialEntity(
-          req.knex,
-          refId
-        );
-        const reviewerDisclosures = await getDisclosureIdsForReviewer(
-          req.knex,
-          req.userInfo.schoolId
-        );
-        if (!reviewerDisclosures.includes(String(disclosureId))) {
-          return Promise.resolve(false);
-        }
-      }
-    } else {
-      if (req.userInfo.coiRole === ROLES.USER) {
-        const permitted = await isDisclosureUsers(
-          req.knex,
-          refId,
-          req.userInfo.schoolId
-        );
-        if (!permitted) {
-          return Promise.resolve(false);
-        }
-      }
-
-      if (req.userInfo.coiRole === ROLES.REVIEWER) {
-        const reviewerDisclosures = await getDisclosureIdsForReviewer(
-          req.knex,
-          req.userInfo.schoolId
-        );
-        if (!reviewerDisclosures.includes(String(refId))) {
-          return Promise.resolve(false);
-        }
+async function userHasPermissionForMultiFileUpload(
+  {
+    userInfo,
+    knex
+  },
+  fileType,
+  refId
+) {
+  if (fileType === FILE_TYPE.FINANCIAL_ENTITY) {
+    if (userInfo.coiRole === ROLES.USER) {
+      const permitted = await isFinancialEntityUsers(
+        knex,
+        refId,
+        userInfo.schoolId
+      );
+      if (!permitted) {
+        return false;
       }
     }
-    return Promise.resolve(true);
-  } catch (err) {
-    Promise.reject(err);
+
+    if (userInfo.coiRole === ROLES.REVIEWER) {
+      const disclosureId = await getDisclosureForFinancialEntity(
+        knex,
+        refId
+      );
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(
+        knex,
+        userInfo.schoolId
+      );
+      if (!reviewerDisclosures.includes(String(disclosureId))) {
+        return false;
+      }
+    }
+  } else {
+    if (userInfo.coiRole === ROLES.USER) {
+      const permitted = await isDisclosureUsers(
+        knex,
+        refId,
+        userInfo.schoolId
+      );
+      if (!permitted) {
+        return false;
+      }
+    }
+
+    if (userInfo.coiRole === ROLES.REVIEWER) {
+      const reviewerDisclosures = await getDisclosureIdsForReviewer(
+        knex,
+        userInfo.schoolId
+      );
+      if (!reviewerDisclosures.includes(String(refId))) {
+        return false;
+      }
+    }
   }
+  return true;
 }
 
 export const init = app => {
   /**
     Admin or user for their own files
   */
-  app.get('/api/coi/files/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res, next) => {
-    const result = await FileDb.getFile(req.knex, req.userInfo, req.params.id);
-    if (!result) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
+  app.get(
+    '/api/coi/files/:id',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async (req, res, next) =>
+    {
+      const {knex, userInfo, params, dbInfo} = req;
 
-    res.setHeader('Content-disposition', `attachment; filename="${result.name}"`);
-    FileService.getFile(req.dbInfo, result.key, error => {
-      if (error) {
-        Log.error(error, req);
-        next(error);
+      const result = await FileDb.getFile(knex, userInfo, params.id);
+      if (!result) {
+        res.sendStatus(FORBIDDEN);
+        return;
       }
-    }).pipe(res);
-  }));
 
-  app.get('/api/coi/files/:fileType/:refId', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res, next) => {
-    const fileType = req.params.fileType;
-    const refId = req.params.refId;
-
-    const hasPermission = await userHasPermissionForMultiFileUpload(req, fileType, refId);
-    if (!hasPermission) {
-      res.sendStatus(FORBIDDEN);
-      return;
-    }
-    const files = await FileDb.getFiles(
-      req.knex,
-      req.userInfo,
-      refId,
-      fileType
-    );
-
-    res.setHeader('Content-disposition', `attachment; filename="${fileType}.zip"`);
-
-    const archive = archiver('zip');
-
-    const names = {};
-    files.forEach(file => {
-      const stream = FileService.getFile(req.dbInfo, file.key, error => {
+      res.setHeader(
+        'Content-disposition',
+        `attachment; filename="${result.name}"`
+      );
+      FileService.getFile(dbInfo, result.key, error => {
         if (error) {
           Log.error(error, req);
           next(error);
         }
-      });
+      }).pipe(res);
+    }
+  ));
 
-      let name = file.name;
-      if (!names[name]) {
-        names[name] = 1;
-      } else {
-        const count = names[name];
-        names[name] = count + 1;
-        name = handleDuplicateFileName(name, count);
+  app.get(
+    '/api/coi/files/:fileType/:refId',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async (req, res, next) =>
+    {
+      const {params, knex, userInfo, dbInfo} = req;
+      const {fileType, refId} = params;
+
+      const hasPermission = await userHasPermissionForMultiFileUpload(
+        req,
+        fileType,
+        refId
+      );
+      if (!hasPermission) {
+        res.sendStatus(FORBIDDEN);
+        return;
       }
-      archive.append(stream, {name});
-    });
-    archive.finalize();
-    archive.pipe(res);
-  }));
+      const files = await FileDb.getFiles(
+        knex,
+        userInfo,
+        refId,
+        fileType
+      );
+
+      res.setHeader(
+        'Content-disposition',
+        `attachment; filename="${fileType}.zip"`
+      );
+
+      const archive = archiver('zip');
+
+      const names = {};
+      files.forEach(file => {
+        const stream = FileService.getFile(dbInfo, file.key, error => {
+          if (error) {
+            Log.error(error, req);
+            next(error);
+          }
+        });
+
+        let {name} = file;
+        if (!names[name]) {
+          names[name] = 1;
+        } else {
+          const count = names[name];
+          names[name] = count + 1;
+          name = handleDuplicateFileName(name, count);
+        }
+        archive.append(stream, {name});
+      });
+      archive.finalize();
+      archive.pipe(res);
+    }
+  ));
 
   /**
     @Role: Admin or user for their own disclosures
   */
-  app.post('/api/coi/files', allowedRoles('ANY'), upload.array('attachments'), useKnex, wrapAsync(async (req, res) => {
-    let result;
-    await req.knex.transaction(async (knex) => {
-      result = await FileDb.saveNewFiles(
-        knex,
-        JSON.parse(req.body.data),
-        req.files,
-        req.userInfo
-      );
-    });
-    res.send(result);
-  }));
+  app.post(
+    '/api/coi/files',
+    allowedRoles('ANY'),
+    upload.array('attachments'),
+    useKnex,
+    wrapAsync(async ({knex, body, files, userInfo}, res) =>
+    {
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await FileDb.saveNewFiles(
+          knexTrx,
+          JSON.parse(body.data),
+          files,
+          userInfo
+        );
+      });
+      res.send(result);
+    }
+  ));
 
   /**
     @Role: admin or user for their own files
   */
-  app.delete('/api/coi/files/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      await FileDb.deleteFiles(req.dbInfo, knex, req.userInfo, req.params.id);
-    });
-    res.sendStatus(ACCEPTED);
-  }));
+  app.delete(
+    '/api/coi/files/:id',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, dbInfo, userInfo, params}, res) =>
+    {
+      await knex.transaction(async (knexTrx) => {
+        await FileDb.deleteFiles(dbInfo, knexTrx, userInfo, params.id);
+      });
+      res.sendStatus(ACCEPTED);
+    }
+  ));
 };

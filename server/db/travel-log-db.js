@@ -315,7 +315,11 @@ function deleteEntity(knex, id) {
     .where('id', id);
 }
 
-async function deleteEntityIfAllRelationshipsAreDeleted(dbInfo, knex, entityId) {
+async function deleteEntityIfAllRelationshipsAreDeleted(
+  dbInfo,
+  knex,
+  entityId
+) {
   const row = await knex('relationship')
     .first('id')
     .where('fin_entity_id', entityId);
