@@ -21,33 +21,35 @@ import { ROLES } from '../../coi-constants';
 const MAX_ROWS = 10;
 
 function queryUsingIndexOracle(knex, term) {
-  return knex.distinct('submitted_by as value')
-      .from('disclosure as d')
-      .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
-      .limit(MAX_ROWS);
+  return knex
+    .distinct('submitted_by as value')
+    .from('disclosure as d')
+    .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
+    .limit(MAX_ROWS);
 }
 
 function queryWithoutIndexOracle(knex, term) {
-  return knex.distinct('submitted_by as value')
-      .from('disclosure as d')
-      .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
-      .limit(MAX_ROWS);
+  return knex
+    .distinct('submitted_by as value')
+    .from('disclosure as d')
+    .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
+    .limit(MAX_ROWS);
 }
 
 function queryUsingIndexMySQL(knex, term) {
   return knex
-      .distinct('submitted_by as value')
-      .from('disclosure as d')
-      .andWhere('submitted_by', 'LIKE', `${term}%`)
-      .limit(MAX_ROWS);
+    .distinct('submitted_by as value')
+    .from('disclosure as d')
+    .andWhere('submitted_by', 'LIKE', `${term}%`)
+    .limit(MAX_ROWS);
 }
 
 function queryWithoutIndexMySQL(knex, term) {
   return knex
-      .distinct('submitted_by as value')
-      .from('disclosure as d')
-      .andWhere('submitted_by', 'LIKE', `%${term}%`)
-      .limit(MAX_ROWS);
+    .distinct('submitted_by as value')
+    .from('disclosure as d')
+    .andWhere('submitted_by', 'LIKE', `%${term}%`)
+    .limit(MAX_ROWS);
 }
 
 function addReviewerCriteria(query, schoolId) {
@@ -65,23 +67,28 @@ export async function getSuggestions(knex, term, userInfo) {
   try {
     let indexQuery;
     let noIndexQuery;
-    let result;
     if (knex.dbType === 'mysql') {
       indexQuery = queryUsingIndexMySQL(knex, term);
       noIndexQuery = queryWithoutIndexMySQL(knex, term);
-      result = await addReviewerCriteriaAndSearch(userInfo, indexQuery, noIndexQuery);
     } else if (checkTerm(term)) {
       indexQuery = queryUsingIndexOracle(knex, term);
       noIndexQuery = queryWithoutIndexOracle(knex, term);
-      result = await addReviewerCriteriaAndSearch(userInfo, indexQuery, noIndexQuery);
     }
-    return result;
+    return await addReviewerCriteriaAndSearch(
+      userInfo,
+      indexQuery,
+      noIndexQuery
+    );
   } catch (err) {
     return Promise.reject(err);
   }
 }
 
-async function addReviewerCriteriaAndSearch(userInfo, indexQueryWithoutReviewer, noIndexQueryWithoutReviewer) {
+async function addReviewerCriteriaAndSearch(
+  userInfo,
+  indexQueryWithoutReviewer,
+  noIndexQueryWithoutReviewer
+) {
   let indexQuery = indexQueryWithoutReviewer;
   let noIndexQuery = noIndexQueryWithoutReviewer;
   if (userInfo.coiRole === ROLES.REVIEWER) {
