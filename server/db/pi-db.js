@@ -20,7 +20,23 @@ import { ROLES } from '../../coi-constants';
 
 const MAX_ROWS = 10;
 
-function queryUsingIndex(knex, term) {
+function queryUsingIndexOracle(knex, term) {
+  return knex
+    .distinct('submitted_by as value')
+    .from('disclosure as d')
+    .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
+    .limit(MAX_ROWS);
+}
+
+function queryWithoutIndexOracle(knex, term) {
+  return knex
+    .distinct('submitted_by as value')
+    .from('disclosure as d')
+    .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
+    .limit(MAX_ROWS);
+}
+
+function queryUsingIndexMySQL(knex, term) {
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
@@ -28,7 +44,7 @@ function queryUsingIndex(knex, term) {
     .limit(MAX_ROWS);
 }
 
-function queryWithoutIndex(knex, term) {
+function queryWithoutIndexMySQL(knex, term) {
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
@@ -42,22 +58,47 @@ function addReviewerCriteria(query, schoolId) {
     .andWhere({'ar.user_id': schoolId});
 }
 
+function checkTerm(term) {
+  const reg = new RegExp('^[-\'.a-zA-Z ]+$');
+  return reg.test(term);
+}
+
 export async function getSuggestions(knex, term, userInfo) {
   try {
-    let indexQuery = queryUsingIndex(knex, term);
-    let noIndexQuery = queryWithoutIndex(knex, term);
-    if (userInfo.coiRole === ROLES.REVIEWER) {
-      indexQuery = addReviewerCriteria(indexQuery, userInfo.schoolId);
-      noIndexQuery = addReviewerCriteria(noIndexQuery, userInfo.schoolId);
+    let indexQuery;
+    let noIndexQuery;
+    if (knex.dbType === 'mysql') {
+      indexQuery = queryUsingIndexMySQL(knex, term);
+      noIndexQuery = queryWithoutIndexMySQL(knex, term);
+    } else if (checkTerm(term)) {
+      indexQuery = queryUsingIndexOracle(knex, term);
+      noIndexQuery = queryWithoutIndexOracle(knex, term);
     }
-
-    const result = await indexQuery;
-    if (result.length < MAX_ROWS) {
-      return await noIndexQuery;
-    }
-
-    return result;
+    return await addReviewerCriteriaAndSearch(
+      userInfo,
+      indexQuery,
+      noIndexQuery
+    );
   } catch (err) {
     return Promise.reject(err);
   }
+}
+
+async function addReviewerCriteriaAndSearch(
+  userInfo,
+  indexQueryWithoutReviewer,
+  noIndexQueryWithoutReviewer
+) {
+  let indexQuery = indexQueryWithoutReviewer;
+  let noIndexQuery = noIndexQueryWithoutReviewer;
+  if (userInfo.coiRole === ROLES.REVIEWER) {
+    indexQuery = addReviewerCriteria(indexQuery, userInfo.schoolId);
+    noIndexQuery = addReviewerCriteria(noIndexQuery, userInfo.schoolId);
+  }
+
+  const result = await indexQuery;
+  if (result.length < MAX_ROWS) {
+    return await noIndexQuery;
+  }
+  return result;
 }
