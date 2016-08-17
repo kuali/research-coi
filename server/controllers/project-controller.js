@@ -16,7 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as ProjectDB from '../db/project-db';
+import {
+  saveProjects,
+  getProjects,
+  updateProjectPersonDispositionType,
+  getProjectStatuses,
+  getProjectStatus
+} from '../db/project-db';
 import { ROLES } from '../../coi-constants';
 import { OK, BAD_REQUEST } from '../../http-status-codes';
 const { ADMIN } = ROLES;
@@ -28,76 +34,109 @@ import Log from '../log';
 import useKnex from '../middleware/request-knex';
 
 export const init = app => {
-  app.post('/api/coi/projects', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    if (!projectIsValid(req.body)) {
-      res.status(BAD_REQUEST);
-      res.json(projectIsValid.errors);
-      Log.error(
-        `An invalid project was pushed to /api/coi/projects
-        ${JSON.stringify(projectIsValid.errors)}`
-      );
-      return;
-    }
-
-    let result;
-    await req.knex.transaction(async (knex) => {
-      result = await ProjectDB.saveProjects(knex, req, req.body);
-      if (!result) {
-        res.sendStatus(OK);
+  app.post(
+    '/api/coi/projects',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async (req, res) =>
+    {
+      const {body, knex} = req;
+      if (!projectIsValid(body)) {
+        res.status(BAD_REQUEST);
+        res.json(projectIsValid.errors);
+        Log.error(
+          `An invalid project was pushed to /api/coi/projects
+          ${JSON.stringify(projectIsValid.errors)}`
+        );
         return;
       }
-    });
-    res.send(result);
-  }));
+
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await saveProjects(knexTrx, req, body);
+        if (!result) {
+          res.sendStatus(OK);
+          return;
+        }
+      });
+      res.send(result);
+    }
+  ));
 
   /**
     Should only return projects associated with the given user
   */
-  app.get('/api/coi/projects', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const projects = await ProjectDB.getProjects(
-      req.knex,
-      req.userInfo.schoolId
-    );
-    if (req.query.filter) {
-      const result = await filterProjects(req.dbInfo, projects, req.headers.authorization);
-      res.send(result);
-      return;
+  app.get(
+    '/api/coi/projects',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, userInfo, query, dbInfo, headers}, res) =>
+    {
+      const projects = await getProjects(knex, userInfo.schoolId);
+      if (query.filter) {
+        const result = await filterProjects(
+          dbInfo,
+          projects,
+          headers.authorization
+        );
+        res.send(result);
+        return;
+      }
+
+      res.send(projects);
     }
+  ));
 
-    res.send(projects);
-  }));
+  app.put(
+    '/api/coi/project-persons-disposition-types/:id',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async ({body, params, knex}, res) =>
+    {
+      await knex.transaction(async (knexTrx) => {
+        await updateProjectPersonDispositionType(
+          knexTrx,
+          body,
+          params.id
+        );
+      });
+      res.sendStatus(OK);
+    }
+  ));
 
-  app.put('/api/coi/project-persons-disposition-types/:id', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    await req.knex.transaction(async (knex) => {
-      await ProjectDB.updateProjectPersonDispositionType(
+  app.get(
+    '/api/coi/project-disclosure-statuses/:sourceId/:projectId',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async ({dbInfo, knex, params, headers}, res) => {
+      const {sourceId, projectId} = params;
+      const result = await getProjectStatuses(
+        dbInfo,
         knex,
-        req.body,
-        req.params.id
+        sourceId,
+        projectId,
+        headers.authorization
       );
-    });
-    res.sendStatus(OK);
-  }));
+      res.send(result);
+    }
+  ));
 
-  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    const result = await ProjectDB.getProjectStatuses(
-      req.dbInfo,
-      req.knex,
-      req.params.sourceId,
-      req.params.projectId,
-      req.headers.authorization
-    );
-    res.send(result);
-  }));
-
-  app.get('/api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId', allowedRoles(ADMIN), useKnex, wrapAsync(async (req, res) => {
-    const result = await ProjectDB.getProjectStatus(
-      req.dbInfo,
-      req.knex,
-      req.params.sourceId,
-      req.params.projectId,
-      req.params.personId,
-      req.headers.authorization
-    );
-    res.send(result);
-  }));
+  app.get(
+    '/api/coi/project-disclosure-statuses/:sourceId/:projectId/:personId',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(async ({dbInfo, knex, params, headers}, res) =>
+    {
+      const {sourceId, projectId, personId} = params;
+      const result = await getProjectStatus(
+        dbInfo,
+        knex,
+        sourceId,
+        projectId,
+        personId,
+        headers.authorization
+      );
+      res.send(result);
+    }
+  ));
 };

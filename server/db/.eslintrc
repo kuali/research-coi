@@ -1,6 +1,7 @@
 {
   "rules": {
     "camelcase": ["off"],
-    "no-invalid-this": ["off"]
+    "no-invalid-this": ["off"],
+    "max-len": ["error", 80]
   }
 }

@@ -16,7 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as ConfigDB from '../db/config-db';
+import {
+  getConfig,
+  archiveConfig,
+  setConfig,
+  getArchivedConfig
+} from '../db/config-db';
 import { ROLES } from '../../coi-constants';
 const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
@@ -25,43 +30,60 @@ import { getProjectData } from '../services/project-service/project-service';
 import useKnex from '../middleware/request-knex';
 
 export async function saveConfig(req, res) {
+  const {knex, dbInfo, body, hostname, userInfo} = req;
+
   let config;
-  await req.knex.transaction(async (knex) => {
-    await ConfigDB.setConfig(
-      req.dbInfo,
-      knex,
-      req.userInfo.schoolId,
-      req.body,
-      req.hostname
-    );
-    config = await ConfigDB.getConfig(req.dbInfo, knex, req.hostname);
-    config.general = req.body.general;
-    await ConfigDB.archiveConfig(
-      knex,
-      req.userInfo.schoolId,
-      req.userInfo.username,
-      config
-    );
+  await knex.transaction(async (knexTrx) => {
+    await setConfig(dbInfo, knexTrx, userInfo.schoolId, body, hostname);
+    config = await getConfig(dbInfo, knexTrx, hostname);
+    config.general = body.general;
+    await archiveConfig(knexTrx, userInfo.schoolId, userInfo.username, config);
   });
 
   res.send(config);
 }
 
 export const init = app => {
-  app.get('/api/coi/config', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const result = await ConfigDB.getConfig(req.dbInfo, req.knex, req.hostname);
-    res.send(result);
-  }));
+  app.get(
+    '/api/coi/config',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({dbInfo, knex, hostname}, res) =>
+    {
+      const result = await getConfig(dbInfo, knex, hostname);
+      res.send(result);
+    }
+  ));
 
-  app.get('/api/coi/archived-config/:id', allowedRoles('ANY'), useKnex, wrapAsync(async (req, res) => {
-    const result = await ConfigDB.getArchivedConfig(req.knex, req.params.id);
-    res.send(result);
-  }));
+  app.get(
+    '/api/coi/archived-config/:id',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params}, res) =>
+    {
+      const result = await getArchivedConfig(knex, params.id);
+      res.send(result);
+    }
+  ));
 
-  app.post('/api/coi/config/', allowedRoles(ADMIN), useKnex, wrapAsync(saveConfig));
+  app.post(
+    '/api/coi/config/',
+    allowedRoles(ADMIN),
+    useKnex,
+    wrapAsync(saveConfig)
+  );
 
-  app.get('/api/coi/new-project-data/:projectTypeCd', allowedRoles(ADMIN), wrapAsync(async (req, res) => {
-    const result = await getProjectData(req.dbInfo, req.headers.authorization, req.params.projectTypeCd);
-    res.send(result);
-  }));
+  app.get(
+    '/api/coi/new-project-data/:projectTypeCd',
+    allowedRoles(ADMIN),
+    wrapAsync(async ({dbInfo, headers, params}, res) =>
+    {
+      const result = await getProjectData(
+        dbInfo,
+        headers.authorization,
+        params.projectTypeCd
+      );
+      res.send(result);
+    }
+  ));
 };

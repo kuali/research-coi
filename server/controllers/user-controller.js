@@ -30,31 +30,39 @@ try {
   }
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
-      researchCoreUrl: process.env.RESEARCH_CORE_URL || 'https://uit.kuali.dev/res'
+      researchCoreUrl: (
+        process.env.RESEARCH_CORE_URL ||
+        'https://uit.kuali.dev/res'
+      )
     };
   };
 }
 
 export const init = app => {
-  app.get('/api/coi/userinfo', allowedRoles('ANY'), wrapAsync(async (req, res) => {
-    const {
-      schoolId: userId,
-      firstName,
-      lastName,
-      displayName,
-      coiRole,
-      mock
-    } = req.userInfo;
+  app.get(
+    '/api/coi/userinfo',
+    allowedRoles('ANY'),
+    wrapAsync(async ({userInfo, dbInfo}, res) =>
+    {
+      const {
+        schoolId: userId,
+        firstName,
+        lastName,
+        displayName,
+        coiRole,
+        mock
+      } = userInfo;
 
-    res.send({
-      userId,
-      firstName,
-      lastName,
-      displayName,
-      coiRole,
-      mock,
-      researchCoreUrl: getAuthorizationInfo(req.dbInfo).researchCoreUrl,
-      version: process.env.npm_package_version
-    });
-  }));
+      res.send({
+        userId,
+        firstName,
+        lastName,
+        displayName,
+        coiRole,
+        mock,
+        researchCoreUrl: getAuthorizationInfo(dbInfo).researchCoreUrl,
+        version: process.env.npm_package_version
+      });
+    }
+  ));
 };

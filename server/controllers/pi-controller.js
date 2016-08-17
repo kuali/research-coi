@@ -71,9 +71,9 @@ export const init = app => {
     wrapAsync(async ({knex, params, userInfo, body}, res) =>
     {
       let result;
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         result = await PIReviewDB.recordPIResponse(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           body.comment
@@ -93,9 +93,9 @@ export const init = app => {
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
       let result;
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         result = await PIReviewDB.reviseQuestion(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           body.answer
@@ -115,9 +115,9 @@ export const init = app => {
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
       let result;
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         result = await PIReviewDB.reviseEntityQuestion(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           params.questionId,
@@ -139,9 +139,9 @@ export const init = app => {
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
       let result;
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         result = await PIReviewDB.addRelationship(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           body
@@ -161,9 +161,9 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo}, res) => {
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         await PIReviewDB.removeRelationship(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           params.relationshipId
@@ -183,9 +183,9 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         await PIReviewDB.reviseDeclaration(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           body
@@ -205,9 +205,9 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         await PIReviewDB.reviseSubQuestion(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           params.subQuestionId,
@@ -228,9 +228,9 @@ export const init = app => {
     useKnex,
     wrapAsync(verifyReviewIsForUser),
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         await PIReviewDB.deleteAnswers(
-          transKnex,
+          knexTrx,
           userInfo,
           params.reviewId,
           body.toDelete
@@ -262,11 +262,11 @@ export const init = app => {
       }
 
       let result;
-      await knex.transaction(async (transKnex) => {
+      await knex.transaction(async (knexTrx) => {
         if (body && Array.isArray(body.responses)) {
           for (const response of body.responses) {
             await PIReviewDB.recordPIResponse(
-              transKnex,
+              knexTrx,
               userInfo,
               response.reviewId,
               response.comment
@@ -275,7 +275,7 @@ export const init = app => {
         }
 
         await PIReviewDB.reSubmitDisclosure(
-          transKnex,
+          knexTrx,
           userInfo,
           params.disclosureId
         );
@@ -304,7 +304,7 @@ export const init = app => {
     allowedRoles([ADMIN, REVIEWER]),
     useKnex,
     wrapAsync(async ({knex, params, userInfo}, res) => {
-      if (userInfo.coiRole === ROLES.REVIEWER) {
+      if (userInfo.coiRole === REVIEWER) {
         const reviewerDisclosureIds = await getDisclosureIdsForReviewer(
           knex,
           userInfo.schoolId
