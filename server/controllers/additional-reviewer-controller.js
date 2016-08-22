@@ -30,7 +30,6 @@ import { ROLES, DATE_TYPE } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { OK, ACCEPTED } from '../../http-status-codes';
-import Log from '../log';
 import wrapAsync from './wrap-async';
 import {
   createAndSendReviewerAssignedNotification,
@@ -50,18 +49,15 @@ export const init = app => {
       let result;
       await knex.transaction(async (knexTrx) => {
         result = await createAdditionalReviewer(knexTrx, body, userInfo);
-
-        try {
-          await createAndSendReviewerAssignedNotification(
-            dbInfo,
-            hostname,
-            userInfo,
-            result.id
-          );
-        } catch (err) {
-          Log.error(err,req);
-        }
       });
+
+      await createAndSendReviewerAssignedNotification(
+        dbInfo,
+        hostname,
+        userInfo,
+        result.id
+      );
+
       res.send(result);
     }
   ));
@@ -75,18 +71,13 @@ export const init = app => {
       const {knex, dbInfo, hostname, userInfo, params} = req;
       await knex.transaction(async (knexTrx) => {
         await deleteAdditionalReviewer(knexTrx, params.id);
-
-        try {
-          await createAndSendReviewerUnassignNotification(
-            dbInfo,
-            hostname,
-            userInfo,
-            params.id
-          );
-        } catch (err) {
-          Log.error(err, req);
-        }
       });
+      await createAndSendReviewerUnassignNotification(
+        dbInfo,
+        hostname,
+        userInfo,
+        params.id
+      );
       res.sendStatus(OK);
     }
   ));
@@ -111,8 +102,9 @@ export const init = app => {
     wrapAsync(async (req, res) =>
     {
       const {knex, userInfo, params, dbInfo, hostname, headers} = req;
+      let additionalReviewer;
       await knex.transaction(async (knexTrx) => {
-        const additionalReviewer = await getReviewerForDisclosureAndUser(
+        additionalReviewer = await getReviewerForDisclosureAndUser(
           knexTrx,
           userInfo.schoolId,
           params.disclosureId
@@ -128,18 +120,15 @@ export const init = app => {
           additionalReviewer[0].id,
           updates
         );
-        try {
-          await createAndSendReviewCompleteNotification(
-            dbInfo,
-            hostname,
-            headers.authorization,
-            userInfo,
-            additionalReviewer[0].id
-          );
-        } catch (err) {
-          Log.error(err, req);
-        }
       });
+
+      await createAndSendReviewCompleteNotification(
+        dbInfo,
+        hostname,
+        headers.authorization,
+        userInfo,
+        additionalReviewer[0].id
+      );
       res.sendStatus(OK);
     }
   ));

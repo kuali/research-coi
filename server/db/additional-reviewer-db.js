@@ -19,27 +19,23 @@
 import { DATE_TYPE } from '../../coi-constants';
 
 export async function getAdditionalReviewer(knex, id) {
-  try {
-    const reviewer = await knex('additional_reviewer')
-      .first(
-        'name',
-        'user_id as userId',
-        'email',
-        'disclosure_id as disclosureId',
-        'dates',
-        'title',
-        'unit_name as unitName',
-        'active',
-        'assigned_by as assignedBy'
-      )
-      .where({id});
-    if (reviewer && reviewer.dates) {
-      reviewer.dates = JSON.parse(reviewer.dates);
-    }
-    return reviewer;
-  } catch (err) {
-    return Promise.reject(err);
+  const reviewer = await knex('additional_reviewer')
+    .first(
+      'name',
+      'user_id as userId',
+      'email',
+      'disclosure_id as disclosureId',
+      'dates',
+      'title',
+      'unit_name as unitName',
+      'active',
+      'assigned_by as assignedBy'
+    )
+    .where({id});
+  if (reviewer && reviewer.dates) {
+    reviewer.dates = JSON.parse(reviewer.dates);
   }
+  return reviewer;
 }
 
 export async function getDisclosuresForReviewer(knex, schoolId) {

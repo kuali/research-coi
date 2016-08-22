@@ -54,11 +54,11 @@ export const init = app => {
       let result;
       await knex.transaction(async (knexTrx) => {
         result = await saveProjects(knexTrx, req, body);
-        if (!result) {
-          res.sendStatus(OK);
-          return;
-        }
       });
+      if (!result) {
+        res.sendStatus(OK);
+        return;
+      }
       res.send(result);
     }
   ));

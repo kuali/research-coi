@@ -26,7 +26,6 @@ import { getProjects } from '../../db/project-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
 import { getDeclarationWithProjectId } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
-import Log from '../../log';
 import * as VariableService from './variables-service';
 import getKnex from '../../db/connection-manager';
 
@@ -159,44 +158,36 @@ function cleanTemplate(template) {
 }
 
 export async function handleTemplates(dbInfo, hostname, templates) {
-  try {
-    return templates.map(async template => {
-      if (template.active === 1) {
-        if (!template.core_template_id) { //eslint-disable-line camelcase
-          const coreTemplateId = await createNewTemplate(dbInfo, hostname, template);
-          template.core_template_id = coreTemplateId; //eslint-disable-line camelcase
-          return cleanTemplate(template);
-        }
-        await updateTemplateData(dbInfo, hostname, template);
+  return templates.map(async (template) => {
+    if (template.active === 1) {
+      if (!template.core_template_id) { //eslint-disable-line camelcase
+        const coreTemplateId = await createNewTemplate(dbInfo, hostname, template);
+        template.core_template_id = coreTemplateId; //eslint-disable-line camelcase
+        return cleanTemplate(template);
       }
+      await updateTemplateData(dbInfo, hostname, template);
+    }
 
-      return cleanTemplate(template);
-    });
-  } catch (err) {
-    Promise.reject(err);
-  }
+    return cleanTemplate(template);
+  });
 }
 
 export async function populateTemplateData(dbInfo, hostname, notificationTemplates) {
-  try {
-    const templates = await getTemplates(dbInfo, hostname);
-    return notificationTemplates.map(notificationTemplate => {
-      const template = templates.find(t => {
-        return String(t.id) === String(notificationTemplate.coreTemplateId) ||
-          t.displayName === createDisplayName(hostname, notificationTemplate.description);
-      });
-
-      if (!template) {
-        return getDefaults(notificationTemplate);
-      }
-      notificationTemplate.subject = template.subject;
-      notificationTemplate.body = template.templates.email.text;
-      notificationTemplate.coreTemplateId = template.id;
-      return notificationTemplate;
+  const templates = await getTemplates(dbInfo, hostname);
+  return notificationTemplates.map(notificationTemplate => {
+    const template = templates.find(t => {
+      return String(t.id) === String(notificationTemplate.coreTemplateId) ||
+        t.displayName === createDisplayName(hostname, notificationTemplate.description);
     });
-  } catch (err) {
-    return Promise.reject(err);
-  }
+
+    if (!template) {
+      return getDefaults(notificationTemplate);
+    }
+    notificationTemplate.subject = template.subject;
+    notificationTemplate.body = template.templates.email.text;
+    notificationTemplate.coreTemplateId = template.id;
+    return notificationTemplate;
+  });
 }
 
 function createCoreNotification(templateId, variables, creatorId, addresses) {
@@ -210,13 +201,13 @@ function createCoreNotification(templateId, variables, creatorId, addresses) {
 
 async function getTemplate(dbInfo, templateId) {
   if (!areNotificationsEnabled(dbInfo)) {
-    return Promise.resolve();
+    return;
   }
   const knex = getKnex(dbInfo);
   const template = await getCoreTemplateIdByTemplateId(knex, templateId);
 
   if (template.active === 0) {
-    return Promise.resolve();
+    return;
   }
 
   return template;
@@ -269,23 +260,17 @@ async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
   let projectInformation = '<table><tr><th>Project Number</th><th>Title</th><th>Sponsors</th><th>Project Type</th><th>Project Disposition</th></tr>';
   for (const project of projects) {
     let sponsorString = '';
-    let projectType;
-    let declaration;
     project.sponsors.forEach(sponsor => {
       sponsorString += `${sponsor.sponsorName}, `;
     });
     sponsorString = sponsorString.replace(/, $/, '');
 
-    try {
-      projectType = await getProjectTypeDescription(knex, project.typeCd);
-      declaration = await getDeclarationWithProjectId(knex, project.id);
-      const dispositionTypes = config.dispositionTypes.filter(type => type.typeCd === declaration[0].adminRelationshipCd);
-      const dispositionType = dispositionTypes[0].description ? dispositionTypes[0].description : '';
-      projectInformation += `<tr><td>${project.sourceIdentifier}</td><td>${project.name}</td><td>${sponsorString}</td>`;
-      projectInformation += `<td>${projectType}</td><td> ${dispositionType}</td></tr>`;
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    const projectType = await getProjectTypeDescription(knex, project.typeCd);
+    const declaration = await getDeclarationWithProjectId(knex, project.id);
+    const dispositionTypes = config.dispositionTypes.filter(type => type.typeCd === declaration[0].adminRelationshipCd);
+    const dispositionType = dispositionTypes[0].description ? dispositionTypes[0].description : '';
+    projectInformation += `<tr><td>${project.sourceIdentifier}</td><td>${project.name}</td><td>${sponsorString}</td>`;
+    projectInformation += `<td>${projectType}</td><td> ${dispositionType}</td></tr>`;
   }
   projectInformation += '</table>';
   return projectInformation;
@@ -301,20 +286,16 @@ function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
 }
 
 export async function createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, templateId) {
-  try {
-    const template = await getTemplate(dbInfo, templateId);
+  const template = await getTemplate(dbInfo, templateId);
 
-    if (!template) {
-      return Promise.resolve();
-    }
-    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
-    const variables = await getVariables(dbInfo, hostname, disclosure);
-    const adminEmails = await getAdminRecipients(dbInfo, authHeader);
-    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, adminEmails);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    return Promise.reject(err);
+  if (!template) {
+    return;
   }
+  const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  const variables = await getVariables(dbInfo, hostname, disclosure);
+  const adminEmails = await getAdminRecipients(dbInfo, authHeader);
+  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, adminEmails);
+  return await sendNotification(dbInfo, hostname, notification);
 }
 
 export async function createAndSendSubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
@@ -326,21 +307,17 @@ export async function createAndSendResubmitNotification(dbInfo, hostname, authHe
 }
 
 export async function createAndSendApproveNotification(dbInfo, knex, hostname, userInfo, archiveId) {
-  try {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.APPROVED.ID);
-    if (!template) {
-      return Promise.resolve();
-    }
-    const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
-    let variables = await getVariables(dbInfo, hostname, disclosure);
-    const projectInformation = await getProjectsInformation(dbInfo, knex, hostname, disclosure);
-    variables = VariableService.addProjectInformation(projectInformation, variables);
-    const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
-    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    return Promise.reject(err);
+  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.APPROVED.ID);
+  if (!template) {
+    return;
   }
+  const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
+  let variables = await getVariables(dbInfo, hostname, disclosure);
+  const projectInformation = await getProjectsInformation(dbInfo, knex, hostname, disclosure);
+  variables = VariableService.addProjectInformation(projectInformation, variables);
+  const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  return await sendNotification(dbInfo, hostname, notification);
 }
 
 export async function createAndSendExpirationNotification(dbInfo, hostname, disclosureId) {
@@ -352,57 +329,45 @@ export async function createAndSendExpirationReminderNotification(dbInfo, hostna
 }
 
 export async function createAndSendExpireNotification(dbInfo, hostname, disclosureId, templateId) {
-  try {
-    const template = await getTemplate(dbInfo, templateId);
-    if (!template) {
-      return Promise.resolve();
-    }
-    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
-    const variables = await getVariables(dbInfo, hostname, disclosure);
-    const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
-    const notification = createCoreNotification(template.coreTemplateId, variables, disclosure.reporterInfo.id, recipients);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    Log.error(err);
+  const template = await getTemplate(dbInfo, templateId);
+  if (!template) {
+    return;
   }
+  const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  const variables = await getVariables(dbInfo, hostname, disclosure);
+  const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+  const notification = createCoreNotification(template.coreTemplateId, variables, disclosure.reporterInfo.id, recipients);
+  return await sendNotification(dbInfo, hostname, notification);
 }
 
 export async function createAndSendSentBackNotification(dbInfo, hostname, userInfo, disclosureId) {
-  try {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.SENT_BACK.ID);
-    if (!template) {
-      return Promise.resolve();
-    }
-    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
-    const variables = await getVariables(dbInfo, hostname, disclosure);
-    const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
-    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    return Promise.reject(err);
+  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.SENT_BACK.ID);
+  if (!template) {
+    return;
   }
+  const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  const variables = await getVariables(dbInfo, hostname, disclosure);
+  const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  return await sendNotification(dbInfo, hostname, notification);
 }
 
 export async function createAndSendReviewerNotification(dbInfo, hostname, userInfo, reviewerId, templateId) {
-  try {
-    const template = await getTemplate(dbInfo, templateId);
-    if (!template) {
-      return Promise.resolve();
-    }
-
-    const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
-
-    if (!reviewer) {
-      return;
-    }
-    const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
-    const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
-    const recipients = getRecipients(dbInfo, reviewer.email);
-    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    return Promise.reject(err);
+  const template = await getTemplate(dbInfo, templateId);
+  if (!template) {
+    return;
   }
+
+  const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
+
+  if (!reviewer) {
+    return;
+  }
+  const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
+  const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
+  const recipients = getRecipients(dbInfo, reviewer.email);
+  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  return await sendNotification(dbInfo, hostname, notification);
 }
 
 export async function createAndSendReviewerAssignedNotification(dbInfo, hostname, userInfo, reviewerId) {
@@ -414,40 +379,32 @@ export async function createAndSendReviewerUnassignNotification(dbInfo, hostname
 }
 
 export async function createAndSendReviewCompleteNotification(dbInfo, hostname, authHeader, userInfo, reviewerId) {
-  try {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.REVIEW_COMPLETE.ID);
-    if (!template) {
-      return Promise.resolve();
-    }
-
-    const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
-
-    if (!reviewer) {
-      return;
-    }
-    const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
-    const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
-    const recipients = await getAdminRecipients(dbInfo, authHeader);
-    const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    return Promise.reject(err);
+  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.REVIEW_COMPLETE.ID);
+  if (!template) {
+    return;
   }
+
+  const reviewer = await getReviewer(dbInfo, hostname, reviewerId);
+
+  if (!reviewer) {
+    return;
+  }
+  const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
+  const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
+  const recipients = await getAdminRecipients(dbInfo, authHeader);
+  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  return await sendNotification(dbInfo, hostname, notification);
 }
 
 export async function createAndSendNewProjectNotification(dbInfo, hostname, userInfo, disclosureId, project, person) {
-  try {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.NEW_PROJECT.ID);
-    if (!template) {
-      return Promise.resolve();
-    }
-    const projectInfo = await getProject(dbInfo, hostname, project, person);
-    const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
-    const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
-    const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
-    const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    return Promise.reject(err);
+  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.NEW_PROJECT.ID);
+  if (!template) {
+    return;
   }
+  const projectInfo = await getProject(dbInfo, hostname, project, person);
+  const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
+  const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
+  const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
+  return await sendNotification(dbInfo, hostname, notification);
 }

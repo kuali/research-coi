@@ -212,7 +212,7 @@ export const init = app => {
     '/api/coi/disclosure-summaries',
     allowedRoles([ADMIN, REVIEWER]),
     useKnex,
-    wrapAsync(async (req, res, next) =>
+    wrapAsync(async (req, res) =>
     {
       const {userInfo, query, knex} = req;
 
@@ -239,7 +239,7 @@ export const init = app => {
         catch (parseErr) {
           Log.error('invalid filters supplied to disclosure-summaries', req);
           Log.error(parseErr, req);
-          next('invalid filters supplied to disclosure-summaries');
+          throw Error('invalid filters supplied to disclosure-summaries');
         }
       }
 
@@ -264,7 +264,7 @@ export const init = app => {
     '/api/coi/disclosure-summaries/count',
     allowedRoles(ADMIN),
     useKnex,
-    wrapAsync(async (req, res, next) =>
+    wrapAsync(async (req, res) =>
     {
       const {query, knex} = req;
       let filters = {};
@@ -280,8 +280,7 @@ export const init = app => {
             req
           );
           Log.error(parseErr, req);
-          next('invalid filters supplied to disclosure-summaries/count');
-          return;
+          throw Error('invalid filters supplied to disclosure-summaries/count');
         }
       }
 
@@ -447,18 +446,16 @@ export const init = app => {
           headers.authorization,
           hostname
         );
-        try {
-          await createAndSendSubmitNotification(
-            dbInfo,
-            hostname,
-            headers.authorization,
-            userInfo,
-            params.id
-          );
-        } catch (err) {
-          Log.error(err, req);
-        }
       });
+
+      await createAndSendSubmitNotification(
+        dbInfo,
+        hostname,
+        headers.authorization,
+        userInfo,
+        params.id
+      );
+
       res.sendStatus(ACCEPTED);
     }
   ));
@@ -470,8 +467,9 @@ export const init = app => {
     wrapAsync(async (req, res) =>
     {
       const {knex, dbInfo, body, userInfo, params, headers, hostname} = req;
+      let archiveId;
       await knex.transaction(async (knexTrx) => {
-        const archiveId = await approve(
+        archiveId = await approve(
           dbInfo,
           knexTrx,
           body,
@@ -479,18 +477,16 @@ export const init = app => {
           params.id,
           headers.authorization
         );
-        try {
-          await createAndSendApproveNotification(
-            dbInfo,
-            knexTrx,
-            hostname,
-            userInfo,
-            archiveId
-          );
-        } catch (err) {
-          Log.error(err, req);
-        }
       });
+
+      await createAndSendApproveNotification(
+        dbInfo,
+        knex,
+        hostname,
+        userInfo,
+        archiveId
+      );
+
       res.sendStatus(ACCEPTED);
     }
   ));
@@ -504,17 +500,15 @@ export const init = app => {
       const {knex, userInfo, params, dbInfo, hostname} = req;
       await knex.transaction(async (knexTrx) => {
         await reject(knexTrx, userInfo, params.id);
-        try {
-          await createAndSendSentBackNotification(
-            dbInfo,
-            hostname,
-            userInfo,
-            params.id
-          );
-        } catch (err) {
-          Log.error(err, req);
-        }
       });
+
+      await createAndSendSentBackNotification(
+        dbInfo,
+        hostname,
+        userInfo,
+        params.id
+      );
+
       res.sendStatus(ACCEPTED);
     }
   ));
@@ -528,6 +522,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo, params, body: comment}, res, next) =>
     {
+      let result;
       await knex.transaction(async (knexTrx) => {
         if (userInfo.coiRole === REVIEWER) {
           const reviewerDisclosures = await getDisclosureIdsForReviewer(
@@ -547,9 +542,9 @@ export const init = app => {
           return;
         }
 
-        const result = await addComment(knexTrx, userInfo, comment);
-        res.send(result[0]);
+        result = await addComment(knexTrx, userInfo, comment);
       });
+      res.send(result[0]);
     }
   ));
 
@@ -562,6 +557,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo, params, body: comment}, res, next) =>
     {
+      let result;
       await knex.transaction(async (knexTrx) => {
         if (userInfo.coiRole === REVIEWER) {
           const reviewerDisclosures = await getDisclosureIdsForReviewer(
@@ -579,9 +575,9 @@ export const init = app => {
           return;
         }
 
-        const result = await updateComment(knexTrx, userInfo, comment);
-        res.send(result);
+        result = await updateComment(knexTrx, userInfo, comment);
       });
+      res.send(result);
     }
   ));
 
@@ -635,8 +631,9 @@ export const init = app => {
           params.id,
           toDelete
         );
-        res.status(NO_CONTENT).end();
       });
+
+      res.status(NO_CONTENT).end();
     }
   ));
 

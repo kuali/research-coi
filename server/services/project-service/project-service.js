@@ -63,12 +63,12 @@ async function callEndPoint(researchCoreUrl, authHeader, endPoint) {
       .set('Authorization', `Bearer ${getAuthToken(authHeader)}`);
 
     if (response.ok) {
-      return Promise.resolve(response.body);
+      return response.body;
     }
-    return Promise.resolve([]);
+    return [];
   } catch (err) {
     Log.error(`cannot access ${researchCoreUrl}${endPoint}`);
-    return Promise.resolve([]);
+    return [];
   }
 }
 
@@ -138,66 +138,58 @@ function filterRoles(roles, projectTypeCd) {
 }
 
 async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoint, statusEndPoint) {
-  try {
-    const authInfo = getAuthorizationInfo(dbInfo);
-    const monolithProjectRoles = await callEndPoint(authInfo.researchCoreUrl, authHeader, roleEndPoint);
-    const unfilteredRoles = monolithProjectRoles.map(monolithRole => {
-      return {
-        projectTypeCd,
-        sourceRoleCd: String(getSourceRoleCd(projectTypeCd, monolithRole)),
-        description: monolithRole.description,
-        reqDisclosure: 0
-      };
-    });
+  const authInfo = getAuthorizationInfo(dbInfo);
+  const monolithProjectRoles = await callEndPoint(authInfo.researchCoreUrl, authHeader, roleEndPoint);
+  const unfilteredRoles = monolithProjectRoles.map(monolithRole => {
+    return {
+      projectTypeCd,
+      sourceRoleCd: String(getSourceRoleCd(projectTypeCd, monolithRole)),
+      description: monolithRole.description,
+      reqDisclosure: 0
+    };
+  });
 
-    const roles = filterRoles(unfilteredRoles, projectTypeCd);
+  const roles = filterRoles(unfilteredRoles, projectTypeCd);
 
-    const monolithStatuses = await callEndPoint(authInfo.researchCoreUrl, authHeader, statusEndPoint);
-    const statuses = monolithStatuses.map(monolithStatus => {
-      return {
-        projectTypeCd,
-        sourceStatusCd: String(getSourceStatusCd(projectTypeCd, monolithStatus)),
-        description: monolithStatus.description,
-        reqDisclosure: 0
-      };
-    });
-    return Promise.resolve({roles, statuses});
-  } catch (err) {
-    return Promise.reject(err);
-  }
+  const monolithStatuses = await callEndPoint(authInfo.researchCoreUrl, authHeader, statusEndPoint);
+  const statuses = monolithStatuses.map(monolithStatus => {
+    return {
+      projectTypeCd,
+      sourceStatusCd: String(getSourceStatusCd(projectTypeCd, monolithStatus)),
+      description: monolithStatus.description,
+      reqDisclosure: 0
+    };
+  });
+  return {roles, statuses};
 }
 
 export async function getProjectData(dbInfo, authHeader, projectTypeCd) {
-  try {
-    switch (projectTypeCd) {
-      case '1': //proposal
-        return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.PROPOSAL_AWARD_IP_ROLES, END_POINTS.PROPOSAL_STATUS);
-      case '2': //institutional proposal
-        return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.PROPOSAL_AWARD_IP_ROLES, END_POINTS.IP_STATUS);
-      case '3': //irb
-        return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.IRB_ROLES, END_POINTS.IRB_STATUS);
-      case '4': //iacuc
-        return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.IACUC_ROLES, END_POINTS.IACUC_STATUS);
-      case '5': //award
-        return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.PROPOSAL_AWARD_IP_ROLES, END_POINTS.AWARD_STATUS);
-      default:
-        return Promise.resolve({roles: [], statuses: []});
-    }
-  } catch (err) {
-    return Promise.reject(err);
+  switch (projectTypeCd) {
+    case '1': //proposal
+      return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.PROPOSAL_AWARD_IP_ROLES, END_POINTS.PROPOSAL_STATUS);
+    case '2': //institutional proposal
+      return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.PROPOSAL_AWARD_IP_ROLES, END_POINTS.IP_STATUS);
+    case '3': //irb
+      return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.IRB_ROLES, END_POINTS.IRB_STATUS);
+    case '4': //iacuc
+      return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.IACUC_ROLES, END_POINTS.IACUC_STATUS);
+    case '5': //award
+      return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.PROPOSAL_AWARD_IP_ROLES, END_POINTS.AWARD_STATUS);
+    default:
+      return {roles: [], statuses: []};
   }
 }
 
 async function getRequiredSponsors(researchCoreUrl, coiHierarchy, authHeader) {
   try {
     if (!coiHierarchy) {
-      return Promise.resolve();
+      return;
     }
 
     let requiredSponsors = cache.get(REQUIRED_SPONSORS_KEY);
 
     if (requiredSponsors) {
-      return Promise.resolve(requiredSponsors);
+      return requiredSponsors;
     }
     const response = await request
       .get(`${researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${coiHierarchy}`)
@@ -209,7 +201,7 @@ async function getRequiredSponsors(researchCoreUrl, coiHierarchy, authHeader) {
 
     cache.set(REQUIRED_SPONSORS_KEY, requiredSponsors);
 
-    return Promise.resolve(requiredSponsors);
+    return requiredSponsors;
   } catch (err) {
     return Promise.reject(`cannot access ${researchCoreUrl}${END_POINTS.SPONSOR_HIERARCHY}${coiHierarchy}`);
   }
@@ -284,34 +276,20 @@ export function isDeclarationRequired(requirements, declaration) {
 }
 
 export async function filterProjects(dbInfo, projects, authHeader) {
-  try {
-    const requirements = await getRequirements(dbInfo, authHeader);
-    const result = projects.filter(project => {
-      return isRequired(requirements, project);
-    });
-    return Promise.resolve(result);
-  } catch (err) {
-    return Promise.reject(err);
-  }
+  const requirements = await getRequirements(dbInfo, authHeader);
+  return projects.filter(project => {
+    return isRequired(requirements, project);
+  });
 }
 
 export async function filterDeclarations(dbInfo, declarations, authHeader) {
-  try {
-    const requirements = await getRequirements(dbInfo, authHeader);
-    const result = declarations.filter(declaration => {
-      return isDeclarationRequired(requirements, declaration);
-    });
-    return Promise.resolve(result);
-  } catch (err) {
-    return Promise.reject(err);
-  }
+  const requirements = await getRequirements(dbInfo, authHeader);
+  return declarations.filter(declaration => {
+    return isDeclarationRequired(requirements, declaration);
+  });
 }
 
 export async function isProjectRequired(dbInfo, project, authHeader) {
-  try {
-    const requirements = await getRequirements(dbInfo, authHeader);
-    return isRequired(requirements, project);
-  } catch (err) {
-    return Promise.reject(err);
-  }
+  const requirements = await getRequirements(dbInfo, authHeader);
+  return isRequired(requirements, project);
 }

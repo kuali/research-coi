@@ -64,24 +64,20 @@ function checkTerm(term) {
 }
 
 export async function getSuggestions(knex, term, userInfo) {
-  try {
-    let indexQuery;
-    let noIndexQuery;
-    if (knex.dbType === 'mysql') {
-      indexQuery = queryUsingIndexMySQL(knex, term);
-      noIndexQuery = queryWithoutIndexMySQL(knex, term);
-    } else if (checkTerm(term)) {
-      indexQuery = queryUsingIndexOracle(knex, term);
-      noIndexQuery = queryWithoutIndexOracle(knex, term);
-    }
-    return await addReviewerCriteriaAndSearch(
-      userInfo,
-      indexQuery,
-      noIndexQuery
-    );
-  } catch (err) {
-    return Promise.reject(err);
+  let indexQuery;
+  let noIndexQuery;
+  if (knex.dbType === 'mysql') {
+    indexQuery = queryUsingIndexMySQL(knex, term);
+    noIndexQuery = queryWithoutIndexMySQL(knex, term);
+  } else if (checkTerm(term)) {
+    indexQuery = queryUsingIndexOracle(knex, term);
+    noIndexQuery = queryWithoutIndexOracle(knex, term);
   }
+  return await addReviewerCriteriaAndSearch(
+    userInfo,
+    indexQuery,
+    noIndexQuery
+  );
 }
 
 async function addReviewerCriteriaAndSearch(

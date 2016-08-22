@@ -52,12 +52,12 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
       .set('Authorization', `Bearer ${authToken}`);
 
     if (response.ok && Array.isArray(response.body) && response.body[0]) {
-      return Promise.resolve(true);
+      return true;
     }
-    return Promise.resolve(false);
+    return false;
   } catch (err) {
     Log.warn(`user ${schoolId} is not a member of the ${role} role`);
-    return Promise.resolve(false);
+    return false;
   }
 }
 
@@ -80,9 +80,9 @@ async function getResearchUser(researchCoreUrl, authToken) {
   try {
     const response = await request.get(`${researchCoreUrl}${END_POINTS.RESEARCH_USERS}`)
      .set('Authorization', `Bearer ${authToken}`);
-    return Promise.resolve(response.body);
+    return response.body;
   } catch (err) {
-    return Promise.resolve({});
+    return {};
   }
 }
 
@@ -90,7 +90,7 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
   try {
     const cachedUserInfo = authToken ? cache.get(`${authToken}:${hostname}`) : undefined;
     if (cachedUserInfo) {
-      return Promise.resolve(cachedUserInfo);
+      return cachedUserInfo;
     }
     const authInfo = getAuthorizationInfo(dbInfo);
     const url = authInfo.authUrl || (useSSL ? 'https://' : 'http://') + hostname;
@@ -114,9 +114,9 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
       userInfo.primaryDepartmentCode = researchUser.primaryDepartmentCode;
     }
     cache.set(`${authToken}:${hostname}`, userInfo);
-    return Promise.resolve(userInfo);
+    return userInfo;
   } catch (err) {
-    return Promise.resolve();
+    return;
   }
 }
 
@@ -128,7 +128,7 @@ export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValu
   try {
     const cachedUserInfo = queryValue ? cache.get(queryValue) : undefined;
     if (cachedUserInfo) {
-      return Promise.resolve(cachedUserInfo);
+      return cachedUserInfo;
     }
     const authInfo = getAuthorizationInfo(dbInfo);
     const url = authInfo.authUrl || (useSSL ? 'https://' : 'http://') + hostname;
@@ -138,9 +138,9 @@ export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValu
 
     const userInfo = response.body;
     cache.set(queryValue, userInfo);
-    return Promise.resolve(userInfo);
+    return userInfo;
   } catch (err) {
-    return Promise.resolve();
+    return;
   }
 }
 
@@ -173,14 +173,14 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
     }
     const cachedReviewers = cache.get(cacheKey);
     if (cachedReviewers) {
-      return Promise.resolve(cachedReviewers);
+      return cachedReviewers;
     }
     const response = await request.get(`${url}/research-sys/api/v1/roles/${role}/principals/`)
       .query(query)
       .set('Authorization', `Bearer ${authToken}`);
 
     if (!response.ok) {
-      return Promise.resolve();
+      return;
     }
     const reviewers = response.body;
     const results = reviewers.map(reviewer => {
@@ -191,9 +191,9 @@ export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
       };
     });
     cache.set(REVIEWER_CACHE_KEY, results);
-    return Promise.resolve(results);
+    return results;
   } catch (err) {
-    return Promise.resolve([]);
+    return [];
   }
 }
 

@@ -70,7 +70,7 @@ export async function getProjects (knex, userId) {
     }
   });
 
-  return Promise.resolve(projects);
+  return projects;
 }
 
 async function shouldUpdateStatus(knex, disclosureId) {
@@ -111,18 +111,14 @@ async function updateDisclosureStatus(knex, person, project, req) {
       .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
       .where({id: disclosure.id});
 
-    try {
-      createAndSendNewProjectNotification(
-        req.dbInfo,
-        req.hostname,
-        req.userInfo,
-        disclosure.id,
-        project,
-        person
-      );
-    } catch (err) {
-      Log.error(err);
-    }
+    await createAndSendNewProjectNotification(
+      req.dbInfo,
+      req.hostname,
+      req.userInfo,
+      disclosure.id,
+      project,
+      person
+    );
   }
 }
 
@@ -527,23 +523,19 @@ export async function getProjectStatuses(
   sourceIdentifier,
   authHeader
 ) {
-  try {
-    const projectPersons = await getProjectPersons(
-      knex,
-      sourceSystem,
-      sourceIdentifier
-    );
-    const results = [];
-    if (Array.isArray(projectPersons)) {
-      for (let i = 0; i < projectPersons.length; i++) {
-        const projectPerson = projectPersons[i];
-        results.push(await getStatus(knex, projectPerson, dbInfo, authHeader));
-      }
+  const projectPersons = await getProjectPersons(
+    knex,
+    sourceSystem,
+    sourceIdentifier
+  );
+  const results = [];
+  if (Array.isArray(projectPersons)) {
+    for (let i = 0; i < projectPersons.length; i++) {
+      const projectPerson = projectPersons[i];
+      results.push(await getStatus(knex, projectPerson, dbInfo, authHeader));
     }
-    return results;
-  } catch (err) {
-    return Promise.reject(err);
   }
+  return results;
 }
 
 export async function getProjectStatus(
@@ -554,33 +546,31 @@ export async function getProjectStatus(
   personId,
   authHeader
 ) {
-  try {
-    const projectPersons = await getProjectPersons(
-      knex,
-      sourceSystem,
-      sourceIdentifier,
-      personId
-    );
+  const projectPersons = await getProjectPersons(
+    knex,
+    sourceSystem,
+    sourceIdentifier,
+    personId
+  );
 
-    if (projectPersons[0]) {
-      return await getStatus(knex, projectPersons[0], dbInfo, authHeader);
-    }
-
-    return {};
-  } catch (err) {
-    return Promise.reject(err);
+  if (projectPersons[0]) {
+    return await getStatus(knex, projectPersons[0], dbInfo, authHeader);
   }
+
+  return {};
 }
 
-export function updateProjectPersonDispositionType(knex, projectPerson, id) {
+export async function updateProjectPersonDispositionType(
+  knex,
+  projectPerson,
+  id
+) {
   const {dispositionTypeCd} = projectPerson;
-  try {
-    return knex('project_person').update({
+  return await knex('project_person')
+    .update({
       disposition_type_cd: dispositionTypeCd ? dispositionTypeCd : null
-    }).where({id});
-  } catch (err) {
-    return Promise.reject(err);
-  }
+    })
+    .where({id});
 }
 
 async function updateProjectSponsors(knex, projectId, sponsors) {

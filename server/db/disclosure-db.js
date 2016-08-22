@@ -1220,7 +1220,7 @@ export async function getSummariesForReviewCount(knex, filters) {
     undefined,
     999999
   );
-  return Promise.resolve([{rowcount: results.length}]);
+  return [{rowcount: results.length}];
 }
 
 export async function getSummariesForUser(knex, userId) {
