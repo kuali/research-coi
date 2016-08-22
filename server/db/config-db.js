@@ -281,48 +281,44 @@ export async function getGeneralConfig(knex) {
 }
 
 export async function getConfig(dbInfo, knex, hostname) {
-  try {
-    let config = {};
-    const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
+  let config = {};
+  const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
 
-    config.matrixTypes = await createMatrixTypes(knex);
-    config.relationshipPersonTypes = await knex
-      .select('*')
-      .from('relationship_person_type')
-      .where('active', true);
-  
-    config.declarationTypes = await knex
-      .select('*')
-      .from('declaration_type')
-      .orderBy('order');
-  
-    config.dispositionTypes = await knex
-      .select('*')
-      .from('disposition_type')
-      .orderBy('order');
-  
-    config.disclosureTypes = await knex.select('*').from('disclosure_type');
-    config.questions = await getQuestions(knex);
-    config.disclosureStatus = await knex.select('*').from('disclosure_status');
-    config.projectTypes = await knex.select('*').from('project_type');
-    config.projectRoles = await knex.select('*').from('project_role');
-    config.projectStatuses = await knex.select('*').from('project_status');
-    config.notificationTemplates = await getNotificationTemplates(
-      knex,
-      dbInfo,
-      hostname,
-      notificationsMode
-    );
-    config.notificationsMode = notificationsMode;
-    config.lane = lane;
-    config = camelizeJson(config);
-    const generalConfig = await getGeneralConfig(knex);
-    config.id = generalConfig.id;
-    config.general = generalConfig.config;
-    return Promise.resolve(config);
-  } catch (err) {
-    Promise.reject(err);
-  }
+  config.matrixTypes = await createMatrixTypes(knex);
+  config.relationshipPersonTypes = await knex
+    .select('*')
+    .from('relationship_person_type')
+    .where('active', true);
+
+  config.declarationTypes = await knex
+    .select('*')
+    .from('declaration_type')
+    .orderBy('order');
+
+  config.dispositionTypes = await knex
+    .select('*')
+    .from('disposition_type')
+    .orderBy('order');
+
+  config.disclosureTypes = await knex.select('*').from('disclosure_type');
+  config.questions = await getQuestions(knex);
+  config.disclosureStatus = await knex.select('*').from('disclosure_status');
+  config.projectTypes = await knex.select('*').from('project_type');
+  config.projectRoles = await knex.select('*').from('project_role');
+  config.projectStatuses = await knex.select('*').from('project_status');
+  config.notificationTemplates = await getNotificationTemplates(
+    knex,
+    dbInfo,
+    hostname,
+    notificationsMode
+  );
+  config.notificationsMode = notificationsMode;
+  config.lane = lane;
+  config = camelizeJson(config);
+  const generalConfig = await getGeneralConfig(knex);
+  config.id = generalConfig.id;
+  config.general = generalConfig.config;
+  return config;
 }
 
 function updateParentIdOnChildren(children, updatedParents) {
@@ -523,7 +519,15 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   await saveScreeningQuestionnaire(knex, config.questions.screening);
   await saveEntityQuestionnaire(knex, config.questions.entities);
 
-  if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
+  const notificationErrors = config.notification_templates.some(
+    template => template.error === true
+  );
+  if (notificationErrors) {
+    Log.error(
+      'Not saving notification templates because of configuration errors'
+    );
+  }
+  if (!notificationErrors && notificationsMode > NOTIFICATIONS_MODE.OFF) {
     const results = await handleTemplates(
       dbInfo,
       hostname,

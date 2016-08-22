@@ -61,16 +61,12 @@ export function getRecipients(dbInfo, recipients) {
 }
 
 export async function getTemplates(dbInfo, hostname) {
-  try {
-    const notificationsInfo = getNotificationsInfo(dbInfo);
-    const url = notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname;
-    const response = await request.get(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
-      .set('Authorization',`Bearer ${notificationsInfo.systemAuthToken}`);
+  const notificationsInfo = getNotificationsInfo(dbInfo);
+  const url = notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname;
+  const response = await request.get(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
+    .set('Authorization',`Bearer ${notificationsInfo.systemAuthToken}`);
 
-    return response.body;
-  } catch (err) {
-    Promise.reject(err);
-  }
+  return response.body;
 }
 
 export function createDisplayName(hostname, description) {
@@ -105,31 +101,21 @@ function createCoreTemplate(notificationTemplate, hostname, applicationId) {
 }
 
 export async function updateTemplateData(dbInfo, hostname, notificationTemplate) {
-  try {
-    const requestInfo = getRequestInfo(dbInfo, hostname);
-    const template = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
-    await request.put(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}/${notificationTemplate.core_template_id}`)
-      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
-      .send(template);
-
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(err);
-  }
+  const requestInfo = getRequestInfo(dbInfo, hostname);
+  const template = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
+  await request.put(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}/${notificationTemplate.core_template_id}`)
+    .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
+    .send(template);
 }
 
 export async function createNewTemplate(dbInfo, hostname, notificationTemplate) {
-  try {
-    const requestInfo = getRequestInfo(dbInfo, hostname);
-    const coreTemplate = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
-    const response = await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
-      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
-      .send(coreTemplate);
+  const requestInfo = getRequestInfo(dbInfo, hostname);
+  const coreTemplate = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
+  const response = await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
+    .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
+    .send(coreTemplate);
 
-    return response.body.id;
-  } catch (err) {
-    Promise.reject(err);
-  }
+  return response.body.id;
 }
 
 export async function getUserInfo(dbInfo, hostname, userId) {
@@ -154,12 +140,8 @@ export async function getAdminRecipients(dbInfo, authHeader) {
 }
 
 export async function sendNotification(dbInfo, hostname, notification) {
-  try {
-    const requestInfo = getRequestInfo(dbInfo, hostname);
-    await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}`)
-      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
-      .send(notification);
-  } catch (err) {
-    Promise.reject(err);
-  }
+  const requestInfo = getRequestInfo(dbInfo, hostname);
+  await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}`)
+    .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
+    .send(notification);
 }

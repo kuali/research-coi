@@ -28,7 +28,6 @@ import {
   createAndSendResubmitNotification
 } from '../services/notification-service/notification-service';
 import wrapAsync from './wrap-async';
-import Log from '../log';
 import useKnex from '../middleware/request-knex';
 
 async function verifyReviewIsForUser({knex, params, userInfo}, res, next) {
@@ -261,7 +260,6 @@ export const init = app => {
         return;
       }
 
-      let result;
       await knex.transaction(async (knexTrx) => {
         if (body && Array.isArray(body.responses)) {
           for (const response of body.responses) {
@@ -279,20 +277,17 @@ export const init = app => {
           userInfo,
           params.disclosureId
         );
-        try {
-          createAndSendResubmitNotification(
-            dbInfo,
-            hostname,
-            headers.authorization,
-            userInfo,
-            params.disclosureId
-          );
-        } catch (err) {
-          Log.error(err, req);
-        }
-        result = {success: true};
       });
-      res.send(result);
+
+      createAndSendResubmitNotification(
+        dbInfo,
+        hostname,
+        headers.authorization,
+        userInfo,
+        params.disclosureId
+      );
+
+      res.send({success: true});
     }
   ));
 
