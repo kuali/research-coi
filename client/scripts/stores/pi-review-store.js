@@ -22,14 +22,14 @@ import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
 import {FILE_TYPE, ROLES} from '../../../coi-constants';
 
-function updateComment(reviewItem, comment, commentFieldName = 'comments') {
+function updateComment(reviewItem, text, commentFieldName = 'comments') {
   if (reviewItem.piResponse) {
     const commentToEdit = reviewItem[commentFieldName].find(
       commentToTest => commentToTest.id === 'temp'
     );
     
     if (commentToEdit) {
-      commentToEdit.text = comment;
+      commentToEdit.text = text;
     }
   }
   else {
@@ -38,7 +38,7 @@ function updateComment(reviewItem, comment, commentFieldName = 'comments') {
     }
     reviewItem[commentFieldName].push({
       date: new Date(),
-      text: comment,
+      text,
       topicId: reviewItem.reviewId,
       userRole: ROLES.USER,
       id: 'temp'
@@ -58,31 +58,33 @@ class _PIReviewStore {
   }
 
   updateCanSubmit() {
-    if (this.disclosure.questions) {
-      const allQuestionsDone = this.disclosure.questions.every(question => {
-        return question.reviewedOn !== null;
-      });
+    const {questions, entities, declarations} = this.disclosure;
+
+    if (questions) {
+      const allQuestionsDone = questions.every(
+        question => question.reviewedOn !== null
+      );
       if (!allQuestionsDone) {
         this.applicationState.canSubmit = false;
         return;
       }
     }
 
-    if (this.disclosure.entities) {
-      const allEntitiesDone = this.disclosure.entities.every(entity => {
-        return entity.reviewedOn !== null;
-      });
+    if (entities) {
+      const allEntitiesDone = entities.every(
+        entity => entity.reviewedOn !== null
+      );
       if (!allEntitiesDone) {
         this.applicationState.canSubmit = false;
         return;
       }
     }
 
-    if (this.disclosure.declarations) {
-      const allDeclarationsDone = this.disclosure.declarations.every(declaration => {
-        const allEntitiesDone = declaration.entities.every(entity => {
-          return entity.reviewedOn !== null;
-        });
+    if (declarations) {
+      const allDeclarationsDone = declarations.every(declaration => {
+        const allEntitiesDone = declaration.entities.every(
+          entity => entity.reviewedOn !== null
+        );
         return allEntitiesDone;
       });
       if (!allDeclarationsDone) {
@@ -95,166 +97,169 @@ class _PIReviewStore {
   }
 
   loadDisclosure(disclosureId) {
-    createRequest().get(`/api/coi/disclosures/${disclosureId}/pi-review-items`)
+    createRequest()
+      .get(`/api/coi/disclosures/${disclosureId}/pi-review-items`)
       .end(processResponse((err, disclosure) => {
-        if (!err) {
-          this.disclosure = disclosure.body;
-          if (this.disclosure.questions) {
-            this.disclosure.questions.forEach(question => {
-              if (question.question) {
-                if (question.question.required_num_selections) {
-                  question.question.requiredNumSelections = question.question.required_num_selections;
-                  delete question.question.required_num_selections;
-                }
-                if (question.question.number_to_show) {
-                  question.question.numberToShow = question.question.number_to_show;
-                  delete question.question.number_to_show;
-                }
-              }
-              if (question.answer) {
-                question.answer = JSON.parse(question.answer);
-              }
-
-              if (question.subQuestions) {
-                question.subQuestions = question.subQuestions.map(subQuestion => {
-                  const newSub = {
-                    id: subQuestion.id,
-                    parent: subQuestion.parent,
-                    answer: {},
-                    question: subQuestion.question
-                  };
-
-                  if (subQuestion.answer) {
-                    newSub.answer = JSON.parse(subQuestion.answer);
-                  }
-
-                  if (newSub.question.required_num_selections) {
-                    newSub.question.requiredNumSelections = newSub.question.required_num_selections;
-                    delete newSub.question.required_num_selections;
-                  }
-                  if (newSub.question.number_to_show) {
-                    newSub.question.numberToShow = newSub.question.number_to_show;
-                    delete newSub.question.number_to_show;
-                  }
-                  if (newSub.question.display_criteria) {
-                    newSub.question.displayCriteria = newSub.question.display_criteria;
-                    delete newSub.question.display_criteria;
-                  }
-
-                  return newSub;
-                });
-              }
-            });
-          }
-
-          if (this.disclosure.entities) {
-            this.disclosure.entities.forEach(entity => {
-              if (entity.answers) {
-                entity.answers.forEach(answer => {
-                  answer.answer = JSON.parse(answer.answer);
-                });
-              }
-            });
-          }
-
-          this.updateCanSubmit();
-          ConfigActions.loadConfig(disclosure.body.configId);
-          this.emitChange();
+        if (err) {
+          return;
         }
+
+        this.disclosure = disclosure.body;
+        if (this.disclosure.questions) {
+          this.disclosure.questions.forEach(questionMeta => {
+            const {question} = questionMeta;
+
+            if (question) {
+              if (question.required_num_selections) {
+                question.requiredNumSelections = question.required_num_selections;
+                delete question.required_num_selections;
+              }
+              if (question.number_to_show) {
+                question.numberToShow = question.number_to_show;
+                delete question.number_to_show;
+              }
+            }
+            if (questionMeta.answer) {
+              questionMeta.answer = JSON.parse(questionMeta.answer);
+            }
+
+            if (questionMeta.subQuestions) {
+              questionMeta.subQuestions = questionMeta.subQuestions.map(subQuestionMeta => {
+                const {
+                  id,
+                  parent,
+                  question: subQuestion,
+                  answer: subAnswer
+                } = subQuestionMeta;
+                const newSub = {
+                  id,
+                  parent,
+                  answer: {},
+                  question: subQuestion
+                };
+
+                if (subAnswer) {
+                  newSub.answer = JSON.parse(subAnswer);
+                }
+
+                if (newSub.question.required_num_selections) {
+                  newSub.question.requiredNumSelections = newSub.question.required_num_selections;
+                  delete newSub.question.required_num_selections;
+                }
+                if (newSub.question.number_to_show) {
+                  newSub.question.numberToShow = newSub.question.number_to_show;
+                  delete newSub.question.number_to_show;
+                }
+                if (newSub.question.display_criteria) {
+                  newSub.question.displayCriteria = newSub.question.display_criteria;
+                  delete newSub.question.display_criteria;
+                }
+
+                return newSub;
+              });
+            }
+          });
+        }
+
+        if (this.disclosure.entities) {
+          this.disclosure.entities.forEach(entity => {
+            if (entity.answers) {
+              entity.answers.forEach(answer => {
+                answer.answer = JSON.parse(answer.answer);
+              });
+            }
+          });
+        }
+
+        this.updateCanSubmit();
+        ConfigActions.loadConfig(disclosure.body.configId);
+        this.emitChange();
       }));
   }
 
-  respond([reviewId, comment]) {
-    if (!comment || comment.length === 0) {
+  respond([reviewId, text]) {
+    if (!text || text.length === 0) {
       return;
     }
 
-    const questionToRespondTo = this.disclosure.questions.find(question => {
-      return reviewId === question.reviewId;
-    });
+    const {questions, entities, declarations} = this.disclosure;
+
+    const questionToRespondTo = questions.find(
+      question => reviewId === question.reviewId
+    );
     if (questionToRespondTo) {
       questionToRespondTo.reviewedOn = new Date();
-      updateComment(questionToRespondTo, comment);
-      questionToRespondTo.piResponse = {
-        text: comment
-      };
+      updateComment(questionToRespondTo, text);
+      questionToRespondTo.piResponse = {text};
     }
 
-    const entityToRespondTo = this.disclosure.entities.find(entity => {
-      return reviewId === entity.reviewId;
-    });
+    const entityToRespondTo = entities.find(
+      entity => reviewId === entity.reviewId
+    );
     if (entityToRespondTo) {
       entityToRespondTo.reviewedOn = new Date();
-      updateComment(entityToRespondTo, comment);
-      entityToRespondTo.piResponse = {
-        text: comment
-      };
+      updateComment(entityToRespondTo, text);
+      entityToRespondTo.piResponse = {text};
     }
 
-    this.disclosure.declarations.forEach(project => {
+    declarations.forEach(project => {
       project.entities.forEach(entity => {
         if (entity.reviewId === reviewId) {
           entity.reviewedOn = new Date();
-          updateComment(entity, comment, 'adminComments');
-          entity.piResponse = {
-            text: comment
-          };
+          updateComment(entity, text, 'adminComments');
+          entity.piResponse = {text};
         }
       });
     });
 
     this.updateCanSubmit();
-    this.updatePendingResponses(reviewId, comment);
+    this.updatePendingResponses(reviewId, text);
   }
 
   updatePendingResponses(reviewId, comment) {
-    const toEdit = this.applicationState.pendingResponses.find(
+    const {pendingResponses} = this.applicationState;
+    const toEdit = pendingResponses.find(
       response => response.reviewId === reviewId
     );
 
     if (toEdit) {
       toEdit.comment = comment;
     } else {
-      this.applicationState.pendingResponses.push({
+      pendingResponses.push({
         reviewId,
         comment
       });
     }
   }
 
-  revise([reviewId, newAnswer]) {
-    const questionToRevise = this.disclosure.questions.find(question => {
-      return reviewId === question.reviewId;
-    });
+  revise([reviewId, answer]) {
+    const questionToRevise = this.disclosure.questions.find(
+      question => reviewId === question.reviewId
+    );
     if (questionToRevise) {
-      questionToRevise.answer = {
-        value: newAnswer
-      };
+      questionToRevise.answer = {value: answer};
       questionToRevise.reviewedOn = new Date();
     }
 
     this.updateCanSubmit();
 
-    createRequest().put(`/api/coi/pi-revise/${reviewId}`)
-      .send({
-        answer: newAnswer
-      })
+    createRequest()
+      .put(`/api/coi/pi-revise/${reviewId}`)
+      .send({answer})
       .end(processResponse(() => {}));
   }
 
-  reviseEntityQuestion([reviewId, questionId, newValue]) {
-    const entityToRevise = this.disclosure.entities.find(entity => {
-      return reviewId === entity.reviewId;
-    });
+  reviseEntityQuestion([reviewId, questionId, value]) {
+    const entityToRevise = this.disclosure.entities.find(
+      entity => reviewId === entity.reviewId
+    );
     if (entityToRevise) {
-      const theAnswer = entityToRevise.answers.find(answer => {
-        return answer.questionId === questionId;
-      });
+      const theAnswer = entityToRevise.answers.find(
+        answer => answer.questionId === questionId
+      );
 
       if (theAnswer) {
-        theAnswer.answer = {
-          value: newValue
-        };
+        theAnswer.answer = {value};
       }
 
       entityToRevise.reviewedOn = new Date();
@@ -263,17 +268,16 @@ class _PIReviewStore {
 
     this.updateCanSubmit();
 
-    createRequest().put(`/api/coi/pi-revise/${reviewId}/entity-question/${questionId}`)
-      .send({
-        answer: newValue
-      })
+    createRequest()
+      .put(`/api/coi/pi-revise/${reviewId}/entity-question/${questionId}`)
+      .send({answer: value})
       .end(processResponse(() => {}));
   }
 
   addRelationship([reviewId, newRelationship]) {
-    const entityToRevise = this.disclosure.entities.find(entity => {
-      return reviewId === entity.reviewId;
-    });
+    const entityToRevise = this.disclosure.entities.find(
+      entity => reviewId === entity.reviewId
+    );
     if (entityToRevise) {
       if (entityToRevise.relationships === undefined) {
         entityToRevise.relationships = [];
@@ -294,7 +298,8 @@ class _PIReviewStore {
 
     this.updateCanSubmit();
 
-    createRequest().post(`/api/coi/pi-revise/${reviewId}/entity-relationship`)
+    createRequest()
+      .post(`/api/coi/pi-revise/${reviewId}/entity-relationship`)
       .send(newRelationship)
       .end(processResponse((err, relationships) => {
         if (!err) {
@@ -305,13 +310,13 @@ class _PIReviewStore {
   }
 
   removeRelationship([entityId, reviewId, relationshipId]) {
-    const entityToRevise = this.disclosure.entities.find(entity => {
-      return entityId === entity.id;
-    });
+    const entityToRevise = this.disclosure.entities.find(
+      entity => entityId === entity.id
+    );
     if (entityToRevise) {
-      entityToRevise.relationships = entityToRevise.relationships.filter(relationship => {
-        return relationship.id !== relationshipId;
-      });
+      entityToRevise.relationships = entityToRevise.relationships.filter(
+        relationship => relationship.id !== relationshipId
+      );
 
       entityToRevise.reviewedOn = new Date();
       entityToRevise.revised = 1;
@@ -319,7 +324,8 @@ class _PIReviewStore {
 
     this.updateCanSubmit();
 
-    createRequest().del(`/api/coi/pi-revise/${reviewId}/entity-relationship/${relationshipId}`)
+    createRequest()
+      .del(`/api/coi/pi-revise/${reviewId}/entity-relationship/${relationshipId}`)
       .end(processResponse(() => {}));
   }
 
@@ -336,7 +342,8 @@ class _PIReviewStore {
     });
 
     this.updateCanSubmit();
-    createRequest().put(`/api/coi/pi-revise/${reviewId}/declaration`)
+    createRequest()
+      .put(`/api/coi/pi-revise/${reviewId}/declaration`)
       .send({
         disposition,
         comment
@@ -344,28 +351,25 @@ class _PIReviewStore {
       .end(processResponse(() => {}));
   }
 
-  reviseSubQuestion([reviewId, subQuestionId, answer]) {
-    const questionToRevise = this.disclosure.questions.find(question => {
-      return reviewId === question.reviewId;
-    });
-    const subQuestionToRevise = questionToRevise.subQuestions.find(subQuestion => {
-      return subQuestion.id === subQuestionId;
-    });
+  reviseSubQuestion([reviewId, subQuestionId, value]) {
+    const questionToRevise = this.disclosure.questions.find(
+      question => reviewId === question.reviewId
+    );
+    const subQuestionToRevise = questionToRevise.subQuestions.find(
+      subQuestion => subQuestion.id === subQuestionId
+    );
 
     if (subQuestionToRevise) {
-      subQuestionToRevise.answer = {
-        value: answer
-      };
+      subQuestionToRevise.answer = {value};
       questionToRevise.reviewedOn = new Date();
     }
 
     this.updateCanSubmit();
 
-    createRequest().put(`/api/coi/pi-revise/${reviewId}/subquestion-answer/${subQuestionId}`)
+    createRequest()
+      .put(`/api/coi/pi-revise/${reviewId}/subquestion-answer/${subQuestionId}`)
       .send({
-        answer: {
-          value: answer
-        }
+        answer: {value}
       })
       .type('application/json')
       .end();
@@ -373,10 +377,9 @@ class _PIReviewStore {
 
   deleteAnswers([reviewId, toDelete]) {
     if (toDelete.length > 0) {
-      createRequest().del(`/api/coi/pi-revise/${reviewId}/question-answers`)
-        .send({
-          toDelete
-        })
+      createRequest()
+        .del(`/api/coi/pi-revise/${reviewId}/question-answers`)
+        .send({toDelete})
         .type('application/json')
         .end();
     }
@@ -387,28 +390,29 @@ class _PIReviewStore {
   }
 
   confirm(disclosureId) {
-    createRequest().put(`/api/coi/pi-revise/${disclosureId}/submit`)
-      .send({
-        responses: this.applicationState.pendingResponses
-      })
+    const {pendingResponses: responses} = this.applicationState;
+    createRequest()
+      .put(`/api/coi/pi-revise/${disclosureId}/submit`)
+      .send({responses})
       .end(processResponse(() => {
         document.location = '/coi/';
       }));
   }
 
   addEntityAttachments([files, entityId]) {
-    const entityToRevise = this.disclosure.entities.find(entity => {
-      return entityId === entity.id;
-    });
+    const entityToRevise = this.disclosure.entities.find(
+      entity => entityId === entity.id
+    );
 
     if (!entityToRevise.files) {
       entityToRevise.files = [];
     }
 
     const formData = new FormData();
-    files.forEach(file => {
-      formData.append('attachments', file);
-    });
+
+    files.forEach(
+      file => formData.append('attachments', file)
+    );
 
     formData.append('data', JSON.stringify({
       refId: entityToRevise.id,
@@ -416,37 +420,39 @@ class _PIReviewStore {
       disclosureId: entityToRevise.disclosureId
     }));
 
-    createRequest().post('/api/coi/files')
-    .send(formData)
-    .end(processResponse((err, res) => {
-      if (!err) {
-        res.body.forEach(file => {
-          entityToRevise.files.push(file);
-        });
-        entityToRevise.reviewedOn = new Date();
-        entityToRevise.revised = 1;
-        this.updateCanSubmit();
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .post('/api/coi/files')
+      .send(formData)
+      .end(processResponse((err, res) => {
+        if (!err) {
+          res.body.forEach(file => {
+            entityToRevise.files.push(file);
+          });
+          entityToRevise.reviewedOn = new Date();
+          entityToRevise.revised = 1;
+          this.updateCanSubmit();
+          this.emitChange();
+        }
+      }));
   }
 
   deleteEntityAttachment([index, entityId]) {
-    const entityToRevise = this.disclosure.entities.find(entity => {
-      return entityId === entity.id;
-    });
+    const entityToRevise = this.disclosure.entities.find(
+      entity => entityId === entity.id
+    );
     const file = entityToRevise.files[index];
 
-    createRequest().del(`/api/coi/files/${file.id}`)
-    .end(processResponse((err) => {
-      if (!err) {
-        entityToRevise.files.splice(index, 1);
-        entityToRevise.reviewedOn = new Date();
-        entityToRevise.revised = 1;
-        this.updateCanSubmit();
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .del(`/api/coi/files/${file.id}`)
+      .end(processResponse(err => {
+        if (!err) {
+          entityToRevise.files.splice(index, 1);
+          entityToRevise.reviewedOn = new Date();
+          entityToRevise.revised = 1;
+          this.updateCanSubmit();
+          this.emitChange();
+        }
+      }));
   }
 }
 
