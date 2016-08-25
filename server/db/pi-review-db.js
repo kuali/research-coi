@@ -666,7 +666,7 @@ export async function getPIReviewItems(knex, userInfo, disclosureId) {
       'd.user_id': userInfo.schoolId
     });
 
-  const [questions, entities, declarations, config] = await Promise.all([
+  const [questions, entities, declarations, disclosure] = await Promise.all([
     getQuestionsToReview(
       knex,
       disclosureId,
@@ -685,14 +685,24 @@ export async function getPIReviewItems(knex, userInfo, disclosureId) {
       userInfo.schoolId,
       rows.filter(row => row.targetType === DISCLOSURE_STEP.PROJECTS)
     ),
-    knex('disclosure').first('config_id as configId').where('id', disclosureId)
+    knex('disclosure')
+      .first(
+        'config_id as configId',
+        'submitted_date as submittedDate',
+        'last_review_date as lastReviewDate',
+        'type_cd as typeCd'
+      )
+      .where('id', disclosureId)
   ]);
 
   return {
     questions,
     entities,
     declarations,
-    configId: config.configId
+    configId: disclosure.configId,
+    submittedDate: disclosure.submittedDate,
+    lastReviewDate: disclosure.lastReviewDate,
+    typeCd: disclosure.typeCd
   };
 }
 
