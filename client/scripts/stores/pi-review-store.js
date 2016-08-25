@@ -105,6 +105,7 @@ class _PIReviewStore {
         }
 
         this.disclosure = disclosure.body;
+        this.disclosure.id = disclosureId;
         if (this.disclosure.questions) {
           this.disclosure.questions.forEach(questionMeta => {
             const {question} = questionMeta;
@@ -232,9 +233,9 @@ class _PIReviewStore {
     }
   }
 
-  revise([reviewId, answer]) {
+  reviseScreeningQuestion([questionId, answer]) {
     const questionToRevise = this.disclosure.questions.find(
-      question => reviewId === question.reviewId
+      question => questionId === question.id
     );
     if (questionToRevise) {
       questionToRevise.answer = {value: answer};
@@ -244,14 +245,16 @@ class _PIReviewStore {
     this.updateCanSubmit();
 
     createRequest()
-      .put(`/api/coi/pi-revise/${reviewId}`)
+      .put(
+        `/api/coi/disclosures/${this.disclosure.id}/pi-revise-by-question-id/${questionId}`
+      )
       .send({answer})
       .end(processResponse(() => {}));
   }
 
-  reviseEntityQuestion([reviewId, questionId, value]) {
+  reviseEntityQuestion([entityId, questionId, value]) {
     const entityToRevise = this.disclosure.entities.find(
-      entity => reviewId === entity.reviewId
+      entity => entityId === entity.id
     );
     if (entityToRevise) {
       const theAnswer = entityToRevise.answers.find(
@@ -269,14 +272,16 @@ class _PIReviewStore {
     this.updateCanSubmit();
 
     createRequest()
-      .put(`/api/coi/pi-revise/${reviewId}/entity-question/${questionId}`)
+      .put(
+        `/api/coi/entities/${entityId}/entity-question/${questionId}`
+      )
       .send({answer: value})
       .end(processResponse(() => {}));
   }
 
-  addRelationship([reviewId, newRelationship]) {
+  addRelationship([entityId, newRelationship]) {
     const entityToRevise = this.disclosure.entities.find(
-      entity => reviewId === entity.reviewId
+      entity => entityId === entity.id
     );
     if (entityToRevise) {
       if (entityToRevise.relationships === undefined) {
@@ -299,7 +304,7 @@ class _PIReviewStore {
     this.updateCanSubmit();
 
     createRequest()
-      .post(`/api/coi/pi-revise/${reviewId}/entity-relationship`)
+      .post(`/api/coi/entities/${entityId}/relationship`)
       .send(newRelationship)
       .end(processResponse((err, relationships) => {
         if (!err) {
@@ -309,7 +314,7 @@ class _PIReviewStore {
       }));
   }
 
-  removeRelationship([entityId, reviewId, relationshipId]) {
+  removeRelationship([entityId, relationshipId]) {
     const entityToRevise = this.disclosure.entities.find(
       entity => entityId === entity.id
     );
@@ -325,14 +330,14 @@ class _PIReviewStore {
     this.updateCanSubmit();
 
     createRequest()
-      .del(`/api/coi/pi-revise/${reviewId}/entity-relationship/${relationshipId}`)
+      .del(`/api/coi/entities/${entityId}/relationship/${relationshipId}`)
       .end(processResponse(() => {}));
   }
 
-  reviseDeclaration([reviewId, disposition, comment]) {
+  reviseDeclaration([entityId, projectId, disposition, comment]) {
     this.disclosure.declarations.forEach(project => {
       project.entities.forEach(entity => {
-        if (entity.reviewId === reviewId) {
+        if (entity.id === entityId && entity.projectId === projectId) {
           entity.reviewedOn = new Date();
           entity.revised = true;
           entity.comments = comment;
@@ -343,7 +348,7 @@ class _PIReviewStore {
 
     this.updateCanSubmit();
     createRequest()
-      .put(`/api/coi/pi-revise/${reviewId}/declaration`)
+      .put(`/api/coi/entities/${entityId}/projects/${projectId}`)
       .send({
         disposition,
         comment
@@ -351,23 +356,28 @@ class _PIReviewStore {
       .end(processResponse(() => {}));
   }
 
-  reviseSubQuestion([reviewId, subQuestionId, value]) {
-    const questionToRevise = this.disclosure.questions.find(
-      question => reviewId === question.reviewId
-    );
-    const subQuestionToRevise = questionToRevise.subQuestions.find(
-      subQuestion => subQuestion.id === subQuestionId
-    );
+  reviseSubQuestion([subQuestionId, value]) {
+    let subQuestionToRevise;
+
+    for (const question of this.disclosure.questions) {
+      if (question.subQuestions) {
+        subQuestionToRevise = question.subQuestions.find(
+          subQuestion => subQuestion.id === subQuestionId
+        );
+        if (subQuestionToRevise) {
+          break;
+        }
+      }
+    }
 
     if (subQuestionToRevise) {
       subQuestionToRevise.answer = {value};
-      questionToRevise.reviewedOn = new Date();
     }
 
     this.updateCanSubmit();
 
     createRequest()
-      .put(`/api/coi/pi-revise/${reviewId}/subquestion-answer/${subQuestionId}`)
+      .put(`/api/coi/disclosures/${this.disclosure.id}/subquestion-answer/${subQuestionId}`)
       .send({
         answer: {value}
       })
@@ -375,14 +385,27 @@ class _PIReviewStore {
       .end();
   }
 
-  deleteAnswers([reviewId, toDelete]) {
-    if (toDelete.length > 0) {
-      createRequest()
-        .del(`/api/coi/pi-revise/${reviewId}/question-answers`)
-        .send({toDelete})
-        .type('application/json')
-        .end();
+  deleteAnswers([questionId, newAnswer]) {
+    const theQuestion = this.disclosure.questions.find(
+      question => question.id === questionId
+    );
+
+    if (!theQuestion.subQuestions) {
+      return;
     }
+
+    const toDelete = theQuestion.subQuestions
+      .filter(
+        subQuestion => subQuestion.question.displayCriteria !== newAnswer
+      ).map(
+        subQuestion => subQuestion.id
+      );
+
+    createRequest()
+      .del(`/api/coi/disclosures/${this.disclosure.id}/question-answers`)
+      .send({toDelete})
+      .type('application/json')
+      .end();
   }
 
   submit() {
@@ -440,13 +463,15 @@ class _PIReviewStore {
     const entityToRevise = this.disclosure.entities.find(
       entity => entityId === entity.id
     );
-    const file = entityToRevise.files[index];
+    const file = entityToRevise.files.find(f => f.id === Number(index));
 
     createRequest()
       .del(`/api/coi/files/${file.id}`)
       .end(processResponse(err => {
         if (!err) {
-          entityToRevise.files.splice(index, 1);
+          entityToRevise.files = entityToRevise.files.filter(
+            f => f.id !== Number(index)
+          );
           entityToRevise.reviewedOn = new Date();
           entityToRevise.revised = 1;
           this.updateCanSubmit();

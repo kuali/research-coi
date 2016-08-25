@@ -23,41 +23,52 @@ import {formatDate} from '../../../../format-date';
 import Question from '../question';
 import { COI_ADMIN, ROLES } from '../../../../../../coi-constants';
 
-export default function QuestionToReview(props) {
-  const comments = props.question.comments.map(comment => {
-    const commentClasses = classNames(
-      {[styles.piComment]: comment.userRole === ROLES.USER},
-      styles.comment
-    );
-
-    const author = comment.userRole === ROLES.USER ? 'you' : COI_ADMIN;
-    return (
-      <div className={commentClasses} key={comment.id}>
-        <div className={styles.commentTitle}>Comment from
-          <span style={{marginLeft: 3}}>{author}</span>:
-        </div>
-        <div className={styles.commentText}>{comment.text}</div>
-        <div className={styles.commentDate}>{formatDate(comment.date)}</div>
-      </div>
-    );
-  });
-
+export default function QuestionToReview({question, className}) {
+  let commentSection;
   let icon;
-  if (props.question.reviewedOn !== null) {
-    icon = (
-      <i className={`fa fa-check-circle ${styles.completed}`} />
-    );
-  }
-  else {
-    icon = (
-      <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
-    );
+  if (question.comments) {
+    const comments = question.comments.map(comment => {
+      const commentClasses = classNames(
+        {[styles.piComment]: comment.userRole === ROLES.USER},
+        styles.comment
+      );
+
+      const author = comment.userRole === ROLES.USER ? 'you' : COI_ADMIN;
+      return (
+        <div className={commentClasses} key={comment.id}>
+          <div className={styles.commentTitle}>Comment from
+            <span style={{marginLeft: 3}}>{author}</span>:
+          </div>
+          <div className={styles.commentText}>{comment.text}</div>
+          <div className={styles.commentDate}>{formatDate(comment.date)}</div>
+        </div>
+      );
+    });
+
+    if (comments.length > 0) {
+      commentSection = (
+        <div className={styles.comments}>
+          {comments}
+        </div>
+      );
+    }
+
+    if (question.reviewedOn !== null) {
+      icon = (
+        <i className={`fa fa-check-circle ${styles.completed}`} />
+      );
+    }
+    else {
+      icon = (
+        <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
+      );
+    }
   }
 
-  const questionDetails = props.question.question;
-  const answer = props.question.answer;
+  const questionDetails = question.question;
+  const answer = question.answer;
   return (
-    <div className={`flexbox row ${styles.container} ${props.className}`}>
+    <div className={`flexbox row ${styles.container} ${className}`}>
       <span className={styles.statusIcon}>
         {icon}
       </span>
@@ -66,20 +77,19 @@ export default function QuestionToReview(props) {
       </span>
 
       <Question
-        reviewId={props.question.reviewId}
-        question={props.question}
+        reviewId={question.reviewId}
+        question={question}
         questionDetails={questionDetails}
         text={questionDetails.text}
-        answer={answer.value}
+        answer={answer ? answer.value : undefined}
         type={questionDetails.type}
-        revised={props.question.revised}
-        respondedTo={props.question.respondedTo}
+        revised={question.revised}
+        respondedTo={question.respondedTo}
+        canRespond={question.comments !== undefined}
       />
 
       <span className={styles.commentSection}>
-        <div className={styles.comments}>
-          {comments}
-        </div>
+        {commentSection}
       </span>
     </div>
   );

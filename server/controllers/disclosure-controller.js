@@ -619,12 +619,12 @@ export const init = app => {
         });
       }
 
-      await knex.transaction(async (knexTrx) => {
-        if (toDelete.length === 0) {
-          res.status(BAD_REQUEST).end();
-          return;
-        }
+      if (toDelete.length === 0) {
+        res.status(BAD_REQUEST).end();
+        return;
+      }
 
+      await knex.transaction(async (knexTrx) => {
         await deleteAnswers(
           knexTrx,
           userInfo,

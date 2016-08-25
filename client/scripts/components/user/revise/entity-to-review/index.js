@@ -34,14 +34,13 @@ export default class EntityToReview extends React.Component {
     this.state = {
       revising: false,
       responding: false,
-      responded: props.respondedTo !== null,
-      revised: props.revised !== null,
+      responded: props.respondedTo,
+      revised: props.revised,
       isValid: true
     };
 
     this.revise = this.revise.bind(this);
     this.respond = this.respond.bind(this);
-    this.cancel = this.cancel.bind(this);
     this.done = this.done.bind(this);
     this.onAnswerQuestion = this.onAnswerQuestion.bind(this);
     this.onAddRelationship = this.onAddRelationship.bind(this);
@@ -68,18 +67,22 @@ export default class EntityToReview extends React.Component {
   }
 
   onRemoveRelationship(relationshipId) {
-    PIReviewActions.removeRelationship(this.props.entity.id, this.props.entity.reviewId, relationshipId);
+    PIReviewActions.removeRelationship(this.props.entity.id, relationshipId);
   }
 
   onAnswerQuestion(newValue, questionId) {
-    PIReviewActions.reviseEntityQuestion(this.props.entity.reviewId, questionId, newValue);
+    PIReviewActions.reviseEntityQuestion(
+      this.props.entity.id,
+      questionId,
+      newValue
+    );
     this.setState({
       revised: true
     });
   }
 
   onAddRelationship(newRelationship) {
-    PIReviewActions.addRelationship(this.props.entity.reviewId, newRelationship);
+    PIReviewActions.addRelationship(this.props.entity.id, newRelationship);
     this.setState({
       revised: true
     });
@@ -94,13 +97,6 @@ export default class EntityToReview extends React.Component {
   respond() {
     this.setState({
       responding: true
-    });
-  }
-
-  cancel() {
-    this.setState({
-      revising: false,
-      responding: false
     });
   }
 
@@ -139,50 +135,73 @@ export default class EntityToReview extends React.Component {
   }
 
   render() {
-    const comments = this.props.entity.comments.map(comment => {
-      const commentClasses = classNames(
-        {[styles.piComment]: comment.userRole === ROLES.USER},
-        styles.comment
-      );
-
-      const author = comment.userRole === ROLES.USER ? 'you' : COI_ADMIN;
-      return (
-        <div className={commentClasses} key={comment.id}>
-          <div className={styles.commentTitle}>Comment from
-            <span style={{marginLeft: 3}}>{author}</span>:
-          </div>
-          <div className={styles.commentText}>{comment.text}</div>
-          <div className={styles.commentDate}>{formatDate(comment.date)}</div>
-        </div>
-      );
-    });
+    const {entity, className} = this.props;
 
     let icon;
-    if (this.props.entity.reviewedOn !== null) {
-      icon = (
-        <i className={`fa fa-check-circle ${styles.completed}`} />
-      );
-    }
-    else {
-      icon = (
-        <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
-      );
+    let commentSection;
+    if (entity.comments) {
+      const comments = entity.comments.map(comment => {
+        const commentClasses = classNames(
+          {[styles.piComment]: comment.userRole === ROLES.USER},
+          styles.comment
+        );
+
+        const author = comment.userRole === ROLES.USER ? 'you' : COI_ADMIN;
+        return (
+          <div className={commentClasses} key={comment.id}>
+            <div className={styles.commentTitle}>Comment from
+              <span style={{marginLeft: 3}}>{author}</span>:
+            </div>
+            <div className={styles.commentText}>{comment.text}</div>
+            <div className={styles.commentDate}>{formatDate(comment.date)}</div>
+          </div>
+        );
+      });
+
+      if (comments.length > 0) {
+        commentSection = (
+          <div className={styles.comments}>
+            {comments}
+          </div>
+        );
+      }
+
+      if (entity.reviewedOn !== null) {
+        icon = (
+          <i className={`fa fa-check-circle ${styles.completed}`} />
+        );
+      }
+      else {
+        icon = (
+          <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
+        );
+      }
     }
 
     let actions;
     if (this.state.revising || this.state.responding) {
       actions = (
         <span className={styles.actions}>
-          {/*<CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>*/}
           <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
         </span>
       );
     }
     else {
+      let respondLink;
+
+      if (entity.comments) {
+        respondLink = (
+          <CheckLink checked={this.state.responded} onClick={this.respond}>
+            RESPOND
+          </CheckLink>
+        );
+      }
       actions = (
         <span className={styles.actions}>
-          <CheckLink checked={this.state.revised} onClick={this.revise}>REVISE</CheckLink>
-          <CheckLink checked={this.state.responded} onClick={this.respond}>RESPOND</CheckLink>
+          <CheckLink checked={this.state.revised} onClick={this.revise}>
+            REVISE
+          </CheckLink>
+          {respondLink}
         </span>
       );
     }
@@ -190,8 +209,8 @@ export default class EntityToReview extends React.Component {
     let responseText;
     if (this.state.responding) {
       let defaultText;
-      if (this.props.entity.piResponse) {
-        defaultText = this.props.entity.piResponse.text;
+      if (entity.piResponse) {
+        defaultText = entity.piResponse.text;
       }
       responseText = (
         <div>
@@ -206,29 +225,29 @@ export default class EntityToReview extends React.Component {
     }
 
     return (
-      <div className={`flexbox row ${styles.container} ${this.props.className}`}>
+      <div className={`flexbox row ${styles.container} ${className}`}>
         <span className={styles.statusIcon}>
           {icon}
         </span>
         <span style={{marginRight: 25}} className={'fill'}>
-          <div className={styles.entityName}>{this.props.entity.name}</div>
+          <div className={styles.entityName}>{entity.name}</div>
           <div style={{marginBottom: 10}}>
             <EntityFormInformationStep
-              id={this.props.entity.id}
+              id={entity.id}
               readonly={!this.state.revising}
               update={true}
-              answers={this.props.entity.answers}
-              files={this.props.entity.files}
+              answers={entity.answers}
+              files={entity.files}
               validating={false}
               onAnswerQuestion={this.onAnswerQuestion}
               addEntityAttachments={this.addEntityAttachments}
               deleteEntityAttachment={this.deleteEntityAttachment}
             />
             <EntityFormRelationshipStep
-              id={this.props.entity.id}
+              id={entity.id}
               readonly={!this.state.revising}
               update={true}
-              relations={this.props.entity.relationships}
+              relations={entity.relationships}
               style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
               validating={false}
               appState={this.state.appState}
@@ -242,9 +261,7 @@ export default class EntityToReview extends React.Component {
           </div>
         </span>
         <span className={styles.commentSection}>
-          <div className={styles.comments}>
-            {comments}
-          </div>
+          {commentSection}
         </span>
       </div>
     );

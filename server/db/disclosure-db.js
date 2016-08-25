@@ -1757,17 +1757,12 @@ export async function deleteAnswers(
     .whereIn('qa.question_id', answersToDelete)
     .andWhere('da.disclosure_id', disclosureId);
 
-  const questionnaireAnswerIds = results.map(row => {
-    return row.questionnaireAnswerId;
-  });
-  const disclosureAnswerIds = results.map(row => {
-    return row.disclosureAnswerId;
-  });
-
+  const disclosureAnswerIds = results.map(row => row.disclosureAnswerId);
   await knex('disclosure_answer')
     .whereIn('id', disclosureAnswerIds)
     .del();
 
+  const questionnaireAnswerIds = results.map(row => row.questionnaireAnswerId);
   await knex('questionnaire_answer')
     .whereIn('id', questionnaireAnswerIds)
     .del();

@@ -32,8 +32,8 @@ export default class EntityDeclaration extends React.Component {
     this.state = {
       revising: props.revising ? props.revising : false,
       responding: props.responding ? props.responding : false,
-      responded: props.respondedTo !== null,
-      revised: props.revised !== null,
+      responded: props.respondedTo,
+      revised: props.revised,
       isValid: true
     };
 
@@ -79,7 +79,12 @@ export default class EntityDeclaration extends React.Component {
         }
       }
       const declarationComment = this.refs.declarationComment ? this.refs.declarationComment : {};
-      PIReviewActions.reviseDeclaration(this.props.entity.reviewId, selectedRadio.value, declarationComment.value);
+      PIReviewActions.reviseDeclaration(
+        this.props.entity.id,
+        this.props.entity.projectId,
+        selectedRadio.value,
+        declarationComment.value
+      );
     }
     else if (this.state.responding) {
       const textarea = this.refs.responseText ? this.refs.responseText : { value: ''};
@@ -95,34 +100,47 @@ export default class EntityDeclaration extends React.Component {
   }
 
   render() {
-    const comments = this.props.entity.adminComments.map(comment => {
-      const commentClasses = classNames(
-        {[styles.piComment]: comment.userRole === ROLES.USER},
-        styles.comment
-      );
-
-      const author = comment.userRole === ROLES.USER ? 'you' : COI_ADMIN;
-      return (
-        <div className={commentClasses} key={comment.id}>
-          <div className={styles.commentTitle}>Comment from
-            <span style={{marginLeft: 3}}>{author}</span>:
-          </div>
-          <div className={styles.commentText}>{comment.text}</div>
-          <div className={styles.commentDate}>{formatDate(comment.date)}</div>
-        </div>
-      );
-    });
+    const {entity, className} = this.props;
 
     let icon;
-    if (this.props.entity.reviewedOn !== null) {
-      icon = (
-        <i className={`fa fa-check-circle ${styles.completed}`} />
-      );
-    }
-    else {
-      icon = (
-        <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
-      );
+    let commentSection;
+    if (entity.adminComments.length > 0) {
+      const comments = entity.adminComments.map(comment => {
+        const commentClasses = classNames(
+          {[styles.piComment]: comment.userRole === ROLES.USER},
+          styles.comment
+        );
+
+        const author = comment.userRole === ROLES.USER ? 'you' : COI_ADMIN;
+        return (
+          <div className={commentClasses} key={comment.id}>
+            <div className={styles.commentTitle}>Comment from
+              <span style={{marginLeft: 3}}>{author}</span>:
+            </div>
+            <div className={styles.commentText}>{comment.text}</div>
+            <div className={styles.commentDate}>{formatDate(comment.date)}</div>
+          </div>
+        );
+      });
+
+      if (comments.length > 0) {
+        commentSection = (
+          <div className={styles.comments}>
+            {comments}
+          </div>
+        );
+      }
+
+      if (entity.reviewedOn !== null) {
+        icon = (
+          <i className={`fa fa-check-circle ${styles.completed}`} />
+        );
+      }
+      else {
+        icon = (
+          <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
+        );
+      }
     }
 
     let actions;
@@ -139,14 +157,20 @@ export default class EntityDeclaration extends React.Component {
       );
     }
     else {
+      let respondLink;
+      if (entity.adminComments.length > 0) {
+        respondLink = (
+          <CheckLink checked={this.state.responded} onClick={this.respond}>
+            RESPOND
+          </CheckLink>
+        );
+      }
       actions = (
         <span className={styles.actions}>
           <CheckLink checked={this.state.revised} onClick={this.revise}>
             REVISE
           </CheckLink>
-          <CheckLink checked={this.state.responded} onClick={this.respond}>
-            RESPOND
-          </CheckLink>
+          {respondLink}
         </span>
       );
     }
@@ -154,8 +178,8 @@ export default class EntityDeclaration extends React.Component {
     let responseText;
     if (this.state.responding) {
       let defaultText;
-      if (this.props.entity.piResponse) {
-        defaultText = this.props.entity.piResponse.text;
+      if (entity.piResponse) {
+        defaultText = entity.piResponse.text;
       }
       responseText = (
         <div>
@@ -173,14 +197,14 @@ export default class EntityDeclaration extends React.Component {
     if (this.state.revising) {
       declarationComment = (
         <span className={`fill ${styles.declarationComment}`}>
-          <textarea className={styles.declarationCommentTextbox} ref="declarationComment" defaultValue={this.props.entity.comments} />
+          <textarea className={styles.declarationCommentTextbox} ref="declarationComment" defaultValue={entity.comments} />
         </span>
       );
     }
-    else if (this.props.entity.comments && this.props.entity.comments.length > 0) {
+    else if (entity.comments && entity.comments.length > 0) {
       declarationComment = (
         <span className={`fill ${styles.declarationComment}`}>
-          {this.props.entity.comments}
+          {entity.comments}
         </span>
       );
     }
@@ -202,14 +226,14 @@ export default class EntityDeclaration extends React.Component {
           <div key={declarationType.typeCd} className={styles.declarationType}>
             <input
               type="radio"
-              id={`decType${this.props.entity.id}:${this.props.entity.projectId}:${declarationType.typeCd}`}
-              name={`decType${this.props.entity.id}:${this.props.entity.projectId}`}
-              defaultChecked={this.props.entity.relationshipCd === declarationType.typeCd}
+              id={`decType${entity.id}:${entity.projectId}:${declarationType.typeCd}`}
+              name={`decType${entity.id}:${entity.projectId}`}
+              defaultChecked={entity.relationshipCd === declarationType.typeCd}
               value={declarationType.typeCd}
             />
             <label
               className={styles.declarationTypeLabel}
-              htmlFor={`decType${this.props.entity.id}:${this.props.entity.projectId}:${declarationType.typeCd}`}
+              htmlFor={`decType${entity.id}:${entity.projectId}:${declarationType.typeCd}`}
             >
               {declarationType.description}
             </label>
@@ -225,7 +249,7 @@ export default class EntityDeclaration extends React.Component {
     else {
       const declarationType = getDeclarationTypeString(
         this.context.configState,
-        this.props.entity.relationshipCd,
+        entity.relationshipCd,
         this.context.configState.config.id
       );
       relationship = (
@@ -234,13 +258,13 @@ export default class EntityDeclaration extends React.Component {
     }
 
     return (
-      <div className={`flexbox row ${styles.container} ${this.props.className}`} name='Entity Declaration'>
+      <div className={`flexbox row ${styles.container} ${className}`} name='Entity Declaration'>
         <span className={styles.statusIcon}>
           {icon}
         </span>
         <span style={{marginRight: 25}} className={'fill'}>
           <div style={{margin: '8px 0 10px 0'}} className={'flexbox row'}>
-            <span className={styles.entityName}>{this.props.entity.name}</span>
+            <span className={styles.entityName}>{entity.name}</span>
             {relationship}
             {declarationComment}
           </div>
@@ -252,9 +276,7 @@ export default class EntityDeclaration extends React.Component {
           </div>
         </span>
         <span className={styles.commentSection}>
-          <div className={styles.comments}>
-            {comments}
-          </div>
+          {commentSection}
         </span>
       </div>
     );
