@@ -63,7 +63,8 @@ export class Revise extends React.Component {
   }
 
   render() {
-    let questionnaire, entities, declarations;
+    let questionnaire, entities, declarations, submittedDate, lastReviewDate;
+    let disclosureType;
     if (this.state.disclosure) {
       if (this.state.disclosure.questions && this.state.disclosure.questions.length > 0) {
         questionnaire = (
@@ -88,6 +89,10 @@ export class Revise extends React.Component {
           />
         );
       }
+
+      lastReviewDate = this.state.disclosure.lastReviewDate;
+      submittedDate = this.state.disclosure.submittedDate;
+      disclosureType = this.state.disclosure.typeCd;
     }
 
     return (
@@ -95,9 +100,9 @@ export class Revise extends React.Component {
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <div className={`fill flexbox column ${styles.container} ${this.props.className}`}>
           <RevisionHeader
-            disclosureType={2}
-            submittedDate={new Date()}
-            returnedDate={new Date()}
+            disclosureType={disclosureType}
+            submittedDate={submittedDate}
+            returnedDate={lastReviewDate}
           />
           <div className={'flexbox row fill'}>
             <span className={`fill ${styles.disclosure}`}>
