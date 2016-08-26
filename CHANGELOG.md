@@ -1,3 +1,32 @@
+##coi-1608
+Enhancements:
+* UI Adjustment: Display "No Projects to Disclose" when the Reporter has no projects
+* UI adjustment: Display of Finanical Entity and Project Declarations sections even when there aren't any in a disclosure
+* Changed Financial Entity icon to avoid confusion by researchers
+* Ability to include Project information and Dispositions in Annual approval email
+ 
+Issues Fixed:
+* Project view in Project Declarations asks for relationship declarations when there is no active FE
+* Reviewer should not see "Previous Versions" on assigned disclosures
+* Show/Hide from Reporter does not work in the aggregate view of review comments. This view of comments should be read-only
+* Cannot read property 'firstName' of undefined at Object.getDisclosureVariables
+* Multi-selection questionnaire answers often don't format correctly. Revising doesn’t work well either, especially with a minimum number of selections.
+* Project data not displayed on a disclosure which is sent back and the user cannot tell which project comment relates to when revising or responding in Project Declaration
+* Consistent approach to using DB transactions with Knex/Express
+* Clean up DB layer by using async/await
+* Error on disclosure approval
+* COI searches are case sensitive in Oracle
+* Disposition type description is too long error
+* LOB already opened in the same transaction
+* Submitted date updating when it should not
+* General Attachment not displayed in reporters' view of a Submitted disclosure
+* COI Reviewer unassigned notifications not being recevied
+
+In-progress features behind a Feature Flag:
+* Ability to filter admin list view whether a disclose is with an assigned reviewer
+* Approved and Archived Disclosures for Admins
+* Filter for disclosures assigned to reviewers
+
 ##coi-1607
 
 Issues Fixed: 
