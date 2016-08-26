@@ -35,14 +35,13 @@ export default class Question extends React.Component {
     this.state = {
       revising: false,
       responding: false,
-      responded: props.respondedTo !== null,
-      revised: props.revised !== null,
+      responded: props.respondedTo,
+      revised: props.revised,
       isValid: true
     };
 
     this.revise = this.revise.bind(this);
     this.respond = this.respond.bind(this);
-    this.cancel = this.cancel.bind(this);
     this.done = this.done.bind(this);
 
     this.changeAnswer = this.changeAnswer.bind(this);
@@ -60,50 +59,38 @@ export default class Question extends React.Component {
   }
 
   changeAnswer(newAnswer) {
-    PIReviewActions.revise(this.props.reviewId, newAnswer);
+    PIReviewActions.reviseScreeningQuestion(
+      this.props.question.id,
+      newAnswer
+    );
     this.setState({
       revised: true
     });
   }
 
-  deleteIrrelaventAnswers(questionId, newAnswer) {
-    if (this.props.question.subQuestions) {
-      const toDelete = this.props.question.subQuestions.filter(question => {
-        return question.parent === questionId;
-      }).filter(question => {
-        return question.question.displayCriteria !== newAnswer;
-      }).map(question => {
-        return question.id;
-      });
-
-      PIReviewActions.deleteAnswers(this.props.reviewId, toDelete);
-    }
-  }
-
   answer(newAnswer, questionId) {
     const isParentQuestion = this.props.question.id === questionId;
     if (isParentQuestion) {
-      this.deleteIrrelaventAnswers(questionId, newAnswer);
+      PIReviewActions.deleteAnswers(questionId, newAnswer);
       this.changeAnswer(newAnswer);
     }
     else {
-      PIReviewActions.reviseSubQuestion(this.props.reviewId, questionId, newAnswer);
+      PIReviewActions.reviseSubQuestion(questionId, newAnswer);
     }
   }
 
   answerMultiple(value, checked, questionId) {
     const isParentQuestion = this.props.question.id === questionId;
     if (isParentQuestion) {
-      let newAnswer = Array.from(this.props.answer);
+      const {answer: answers = []} = this.props;
+      let newAnswer = Array.from(answers);
       if (checked) {
         if (!newAnswer.includes(value)) {
           newAnswer.push(value);
         }
       }
       else {
-        newAnswer = this.props.answer.filter(answer => {
-          return answer !== value;
-        });
+        newAnswer = answers.filter(answer => answer !== value);
       }
       this.changeAnswer(newAnswer);
     }
@@ -111,7 +98,10 @@ export default class Question extends React.Component {
       const questionBeingAnswered = this.props.question.subQuestions.find(subQuestion => {
         return subQuestion.id === questionId;
       });
-      let newAnswer = Array.from(questionBeingAnswered.answer.value);
+      let newAnswer = [];
+      if (questionBeingAnswered.answer.value) {
+        newAnswer = Array.from(questionBeingAnswered.answer.value);
+      }
       if (checked) {
         if (!newAnswer.includes(value)) {
           newAnswer.push(value);
@@ -122,7 +112,7 @@ export default class Question extends React.Component {
           return answer !== value;
         });
       }
-      PIReviewActions.reviseSubQuestion(this.props.reviewId, questionId, newAnswer);
+      PIReviewActions.reviseSubQuestion(questionId, newAnswer);
     }
   }
 
@@ -215,13 +205,6 @@ export default class Question extends React.Component {
     });
   }
 
-  cancel() {
-    this.setState({
-      revising: false,
-      responding: false
-    });
-  }
-
   done() {
     if (!this.state.isValid) {
       return;
@@ -253,16 +236,31 @@ export default class Question extends React.Component {
     if (this.state.revising || this.state.responding) {
       actions = (
         <span className={styles.actions}>
-          {/*<CheckLink checked={false} onClick={this.cancel}>CANCEL</CheckLink>*/}
-          <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
+          <CheckLink
+            checked={false}
+            onClick={this.done}
+            disabled={!this.state.isValid}
+          >
+            DONE
+          </CheckLink>
         </span>
       );
     }
     else {
+      let respondLink;
+      if (this.props.canRespond) {
+        respondLink = (
+          <CheckLink checked={this.state.responded} onClick={this.respond}>
+            RESPOND
+          </CheckLink>
+        );
+      }
       actions = (
         <span className={styles.actions}>
-          <CheckLink checked={this.state.revised} onClick={this.revise}>REVISE</CheckLink>
-          <CheckLink checked={this.state.responded} onClick={this.respond}>RESPOND</CheckLink>
+          <CheckLink checked={this.state.revised} onClick={this.revise}>
+            REVISE
+          </CheckLink>
+          {respondLink}
         </span>
       );
     }
@@ -294,8 +292,9 @@ export default class Question extends React.Component {
       );
     }
     else if (this.props.type === QUESTION_TYPE.MULTISELECT) {
+      const {answer = []} = this.props;
       answerArea = (
-        <div>{this.props.answer.join(', ')}</div>
+        <div>{answer.join(', ')}</div>
       );
     }
     else if (this.props.type === QUESTION_TYPE.DATE) {

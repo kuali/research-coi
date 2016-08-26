@@ -23,7 +23,7 @@ export default alt.generateActions(
   'submit',
   'confirm',
   'respond',
-  'revise',
+  'reviseScreeningQuestion',
   'reviseEntityQuestion',
   'addRelationship',
   'removeRelationship',

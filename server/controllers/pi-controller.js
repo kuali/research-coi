@@ -18,7 +18,11 @@
 
 import * as PIDB from '../db/pi-db';
 import * as PIReviewDB from '../db/pi-review-db';
-import {isDisclosureUsers} from '../db/common-db';
+import {
+  isDisclosureUsers,
+  isFinancialEntityUsers,
+  isProjectUsers
+} from '../db/common-db';
 import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
@@ -83,6 +87,9 @@ export const init = app => {
   ));
 
   /**
+    -- DEPRECATED:
+    Use /api/coi/disclosures/:disclosureId/pi-revise-by-question-id/:questionId
+
     User can only revise questions which are associated with their disclosures
   */
   app.put(
@@ -93,7 +100,7 @@ export const init = app => {
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await PIReviewDB.reviseQuestion(
+        result = await PIReviewDB.reviseScreeningQuestion(
           knexTrx,
           userInfo,
           params.reviewId,
@@ -105,6 +112,42 @@ export const init = app => {
   ));
 
   /**
+    User can only revise questions which are associated with their disclosures
+  */
+  app.put(
+    '/api/coi/disclosures/:disclosureId/pi-revise-by-question-id/:questionId',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      const isSubmitter = await isDisclosureUsers(
+        knex,
+        params.disclosureId,
+        userInfo.schoolId
+      );
+
+      if (!isSubmitter) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await PIReviewDB.reviseScreeningQuestionById(
+          knexTrx,
+          userInfo,
+          params.disclosureId,
+          params.questionId,
+          body.answer
+        );
+      });
+      res.send(result);
+    }
+  ));
+
+  /**
+    -- DEPRECATED:
+    Use /api/coi/entities/:entityId/entity-question/:questionId
+
     User can only revise questions which are associated with their disclosures
   */
   app.put(
@@ -128,6 +171,42 @@ export const init = app => {
   ));
 
   /**
+    User can only revise questions which are associated with their entities
+  */
+  app.put(
+    '/api/coi/entities/:entityId/entity-question/:questionId',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      const isOwner = await isFinancialEntityUsers(
+        knex,
+        params.entityId,
+        userInfo.schoolId
+      );
+
+      if (!isOwner) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await PIReviewDB.reviseEntityQuestionById(
+          knexTrx,
+          userInfo,
+          params.entityId,
+          params.questionId,
+          body.answer
+        );
+      });
+      res.send(result);
+    }
+  ));
+
+  /**
+    -- DEPRECATED:
+    Use /api/coi/entities/:entityId/relationship
+
     User can only add relationships for entities which are associated with their
     disclosures
   */
@@ -151,6 +230,42 @@ export const init = app => {
   ));
 
   /**
+    User can only add relationships for entities which are associated with their
+    disclosures
+  */
+  app.post(
+    '/api/coi/entities/:entityId/relationship',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      const isOwner = await isFinancialEntityUsers(
+        knex,
+        params.entityId,
+        userInfo.schoolId
+      );
+
+      if (!isOwner) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      let result;
+      await knex.transaction(async (knexTrx) => {
+        result = await PIReviewDB.addRelationshipById(
+          knexTrx,
+          userInfo,
+          params.entityId,
+          body
+        );
+      });
+      res.send(result);
+    }
+  ));
+
+  /**
+    -- DEPRECATED:
+    Use /api/coi/entities/:entityId/relationship/:relationshipId
+
     User can only remove relationships for entities which are associated with
     their disclosures
   */
@@ -173,6 +288,41 @@ export const init = app => {
   ));
 
   /**
+    User can only remove relationships for entities which are associated with
+    their disclosures
+  */
+  app.delete(
+    '/api/coi/entities/:entityId/relationship/:relationshipId',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo}, res) => {
+      const isOwner = await isFinancialEntityUsers(
+        knex,
+        params.entityId,
+        userInfo.schoolId
+      );
+
+      if (!isOwner) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      await knex.transaction(async (knexTrx) => {
+        await PIReviewDB.removeRelationshipById(
+          knexTrx,
+          userInfo,
+          params.entityId,
+          params.relationshipId
+        );
+      });
+      res.status(NO_CONTENT).end();
+    }
+  ));
+
+  /**
+    -- DEPRECATED:
+    Use /api/coi/entities/:entityId/projects/:projectId
+
     User can only revise declarations which are associated with their
     disclosures
   */
@@ -195,6 +345,49 @@ export const init = app => {
   ));
 
   /**
+    User can only revise declarations which are associated with their
+    disclosures
+  */
+  app.put(
+    '/api/coi/entities/:entityId/projects/:projectId',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      const [isEntityOwner, isProjectOwner] = await Promise.all([
+        isFinancialEntityUsers(
+          knex,
+          params.entityId,
+          userInfo.schoolId
+        ),
+        isProjectUsers(
+          knex,
+          params.projectId,
+          userInfo.schoolId
+        )
+      ]);
+
+      if (!isEntityOwner || !isProjectOwner) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      await knex.transaction(async (knexTrx) => {
+        await PIReviewDB.reviseDeclarationById(
+          knexTrx,
+          userInfo,
+          params.entityId,
+          params.projectId,
+          body
+        );
+      });
+      res.status(NO_CONTENT).end();
+    }
+  ));
+
+  /**
+    -- DEPRECATED:
+    Use /api/coi/disclosures/:disclosureId/subquestion-answer/:subQuestionId
+
     User can only revise subquestions which are associated with their
     disclosures
   */
@@ -218,6 +411,42 @@ export const init = app => {
   ));
 
   /**
+    User can only revise subquestions which are associated with their
+    disclosures
+  */
+  app.put(
+    '/api/coi/disclosures/:disclosureId/subquestion-answer/:subQuestionId',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      const isSubmitter = await isDisclosureUsers(
+        knex,
+        params.disclosureId,
+        userInfo.schoolId
+      );
+
+      if (!isSubmitter) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      await knex.transaction(async (knexTrx) => {
+        await PIReviewDB.reviseSubQuestionByQuestionId(
+          knexTrx,
+          userInfo,
+          params.disclosureId,
+          params.subQuestionId,
+          body
+        );
+      });
+      res.status(NO_CONTENT).end();
+    }
+  ));
+
+  /**
+    -- DEPRECATED:
+    Use /api/coi/disclosures/:id/question-answers
+
     User can only remove answers for questions which are associated with their
     disclosures
   */

@@ -26,6 +26,8 @@ import EntityDeclaration from '../../../../../../client/scripts/components/user/
 EntityDeclaration.__Rewire__('PIReviewActions', MockPIReviewActions); //eslint-disable-line no-underscore-dangle
 
 const entityWithComments = {
+  id: 1,
+  projectId: 3,
   reviewId: 1,
   comments: [{id: 1, author: 'Kuali Joe', text: 'comment', date: new Date()}],
   adminComments: [{id: 1, author: 'Kuali Joe', text: 'admin comment', date: new Date()}],
@@ -34,6 +36,8 @@ const entityWithComments = {
 };
 
 const entityWithOutComments = {
+  id: 2,
+  projectId: 4,
   reviewId: 1,
   comments: [],
   adminComments: [],

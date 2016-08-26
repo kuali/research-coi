@@ -344,7 +344,7 @@ class _DisclosureStore {
         question: this.applicationState.currentDisclosureState.question
       })
       .type('application/json')
-      .end();
+      .end(processResponse(() => {}));
   }
 
   loadDisclosureData(disclosureType) {

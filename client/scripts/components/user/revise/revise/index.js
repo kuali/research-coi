@@ -26,6 +26,7 @@ import EntitySection from '../entity-section';
 import DeclarationSection from '../declaration-section';
 import SidePanel from '../side-panel';
 import PIReviewActions from '../../../../actions/pi-review-actions';
+import {LANES} from '../../../../../../coi-constants';
 
 export class Revise extends React.Component {
   constructor() {
@@ -63,31 +64,62 @@ export class Revise extends React.Component {
   }
 
   render() {
+    const {configState} = this.context;
+
     let questionnaire, entities, declarations, submittedDate, lastReviewDate;
     let disclosureType;
     if (this.state.disclosure) {
-      if (this.state.disclosure.questions && this.state.disclosure.questions.length > 0) {
-        questionnaire = (
-          <QuestionnaireSection
-            questions={this.state.disclosure.questions}
-          />
-        );
+      if (this.state.disclosure.questions) {
+        let questionsToDisplay = this.state.disclosure.questions;
+        if (configState.config.lane !== LANES.TEST) {
+          questionsToDisplay = questionsToDisplay.filter(question => {
+            return question.comments && question.comments.length > 0;
+          });
+        }
+
+        if (questionsToDisplay.length > 0) {
+          questionnaire = (
+            <QuestionnaireSection
+              questions={questionsToDisplay}
+            />
+          );
+        }
       }
 
-      if (this.state.disclosure.entities && this.state.disclosure.entities.length > 0) {
-        entities = (
-          <EntitySection
-            entitiesToReview={this.state.disclosure.entities}
-          />
-        );
+      if (this.state.disclosure.entities) {
+        let entitiesToReview = this.state.disclosure.entities;
+        if (configState.config.lane !== LANES.TEST) {
+          entitiesToReview = entitiesToReview.filter(entity => {
+            return entity.comments && entity.comments.length > 0;
+          });
+        }
+
+        if (entitiesToReview.length > 0) {
+          entities = (
+            <EntitySection
+              entitiesToReview={entitiesToReview}
+            />
+          );
+        }
       }
 
-      if (this.state.disclosure.declarations && this.state.disclosure.declarations.length > 0) {
-        declarations = (
-          <DeclarationSection
-            declarationsToReview={this.state.disclosure.declarations}
-          />
-        );
+      if (this.state.disclosure.declarations) {
+        let declarationsToReview = this.state.disclosure.declarations;
+        if (configState.config.lane !== LANES.TEST) {
+          declarationsToReview.forEach(project => {
+            project.entities = project.entities.filter(entity => {
+              return entity.adminComments && entity.adminComments.length > 0;
+            });
+          });
+        }
+
+        if (declarationsToReview.length > 0) {
+          declarations = (
+            <DeclarationSection
+              declarationsToReview={declarationsToReview}
+            />
+          );
+        }
       }
 
       lastReviewDate = this.state.disclosure.lastReviewDate;
@@ -112,7 +144,7 @@ export class Revise extends React.Component {
             </span>
 
             <SidePanel
-              certificationText={this.context.configState.config.general.certificationOptions.text}
+              certificationText={configState.config.general.certificationOptions.text}
               showingCertification={this.state.applicationState.showingCertification}
               submitEnabled={this.state.applicationState.canSubmit}
               onConfirm={this.onConfirm}

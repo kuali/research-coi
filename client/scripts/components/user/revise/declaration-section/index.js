@@ -20,8 +20,8 @@ import styles from './style';
 import React from 'react';
 import ProjectToReview from '../project-to-review';
 
-export default function DeclarationSection(props) {
-  const projects = props.declarationsToReview;
+export default function DeclarationSection({declarationsToReview, className}) {
+  const projects = declarationsToReview;
 
   const projectsJSX = projects.map((project, index) => {
     return (
@@ -34,7 +34,7 @@ export default function DeclarationSection(props) {
   });
 
   return (
-    <div className={`${styles.container} ${props.className}`} name='Declaration Section'>
+    <div className={`${styles.container} ${className}`} name='Declaration Section'>
       <div className={styles.title}>
         PROJECT DECLARATIONS
       </div>

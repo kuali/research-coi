@@ -21,28 +21,30 @@ import classNames from 'classnames';
 import React from 'react';
 import QuestionToReview from '../question-to-review';
 
-export default function QuestionnaireSection(props) {
-  const questions = props.questions.map((question, index) => {
-    return (
-      <QuestionToReview
-        key={question.id}
-        question={question}
-        className={classNames(
-          styles.override,
-          styles.question,
-          {[styles.last]: index === props.questions.length - 1}
-        )}
-      />
-    );
-  });
+export default function QuestionnaireSection({questions, className}) {
+  const questionsJsx = questions
+    .sort((a, b) => a.question.order - b.question.order)
+    .map((question, index) => {
+      return (
+        <QuestionToReview
+          key={question.id}
+          question={question}
+          className={classNames(
+            styles.override,
+            styles.question,
+            {[styles.last]: index === questions.length - 1}
+          )}
+        />
+      );
+    });
 
   return (
-    <div className={`${styles.container} ${props.className}`}>
+    <div className={`${styles.container} ${className}`}>
       <div className={styles.title}>
         QUESTIONNAIRE
       </div>
       <div className={styles.body}>
-        {questions}
+        {questionsJsx}
       </div>
     </div>
   );

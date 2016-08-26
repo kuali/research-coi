@@ -41,6 +41,18 @@ export async function isFinancialEntityUsers(knex, id, userId) {
   return result !== undefined;
 }
 
+export async function isProjectUsers(knex, projectId, userId) {
+  const result = await knex
+    .first('id')
+    .from('project_person')
+    .where({
+      person_id: userId,
+      project_id: projectId
+    });
+
+  return result !== undefined;
+}
+
 export async function getDisclosureForFinancialEntity(knex, id) {
   const entity = await knex('fin_entity')
     .first('disclosure_id as disclosureId')
