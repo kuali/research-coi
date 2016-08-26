@@ -21,7 +21,9 @@ import React from 'react';
 import DeclarationsSummary from '../../../read-only-declarations-summary';
 import EntitiesSummary from '../../../read-only-entities-summary';
 import QuestionnaireSummary from '../../../read-only-questionnaire-summary';
+import AttachmentSummary from '../../../read-only-attachment-summary';
 import getConfig from '../../../../get-config';
+import {FILE_TYPE} from '../../../../../../coi-constants';
 
 function getAnswerMap(answers) {
   if (!answers || !Array.isArray(answers)) {
@@ -48,8 +50,16 @@ export default function ReadOnlyDetail(props, {configState}) {
   }
 
   if (disclosure) {
+    const files = disclosure.files.filter(
+      file => file.fileType === FILE_TYPE.DISCLOSURE
+    );
+
     detail = (
       <div>
+        <AttachmentSummary
+          files={files}
+          className={`${styles.override} ${styles.files}`}
+        />
         <QuestionnaireSummary
           questions={config.questions.screening}
           answers={getAnswerMap(disclosure.answers)}
