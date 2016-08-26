@@ -20,6 +20,10 @@
   padding: 20px;
 }
 
+.override.files {
+  margin-bottom: 25px;
+}
+
 .override.questionnaire {
   margin-bottom: 25px;
 }
