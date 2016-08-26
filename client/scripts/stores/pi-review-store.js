@@ -382,7 +382,7 @@ class _PIReviewStore {
         answer: {value}
       })
       .type('application/json')
-      .end();
+      .end(processResponse(() => {}));
   }
 
   deleteAnswers([questionId, newAnswer]) {
@@ -401,11 +401,15 @@ class _PIReviewStore {
         subQuestion => subQuestion.id
       );
 
+    if (toDelete.length === 0) {
+      return;
+    }
+
     createRequest()
       .del(`/api/coi/disclosures/${this.disclosure.id}/question-answers`)
       .send({toDelete})
       .type('application/json')
-      .end();
+      .end(processResponse(() => {}));
   }
 
   submit() {
