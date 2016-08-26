@@ -69,15 +69,17 @@ export const init = app => {
     wrapAsync(async (req, res) =>
     {
       const {knex, dbInfo, hostname, userInfo, params} = req;
-      await knex.transaction(async (knexTrx) => {
-        await deleteAdditionalReviewer(knexTrx, params.id);
-      });
+
       await createAndSendReviewerUnassignNotification(
         dbInfo,
         hostname,
         userInfo,
         params.id
       );
+
+      await knex.transaction(async (knexTrx) => {
+        await deleteAdditionalReviewer(knexTrx, params.id);
+      });
       res.sendStatus(OK);
     }
   ));
