@@ -45,21 +45,22 @@ export default class RelationshipTextField extends React.Component {
   }
 
   render() {
+    const {invalid, validation, label, value = ''} = this.props;
     let requiredFieldError;
-    if (this.props.invalid && this.props.validation) {
+    if (invalid && validation) {
       requiredFieldError = (
-        <div className={styles.invalidError}>{this.props.invalid}</div>
+        <div className={styles.invalidError}>{invalid}</div>
       );
     }
 
     return (
       <div className={styles.container}>
-        <div style={this.getLabelStyle(this.props.invalid, this.props.validation)}>{this.props.label}</div>
+        <div style={this.getLabelStyle(invalid, validation)}>{label}</div>
         <input
           type='text'
           onChange={this.onChange}
-          className={this.getInputStyle(this.props.invalid, this.props.validation, styles.textBox)}
-          value={this.props.value}
+          className={this.getInputStyle(invalid, validation, styles.textBox)}
+          value={value}
         />
         {requiredFieldError}
       </div>

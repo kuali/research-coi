@@ -55,15 +55,17 @@ export class NumericControl extends React.Component {
   }
 
   render() {
+    const {questionId, answer = ''} = this.props;
+
     return (
       <div>
         <div className={styles.container}>
           <input
             className={styles.textbox}
             type="number"
-            id={`qn${this.props.questionId}`}
+            id={`qn${questionId}`}
             onChange={this.onChange}
-            value={this.props.answer}
+            value={answer}
           />
         </div>
       </div>

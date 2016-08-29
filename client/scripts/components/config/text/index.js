@@ -37,28 +37,39 @@ export default class Text extends React.Component {
   }
 
   render() {
+    const {
+      readOnly,
+      className,
+      value = '',
+      path,
+      labelStyle,
+      label
+    } = this.props;
+
     let content;
-    if (this.props.readOnly) {
+    if (readOnly) {
       content = (
-        <div className={classNames(styles.readOnly, this.props.className)}>
-          {this.props.value}
+        <div className={classNames(styles.readOnly, className)}>
+          {value}
         </div>
       );
     } else {
       content = (
         <input
           type='text'
-          id={this.props.path}
-          name={this.props.path}
-          className={classNames(styles.text, this.props.className)}
-          value={this.props.value}
+          id={path}
+          name={path}
+          className={classNames(styles.text, className)}
+          value={value}
           onChange={this.set}
         />
       );
     }
     return (
       <div>
-        <label htmlFor={this.props.path} className={classNames(styles.label, this.props.labelStyle)}>{this.props.label}</label>
+        <label htmlFor={path} className={classNames(styles.label, labelStyle)}>
+          {label}
+        </label>
         {content}
       </div>
     );

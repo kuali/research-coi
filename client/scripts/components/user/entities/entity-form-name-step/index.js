@@ -35,10 +35,12 @@ export class EntityFormNameStep extends React.Component {
   }
 
   render() {
+    const {validating, className, entityName = ''} = this.props;
+
     const validationErrors = DisclosureStore.entityNameStepErrors();
 
     let requiredFieldError;
-    if (this.props.validating && validationErrors.name) {
+    if (validating && validationErrors.name) {
       requiredFieldError = (
         <div className={styles.invalidError}>{validationErrors.name}</div>
       );
@@ -48,8 +50,8 @@ export class EntityFormNameStep extends React.Component {
 
     const classes = classNames(
       styles.container,
-      {[styles.errors]: this.props.validating && validationErrors.name},
-      this.props.className
+      {[styles.errors]: validating && validationErrors.name},
+      className
     );
 
     return (
@@ -64,7 +66,7 @@ export class EntityFormNameStep extends React.Component {
                 id={htmlId}
                 required
                 onChange={this.updateName}
-                value={this.props.entityName}
+                value={entityName}
                 ref="entityName"
                 type="text"
                 className={styles.name}

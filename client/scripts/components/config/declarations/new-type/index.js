@@ -60,7 +60,7 @@ export default class NewType extends React.Component {
   }
 
   render() {
-    const { value } = this.props;
+    const { value = '' } = this.props;
     let doneLink;
     if (value && value.length > 0) {
       doneLink = (

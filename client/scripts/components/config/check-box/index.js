@@ -32,23 +32,31 @@ export default class CheckBox extends React.Component {
   }
 
   render() {
+    const {
+      path,
+      className,
+      checked = false,
+      labelClassName,
+      label
+    } = this.props;
+
     return (
       <div className={styles.container}>
         <span style={{height: '100%', verticalAlign: 'top'}}>
           <input
-            id={this.props.path}
+            id={path}
             type="checkbox"
-            className={this.props.className}
-            checked={this.props.checked}
+            className={className}
+            checked={checked}
             onChange={this.toggle}
           />
         </span>
         <span style={{height: '100%', whiteSpace: 'normal', minWidth: '233px'}}>
           <label
-            htmlFor={this.props.path}
-            className={this.props.labelClassName}
+            htmlFor={path}
+            className={labelClassName}
           >
-            {this.props.label}
+            {label}
           </label>
         </span>
       </div>

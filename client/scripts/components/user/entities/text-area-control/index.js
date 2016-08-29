@@ -32,28 +32,30 @@ export class TextAreaControl extends React.Component {
   }
 
   render() {
+    const {invalid, readonly, answer = '', entityId, questionId} = this.props;
+
     let requiredFieldError;
-    if (this.props.invalid) {
+    if (invalid) {
       requiredFieldError = (
         <div className={styles.invalidError}>Required Field</div>
       );
     }
 
-    if (this.props.readonly) {
+    if (readonly) {
       return (
         <div className={styles.value}>
-          {this.props.answer}
+          {answer}
         </div>
       );
     }
 
     return (
-      <div className={classNames({[styles.invalid]: this.props.invalid})}>
+      <div className={classNames({[styles.invalid]: invalid})}>
         <textarea
-          id={`eqa${this.props.entityId}${this.props.questionId}`}
+          id={`eqa${entityId}${questionId}`}
           ref="textarea"
           className={styles.textarea}
-          value={this.props.answer}
+          value={answer}
           onChange={this.onChange}
         />
         {requiredFieldError}
