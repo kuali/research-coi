@@ -94,6 +94,7 @@ export class Question extends React.Component {
             onChange={this.onAnswer}
             questionId={question.id}
             invalid={this.props.invalid}
+            entityId={this.props.entityId}
           />
         );
       case QUESTION_TYPE.MULTISELECT:
@@ -115,6 +116,7 @@ export class Question extends React.Component {
             onChange={this.onAnswer}
             questionId={question.id}
             invalid={this.props.invalid}
+            entityId={this.props.entityId}
           />
         );
       case QUESTION_TYPE.DATE:
@@ -125,6 +127,7 @@ export class Question extends React.Component {
             onChange={this.onAnswer}
             questionId={question.id}
             invalid={this.props.invalid}
+            entityId={this.props.entityId}
           />
         );
     }
@@ -138,7 +141,7 @@ export class Question extends React.Component {
 
     return (
       <span className={classes}>
-        <label htmlFor={`eqa${this.props.question.id}`}>
+        <label htmlFor={`eqa${this.props.entityId}${this.props.question.id}`}>
           {this.props.question.question.text}
         </label>
         <div className={styles.controls}>

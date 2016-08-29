@@ -50,7 +50,7 @@ export class TextAreaControl extends React.Component {
     return (
       <div className={classNames({[styles.invalid]: this.props.invalid})}>
         <textarea
-          id={`eqa${this.props.questionId}`}
+          id={`eqa${this.props.entityId}${this.props.questionId}`}
           ref="textarea"
           className={styles.textarea}
           value={this.props.answer}

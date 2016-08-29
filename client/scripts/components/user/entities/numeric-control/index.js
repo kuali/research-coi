@@ -52,7 +52,7 @@ export class NumericControl extends React.Component {
           <input
             className={styles.textbox}
             type="number"
-            id={`eqa${this.props.questionId}`}
+            id={`eqa${this.props.entityId}${this.props.questionId}`}
             onChange={this.onChange}
             value={this.props.answer}
           />
