@@ -129,7 +129,7 @@ export default function EntitySummary(props) {
 
   let commentsJsx;
   if (props.comments && props.comments.length > 0) {
-    let individualComments = props.comments.map(comment => {
+    const individualComments = props.comments.map(comment => {
       return (
         <div key={comment.id} className={styles.comment}>
           {comment.author}:

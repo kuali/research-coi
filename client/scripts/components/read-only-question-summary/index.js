@@ -38,7 +38,7 @@ function formatAnswer(type, answer) {
 export default function QuestionSummary({className, question, answer, comments}) {
   let commentsJsx;
   if (comments && comments.length > 0) {
-    let individualComments = comments.map(comment => {
+    const individualComments = comments.map(comment => {
       return (
         <div key={comment.id} className={styles.comment}>
           {comment.author}:

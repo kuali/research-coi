@@ -10,6 +10,7 @@
     "selector-pseudo-class-no-unknown": [true, {
       ignorePseudoClasses: ["global"]
     }],
-    "shorthand-property-no-redundant-values": null
+    "shorthand-property-no-redundant-values": null,
+    "declaration-block-no-duplicate-properties": null
   }
 }

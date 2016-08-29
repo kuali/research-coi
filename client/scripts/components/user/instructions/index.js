@@ -21,14 +21,14 @@ import React from 'react';
 import {DisclosureActions} from '../../../actions/disclosure-actions';
 import {GreyButton} from '../../grey-button';
 import VerticalSlider from '../../vertical-slider';
-import {Editor, convertFromRaw, EditorState, ContentState} from 'draft-js';
+import {Editor, convertFromRaw, EditorState} from 'draft-js';
 import { decorator } from '../../../editor-utils';
 
 export function Instructions(props) {
   let instruction;
   if (props.contentState) {
     const blocks = convertFromRaw(props.contentState);
-    const editorState = EditorState.createWithContent(ContentState.createFromBlockArray(blocks), decorator);
+    const editorState = EditorState.createWithContent(blocks, decorator);
     instruction = (
       <Editor
         editorState={editorState}

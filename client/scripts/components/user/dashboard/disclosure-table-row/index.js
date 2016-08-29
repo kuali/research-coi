@@ -163,7 +163,7 @@ export default function DisclosureTableRow(props, {configState}) {
     ), disclosureId);
   }
 
-  let buttonColumn = (
+  const buttonColumn = (
     <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
       {button}
     </span>

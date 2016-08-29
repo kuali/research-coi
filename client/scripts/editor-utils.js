@@ -71,7 +71,7 @@ function createEditorStatesFromContentState(instructions) {
       const instruction = instructions[key];
       if (instruction) {
         const blocks = convertFromRaw(instruction);
-        editorStates[key] = EditorState.createWithContent(ContentState.createFromBlockArray(blocks),decorator);
+        editorStates[key] = EditorState.createWithContent(blocks, decorator);
       } else {
         editorStates[key] = EditorState.createEmpty(decorator);
       }
