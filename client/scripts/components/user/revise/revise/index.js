@@ -104,7 +104,7 @@ export class Revise extends React.Component {
       }
 
       if (this.state.disclosure.declarations) {
-        let declarationsToReview = this.state.disclosure.declarations;
+        const declarationsToReview = this.state.disclosure.declarations;
         if (configState.config.lane !== LANES.TEST) {
           declarationsToReview.forEach(project => {
             project.entities = project.entities.filter(entity => {

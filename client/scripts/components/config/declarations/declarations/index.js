@@ -175,8 +175,7 @@ export default class Declarations extends React.Component {
       );
     }
 
-    let dispositionPanel;
-    dispositionPanel = (
+    const dispositionPanel = (
       <Panel title="Disposition Configuration">
         <div className={styles.types}>
           <div className={styles.checkbox}>
