@@ -138,10 +138,17 @@ export const init = app => {
   app.get(
     '/api/coi/reviewers',
     allowedRoles([ADMIN, REVIEWER]),
-    wrapAsync(async ({dbInfo, headers}, res) =>
+    wrapAsync(async ({query, dbInfo, headers}, res) =>
     {
       const results = await getReviewers(dbInfo, headers.authorization);
-      res.send(results);
+      let filteredReviewers = results;
+      if (query.term) {
+        const regex = new RegExp(query.term,'i');
+        filteredReviewers = results.filter(reviewer => {
+          return reviewer.value.match(regex);
+        });
+      }
+      res.send(filteredReviewers);
     }
   ));
 
