@@ -27,17 +27,17 @@ const knex = getKnex({});
 
 describe('Disclosure', () => {
   it('expiration date year should equal approval year when approval month day is before expiration month day', () => {
-    const expirationDate = DisclosureDB.getExpirationDate(new Date(2015, 3, 1), false, new Date(2001, 6, 31));
+    const expirationDate = DisclosureDB.getStaticExpirationDate(new Date(2015, 3, 1), new Date(2001, 6, 31));
     assert.equal(expirationDate.toDateString(), new Date(2015, 6, 31).toDateString());
   });
 
   it('expiration date year should be approval year plus 1 when approval month day is after expiration month day', () => {
-    const expirationDate = DisclosureDB.getExpirationDate(new Date(2015, 8, 1), false, new Date(2001, 6, 31));
+    const expirationDate = DisclosureDB.getStaticExpirationDate(new Date(2015, 8, 1), new Date(2001, 6, 31));
     assert.equal(expirationDate.toDateString(), new Date(2016, 6, 31).toDateString());
   });
 
-  it('expiration date year should be approval year plus 1 when rolling date is true', () => {
-    const expirationDate = DisclosureDB.getExpirationDate(new Date(2015, 8, 1), true);
+  it('rolling expiration date year should be approval year plus 1', () => {
+    const expirationDate = DisclosureDB.getRollingExpirationDate(new Date(2015, 8, 1));
     assert.equal(expirationDate.toDateString(), new Date(2016, 8, 1).toDateString());
   });
 });
