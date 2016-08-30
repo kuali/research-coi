@@ -19,6 +19,13 @@
 import styles from './style';
 import React from 'react';
 
+let renderId = 0;
+
+function getUniqueIdForControl() {
+  renderId++;
+  return renderId;
+}
+
 export class CheckboxControl extends React.Component {
   constructor() {
     super();
@@ -31,6 +38,8 @@ export class CheckboxControl extends React.Component {
   }
 
   render() {
+    const controlId = getUniqueIdForControl();
+
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
@@ -51,7 +60,7 @@ export class CheckboxControl extends React.Component {
           <span>
             <input
               key={option}
-              id={`multi_${option}`}
+              id={`${controlId}multi_${option}`}
               value={option}
               checked={checked}
               onChange={this.onChange}
@@ -59,7 +68,7 @@ export class CheckboxControl extends React.Component {
               className={styles.radio}
             />
           </span>
-          <label htmlFor={`multi_${option}`} className={styles.label}>{option}</label>
+          <label htmlFor={`${controlId}multi_${option}`} className={styles.label}>{option}</label>
         </span>
       );
     });

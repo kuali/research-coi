@@ -42,25 +42,26 @@ export default class NumericField extends TextField {
   }
 
   render() {
-    const inputStyle = merge(this.props.styles.input, {padding: '2px 20px'});
+    const {id, invalid, value = '', styles: style, label} = this.props;
+    const inputStyle = merge(style.input, {padding: '2px 20px'});
 
     return (
-      <div style={this.props.styles.container}>
+      <div style={style.container}>
         <label
-          htmlFor={this.props.id}
-          style={this.getLabelStyle(this.props.invalid, this.props.styles.label)}
+          htmlFor={id}
+          style={this.getLabelStyle(invalid, style.label)}
         >
-          {this.props.label}
+          {label}
         </label>
         <div style={{position: 'relative'}}>
           <span className={styles.currency}>$</span>
           <input
-            id={this.props.id}
+            id={id}
             type='text'
             onChange={this.onChange}
-            name={this.props.name}
-            style={this.getInputStyle(this.props.invalid, inputStyle)}
-            value={this.props.value}
+            name={name}
+            style={this.getInputStyle(invalid, inputStyle)}
+            value={value}
             onKeyPress={this.validateNumeric}
           />
         </div>

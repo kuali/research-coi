@@ -19,6 +19,13 @@
 import styles from './style';
 import React from 'react';
 
+let renderId = 0;
+
+function getUniqueIdForControl() {
+  renderId++;
+  return renderId;
+}
+
 export class RadioControl extends React.Component {
   constructor() {
     super();
@@ -31,6 +38,8 @@ export class RadioControl extends React.Component {
   }
 
   render() {
+    const controlId = getUniqueIdForControl();
+
     let requiredFieldError;
     if (this.props.invalid) {
       requiredFieldError = (
@@ -42,9 +51,9 @@ export class RadioControl extends React.Component {
       return (
         <span className={styles.option} key={`${this.props.questionId}_${index}`}>
           <div>
-            <label htmlFor={`multi_${option}_${this.props.questionId}`} className={styles.label}>
+            <label htmlFor={`${controlId}multi_${option}_${this.props.questionId}`} className={styles.label}>
               <input
-                id={`multi_${option}_${this.props.questionId}`}
+                id={`${controlId}multi_${option}_${this.props.questionId}`}
                 value={option}
                 checked={this.props.answer === option}
                 onChange={this.onChange}

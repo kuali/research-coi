@@ -25,8 +25,8 @@ export function FEPlaceHolder(props) {
     <svg className={props.className} x="0px" y="0px" viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="117.4805" y1="132.6119" x2="256.5151" y2="265.2549">
-          <stop offset="0.2044" style={{'stop-color': 'rgb(0, 0, 0)'}} />
-          <stop offset="1" style={{'stop-color': 'rgb(255, 255, 255)', 'stop-opacity': 0}}/>
+          <stop offset="0.2044" style={{stopColor: 'rgb(0, 0, 0)'}} />
+          <stop offset="1" style={{stopColor: 'rgb(255, 255, 255)', stopOpacity: 0}}/>
         </linearGradient>
       </defs>
       <path d="M 332.1 174.8 C 332.1 178.8 332 182.8 331.7 186.7 C 331.7 186.8 331.7 186.8 331.7 186.9 C 331.7 186.9 331.7 187 331.7 187 C 325.5 268.3 257.6 332.2 174.7 332.2 C 169.9 332.2 165.1 332 160.3 331.6 C 158.3 331.4 156.3 331.2 154.3 330.9 C 77 320.9 17.3 254.8 17.3 174.8 C 17.3 87.8 87.8 17.4 174.7 17.4 C 257.6 17.4 325.5 81.4 331.7 162.7 C 332 166.7 332.1 170.7 332.1 174.8 Z" style={{fill: 'rgb(0, 151, 167)'}} transform="matrix(1, 0, 0, 1, 0, 0)"/>

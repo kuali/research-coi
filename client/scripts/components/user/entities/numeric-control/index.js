@@ -31,17 +31,19 @@ export class NumericControl extends React.Component {
   }
 
   render() {
+    const {invalid, readonly, answer = '', entityId, questionId} = this.props;
+
     let requiredFieldError;
-    if (this.props.invalid) {
+    if (invalid) {
       requiredFieldError = (
         <div className={styles.invalidError}>Required Field</div>
       );
     }
 
-    if (this.props.readonly) {
+    if (readonly) {
       return (
         <div className={styles.value}>
-          {this.props.answer}
+          {answer}
         </div>
       );
     }
@@ -52,9 +54,9 @@ export class NumericControl extends React.Component {
           <input
             className={styles.textbox}
             type="number"
-            id={`eqa${this.props.questionId}`}
+            id={`eqa${entityId}${questionId}`}
             onChange={this.onChange}
-            value={this.props.answer}
+            value={answer}
           />
         </div>
         {requiredFieldError}

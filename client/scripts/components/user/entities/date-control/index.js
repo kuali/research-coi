@@ -51,7 +51,7 @@ export class DateControl extends React.Component {
     return (
       <div>
         <DatePicker
-          id={`eqa${this.props.questionId}`}
+          id={`eqa${this.props.entityId}${this.props.questionId}`}
           textFieldStyle={{
             padding: 6,
             fontSize: 12,

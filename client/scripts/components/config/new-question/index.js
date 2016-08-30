@@ -165,7 +165,7 @@ export default class NewQuestion extends React.Component {
               id="requiredNumSelections"
               ref="requiredNumSelections"
               onChange={this.requiredSelectionsChanged}
-              value={this.props.question.question.requiredNumSelections}
+              value={this.props.question.question.requiredNumSelections || ''}
             />
           </div>
         </span>

@@ -165,7 +165,7 @@ export default class AutoSuggest extends React.Component {
       <span className={classes}>
         <input
           type="text"
-          value={this.state.value}
+          value={this.state.value || ''}
           onChange={this.onChange}
           className={styles.textbox}
           onKeyUp={this.keyUp}
