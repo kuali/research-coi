@@ -28,6 +28,7 @@ import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import { getProjectData } from '../services/project-service/project-service';
 import useKnex from '../middleware/request-knex';
+import {handleNotifications} from '../expiration-check';
 
 export async function saveConfig(req, res) {
   const {knex, dbInfo, body, hostname, userInfo} = req;
@@ -41,6 +42,8 @@ export async function saveConfig(req, res) {
   });
 
   res.send(config);
+
+  await handleNotifications();
 }
 
 export const init = app => {
