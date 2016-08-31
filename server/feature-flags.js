@@ -50,19 +50,21 @@ async function initFeatureFlags(flags) {
   }
 }
 
-let init;
-try {
-  const extensions = require('research-extensions').default;
-  init = extensions.initFeatureFlags;
-}
-catch (err) {
-  if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+export default function init(flags) {
+  let initFunction;
+  try {
+    const extensions = require('research-extensions').default;
+    initFunction = extensions.initFeatureFlags;
   }
-  init = initFeatureFlags;
-}
+  catch (err) {
+    if (err.code !== 'MODULE_NOT_FOUND') {
+      Log.error(err);
+    }
+    initFunction = initFeatureFlags;
+  }
 
-export default init;
+  initFunction(flags);
+}
 
 export async function flagIsOn(knex, key) {
   try {
