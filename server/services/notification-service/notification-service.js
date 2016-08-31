@@ -267,10 +267,18 @@ async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
 
     const projectType = await getProjectTypeDescription(knex, project.typeCd);
     const declaration = await getDeclarationWithProjectId(knex, project.id);
-    const dispositionTypes = config.dispositionTypes.filter(type => type.typeCd === declaration[0].adminRelationshipCd);
-    const dispositionType = dispositionTypes[0].description ? dispositionTypes[0].description : '';
+
+    let description = '';
+    let dispositionType;
+    if (declaration[0]) {
+      dispositionType = config.dispositionTypes.find(type => type.typeCd === declaration[0].adminRelationshipCd);
+      if (dispositionType) {
+        description = dispositionType.description ? dispositionType.description : '';
+      }
+    }
+
     projectInformation += `<tr><td>${project.sourceIdentifier}</td><td>${project.name}</td><td>${sponsorString}</td>`;
-    projectInformation += `<td>${projectType}</td><td> ${dispositionType}</td></tr>`;
+    projectInformation += `<td>${projectType}</td><td> ${description}</td></tr>`;
   }
   projectInformation += '</table>';
   return projectInformation;
@@ -311,6 +319,7 @@ export async function createAndSendApproveNotification(dbInfo, knex, hostname, u
   if (!template) {
     return;
   }
+
   const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
   let variables = await getVariables(dbInfo, hostname, disclosure);
   const projectInformation = await getProjectsInformation(dbInfo, knex, hostname, disclosure);
