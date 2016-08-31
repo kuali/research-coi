@@ -110,7 +110,6 @@ async function updateDisclosureStatus(knex, person, project, req) {
     await knex('disclosure')
       .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
       .where({id: disclosure.id});
-
     await createAndSendNewProjectNotification(
       req.dbInfo,
       req.hostname,
@@ -118,6 +117,15 @@ async function updateDisclosureStatus(knex, person, project, req) {
       disclosure.id,
       project,
       person
+    );
+  } else if (!disclosure) {
+    await createAndSendNewProjectNotification(
+        req.dbInfo,
+        req.hostname,
+        req.userInfo,
+        undefined,
+        project,
+        person
     );
   }
 }
@@ -220,6 +228,7 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
   if (isRequired) {
     await updateDisclosureStatus(knex, person, project, req);
   }
+
   return id[0];
 }
 

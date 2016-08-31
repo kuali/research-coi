@@ -250,7 +250,9 @@ async function getProject(dbInfo, hostname, project, person) {
   projectInfo.person = JSON.parse(JSON.stringify(person));
   projectInfo.person.info = await getUserInfo(dbInfo, hostname, person.personId);
   const pi = projectInfo.persons.find(p => p.roleCode === PI_ROLE_CODE);
-  projectInfo.piInfo = await getUserInfo(dbInfo, hostname, pi.personId);
+  if (pi) {
+    projectInfo.piInfo = await getUserInfo(dbInfo, hostname, pi.personId);
+  }
   return projectInfo;
 }
 
@@ -279,7 +281,9 @@ async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
 function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
   const url = getRequestInfo(dbInfo, hostname).url;
   let variables = VariableService.getDefaultVariables(url);
-  variables = VariableService.getDisclosureVariables(disclosure, url, variables);
+  if (disclosure) {
+    variables = VariableService.getDisclosureVariables(disclosure, url, variables);
+  }
   variables = reviewer ? VariableService.getReviewerVariables(reviewer, variables) : variables;
   variables = project ? VariableService.getProjectVariables(project, variables) : variables;
   return variables;
@@ -402,8 +406,16 @@ export async function createAndSendNewProjectNotification(dbInfo, hostname, user
     return;
   }
   const projectInfo = await getProject(dbInfo, hostname, project, person);
-  const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  let disclosure;
+  if (disclosureId) {
+    disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  }
   const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
+  if (!disclosureId) {
+    const reporterInfo = await getUserInfo(dbInfo, hostname, person.personId);
+    VariableService.setReporterDetails(variables, reporterInfo.firstName, reporterInfo.lastName);
+  }
+
   const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
   const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
   return await sendNotification(dbInfo, hostname, notification);

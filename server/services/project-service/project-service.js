@@ -242,7 +242,6 @@ export function isRequired(requirements, project) {
       });
     }
   }
-
   return isTypeRequired && isRoleRequired && isStatusRequired && isSponsorRequired;
 }
 
