@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import { values, uniq } from 'lodash';
-import {isDisclosureUsers} from './common-db';
+import { values, uniq, isDate } from 'lodash';
+import {isDisclosureUsers, usingMySql} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
 import { getLatestConfigsId } from './config-db';
@@ -1281,11 +1281,46 @@ async function updateEntitiesAndRelationshipsStatuses(
   );
 }
 
-export function getExpirationDate(date, isRolling, dueDate) {
-  if (isRolling === true) {
-    return new Date(date.setFullYear(date.getFullYear() + 1));
+export async function updateExpirationToRollingDate(knex) {
+  if (usingMySql(knex)) {
+    await knex('disclosure')
+      .update({
+        expired_date: knex.raw('submitted_date + interval 1 year')
+      })
+      .whereNot({
+        status_cd: DISCLOSURE_STATUS.EXPIRED
+      });
+  }
+  else {
+    await knex('disclosure')
+      .update({
+        expired_date: knex.raw('"submitted_date" + interval \'1\' year')
+      })
+      .whereNot({
+        status_cd: DISCLOSURE_STATUS.EXPIRED
+      });
+  }
+}
+
+export async function updateExpirationToStaticDate(knex, expirationDate) {
+  if (!isDate(expirationDate)) {
+    throw Error('Invalid expiration date');
   }
 
+  await knex('disclosure')
+    .update({
+      expired_date: expirationDate
+    })
+    .whereNot({
+      status_cd: DISCLOSURE_STATUS.EXPIRED
+    });
+}
+
+export function getRollingExpirationDate(date) {
+  return new Date(date.setFullYear(date.getFullYear() + 1));
+}
+
+export function getStaticExpirationDate(date, dueDate) {
   const dueMonthDay = dueDate.getMonth() + dueDate.getDay();
   const approveMonthDay = date.getMonth() + date.getDay();
 
@@ -1484,11 +1519,16 @@ export async function approve(
   ]);
 
   const generalConfig = JSON.parse(config.config).general;
-  const expiredDate = getExpirationDate(
-    new Date(disclosure.submittedDate),
-    generalConfig.isRollingDueDate,
-    new Date(generalConfig.dueDate)
-  );
+  let expiredDate;
+  if (generalConfig.isRollingDueDate) {
+    expiredDate = getRollingExpirationDate(new Date(disclosure.submittedDate));
+  }
+  else {
+    expiredDate = getStaticExpirationDate(
+      new Date(disclosure.submittedDate),
+      new Date(generalConfig.dueDate)
+    );
+  }
   await approveDisclosure(
     knex,
     disclosureId,
@@ -1503,12 +1543,12 @@ export async function approve(
 
 function updateStatus(knex, name, disclosureId) {
   return knex('disclosure')
-  .update({
-    status_cd: DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
-    submitted_by: name,
-    submitted_date: new Date()
-  })
-  .where('id', disclosureId);
+    .update({
+      status_cd: DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+      submitted_by: name,
+      submitted_date: new Date()
+    })
+    .where('id', disclosureId);
 }
 
 async function updateProjects(knex, schoolId) {

@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+export function usingMySql(knex) {
+  return knex.client.config.client === 'mysql';
+}
+
 export async function isDisclosureUsers(knex, disclosureId, userId) {
   const result = await knex
     .first('user_id')

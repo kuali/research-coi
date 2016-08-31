@@ -16,15 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import getKnex from '../db/connection-manager';
+import {getFeatureFlags} from '../db/features-db';
+import wrapAsync from '../controllers/wrap-async';
+
 export default function renderView(viewName) {
   const reportUsage = process.env.REPORT_USAGE === 'true';
  
-  return (req, res, next) => {
+  return wrapAsync(async (req, res, next) => {
     let data;
     if (viewName === 'auth') {
       data = {};
     } else {
       const { schoolId, firstName, lastName, coiRole } = req.userInfo;
+
+      const knex = getKnex(req.dbInfo);
+      const featureFlags = await getFeatureFlags(knex);
 
       data = {
         reportUsage,
@@ -32,7 +39,8 @@ export default function renderView(viewName) {
         firstName,
         lastName,
         coiRole,
-        version: process.env.npm_package_version
+        version: process.env.npm_package_version,
+        featureFlags
       };
     }
 
@@ -43,5 +51,5 @@ export default function renderView(viewName) {
 
       res.send(html);
     });
-  };
+  });
 }

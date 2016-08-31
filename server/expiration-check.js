@@ -16,10 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*eslint-disable
- camelcase,
- no-console
- */
+/* eslint-disable camelcase */
+
 import Log from './log';
 import {DISCLOSURE_STATUS} from '../coi-constants';
 import moment from 'moment';
@@ -31,6 +29,7 @@ import getKnex from './db/connection-manager';
 
 const MILLIS_IN_A_DAY = 86400000;
 const REMINDER_TEMPLATE_ID = 9;
+
 async function checkForExpiredDisclosures(expiredCode) {
   try {
     Log.info('Checking for disclosures which have expired');
@@ -42,7 +41,18 @@ async function checkForExpiredDisclosures(expiredCode) {
 
     const remindersDisclosures = await knex('disclosure')
       .select('id')
-      .where('expired_date','=',new Date(moment().add(reminderNotification[0].value,reminderNotification[0].period).format('YYYY-MM-DD')));
+      .where(
+        'expired_date',
+        '=',
+        new Date(
+          moment()
+            .add(
+              reminderNotification[0].value,
+              reminderNotification[0].period
+            )
+            .format('YYYY-MM-DD')
+        )
+      );
 
     const expiredDisclosures = await knex('disclosure')
       .select('id')
@@ -56,7 +66,7 @@ async function checkForExpiredDisclosures(expiredCode) {
         status_cd: expiredCode
       });
 
-    console.log(`${numberExpired} disclosures expired`);
+    console.log(`${numberExpired} disclosures expired`); // eslint-disable-line no-console
 
     return {
       expirationNotifications: expiredDisclosures.map(disclosure => {
@@ -92,11 +102,15 @@ catch (err) {
   expirationCheck = checkForExpiredDisclosures;
 }
 
-async function handleNotifications() {
+export async function handleNotifications() {
   const notifications = await expirationCheck(DISCLOSURE_STATUS.EXPIRED);
   await notifications.expirationNotifications.map(async (disclosure) => {
     try {
-      return await createAndSendExpirationNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
+      return await createAndSendExpirationNotification(
+        disclosure.dbInfo,
+        disclosure.hostname,
+        disclosure.disclosureId
+      );
     } catch (err) {
       Log.error(err);
       return Promise.resolve();
@@ -105,17 +119,24 @@ async function handleNotifications() {
 
   await notifications.expirationReminders.map(async (disclosure) => {
     try {
-      return await createAndSendExpirationReminderNotification(disclosure.dbInfo, disclosure.hostname, disclosure.disclosureId);
+      return await createAndSendExpirationReminderNotification(
+        disclosure.dbInfo,
+        disclosure.hostname,
+        disclosure.disclosureId
+      );
     } catch (err) {
       Log.error(err);
       return Promise.resolve();
     }
   });
 }
+
 export default function scheduleExpirationCheck() {
   const waitUntilToRun = Math.random() * MILLIS_IN_A_DAY;
   setTimeout(async () => {
-    Log.info('Scheduled the expired disclosures check to run every 24 hours from now');
+    Log.info(
+      'Scheduled the expired disclosures check to run every 24 hours from now'
+    );
     handleNotifications();
     setInterval(async () => {
       handleNotifications();

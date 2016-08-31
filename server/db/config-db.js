@@ -22,7 +22,12 @@ import {
   handleTemplates
 } from '../services/notification-service/notification-service';
 import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
+import {
+  updateExpirationToRollingDate,
+  updateExpirationToStaticDate
+} from './disclosure-db';
 import Log from '../log';
+import {flagIsOn} from '../feature-flags';
 
 const cachedConfigs = {};
 
@@ -515,6 +520,24 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
       {pk: 'type_cd', table: 'project_status'}
     )
   );
+
+  if (await flagIsOn(knex, 'RESCOI-898')) {
+    const previousGeneralConfig = await getGeneralConfig(knex);
+    if (config.general.is_rolling_due_date) {
+      if (!previousGeneralConfig.config.isRollingDueDate) {
+        await updateExpirationToRollingDate(knex);
+      }
+    }
+    else if (
+      previousGeneralConfig.config.isRollingDueDate ||
+      previousGeneralConfig.config.dueDate !== config.general.due_date
+    ) {
+      await updateExpirationToStaticDate(
+        knex,
+        new Date(config.general.due_date)
+      );
+    }
+  }
 
   await saveScreeningQuestionnaire(knex, config.questions.screening);
   await saveEntityQuestionnaire(knex, config.questions.entities);
