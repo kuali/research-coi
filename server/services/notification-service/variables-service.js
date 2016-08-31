@@ -83,20 +83,26 @@ export function getDisclosureVariables(disclosure, url, variables) {
   result[`${LEFT}EXPIRATION_DATE${RIGHT}`] = formatDateIfAvailable(
     disclosure.expiredDate
   );
-  result[`${LEFT}REPORTER_FIRST_NAME${RIGHT}`] = get(
-    disclosure,
-    'reporterInfo.firstName'
-  );
-  result[`${LEFT}REPORTER_LAST_NAME${RIGHT}`] = get(
-    disclosure,
-    'reporterInfo.lastName'
-  );
+
+  setReporterDetails(result, get(
+      disclosure,
+      'reporterInfo.firstName'
+  ), get(
+      disclosure,
+      'reporterInfo.lastName'
+  ));
+
   const approver = getNamePartsFromString(disclosure.approvedBy);
   result[`${LEFT}APPROVER_FIRST_NAME${RIGHT}`] = get(approver, 'firstName');
   result[`${LEFT}APPROVER_LAST_NAME${RIGHT}`] = get(approver, 'lastName');
   result[`${LEFT}DISPOSITION${RIGHT}`] = get(disclosure, 'disposition');
 
   return result;
+}
+
+export function setReporterDetails(result, firstName, lastName) {
+  result[`${LEFT}REPORTER_FIRST_NAME${RIGHT}`] = firstName;
+  result[`${LEFT}REPORTER_LAST_NAME${RIGHT}`] = lastName;
 }
 
 export function addProjectInformation(projectInformation, variables) {
