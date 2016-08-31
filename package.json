@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build_babel",
     "build_babel": "npm run build_babel_to -- .",
-    "build_babel_to": "babel . --ignore \"./client/,./node_modules,./loadtest,./webpack.config.js,./test,./start-server.js\" -d ",
+    "build_babel_to": "babel . --ignore \"./client/,./node_modules,./loadtest,./webpack.config.js,./test,./start-server.js\" --copy-files -d ",
     "test": "npm run lint && npm run test_unit",
     "test_no_db": "npm run lint && npm run test_unit_no_db",
     "test_unit": "BABEL_ENV=test NODE_ENV=test nyc --reporter=lcov mocha test",
