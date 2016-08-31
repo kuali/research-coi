@@ -1,0 +1,5 @@
+script
+  | window.featureFlags = {
+  each flag in featureFlags
+    = '\'' + flag.key + '\': ' + flag.active + ','
+  |};
