@@ -25,6 +25,7 @@ import * as FileController from './controllers/file-controller';
 import * as PIController from './controllers/pi-controller';
 import * as UserController from './controllers/user-controller';
 import * as AdditionalReviewerController from './controllers/additional-reviewer-controller';
+import * as FeaturesController from './controllers/features-controller';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -41,8 +42,12 @@ import { configCheck, adminCheck } from './middleware/role-check';
 import unauthorized from './middleware/unauthorized';
 import scheduleExpirationCheck from './expiration-check';
 import impersonationLogger from './middleware/impersonation-logger';
+import flags from '../feature-flags.json'; // eslint-disable-line
+import initFeatureFlags from './feature-flags';
 
 const DEFAULT_PORT = 8090;
+
+initFeatureFlags(flags);
 
 function conditionallyLogRequests(app, logLevel) {
   if (logLevel <= LOG_LEVEL.INFO) {
@@ -127,6 +132,7 @@ export function run() {
 
   app.use('/coi/admin', adminCheck, renderView('admin/admin'));
   app.use('/coi/config', configCheck, renderView('admin/config'));
+  app.use('/coi/features', configCheck, renderView('admin/features'));
   app.use('/coi', unauthorized);
 
   app.use(bodyParser.json());
@@ -139,6 +145,7 @@ export function run() {
   PIController.init(app);
   UserController.init(app);
   AdditionalReviewerController.init(app);
+  FeaturesController.init(app);
   app.use(ErrorLogger);
 
   app.set('portNumber', config ? config.port : process.env.COI_PORT || DEFAULT_PORT);
