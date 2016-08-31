@@ -24,7 +24,6 @@ import useKnex from '../middleware/request-knex';
 import {getFeatureFlags, setFeatureFlagState} from '../db/features-db';
 import {ACCEPTED} from '../../http-status-codes';
 
-
 export const init = app => {
   app.get(
     '/api/coi/features',

@@ -27,6 +27,7 @@ import {
   updateExpirationToStaticDate
 } from './disclosure-db';
 import Log from '../log';
+import {flagIsOn} from '../feature-flags';
 
 const cachedConfigs = {};
 
@@ -520,17 +521,22 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
     )
   );
 
-  const previousGeneralConfig = await getGeneralConfig(knex);
-  if (config.general.is_rolling_due_date) {
-    if (!previousGeneralConfig.config.isRollingDueDate) {
-      await updateExpirationToRollingDate(knex);
+  if (await flagIsOn(knex, 'RESCOI-898')) {
+    const previousGeneralConfig = await getGeneralConfig(knex);
+    if (config.general.is_rolling_due_date) {
+      if (!previousGeneralConfig.config.isRollingDueDate) {
+        await updateExpirationToRollingDate(knex);
+      }
     }
-  }
-  else if (
-    previousGeneralConfig.config.isRollingDueDate ||
-    previousGeneralConfig.config.dueDate !== config.general.due_date
-  ) {
-    await updateExpirationToStaticDate(knex, new Date(config.general.due_date));
+    else if (
+      previousGeneralConfig.config.isRollingDueDate ||
+      previousGeneralConfig.config.dueDate !== config.general.due_date
+    ) {
+      await updateExpirationToStaticDate(
+        knex,
+        new Date(config.general.due_date)
+      );
+    }
   }
 
   await saveScreeningQuestionnaire(knex, config.questions.screening);
