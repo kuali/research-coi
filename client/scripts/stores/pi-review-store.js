@@ -83,7 +83,13 @@ class _PIReviewStore {
     if (declarations) {
       const allDeclarationsDone = declarations.every(declaration => {
         const allEntitiesDone = declaration.entities.every(
-          entity => entity.reviewedOn !== null
+          entity => {
+            return entity.relationshipCd != null || ( // eslint-disable-line no-eq-null
+              entity.adminComments &&
+              entity.adminComments.length > 0 &&
+              entity.reviewedOn == null // eslint-disable-line no-eq-null
+            );
+          }
         );
         return allEntitiesDone;
       });

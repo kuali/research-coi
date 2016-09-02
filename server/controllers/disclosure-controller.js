@@ -38,7 +38,8 @@ import {
   deleteAnswers,
   getCurrentState,
   saveCurrentState,
-  getArchivedDisclosure
+  getArchivedDisclosure,
+  createEmptyDeclarations
 } from '../db/disclosure-db';
 import * as PIReviewDB from '../db/pi-review-db';
 import * as FileDB from '../db/file-db';
@@ -323,7 +324,7 @@ export const init = app => {
     User can only add entities to disclosures which are theirs
   */
   app.post(
-    '/api/coi/disclosures/:id/financial-entities',
+    '/api/coi/disclosures/:disclosureId/financial-entities',
     allowedRoles('ANY'),
     upload.array('attachments'),
     useKnex,
@@ -334,19 +335,36 @@ export const init = app => {
         result = await saveNewFinancialEntity(
           knexTrx,
           userInfo,
-          params.id,
+          params.disclosureId,
           JSON.parse(body.entity),
           files
         );
 
-        if (body.duringRevision) {
+        if (body.duringRevision === 'true') {
           await PIReviewDB.upsertReviewRecord(
-            knex,
-            params.id,
+            knexTrx,
+            params.disclosureId,
             DISCLOSURE_STEP.ENTITIES,
             result.id,
             {revised: true}
           );
+
+          const declarationIds = await createEmptyDeclarations(
+            knexTrx,
+            params.disclosureId,
+            userInfo.schoolId,
+            result.id
+          );
+
+          for (const declarationId of declarationIds) {
+            await PIReviewDB.upsertReviewRecord(
+              knexTrx,
+              params.disclosureId,
+              DISCLOSURE_STEP.PROJECTS,
+              declarationId,
+              {}
+            );
+          }
         }
       });
       res.send(result);
