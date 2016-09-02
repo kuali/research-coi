@@ -1887,3 +1887,33 @@ export async function getArchivedDisclosureInfoForNotifications(knex, id) {
   disclosure.userId = results.userId;
   return disclosure;
 }
+
+async function getProjectIdsForPerson(knex, userId) {
+  return await knex
+    .select('project_id as id')
+    .from('project_person')
+    .where('person_id', userId);
+}
+
+export async function createEmptyDeclarations(
+  knex,
+  disclosureId,
+  userId,
+  entityId
+) {
+  const projects = await getProjectIdsForPerson(knex, userId);
+
+  const declarationIds = [];
+  for (const project of projects) {
+    const id = await knex('declaration')
+      .insert({
+        disclosure_id: disclosureId,
+        fin_entity_id: entityId,
+        project_id: project.id
+      }, 'id');
+
+    declarationIds.push(id[0]);
+  }
+
+  return declarationIds;
+}
