@@ -98,6 +98,7 @@ export class Revise extends React.Component {
           entities = (
             <EntitySection
               entitiesToReview={entitiesToReview}
+              disclosureId={parseInt(this.state.disclosure.id)}
             />
           );
         }

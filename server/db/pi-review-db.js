@@ -482,7 +482,13 @@ async function getQuestionnaireAnswerId(knex, disclosureId, questionId) {
   }
 }
 
-async function upsertReviewRecord(knex, disclosureId, type, targetId, values) {
+export async function upsertReviewRecord(
+  knex,
+  disclosureId,
+  type,
+  targetId,
+  values
+) {
   const existingRow = await knex
     .first('id')
     .from('pi_review')

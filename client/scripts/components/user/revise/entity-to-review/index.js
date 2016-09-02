@@ -24,7 +24,6 @@ import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import {EntityFormInformationStep} from '../../entities/entity-form-information-step';
 import {EntityFormRelationshipStep} from '../../entities/entity-form-relationship-step';
-import {DisclosureStore} from '../../../../stores/disclosure-store';
 import { COI_ADMIN, ROLES } from '../../../../../../coi-constants';
 
 export default class EntityToReview extends React.Component {
@@ -47,23 +46,6 @@ export default class EntityToReview extends React.Component {
     this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
     this.addEntityAttachments = this.addEntityAttachments.bind(this);
     this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
-    this.onChange = this.onChange.bind(this);
-  }
-
-  componentDidMount() {
-    DisclosureStore.listen(this.onChange);
-    this.onChange();
-  }
-
-  componentWillUnmount() {
-    DisclosureStore.unlisten(this.onChange);
-  }
-
-  onChange() {
-    const storeState = DisclosureStore.getState();
-    this.setState({
-      appState: storeState.applicationState
-    });
   }
 
   onRemoveRelationship(relationshipId) {
@@ -135,7 +117,7 @@ export default class EntityToReview extends React.Component {
   }
 
   render() {
-    const {entity, className} = this.props;
+    const {entity, className, appState} = this.props;
 
     let icon;
     let commentSection;
@@ -182,7 +164,13 @@ export default class EntityToReview extends React.Component {
     if (this.state.revising || this.state.responding) {
       actions = (
         <span className={styles.actions}>
-          <CheckLink checked={false} onClick={this.done} disabled={!this.state.isValid}>DONE</CheckLink>
+          <CheckLink
+            checked={false}
+            onClick={this.done}
+            disabled={!this.state.isValid}
+          >
+            DONE
+          </CheckLink>
         </span>
       );
     }
@@ -248,9 +236,13 @@ export default class EntityToReview extends React.Component {
               readonly={!this.state.revising}
               update={true}
               relations={entity.relationships}
-              style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
+              style={{
+                borderTop: '1px solid #888',
+                marginTop: 16,
+                paddingTop: 16
+              }}
               validating={false}
-              appState={this.state.appState}
+              appState={appState}
               onAddRelationship={this.onAddRelationship}
               onRemoveRelationship={this.onRemoveRelationship}
             />

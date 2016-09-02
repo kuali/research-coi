@@ -18,6 +18,7 @@
 
 import {browserHistory} from 'react-router';
 import {DisclosureActions} from '../actions/disclosure-actions';
+import PIReviewActions from '../actions/pi-review-actions';
 import alt from '../alt';
 import {
   DISCLOSURE_STEP,
@@ -370,6 +371,10 @@ class _DisclosureStore {
           }
         }));
     }
+  }
+
+  setCurrentDisclosureId(id) {
+    this.applicationState.currentDisclosureState.disclosure.id = id;
   }
 
   changeArchiveFilter(newValue) {
@@ -891,7 +896,7 @@ class _DisclosureStore {
     }
   }
 
-  saveInProgressEntity(entity) {
+  saveInProgressEntity([entity, duringRevision]) {
     let potentialRelationship = this.applicationState.potentialRelationships[entity.id];
     if (!entity.id) {
       potentialRelationship = this.applicationState.potentialRelationships.new;
@@ -916,6 +921,7 @@ class _DisclosureStore {
     }
 
     formData.append('entity', JSON.stringify(entity));
+    formData.append('duringRevision', duringRevision);
 
     this.applicationState.entityInProgress = {
       active: 1,
@@ -924,13 +930,18 @@ class _DisclosureStore {
 
     this.applicationState.newEntityFormStep = -1;
 
+    const disclosureId = this.applicationState.currentDisclosureState.disclosure.id;
     createRequest()
-      .post(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/financial-entities`)
+      .post(`/api/coi/disclosures/${disclosureId}/financial-entities`)
       .send(formData)
       .end(processResponse((err, res) => {
         if (!err) {
           this.entities.push(res.body);
           this.emitChange();
+
+          if (duringRevision) {
+            PIReviewActions.loadDisclosure(disclosureId);
+          }
         }
       }));
   }

@@ -108,11 +108,12 @@ export class EntityForm extends React.Component {
   }
 
   submit() {
-    const {entity, step} = this.props;
+    const {entity, step, onSubmit, duringRevision} = this.props;
 
     if (DisclosureStore.entityRelationshipsAreSubmittable(entity.id)) {
       DisclosureActions.turnOffValidation(step);
-      DisclosureActions.saveInProgressEntity(entity);
+      DisclosureActions.saveInProgressEntity(entity, duringRevision);
+      onSubmit(entity);
     }
     else {
       DisclosureActions.turnOnValidation(step);
@@ -370,11 +371,15 @@ EntityForm.propTypes = {
   editing: React.PropTypes.bool,
   snapshot: React.PropTypes.object,
   className: React.PropTypes.string,
-  update: React.PropTypes.bool
+  update: React.PropTypes.bool,
+  onSubmit: React.PropTypes.func.isRequired,
+  duringRevision: React.PropTypes.bool,
 };
 
 EntityForm.defaultProps = {
   editing: false,
   update: false,
-  className: ''
+  className: '',
+  onSubmit: () => {},
+  duringRevision: false
 };
