@@ -28,7 +28,7 @@ export async function isDisclosureUsers(knex, disclosureId, userId) {
       id: disclosureId,
       user_id: userId
     });
-  
+
   return result !== undefined;
 }
 

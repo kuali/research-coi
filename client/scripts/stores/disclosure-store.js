@@ -1366,6 +1366,8 @@ class _DisclosureStore {
             this.files.push(file);
             this.emitChange();
           });
+
+          PIReviewActions.loadDisclosure(this.applicationState.currentDisclosureState.disclosure.id);
         }
       }));
   }
@@ -1378,6 +1380,7 @@ class _DisclosureStore {
         if (!err) {
           this.files.splice(index, 1);
           this.emitChange();
+          PIReviewActions.loadDisclosure(this.applicationState.currentDisclosureState.disclosure.id);
         }
       }));
   }

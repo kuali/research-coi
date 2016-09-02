@@ -172,10 +172,53 @@ class _PIReviewStore {
           });
         }
 
+        this.files = this.disclosure.files;
         this.updateCanSubmit();
         ConfigActions.loadConfig(disclosure.body.configId);
         this.emitChange();
       }));
+  }
+
+  addDisclosureAttachment(files) {
+    if (!this.files) {
+      this.files = [];
+    }
+
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append('attachments', file);
+    });
+
+    formData.append('data', JSON.stringify({
+      refId: this.disclosure.id,
+      type: FILE_TYPE.DISCLOSURE,
+      disclosureId: this.disclosure.id
+    }));
+
+    createRequest().post('/api/coi/files')
+        .send(formData)
+        .end(processResponse((err, res) => {
+          if (!err) {
+            res.body.forEach(file => {
+              this.files.push(file);
+              this.emitChange();
+            });
+
+            this.loadDisclosure(this.disclosure.id);
+          }
+        }));
+  }
+
+  deleteDisclosureAttachment(id) {
+    const index = this.files.findIndex(f => f.id === parseInt(id));
+    createRequest().del(`/api/coi/files/${id}`)
+        .end(processResponse((err) => {
+          if (!err) {
+            this.files.splice(index, 1);
+            this.emitChange();
+            this.loadDisclosure(this.disclosure.id);
+          }
+        }));
   }
 
   respond([reviewId, text]) {
