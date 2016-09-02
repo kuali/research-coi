@@ -41,6 +41,7 @@ import {
   getArchivedDisclosure
 } from '../db/disclosure-db';
 import * as PIReviewDB from '../db/pi-review-db';
+import * as FileDB from '../db/file-db';
 import {isDisclosureUsers} from '../db/common-db';
 import wrapAsync from './wrap-async';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
@@ -610,6 +611,14 @@ export const init = app => {
         userInfo,
         params.id
       );
+      const fileType = 'disclosure';
+      const files = await FileDB.getFilesForReview(
+          knex,
+          userInfo,
+          params.id,
+          fileType
+      );
+      result.files = files;
       res.send(result);
     }
   ));

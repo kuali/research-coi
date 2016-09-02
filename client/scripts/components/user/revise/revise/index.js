@@ -22,11 +22,14 @@ import {AppHeader} from '../../../app-header';
 import {PIReviewStore} from '../../../../stores/pi-review-store';
 import RevisionHeader from '../revision-header';
 import QuestionnaireSection from '../questionnaire-section';
+import FileSection from '../file-section';
 import EntitySection from '../entity-section';
 import DeclarationSection from '../declaration-section';
 import SidePanel from '../side-panel';
 import PIReviewActions from '../../../../actions/pi-review-actions';
+import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {LANES} from '../../../../../../coi-constants';
+import {flagIsOn} from '../../../../feature-flags';
 
 export class Revise extends React.Component {
   constructor() {
@@ -35,7 +38,8 @@ export class Revise extends React.Component {
     const storeState = PIReviewStore.getState();
     this.state = {
       disclosure: storeState.disclosure,
-      applicationState: storeState.applicationState
+      applicationState: storeState.applicationState,
+      files: storeState.files
     };
 
     this.onChange = this.onChange.bind(this);
@@ -45,6 +49,7 @@ export class Revise extends React.Component {
   componentDidMount() {
     PIReviewStore.listen(this.onChange);
     PIReviewActions.loadDisclosure(this.props.params.id);
+    DisclosureActions.setCurrentDisclosureId(this.props.params.id);
   }
 
   componentWillUnmount() {
@@ -55,7 +60,8 @@ export class Revise extends React.Component {
     const storeState = PIReviewStore.getState();
     this.setState({
       disclosure: storeState.disclosure,
-      applicationState: storeState.applicationState
+      applicationState: storeState.applicationState,
+      files: storeState.files
     });
   }
 
@@ -67,7 +73,7 @@ export class Revise extends React.Component {
     const {configState} = this.context;
 
     let questionnaire, entities, declarations, submittedDate, lastReviewDate;
-    let disclosureType;
+    let disclosureType, disclosureFiles;
     if (this.state.disclosure) {
       if (this.state.disclosure.questions) {
         let questionsToDisplay = this.state.disclosure.questions;
@@ -123,6 +129,15 @@ export class Revise extends React.Component {
         }
       }
 
+      if (flagIsOn('RESCOI-922') && this.state.files) {
+        disclosureFiles = (
+          <FileSection
+            files={this.state.files}
+            disclosureId={this.state.disclosure.id}
+          />
+        );
+      }
+
       lastReviewDate = this.state.disclosure.lastReviewDate;
       submittedDate = this.state.disclosure.submittedDate;
       disclosureType = this.state.disclosure.typeCd;
@@ -142,6 +157,7 @@ export class Revise extends React.Component {
               {questionnaire}
               {entities}
               {declarations}
+              {disclosureFiles}
             </span>
 
             <SidePanel

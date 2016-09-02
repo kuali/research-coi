@@ -89,6 +89,19 @@ export function getFiles(knex, userInfo, refId, fileType) {
   });
 }
 
+export function getFilesForReview(knex, userInfo, refId, fileType) {
+  const query = knex
+      .select('name', 'key', 'id')
+      .from('file')
+      .where({
+        file_type: fileType,
+        ref_id: refId
+      });
+  return query.andWhere({
+    user_id: userInfo.schoolId
+  });
+}
+
 export async function saveNewFiles(knex, body, files, userInfo) {
   if (
     body.type !== FILE_TYPE.DISCLOSURE &&
