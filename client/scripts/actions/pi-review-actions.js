@@ -31,5 +31,6 @@ export default alt.generateActions(
   'reviseSubQuestion',
   'deleteAnswers',
   'addEntityAttachments',
-  'deleteEntityAttachment'
+  'deleteEntityAttachment',
+  'addEntity'
 );

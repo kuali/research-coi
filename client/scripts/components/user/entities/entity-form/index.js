@@ -40,14 +40,9 @@ export class EntityForm extends React.Component {
     this.isCurrentStepValid = this.isCurrentStepValid.bind(this);
     this.onAnswerQuestion = this.onAnswerQuestion.bind(this);
     this.onAddRelationship = this.onAddRelationship.bind(this);
-    this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
-    this.addEntityAttachments = this.addEntityAttachments.bind(this);
-    this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
   }
 
-  onRemoveRelationship(relationshipId, entityId) {
-    DisclosureActions.removeEntityRelationship(relationshipId, entityId);
-  }
+  shouldComponentUpdate() { return true; }
 
   onAddRelationship() {
     const stepNumber = 2;
@@ -55,47 +50,49 @@ export class EntityForm extends React.Component {
     DisclosureActions.addEntityRelationship(this.props.entity.id);
   }
 
-  onAnswerQuestion(newValue, questionId) {
+  onAnswerQuestion(value, id) {
     DisclosureActions.answerEntityQuestion({
       entityId: this.props.entity.id,
-      id: questionId,
-      answer: {
-        value: newValue
-      }
+      id,
+      answer: {value}
     });
   }
 
-  shouldComponentUpdate() { return true; }
-
   isCurrentStepValid() {
-    switch (this.props.step) {
+    const {step, entity} = this.props;
+
+    switch (step) {
       case 0:
         return DisclosureStore.entityNameStepComplete();
       case 1:
-        return DisclosureStore.entityInformationStepComplete(this.props.entity.id);
+        return DisclosureStore.entityInformationStepComplete(entity.id);
       case 2:
-        return DisclosureStore.entityRelationshipStepComplete(this.props.entity.id);
+        return DisclosureStore.entityRelationshipStepComplete(entity.id);
     }
   }
 
   isStepValidating() {
-    switch (this.props.step) {
+    const {step, appState} = this.props;
+
+    switch (step) {
       case 0:
-        return this.props.appState.validatingEntityNameStep;
+        return appState.validatingEntityNameStep;
       case 1:
-        return this.props.appState.validatingEntityInformationStep;
+        return appState.validatingEntityInformationStep;
       case 2:
-        return this.props.appState.validatingEntityRelationshipStep;
+        return appState.validatingEntityRelationshipStep;
     }
   }
 
   next() {
+    const {step, entity} = this.props;
+
     if (this.isCurrentStepValid()) {
-      DisclosureActions.turnOffValidation(this.props.step);
-      DisclosureActions.entityFormNextClicked(this.props.entity.id);
+      DisclosureActions.turnOffValidation(step);
+      DisclosureActions.entityFormNextClicked(entity.id);
     }
     else {
-      DisclosureActions.turnOnValidation(this.props.step);
+      DisclosureActions.turnOnValidation(step);
     }
   }
 
@@ -111,36 +108,43 @@ export class EntityForm extends React.Component {
   }
 
   submit() {
-    if (DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id)) {
-      DisclosureActions.turnOffValidation(this.props.step);
-      DisclosureActions.saveInProgressEntity(this.props.entity);
+    const {entity, step, onSubmit, duringRevision} = this.props;
+
+    if (DisclosureStore.entityRelationshipsAreSubmittable(entity.id)) {
+      DisclosureActions.turnOffValidation(step);
+      DisclosureActions.saveInProgressEntity(entity, duringRevision);
+      onSubmit(entity);
     }
     else {
-      DisclosureActions.turnOnValidation(this.props.step);
+      DisclosureActions.turnOnValidation(step);
     }
   }
 
   edit() {
-    if (!DisclosureStore.entityInformationStepComplete(this.props.entity.id)) {
+    const {entity} = this.props;
+
+    if (!DisclosureStore.entityInformationStepComplete(entity.id)) {
       DisclosureActions.turnOnValidation(1);
     }
-    if (!DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id)) {
+    if (!DisclosureStore.entityRelationshipsAreSubmittable(entity.id)) {
       DisclosureActions.turnOnValidation(2);
     }
-    DisclosureActions.editEntity(this.props.entity.id);
+    DisclosureActions.editEntity(entity.id);
   }
 
   done() {
-    const entityRelationshipsAreSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id);
-    const entityInformationIsSubmittable = DisclosureStore.entityInformationStepComplete(this.props.entity.id);
-    if (!this.props.editing || (entityRelationshipsAreSubmittable && entityInformationIsSubmittable)) {
-      DisclosureActions.entityFormClosed(this.props.entity);
+    const {entity, editing} = this.props;
+
+    const relationshipsSubmittable = DisclosureStore.entityRelationshipsAreSubmittable(entity.id);
+    const informationStepSubmittable = DisclosureStore.entityInformationStepComplete(entity.id);
+    if (!editing || (relationshipsSubmittable && informationStepSubmittable)) {
+      DisclosureActions.entityFormClosed(entity);
       DisclosureActions.turnOffValidation(1);
       DisclosureActions.turnOffValidation(2);
     }
-    else if (!entityInformationIsSubmittable) {
+    else if (!informationStepSubmittable) {
       DisclosureActions.turnOnValidation(1);
-    } else if (!entityRelationshipsAreSubmittable) {
+    } else if (!relationshipsSubmittable) {
       DisclosureActions.turnOnValidation(2);
     }
   }
@@ -149,137 +153,158 @@ export class EntityForm extends React.Component {
     DisclosureActions.undoEntityChanges(this.props.snapshot);
   }
 
-  addEntityAttachments(files, entityId) {
-    DisclosureActions.addEntityAttachments(files, entityId);
-  }
-
-  deleteEntityAttachment(index, entityId) {
-    DisclosureActions.deleteEntityAttachment(index, entityId);
-  }
-
   render() {
-    let currentStep;
-    let submitButton;
-    let nextButton;
-    if (this.isStepValidating() && !this.isCurrentStepValid()) {
-      nextButton = (
-        <GreyButton
-          title="Please correct the marked fields"
-          className={`${styles.override} ${styles.button} ${styles.disabled}`}
-          onClick={this.next}
-        >
-          Next &gt;
-        </GreyButton>
-      );
-    }
-    else {
-      nextButton = (
-        <GreyButton id='nextButton' className={`${styles.override} ${styles.button}`} onClick={this.next}>
-          Next &gt;
-        </GreyButton>
-      );
-    }
+    const {entity, update, editing, appState, step, className} = this.props;
+    const buttonClasses = `${styles.override} ${styles.button}`;
 
-    const entity = this.props.entity;
     let buttons;
-    let backButton;
-    if (this.props.update) {
+    let currentStep;
+    if (update) {
       currentStep = (
         <div>
           <EntityFormInformationStep
             id={entity.id}
-            readonly={!this.props.editing}
-            update={this.props.update}
+            readonly={!editing}
+            update={update}
             name={entity.name}
             answers={entity.answers}
             files={entity.files}
-            validating={this.props.appState.validatingEntityInformationStep}
-            addEntityAttachments={this.addEntityAttachments}
-            deleteEntityAttachment={this.deleteEntityAttachment}
+            validating={appState.validatingEntityInformationStep}
+            addEntityAttachments={DisclosureActions.addEntityAttachments}
+            deleteEntityAttachment={DisclosureActions.deleteEntityAttachment}
             onAnswerQuestion={this.onAnswerQuestion}
           />
           <EntityFormRelationshipStep
             id={entity.id}
-            readonly={!this.props.editing}
-            update={this.props.update}
-            relations={this.props.entity.relationships}
-            name={this.props.entity.name}
+            readonly={!editing}
+            update={update}
+            relations={entity.relationships}
+            name={entity.name}
             style={{borderTop: '1px solid #888', marginTop: 16, paddingTop: 16}}
-            validating={this.props.appState.validatingEntityRelationshipStep}
-            appState={this.props.appState}
+            validating={appState.validatingEntityRelationshipStep}
+            appState={appState}
             onAddRelationship={this.onAddRelationship}
-            onRemoveRelationship={this.onRemoveRelationship}
+            onRemoveRelationship={DisclosureActions.removeEntityRelationship}
           />
         </div>
       );
 
       const entityIsSubmittable = (
-        DisclosureStore.entityRelationshipsAreSubmittable(this.props.entity.id) &&
-        DisclosureStore.entityInformationStepComplete(this.props.entity.id)
+        DisclosureStore.entityRelationshipsAreSubmittable(entity.id) &&
+        DisclosureStore.entityInformationStepComplete(entity.id)
       );
 
-      const doneButtonStyle = classNames(
-        styles.override,
-        styles.button,
-        {[styles.disabled]: !entityIsSubmittable}
-      );
+      if (editing) {
+        const disabledStyle = classNames(
+          {[styles.disabled]: !entityIsSubmittable}
+        );
 
-      if (this.props.editing) {
         buttons = (
           <span>
-            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.undo}>Undo</GreyButton>
-            <GreyButton className={doneButtonStyle} onClick={this.done}>Done</GreyButton>
+            <GreyButton
+              className={buttonClasses}
+              onClick={this.undo}
+            >
+              Undo
+            </GreyButton>
+            <GreyButton
+              className={`${buttonClasses} ${disabledStyle}`}
+              onClick={this.done}
+            >
+              Done
+            </GreyButton>
           </span>
         );
       }
       else {
         buttons = (
           <span>
-            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.edit}>Edit</GreyButton>
-            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.done}>Done</GreyButton>
+            <GreyButton
+              className={buttonClasses}
+              onClick={this.edit}
+            >
+              Edit
+            </GreyButton>
+            <GreyButton
+              className={buttonClasses}
+              onClick={this.done}
+            >
+              Done
+            </GreyButton>
           </span>
         );
       }
     }
     else {
-      switch (this.props.step) {
+      let nextButton;
+      if (this.isStepValidating() && !this.isCurrentStepValid()) {
+        nextButton = (
+          <GreyButton
+            title="Please correct the marked fields"
+            className={`${styles.override} ${styles.button} ${styles.disabled}`}
+            onClick={this.next}
+          >
+            Next &gt;
+          </GreyButton>
+        );
+      }
+      else {
+        nextButton = (
+          <GreyButton
+            id='nextButton'
+            className={buttonClasses}
+            onClick={this.next}
+          >
+            Next &gt;
+          </GreyButton>
+        );
+      }
+
+      let submitButton;
+      let backButton = (
+        <GreyButton
+          className={buttonClasses}
+          onClick={this.back}
+        >
+          Back
+        </GreyButton>
+      );
+
+      switch (step) {
         case 0:
           currentStep = (
             <EntityFormNameStep
               entityName={entity.name}
-              validating={this.props.appState.validatingEntityNameStep}
+              validating={appState.validatingEntityNameStep}
             />
           );
+          backButton = null;
           break;
         case 1:
           currentStep = (
             <EntityFormInformationStep
-              update={this.props.update}
+              update={update}
               name={entity.name}
               answers={entity.answers}
               files={entity.files}
-              validating={this.props.appState.validatingEntityInformationStep}
+              validating={appState.validatingEntityInformationStep}
               onAnswerQuestion={this.onAnswerQuestion}
-              addEntityAttachments={this.addEntityAttachments}
-              deleteEntityAttachment={this.deleteEntityAttachment}
+              addEntityAttachments={DisclosureActions.addEntityAttachments}
+              deleteEntityAttachment={DisclosureActions.deleteEntityAttachment}
             />
-          );
-
-          backButton = (
-            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.back}>Back</GreyButton>
           );
 
           break;
         default:
           currentStep = (
             <EntityFormRelationshipStep
-              update={this.props.update}
-              relations={this.props.entity.relationships}
-              name={this.props.entity.name}
-              appState={this.props.appState}
-              validating={this.props.appState.validatingEntityRelationshipStep}
+              update={update}
+              relations={entity.relationships}
+              name={entity.name}
+              appState={appState}
+              validating={appState.validatingEntityRelationshipStep}
               onAddRelationship={this.onAddRelationship}
-              onRemoveRelationship={this.onRemoveRelationship}
+              onRemoveRelationship={DisclosureActions.removeEntityRelationship}
             />
           );
 
@@ -288,7 +313,7 @@ export class EntityForm extends React.Component {
               <GreyButton
                 id="submitButton"
                 title="Please correct the marked fields"
-                className={`${styles.override} ${styles.button} ${styles.disabled}`}
+                className={`${buttonClasses} ${styles.disabled}`}
                 onClick={this.submit}
               >
                 Submit
@@ -297,13 +322,15 @@ export class EntityForm extends React.Component {
           }
           else {
             submitButton = (
-              <GreyButton id='submitButton' className={`${styles.override} ${styles.button}`} onClick={this.submit}>Submit</GreyButton>
+              <GreyButton
+                id='submitButton'
+                className={buttonClasses}
+                onClick={this.submit}
+              >
+                Submit
+              </GreyButton>
             );
           }
-
-          backButton = (
-            <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.back}>Back</GreyButton>
-          );
 
           nextButton = null;
           break;
@@ -312,7 +339,12 @@ export class EntityForm extends React.Component {
       buttons = (
         <span>
           {backButton}
-          <GreyButton className={`${styles.override} ${styles.button}`} onClick={this.cancel}>Cancel</GreyButton>
+          <GreyButton
+            className={buttonClasses}
+            onClick={this.cancel}
+          >
+            Cancel
+          </GreyButton>
           {nextButton}
           {submitButton}
         </span>
@@ -320,7 +352,7 @@ export class EntityForm extends React.Component {
     }
 
     return (
-      <span ref="theForm" className={`${styles.container} ${this.props.className}`}>
+      <span ref="theForm" className={`${styles.container} ${className}`}>
         <div className={styles.content}>
           {currentStep}
         </div>
@@ -331,3 +363,23 @@ export class EntityForm extends React.Component {
     );
   }
 }
+
+EntityForm.propTypes = {
+  entity: React.PropTypes.object.isRequired,
+  step: React.PropTypes.number,
+  appState: React.PropTypes.object.isRequired,
+  editing: React.PropTypes.bool,
+  snapshot: React.PropTypes.object,
+  className: React.PropTypes.string,
+  update: React.PropTypes.bool,
+  onSubmit: React.PropTypes.func.isRequired,
+  duringRevision: React.PropTypes.bool,
+};
+
+EntityForm.defaultProps = {
+  editing: false,
+  update: false,
+  className: '',
+  onSubmit: () => {},
+  duringRevision: false
+};

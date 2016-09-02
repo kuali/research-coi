@@ -128,7 +128,7 @@ export class Entity extends React.Component {
         </div>
 
         <EntityForm
-          update="true"
+          update={true}
           step={this.props.step}
           className={`${styles.override} ${styles.entityForm}`}
           entity={this.props.entity}

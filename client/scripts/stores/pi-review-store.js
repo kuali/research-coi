@@ -483,6 +483,10 @@ class _PIReviewStore {
         }
       }));
   }
+
+  addEntity(entity) {
+    this.disclosure.entities.push(entity);
+  }
 }
 
 export const PIReviewStore = alt.createStore(_PIReviewStore, 'PIReviewStore');

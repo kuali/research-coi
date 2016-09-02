@@ -43,3 +43,9 @@
 .override.last.entity {
   margin-bottom: 0;
 }
+
+.addSection {
+  padding: 10px 18px;
+  border-top: 1px solid #AAA;
+  text-align: right;
+}

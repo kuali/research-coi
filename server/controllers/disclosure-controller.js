@@ -46,7 +46,12 @@ import wrapAsync from './wrap-async';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import multer from 'multer';
 import Log from '../log';
-import { ROLES, ADMIN_PAGE_SIZE,LANES } from '../../coi-constants';
+import {
+  ROLES,
+  ADMIN_PAGE_SIZE,
+  LANES,
+  DISCLOSURE_STEP
+} from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import {
@@ -332,6 +337,16 @@ export const init = app => {
           JSON.parse(body.entity),
           files
         );
+
+        if (body.duringRevision) {
+          await PIReviewDB.upsertReviewRecord(
+            knex,
+            params.id,
+            DISCLOSURE_STEP.ENTITIES,
+            result.id,
+            {revised: true}
+          );
+        }
       });
       res.send(result);
     }
