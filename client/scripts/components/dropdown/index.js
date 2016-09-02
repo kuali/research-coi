@@ -41,7 +41,7 @@ export default class Dropdown extends React.Component {
       <select
         className={this.props.className || ''}
         id={this.props.id || ''}
-        value={this.props.value}
+        value={this.props.value || ''}
         onChange={this.onChange}
       >
         <option value=''>{this.props.defaultLabel || 'SELECT'}</option>

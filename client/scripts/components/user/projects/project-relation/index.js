@@ -81,7 +81,7 @@ export class ProjectRelation extends React.Component {
           <input
             type="text"
             ref="comment"
-            value={this.props.comments}
+            value={this.props.comments || ''}
             onChange={this.commentMade}
             className={styles.commentBox}
             aria-label={`Report comments for ${this.props.project.name}`}

@@ -149,7 +149,6 @@ export class Entities extends React.Component {
           entity={this.props.inProgress}
           editing={true}
           appState={this.props.applicationState}
-          onSubmit={DisclosureActions.saveInProgressEntity}
         />
       );
     }

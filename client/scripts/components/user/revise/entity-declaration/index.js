@@ -142,6 +142,11 @@ export default class EntityDeclaration extends React.Component {
         );
       }
     }
+    else if (entity.relationshipCd == null) { // eslint-disable-line no-eq-null
+      icon = (
+        <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
+      );
+    }
 
     let actions;
     if (this.state.revising || this.state.responding) {
