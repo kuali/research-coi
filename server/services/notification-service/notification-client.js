@@ -126,6 +126,10 @@ export async function getUserInfo(dbInfo, hostname, userId) {
     notificationsInfo.systemAuthToken,
     userId
   );
+
+  if (!Array.isArray(userInfos) || userInfos.length === 0) {
+    throw Error(`NotificationClient.getUserInfo: User id ${userId} not found`);
+  }
   //user info query can bring back multiple results we want the one that has the userId
   return userInfos.find(user => user.schoolId === userId);
 }
