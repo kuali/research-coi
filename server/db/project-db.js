@@ -95,7 +95,7 @@ async function shouldUpdateStatus(knex, disclosureId) {
   return entity !== undefined;
 }
 
-async function updateDisclosureStatus(knex, person, project, req) {
+async function updateDisclosureStatus(knex, person, project, req, isNew) {
   const disclosure = await knex('disclosure')
     .first('status_cd as statusCd', 'id')
     .where({
@@ -104,14 +104,16 @@ async function updateDisclosureStatus(knex, person, project, req) {
     });
 
   if (await flagIsOn(knex, 'RESCOI-911_925')) {
-    await createAndSendNewProjectNotification(
-      req.dbInfo,
-      req.hostname,
-      req.userInfo,
-      disclosure ? disclosure.id : undefined,
-      project,
-      person
-    );
+    if (isNew) {
+      await createAndSendNewProjectNotification(
+        req.dbInfo,
+        req.hostname,
+        req.userInfo,
+        disclosure ? disclosure.id : undefined,
+        project,
+        person
+      );
+    }
 
     if (
       disclosure &&
@@ -228,7 +230,7 @@ async function updateProjectPerson(
 
   if (isNew === 1) {
     if (isRequired) {
-      await updateDisclosureStatus(knex, person, project, req);
+      await updateDisclosureStatus(knex, person, project, req, false);
     } else {
       await revertDisclosureStatus(knex, person, req);
     }
@@ -246,7 +248,7 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
     }, 'id');
 
   if (isRequired) {
-    await updateDisclosureStatus(knex, person, project, req);
+    await updateDisclosureStatus(knex, person, project, req, true);
   }
 
   return id[0];
