@@ -28,6 +28,7 @@ import { getDeclarationWithProjectId } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import * as VariableService from './variables-service';
 import getKnex from '../../db/connection-manager';
+import Log from '../../log';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
@@ -219,7 +220,12 @@ async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
     knex,
     archiveId
   );
-  disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+  try {
+    disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+  } catch (err) {
+    Log.error(err);
+  }
+
   return disclosure;
 }
 
@@ -230,7 +236,11 @@ async function getDisclosure(dbInfo, hostname, disclosureId) {
     knex,
     disclosureId
   );
-  disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+  try {
+    disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+  } catch (err) {
+    Log.error(err);
+  }
   return disclosure;
 }
 
@@ -238,7 +248,11 @@ async function getReviewer(dbInfo, hostname, reviewerId) {
   const knex = getKnex(dbInfo);
   const reviewer = await getAdditionalReviewer(knex, reviewerId);
   if (reviewer) {
-    reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
+    try {
+      reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
+    } catch (err) {
+      Log.error(err);
+    }
   }
   return reviewer;
 }
@@ -414,18 +428,29 @@ export async function createAndSendNewProjectNotification(dbInfo, hostname, user
   if (!template) {
     return;
   }
-  const projectInfo = await getProject(dbInfo, hostname, project, person);
-  let disclosure;
-  if (disclosureId) {
-    disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
-  }
-  const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
-  if (!disclosureId) {
-    const reporterInfo = await getUserInfo(dbInfo, hostname, person.personId);
-    VariableService.setReporterDetails(variables, reporterInfo.firstName, reporterInfo.lastName);
-  }
 
-  const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
-  const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
-  return await sendNotification(dbInfo, hostname, notification);
+  try {
+    const projectInfo = await getProject(dbInfo, hostname, project, person);
+    let disclosure;
+    if (disclosureId) {
+      disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+    }
+    const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
+    if (!disclosureId) {
+      const reporterInfo = await getUserInfo(dbInfo, hostname, person.personId);
+      if (reporterInfo) {
+        VariableService.setReporterDetails(
+          variables,
+          reporterInfo.firstName,
+          reporterInfo.lastName
+        );
+      }
+    }
+
+    const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
+    const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch (err) {
+    Log.error(err);
+  }
 }

@@ -29,6 +29,7 @@ import Log from '../log';
 import {
   createAndSendNewProjectNotification
 } from '../services/notification-service/notification-service';
+import {flagIsOn} from '../feature-flags';
 
 export async function getProjects (knex, userId) {
   const projects = await knex
@@ -94,7 +95,7 @@ async function shouldUpdateStatus(knex, disclosureId) {
   return entity !== undefined;
 }
 
-async function updateDisclosureStatus(knex, person, project, req) {
+async function updateDisclosureStatus(knex, person, project, req, isNew) {
   const disclosure = await knex('disclosure')
     .first('status_cd as statusCd', 'id')
     .where({
@@ -102,7 +103,28 @@ async function updateDisclosureStatus(knex, person, project, req) {
       type_cd: DISCLOSURE_TYPE.ANNUAL
     });
 
-  if (
+  if (await flagIsOn(knex, 'RESCOI-911_925')) {
+    if (isNew) {
+      await createAndSendNewProjectNotification(
+        req.dbInfo,
+        req.hostname,
+        req.userInfo,
+        disclosure ? disclosure.id : undefined,
+        project,
+        person
+      );
+    }
+
+    if (
+      disclosure &&
+      await shouldUpdateStatus(knex, disclosure.id) &&
+      disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+    ) {
+      await knex('disclosure')
+        .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
+        .where({id: disclosure.id});
+    }
+  } else if (
     disclosure &&
     await shouldUpdateStatus(knex, disclosure.id) &&
     disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
@@ -208,7 +230,7 @@ async function updateProjectPerson(
 
   if (isNew === 1) {
     if (isRequired) {
-      await updateDisclosureStatus(knex, person, project, req);
+      await updateDisclosureStatus(knex, person, project, req, false);
     } else {
       await revertDisclosureStatus(knex, person, req);
     }
@@ -226,7 +248,7 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
     }, 'id');
 
   if (isRequired) {
-    await updateDisclosureStatus(knex, person, project, req);
+    await updateDisclosureStatus(knex, person, project, req, true);
   }
 
   return id[0];
