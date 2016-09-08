@@ -219,7 +219,7 @@ npm run build
 ```
 If you would prefer to transpile to another directory, leaving the existing code intact, run this command instead
 ```
-npm run build_babel_to <the target directory>
+node build-babel-to.js <the target directory>
 ```
 
 **Step 10**: Start Up Node
