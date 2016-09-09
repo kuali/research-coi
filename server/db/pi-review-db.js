@@ -1076,7 +1076,7 @@ export async function reviseSubQuestion(
     .where({
       'p.id': reviewId
     });
-    
+
   const [rowCount] = await Promise.all([
     knex
       .count('* as answerCount')
@@ -1114,9 +1114,17 @@ export async function reviseSubQuestionByQuestionId(
   answer
 ) {
   const qaRow = await knex
-    .first('id')
-    .from('questionnaire_answer')
-    .where('question_id', subQuestionId);
+    .first('qa.id')
+    .from('questionnaire_answer as qa')
+    .innerJoin(
+      'disclosure_answer as da',
+      'da.questionnaire_answer_id',
+      'qa.id'
+    )
+    .where({
+      'qa.question_id': subQuestionId,
+      'da.disclosure_id': disclosureId
+    });
 
   if (qaRow) {
     return DisclosureDB.saveExistingQuestionAnswer(
