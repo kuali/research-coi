@@ -25,6 +25,7 @@ import {
 } from '../../coi-constants';
 import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
 import * as DisclosureDB from './disclosure-db';
+import {flagIsOn} from '../feature-flags';
 
 export async function verifyReviewIsForUser(knex, reviewId, userId) {
   const rows = await knex
@@ -223,18 +224,32 @@ async function getQuestionnaireComments(knex, disclosureId, topicIDs) {
     DISCLOSURE_STEP.QUESTIONNAIRE
   );
 }
-export function getDeclarationWithProjectId(knex, projectId) {
-  return knex
-    .select(
-      'id',
-      'fin_entity_id as finEntityId',
-      'project_id as projectId',
-      'type_cd as typeCd',
-      'comments',
-      'admin_relationship_cd as adminRelationshipCd'
-    )
-    .from('declaration')
-    .where({project_id: projectId});
+
+export async function getDeclarationWithProjectId(knex, projectId) {
+  const flagOn = await flagIsOn(knex, 'RESCOI-932');
+  if (!flagOn) {
+    return await knex
+      .select(
+        'id',
+        'fin_entity_id as finEntityId',
+        'project_id as projectId',
+        'type_cd as typeCd',
+        'comments',
+        'admin_relationship_cd as adminRelationshipCd'
+      )
+      .from('declaration')
+      .where({project_id: projectId});
+  }
+}
+
+export async function getAdminProjectDisposition(knex, projectId, personId) {
+  return await knex
+    .first('disposition_type_cd as dispositionTypeCd')
+    .from('project_person')
+    .where({
+      project_id: projectId,
+      person_id: personId
+    });
 }
 
 async function getEntityComments(knex, disclosureId, topicIDs) {

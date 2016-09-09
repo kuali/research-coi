@@ -1917,3 +1917,27 @@ export async function createEmptyDeclarations(
 
   return declarationIds;
 }
+
+export async function getDisclosuresAdminDisposition(knex, disclosureId) {
+  const disclosureRecord = await knex
+    .first('user_id as userId')
+    .from('disclosure')
+    .where('disclosure_id', disclosureId);
+
+  if (!disclosureRecord) {
+    throw Error('invalid disclosure id');
+  }
+
+  const worstDisposition = await knex
+    .first('dt.description')
+    .from('project_person as pp')
+    .innerJoin('disposition_type as dt', 'dt.type_cd', 'pp.disposition_type_cd')
+    .where({
+      person_id: disclosureRecord.userId
+    })
+    .orderBy('disposition_type_cd');
+
+  if (worstDisposition) {
+    return worstDisposition.description;
+  }
+}
