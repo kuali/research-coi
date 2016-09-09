@@ -1079,9 +1079,17 @@ export async function reviseSubQuestion(
 
   const [rowCount] = await Promise.all([
     knex
-      .count('* as answerCount')
-      .from('questionnaire_answer')
-      .where('question_id', subQuestionId),
+      .count('qa.* as answerCount')
+      .from('questionnaire_answer as qa')
+      .innerJoin(
+        'disclosure_answer as da',
+        'da.questionnaire_answer_id',
+        'qa.id'
+      )
+      .where({
+        'qa.question_id': subQuestionId,
+        'da.disclosure_id': row.disclosureId
+      }),
     updateReviewRecord(knex, reviewId, {revised: true})
   ]);
 
