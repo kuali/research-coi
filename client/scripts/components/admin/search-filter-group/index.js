@@ -26,7 +26,7 @@ import {DisclosureFilterByPI} from '../disclosure-filter-by-pi';
 import {DisclosureFilterByDisposition} from '../disclosure-filter-by-disposition';
 import {DisclosureFilterByReviewer} from '../disclosure-filter-by-reviewer';
 import {DisclosureFilterByReviewStatus} from '../disclosure-filter-by-review-status';
-import { LANES, ROLES } from '../../../../../coi-constants';
+import {ROLES} from '../../../../../coi-constants';
 
 export default function SearchFilterGroup(props, context) {
   const {
@@ -70,7 +70,7 @@ export default function SearchFilterGroup(props, context) {
   let reviewerFilter;
   let reviewStatusFilter;
   const isReviewer = context.userInfo.coiRole === ROLES.REVIEWER;
-  if (props.lane === LANES.TEST && !isReviewer) {
+  if (!isReviewer) {
     reviewerFilter = (
       <DisclosureFilterByReviewer
         reviewers={props.reviewerFilterValues}
