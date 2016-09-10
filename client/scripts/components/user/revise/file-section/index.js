@@ -47,7 +47,7 @@ export default function FileSection({files, className}) {
   return (
     <div className={`${styles.container} ${className}`}>
       <div className={styles.title}>
-        FILES
+        ATTACHMENTS
       </div>
       <div className={styles.body}>
         {filesJsx}
