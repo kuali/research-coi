@@ -20,6 +20,7 @@ import request from 'superagent';
 import { getUserInfosByQuery, getAdmins } from '../auth-service/auth-service';
 import { NOTIFICATIONS_MODE } from '../../../coi-constants';
 import Log from '../../log';
+import {OK} from '../../../http-status-codes';
 
 let getNotificationsInfo;
 try {
@@ -145,7 +146,29 @@ export async function getAdminRecipients(dbInfo, authHeader) {
 
 export async function sendNotification(dbInfo, hostname, notification) {
   const requestInfo = getRequestInfo(dbInfo, hostname);
-  await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}`)
-    .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
-    .send(notification);
+
+  Log.info('Requesting notification be sent:');
+  Log.info(JSON.stringify(notification));
+  let response;
+  try {
+    response = await request
+      .post(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}`)
+      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
+      .send(notification);
+  } catch (err) {
+    Log.error('Notification request failed');
+    Log.error(err);
+  }
+
+  if (!response || response.status !== OK) {
+    Log.error('Notification may not have been sent successfully');
+    Log.error(JSON.stringify(notification));
+    if (response) {
+      Log.error(JSON.stringify(response.status));
+    }
+  }
+  else {
+    Log.info('Notification requested successfully');
+    Log.info(JSON.stringify(response.body));
+  }
 }
