@@ -20,7 +20,7 @@ import { values, uniq, isDate } from 'lodash';
 import {isDisclosureUsers, usingMySql} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects } from './project-db';
-import { getLatestConfigsId } from './config-db';
+import { getLatestConfigsId, getGeneralConfig } from './config-db';
 import {
   filterProjects,
   filterDeclarations
@@ -1348,15 +1348,17 @@ async function approveDisclosure(
     disclosure.userId
   );
 
-  const requiredProjects = await filterProjects(dbInfo, projects, authHeader);
-
-  const newActiveProjects = requiredProjects.filter(project => {
-    return project.new === 1;
-  });
   let status = DISCLOSURE_STATUS.UP_TO_DATE;
 
-  if (newActiveProjects && newActiveProjects.length > 0) {
-    status = DISCLOSURE_STATUS.UPDATE_REQUIRED;
+  const generalConfig = await getGeneralConfig(knex);
+  if (!generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities) {
+    const requiredProjects = await filterProjects(dbInfo, projects, authHeader);
+    const newActiveProjects = requiredProjects.filter(
+      project => project.new === 1
+    );
+    if (newActiveProjects.length > 0) {
+      status = DISCLOSURE_STATUS.UPDATE_REQUIRED;
+    }
   }
 
   await knex('disclosure')
