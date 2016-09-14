@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+/* eslint-disable no-eq-null */
+
 import PIReviewActions from '../actions/pi-review-actions';
 import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
@@ -84,11 +86,24 @@ class _PIReviewStore {
       const allDeclarationsDone = declarations.every(declaration => {
         const allEntitiesDone = declaration.entities.every(
           entity => {
-            return entity.relationshipCd != null || ( // eslint-disable-line no-eq-null
+            if (entity.relationshipCd == null) {
+              return false;
+            }
+
+            const hasAdminComment = (
               entity.adminComments &&
-              entity.adminComments.length > 0 &&
-              entity.reviewedOn == null // eslint-disable-line no-eq-null
+              entity.adminComments.length > 0
             );
+
+            if (!hasAdminComment) {
+              return true;
+            }
+
+            if (entity.reviewedOn == null) {
+              return false;
+            }
+
+            return true;
           }
         );
         return allEntitiesDone;
