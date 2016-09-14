@@ -18,7 +18,7 @@
     "lint": "npm run eslint && npm run stylelint",
     "eslint": "eslint client db server test loadtest functional-tests",
     "stylelint": "stylelint client/**/**/*.css",
-    "webpack": "webpack -p",
+    "webpack": "webpack -p --config webpack.config.prod.js",
     "watch": "webpack -w",
     "load": "babel-node loadtest"
   },
