@@ -21,12 +21,21 @@ import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
 import {FILE_TYPE, ROLES} from '../../../coi-constants';
+import {flagIsOn} from '../feature-flags';
 
 function updateComment(reviewItem, text, commentFieldName = 'comments') {
   if (reviewItem.piResponse) {
-    const commentToEdit = reviewItem[commentFieldName].find(
-      commentToTest => commentToTest.id === 'temp'
-    );
+    let commentToEdit;
+    if (flagIsOn('RESCOI-940')) {
+      commentToEdit = reviewItem[commentFieldName].find(
+        commentToTest => commentToTest.current == true
+      );
+    }
+    else {
+      commentToEdit = reviewItem[commentFieldName].find(
+        commentToTest => commentToTest.id === 'temp'
+      );
+    }
     
     if (commentToEdit) {
       commentToEdit.text = text;
@@ -46,15 +55,34 @@ function updateComment(reviewItem, text, commentFieldName = 'comments') {
   }
 }
 
+function setPIResponseBasedOnComments(target, fieldToUse = 'comments') {
+  if (target[fieldToUse]) {
+    const currentComment = target[fieldToUse].find(
+      comment => comment.current == true
+    );
+    if (currentComment) {
+      target.piResponse = currentComment;
+    }
+  }
+}
+
 class _PIReviewStore {
   constructor() {
     this.bindActions(PIReviewActions);
 
-    this.applicationState = {
-      canSubmit: false,
-      showingCertification: false,
-      pendingResponses: []
-    };
+    if (flagIsOn('RESCOI-940')) {
+      this.applicationState = {
+        canSubmit: false,
+        showingCertification: false
+      };
+    }
+    else {
+      this.applicationState = {
+        canSubmit: false,
+        showingCertification: false,
+        pendingResponses: []
+      };
+    }
   }
 
   updateCanSubmit() {
@@ -114,6 +142,10 @@ class _PIReviewStore {
         this.disclosure.id = disclosureId;
         if (this.disclosure.questions) {
           this.disclosure.questions.forEach(questionMeta => {
+            if (flagIsOn('RESCOI-940')) {
+              setPIResponseBasedOnComments(questionMeta);
+            }
+
             const {question} = questionMeta;
 
             if (question) {
@@ -170,12 +202,26 @@ class _PIReviewStore {
 
         if (this.disclosure.entities) {
           this.disclosure.entities.forEach(entity => {
+            if (flagIsOn('RESCOI-940')) {
+              setPIResponseBasedOnComments(entity);
+            }
+
             if (entity.answers) {
               entity.answers.forEach(answer => {
                 answer.answer = JSON.parse(answer.answer);
               });
             }
           });
+        }
+
+        if (flagIsOn('RESCOI-940')) {
+          if (this.disclosure.declarations) {
+            this.disclosure.declarations.forEach(project => {
+              project.entities.forEach(entity => {
+                setPIResponseBasedOnComments(entity, 'adminComments');
+              });
+            });
+          }
         }
 
         this.files = this.disclosure.files;
@@ -263,7 +309,15 @@ class _PIReviewStore {
     });
 
     this.updateCanSubmit();
-    this.updatePendingResponses(reviewId, text);
+    if (flagIsOn('RESCOI-940')) {
+      createRequest()
+        .post(`/api/coi/pi-response/${reviewId}`)
+        .send({comment: text})
+        .end(processResponse(() => {}));
+    }
+    else {
+      this.updatePendingResponses(reviewId, text);
+    }
   }
 
   updatePendingResponses(reviewId, comment) {
@@ -466,13 +520,22 @@ class _PIReviewStore {
   }
 
   confirm(disclosureId) {
-    const {pendingResponses: responses} = this.applicationState;
-    createRequest()
-      .put(`/api/coi/pi-revise/${disclosureId}/submit`)
-      .send({responses})
-      .end(processResponse(() => {
-        document.location = '/coi/';
-      }));
+    if (flagIsOn('RESCOI-940')) {
+      createRequest()
+        .put(`/api/coi/pi-revise/${disclosureId}/submit`)
+        .end(processResponse(() => {
+          document.location = '/coi/';
+        }));
+    }
+    else {
+      const {pendingResponses: responses} = this.applicationState;
+      createRequest()
+        .put(`/api/coi/pi-revise/${disclosureId}/submit`)
+        .send({responses})
+        .end(processResponse(() => {
+          document.location = '/coi/';
+        }));
+    }
   }
 
   addEntityAttachments([files, entityId]) {

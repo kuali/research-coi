@@ -43,36 +43,81 @@ export async function verifyReviewIsForUser(knex, reviewId, userId) {
 async function updatePIResponseComment(
   knex,
   userInfo,
-  disclosureId,
-  targetType,
-  targetId,
+  disclosure_id,
+  topic_section,
+  topic_id,
   comment
 ) {
-  await knex('comment as c')
-    .update({
-      current: false
-    })
-    .where({
-      'c.disclosure_id': disclosureId,
-      'c.topic_section': targetType,
-      'c.topic_id': targetId,
-      'c.user_id': userInfo.schoolId
-    });
+  if (await flagIsOn(knex, 'RESCOI-940')) {
+    const {schoolId: user_id} = userInfo;
+    const commentRow = await knex
+      .first('c.id')
+      .from('comment as c')
+      .where({
+        disclosure_id,
+        topic_section,
+        topic_id,
+        user_id,
+        current: true
+      });
 
-  await knex('comment').insert({
-    disclosure_id: disclosureId,
-    topic_section: targetType,
-    topic_id: targetId,
-    text: comment,
-    user_id: userInfo.schoolId,
-    author: `${userInfo.firstName} ${userInfo.lastName}`,
-    user_role: ROLES.USER,
-    editable: false,
-    date: new Date(),
-    pi_visible: true,
-    reviewer_visible: true,
-    current: true
-  }, 'id');
+    if (commentRow) {
+      await knex('comment as c')
+        .update({
+          text: comment,
+          date: new Date()
+        })
+        .where({
+          disclosure_id,
+          topic_section,
+          topic_id,
+          user_id,
+          current: true
+        });
+    } else {
+      await knex('comment').insert({
+        disclosure_id,
+        topic_section,
+        topic_id,
+        text: comment,
+        user_id,
+        author: `${userInfo.firstName} ${userInfo.lastName}`,
+        user_role: ROLES.USER,
+        editable: false,
+        date: new Date(),
+        pi_visible: true,
+        reviewer_visible: true,
+        current: true
+      }, 'id');
+    }
+  }
+  else {
+    await knex('comment as c')
+      .update({
+        current: false
+      })
+      .where({
+        'c.disclosure_id': disclosure_id,
+        'c.topic_section': topic_section,
+        'c.topic_id': topic_id,
+        'c.user_id': userInfo.schoolId
+      });
+
+    await knex('comment').insert({
+      disclosure_id,
+      topic_section,
+      topic_id,
+      text: comment,
+      user_id: userInfo.schoolId,
+      author: `${userInfo.firstName} ${userInfo.lastName}`,
+      user_role: ROLES.USER,
+      editable: false,
+      date: new Date(),
+      pi_visible: true,
+      reviewer_visible: true,
+      current: true
+    }, 'id');
+  }
 }
 
 async function updateReviewRecord(knex, reviewId, values) {
@@ -198,7 +243,27 @@ async function getSubQuestions(knex, disclosureId) {
 }
 
 async function getComments(knex, disclosureId, topicIDs, section) {
-  return await knex.select(
+  if (await flagIsOn(knex, 'RESCOI-940')) {
+    return await knex.select(
+        'id',
+        'topic_id as topicId',
+        'text',
+        'author',
+        'date',
+        'user_id as userId',
+        'user_role as userRole',
+        'current'
+      )
+      .from('comment as c')
+      .where({
+        disclosure_id: disclosureId,
+        topic_section: section,
+        pi_visible: true
+      })
+      .andWhere('topic_id', 'in', topicIDs);
+  }
+  else { // eslint-disable-line no-else-return
+    return await knex.select(
       'id',
       'topic_id as topicId',
       'text',
@@ -214,6 +279,7 @@ async function getComments(knex, disclosureId, topicIDs, section) {
       pi_visible: true
     })
     .andWhere('topic_id', 'in', topicIDs);
+  }
 }
 
 async function getQuestionnaireComments(knex, disclosureId, topicIDs) {
@@ -754,6 +820,8 @@ async function getDeclarationsToReview(
   userId,
   reviewItems
 ) {
+  const flag940 = await flagIsOn(knex, 'RESCOI-940');
+
   const declarationIDs = extractTargetIDs(reviewItems);
 
   const [projects, entities, comments, declarations] = await Promise.all([
@@ -776,7 +844,15 @@ async function getDeclarationsToReview(
       entity.relationshipCd = declaration.typeCd;
 
       entity.adminComments = comments.filter(comment => {
-        return comment.topicId === declaration.id && comment.userId !== userId;
+        if (flag940) {
+          return comment.topicId === declaration.id;
+        }
+        else { // eslint-disable-line no-else-return
+          return (
+            comment.topicId === declaration.id &&
+            comment.userId !== userId
+          );
+        }
       }).sort((a, b) => {
         return a.date - b.date;
       });
@@ -1169,10 +1245,10 @@ export async function deleteAnswers(knex, userInfo, reviewId, toDelete) {
   );
 }
 
-export async function reSubmitDisclosure(knex, {schoolId}, disclosureId) {
+export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
   const isSubmitter = await isDisclosureUsers(
     knex,
-    disclosureId,
+    disclosure_id,
     schoolId
   );
   if (!isSubmitter) {
@@ -1183,16 +1259,22 @@ export async function reSubmitDisclosure(knex, {schoolId}, disclosureId) {
     .update({
       status_cd: DISCLOSURE_STATUS.RESUBMITTED
     })
-    .where({
-      id: disclosureId
-    });
+    .where({id: disclosure_id});
 
   await knex('pi_review')
     .update({
       revised: null,
       responded_to: null
     })
-    .where({disclosure_id: disclosureId});
+    .where({disclosure_id});
+
+  if (await flagIsOn(knex, 'RESCOI-940')) {
+    await knex('comment')
+      .update({
+        current: false
+      })
+      .where({disclosure_id});
+  }
 }
 
 export async function getPIResponseInfo(knex, disclosureId) {
