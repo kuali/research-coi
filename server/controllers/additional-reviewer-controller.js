@@ -88,11 +88,20 @@ export const init = app => {
     '/api/coi/additional-reviewers/:id',
     allowedRoles(ADMIN),
     useKnex,
-    wrapAsync(async ({knex, params, body}, res) =>
+    wrapAsync(async (req, res) =>
     {
+      const {knex, body, userInfo, hostname, dbInfo, params} = req;
       await knex.transaction(async (knexTrx) => {
         await updateAdditionalReviewer(knexTrx, params.id, body);
       });
+      
+      await createAndSendReviewerAssignedNotification(
+          dbInfo,
+          hostname,
+          userInfo,
+          params.id
+      );
+
       res.sendStatus(OK);
     }
   ));
