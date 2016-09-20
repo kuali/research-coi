@@ -109,7 +109,7 @@ System configuration for COI is done with environment variables. Environment var
 
 >**DB_PORT**
 >: The port for the database.
->*Default*: none
+>*Default*: *None*
 
 >**DB_USER**
 >: The db user name.
@@ -117,7 +117,7 @@ System configuration for COI is done with environment variables. Environment var
 >
 >**DB_PASSWORD**
 >: The password for the db user.
->*Default*: none
+>*Default*: *None*
 >
 >**DB_NAME**
 >:  the name of the database.
@@ -137,7 +137,7 @@ System configuration for COI is done with environment variables. Environment var
 >
 >**TRUST_PROXY**
 >: The value to pass to app.set('trust_proxy', <YOUR STRING HERE>)
->*Default*:  None
+>*Default*:  *None*
 >
 >**RESEARCH_CORE_URL**
 >: The absolute path to the research core application. Used when linking to or calling services from research core.
@@ -159,6 +159,10 @@ System configuration for COI is done with environment variables. Environment var
 >**USE_NULL_AS_DEFAULT**
 >: Defaults undefined properties to NULL when inserting new rows.
 >*Default*: true
+>
+>**COI_HIERARCHY**
+>: The name of the research core Sponsor Hierarchy for COI Disclosures.
+> *Default*:  *None*
 
 -------
 
@@ -175,7 +179,7 @@ System configuration for COI is done with environment variables. Environment var
 >*Default*: false
 >
 >**AUTH_URL**
->: The the absolute path to the authentication service
+>: The absolute path to the authentication service
 >*Default*: false
 >
 >**CACHE_MAX**
@@ -197,6 +201,9 @@ System configuration for COI is done with environment variables. Environment var
 >**AUTH_OVER_SSL**
 > : If your are sure you want to use the auth service over http set this to false.
 > *Default*:  true
+>
+
+
 
 -------
 
