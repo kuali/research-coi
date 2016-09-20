@@ -159,6 +159,10 @@ System configuration for COI is done with environment variables. Environment var
 >**USE_NULL_AS_DEFAULT**
 >: Defaults undefined properties to NULL when inserting new rows.
 >*Default*: true
+>
+>**COI_HIERARCHY**
+>: The name of the research core Sponsor Hierarchy for COI Disclosures.
+> *Default*:  COI%20Disclosures
 
 -------
 
@@ -175,7 +179,7 @@ System configuration for COI is done with environment variables. Environment var
 >*Default*: false
 >
 >**AUTH_URL**
->: The the absolute path to the authentication service
+>: The absolute path to the authentication service
 >*Default*: false
 >
 >**CACHE_MAX**
@@ -197,6 +201,9 @@ System configuration for COI is done with environment variables. Environment var
 >**AUTH_OVER_SSL**
 > : If your are sure you want to use the auth service over http set this to false.
 > *Default*:  true
+>
+
+
 
 -------
 
