@@ -20,7 +20,7 @@ import styles from './style';
 import React from 'react';
 import EntityDeclaration from '../entity-declaration';
 
-export default function ProjectToReview({project, last, className}) {
+export default function ProjectToReview({project, last, configId, className}) {
   let entityDeclarations;
   if (project.entities) {
     entityDeclarations = project.entities.map(entityDeclaration => {
@@ -30,6 +30,7 @@ export default function ProjectToReview({project, last, className}) {
           entity={entityDeclaration}
           revised={entityDeclaration.revised}
           respondedTo={entityDeclaration.respondedTo}
+          configId={configId}
         />
       );
     });

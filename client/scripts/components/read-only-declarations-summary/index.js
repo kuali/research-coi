@@ -100,7 +100,6 @@ export default class DeclarationsSummary extends React.Component {
       }
 
       const uniqueProjects = this.getUniqueProjects(declarations);
-
       projects = uniqueProjects.map((project, index) => {
         const declarationsJsx = declarations.filter(declaration => {
           return (
@@ -113,6 +112,7 @@ export default class DeclarationsSummary extends React.Component {
             declaration.typeCd,
             configId
           );
+
           return (
             <DeclarationSummary
               key={declaration.id}
