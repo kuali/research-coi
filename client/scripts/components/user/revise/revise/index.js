@@ -124,6 +124,7 @@ export class Revise extends React.Component {
           declarations = (
             <DeclarationSection
               declarationsToReview={declarationsToReview}
+              configId={this.state.disclosure.configId}
             />
           );
         }

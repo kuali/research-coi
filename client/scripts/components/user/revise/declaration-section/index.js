@@ -20,7 +20,7 @@ import styles from './style';
 import React from 'react';
 import ProjectToReview from '../project-to-review';
 
-export default function DeclarationSection({declarationsToReview, className}) {
+export default function DeclarationSection({declarationsToReview, configId, className}) {
   const projects = declarationsToReview;
 
   const projectsJSX = projects.map((project, index) => {
@@ -29,6 +29,7 @@ export default function DeclarationSection({declarationsToReview, className}) {
         key={project.id}
         project={project}
         last={index === projects.length - 1}
+        configId={configId}
       />
     );
   });

@@ -24,6 +24,7 @@ import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import {getDeclarationTypeString} from '../../../../stores/config-store';
 import { COI_ADMIN, ROLES } from '../../../../../../coi-constants';
+import getConfig from '../../../../get-config';
 
 export default class EntityDeclaration extends React.Component {
   constructor(props) {
@@ -101,7 +102,6 @@ export default class EntityDeclaration extends React.Component {
 
   render() {
     const {entity, className} = this.props;
-
     let icon;
     let commentSection;
     if (entity.adminComments.length > 0) {
@@ -220,10 +220,9 @@ export default class EntityDeclaration extends React.Component {
         </span>
       );
     }
-
     let relationship;
     if (this.state.revising) {
-      const {config} = this.context.configState;
+      const config = getConfig(this.context.configState, this.props.configId);
       const declarationTypes = config.declarationTypes.filter(declarationType => {
         return Boolean(declarationType.active);
       }).map(declarationType => {
@@ -255,8 +254,9 @@ export default class EntityDeclaration extends React.Component {
       const declarationType = getDeclarationTypeString(
         this.context.configState,
         entity.relationshipCd,
-        this.context.configState.config.id
+        this.props.configId
       );
+
       relationship = (
         <span className={styles.relationship}>{declarationType}</span>
       );
