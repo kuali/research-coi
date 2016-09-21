@@ -25,6 +25,9 @@ import {AdminEntitiesSummary} from '../admin-entities-summary';
 import {AdminDeclarationsSummary} from '../admin-declarations-summary';
 import ApprovalConfirmation from '../approval-confirmation';
 import RejectionConfirmation from '../rejection-confirmation';
+import ReturnToReporterConfirmation from '../return-to-reporter-confirmation';
+import {flagIsOn} from '../../../../feature-flags';
+
 import {
   DISCLOSURE_STEP,
   FILE_TYPE,
@@ -150,6 +153,7 @@ export class DisclosureDetail extends React.Component {
     const readonly = statusCd === DISCLOSURE_STATUS.UP_TO_DATE ||
       statusCd === DISCLOSURE_STATUS.REVISION_REQUIRED ||
       statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED ||
+      statusCd === DISCLOSURE_STATUS.RETURNED ||
       statusCd === DISCLOSURE_STATUS.EXPIRED;
 
     const declarationsWithoutDispositions = disclosure.declarations.filter(declaration => {
@@ -159,6 +163,9 @@ export class DisclosureDetail extends React.Component {
       declarationsWithoutDispositions.length > 0 &&
       config.general.dispositionsEnabled;
 
+    const areReviewCommentsvisibleToReporter = piComments.length;
+    const hasFinancialEntities = this.props.disclosure.entities.size;
+    const sendToReporterEnabled = flagIsOn('RESCOI-965');
     return (
       <div className={classes}>
         <DisclosureDetailHeading disclosure={disclosure} />
@@ -201,11 +208,21 @@ export class DisclosureDetail extends React.Component {
               canReject={piComments.length > 0}
               className={`${styles.override} ${styles.rejection}`}
             />
+            <ReturnToReporterConfirmation
+              id={disclosure.id}
+              areReviewCommentsvisibleToReporter={areReviewCommentsvisibleToReporter}
+              showReturnToReporterConfirmation={this.props.showReturnToReporterConfirmation}
+              returnToReporterComment={this.props.returnToReporterComment}
+              className={`${styles.override}`}
+            />
             <ActionButtons
               className={`${styles.override} ${styles.actionButtons}`}
               showAttachments={showAttachments}
               role={this.props.role}
               readonly={readonly}
+              hasFinancialEntities={hasFinancialEntities}
+              sendToReporterEnabled={sendToReporterEnabled}
+              showReturnToReporterConfirmation={this.props.showReturnToReporterConfirmation}
             />
           </span>
         </div>

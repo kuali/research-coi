@@ -56,6 +56,7 @@ export class DisclosureTableRow extends React.Component {
       this.props.statusCd,
       this.props.configId
     );
+
     return (
       <div role="row" className={classNames(styles.container, this.props.className)}>
         <span role="gridcell" className={classNames(styles.value, styles.firstColumn)}>

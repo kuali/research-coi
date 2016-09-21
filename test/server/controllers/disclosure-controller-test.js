@@ -221,7 +221,6 @@ describe('DisclosureController',async () => {
         .expect(OK);
 
       const disclosure = response.body;
-
       assert(!disclosure.submittedBy);
 
       await request(app.run())
@@ -242,6 +241,36 @@ describe('DisclosureController',async () => {
       assert.equal(submittedDisclosure[0].status_cd, DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL);
       assert.equal(submittedDisclosure[0].submitted_by, `User ${user}`);
       assert.equal(formatDate(submittedDisclosure[0].submitted_date), formatDate(today));
+    });
+
+    it('return submitted disclosure ', async function () {
+      const response = await request(app.run())
+        .get(`/api/coi/disclosures/${disclosureId}`)
+        .set('Authorization', `Bearer ${user}`)
+        .expect(OK);
+      const disclosure = response.body;
+      assert(disclosure.submittedBy != undefined);
+
+      const comment = {text: 'Hey there', disclosureId: disclosure.id};
+      await request(app.run())
+        .put(`/api/coi/disclosures/${disclosure.id}/return`)
+        .send(comment)
+        .set('Authorization','Bearer admin')
+        .expect(ACCEPTED);
+
+      const returnedDisclosure = await knex('disclosure')
+        .select('status_cd','returned_date')
+        .where({id: disclosure.id});
+      assert(!returnedDisclosure[0].returnedDate);
+      assert.equal(returnedDisclosure[0].status_cd, DISCLOSURE_STATUS.RETURNED);
+
+      const generalComment = await knex('general_comment')
+        .select('text', 'user_role', 'author', 'date')
+        .where({disclosure_id: disclosure.id});
+      assert.equal('Hey there', generalComment[0].text);
+      assert(generalComment[0].user_role);
+      assert(generalComment[0].author);
+      assert(generalComment[0].date);
     });
 
     it('should submit disclosure if auto approve is true but there are financial entities ', async function () {
@@ -362,6 +391,7 @@ describe('DisclosureController',async () => {
 
   after(async function() {
     await updateConfig(false, false);
+    await knex('general_comment').del();
     await knex('project_person').del();
     await knex('project_sponsor').del();
     await knex('project').del();

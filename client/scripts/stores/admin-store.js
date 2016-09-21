@@ -79,6 +79,7 @@ class _AdminStore {
       showFilters: true,
       showingApproval: false,
       showingRejection: false,
+      showReturnToReporterConfirmation: false,
       selectedDisclosure: undefined,
       loadingMore: false,
       offset: 0,
@@ -95,6 +96,9 @@ class _AdminStore {
         text: '',
         piVisible: 0,
         reviewerVisible: 0
+      },
+      returnToReporterComment: {
+        text: ''
       }
     };
 
@@ -330,6 +334,26 @@ class _AdminStore {
 
   toggleRejectionConfirmation() {
     this.applicationState.showingRejection = !this.applicationState.showingRejection;
+  }
+
+  toggleReturnToReporterConfirmation() {
+    this.applicationState.showReturnToReporterConfirmation = !this.applicationState.showReturnToReporterConfirmation;
+  }
+
+  returnToReporter() {
+    createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/return`)
+        .send(this.applicationState.returnToReporterComment)
+        .end(processResponse((err) => {
+          if (!err) {
+            this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
+              comment.editable = false;
+              return comment;
+            });
+            this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.RETURNED;
+            this.applicationState.showReturnToReporterConfirmation = !this.applicationState.showReturnToReporterConfirmation;
+            this.emitChange();
+          }
+        }));
   }
 
   rejectDisclosure() {
@@ -772,6 +796,10 @@ class _AdminStore {
 
   toggleReporter() {
     this.applicationState.comment.piVisible = this.applicationState.comment.piVisible === 0 ? 1 : 0;
+  }
+
+  updateGeneralComment(text) {
+    this.applicationState.returnToReporterComment.text = text.target.value;
   }
 
   updateCommentText(evt) {

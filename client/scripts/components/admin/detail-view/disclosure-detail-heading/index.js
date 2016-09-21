@@ -109,6 +109,16 @@ export class DisclosureDetailHeading extends React.Component {
       );
     }
 
+    let returnedDate;
+    if (disclosure.statusCd === DISCLOSURE_STATUS.RETURNED && disclosure.returnedDate) {
+      returnedDate = (
+        <div className={styles.details}>
+          <span className={styles.label}>Returned On:</span>
+          <span className={styles.value}>{formatDate(disclosure.returnedDate)}</span>
+        </div>
+      );
+    }
+
     let disposition;
     if (
       getDispositionsEnabled(configState) &&
@@ -195,6 +205,7 @@ export class DisclosureDetailHeading extends React.Component {
           </div>
           {submittedDate}
           {approvedDate}
+          {returnedDate}
         </span>
         {versionPicker}
       </div>
