@@ -45,12 +45,14 @@ const entityWithOutComments = {
 };
 
 const renderEntityDelcaration = (entity, revising, responding) => {
+  const configId = 1;
   return sd.shallowRender(
     <EntityDeclaration
       key={1}
       entity={entity}
       revising={revising}
       responding={responding}
+      configId={configId}
     />,
     configState
   );
