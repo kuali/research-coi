@@ -164,54 +164,27 @@ export async function getDisclosureForUser(knex, user_id) {
 async function updateDisclosureStatus(knex, person, project, req, isRequired) {
   const disclosure = await getDisclosureForUser(knex, person.personId);
 
-  if (await flagIsOn(knex, 'RESCOI-911_925')) {
-    if (isRequired) {
-      if (!person.notified) {
-        await createAndSendNewProjectNotification(
-          req.dbInfo,
-          req.hostname,
-          req.userInfo,
-          disclosure ? disclosure.id : undefined,
-          project,
-          person
-        );
-      }
-
-      if (
-        disclosure &&
-        await shouldUpdateStatus(knex, disclosure.id) &&
-        disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
-      ) {
-        await knex('disclosure')
-          .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
-          .where({id: disclosure.id});
-      }
-    }
-  } else if (
-    disclosure &&
-    await shouldUpdateStatus(knex, disclosure.id) &&
-    disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
-  ) {
-    await knex('disclosure')
-      .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
-      .where({id: disclosure.id});
-    await createAndSendNewProjectNotification(
-      req.dbInfo,
-      req.hostname,
-      req.userInfo,
-      disclosure.id,
-      project,
-      person
-    );
-  } else if (!disclosure) {
-    await createAndSendNewProjectNotification(
+  if (isRequired) {
+    if (!person.notified) {
+      await createAndSendNewProjectNotification(
         req.dbInfo,
         req.hostname,
         req.userInfo,
-        undefined,
+        disclosure ? disclosure.id : undefined,
         project,
         person
-    );
+      );
+    }
+
+    if (
+      disclosure &&
+      await shouldUpdateStatus(knex, disclosure.id) &&
+      disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+    ) {
+      await knex('disclosure')
+        .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
+        .where({id: disclosure.id});
+    }
   }
 }
 
