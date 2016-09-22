@@ -34,7 +34,6 @@ import Log from '../log';
 import {
   createAndSendNewProjectNotification
 } from '../services/notification-service/notification-service';
-import {flagIsOn} from '../feature-flags';
 
 export async function getSponsorsForProjects(knex, projectIds) {
   if (!Array.isArray(projectIds)) {
