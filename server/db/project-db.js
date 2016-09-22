@@ -366,6 +366,51 @@ async function deactivateProjectPersons(
   }
 }
 
+export async function updateAllProjectPersons(knex, req) {
+  const projects = await knex
+    .select(
+      'id',
+      'type_cd as typeCode',
+      'source_system as sourceSystem',
+      'source_identifier as sourceIdentifier',
+      'source_status as sourceStatus',
+      'start_date as startDate',
+      'end_date as endDate',
+      'title'
+    )
+    .from('project');
+
+  for (const project of projects) {
+    project.sponsors = await getSponsorsForProjects(knex, [project.id]);
+
+    const existingPersons = await knex
+      .select(
+        'role_cd as roleCode',
+        'person_id as personId',
+        'source_person_type as sourcePersonType',
+        'new',
+        'notified'
+      )
+      .from('project_person')
+      .where('project_id', project.id);
+
+    project.persons = existingPersons;
+
+    for (const person of existingPersons) {
+      const isRequired = await isProjectRequired(req, project, person);
+
+      await updateProjectPerson(
+        knex,
+        person,
+        project,
+        isRequired,
+        person.new,
+        req
+      );
+    }
+  }
+}
+
 async function saveProjectPersons(knex, project, req) {
   Log.info('pre project_person select');
 
