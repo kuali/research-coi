@@ -166,14 +166,16 @@ async function updateDisclosureStatus(knex, person, project, req, isRequired) {
 
   if (await flagIsOn(knex, 'RESCOI-911_925')) {
     if (isRequired) {
-      await createAndSendNewProjectNotification(
-        req.dbInfo,
-        req.hostname,
-        req.userInfo,
-        disclosure ? disclosure.id : undefined,
-        project,
-        person
-      );
+      if (!person.notified) {
+        await createAndSendNewProjectNotification(
+          req.dbInfo,
+          req.hostname,
+          req.userInfo,
+          disclosure ? disclosure.id : undefined,
+          project,
+          person
+        );
+      }
 
       if (
         disclosure &&
@@ -294,7 +296,8 @@ async function updateProjectPerson(
   await knex('project_person')
     .update({
       active: true,
-      role_cd: person.roleCode
+      role_cd: person.roleCode,
+      notified: isRequired
     })
     .where({
       person_id: person.personId,
@@ -318,8 +321,11 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
       role_cd: person.roleCode,
       person_id: person.personId,
       source_person_type: person.sourcePersonType,
-      project_id: project.id
+      project_id: project.id,
+      notified: true
     }, 'id');
+
+  person.notified = false;
 
   if (isRequired) {
     await updateDisclosureStatus(knex, person, project, req, isRequired);
@@ -364,7 +370,7 @@ async function saveProjectPersons(knex, project, req) {
   Log.info('pre project_person select');
 
   const existingPersons = await knex
-    .select('person_id as personId', 'source_person_type', 'new')
+    .select('person_id as personId', 'source_person_type', 'new', 'notified')
     .from('project_person')
     .where('project_id', project.id);
 
@@ -383,6 +389,8 @@ async function saveProjectPersons(knex, project, req) {
       });
 
       if (existingPerson) {
+        person.notified = existingPerson.notified;
+
         Log.info('pre updateProjectPerson');
         return await updateProjectPerson(
           knex,
