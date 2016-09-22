@@ -161,11 +161,11 @@ export async function getDisclosureForUser(knex, user_id) {
     });
 }
 
-async function updateDisclosureStatus(knex, person, project, req, isNew) {
+async function updateDisclosureStatus(knex, person, project, req, isRequired) {
   const disclosure = await getDisclosureForUser(knex, person.personId);
 
   if (await flagIsOn(knex, 'RESCOI-911_925')) {
-    if (isNew) {
+    if (isRequired) {
       await createAndSendNewProjectNotification(
         req.dbInfo,
         req.hostname,
@@ -174,16 +174,16 @@ async function updateDisclosureStatus(knex, person, project, req, isNew) {
         project,
         person
       );
-    }
 
-    if (
-      disclosure &&
-      await shouldUpdateStatus(knex, disclosure.id) &&
-      disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
-    ) {
-      await knex('disclosure')
-        .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
-        .where({id: disclosure.id});
+      if (
+        disclosure &&
+        await shouldUpdateStatus(knex, disclosure.id) &&
+        disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+      ) {
+        await knex('disclosure')
+          .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
+          .where({id: disclosure.id});
+      }
     }
   } else if (
     disclosure &&
@@ -288,7 +288,7 @@ async function updateProjectPerson(
   person,
   project,
   isRequired,
-  isNew,
+  noDisclosureSubmitted,
   req
 ) {
   await knex('project_person')
@@ -302,9 +302,9 @@ async function updateProjectPerson(
       project_id: project.id
     });
 
-  if (isNew === 1) {
+  if (noDisclosureSubmitted === 1) {
     if (isRequired) {
-      await updateDisclosureStatus(knex, person, project, req, false);
+      await updateDisclosureStatus(knex, person, project, req, isRequired);
     } else {
       await revertDisclosureStatus(knex, person, req);
     }
@@ -322,7 +322,7 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
     }, 'id');
 
   if (isRequired) {
-    await updateDisclosureStatus(knex, person, project, req, true);
+    await updateDisclosureStatus(knex, person, project, req, isRequired);
   }
 
   return id[0];
@@ -393,6 +393,7 @@ async function saveProjectPersons(knex, project, req) {
           req
         );
       }
+
       Log.info('pre insertProjectPerson');
       return await insertProjectPerson(knex, person, project, isRequired, req);
     });
