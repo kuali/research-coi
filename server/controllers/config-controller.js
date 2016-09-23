@@ -22,6 +22,9 @@ import {
   setConfig,
   getArchivedConfig
 } from '../db/config-db';
+import {
+  updateAllProjectPersons
+} from '../db/project-db';
 import { ROLES } from '../../coi-constants';
 const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
@@ -43,6 +46,8 @@ export async function saveConfig(req, res) {
   });
 
   res.send(config);
+
+  await updateAllProjectPersons(knex, req);
 
   if (await flagIsOn(knex, 'RESCOI-898')) {
     await handleNotifications();

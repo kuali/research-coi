@@ -195,3 +195,17 @@ export async function insertEntity(knex, entity) {
 
   return id[0];
 }
+
+export function randomInteger(max = 1000000) {
+  return Math.floor(Math.random() * max);
+}
+
+export async function asyncThrows(fn, ...params) {
+  let errorThrown = false;
+  try {
+    await fn(...params);
+  } catch (err) {
+    errorThrown = true;
+  }
+  return errorThrown;
+}

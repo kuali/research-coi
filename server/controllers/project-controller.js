@@ -17,7 +17,7 @@
 */
 
 import {
-  saveProjects,
+  saveProject,
   getProjects,
   updateProjectPersonDispositionType,
   getProjectStatuses,
@@ -53,7 +53,7 @@ export const init = app => {
 
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await saveProjects(knexTrx, req, body);
+        result = await saveProject(knexTrx, req, body);
       });
       if (!result) {
         res.sendStatus(OK);
@@ -97,7 +97,7 @@ export const init = app => {
         await updateProjectPersonDispositionType(
           knexTrx,
           body,
-          params.id
+          parseInt(params.id)
         );
       });
       res.sendStatus(OK);

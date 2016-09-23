@@ -65,7 +65,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
       description: 'test',
       order: 1,
       active: true
-    });
+    }, 'type_cd');
 
     dispositionTypeCd = dispositionType[0];
   });
