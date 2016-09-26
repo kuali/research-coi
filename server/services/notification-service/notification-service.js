@@ -532,3 +532,7 @@ export async function createAndSendNewProjectNotification(dbInfo, hostname, user
     Log.error(err);
   }
 }
+
+export async function getNotificationReceiptDetail(dbInfo, hostname, id) {
+  return await client.getNotificationReceiptDetail(dbInfo, hostname, id);
+}

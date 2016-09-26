@@ -26,6 +26,7 @@ import * as PIController from './controllers/pi-controller';
 import * as UserController from './controllers/user-controller';
 import * as AdditionalReviewerController from './controllers/additional-reviewer-controller';
 import * as FeaturesController from './controllers/features-controller';
+import * as NotificationsController from './controllers/notifications-controller';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -133,6 +134,7 @@ export function run() {
   app.use('/coi/admin', adminCheck, renderView('admin/admin'));
   app.use('/coi/config', configCheck, renderView('admin/config'));
   app.use('/coi/features', configCheck, renderView('admin/features'));
+  app.use('/coi/notifications', configCheck, renderView('admin/notifications'));
   app.use('/coi', unauthorized);
 
   app.use(bodyParser.json());
@@ -146,6 +148,7 @@ export function run() {
   UserController.init(app);
   AdditionalReviewerController.init(app);
   FeaturesController.init(app);
+  NotificationsController.init(app);
   app.use(ErrorLogger);
 
   app.set('portNumber', config ? config.port : process.env.COI_PORT || DEFAULT_PORT);
