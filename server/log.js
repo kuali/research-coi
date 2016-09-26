@@ -33,6 +33,12 @@ try {
 }
 
 class Log {
+  verbose(message, req) {
+    if (logLevel <= LOG_LEVEL.VERBOSE) {
+      console.info(this.create(message, 'VERBOSE', req));
+    }
+  }
+
   info(message, req) {
     if (logLevel <= LOG_LEVEL.INFO) {
       console.info(this.create(message, 'INFO', req));

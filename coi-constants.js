@@ -114,6 +114,7 @@ export const RELATIONSHIP_STATUS = {
 };
 
 export const LOG_LEVEL = {
+  VERBOSE: -1,
   INFO: 0,
   WARN: 1,
   ERROR: 2

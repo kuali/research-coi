@@ -35,7 +35,27 @@ import {
   createAndSendNewProjectNotification
 } from '../services/notification-service/notification-service';
 
+function logArguments(functionName, parameters) {
+  Log.verbose(`${functionName}`);
+  for (const param in parameters) {
+    Log.verbose(`\t${param} =`);
+    Log.verbose(`\t\t${JSON.stringify(parameters[param])}`);
+  }
+}
+
+function logVariable(names) {
+  for (const name in names) {
+    Log.verbose(`\t${name} = ${JSON.stringify(names[name])}`);
+  }
+}
+
+function logValue(name, value) {
+  Log.verbose(`\t${name} = ${JSON.stringify(value)}`);
+}
+
 export async function getSponsorsForProjects(knex, projectIds) {
+  logArguments('getSponsorsForProjects', {projectIds});
+
   if (!Array.isArray(projectIds)) {
     throw Error('invalid project ids');
   }
@@ -51,6 +71,8 @@ export async function getSponsorsForProjects(knex, projectIds) {
 }
 
 export async function getActiveProjectsForUser(knex, userId) {
+  logArguments('getActiveProjectsForUser', {userId});
+
   if (!Number.isInteger(userId) && typeof userId !== 'string') {
     throw Error('invalid user id');
   }
@@ -74,6 +96,8 @@ export async function getActiveProjectsForUser(knex, userId) {
 }
 
 export function associateSponsorsWithProject(sponsors, projects) {
+  logArguments('associateSponsorsWithProject', {sponsors, projects});
+
   if (!Array.isArray(sponsors)) {
     throw Error('Invalid sponsors');
   }
@@ -86,6 +110,7 @@ export function associateSponsorsWithProject(sponsors, projects) {
     const matchingProjects = projects.filter(
       prj => prj.id === sponsor.projectId
     );
+    logVariable({matchingProjects});
 
     for (const project of matchingProjects) {
       if (!project.sponsors) {
@@ -99,22 +124,31 @@ export function associateSponsorsWithProject(sponsors, projects) {
 }
 
 export async function getProjects (knex, userId) {
+  logArguments('getProjects', {userId});
+
   let projects = await getActiveProjectsForUser(knex, userId);
+  logVariable({projects});
   const projectIds = projects.map(project => project.id);
+  logVariable({projectIds});
   const uniqueProjectIds = uniq(projectIds);
+  logVariable(uniqueProjectIds);
 
   const sponsors = await getSponsorsForProjects(knex, uniqueProjectIds);
+  logVariable(sponsors);
   projects = associateSponsorsWithProject(sponsors, projects);
 
   return projects;
 }
 
 export async function shouldUpdateStatus(knex, disclosure_id) {
+  logArguments('shouldUpdateStatus', {disclosure_id});
+
   if (!Number.isInteger(disclosure_id)) {
     throw Error('invalid disclosure id');
   }
 
   const generalConfig = await getGeneralConfig(knex);
+  logVariable({generalConfig});
 
   if (!generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities) {
     return true;
@@ -127,6 +161,7 @@ export async function shouldUpdateStatus(knex, disclosure_id) {
       disclosure_id,
       active: true
     });
+  logVariable({entity});
 
   const entitiesExist = (entity !== undefined);
 
@@ -134,6 +169,8 @@ export async function shouldUpdateStatus(knex, disclosure_id) {
 }
 
 export async function getDisclosureForUser(knex, user_id) {
+  logArguments('getDisclosureForUser', {user_id});
+
   if (!Number.isInteger(user_id) && typeof user_id !== 'string') {
     throw Error('invalid user id');
   }
@@ -161,18 +198,28 @@ export async function getDisclosureForUser(knex, user_id) {
 }
 
 async function updateDisclosureStatus(knex, person, project, req, isRequired) {
-  const disclosure = await getDisclosureForUser(knex, person.personId);
-
+  logArguments('updateDisclosureStatus', {person, project, isRequired});
+  
   if (isRequired) {
+    const disclosure = await getDisclosureForUser(knex, person.personId);
+    logVariable({disclosure});
+
     if (!person.notified) {
-      await createAndSendNewProjectNotification(
-        req.dbInfo,
-        req.hostname,
-        req.userInfo,
-        disclosure ? disclosure.id : undefined,
-        project,
-        person
-      );
+      if (
+        !disclosure ||
+        disclosure.statusCd === DISCLOSURE_STATUS.IN_PROGRESS ||
+        disclosure.statusCd === DISCLOSURE_STATUS.EXPIRED ||
+        disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+      ) {
+        await createAndSendNewProjectNotification(
+          req.dbInfo,
+          req.hostname,
+          req.userInfo,
+          disclosure ? disclosure.id : undefined,
+          project,
+          person
+        );
+      }
     }
 
     if (
@@ -180,6 +227,7 @@ async function updateDisclosureStatus(knex, person, project, req, isRequired) {
       await shouldUpdateStatus(knex, disclosure.id) &&
       disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
     ) {
+      Log.verbose('updating disclosure status to UPDATE_REQUIRED');
       await knex('disclosure')
         .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
         .where({id: disclosure.id});
@@ -188,6 +236,8 @@ async function updateDisclosureStatus(knex, person, project, req, isRequired) {
 }
 
 export async function markDisclosureAsUpToDate(knex, user_id) {
+  logArguments('markDisclosureAsUpToDate', {user_id});
+
   if (!Number.isInteger(user_id) && typeof user_id !== 'string') {
     throw Error('invalid user id');
   }
@@ -202,15 +252,21 @@ export async function markDisclosureAsUpToDate(knex, user_id) {
 }
 
 async function revertDisclosureStatus(knex, person, req, projectId) {
+  logArguments('revertDisclosureStatus', {person, projectId});
+
   const projects = await getProjects(knex, person.personId);
+  logVariable({projects});
   const otherProjects = projects.filter(project => project.id !== projectId);
+  logVariable({otherProjects});
   const otherRequiredProjects = await ProjectService.filterProjects(
     req.dbInfo,
     otherProjects,
     req.headers.authorization
   );
+  logVariable({otherRequiredProjects});
 
   if (otherRequiredProjects.length > 0) {
+    Log.verbose('no other required projects');
     return;
   }
 
@@ -218,6 +274,8 @@ async function revertDisclosureStatus(knex, person, req, projectId) {
 }
 
 async function isProjectRequired(req, project, person) {
+  logArguments('isProjectRequired', {project, person});
+
   const projectData = {
     typeCd: project.typeCode,
     roleCd: person.roleCode,
@@ -233,6 +291,8 @@ async function isProjectRequired(req, project, person) {
 }
 
 export async function deactivateAllProjectPeople(knex, project_id) {
+  logArguments('deactivateAllProjectPeople', {project_id});
+
   if (!Number.isInteger(project_id)) {
     throw Error('invalid project id');
   }
@@ -243,10 +303,13 @@ export async function deactivateAllProjectPeople(knex, project_id) {
 }
 
 async function disableAllPersonsForProject(knex, project_id, req) {
+  logArguments('disableAllPersonsForProject', {project_id});
+
   const existingPersons = await knex
     .select('person_id as personId')
     .from('project_person')
     .where({project_id});
+  logVariable({existingPersons});
 
   await deactivateAllProjectPeople(knex, project_id);
 
@@ -265,6 +328,11 @@ async function updateProjectPerson(
   noDisclosureSubmitted,
   req
 ) {
+  logArguments(
+    'updateProjectPerson',
+    {person, project, isRequired, noDisclosureSubmitted}
+  );
+
   await knex('project_person')
     .update({
       active: true,
@@ -287,6 +355,8 @@ async function updateProjectPerson(
 }
 
 async function insertProjectPerson(knex, person, project, isRequired, req) {
+  logArguments('insertProjectPerson', {person, project, isRequired});
+
   const id = await knex('project_person')
     .insert({
       active: true,
@@ -296,6 +366,7 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
       project_id: project.id,
       notified: true
     }, 'id');
+  logVariable({id});
 
   person.notified = false;
 
@@ -307,6 +378,8 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
 }
 
 async function deactivateProjectPerson(knex, person, projectId, req) {
+  logArguments('deactivateProjectPerson', {person, projectId});
+
   await knex('project_person')
     .update('active', false)
     .where({
@@ -324,6 +397,11 @@ async function deactivateProjectPersons(
   projectId,
   req
 ) {
+  logArguments(
+    'deactivateProjectPersons',
+    {existingPersons, persons, projectId}
+  );
+
   const filtered = existingPersons.filter(pr => {
     return persons.find(person => {
       return (
@@ -332,13 +410,16 @@ async function deactivateProjectPersons(
       );
     }) === undefined;
   });
-  
+  logVariable({filtered});
+
   for (const result of filtered) {
     await deactivateProjectPerson(knex, result, projectId, req);
   }
 }
 
 export async function updateAllProjectPersons(knex, req) {
+  logArguments('updateAllProjectPersons');
+
   const projects = await knex
     .select(
       'id',
@@ -351,9 +432,12 @@ export async function updateAllProjectPersons(knex, req) {
       'title'
     )
     .from('project');
+  logVariable({projects});
 
   for (const project of projects) {
     project.sponsors = await getSponsorsForProjects(knex, [project.id]);
+    const projSponsors = project.sponsors;
+    logVariable({projSponsors});
 
     const existingPersons = await knex
       .select(
@@ -365,11 +449,12 @@ export async function updateAllProjectPersons(knex, req) {
       )
       .from('project_person')
       .where('project_id', project.id);
-
+    logVariable({existingPersons});
     project.persons = existingPersons;
 
     for (const person of existingPersons) {
       const isRequired = await isProjectRequired(req, project, person);
+      logVariable({isRequired});
 
       await updateProjectPerson(
         knex,
@@ -384,32 +469,40 @@ export async function updateAllProjectPersons(knex, req) {
 }
 
 async function saveProjectPersons(knex, project, req) {
-  Log.info('pre project_person select');
+  logArguments('saveProjectPersons', {project});
 
   const existingPersons = await knex
     .select('person_id as personId', 'source_person_type', 'new', 'notified')
     .from('project_person')
     .where('project_id', project.id);
 
-  Log.info('post project_person select');
+  logVariable({existingPersons});
 
   if (project.persons && project.persons.length > 0) {
-    const queries = project.persons.map(async (person) => {
-      Log.info('pre isProjectRequired');
+    await deactivateProjectPersons(
+      knex,
+      existingPersons,
+      project.persons,
+      project.id,
+      req
+    );
+
+    for (const person of project.persons) {
       const isRequired = await isProjectRequired(req, project, person);
-      Log.info('post isProjectRequired');
+      logVariable({isRequired});
+
       const existingPerson = existingPersons.find(pr => {
         return (
           pr.personId === person.personId &&
           pr.source_person_type === person.sourcePersonType
         );
       });
+      logVariable({existingPerson});
 
       if (existingPerson) {
         person.notified = existingPerson.notified;
 
-        Log.info('pre updateProjectPerson');
-        return await updateProjectPerson(
+        await updateProjectPerson(
           knex,
           person,
           project,
@@ -418,35 +511,23 @@ async function saveProjectPersons(knex, project, req) {
           req
         );
       }
+      else {
+        await insertProjectPerson(knex, person, project, isRequired, req);
+      }
+    }
 
-      Log.info('pre insertProjectPerson');
-      return await insertProjectPerson(knex, person, project, isRequired, req);
-    });
-
-    Log.info('pre deactivateProjectPersons');
-    await deactivateProjectPersons(
-      knex,
-      existingPersons,
-      project.persons,
-      project.id,
-      req
-    );
-    Log.info('post deactivateProjectPersons');
-
-    Log.info('pre queries');
-    await Promise.all(queries);
-    Log.info('post queries');
     return;
   }
 
+  logVariable({existingPersons});
   if (existingPersons.length > 0) {
-    Log.info('pre disableAllPersonsForProject');
     await disableAllPersonsForProject(knex, project.id, req);
-    Log.info('post disableAllPersonsForProject');
   }
 }
 
 export async function insertProject(knex, project) {
+  logArguments('insertProject', {project});
+
   if (typeof project !== 'object') {
     throw Error('invalid project');
   }
@@ -469,25 +550,24 @@ export async function insertProject(knex, project) {
 }
 
 async function saveNewProjects(knex, project, req) {
-  Log.info('pre insertProject');
+  logArguments('saveNewProjects', {project});
+
   project.id = await insertProject(knex, project);
-  Log.info('post insertProject');
+  logValue('project.id', project.id);
 
   if (project.sponsors) {
-    Log.info('pre updateProjectSponsors');
     let {sponsors} = project;
     if (sponsors === null || sponsors === undefined) {
       sponsors = [];
     }
     await updateProjectSponsors(knex, project.id, sponsors);
-    Log.info('post updateProjectSponsors');
   }
 
   if (project.persons && Array.isArray(project.persons)) {
     for (const person of project.persons) {
-      Log.info('pre isProjectRequired');
       const isRequired = await isProjectRequired(req, project, person);
-      Log.info('post isProjectRequired');
+      logVariable({isRequired});
+
       const id = await insertProjectPerson(
         knex,
         person,
@@ -495,7 +575,7 @@ async function saveNewProjects(knex, project, req) {
         isRequired,
         req
       );
-      Log.info('post insertProjectPerson');
+      logVariable({id});
       person.id = id;
     }
   }
@@ -503,6 +583,8 @@ async function saveNewProjects(knex, project, req) {
 }
 
 async function saveExistingProject(knex, project, authHeader) {
+  logArguments('saveExistingProject', {project});
+
   if (!project.title) {
     throw Error('title is a required field');
   }
@@ -516,8 +598,6 @@ async function saveExistingProject(knex, project, authHeader) {
     })
     .where('id', project.id);
 
-  Log.info('update project table complete');
-
   let {sponsors} = project;
   if (sponsors === null || sponsors === undefined) {
     sponsors = [];
@@ -527,11 +607,12 @@ async function saveExistingProject(knex, project, authHeader) {
 }
 
 export async function getExistingProjectId(knex, project) {
+  logArguments('getExistingProjectId', {project});
+
   if (typeof project !== 'object') {
     throw Error('invalid project');
   }
 
-  Log.info('pre existing project query');
   const existingProject = await knex
     .first('id')
     .from('project')
@@ -539,25 +620,29 @@ export async function getExistingProjectId(knex, project) {
       source_system: project.sourceSystem,
       source_identifier: project.sourceIdentifier
     });
-  Log.info('got existing project');
+  logVariable({existingProject});
+
   if (existingProject) {
     return existingProject.id;
   }
 }
 
 export async function saveProject(knex, req, project) {
+  logArguments('saveProject', {project});
+
   const existingProjectId = await getExistingProjectId(knex, project);
-  Log.info(`existingProjectId = ${existingProjectId}`);
+  logVariable({existingProjectId});
+
   if (existingProjectId) {
     project.id = existingProjectId;
-    Log.info('Pre saveExistingProjects');
     return await saveExistingProject(knex, project, req);
   }
-  Log.info('Pre saveNewProjects');
   return await saveNewProjects(knex, project, req);
 }
 
 export async function getDisclosureStatusForUser(knex, user_id) {
+  logArguments('getDisclosureStatusForUser', {user_id});
+
   if (!Number.isInteger(user_id) && typeof user_id !== 'string') {
     throw Error('invalid user id');
   }
@@ -570,6 +655,8 @@ export async function getDisclosureStatusForUser(knex, user_id) {
 }
 
 export async function projectHasDeclarations(knex, disclosure_id, project_id) {
+  logArguments('projectHasDeclarations', {disclosure_id, project_id});
+
   if (!Number.isInteger(disclosure_id)) {
     throw Error('Invalid disclosure id');
   }
@@ -585,7 +672,8 @@ export async function projectHasDeclarations(knex, disclosure_id, project_id) {
       project_id,
       disclosure_id
     });
-  
+  logVariable({declarationRecord});
+
   if (declarationRecord) {
     return true;
   }
@@ -593,6 +681,8 @@ export async function projectHasDeclarations(knex, disclosure_id, project_id) {
 }
 
 export async function disclosureHasEntities(knex, disclosure_id) {
+  logArguments('disclosureHasEntities', {disclosure_id});
+
   if (!Number.isInteger(disclosure_id)) {
     throw Error('invalid disclosure id');
   }
@@ -601,7 +691,8 @@ export async function disclosureHasEntities(knex, disclosure_id) {
     .first('id')
     .from('fin_entity')
     .where({disclosure_id});
-  
+  logVariable(entityRecord);
+
   if (entityRecord) {
     return true;
   }
@@ -609,6 +700,8 @@ export async function disclosureHasEntities(knex, disclosure_id) {
 }
 
 async function getStatus(knex, projectPerson, dbInfo, authHeader) {
+  logArguments('getStatus', {projectPerson});
+
   const {
     disposition,
     person_id: userId,
@@ -626,6 +719,7 @@ async function getStatus(knex, projectPerson, dbInfo, authHeader) {
     projectPerson,
     authHeader
   );
+  logVariable({isRequired});
 
   if (!isRequired) {
     disclosureStatus.status = DISCLOSURE_NOT_REQUIRED;
@@ -633,6 +727,7 @@ async function getStatus(knex, projectPerson, dbInfo, authHeader) {
   }
 
   const disclosureRecord = await getDisclosureStatusForUser(knex, userId);
+  logVariable({disclosureRecord});
   if (!disclosureRecord) {
     disclosureStatus.status = NOT_YET_DISCLOSED;
     return disclosureStatus;
@@ -643,7 +738,9 @@ async function getStatus(knex, projectPerson, dbInfo, authHeader) {
     disclosureId,
     projectId
   );
+  logVariable({hasDeclarations});
   const hasEntities = await disclosureHasEntities(knex, disclosureRecord.id);
+  logVariable({hasEntities});
   const shouldUseDisclosuresStatus = hasDeclarations || !hasEntities;
   if (shouldUseDisclosuresStatus) {
     disclosureStatus.status = disclosureRecord.status;
@@ -660,6 +757,8 @@ export async function getProjectInfos(
   sourceIdentifier,
   personId
 ) {
+  logArguments('getProjectInfos', {sourceSystem, sourceIdentifier, personId});
+
   const criteria = {
     'p.source_system': sourceSystem,
     'p.source_identifier': sourceIdentifier
@@ -685,6 +784,7 @@ export async function getProjectInfos(
     .leftJoin('disclosure as d', 'd.user_id', 'pp.person_id')
     .leftJoin('disposition_type as dt', 'dt.type_cd', 'pp.disposition_type_cd')
     .where(criteria);
+  logVariable({projectInfos});
 
   if (projectInfos.length === 0) {
     return [];
@@ -694,6 +794,7 @@ export async function getProjectInfos(
   const uniqueProjectIds = uniq(projectIds);
 
   const sponsors = await getSponsorsForProjects(knex, uniqueProjectIds);
+  logVariable({sponsors});
   projectInfos = associateSponsorsWithProject(sponsors, projectInfos);
 
   return projectInfos;
@@ -706,11 +807,14 @@ export async function getProjectStatuses(
   sourceIdentifier,
   authHeader
 ) {
+  logArguments('getProjectStatuses', {sourceSystem, sourceIdentifier});
+
   const projectInfos = await getProjectInfos(
     knex,
     sourceSystem,
     sourceIdentifier
   );
+  logVariable({projectInfos});
   const results = [];
   if (Array.isArray(projectInfos)) {
     for (const projectInfo of projectInfos) {
@@ -728,12 +832,15 @@ export async function getProjectStatus(
   personId,
   authHeader
 ) {
+  logArguments('getProjectStatus', {sourceSystem, sourceIdentifier, personId});
+
   const projectInfos = await getProjectInfos(
     knex,
     sourceSystem,
     sourceIdentifier,
     personId
   );
+  logVariable({projectInfos});
 
   if (projectInfos[0]) {
     return await getStatus(knex, projectInfos[0], dbInfo, authHeader);
@@ -747,6 +854,8 @@ export async function updateProjectPersonDispositionType(
   projectPerson,
   id
 ) {
+  logArguments('updateProjectPersonDispositionType', {projectPerson, id});
+
   if (typeof projectPerson !== 'object') {
     throw Error('invalid project person object');
   }
@@ -762,7 +871,8 @@ export async function updateProjectPersonDispositionType(
 }
 
 export async function updateProjectSponsors(knex, project_id, sponsors) {
-  Log.info('beginning updateProjectSponsors');
+  logArguments('updateProjectSponsors', {project_id, sponsors});
+
   if (!isNumber(project_id)) {
     throw Error('invalid project id');
   }
@@ -781,8 +891,7 @@ export async function updateProjectSponsors(knex, project_id, sponsors) {
     )
     .from('project_sponsor')
     .where({project_id});
-
-  Log.info('existingSponsors query complete');
+  logVariable({existingSponsors});
 
   const toDelete = [];
   existingSponsors.forEach(existingSponsor => {
@@ -800,14 +909,13 @@ export async function updateProjectSponsors(knex, project_id, sponsors) {
     }
   });
 
-  Log.info('pre project_sponsor delete');
   if (toDelete.length > 0) {
+    logVariable({toDelete});
     await knex('project_sponsor')
       .del()
       .whereIn('id', toDelete)
       .andWhere({project_id});
   }
-  Log.info('post project_sponsor delete');
 
   const toAdd = [];
   sponsors.forEach(sponsor => {
@@ -831,11 +939,8 @@ export async function updateProjectSponsors(knex, project_id, sponsors) {
     }
   });
 
-  Log.info('pre project_sponsor insert');
-
   if (toAdd.length > 0) {
+    logVariable({toAdd});
     await knex('project_sponsor').insert(toAdd);
   }
-
-  Log.info('post project_sponsor insert');
 }
