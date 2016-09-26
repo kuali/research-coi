@@ -475,7 +475,11 @@ async function saveNewProjects(knex, project, req) {
 
   if (project.sponsors) {
     Log.info('pre updateProjectSponsors');
-    await updateProjectSponsors(knex, project.id, project.sponsors);
+    let {sponsors} = project;
+    if (sponsors === null || sponsors === undefined) {
+      sponsors = [];
+    }
+    await updateProjectSponsors(knex, project.id, sponsors);
     Log.info('post updateProjectSponsors');
   }
 
@@ -514,7 +518,11 @@ async function saveExistingProject(knex, project, authHeader) {
 
   Log.info('update project table complete');
 
-  await updateProjectSponsors(knex, project.id, project.sponsors);
+  let {sponsors} = project;
+  if (sponsors === null || sponsors === undefined) {
+    sponsors = [];
+  }
+  await updateProjectSponsors(knex, project.id, sponsors);
   await saveProjectPersons(knex, project, authHeader);
 }
 
