@@ -109,6 +109,8 @@ export function run() {
     }
   }
 
+  console.log(`Log level: ${logLevel}`); // eslint-disable-line no-console
+
   conditionallyLogRequests(app, logLevel);
 
   app.use('/coi', express.static('client'));
