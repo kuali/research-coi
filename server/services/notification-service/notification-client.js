@@ -21,6 +21,7 @@ import { getUserInfosByQuery, getAdmins } from '../auth-service/auth-service';
 import { NOTIFICATIONS_MODE } from '../../../coi-constants';
 import Log from '../../log';
 import {OK} from '../../../http-status-codes';
+import getKnex from '../../db/connection-manager';
 
 let getNotificationsInfo;
 try {
@@ -170,5 +171,39 @@ export async function sendNotification(dbInfo, hostname, notification) {
   else {
     Log.info('Notification requested successfully');
     Log.info(JSON.stringify(response.body));
+
+    const receiptIds = response.body.map(receipt => receipt.notificationId);
+    await recordNotificationRequest(
+      getKnex(dbInfo),
+      notification.addresses,
+      receiptIds
+    );
+  }
+}
+
+async function recordNotificationRequest(knex, addresses, receiptIds) {
+  await knex('notification_request')
+    .insert({
+      timestamp: new Date(),
+      addresses,
+      receipt_ids: JSON.stringify(receiptIds) // eslint-disable-line camelcase
+    });
+}
+
+export async function getNotificationReceiptDetail(dbInfo, hostname, id) {
+  const requestInfo = getRequestInfo(dbInfo, hostname);
+
+  let response;
+  try {
+    response = await request
+      .get(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}/${id}`)
+      .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`);
+  } catch (err) {
+    Log.error('Notification detail request failed');
+    Log.error(err);
+  }
+
+  if (response && response.status === OK) {
+    return response.body;
   }
 }

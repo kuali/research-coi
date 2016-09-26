@@ -39,7 +39,8 @@ module.exports = {
     admin: './client/scripts/components/admin/admin.js',
     config: './client/scripts/components/config/config.js',
     about: './client/scripts/components/about/about.js',
-    features: './client/scripts/components/features/app.js'
+    features: './client/scripts/components/features/app.js',
+    notifications: './client/scripts/components/notifications/app.js'
   },
   output: {
     path: path.join(__dirname, 'client/build'),
