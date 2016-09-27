@@ -29,8 +29,8 @@ export default function CustomizeNotifications(props, {configState}) {
       className={props.className}
     >
       <NotificationPanels
-        notificationTemplates ={configState.config ? configState.config.notificationTemplates : []}
-        notificationEdits = {configState.applicationState.notificationEdits}
+        notificationTemplates={configState.config ? configState.config.notificationTemplates : []}
+        notificationEdits={configState.applicationState.notificationEdits}
       />
     </ConfigPage>
   );

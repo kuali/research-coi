@@ -236,7 +236,7 @@ export class Disclosure extends React.Component {
             enforceEntities;
           currentStep = (
             <Entities
-              enforceEntities = {enforceEntities}
+              enforceEntities={enforceEntities}
               applicationState={this.state.applicationState}
               entities={this.state.entities}
               inProgress={this.state.applicationState.entityInProgress}
@@ -304,7 +304,7 @@ export class Disclosure extends React.Component {
           currentStep = (
             <Certify
               instructionsShowing={this.state.applicationState.instructionsShowing}
-              isCertified = {this.state.applicationState.currentDisclosureState.isCertified}
+              isCertified={this.state.applicationState.currentDisclosureState.isCertified}
               files={this.state.files}
             />
           );
