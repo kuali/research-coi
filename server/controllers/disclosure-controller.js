@@ -33,13 +33,16 @@ import {
   submit,
   approve,
   reject,
+  returnToReporter,
   addComment,
+  addGeneralComment,
   updateComment,
   deleteAnswers,
+  deleteAllAnswers,
   getCurrentState,
   saveCurrentState,
   getArchivedDisclosure,
-  createEmptyDeclarations
+  createEmptyDeclarations,
 } from '../db/disclosure-db';
 import * as PIReviewDB from '../db/pi-review-db';
 import * as FileDB from '../db/file-db';
@@ -546,6 +549,46 @@ export const init = app => {
       res.sendStatus(ACCEPTED);
     }
   ));
+
+  app.put(
+      '/api/coi/disclosures/:id/return',
+      allowedRoles(ADMIN),
+      useKnex,
+      wrapAsync(async (req, res) =>
+      {
+        const {
+          knex,
+          userInfo,
+          params,
+          dbInfo,
+          hostname,
+          body: comment
+          } = req;
+        await knex.transaction(async (knexTrx) => {
+          await returnToReporter(knexTrx, userInfo, params.id);
+        });
+
+        await knex.transaction(async (knexTrx) => {
+          await deleteAllAnswers(
+            knexTrx,
+            userInfo,
+            params.id
+          );
+
+          comment.disclosureId = params.id;
+          await addGeneralComment(knexTrx, userInfo, comment);
+        });
+
+        await createAndSendSentBackNotification(
+          dbInfo,
+          hostname,
+          userInfo,
+          params.id
+        );
+
+        res.sendStatus(ACCEPTED);
+      }
+      ));
 
   /**
     Admin can add any, Reviewer can only add ones where they are a reviewer

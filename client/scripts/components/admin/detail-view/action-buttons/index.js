@@ -24,6 +24,7 @@ import { ROLES } from '../../../../../../coi-constants';
 
 export default function ActionButtons(props) {
   let generalAttachmentButton;
+
   if (props.showAttachments) {
     generalAttachmentButton = (
       <div
@@ -39,8 +40,9 @@ export default function ActionButtons(props) {
   }
 
   let approveButton;
-  let sendBackButton;
-  if (!props.readonly && props.role === ROLES.ADMIN) {
+  let sendBackForRevisionsButton;
+  let returnToReporterButton;
+  if (!props.readonly && props.role === ROLES.ADMIN && !props.showReturnToReporterConfirmation) {
     approveButton = (
       <div
         name='Approve Button'
@@ -52,22 +54,37 @@ export default function ActionButtons(props) {
       </div>
     );
 
-    sendBackButton = (
-      <div
-        name='Send Back Button'
-        className={styles.button}
-        onClick={AdminActions.toggleRejectionConfirmation}
-      >
-        <i className={`fa fa-times ${styles.icon} ${styles.sendBackIcon}`} />
-        <span className={styles.label}>SEND BACK</span>
-      </div>
-    );
+    if (!props.sendToReporterEnabled || (props.sendToReporterEnabled && props.hasFinancialEntities)) {
+      sendBackForRevisionsButton = (
+        <div
+          name='Send Back For Revisions Button'
+          className={styles.button}
+          onClick={AdminActions.toggleRejectionConfirmation}
+        >
+          <i className={`fa fa-times ${styles.icon} ${styles.sendBackIcon}`} />
+          <span className={styles.label}>SEND BACK TO REVISE</span>
+        </div>
+      );
+    }
+
+    if (props.sendToReporterEnabled && !props.hasFinancialEntities) {
+      returnToReporterButton = (
+        <div
+          name='Return To Reporter Button'
+          className={styles.button}
+          onClick={AdminActions.toggleReturnToReporterConfirmation}
+        >
+          <i className={`fa fa-reply ${styles.icon} ${styles.sendBackIcon}`} />
+          <span className={styles.label}>RETURN TO REPORTER</span>
+        </div>
+      );
+    }
   }
 
   let additionalReviewButton;
   let uploadAttachmentsButton;
 
-  if (props.role === ROLES.ADMIN) {
+  if (props.role === ROLES.ADMIN && !props.showReturnToReporterConfirmation) {
     additionalReviewButton = (
       <div
         name='Additional Review Button'
@@ -110,13 +127,9 @@ export default function ActionButtons(props) {
     );
   }
 
-  return (
-    <div name='Action Buttons' className={classNames(styles.container, props.className)}>
-      {generalAttachmentButton}
-      {completeReviewButton}
-      {approveButton}
-      {sendBackButton}
-      {additionalReviewButton}
+  let reviewCommentsButton;
+  if (!props.showReturnToReporterConfirmation) {
+    reviewCommentsButton = (
       <div
         name='Review Comments Button'
         className={styles.button}
@@ -127,6 +140,18 @@ export default function ActionButtons(props) {
           <div>REVIEW COMMENTS</div>
         </span>
       </div>
+    );
+  }
+
+  return (
+    <div name='Action Buttons' className={classNames(styles.container, props.className)}>
+      {generalAttachmentButton}
+      {completeReviewButton}
+      {approveButton}
+      {sendBackForRevisionsButton}
+      {returnToReporterButton}
+      {additionalReviewButton}
+      {reviewCommentsButton}
       {uploadAttachmentsButton}
 
     </div>
