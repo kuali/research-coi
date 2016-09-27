@@ -75,4 +75,23 @@ class Log {
   }
 }
 
-export default new Log();
+const log = new Log();
+export default log;
+
+export function logArguments(functionName, parameters) {
+  log.verbose(`${functionName}`);
+  for (const param in parameters) {
+    log.verbose(`\t${param} =`);
+    log.verbose(`\t\t${JSON.stringify(parameters[param])}`);
+  }
+}
+
+export function logVariable(names) {
+  for (const name in names) {
+    log.verbose(`\t${name} = ${JSON.stringify(names[name])}`);
+  }
+}
+
+export function logValue(name, value) {
+  log.verbose(`\t${name} = ${JSON.stringify(value)}`);
+}

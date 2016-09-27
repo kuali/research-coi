@@ -30,28 +30,14 @@ const {
 } = PROJECT_DISCLOSURE_STATUSES;
 import * as ProjectService from '../services/project-service/project-service';
 import { getGeneralConfig } from '../db/config-db';
-import Log from '../log';
+import Log, {
+  logArguments,
+  logVariable,
+  logValue
+} from '../log';
 import {
   createAndSendNewProjectNotification
 } from '../services/notification-service/notification-service';
-
-function logArguments(functionName, parameters) {
-  Log.verbose(`${functionName}`);
-  for (const param in parameters) {
-    Log.verbose(`\t${param} =`);
-    Log.verbose(`\t\t${JSON.stringify(parameters[param])}`);
-  }
-}
-
-function logVariable(names) {
-  for (const name in names) {
-    Log.verbose(`\t${name} = ${JSON.stringify(names[name])}`);
-  }
-}
-
-function logValue(name, value) {
-  Log.verbose(`\t${name} = ${JSON.stringify(value)}`);
-}
 
 export async function getSponsorsForProjects(knex, projectIds) {
   logArguments('getSponsorsForProjects', {projectIds});
