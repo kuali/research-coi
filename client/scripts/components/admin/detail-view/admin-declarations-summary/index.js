@@ -283,7 +283,8 @@ export class AdminDeclarationsSummary extends React.Component {
         }
 
         return (
-          <div key={`proj${project.id}`}
+          <div
+            key={`proj${project.id}`}
             className={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}
           >
             <div>

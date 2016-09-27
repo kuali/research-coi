@@ -81,7 +81,8 @@ export default class PopOver extends React.Component {
     );
 
     return (
-      <span style={inlineStyles}
+      <span
+        style={inlineStyles}
         className={styles.container}
         data-hover="true"
       >

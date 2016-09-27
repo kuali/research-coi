@@ -191,13 +191,15 @@ export default class DeclarationSummary extends React.Component {
     }
 
     return (
-      <div className={
-        classNames(
-          styles.container,
-          {[styles.highlighted]: changedByPI},
-          className
-        )
-      }>
+      <div
+        className={
+          classNames(
+            styles.container,
+            {[styles.highlighted]: changedByPI},
+            className
+          )
+        }
+      >
         <div>
           <span className={styles.entityName} style={{fontWeight: 'bold'}}>
             {declaration.entityName}

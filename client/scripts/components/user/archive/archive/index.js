@@ -202,10 +202,12 @@ export class Archive extends React.Component {
     let updateDisclosureLink;
     if (isEditable) {
       updateDisclosureLink = (
-        <Link to={{
-          pathname: '/coi/disclosure',
-          query: {type: DISCLOSURE_TYPE.ANNUAL}
-        }}>
+        <Link
+          to={{
+            pathname: '/coi/disclosure',
+            query: {type: DISCLOSURE_TYPE.ANNUAL}
+          }}
+        >
           <div className={`${styles.sidebarButton} ${styles.firstButton}`}>
             <div className={styles.sidebarTopText}>Update</div>
             <div className={styles.sidebarBottomText}>Annual Disclosure</div>

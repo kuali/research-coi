@@ -69,7 +69,8 @@ export default function ActionButtons(props) {
 
   if (props.role === ROLES.ADMIN) {
     additionalReviewButton = (
-      <div name='Additional Review Button'
+      <div
+        name='Additional Review Button'
         className={styles.button}
         onClick={AdminActions.showAdditionalReviewPanel}
       >
