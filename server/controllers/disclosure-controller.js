@@ -556,8 +556,14 @@ export const init = app => {
       useKnex,
       wrapAsync(async (req, res) =>
       {
-        const {knex, userInfo, params, dbInfo, hostname,
-          body: comment} = req;
+        const {
+          knex,
+          userInfo,
+          params,
+          dbInfo,
+          hostname,
+          body: comment
+          } = req;
         await knex.transaction(async (knexTrx) => {
           await returnToReporter(knexTrx, userInfo, params.id);
         });

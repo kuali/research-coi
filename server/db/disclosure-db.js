@@ -534,21 +534,21 @@ async function unflagPIReviewNeeded(knex, disclosureId, section, id) {
 
 export async function addGeneralComment(knex, userInfo, comment) {
   await knex('general_comment')
-      .insert({
-        disclosure_id: comment.disclosureId,
-        text: comment.text,
-        user_id: userInfo.schoolId,
-        author: `${userInfo.firstName} ${userInfo.lastName}`,
-        user_role: userInfo.coiRole,
-        date: new Date()
-      }, 'id');
+    .insert({
+      disclosure_id: comment.disclosureId,
+      text: comment.text,
+      user_id: userInfo.schoolId,
+      author: `${userInfo.firstName} ${userInfo.lastName}`,
+      user_role: userInfo.coiRole,
+      date: new Date()
+    }, 'id');
 }
 
 export async function getGeneralComment(knex, userInfo, disclosureId) {
   return await knex
-      .select('text as text')
-      .from('general_comment')
-      .where('disclosure_id', disclosureId);
+    .select('text as text')
+    .from('general_comment')
+    .where('disclosure_id', disclosureId);
 }
 
 export async function addComment(knex, userInfo, comment) {
@@ -1769,12 +1769,12 @@ export async function reject(knex, userInfo, disclosureId) {
 
 export async function returnToReporter(knex, userInfo, disclosureId) {
   await knex('disclosure')
-      .update({
-        status_cd: DISCLOSURE_STATUS.RETURNED,
-        last_review_date: new Date(),
-        returned_date: new Date()
-      })
-      .where('id', disclosureId);
+    .update({
+      status_cd: DISCLOSURE_STATUS.RETURNED,
+      last_review_date: new Date(),
+      returned_date: new Date()
+    })
+    .where('id', disclosureId);
 
   return updateEditableComments(knex, disclosureId);
 }
@@ -1872,14 +1872,14 @@ export async function deleteAnswers(
 }
 
 export async function deleteAllAnswers(
-    knex,
-    userInfo,
-    disclosureId
+  knex,
+  userInfo,
+  disclosureId
 ) {
   const isSubmitter = await isDisclosureUsers(
-      knex,
-      disclosureId,
-      userInfo.schoolId
+    knex,
+    disclosureId,
+    userInfo.schoolId
   );
 
   const isAdmin = userInfo.coiRole === ROLES.ADMIN;
@@ -1888,26 +1888,26 @@ export async function deleteAllAnswers(
   }
 
   const results = await knex.select(
-      'qa.id as questionnaireAnswerId',
-      'da.id as disclosureAnswerId'
+    'qa.id as questionnaireAnswerId',
+    'da.id as disclosureAnswerId'
   )
-      .from('disclosure_answer as da')
-      .innerJoin(
-      'questionnaire_answer as qa',
-      'qa.id',
-      'da.questionnaire_answer_id'
+    .from('disclosure_answer as da')
+    .innerJoin(
+    'questionnaire_answer as qa',
+    'qa.id',
+    'da.questionnaire_answer_id'
   )
-      .where('da.disclosure_id', disclosureId);
+    .where('da.disclosure_id', disclosureId);
 
   const disclosureAnswerIds = results.map(row => row.disclosureAnswerId);
   await knex('disclosure_answer')
-      .whereIn('id', disclosureAnswerIds)
-      .del();
+    .whereIn('id', disclosureAnswerIds)
+    .del();
 
   const questionnaireAnswerIds = results.map(row => row.questionnaireAnswerId);
   await knex('questionnaire_answer')
-      .whereIn('id', questionnaireAnswerIds)
-      .del();
+    .whereIn('id', questionnaireAnswerIds)
+    .del();
 }
 
 export async function getCurrentState(knex, userInfo, disclosureId) {

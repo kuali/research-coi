@@ -61,7 +61,7 @@ export default function ActionButtons(props) {
           className={styles.button}
           onClick={AdminActions.toggleRejectionConfirmation}
         >
-          <i className={`fa fa-times ${styles.icon} ${styles.sendBackIcon}`}/>
+          <i className={`fa fa-times ${styles.icon} ${styles.sendBackIcon}`} />
           <span className={styles.label}>SEND BACK TO REVISE</span>
         </div>
       );
@@ -74,7 +74,7 @@ export default function ActionButtons(props) {
           className={styles.button}
           onClick={AdminActions.toggleReturnToReporterConfirmation}
         >
-          <i className={`fa fa-reply ${styles.icon} ${styles.sendBackIcon}`}/>
+          <i className={`fa fa-reply ${styles.icon} ${styles.sendBackIcon}`} />
           <span className={styles.label}>RETURN TO REPORTER</span>
         </div>
       );
@@ -135,7 +135,7 @@ export default function ActionButtons(props) {
         className={styles.button}
         onClick={AdminActions.showCommentSummary}
       >
-        <i className={`fa fa-binoculars ${styles.icon}`}/>
+        <i className={`fa fa-binoculars ${styles.icon}`} />
         <span className={styles.label}>
           <div>REVIEW COMMENTS</div>
         </span>

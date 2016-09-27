@@ -342,18 +342,18 @@ class _AdminStore {
 
   returnToReporter() {
     createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/return`)
-        .send(this.applicationState.returnToReporterComment)
-        .end(processResponse((err) => {
-          if (!err) {
-            this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
-              comment.editable = false;
-              return comment;
-            });
-            this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.RETURNED;
-            this.applicationState.showReturnToReporterConfirmation = !this.applicationState.showReturnToReporterConfirmation;
-            this.emitChange();
-          }
-        }));
+      .send(this.applicationState.returnToReporterComment)
+      .end(processResponse((err) => {
+        if (!err) {
+          this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
+            comment.editable = false;
+            return comment;
+          });
+          this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.RETURNED;
+          this.applicationState.showReturnToReporterConfirmation = !this.applicationState.showReturnToReporterConfirmation;
+          this.emitChange();
+        }
+      }));
   }
 
   rejectDisclosure() {

@@ -29,10 +29,6 @@ export default class ReturnToReporterConfirmation extends React.Component {
     this.returnToReporter = this.returnToReporter.bind(this);
   }
 
-  returnToReporter() {
-    AdminActions.returnToReporter();
-  }
-
   render() {
     let returnToReporterSection;
     if (this.props.showReturnToReporterConfirmation) {
@@ -47,13 +43,14 @@ export default class ReturnToReporterConfirmation extends React.Component {
               COMMENT
             </div>
             <div>
-              <textarea className={styles.textbox}
+              <textarea
+                className={styles.textbox}
                 onChange={AdminActions.updateGeneralComment}
                 value={this.props.returnToReporterComment.text}
               />
             </div>
             <BlueButton
-              onClick={this.returnToReporter}
+              onClick={AdminActions.returnToReporter}
               className={`${styles.override} ${styles.yesButton}`}
             >
               YES, SUBMIT
