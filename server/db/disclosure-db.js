@@ -1965,7 +1965,8 @@ export async function getDisclosureInfoForNotifications(knex, id) {
       'status_cd as statusCd',
       'submitted_date as submittedDate',
       'expired_date as expiredDate',
-      'user_id as userId'
+      'user_id as userId',
+      'returned_date as returnedDate'
     )
     .where({id});
 
