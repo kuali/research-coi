@@ -501,36 +501,44 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
   return await sendNotification(dbInfo, hostname, notification);
 }
 
+const debounced = {};
 export async function createAndSendNewProjectNotification(dbInfo, hostname, userInfo, disclosureId, project, person) {
-  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.NEW_PROJECT.ID);
-  if (!template) {
-    return;
+  if (debounced[`${person.sourceIdentifier}:${person.personId}`]) {
+    clearTimeout(debounced[`${person.sourceIdentifier}:${person.personId}`]);
   }
 
-  try {
-    const projectInfo = await getProject(dbInfo, hostname, project, person);
-    let disclosure;
-    if (disclosureId) {
-      disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  const timeoutId = setTimeout(async () => {
+    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.NEW_PROJECT.ID);
+    if (!template) {
+      return;
     }
-    const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
-    if (!disclosureId) {
-      const reporterInfo = await getUserInfo(dbInfo, hostname, person.personId);
-      if (reporterInfo) {
-        VariableService.setReporterDetails(
-          variables,
-          reporterInfo.firstName,
-          reporterInfo.lastName
-        );
+
+    try {
+      const projectInfo = await getProject(dbInfo, hostname, project, person);
+      let disclosure;
+      if (disclosureId) {
+        disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
       }
-    }
+      const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
+      if (!disclosureId) {
+        const reporterInfo = await getUserInfo(dbInfo, hostname, person.personId);
+        if (reporterInfo) {
+          VariableService.setReporterDetails(
+            variables,
+            reporterInfo.firstName,
+            reporterInfo.lastName
+          );
+        }
+      }
 
-    const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
-    const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
-    return await sendNotification(dbInfo, hostname, notification);
-  } catch (err) {
-    Log.error(err);
-  }
+      const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
+      const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
+      return await sendNotification(dbInfo, hostname, notification);
+    } catch (err) {
+      Log.error(err);
+    }
+  }, 20000);
+  debounced[`${person.sourceIdentifier}:${person.personId}`] = timeoutId;
 }
 
 export async function getNotificationReceiptDetail(dbInfo, hostname, id) {

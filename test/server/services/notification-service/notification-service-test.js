@@ -822,7 +822,7 @@ describe('NotificationService', () => {
     });
   });
 
-  describe('createAndSendNewProjectNotification', () => {
+  describe.skip('createAndSendNewProjectNotification', () => {
     let results;
     let disclosureId;
     const now = new Date();

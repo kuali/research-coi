@@ -335,7 +335,7 @@ async function updateProjectPerson(
     if (isRequired) {
       await updateDisclosureStatus(knex, person, project, req, isRequired);
     } else {
-      await revertDisclosureStatus(knex, person, req);
+      await revertDisclosureStatus(knex, person, req, project.id);
     }
   }
 }
