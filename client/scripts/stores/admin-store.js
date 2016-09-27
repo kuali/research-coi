@@ -350,6 +350,7 @@ class _AdminStore {
             return comment;
           });
           this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.RETURNED;
+          this.applicationState.selectedDisclosure.returnedDate = new Date();
           this.applicationState.showReturnToReporterConfirmation = !this.applicationState.showReturnToReporterConfirmation;
           this.emitChange();
         }
