@@ -131,17 +131,16 @@ export class Disclosure extends React.Component {
     }
 
     let incompleteEntity = false;
-    entities.filter(entity => {
-      return entity.active === 1;
-    })
-    .forEach(entity => {
-      if (
-        !DisclosureStore.entityInformationStepComplete(entity.id) ||
-        !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)
-      ) {
-        incompleteEntity = true;
-      }
-    });
+    entities
+      .filter(entity => entity.active === 1)
+      .forEach(entity => {
+        if (
+          !DisclosureStore.entityInformationStepComplete(entity.id) ||
+          !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)
+        ) {
+          incompleteEntity = true;
+        }
+      });
     return incompleteEntity;
   }
   componentDidMount() {

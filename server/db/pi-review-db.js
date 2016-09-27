@@ -263,22 +263,23 @@ async function getComments(knex, disclosureId, topicIDs, section) {
       .andWhere('topic_id', 'in', topicIDs);
   }
   else { // eslint-disable-line no-else-return
-    return await knex.select(
-      'id',
-      'topic_id as topicId',
-      'text',
-      'author',
-      'date',
-      'user_id as userId',
-      'user_role as userRole'
-    )
-    .from('comment as c')
-    .where({
-      disclosure_id: disclosureId,
-      topic_section: section,
-      pi_visible: true
-    })
-    .andWhere('topic_id', 'in', topicIDs);
+    return await knex
+      .select(
+        'id',
+        'topic_id as topicId',
+        'text',
+        'author',
+        'date',
+        'user_id as userId',
+        'user_role as userRole'
+      )
+      .from('comment as c')
+      .where({
+        disclosure_id: disclosureId,
+        topic_section: section,
+        pi_visible: true
+      })
+      .andWhere('topic_id', 'in', topicIDs);
   }
 }
 

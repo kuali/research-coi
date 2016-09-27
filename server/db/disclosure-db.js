@@ -905,8 +905,8 @@ async function addEntityFileRecords(knex, disclosure) {
 
 async function updateDisclosuresConfig(knex, disclosure) {
   await knex('disclosure')
-      .update({config_id: disclosure.configId})
-      .where({id: disclosure.id});
+    .update({config_id: disclosure.configId})
+    .where({id: disclosure.id});
 }
 
 async function addEntityQuestionAnswers(knex, disclosure) {
@@ -1626,12 +1626,13 @@ async function addAdditionalReviewers(
   );
 
   return await Promise.all(
-    reviewers.filter(reviewer => {
-      return reviewer.userId !== userInfo.schoolId;
-    })
-    .map(reviewer => {
-      return addAdditionalReviewer(knex, reviewer, disclosureId);
-    })
+    reviewers
+      .filter(reviewer => {
+        return reviewer.userId !== userInfo.schoolId;
+      })
+      .map(reviewer => {
+        return addAdditionalReviewer(knex, reviewer, disclosureId);
+      })
   );
 }
 

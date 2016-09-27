@@ -18,7 +18,14 @@
         "indent": [
             2,
             2,
-            {"SwitchCase": 1}
+            {
+                "SwitchCase": 1,
+                "FunctionExpression": {
+                    "body": 1,
+                    "parameters": 2
+                },
+                "MemberExpression": 1
+            }
         ],
         "key-spacing": 2,
         "keyword-spacing": 2,

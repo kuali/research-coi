@@ -45,15 +45,15 @@ class _TravelLogStore {
 
   refreshTravelLogEntries() {
     createRequest().get('/api/coi/travel-log-entries/')
-    .query({sortColumn: this.sortColumn})
-    .query({sortDirection: this.sortDirection})
-    .query({filter: this.filter})
-    .end(processResponse((err, travelLog) => {
-      if (!err) {
-        this.entries = travelLog.body;
-        this.emitChange();
-      }
-    }));
+      .query({sortColumn: this.sortColumn})
+      .query({sortDirection: this.sortDirection})
+      .query({filter: this.filter})
+      .end(processResponse((err, travelLog) => {
+        if (!err) {
+          this.entries = travelLog.body;
+          this.emitChange();
+        }
+      }));
   }
 
   loadTravelLogEntries() {
@@ -118,8 +118,8 @@ class _TravelLogStore {
     this.entryStates[relationshipId].validating = false;
 
     createRequest().put(`/api/coi/travel-log-entries/${relationshipId}`)
-    .send(entryToSave)
-    .end(processResponse(() => {}));
+      .send(entryToSave)
+      .end(processResponse(() => {}));
   }
 
   cancelEntry(relationshipId) {

@@ -27,10 +27,10 @@ const knex = getKnex({});
 
 function updateProjectTypes() {
   return knex('project_type')
-  .update({
-    req_disclosure: true
-  })
-  .where({type_cd: 1});
+    .update({
+      req_disclosure: true
+    })
+    .where({type_cd: 1});
 }
 
 function insertProjectRoles(projectTypeCd) {
