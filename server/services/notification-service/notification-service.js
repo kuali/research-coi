@@ -25,7 +25,8 @@ import {
 import {
   getDisclosureInfoForNotifications,
   getArchivedDisclosureInfoForNotifications,
-  getDisclosuresAdminDisposition
+  getDisclosuresAdminDisposition,
+  getGeneralComment
 } from '../../db/disclosure-db';
 import { getProjects } from '../../db/project-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
@@ -103,7 +104,12 @@ const NOTIFICATION_TEMPLATES = {
     ID: 10,
     SUBJECT: 'Revised Annual Disclosure Resubmitted for Review',
     BODY: 'Hello COI Admin, An Annual Disclosure was resubmitted by {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}} on {{SUBMISSION_DATE}}. You can review this disclosure at {{ADMIN_DETAIL_VIEW}}. You can access the Kuali Research COI Admin Dashboard at {{ADMIN_DASHBOARD}}. Have a nice day.' //eslint-disable-line max-len
-  }
+  },
+  RETURN_TO_REPORTER: {
+    ID: 11,
+    SUBJECT: 'Annual COI Disclosure was Returned to Reporter',
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was returned on {{NOW}} for the following reason {{RETURN_REASON}}. Please login to Kuali Research COI and access your disclosure at {{REPORTER_DASHBOARD}} to revise and resubmit your disclosure.'//eslint-disable-line max-len
+  },
 };
 
 export function getDefaults(notificationTemplate) {
@@ -147,6 +153,10 @@ export function getDefaults(notificationTemplate) {
     case NOTIFICATION_TEMPLATES.RESUBMITTED.ID:
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.RESUBMITTED.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.RESUBMITTED.BODY;
+      return notificationTemplate;
+    case NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.ID:
+      notificationTemplate.subject = NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.SUBJECT;
+      notificationTemplate.body = NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';
@@ -452,6 +462,22 @@ export async function createAndSendSentBackNotification(dbInfo, hostname, userIn
   }
   const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
   const variables = await getVariables(dbInfo, hostname, disclosure);
+  const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
+  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  return await sendNotification(dbInfo, hostname, notification);
+}
+
+export async function returnToReporterNotification(dbInfo, hostname, userInfo, disclosureId) {
+  const knex = getKnex(dbInfo);
+  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.ID);
+  if (!template) {
+    return;
+  }
+  const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+  let variables = await getVariables(dbInfo, hostname, disclosure);
+  const comment = await getGeneralComment(knex, userInfo, disclosureId);
+  const returnReason = comment === undefined ? '' : comment.slice(-1)[0].text;
+  variables = VariableService.addReturnedToReporterInformation(returnReason, variables);
   const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
   const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
   return await sendNotification(dbInfo, hostname, notification);

@@ -68,7 +68,8 @@ import {
 import {
   createAndSendSubmitNotification,
   createAndSendApproveNotification,
-  createAndSendSentBackNotification
+  createAndSendSentBackNotification,
+  returnToReporterNotification
 } from '../services/notification-service/notification-service';
 import useKnex from '../middleware/request-knex';
 
@@ -579,7 +580,7 @@ export const init = app => {
           await addGeneralComment(knexTrx, userInfo, comment);
         });
 
-        await createAndSendSentBackNotification(
+        await returnToReporterNotification(
           dbInfo,
           hostname,
           userInfo,

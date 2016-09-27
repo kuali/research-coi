@@ -83,7 +83,9 @@ export function getDisclosureVariables(disclosure, url, variables) {
   result[`${LEFT}EXPIRATION_DATE${RIGHT}`] = formatDateIfAvailable(
     disclosure.expiredDate
   );
-
+  result[`${LEFT}RETURNED_DATE${RIGHT}`] = formatDateIfAvailable(
+    disclosure.returnedDate
+  );
   setReporterDetails(result, get(
       disclosure,
       'reporterInfo.firstName'
@@ -107,6 +109,11 @@ export function setReporterDetails(result, firstName, lastName) {
 
 export function addProjectInformation(projectInformation, variables) {
   variables[`${LEFT}PROJECT_INFORMATION${RIGHT}`] = projectInformation;
+  return variables;
+}
+
+export function addReturnedToReporterInformation(comment, variables) {
+  variables[`${LEFT}RETURN_REASON${RIGHT}`] = comment;
   return variables;
 }
 
