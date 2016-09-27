@@ -29,7 +29,7 @@ function renderOutputWithApplicationState(applicationState) {
     coiRole: ROLES.ADMIN
   };
   const tree = sd.shallowRender(
-    <DetailView/>,
+    <DetailView />,
     context
   );
 

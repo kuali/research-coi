@@ -131,17 +131,16 @@ export class Disclosure extends React.Component {
     }
 
     let incompleteEntity = false;
-    entities.filter(entity => {
-      return entity.active === 1;
-    })
-    .forEach(entity => {
-      if (
-        !DisclosureStore.entityInformationStepComplete(entity.id) ||
-        !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)
-      ) {
-        incompleteEntity = true;
-      }
-    });
+    entities
+      .filter(entity => entity.active === 1)
+      .forEach(entity => {
+        if (
+          !DisclosureStore.entityInformationStepComplete(entity.id) ||
+          !DisclosureStore.entityRelationshipsAreSubmittable(entity.id)
+        ) {
+          incompleteEntity = true;
+        }
+      });
     return incompleteEntity;
   }
   componentDidMount() {
@@ -236,7 +235,7 @@ export class Disclosure extends React.Component {
             enforceEntities;
           currentStep = (
             <Entities
-              enforceEntities = {enforceEntities}
+              enforceEntities={enforceEntities}
               applicationState={this.state.applicationState}
               entities={this.state.entities}
               inProgress={this.state.applicationState.entityInProgress}
@@ -304,7 +303,7 @@ export class Disclosure extends React.Component {
           currentStep = (
             <Certify
               instructionsShowing={this.state.applicationState.instructionsShowing}
-              isCertified = {this.state.applicationState.currentDisclosureState.isCertified}
+              isCertified={this.state.applicationState.currentDisclosureState.isCertified}
               files={this.state.files}
             />
           );

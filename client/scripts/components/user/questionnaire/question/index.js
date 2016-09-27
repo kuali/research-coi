@@ -59,13 +59,16 @@ export class Question extends React.Component {
   }
 
   deleteIrrelaventAnswers(questionId, newAnswer) {
-    const toDelete = this.props.allQuestions.filter(question => {
-      return question.parent === questionId;
-    }).filter(question => {
-      return question.question.displayCriteria !== newAnswer;
-    }).map(question => {
-      return question.id;
-    });
+    const toDelete = this.props.allQuestions
+      .filter(question => {
+        return question.parent === questionId;
+      })
+      .filter(question => {
+        return question.question.displayCriteria !== newAnswer;
+      })
+      .map(question => {
+        return question.id;
+      });
 
     delete this.state.controlValid[toDelete];
     DisclosureActions.deleteAnswersTo(toDelete);
@@ -230,41 +233,44 @@ export class Question extends React.Component {
   render() {
     let isValid = this.questionIsValid();
     const subQuestions = [];
-    this.props.subQuestions.filter(subQuestion => {
-      return subQuestion.question.displayCriteria === this.props.answer;
-    }).sort((a, b) => {
-      return a.question.order - b.question.order;
-    }).forEach((subQuestion, index, array) => {
-      let nextDiv;
-      if (index === array.length - 1) {
-        nextDiv = (
-          <div className={styles.nextButton}>
-            <NextButton onClick={this.next} isValid={isValid} />
+    this.props.subQuestions
+      .filter(subQuestion => {
+        return subQuestion.question.displayCriteria === this.props.answer;
+      })
+      .sort((a, b) => {
+        return a.question.order - b.question.order;
+      })
+      .forEach((subQuestion, index, array) => {
+        let nextDiv;
+        if (index === array.length - 1) {
+          nextDiv = (
+            <div className={styles.nextButton}>
+              <NextButton onClick={this.next} isValid={isValid} />
+            </div>
+          );
+        }
+
+        subQuestions.push(
+          <div key={index} className={styles.subQuestionPanel}>
+            <div className={styles.subQuestionContent}>
+              <div className={styles.numberToShow}>
+                {subQuestion.question.numberToShow}
+              </div>
+              <label htmlFor={`qn${subQuestion.id}`} className={styles.text}>
+                {subQuestion.question.text}
+              </label>
+              <div className={styles.controls}>
+                {this.getControl(subQuestion, subQuestion.answer)}
+              </div>
+            </div>
+            {nextDiv}
           </div>
         );
-      }
 
-      subQuestions.push(
-        <div key={index} className={styles.subQuestionPanel}>
-          <div className={styles.subQuestionContent}>
-            <div className={styles.numberToShow}>
-              {subQuestion.question.numberToShow}
-            </div>
-            <label htmlFor={`qn${subQuestion.id}`} className={styles.text}>
-              {subQuestion.question.text}
-            </label>
-            <div className={styles.controls}>
-              {this.getControl(subQuestion, subQuestion.answer)}
-            </div>
-          </div>
-          {nextDiv}
-        </div>
-      );
-
-      if (!subQuestion.answer) {
-        isValid = false;
-      }
-    });
+        if (!subQuestion.answer) {
+          isValid = false;
+        }
+      });
 
     let nextButton;
     if (
@@ -275,7 +281,7 @@ export class Question extends React.Component {
     ) {
       nextButton = (
         <div className={styles.nextButton}>
-          <NextButton onClick={this.next} isValid={isValid}/>
+          <NextButton onClick={this.next} isValid={isValid} />
         </div>
       );
     }

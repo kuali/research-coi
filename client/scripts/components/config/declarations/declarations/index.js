@@ -188,7 +188,7 @@ export default class Declarations extends React.Component {
           </div>
           
           {dispositionConfig}
-          <div style={{paddingBottom: 10}}/>
+          <div style={{paddingBottom: 10}} />
         </div>
       </Panel>
     );
@@ -224,7 +224,7 @@ export default class Declarations extends React.Component {
             </div>
           </div>
 
-          <div style={{paddingBottom: 10}}/>
+          <div style={{paddingBottom: 10}} />
         </Panel>
 
         {dispositionPanel}

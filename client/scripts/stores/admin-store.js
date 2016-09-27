@@ -108,14 +108,14 @@ class _AdminStore {
 
   loadSummaryCount() {
     createRequest().get('/api/coi/disclosure-summaries/count')
-           .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
-           .end(processResponse((err, theCount) => {
-             if (!err) {
-               this.applicationState.summaryCount = theCount.body[0].rowcount;
-               this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
-               this.emitChange();
-             }
-           }));
+      .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
+      .end(processResponse((err, theCount) => {
+        if (!err) {
+          this.applicationState.summaryCount = theCount.body[0].rowcount;
+          this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
+          this.emitChange();
+        }
+      }));
   }
 
   refreshDisclosures() {
@@ -123,45 +123,47 @@ class _AdminStore {
     this.applicationState.loadingMore = true;
 
     createRequest().get('/api/coi/disclosure-summaries')
-           .query({sortColumn: this.applicationState.sort})
-           .query({sortDirection: this.applicationState.sortDirection})
-           .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
-           .query({start: this.applicationState.offset})
-           .end(processResponse((err, summaries) => {
-             if (!err) {
-               this.disclosureSummaries = summaries.body;
-               this.applicationState.loadingMore = false;
-               if (this.morePossibleSummaries(this.disclosureSummaries)) {
-                 this.loadSummaryCount();
-               }
-               else {
-                 this.applicationState.summaryCount = this.disclosureSummaries.length;
-                 this.applicationState.loadedAll = true;
-               }
+      .query({sortColumn: this.applicationState.sort})
+      .query({sortDirection: this.applicationState.sortDirection})
+      .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
+      .query({start: this.applicationState.offset})
+      .end(processResponse((err, summaries) => {
+        if (!err) {
+          this.disclosureSummaries = summaries.body;
+          this.applicationState.loadingMore = false;
+          if (this.morePossibleSummaries(this.disclosureSummaries)) {
+            this.loadSummaryCount();
+          }
+          else {
+            this.applicationState.summaryCount = this.disclosureSummaries.length;
+            this.applicationState.loadedAll = true;
+          }
 
-               this.emitChange();
-             }
-           }));
+          this.emitChange();
+        }
+      }));
   }
 
   loadDisclosure(id) {
     delete this.applicationState.selectedDisclosure;
     this.applicationState.loadingDisclosure = true;
 
-    createRequest().get(`/api/coi/disclosures/${id}`)
-           .end(processResponse((err, disclosure) => {
-             if (!err) {
-               this.loadDisclosureData(disclosure.body);
-             }
-           }));
+    createRequest()
+      .get(`/api/coi/disclosures/${id}`)
+      .end(processResponse((err, disclosure) => {
+        if (!err) {
+          this.loadDisclosureData(disclosure.body);
+        }
+      }));
 
-    createRequest().get(`/api/coi/disclosures/${id}/pi-responses`)
-    .end(processResponse((err, responses) => {
-      if (!err) {
-        this.applicationState.piResponses = responses.body;
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .get(`/api/coi/disclosures/${id}/pi-responses`)
+      .end(processResponse((err, responses) => {
+        if (!err) {
+          this.applicationState.piResponses = responses.body;
+          this.emitChange();
+        }
+      }));
 
     createRequest().get('/api/coi/reviewers')
       .end(processResponse((err, responses) => {
@@ -173,12 +175,13 @@ class _AdminStore {
   }
 
   loadArchivedDisclosure(id) {
-    createRequest().get(`/api/coi/archived-disclosures/${id}/latest`)
-    .end(processResponse((err, disclosure) => {
-      if (!err) {
-        this.loadDisclosureData(disclosure.body);
-      }
-    }));
+    createRequest()
+      .get(`/api/coi/archived-disclosures/${id}/latest`)
+      .end(processResponse((err, disclosure) => {
+        if (!err) {
+          this.loadDisclosureData(disclosure.body);
+        }
+      }));
   }
 
   loadDisclosureData(disclosure) {
@@ -314,14 +317,15 @@ class _AdminStore {
   }
 
   approveDisclosure() {
-    createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/approve`)
-    .send(this.applicationState.selectedDisclosure)
-    .type('application/json')
-    .end(processResponse(err => {
-      if (!err) {
-        window.location = `/coi/admin/detailview/${this.applicationState.selectedDisclosure.id}/${DISCLOSURE_STATUS.UP_TO_DATE}`;
-      }
-    }));
+    createRequest()
+      .put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/approve`)
+      .send(this.applicationState.selectedDisclosure)
+      .type('application/json')
+      .end(processResponse(err => {
+        if (!err) {
+          window.location = `/coi/admin/detailview/${this.applicationState.selectedDisclosure.id}/${DISCLOSURE_STATUS.UP_TO_DATE}`;
+        }
+      }));
   }
 
   toggleRejectionConfirmation() {
@@ -329,18 +333,19 @@ class _AdminStore {
   }
 
   rejectDisclosure() {
-    createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/reject`)
-    .end(processResponse((err) => {
-      if (!err) {
-        this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
-          comment.editable = false;
-          return comment;
-        });
-        this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.REVISION_REQUIRED;
-        this.applicationState.showingRejection = !this.applicationState.showingRejection;
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/reject`)
+      .end(processResponse((err) => {
+        if (!err) {
+          this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
+            comment.editable = false;
+            return comment;
+          });
+          this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.REVISION_REQUIRED;
+          this.applicationState.showingRejection = !this.applicationState.showingRejection;
+          this.emitChange();
+        }
+      }));
   }
 
   clearTypeFilter() {
@@ -438,20 +443,21 @@ class _AdminStore {
     this.applicationState.loadingMore = true;
     this.applicationState.offset += ADMIN_PAGE_SIZE;
 
-    createRequest().get('/api/coi/disclosure-summaries')
-           .query({sortColumn: this.applicationState.sort})
-           .query({sortDirection: this.applicationState.sortDirection})
-           .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
-           .query({start: this.applicationState.offset})
-           .end(processResponse((err, summaries) => {
-             if (!err) {
-               this.disclosureSummaries = this.disclosureSummaries.concat(summaries.body);
-               this.applicationState.loadingMore = false;
-               this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
+    createRequest()
+      .get('/api/coi/disclosure-summaries')
+      .query({sortColumn: this.applicationState.sort})
+      .query({sortDirection: this.applicationState.sortDirection})
+      .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
+      .query({start: this.applicationState.offset})
+      .end(processResponse((err, summaries) => {
+        if (!err) {
+          this.disclosureSummaries = this.disclosureSummaries.concat(summaries.body);
+          this.applicationState.loadingMore = false;
+          this.applicationState.loadedAll = this.disclosureSummaries.length === this.applicationState.summaryCount;
 
-               this.emitChange();
-             }
-           }));
+          this.emitChange();
+        }
+      }));
   }
 
   updateCurrentComments(transitionLast) {
@@ -604,28 +610,30 @@ class _AdminStore {
       disclosureId: this.applicationState.selectedDisclosure.id
     }));
 
-    createRequest().post('/api/coi/files')
-    .send(formData)
-    .end(processResponse((err, res) => {
-      if (!err) {
-        res.body.forEach(file => {
-          this.applicationState.selectedDisclosure.managementPlan.push(file);
-          this.emitChange();
-        });
-      }
-    }));
+    createRequest()
+      .post('/api/coi/files')
+      .send(formData)
+      .end(processResponse((err, res) => {
+        if (!err) {
+          res.body.forEach(file => {
+            this.applicationState.selectedDisclosure.managementPlan.push(file);
+            this.emitChange();
+          });
+        }
+      }));
   }
 
   deleteManagementPlan() {
     const file = this.applicationState.selectedDisclosure.managementPlan[0];
 
-    createRequest().del(`/api/coi/files/${file.id}`)
-    .end(processResponse((err) => {
-      if (!err) {
-        this.applicationState.selectedDisclosure.managementPlan.splice(0, 1);
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .del(`/api/coi/files/${file.id}`)
+      .end(processResponse((err) => {
+        if (!err) {
+          this.applicationState.selectedDisclosure.managementPlan.splice(0, 1);
+          this.emitChange();
+        }
+      }));
   }
 
   addAdminAttachment(files) {
@@ -739,13 +747,14 @@ class _AdminStore {
   }
 
   removeAdditionalReviewer(id) {
-    createRequest().del(`/api/coi/additional-reviewers/${id}`)
-    .end(processResponse(err => {
-      if (!err) {
-        this.removeReviewerFromState(id);
-        this.emitChange();
-      }
-    }));
+    createRequest()
+      .del(`/api/coi/additional-reviewers/${id}`)
+      .end(processResponse(err => {
+        if (!err) {
+          this.removeReviewerFromState(id);
+          this.emitChange();
+        }
+      }));
   }
 
   completeReview() {

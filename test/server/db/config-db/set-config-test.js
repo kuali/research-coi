@@ -91,13 +91,19 @@ describe('setConfig', () => {
     });
 
     it('it should update the parent to be inactive', async () => {
-      const question = await knex('questionnaire_question').select('active').where({id: parentId});
+      const question = await knex('questionnaire_question')
+        .select('active')
+        .where({id: parentId});
       assert.equal(0, question[0].active);
     });
   });
 
   after(async function() {
-    await knex('questionnaire_question').del().where('question', 'like', '%child%');
-    await knex('questionnaire_question').del().where('question', 'like', '%parent%');
+    await knex('questionnaire_question')
+      .del()
+      .where('question', 'like', '%child%');
+    await knex('questionnaire_question')
+      .del()
+      .where('question', 'like', '%parent%');
   });
 });

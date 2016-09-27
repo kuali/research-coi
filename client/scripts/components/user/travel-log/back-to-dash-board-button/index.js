@@ -20,21 +20,19 @@ import styles from './style';
 import React from 'react';
 import {Link} from 'react-router';
 
-export class BackToDashBoardButton extends React.Component {
-  render() {
-    return (
-      <Link
-        to={{pathname: '/coi/dashboard'}}
-        className={styles.container}
-        name='Back Button'
-      >
-        <div>
-          <span>
-            <div className={styles.primary}>Back</div>
-            <div className={styles.secondary}>To Dashboard</div>
-          </span>
-        </div>
-      </Link>
-    );
-  }
+export function BackToDashBoardButton() {
+  return (
+    <Link
+      to={{pathname: '/coi/dashboard'}}
+      className={styles.container}
+      name='Back Button'
+    >
+      <div>
+        <span>
+          <div className={styles.primary}>Back</div>
+          <div className={styles.secondary}>To Dashboard</div>
+        </span>
+      </div>
+    </Link>
+  );
 }

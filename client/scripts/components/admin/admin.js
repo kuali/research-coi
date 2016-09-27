@@ -29,7 +29,10 @@ import ColorStore from '../../stores/color-store'; // eslint-disable-line no-unu
 const router = (
   <Router history={browserHistory}>
     <Route path="/coi/admin/detailview" component={DetailView}>
-      <Route path="/coi/admin/detailview/:id/:statusCd" component={DetailView}/>
+      <Route
+        path="/coi/admin/detailview/:id/:statusCd"
+        component={DetailView}
+      />
     </Route>
     <Route path="/coi/admin/listview" component={ListView} />
     <Route path="/coi/admin*" component={ListView} />

@@ -80,13 +80,13 @@ export default class TravelLog extends React.Component {
         <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
         <span className={`flexbox row fill ${styles.container}`}>
           <span className={styles.sidebar}>
-            <BackToDashBoardButton/>
+            <BackToDashBoardButton />
           </span>
           <span className={`fill ${styles.content}`}>
-            <TravelLogHeader/>
-            <TravelLogForm entry={this.state.potentialEntry} validating={this.state.validating}/>
+            <TravelLogHeader />
+            <TravelLogForm entry={this.state.potentialEntry} validating={this.state.validating} />
             <div className={styles.entryList}>
-              <TravelLogSort/>
+              <TravelLogSort />
               {travelLogs}
             </div>
           </span>

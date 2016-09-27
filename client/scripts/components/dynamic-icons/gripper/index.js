@@ -23,7 +23,7 @@ import React from 'react';
 export default function Gripper(props) {
   return (
     <svg className={props.className} version="1.1" data-icon="menu" data-container-transform="translate(0 4)" viewBox="0 0 32 40" x="0px" y="0px" role="img" aria-label="Gripper">
-      <path fill={props.color} d="M0 0v3h32v-3h-32zm0 20v3h32v-3h-32zm0 20v3h32v-3h-32z" transform="translate(0 4)"/>
+      <path fill={props.color} d="M0 0v3h32v-3h-32zm0 20v3h32v-3h-32zm0 20v3h32v-3h-32z" transform="translate(0 4)" />
     </svg>
   );
 }

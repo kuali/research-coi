@@ -57,15 +57,17 @@ module.exports = {
       question.options = options;
       question.requiredNumSelections = requiredNumSelections;
     }
-    return knex('questionnaire_question').insert({
-      questionnaire_id: questionnaireId,
-      active: true,
-      question: JSON.stringify(question)
-    }, 'id').then(function (parentId) {
-      if (subquestion) {
-        return insertQuestionnaireSubquestion(knex, questionnaireId, parentId[0], numberToShow);
-      }
-    });
+    return knex('questionnaire_question')
+      .insert({
+        questionnaire_id: questionnaireId,
+        active: true,
+        question: JSON.stringify(question)
+      }, 'id')
+      .then(function (parentId) {
+        if (subquestion) {
+          return insertQuestionnaireSubquestion(knex, questionnaireId, parentId[0], numberToShow);
+        }
+      });
   },
 
   insertInitialArchiveConfig: function(query) {

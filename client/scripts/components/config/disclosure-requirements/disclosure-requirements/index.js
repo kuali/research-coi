@@ -73,7 +73,7 @@ export default class DisclosureRequirements extends React.Component {
         projectTypesPanel = (
           <div>
             <div className={styles.title}>
-              Choose from the project types below <br/>
+              Choose from the project types below <br />
               which require the completion of a COI disclosure
             </div>
 
@@ -111,7 +111,7 @@ export default class DisclosureRequirements extends React.Component {
         projectTypesPanel = (
           <div>
             <div className={styles.title}>
-              The project types below require the completion of a COI disclosure.<br/>
+              The project types below require the completion of a COI disclosure.<br />
               <a className={styles.link} onClick={this.toggleSelectingProjectTypes}>Click here to edit these project types</a>
             </div>
             <div>

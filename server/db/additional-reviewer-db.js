@@ -116,7 +116,9 @@ export async function createAdditionalReviewer(knex, reviewer, userInfo) {
 }
 
 export function deleteAdditionalReviewer(knex, id) {
-  return knex('additional_reviewer').del().where({id});
+  return knex('additional_reviewer')
+    .del()
+    .where({id});
 }
 
 export function updateAdditionalReviewer(knex, id, updates) {
@@ -170,12 +172,14 @@ export async function saveRecommendation(
     });
 
   if (exists) {
-    return knex('reviewer_recommendation').update({
-      disposition_type_id: dispositionType
-    }).where({
-      additional_reviewer_id: additionalReviewerId,
-      declaration_id: declarationId
-    });
+    return knex('reviewer_recommendation')
+      .update({
+        disposition_type_id: dispositionType
+      })
+      .where({
+        additional_reviewer_id: additionalReviewerId,
+        declaration_id: declarationId
+      });
   }
 
   return knex('reviewer_recommendation').insert({
@@ -214,12 +218,14 @@ export async function saveProjectRecommendation(
     });
 
   if (exists) {
-    return knex('reviewer_recommendation').update({
-      disposition_type_id: dispositionType
-    }).where({
-      additional_reviewer_id: additionalReviewerId,
-      project_person_id: projectPersonId
-    });
+    return knex('reviewer_recommendation')
+      .update({
+        disposition_type_id: dispositionType
+      })
+      .where({
+        additional_reviewer_id: additionalReviewerId,
+        project_person_id: projectPersonId
+      });
   }
 
   return knex('reviewer_recommendation').insert({

@@ -67,7 +67,7 @@ export class Certify extends React.Component {
       agreement = (
         <div style={{marginTop: 20}}>
           <span style={{display: 'inline-block', width: '5%'}}>
-            <input type="checkbox" id="certCheckbox" onChange={this.certify} checked={this.props.isCertified}/>
+            <input type="checkbox" id="certCheckbox" onChange={this.certify} checked={this.props.isCertified} />
           </span>
           <label htmlFor="certCheckbox" style={{display: 'inline-block', width: '95%', verticalAlign: 'top', fontWeight: 'bold'}}>
             I acknowledge that it is my responsibility to disclose any new SIGNIFICANT FINANCIAL

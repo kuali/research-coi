@@ -27,7 +27,7 @@ TravelLogSort.__Rewire__('TravelLogActions', MockTravelLogActions); //eslint-dis
 /*global describe, it */
 
 const tree = sd.shallowRender(
-  <TravelLogSort/>
+  <TravelLogSort />
 );
 
 const instance = tree.getMountedInstance();

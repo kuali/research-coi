@@ -262,30 +262,32 @@ class _PIReviewStore {
       disclosureId: this.disclosure.id
     }));
 
-    createRequest().post('/api/coi/files')
-        .send(formData)
-        .end(processResponse((err, res) => {
-          if (!err) {
-            res.body.forEach(file => {
-              this.files.push(file);
-              this.emitChange();
-            });
+    createRequest()
+      .post('/api/coi/files')
+      .send(formData)
+      .end(processResponse((err, res) => {
+        if (!err) {
+          res.body.forEach(file => {
+            this.files.push(file);
+            this.emitChange();
+          });
 
-            this.loadDisclosure(this.disclosure.id);
-          }
-        }));
+          this.loadDisclosure(this.disclosure.id);
+        }
+      }));
   }
 
   deleteDisclosureAttachment(id) {
     const index = this.files.findIndex(f => f.id === parseInt(id));
-    createRequest().del(`/api/coi/files/${id}`)
-        .end(processResponse((err) => {
-          if (!err) {
-            this.files.splice(index, 1);
-            this.emitChange();
-            this.loadDisclosure(this.disclosure.id);
-          }
-        }));
+    createRequest()
+      .del(`/api/coi/files/${id}`)
+      .end(processResponse((err) => {
+        if (!err) {
+          this.files.splice(index, 1);
+          this.emitChange();
+          this.loadDisclosure(this.disclosure.id);
+        }
+      }));
   }
 
   respond([reviewId, text]) {

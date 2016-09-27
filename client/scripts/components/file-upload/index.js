@@ -46,12 +46,22 @@ export class FileUpload extends React.Component {
 
         if (file.preview) {
           downloadLink = (
-            <a target="_blank" className={styles.link} href={file.preview}>
+            <a
+              target="_blank"
+              className={styles.link}
+              href={file.preview}
+              rel="noopener noreferrer"
+            >
               {file.name}
             </a>
           );
           downloadButton = (
-            <a target="_blank" className={styles.downloadButtonLink} href={file.preview}>
+            <a
+              target="_blank"
+              className={styles.downloadButtonLink}
+              href={file.preview}
+              rel="noopener noreferrer"
+            >
               <span>
                 <BlueButton className={`${styles.override} ${styles.downloadButton}`}>DOWNLOAD</BlueButton>
               </span>

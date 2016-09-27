@@ -222,6 +222,8 @@ describe('AdditionalReviewerControllerTest', () => {
 
   after(async function() {
     await knex('additional_reviewer').del();
-    await knex('disclosure').del().where({id: disclosureId});
+    await knex('disclosure')
+      .del()
+      .where({id: disclosureId});
   });
 });

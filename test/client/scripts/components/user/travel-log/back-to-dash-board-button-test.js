@@ -26,7 +26,7 @@ import {BackToDashBoardButton} from '../../../../../../client/scripts/components
 describe('BackToDashBoardButton', () => {
   it('render button', () => {
     const tree = sd.shallowRender(
-      <BackToDashBoardButton/>
+      <BackToDashBoardButton />
     );
 
     const vdom = tree.getRenderOutput();

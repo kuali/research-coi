@@ -41,7 +41,8 @@ export default function authentication(req, res, next) {
         req.userInfo = userInfo;
         next();
       }
-    }).catch(err => {
+    })
+    .catch(err => {
       Log.error(err);
       next(err);
     });

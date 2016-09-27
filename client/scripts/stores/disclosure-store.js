@@ -156,8 +156,8 @@ export function entityRelationshipStepErrors(potentialRelationship, matrixTypes)
 
 export function areNoActiveEntities(entities) {
   return entities
-      .filter(entity => entity.active === 1)
-      .length === 0;
+    .filter(entity => entity.active === 1)
+    .length === 0;
 }
 
 export function getYesNoYeses(answers, questions) {

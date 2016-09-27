@@ -103,8 +103,14 @@ describe('PIControllerTest', () => {
   });
 
   after(async function() {
-    await knex('additional_reviewer').del().where({id: additionalReviewerId});
-    await knex('pi_review').del().where({id: piReviewId});
-    await knex('disclosure').del().where({id: disclosureId});
+    await knex('additional_reviewer')
+      .del()
+      .where({id: additionalReviewerId});
+    await knex('pi_review')
+      .del()
+      .where({id: piReviewId});
+    await knex('disclosure')
+      .del()
+      .where({id: disclosureId});
   });
 });

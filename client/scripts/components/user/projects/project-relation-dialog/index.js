@@ -79,22 +79,21 @@ export class ProjectRelationDialog extends React.Component {
 
   render() {
     const entityRelations = [];
-    this.props.entities.filter(element => {
-      return element.active === 1;
-    })
-    .forEach((element) => {
-      entityRelations.push(
-        <EntityRelation
-          entity={element}
-          relationType="PROJECT"
-          projectId={this.props.projectId}
-          typeCd={this.findDeclarationTypeByEntity(element.id)}
-          comments={this.findCommentByEntity(element.id)}
-          declarationTypes={this.props.declarationTypes}
-          key={element.id}
-        />
-      );
-    });
+    this.props.entities
+      .filter(element => element.active === 1)
+      .forEach((element) => {
+        entityRelations.push(
+          <EntityRelation
+            entity={element}
+            relationType="PROJECT"
+            projectId={this.props.projectId}
+            typeCd={this.findDeclarationTypeByEntity(element.id)}
+            comments={this.findCommentByEntity(element.id)}
+            declarationTypes={this.props.declarationTypes}
+            key={element.id}
+          />
+        );
+      });
 
     const declarationTypeOptions = this.props.declarationTypes.map(declarationType => {
       return (

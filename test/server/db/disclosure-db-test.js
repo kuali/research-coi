@@ -50,7 +50,9 @@ describe('Comments', () => {
   });
 
   after(async () => {
-    knex('disclosure').where('id', disclosureId).delete();
+    knex('disclosure')
+      .where('id', disclosureId)
+      .delete();
   });
 
   describe('updating', () => {
@@ -62,8 +64,12 @@ describe('Comments', () => {
     });
 
     afterEach(async () => {
-      await knex('pi_review').where('disclosure_id', disclosureId).delete();
-      await knex('comment').where('id', comment.id).delete();
+      await knex('pi_review')
+        .where('disclosure_id', disclosureId)
+        .delete();
+      await knex('comment')
+        .where('id', comment.id)
+        .delete();
       comment = undefined;
     });
 
@@ -84,8 +90,12 @@ describe('Comments', () => {
     });
 
     afterEach(async () => {
-      await knex('pi_review').where('disclosure_id', disclosureId).delete();
-      await knex('comment').where('id', comment.id).delete();
+      await knex('pi_review')
+        .where('disclosure_id', disclosureId)
+        .delete();
+      await knex('comment')
+        .where('id', comment.id)
+        .delete();
       comment = undefined;
     });
 
@@ -102,7 +112,9 @@ describe('Comments', () => {
       comment.piVisible = true;
       await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
 
-      const results = await knex('pi_review').where('disclosure_id', disclosureId).count();
+      const results = await knex('pi_review')
+        .where('disclosure_id', disclosureId)
+        .count();
       const piReviewCount = results[0]['count(*)'];
       assert.equal(piReviewCount, 1);
     });
@@ -117,7 +129,9 @@ describe('Comments', () => {
         comment.piVisible = false;
         await DisclosureDB.updateComment(knex, {coiRole: 'admin', firstName: 'Bill'}, comment);
 
-        const results = await knex('pi_review').where('disclosure_id', disclosureId).count();
+        const results = await knex('pi_review')
+          .where('disclosure_id', disclosureId)
+          .count();
         const piReviewCount = results[0]['count(*)'];
         assert.equal(piReviewCount, 0);
       });

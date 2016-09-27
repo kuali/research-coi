@@ -20,15 +20,13 @@ import styles from './style';
 import React from 'react';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 
-export class ConfirmationMessage extends React.Component {
-  render() {
-    return (
-      <div className={`${styles.container} ${this.props.className}`}>
-        <span className={styles.close} onClick={DisclosureActions.toggleConfirmationMessage}>
-          <i className={`fa fa-times ${styles.x}`} />
-        </span>
-        <div>Awesome, you have successfully submitted your disclosure!</div>
-      </div>
-    );
-  }
+export function ConfirmationMessage({className}) {
+  return (
+    <div className={`${styles.container} ${className}`}>
+      <span className={styles.close} onClick={DisclosureActions.toggleConfirmationMessage}>
+        <i className={`fa fa-times ${styles.x}`} />
+      </span>
+      <div>Awesome, you have successfully submitted your disclosure!</div>
+    </div>
+  );
 }

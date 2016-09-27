@@ -141,7 +141,7 @@ export class Dashboard extends React.Component {
       ) {
         annualDisclosureButton = (
           <div>
-            <NewDisclosureButton type={DISCLOSURE_TYPE.ANNUAL}/>
+            <NewDisclosureButton type={DISCLOSURE_TYPE.ANNUAL} />
           </div>
         );
       }
@@ -151,7 +151,7 @@ export class Dashboard extends React.Component {
     if (travelLogEnabled) {
       travelLogButton = (
         <div>
-          <TravelLogButton/>
+          <TravelLogButton />
         </div>
       );
     }
@@ -165,7 +165,7 @@ export class Dashboard extends React.Component {
       );
     }
     if (!configState.isLoaded) {
-      return (<div/>);
+      return (<div />);
     }
 
     let adminMenu;

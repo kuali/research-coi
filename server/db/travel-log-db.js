@@ -237,8 +237,8 @@ function deleteTravelRelationship(knex, id) {
 
 function deleteRelationship(knex, id) {
   return knex('relationship')
-  .del()
-  .where('id', id);
+    .del()
+    .where('id', id);
 }
 
 async function getQuestionnaireAnswerIds(knex, id) {
@@ -253,8 +253,8 @@ async function getQuestionnaireAnswerIds(knex, id) {
 
 function deleteFinEntityAnswers(knex, id) {
   return knex('fin_entity_answer')
-  .del()
-  .where('fin_entity_id', id);
+    .del()
+    .where('fin_entity_id', id);
 }
 
 function deleteQuestionnaireAnswers(knex, answerIds) {

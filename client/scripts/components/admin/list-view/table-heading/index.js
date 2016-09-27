@@ -21,19 +21,17 @@ import classNames from 'classnames';
 import React from 'react';
 import SortArrow from '../sort-arrow';
 
-export class TableHeading extends React.Component {
-  render() {
-    const sortArrow = <SortArrow direction={this.props.sortDirection} />;
+export function TableHeading(props) {
+  const sortArrow = <SortArrow direction={props.sortDirection} />;
 
-    return (
-      <span
-        className={classNames(this.props.className, styles.container)}
-        role="columnheader"
-        onClick={this.props.sort}
-      >
-        <span className={styles.label}>{this.props.children}</span>
-        {this.props.active ? sortArrow : <span />}
-      </span>
-    );
-  }
+  return (
+    <span
+      className={classNames(props.className, styles.container)}
+      role="columnheader"
+      onClick={props.sort}
+    >
+      <span className={styles.label}>{props.children}</span>
+      {props.active ? sortArrow : <span />}
+    </span>
+  );
 }

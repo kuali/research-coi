@@ -20,13 +20,11 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 
-export class SearchFilter extends React.Component {
-  render() {
-    return (
-      <div className={classNames(styles.container, this.props.className)}>
-        {this.props.children}
-        <span className={styles.arrows}>&#9654;</span>
-      </div>
-    );
-  }
+export function SearchFilter({className, children}) {
+  return (
+    <div className={classNames(styles.container, className)}>
+      {children}
+      <span className={styles.arrows}>&#9654;</span>
+    </div>
+  );
 }

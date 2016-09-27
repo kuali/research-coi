@@ -35,12 +35,16 @@ import getKnex from '../../../server/db/connection-manager';
 const knex = getKnex({});
 
 async function updateConfig(autoApprove, addReviewers) {
-  const configResult = await knex('config').select('config').where({id: 1});
+  const configResult = await knex('config')
+    .select('config')
+    .where({id: 1});
   const config = JSON.parse(configResult[0].config);
 
   config.general.autoApprove = autoApprove;
   config.general.autoAddAdditionalReviewer = addReviewers;
-  await knex('config').update({config: JSON.stringify(config)}).where({id: 1});
+  await knex('config')
+    .update({config: JSON.stringify(config)})
+    .where({id: 1});
 }
 
 async function addFinancialEntity(id) {
@@ -322,7 +326,9 @@ describe('DisclosureController',async () => {
     });
 
     it('should add 2 additional reviewers', async () => {
-      const reviewers = await knex('additional_reviewer').select('name').where({disclosure_id: discId});
+      const reviewers = await knex('additional_reviewer')
+        .select('name')
+        .where({disclosure_id: discId});
       assert.equal(2, reviewers.length);
       assert.equal('reviewer1',reviewers[0].name);
       assert.equal('reviewer2',reviewers[1].name);
@@ -346,7 +352,9 @@ describe('DisclosureController',async () => {
     });
 
     it('should add only reviewer 2 as an additional reviewer', async () => {
-      const reviewers = await knex('additional_reviewer').select('name').where({disclosure_id: discId});
+      const reviewers = await knex('additional_reviewer')
+        .select('name')
+        .where({disclosure_id: discId});
       assert.equal(1, reviewers.length);
       assert.equal('reviewer2',reviewers[0].name);
     });

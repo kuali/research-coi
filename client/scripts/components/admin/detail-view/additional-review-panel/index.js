@@ -50,7 +50,7 @@ export default function AdditionalReviewPanel(props) {
   } else {
     additionalReview = (
       <div className={styles.noReviewers}>
-        You have not assigned additional reviewers to this disclosure.<br/>
+        You have not assigned additional reviewers to this disclosure.<br />
         Search for reviewers above to add here.
       </div>
     );
