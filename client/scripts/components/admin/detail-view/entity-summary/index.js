@@ -123,7 +123,7 @@ export default class EntitySummary extends React.Component {
             style={styleToUse}
             href={`/api/coi/files/${encodeURIComponent(file.id)}`}
           >
-              {file.name}
+            {file.name}
           </a>
         </div>
       );
