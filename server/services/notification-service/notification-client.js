@@ -19,7 +19,7 @@
 import request from 'superagent';
 import { getUserInfosByQuery, getAdmins } from '../auth-service/auth-service';
 import { NOTIFICATIONS_MODE } from '../../../coi-constants';
-import Log from '../../log';
+import Log, {logArguments, logValue} from '../../log';
 import {OK} from '../../../http-status-codes';
 import getKnex from '../../db/connection-manager';
 
@@ -173,15 +173,18 @@ export async function sendNotification(dbInfo, hostname, notification) {
     Log.info(JSON.stringify(response.body));
 
     const receiptIds = response.body.map(receipt => receipt.notificationId);
+    logValue('receiptIds', receiptIds);
     await recordNotificationRequest(
       getKnex(dbInfo),
       notification.addresses,
       receiptIds
     );
+    Log.verbose('done recording receipts');
   }
 }
 
 async function recordNotificationRequest(knex, addresses, receiptIds) {
+  logArguments('recordNotificationRequest', {addresses, receiptIds});
   await knex('notification_request')
     .insert({
       timestamp: new Date(),
