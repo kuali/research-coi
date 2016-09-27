@@ -19,30 +19,29 @@
 import styles from './style';
 import React from 'react';
 
-export default class About extends React.Component {
-  render() {
-    return (
-      <div className={styles.content}>
-        <h1 className={styles.heading}>Acknowledgements</h1>
-        <p className={styles.paragraph}>
-          Copyright 2005-2016 Kuali, Inc. All rights reserved. Kuali Research is licensed for use
-          pursuant to the Affero General Public License, version 3. Portions of this software are
-          copyrighted by other parties, including the parties listed below. Questions about licensing
-          should be directed to legal@kuali.co.
-        </p>
+export default function About({version}) {
+  return (
+    <div className={styles.content}>
+      <h1 className={styles.heading}>Acknowledgements</h1>
+      <p className={styles.paragraph}>
+        Copyright 2005-2016 Kuali, Inc. All rights reserved. Kuali Research is licensed for use
+        pursuant to the Affero General Public License, version 3. Portions of this software are
+        copyrighted by other parties, including the parties listed below. Questions about licensing
+        should be directed to legal@kuali.co.
+      </p>
 
-        <h1 className={styles.heading}>Third Party Contributions</h1>
-        <p className={styles.paragraph}>
-          This product includes software developed by:<br />
-          The Apache Software Foundation (http://www.apache.org), licensed under the Apache
-          Software License versions 1.0, and 2.0
-        </p>
+      <h1 className={styles.heading}>Third Party Contributions</h1>
+      <p className={styles.paragraph}>
+        This product includes software developed by:<br />
+        The Apache Software Foundation (http://www.apache.org), licensed under the Apache
+        Software License versions 1.0, and 2.0
+      </p>
 
-        <h1 className={styles.heading}>Version</h1>
-        <p className={styles.paragraph}>
-          {this.props.version}
-        </p>
-      </div>
-    );
-  }
+      <h1 className={styles.heading}>Version</h1>
+      <p className={styles.paragraph}>
+        {version}
+      </p>
+    </div>
+  );
 }
+

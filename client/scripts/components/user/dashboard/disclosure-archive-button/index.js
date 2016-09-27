@@ -20,18 +20,16 @@ import styles from './style';
 import React from 'react';
 import {Link} from 'react-router';
 
-export class DisclosureArchiveButton extends React.Component {
-  render() {
-    return (
-      <Link
-        to={{pathname: '/coi/archiveview', query: {type: this.props.type}}}
-        className={`${styles.container} ${this.props.className}`}
-      >
-        <div>
-          <div className={styles.primary}>View</div>
-          <div className={styles.secondary}>Disclosure Archives</div>
-        </div>
-      </Link>
-    );
-  }
+export function DisclosureArchiveButton({type, className}) {
+  return (
+    <Link
+      to={{pathname: '/coi/archiveview', query: {type}}}
+      className={`${styles.container} ${className}`}
+    >
+      <div>
+        <div className={styles.primary}>View</div>
+        <div className={styles.secondary}>Disclosure Archives</div>
+      </div>
+    </Link>
+  );
 }
