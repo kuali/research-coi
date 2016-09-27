@@ -29,7 +29,7 @@ import assert from 'assert';
 describe('General', () => {
   it('should render ', () => {
     const renderer = TestUtils.createRenderer();
-    renderer.render(<General/>, configState);
+    renderer.render(<General />, configState);
     const component = renderer.getRenderOutput();
     assert(findWithType(component,DisclosureTypes));
     assert.equal(findAllWithType(component,Panel).length,4);

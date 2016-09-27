@@ -26,7 +26,7 @@ import configState from '../../../../config-context';
 
 describe('TravelLogHeader', () => {
   it('should render h2 element with Travel Log text', () => {
-    const travelLogHeader = sd.shallowRender(<TravelLogHeader/>, configState);
+    const travelLogHeader = sd.shallowRender(<TravelLogHeader />, configState);
     const dom = travelLogHeader.getRenderOutput();
     assert.equal('h2', dom.props.children.type);
   });

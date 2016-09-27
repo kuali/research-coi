@@ -30,7 +30,7 @@ TravelLog.__Rewire__('TravelLogStore', MockTravelLogStore); //eslint-disable-lin
 describe('TravelLog', () => {
   it('render travel log with no entry state', () => {
     const tree = sd.shallowRender(
-      <TravelLog/>
+      <TravelLog />
     );
 
     const vdom = tree.getRenderOutput();
@@ -41,7 +41,7 @@ describe('TravelLog', () => {
   it('render travel log with entry state', () => {
     MockTravelLogActions.updateEntryState(1);
     const tree = sd.shallowRender(
-      <TravelLog/>
+      <TravelLog />
     );
 
     const vdom = tree.getRenderOutput();
@@ -50,7 +50,7 @@ describe('TravelLog', () => {
 
   it('componentDidMount and componentWillUnmount methods', () => {
     const tree = sd.shallowRender(
-      <TravelLog/>
+      <TravelLog />
     );
 
     const instance = tree.getMountedInstance();

@@ -24,7 +24,7 @@ import assert from 'assert';
 describe('AddSection', () => {
   it('should hide message div if no message is provided', () => {
     const wrapper = shallow(
-      <AddSection/>
+      <AddSection />
     );
 
     assert(wrapper.find('#message').node.props.className.indexOf('hideWarning') > 0);

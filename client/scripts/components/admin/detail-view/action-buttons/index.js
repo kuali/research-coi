@@ -33,7 +33,7 @@ export default function ActionButtons(props) {
         onClick={AdminActions.showGeneralAttachmentsPanel}
       >
         <i className={`fa fa-eye ${styles.icon}`} />
-        <span className={styles.label}>VIEW GENERAL<br/>ATTACHMENTS</span>
+        <span className={styles.label}>VIEW GENERAL<br />ATTACHMENTS</span>
       </div>
     );
   }

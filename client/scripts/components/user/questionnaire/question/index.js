@@ -275,7 +275,7 @@ export class Question extends React.Component {
     ) {
       nextButton = (
         <div className={styles.nextButton}>
-          <NextButton onClick={this.next} isValid={isValid}/>
+          <NextButton onClick={this.next} isValid={isValid} />
         </div>
       );
     }

@@ -76,7 +76,7 @@ export default class AdminMenu extends React.Component {
       menu = (
         <div className={styles.container}>
           <a href="/coi/" className={styles.menuItem}>
-            <i className={`fa fa-chevron-left ${styles.arrowIcon}`}/>
+            <i className={`fa fa-chevron-left ${styles.arrowIcon}`} />
             Researcher Dashboard
           </a>
         </div>
