@@ -31,7 +31,7 @@ function deleteDisclosureAttachment(index) {
 
 export default function FileSection({files, className}) {
   const fileType = 'disclosure';
-  const filesJsx =
+  const filesJsx = (
     <FileUpload
       fileType={fileType}
       readOnly={false}
@@ -42,7 +42,8 @@ export default function FileSection({files, className}) {
     >
       <div>Drag and Drop or Click to upload your attachments</div>
       <div>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
-    </FileUpload>;
+    </FileUpload>
+  );
 
   return (
     <div className={`${styles.container} ${className}`}>
