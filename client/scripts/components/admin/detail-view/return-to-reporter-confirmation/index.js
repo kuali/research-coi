@@ -26,7 +26,6 @@ import classNames from 'classnames';
 export default class ReturnToReporterConfirmation extends React.Component {
   constructor() {
     super();
-    this.returnToReporter = this.returnToReporter.bind(this);
   }
 
   render() {
