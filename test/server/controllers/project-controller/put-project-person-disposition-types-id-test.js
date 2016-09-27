@@ -113,7 +113,9 @@ describe('PUT api/coi/project-persons-disposition-types/:id', () => {
     });
 
     it('should update the project person', async function() {
-      const projectPerson = await knex('project_person').select('*').where({id: projectPersonId});
+      const projectPerson = await knex('project_person')
+        .select('*')
+        .where({id: projectPersonId});
       assert.equal(dispositionTypeCd,projectPerson[0].disposition_type_cd);
     });
   });

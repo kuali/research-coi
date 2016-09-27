@@ -35,6 +35,7 @@
         ],
         "max-len": [2, 150, 2],
         "module-name/kebab-case": 2,
+        "newline-per-chained-call": 2,
         "no-duplicate-imports": 2,
         "no-else-return": 2,
         "no-eq-null": 2,

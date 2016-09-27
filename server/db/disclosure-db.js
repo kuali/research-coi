@@ -493,13 +493,15 @@ async function flagPIReviewNeeded(knex, disclosureId, section, id) {
     });
     
   if (rows.length > 0) {
-    return await knex('pi_review').update({
-      reviewed_on: null
-    }).where({
-      disclosure_id: disclosureId,
-      target_type: section,
-      target_id: id
-    });
+    return await knex('pi_review')
+      .update({
+        reviewed_on: null
+      })
+      .where({
+        disclosure_id: disclosureId,
+        target_type: section,
+        target_id: id
+      });
   }
   return await knex('pi_review').insert({
     disclosure_id: disclosureId,
@@ -1529,7 +1531,9 @@ export async function approve(
   disclosure.lastReviewDate = new Date();
 
   const [config, archivedDisclosure] = await Promise.all([
-    knex('config').first('config').orderBy('id', 'desc'),
+    knex('config')
+      .first('config')
+      .orderBy('id', 'desc'),
     archiveDisclosure(knex, disclosureId, displayName, disclosure),
     deleteComments(knex, disclosureId),
     deleteAnswersForDisclosure(knex, disclosureId),

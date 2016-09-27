@@ -1,5 +1,6 @@
 {
   "rules": {
+    "newline-per-chained-call": ["off"],
     "no-magic-numbers": ["off"]
   }
 }

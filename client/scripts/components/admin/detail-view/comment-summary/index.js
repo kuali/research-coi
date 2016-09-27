@@ -53,47 +53,49 @@ export default class CommentSummary extends React.Component {
       return a.topicId - b.topicId;
     });
 
-    return this.getUniqueTopics(questionComments).sort((a, b) => {
-      let aName = getQuestionNumberToShow(
-        this.context.configState,
-        QUESTIONNAIRE_TYPE.SCREENING,
-        a,
-        this.props.configId
-      );
-      if (aName === null) {
-        aName = '';
-      }
-      let bName = getQuestionNumberToShow(
-        this.context.configState,
-        QUESTIONNAIRE_TYPE.SCREENING,
-        b,
-        this.props.configId
-      );
-      if (bName === null) {
-        bName = '';
-      }
+    return this
+      .getUniqueTopics(questionComments).sort((a, b) => {
+        let aName = getQuestionNumberToShow(
+          this.context.configState,
+          QUESTIONNAIRE_TYPE.SCREENING,
+          a,
+          this.props.configId
+        );
+        if (aName === null) {
+          aName = '';
+        }
+        let bName = getQuestionNumberToShow(
+          this.context.configState,
+          QUESTIONNAIRE_TYPE.SCREENING,
+          b,
+          this.props.configId
+        );
+        if (bName === null) {
+          bName = '';
+        }
 
-      return String(aName).localeCompare(String(bName));
-    }).map(topicId => {
-      const comments = questionComments.filter(comment => {
-        return comment.topicId === topicId;
+        return String(aName).localeCompare(String(bName));
+      })
+      .map(topicId => {
+        const comments = questionComments.filter(comment => {
+          return comment.topicId === topicId;
+        });
+
+        const questionNumber = getQuestionNumberToShow(
+          this.context.configState,
+          QUESTIONNAIRE_TYPE.SCREENING,
+          topicId,
+          this.props.configId
+        );
+        const topicName = `${COMMENT_TITLES.QUESTION} ${questionNumber}`;
+        return (
+          <TopicCommentSummary
+            key={`qt${topicId}`}
+            topicName={topicName}
+            comments={comments}
+          />
+        );
       });
-
-      const questionNumber = getQuestionNumberToShow(
-        this.context.configState,
-        QUESTIONNAIRE_TYPE.SCREENING,
-        topicId,
-        this.props.configId
-      );
-      const topicName = `${COMMENT_TITLES.QUESTION} ${questionNumber}`;
-      return (
-        <TopicCommentSummary
-          key={`qt${topicId}`}
-          topicName={topicName}
-          comments={comments}
-        />
-      );
-    });
   }
 
   getEntityName(id) {

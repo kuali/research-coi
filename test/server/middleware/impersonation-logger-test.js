@@ -31,7 +31,9 @@ describe('impersonationLogger', async () => {
       .send({test: 'test'})
       .set('Authorization', 'Bearer test1');
 
-    const record = await knex('impersonation_audit').select('*').where({path: '/api/coi/impersonation-test1'});
+    const record = await knex('impersonation_audit')
+      .select('*')
+      .where({path: '/api/coi/impersonation-test1'});
     assert.equal(0, record.length);
   });
 
@@ -41,7 +43,9 @@ describe('impersonationLogger', async () => {
       .send({test: 'test'})
       .set('Authorization', 'Bearer impersonating_test2');
 
-    const record = await knex('impersonation_audit').select('*').where({path: '/api/coi/impersonation-test2'});
+    const record = await knex('impersonation_audit')
+      .select('*')
+      .where({path: '/api/coi/impersonation-test2'});
     assert.equal(1, record.length);
     assert.equal('test', JSON.parse(record[0].request_info).body.test);
   });

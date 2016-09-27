@@ -314,7 +314,11 @@ describe('FileController', () => {
   after(async function() {
     await knex('file').truncate();
     await knex('additional_reviewer').del();
-    await knex('fin_entity').del().where({disclosure_id: disclosureId});
-    await knex('disclosure').del().where({id: disclosureId});
+    await knex('fin_entity')
+      .del()
+      .where({disclosure_id: disclosureId});
+    await knex('disclosure')
+      .del()
+      .where({id: disclosureId});
   });
 });

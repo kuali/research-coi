@@ -46,18 +46,20 @@ export default function(req, res, next) {
     if (lane === LANES.TEST && req.userInfo.impersonatedBy) {
       console.info(getRequestInfo(req)); //eslint-disable-line no-console
       const knex = getKnex(req.dbInfo);
-      knex('impersonation_audit').insert({
-        timestamp: new Date(),
-        auth_id: req.userInfo.id,
-        school_id: req.userInfo.schoolId,
-        username: req.userInfo.username,
-        impersonator_auth_id: req.userInfo.impersonatedBy,
-        method: req.method,
-        path: req.url,
-        request_info: JSON.stringify({
-          body: req.body
-        })
-      }, 'id').then();
+      knex('impersonation_audit')
+        .insert({
+          timestamp: new Date(),
+          auth_id: req.userInfo.id,
+          school_id: req.userInfo.schoolId,
+          username: req.userInfo.username,
+          impersonator_auth_id: req.userInfo.impersonatedBy,
+          method: req.method,
+          path: req.url,
+          request_info: JSON.stringify({
+            body: req.body
+          })
+        }, 'id')
+        .then();
     }
   } catch (err) {
     console.error(err); //eslint-disable-line no-console

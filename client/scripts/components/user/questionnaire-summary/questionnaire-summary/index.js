@@ -65,20 +65,23 @@ export class QuestionnaireSummary extends React.Component {
             key={`a${answer.questionId}`}
           />
         );
-        subs.filter(subAnswer => {
-          return answer.question.id === subAnswer.question.parent;
-        }).sort((a, b) => {
-          return a.question.question.order - b.question.question.order;
-        }).forEach((subAnswer) => {
-          summaries.push(
-            <QuestionSummary
-              answer={subAnswer.answer.value}
-              question={subAnswer.question}
-              index={index}
-              key={`sa${subAnswer.questionId}`}
-            />
-          );
-        });
+        subs
+          .filter(subAnswer => {
+            return answer.question.id === subAnswer.question.parent;
+          })
+          .sort((a, b) => {
+            return a.question.question.order - b.question.question.order;
+          })
+          .forEach((subAnswer) => {
+            summaries.push(
+              <QuestionSummary
+                answer={subAnswer.answer.value}
+                question={subAnswer.question}
+                index={index}
+                key={`sa${subAnswer.questionId}`}
+              />
+            );
+          });
       });
     }
 

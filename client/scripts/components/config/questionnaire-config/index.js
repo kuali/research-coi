@@ -352,28 +352,34 @@ class QuestionnaireConfig extends React.Component {
     }
 
     let currentQuestionNumber = 0;
-    Array.from(this.props.questions).filter(question => {
-      return !question.parent;
-    }).sort((a, b) => {
-      if (a.question.order < b.question.order) { return -1; }
-      else if (a.question.order === b.question.order) { return 0; }
-      return 1;
-    }).forEach(question => {
-      question.question.top = nextQuestionYPosition;
-      nextQuestionYPosition += this.findQuestionHeight(question);
-      currentQuestionNumber++;
-      question.question.numberToShow = currentQuestionNumber;
+    Array
+      .from(this.props.questions)
+      .filter(question => {
+        return !question.parent;
+      })
+      .sort((a, b) => {
+        if (a.question.order < b.question.order) { return -1; }
+        else if (a.question.order === b.question.order) { return 0; }
+        return 1;
+      })
+      .forEach(question => {
+        question.question.top = nextQuestionYPosition;
+        nextQuestionYPosition += this.findQuestionHeight(question);
+        currentQuestionNumber++;
+        question.question.numberToShow = currentQuestionNumber;
 
-      let currentSubQuestionNumber = 0;
-      this.findSubQuestions(question.id).sort((a, b) => {
-        return a.question.order - b.question.order;
-      }).forEach(subQuestion => {
-        subQuestion.question.top = nextQuestionYPosition;
-        nextQuestionYPosition += this.findQuestionHeight(subQuestion);
-        currentSubQuestionNumber++;
-        subQuestion.question.numberToShow = `${currentQuestionNumber} - ${(String.fromCharCode(64 + currentSubQuestionNumber))}`;
+        let currentSubQuestionNumber = 0;
+        this
+          .findSubQuestions(question.id).sort((a, b) => {
+            return a.question.order - b.question.order;
+          })
+          .forEach(subQuestion => {
+            subQuestion.question.top = nextQuestionYPosition;
+            nextQuestionYPosition += this.findQuestionHeight(subQuestion);
+            currentSubQuestionNumber++;
+            subQuestion.question.numberToShow = `${currentQuestionNumber} - ${(String.fromCharCode(64 + currentSubQuestionNumber))}`;
+          });
       });
-    });
 
     this.props.questions.filter(question => {
       return !question.parent;
