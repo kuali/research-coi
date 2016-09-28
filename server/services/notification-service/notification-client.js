@@ -176,7 +176,7 @@ export async function sendNotification(dbInfo, hostname, notification) {
     logValue('receiptIds', receiptIds);
     await recordNotificationRequest(
       getKnex(dbInfo),
-      notification.addresses,
+      JSON.stringify(notification.addresses),
       receiptIds
     );
     Log.verbose('done recording receipts');

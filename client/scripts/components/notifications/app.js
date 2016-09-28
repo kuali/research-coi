@@ -44,11 +44,19 @@ class App extends React.Component {
 
   render() {
     const requests = this.state.requests.map(request => {
+      let addresses;
+      if (request.addresses && request.addresses.startsWith('[')) {
+        addresses = JSON.parse(request.addresses);
+      }
+      else {
+        addresses = request.addresses;
+      }
+
       return (
         <Request
           key={request.id}
           time={request.timestamp}
-          addresses={request.addresses}
+          addresses={addresses}
           receiptIds={request.receiptIds}
         />
       );
