@@ -33,6 +33,7 @@ export default class SidePanel extends React.Component {
 
     this.onAgreeChange = this.onAgreeChange.bind(this);
     this.confirm = this.confirm.bind(this);
+    this.submit = this.submit.bind(this);
   }
 
   onAgreeChange(evt) {
@@ -47,6 +48,11 @@ export default class SidePanel extends React.Component {
     }
   }
 
+  submit() {
+    if (this.props.submitEnabled) {
+      PIReviewActions.submit();
+    }
+  }
   render() {
     const submitEnabled = this.props.submitEnabled;
 
@@ -84,7 +90,7 @@ export default class SidePanel extends React.Component {
       content = (
         <div>
           <div className={styles.message}>{message}</div>
-          <div className={styles.submit} onClick={PIReviewActions.submit}>
+          <div className={styles.submit} onClick={this.submit}>
             <i className={`fa fa-arrow-circle-right ${styles.submitIcon}`} />
             SUBMIT
           </div>
