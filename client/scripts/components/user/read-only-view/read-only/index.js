@@ -29,7 +29,7 @@ import {Link} from 'react-router';
 import ReadOnlyDetail from '../read-only-detail';
 import {formatDateTime} from '../../../../format-date';
 import {
-  DISCLOSURE_TYPE
+  DISCLOSURE_TYPE, DISCLOSURE_STATUS
 } from '../../../../../../coi-constants';
 
 export default class ReadOnly extends React.Component {
@@ -71,6 +71,7 @@ export default class ReadOnly extends React.Component {
   render() {
     let detail;
     let header;
+    let headerStyle;
     if (this.state.disclosure) {
       const disclosureType = getDisclosureTypeString(
         this.context.configState,
@@ -82,6 +83,18 @@ export default class ReadOnly extends React.Component {
         this.state.disclosure.statusCd,
         this.state.disclosure.configId
       );
+
+      let resubmissionDate;
+      if (this.state.disclosure.statusCd === DISCLOSURE_STATUS.RESUBMITTED && this.state.disclosure.resubmissionDate) {
+        resubmissionDate = (
+          <div className={styles.dateRow}>
+            Resubmitted On:
+            <span className={styles.dateValue}>{formatDateTime(this.state.disclosure.resubmissionDate)}</span>
+          </div>
+        );
+      }
+
+      headerStyle = this.state.disclosure.resubmissionDate ? styles.header2 : styles.header3;
       header = (
         <div>
           <div className={styles.heading}>
@@ -95,6 +108,7 @@ export default class ReadOnly extends React.Component {
             Status:
             <span className={styles.statusValue}>{statusString}</span>
           </div>
+          {resubmissionDate}
         </div>
       );
 
@@ -134,7 +148,7 @@ export default class ReadOnly extends React.Component {
             </Link>
           </span>
           <span className={`inline-flexbox column fill ${styles.content}`}>
-            <div className={styles.header2}>
+            <div className={headerStyle}>
               {header}
             </div>
             <div className={'fill'} style={{overflowY: 'auto'}}>

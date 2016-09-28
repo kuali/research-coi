@@ -86,6 +86,9 @@ export function getDisclosureVariables(disclosure, url, variables) {
   result[`${LEFT}RETURNED_DATE${RIGHT}`] = formatDateIfAvailable(
     disclosure.returnedDate
   );
+  result[`${LEFT}RESUBMISSION_DATE${RIGHT}`] = formatDateIfAvailable(
+    disclosure.resubmissionDate
+  );
   setReporterDetails(result, get(
       disclosure,
       'reporterInfo.firstName'

@@ -118,6 +118,15 @@ export class DisclosureDetailHeading extends React.Component {
         </div>
       );
     }
+    let resubmissionDate;
+    if (disclosure.statusCd === DISCLOSURE_STATUS.RESUBMITTED && disclosure.resubmissionDate) {
+      resubmissionDate = (
+        <div className={styles.details}>
+          <span className={styles.label}>Resubmitted On:</span>
+          <span className={styles.value}>{formatDate(disclosure.resubmissionDate)}</span>
+        </div>
+      );
+    }
 
     let disposition;
     if (
@@ -206,6 +215,7 @@ export class DisclosureDetailHeading extends React.Component {
           {submittedDate}
           {approvedDate}
           {returnedDate}
+          {resubmissionDate}
         </span>
         {versionPicker}
       </div>

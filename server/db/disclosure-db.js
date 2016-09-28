@@ -624,7 +624,6 @@ async function getDisclosure(knex, userInfo, disclosureId) {
   const criteria = {
     id: disclosureId
   };
-
   if (userInfo.coiRole !== ROLES.ADMIN && userInfo.coiRole !== ROLES.REVIEWER) {
     criteria.user_id = userInfo.schoolId;
   }
@@ -642,8 +641,9 @@ async function getDisclosure(knex, userInfo, disclosureId) {
       'de.expired_date as expiredDate',
       'de.last_review_date as lastReviewDate',
       'de.config_id as configId',
-      'de.returned_date as returnedDate'
-    )
+      'de.returned_date as returnedDate',
+      'de.resubmission_date as resubmissionDate'
+  )
     .from('disclosure as de')
     .where(criteria);
 }
@@ -1966,7 +1966,8 @@ export async function getDisclosureInfoForNotifications(knex, id) {
       'submitted_date as submittedDate',
       'expired_date as expiredDate',
       'user_id as userId',
-      'returned_date as returnedDate'
+      'returned_date as returnedDate',
+      'resubmission_date as resubmissionDate'
     )
     .where({id});
 
