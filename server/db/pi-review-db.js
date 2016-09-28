@@ -1371,7 +1371,8 @@ export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
 
   await knex('disclosure')
     .update({
-      status_cd: DISCLOSURE_STATUS.RESUBMITTED
+      status_cd: DISCLOSURE_STATUS.RESUBMITTED,
+      resubmission_date: new Date()
     })
     .where({id: disclosure_id});
 

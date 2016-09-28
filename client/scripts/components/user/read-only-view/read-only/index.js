@@ -29,7 +29,7 @@ import {Link} from 'react-router';
 import ReadOnlyDetail from '../read-only-detail';
 import {formatDateTime} from '../../../../format-date';
 import {
-  DISCLOSURE_TYPE
+  DISCLOSURE_TYPE, DISCLOSURE_STATUS
 } from '../../../../../../coi-constants';
 
 export default class ReadOnly extends React.Component {
@@ -82,6 +82,17 @@ export default class ReadOnly extends React.Component {
         this.state.disclosure.statusCd,
         this.state.disclosure.configId
       );
+
+      let resubmissionDate;
+      if (this.state.disclosure.statusCd === DISCLOSURE_STATUS.RESUBMITTED && this.state.disclosure.resubmissionDate) {
+        resubmissionDate = (
+          <div className={styles.dateRow}>
+            Resubmitted On:
+            <span className={styles.dateValue}>{formatDateTime(this.state.disclosure.resubmissionDate)}</span>
+          </div>
+        );
+      }
+
       header = (
         <div>
           <div className={styles.heading}>
@@ -95,6 +106,7 @@ export default class ReadOnly extends React.Component {
             Status:
             <span className={styles.statusValue}>{statusString}</span>
           </div>
+          {resubmissionDate}
         </div>
       );
 

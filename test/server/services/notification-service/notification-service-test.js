@@ -223,6 +223,7 @@ describe('NotificationService', () => {
         start_date: now,
         expired_date: now,
         submitted_date: now,
+        resubmission_date: now,
         config_id: 1}, 'id');
 
       disclosureId = dislcosureIds[0];
@@ -253,6 +254,7 @@ describe('NotificationService', () => {
       assert.equal( formatDate(now),results.variables['{{NOW}}']);
       assert.equal( formatDate(now),results.variables['{{SUBMISSION_DATE}}']);
       assert.equal( formatDate(now),results.variables['{{EXPIRATION_DATE}}']);
+      assert.equal( formatDate(now),results.variables['{{RESUBMISSION_DATE}}']);
     });
 
     after(async () => {
