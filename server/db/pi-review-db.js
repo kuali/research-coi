@@ -1348,6 +1348,17 @@ export async function deleteAnswers(knex, userInfo, reviewId, toDelete) {
   );
 }
 
+async function updateProjects(knex, schoolId) {
+  await knex('project_person')
+    .update({
+      new: false
+    })
+    .where({
+      person_id: schoolId,
+      active: true
+    });
+}
+
 export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
   const isSubmitter = await isDisclosureUsers(
     knex,
@@ -1371,6 +1382,9 @@ export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
     })
     .where({disclosure_id});
 
+  if (await flagIsOn(knex, 'RESCOI-941')) {
+    await updateProjects(knex, schoolId);
+  }
   if (await flagIsOn(knex, 'RESCOI-940')) {
     await knex('comment')
       .update({
