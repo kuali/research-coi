@@ -1398,7 +1398,8 @@ async function approveDisclosure(
   let status = DISCLOSURE_STATUS.UP_TO_DATE;
 
   const generalConfig = await getGeneralConfig(knex);
-  if (!generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities || activeEntitiesExist) {
+  if (!generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities
+    || activeEntitiesExist) {
     const requiredProjects = await filterProjects(dbInfo, projects, authHeader);
     const newActiveProjects = requiredProjects.filter(
       project => project.new === 1
