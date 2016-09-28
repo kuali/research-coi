@@ -26,6 +26,7 @@ import {
 import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
 import * as DisclosureDB from './disclosure-db';
 import {flagIsOn} from '../feature-flags';
+import Log from '../log';
 
 export async function verifyReviewIsForUser(knex, reviewId, userId) {
   const rows = await knex
@@ -764,12 +765,27 @@ async function getEntitiesToReview(knex, disclosureId, userId, reviewItems) {
   return entities;
 }
 
-function getProjects(knex, disclosureId) {
+function getAllProjects(knex, userId) {
   return knex.distinct(
       'p.title',
       'p.id',
       'p.source_identifier as sourceIdentifier',
       'type.description as projectType'
+    )
+    .from('project_person as pp')
+    .innerJoin('project as p', 'p.id', 'pp.project_id')
+    .innerJoin('project_type as type', 'p.type_cd', 'type.type_cd')
+    .andWhere({
+      'pp.person_id': userId
+    });
+}
+
+function getProjects(knex, disclosureId) {
+  return knex.distinct(
+    'p.title',
+    'p.id',
+    'p.source_identifier as sourceIdentifier',
+    'type.description as projectType'
     )
     .from('declaration as d')
     .innerJoin('project as p', 'p.id', 'd.project_id')
@@ -815,6 +831,66 @@ function setPIReviewDataForDeclaration(target, declaration, reviewItems) {
   }
 }
 
+function getAllActiveEntitiesForDisclosure(knex, disclosureId) {
+  return knex.select(
+      'id',
+      'name'
+    )
+    .from('fin_entity')
+    .where({
+      disclosure_id: disclosureId,
+      active: true
+    });
+}
+
+async function handleNewDeclaration(knex, entity, project, disclosureId) {
+  const newDeclaration = {
+    disclosure_id: disclosureId,
+    fin_entity_id: entity.id,
+    project_id: project.id
+  };
+
+  await knex('declaration').insert(newDeclaration);
+
+  Log.info(
+    `inserted declaration new declaration ${JSON.stringify(newDeclaration)}`
+  );
+
+  return {
+    id: entity.id,
+    name: entity.name,
+    projectId: project.id,
+    adminComments: []
+  };
+}
+
+async function handleNewProject(
+  knex,
+  project,
+  entities,
+  declarations,
+  disclosureId
+) {
+  const declarationExists = declarations.some(declaration => {
+    return declaration.projectId === project.id;
+  });
+
+  if (!declarationExists) {
+    Log.info(`project: ${JSON.stringify(project)} exists with no declaration`);
+    project.entities = await Promise.all(
+      entities.map(
+        entity => handleNewDeclaration(
+          knex,
+          entity,
+          project,
+          disclosureId
+        )
+      )
+    );
+  }
+  return project;
+}
+
 async function getDeclarationsToReview(
   knex,
   disclosureId,
@@ -822,15 +898,41 @@ async function getDeclarationsToReview(
   reviewItems
 ) {
   const flag940 = await flagIsOn(knex, 'RESCOI-940');
-
+  const flag941 = await flagIsOn(knex, 'RESCOI-941');
   const declarationIDs = extractTargetIDs(reviewItems);
 
-  const [projects, entities, comments, declarations] = await Promise.all([
+  const [
+    declaredProjects,
+    allProjects,
+    entities,
+    comments,
+    declarations,
+    allEntities
+  ] = await Promise.all([
     getProjects(knex, disclosureId),
+    getAllProjects(knex, userId),
     getEntitesWithTheseDeclarations(knex, disclosureId),
     getDeclarationComments(knex, disclosureId, declarationIDs),
-    getDeclarations(knex, disclosureId)
+    getDeclarations(knex, disclosureId),
+    getAllActiveEntitiesForDisclosure(knex, disclosureId)
   ]);
+
+  let projects;
+  if (flag941 && Array.isArray(allEntities) && allEntities.length > 0) {
+    projects = await Promise.all(
+      allProjects.map(
+        project => handleNewProject(
+          knex,
+          project,
+          allEntities,
+          declarations,
+          disclosureId
+        )
+      )
+    );
+  } else {
+    projects = declaredProjects;
+  }
 
   entities.forEach(entity => {
     const declaration = declarations.find(declarationToTest => {
