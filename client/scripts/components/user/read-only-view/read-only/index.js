@@ -71,6 +71,7 @@ export default class ReadOnly extends React.Component {
   render() {
     let detail;
     let header;
+    let headerStyle;
     if (this.state.disclosure) {
       const disclosureType = getDisclosureTypeString(
         this.context.configState,
@@ -93,6 +94,7 @@ export default class ReadOnly extends React.Component {
         );
       }
 
+      headerStyle = this.state.disclosure.resubmissionDate ? styles.header2 : styles.header3;
       header = (
         <div>
           <div className={styles.heading}>
@@ -146,7 +148,7 @@ export default class ReadOnly extends React.Component {
             </Link>
           </span>
           <span className={`inline-flexbox column fill ${styles.content}`}>
-            <div className={styles.header2}>
+            <div className={headerStyle}>
               {header}
             </div>
             <div className={'fill'} style={{overflowY: 'auto'}}>

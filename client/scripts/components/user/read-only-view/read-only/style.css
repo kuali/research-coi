@@ -84,6 +84,15 @@
   min-height: 93px;
 }
 
+.header3 {
+  background-color: white;
+  padding: 12px 0 13px 33px;
+  position: relative;
+  border-bottom: 1px solid #e3e3e3;
+  box-shadow: 0 2px 8px #CCC;
+  min-height: 83px;
+}
+
 .heading {
   font-size: 19px;
   font-weight: bold;
