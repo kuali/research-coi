@@ -164,7 +164,7 @@ export class DisclosureDetail extends React.Component {
       config.general.dispositionsEnabled;
 
     const areReviewCommentsvisibleToReporter = piComments.length;
-    const hasFinancialEntities = this.props.disclosure.entities.length;
+    const hasFinancialEntities = this.props.disclosure.entities.some(entity => entity.active !== 0);
     const sendToReporterEnabled = flagIsOn('RESCOI-965');
     return (
       <div className={classes}>
