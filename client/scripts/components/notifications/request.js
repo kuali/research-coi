@@ -79,13 +79,23 @@ export default class Request extends React.Component {
       }
     };
 
+    let addressJsx = addresses;
+    if (Array.isArray(addresses)) {
+      addressJsx = addresses.map((address, index, arr) => {
+        if (index < arr.length - 1) {
+          return `${address}, `;
+        }
+        return address;
+      });
+    }
+
     return (
       <div>
         <div>
           <span onClick={this.toggleDetail} style={styles.date}>
             {new Date(time).toLocaleString()}
           </span>
-          <span>{addresses}</span>
+          <span>{addressJsx}</span>
         </div>
 
         {details}
