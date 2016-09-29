@@ -700,6 +700,8 @@ export async function getExistingProject(knex, project) {
 }
 
 async function getPeopleWhoChanged(knex, project) {
+  logArguments('getPeopleWhoChanged', {project});
+
   const currentPeople = await knex
     .select(
       'person_id as personId',
@@ -709,6 +711,7 @@ async function getPeopleWhoChanged(knex, project) {
     .where({
       project_id: project.id
     });
+  logVariable({currentPeople});
 
   if (!project.persons) {
     return currentPeople.map(person => person.personId);
@@ -717,12 +720,13 @@ async function getPeopleWhoChanged(knex, project) {
   const result = [];
   for (const person of currentPeople) {
     const newPerson = project.persons.find(p => p.personId == person.personId);
+    logVariable({newPerson});
+
     const personWasRemoved = !newPerson;
     if (personWasRemoved) {
       result.push(person.personId);
     }
-
-    if (person.roleCode != newPerson.roleCode) {
+    else if (person.roleCode != newPerson.roleCode) {
       result.push(person.personId);
     }
   }
