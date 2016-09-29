@@ -26,7 +26,6 @@ import {AdminDeclarationsSummary} from '../admin-declarations-summary';
 import ApprovalConfirmation from '../approval-confirmation';
 import RejectionConfirmation from '../rejection-confirmation';
 import ReturnToReporterConfirmation from '../return-to-reporter-confirmation';
-import {flagIsOn} from '../../../../feature-flags';
 
 import {
   DISCLOSURE_STEP,
@@ -165,7 +164,6 @@ export class DisclosureDetail extends React.Component {
 
     const areReviewCommentsvisibleToReporter = piComments.length;
     const hasFinancialEntities = this.props.disclosure.entities.some(entity => entity.active !== 0);
-    const sendToReporterEnabled = flagIsOn('RESCOI-965');
     return (
       <div className={classes}>
         <DisclosureDetailHeading disclosure={disclosure} />
@@ -221,7 +219,6 @@ export class DisclosureDetail extends React.Component {
               role={this.props.role}
               readonly={readonly}
               hasFinancialEntities={hasFinancialEntities}
-              sendToReporterEnabled={sendToReporterEnabled}
               showReturnToReporterConfirmation={this.props.showReturnToReporterConfirmation}
             />
           </span>

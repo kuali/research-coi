@@ -23,21 +23,12 @@ import alt from '../alt';
 import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
 import {FILE_TYPE, ROLES} from '../../../coi-constants';
-import {flagIsOn} from '../feature-flags';
 
 function updateComment(reviewItem, text, commentFieldName = 'comments') {
   if (reviewItem.piResponse) {
-    let commentToEdit;
-    if (flagIsOn('RESCOI-940')) {
-      commentToEdit = reviewItem[commentFieldName].find(
-        commentToTest => commentToTest.current == true
-      );
-    }
-    else {
-      commentToEdit = reviewItem[commentFieldName].find(
-        commentToTest => commentToTest.id === 'temp'
-      );
-    }
+    const commentToEdit = reviewItem[commentFieldName].find(
+      commentToTest => commentToTest.current == true
+    );
     
     if (commentToEdit) {
       commentToEdit.text = text;
@@ -72,19 +63,10 @@ class _PIReviewStore {
   constructor() {
     this.bindActions(PIReviewActions);
 
-    if (flagIsOn('RESCOI-940')) {
-      this.applicationState = {
-        canSubmit: false,
-        showingCertification: false
-      };
-    }
-    else {
-      this.applicationState = {
-        canSubmit: false,
-        showingCertification: false,
-        pendingResponses: []
-      };
-    }
+    this.applicationState = {
+      canSubmit: false,
+      showingCertification: false
+    };
   }
 
   updateCanSubmit() {
@@ -157,9 +139,7 @@ class _PIReviewStore {
         this.disclosure.id = disclosureId;
         if (this.disclosure.questions) {
           this.disclosure.questions.forEach(questionMeta => {
-            if (flagIsOn('RESCOI-940')) {
-              setPIResponseBasedOnComments(questionMeta);
-            }
+            setPIResponseBasedOnComments(questionMeta);
 
             const {question} = questionMeta;
 
@@ -217,9 +197,7 @@ class _PIReviewStore {
 
         if (this.disclosure.entities) {
           this.disclosure.entities.forEach(entity => {
-            if (flagIsOn('RESCOI-940')) {
-              setPIResponseBasedOnComments(entity);
-            }
+            setPIResponseBasedOnComments(entity);
 
             if (entity.answers) {
               entity.answers.forEach(answer => {
@@ -229,14 +207,12 @@ class _PIReviewStore {
           });
         }
 
-        if (flagIsOn('RESCOI-940')) {
-          if (this.disclosure.declarations) {
-            this.disclosure.declarations.forEach(project => {
-              project.entities.forEach(entity => {
-                setPIResponseBasedOnComments(entity, 'adminComments');
-              });
+        if (this.disclosure.declarations) {
+          this.disclosure.declarations.forEach(project => {
+            project.entities.forEach(entity => {
+              setPIResponseBasedOnComments(entity, 'adminComments');
             });
-          }
+          });
         }
 
         this.files = this.disclosure.files;
@@ -326,15 +302,10 @@ class _PIReviewStore {
     });
 
     this.updateCanSubmit();
-    if (flagIsOn('RESCOI-940')) {
-      createRequest()
-        .post(`/api/coi/pi-response/${reviewId}`)
-        .send({comment: text})
-        .end(processResponse(() => {}));
-    }
-    else {
-      this.updatePendingResponses(reviewId, text);
-    }
+    createRequest()
+      .post(`/api/coi/pi-response/${reviewId}`)
+      .send({comment: text})
+      .end(processResponse(() => {}));
   }
 
   updatePendingResponses(reviewId, comment) {
@@ -537,22 +508,11 @@ class _PIReviewStore {
   }
 
   confirm(disclosureId) {
-    if (flagIsOn('RESCOI-940')) {
-      createRequest()
-        .put(`/api/coi/pi-revise/${disclosureId}/submit`)
-        .end(processResponse(() => {
-          document.location = '/coi/';
-        }));
-    }
-    else {
-      const {pendingResponses: responses} = this.applicationState;
-      createRequest()
-        .put(`/api/coi/pi-revise/${disclosureId}/submit`)
-        .send({responses})
-        .end(processResponse(() => {
-          document.location = '/coi/';
-        }));
-    }
+    createRequest()
+      .put(`/api/coi/pi-revise/${disclosureId}/submit`)
+      .end(processResponse(() => {
+        document.location = '/coi/';
+      }));
   }
 
   addEntityAttachments([files, entityId]) {

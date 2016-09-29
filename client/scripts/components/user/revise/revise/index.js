@@ -29,7 +29,6 @@ import SidePanel from '../side-panel';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import {LANES} from '../../../../../../coi-constants';
-import {flagIsOn} from '../../../../feature-flags';
 
 export class Revise extends React.Component {
   constructor() {
@@ -130,7 +129,7 @@ export class Revise extends React.Component {
         }
       }
 
-      if (flagIsOn('RESCOI-922') && this.state.files) {
+      if (this.state.files) {
         disclosureFiles = (
           <FileSection
             files={this.state.files}

@@ -32,7 +32,6 @@ import wrapAsync from './wrap-async';
 import { getProjectData } from '../services/project-service/project-service';
 import useKnex from '../middleware/request-knex';
 import {handleNotifications} from '../expiration-check';
-import {flagIsOn} from '../feature-flags';
 
 export async function saveConfig(req, res) {
   const {knex, dbInfo, body, hostname, userInfo} = req;
@@ -48,10 +47,7 @@ export async function saveConfig(req, res) {
   res.send(config);
 
   await updateAllProjectPersons(knex, req);
-
-  if (await flagIsOn(knex, 'RESCOI-898')) {
-    await handleNotifications();
-  }
+  await handleNotifications();
 }
 
 export const init = app => {

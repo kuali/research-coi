@@ -25,7 +25,6 @@ import {
 } from '../../coi-constants';
 import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
 import * as DisclosureDB from './disclosure-db';
-import {flagIsOn} from '../feature-flags';
 import Log from '../log';
 
 export async function verifyReviewIsForUser(knex, reviewId, userId) {
@@ -49,67 +48,38 @@ async function updatePIResponseComment(
   topic_id,
   comment
 ) {
-  if (await flagIsOn(knex, 'RESCOI-940')) {
-    const {schoolId: user_id} = userInfo;
-    const commentRow = await knex
-      .first('c.id')
-      .from('comment as c')
-      .where({
-        disclosure_id,
-        topic_section,
-        topic_id,
-        user_id,
-        current: true
-      });
+  const {schoolId: user_id} = userInfo;
+  const commentRow = await knex
+    .first('c.id')
+    .from('comment as c')
+    .where({
+      disclosure_id,
+      topic_section,
+      topic_id,
+      user_id,
+      current: true
+    });
 
-    if (commentRow) {
-      await knex('comment as c')
-        .update({
-          text: comment,
-          date: new Date()
-        })
-        .where({
-          disclosure_id,
-          topic_section,
-          topic_id,
-          user_id,
-          current: true
-        });
-    } else {
-      await knex('comment').insert({
-        disclosure_id,
-        topic_section,
-        topic_id,
-        text: comment,
-        user_id,
-        author: `${userInfo.firstName} ${userInfo.lastName}`,
-        user_role: ROLES.USER,
-        editable: false,
-        date: new Date(),
-        pi_visible: true,
-        reviewer_visible: true,
-        current: true
-      }, 'id');
-    }
-  }
-  else {
+  if (commentRow) {
     await knex('comment as c')
       .update({
-        current: false
+        text: comment,
+        date: new Date()
       })
       .where({
-        'c.disclosure_id': disclosure_id,
-        'c.topic_section': topic_section,
-        'c.topic_id': topic_id,
-        'c.user_id': userInfo.schoolId
+        disclosure_id,
+        topic_section,
+        topic_id,
+        user_id,
+        current: true
       });
-
+  } else {
     await knex('comment').insert({
       disclosure_id,
       topic_section,
       topic_id,
       text: comment,
-      user_id: userInfo.schoolId,
+      user_id,
       author: `${userInfo.firstName} ${userInfo.lastName}`,
       user_role: ROLES.USER,
       editable: false,
@@ -244,44 +214,23 @@ async function getSubQuestions(knex, disclosureId) {
 }
 
 async function getComments(knex, disclosureId, topicIDs, section) {
-  if (await flagIsOn(knex, 'RESCOI-940')) {
-    return await knex.select(
-        'id',
-        'topic_id as topicId',
-        'text',
-        'author',
-        'date',
-        'user_id as userId',
-        'user_role as userRole',
-        'current'
-      )
-      .from('comment as c')
-      .where({
-        disclosure_id: disclosureId,
-        topic_section: section,
-        pi_visible: true
-      })
-      .andWhere('topic_id', 'in', topicIDs);
-  }
-  else { // eslint-disable-line no-else-return
-    return await knex
-      .select(
-        'id',
-        'topic_id as topicId',
-        'text',
-        'author',
-        'date',
-        'user_id as userId',
-        'user_role as userRole'
-      )
-      .from('comment as c')
-      .where({
-        disclosure_id: disclosureId,
-        topic_section: section,
-        pi_visible: true
-      })
-      .andWhere('topic_id', 'in', topicIDs);
-  }
+  return await knex.select(
+      'id',
+      'topic_id as topicId',
+      'text',
+      'author',
+      'date',
+      'user_id as userId',
+      'user_role as userRole',
+      'current'
+    )
+    .from('comment as c')
+    .where({
+      disclosure_id: disclosureId,
+      topic_section: section,
+      pi_visible: true
+    })
+    .andWhere('topic_id', 'in', topicIDs);
 }
 
 async function getQuestionnaireComments(knex, disclosureId, topicIDs) {
@@ -291,23 +240,6 @@ async function getQuestionnaireComments(knex, disclosureId, topicIDs) {
     topicIDs,
     DISCLOSURE_STEP.QUESTIONNAIRE
   );
-}
-
-export async function getDeclarationWithProjectId(knex, projectId) {
-  const flagOn = await flagIsOn(knex, 'RESCOI-932');
-  if (!flagOn) {
-    return await knex
-      .select(
-        'id',
-        'fin_entity_id as finEntityId',
-        'project_id as projectId',
-        'type_cd as typeCd',
-        'comments',
-        'admin_relationship_cd as adminRelationshipCd'
-      )
-      .from('declaration')
-      .where({project_id: projectId});
-  }
 }
 
 export async function getAdminProjectDisposition(knex, projectId, personId) {
@@ -897,8 +829,6 @@ async function getDeclarationsToReview(
   userId,
   reviewItems
 ) {
-  const flag940 = await flagIsOn(knex, 'RESCOI-940');
-  const flag941 = await flagIsOn(knex, 'RESCOI-941');
   const declarationIDs = extractTargetIDs(reviewItems);
 
   const [
@@ -918,7 +848,7 @@ async function getDeclarationsToReview(
   ]);
 
   let projects;
-  if (flag941 && Array.isArray(allEntities) && allEntities.length > 0) {
+  if (Array.isArray(allEntities) && allEntities.length > 0) {
     projects = await Promise.all(
       allProjects.map(
         project => handleNewProject(
@@ -947,15 +877,7 @@ async function getDeclarationsToReview(
       entity.relationshipCd = declaration.typeCd;
 
       entity.adminComments = comments.filter(comment => {
-        if (flag940) {
-          return comment.topicId === declaration.id;
-        }
-        else { // eslint-disable-line no-else-return
-          return (
-            comment.topicId === declaration.id &&
-            comment.userId !== userId
-          );
-        }
+        return comment.topicId === declaration.id;
       }).sort((a, b) => {
         return a.date - b.date;
       });
@@ -1383,16 +1305,12 @@ export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
     })
     .where({disclosure_id});
 
-  if (await flagIsOn(knex, 'RESCOI-941')) {
-    await updateProjects(knex, schoolId);
-  }
-  if (await flagIsOn(knex, 'RESCOI-940')) {
-    await knex('comment')
-      .update({
-        current: false
-      })
-      .where({disclosure_id});
-  }
+  await updateProjects(knex, schoolId);
+  await knex('comment')
+    .update({
+      current: false
+    })
+    .where({disclosure_id});
 }
 
 export async function getPIResponseInfo(knex, disclosureId) {

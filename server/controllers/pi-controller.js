@@ -33,7 +33,6 @@ import {
 } from '../services/notification-service/notification-service';
 import wrapAsync from './wrap-async';
 import useKnex from '../middleware/request-knex';
-import {flagIsOn} from '../feature-flags';
 
 async function verifyReviewIsForUser({knex, params, userInfo}, res, next) {
   const isAllowed = await PIReviewDB.verifyReviewIsForUser(
@@ -491,17 +490,14 @@ export const init = app => {
       }
 
       await knex.transaction(async (knexTrx) => {
-        const flagOn = await flagIsOn(knexTrx, 'RESCOI-940');
-        if (!flagOn) {
-          if (body && Array.isArray(body.responses)) {
-            for (const response of body.responses) {
-              await PIReviewDB.recordPIResponse(
-                knexTrx,
-                userInfo,
-                response.reviewId,
-                response.comment
-              );
-            }
+        if (body && Array.isArray(body.responses)) {
+          for (const response of body.responses) {
+            await PIReviewDB.recordPIResponse(
+              knexTrx,
+              userInfo,
+              response.reviewId,
+              response.comment
+            );
           }
         }
 

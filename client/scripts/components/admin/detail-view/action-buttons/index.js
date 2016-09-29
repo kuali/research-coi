@@ -54,7 +54,7 @@ export default function ActionButtons(props) {
       </div>
     );
 
-    if (!props.sendToReporterEnabled || (props.sendToReporterEnabled && props.hasFinancialEntities)) {
+    if (props.hasFinancialEntities) {
       sendBackForRevisionsButton = (
         <div
           name='Send Back For Revisions Button'
@@ -66,8 +66,7 @@ export default function ActionButtons(props) {
         </div>
       );
     }
-
-    if (props.sendToReporterEnabled && !props.hasFinancialEntities) {
+    else {
       returnToReporterButton = (
         <div
           name='Return To Reporter Button'

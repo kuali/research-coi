@@ -25,13 +25,10 @@
   box-shadow: 0 0 10px 2px #CCC;
 }
 
-:global(.color-blind) .override.button {
-  background-color: white;
-}
-
-.generalComments {
-  font-size: 12px;
-  margin-bottom: 3px;
+.button {
+  margin: 10px auto;
+  display: block;
+  min-width: 135px;
 }
 
 .textbox {
@@ -42,17 +39,6 @@
   font-size: 13px;
   resize: none;
   border: 1px solid #AAA;
-}
-
-.commentText {
-  display: block;
-  width: 100%;
-  height: 200px;
-  margin-bottom: 30px;
-  border-radius: 5px;
-  border: 1px solid #AAA;
-  padding: 7px;
-  font-size: 14px;
 }
 
 .question {
