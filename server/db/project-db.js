@@ -194,8 +194,8 @@ function onlyStatusChanged(project) {
   return true;
 }
 
-async function updateDisclosureStatus(knex, person, project, req, isRequired) {
-  logArguments('updateDisclosureStatus', {person, project, isRequired});
+async function updateDisclosureStatus(knex, person, isRequired) {
+  logArguments('updateDisclosureStatus', {person, isRequired});
   
   if (isRequired) {
     const disclosure = await getDisclosureForUser(knex, person.personId);
@@ -210,40 +210,6 @@ async function updateDisclosureStatus(knex, person, project, req, isRequired) {
     }
     logVariable({entitiesNeedDeclaring});
 
-    const previouslyNotified = person.notified;
-    if (!previouslyNotified) {
-      const hasNotSubmitted = (
-        !disclosure ||
-        disclosure.statusCd === DISCLOSURE_STATUS.IN_PROGRESS ||
-        disclosure.statusCd === DISCLOSURE_STATUS.EXPIRED ||
-        disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED ||
-        disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
-      );
-      logVariable({hasNotSubmitted});
-
-      const sendableStatusChange = (
-        project.statusChange === true &&
-        onlyStatusChanged(project) &&
-        hasNotSubmitted
-      );
-      logVariable({sendableStatusChange});
-
-      if (
-        hasNotSubmitted ||
-        entitiesNeedDeclaring ||
-        sendableStatusChange
-      ) {
-        await createAndSendNewProjectNotification(
-          req.dbInfo,
-          req.hostname,
-          req.userInfo,
-          disclosure ? disclosure.id : undefined,
-          project,
-          person
-        );
-      }
-    }
-
     if (
       disclosure &&
       entitiesNeedDeclaring &&
@@ -253,6 +219,64 @@ async function updateDisclosureStatus(knex, person, project, req, isRequired) {
       await knex('disclosure')
         .update({status_cd: DISCLOSURE_STATUS.UPDATE_REQUIRED})
         .where({id: disclosure.id});
+    }
+  }
+}
+
+async function sendNotification(
+  knex,
+  person,
+  project,
+  dbInfo,
+  hostname,
+  userInfo
+) {
+  logArguments(
+    'sendNotification',
+    {person, project, dbInfo, hostname, userInfo}
+  );
+  
+  const disclosure = await getDisclosureForUser(knex, person.personId);
+  logVariable({disclosure});
+
+  let entitiesNeedDeclaring = false;
+  if (disclosure) {
+    entitiesNeedDeclaring = await entitiesNeedDeclaration(
+      knex,
+      disclosure.id
+    );
+  }
+  logVariable({entitiesNeedDeclaring});
+
+  const previouslyNotified = person.notified;
+  if (!previouslyNotified) {
+    const hasNotSubmitted = (
+      !disclosure ||
+      disclosure.statusCd === DISCLOSURE_STATUS.IN_PROGRESS ||
+      disclosure.statusCd === DISCLOSURE_STATUS.EXPIRED ||
+      disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED ||
+      disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+    );
+    logVariable({hasNotSubmitted});
+    const hasSubmitted = !hasNotSubmitted;
+
+    if (
+      project.statusChange === true &&
+      onlyStatusChanged(project) &&
+      hasSubmitted
+    ) {
+      return;
+    }
+
+    if (hasNotSubmitted || entitiesNeedDeclaring) {
+      await createAndSendNewProjectNotification(
+        dbInfo,
+        hostname,
+        userInfo,
+        disclosure ? disclosure.id : undefined,
+        project,
+        person
+      );
     }
   }
 }
@@ -347,12 +371,12 @@ async function updateProjectPerson(
   person,
   project,
   isRequired,
-  noDisclosureSubmitted,
+  projectIsNewToDisclosure,
   req
 ) {
   logArguments(
     'updateProjectPerson',
-    {person, project, isRequired, noDisclosureSubmitted}
+    {person, project, isRequired, projectIsNewToDisclosure}
   );
 
   await knex('project_person')
@@ -367,9 +391,20 @@ async function updateProjectPerson(
       project_id: project.id
     });
 
-  if (noDisclosureSubmitted === 1) {
+  if (isRequired) {
+    await sendNotification(
+      knex,
+      person,
+      project,
+      req.dbInfo,
+      req.hostname,
+      req.userInfo
+    );
+  }
+
+  if (projectIsNewToDisclosure === 1) {
     if (isRequired) {
-      await updateDisclosureStatus(knex, person, project, req, isRequired);
+      await updateDisclosureStatus(knex, person, isRequired);
     } else {
       await revertDisclosureStatus(knex, person, req, project.id);
     }
@@ -393,7 +428,15 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
   person.notified = false;
 
   if (isRequired) {
-    await updateDisclosureStatus(knex, person, project, req, isRequired);
+    await sendNotification(
+      knex,
+      person,
+      project,
+      req.dbInfo,
+      req.hostname,
+      req.userInfo
+    );
+    await updateDisclosureStatus(knex, person, isRequired);
   }
 
   return id[0];
@@ -737,8 +780,8 @@ export async function saveProject(knex, req, project) {
   if (existingProject) {
     project.id = existingProject.id;
     project.isNewProject = false;
-    project.peopleWhoChanged = getPeopleWhoChanged(knex, project);
-    project.sponsorsChanged = didSponsorsChange(knex, project);
+    project.peopleWhoChanged = await getPeopleWhoChanged(knex, project);
+    project.sponsorsChanged = await didSponsorsChange(knex, project);
 
     if (project.sourceStatus != existingProject.sourceStatus) {
       project.statusChange = true;
