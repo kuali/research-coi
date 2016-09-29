@@ -149,7 +149,7 @@ export async function saveNewFiles(knex, body, files, userInfo) {
         upload_date: fileDatum.uploadDate
       }, 'id');
     
-    fileDatum.id = fileId[0];
+    fileDatum.id = parseInt(fileId[0]);
     fileData.push(fileDatum);
   }
 

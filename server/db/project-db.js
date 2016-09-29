@@ -439,7 +439,7 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
     await updateDisclosureStatus(knex, person, isRequired);
   }
 
-  return id[0];
+  return parseInt(id[0]);
 }
 
 async function deactivateProjectPerson(knex, person, projectId, req) {
@@ -611,7 +611,7 @@ export async function insertProject(knex, project) {
       end_date: new Date(project.endDate)
     }, 'id');
 
-  return id[0];
+  return parseInt(id[0]);
 }
 
 async function saveNewProjects(knex, project, req) {

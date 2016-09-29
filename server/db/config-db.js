@@ -402,7 +402,7 @@ export async function saveEntityQuestionnaire(knex, questions) {
         type_cd: 2
       }, 'id');
     
-    idToUse = id[0];
+    idToUse = parseInt(id[0]);
   }
 
   return await createCollectionQueries(
@@ -570,13 +570,16 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   return camelizeJson(config);
 }
 
-export function archiveConfig(knex, userId, userName, config) {
-  return knex('config').insert({
-    config: JSON.stringify(config),
-    user_id: userId,
-    user_name: userName,
-    updated_date: new Date()
-  }, 'id');
+export async function archiveConfig(knex, userId, userName, config) {
+  const id = await knex('config')
+    .insert({
+      config: JSON.stringify(config),
+      user_id: userId,
+      user_name: userName,
+      updated_date: new Date()
+    }, 'id');
+
+  return parseInt(id[0]);
 }
 
 export async function getArchivedConfig(knex, id) {

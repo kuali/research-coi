@@ -75,7 +75,7 @@ async function saveEntityRelationship(knex, relationship) {
       status: RELATIONSHIP_STATUS.IN_PROGRESS
     }, 'id');
 
-  relationship.id = relationshipId[0];
+  relationship.id = parseInt(relationshipId[0]);
 
   if (relationship.relationshipCd === ENTITY_RELATIONSHIP.TRAVEL) {
     await knex('travel_relationship')
@@ -97,7 +97,7 @@ async function saveEntityAnswer(knex, answer, entityId) {
       answer: JSON.stringify(answer.answer)
     }, 'id');
 
-  answer.id = result[0];
+  answer.id = parseInt(result[0]);
 
   await knex('fin_entity_answer')
     .insert({
@@ -121,7 +121,7 @@ async function saveEntityFile(knex, file, entityId, userInfo) {
   const fileId = await knex('file')
       .insert(fileData, 'id');
 
-  fileData.id = fileId[0];
+  fileData.id = parseInt(fileId[0]);
   return fileData;
 }
 
@@ -172,7 +172,7 @@ export async function saveNewFinancialEntity(
       status: RELATIONSHIP_STATUS.IN_PROGRESS
     }, 'id');
 
-  financialEntity.id = id[0];
+  financialEntity.id = parseInt(id[0]);
 
   for (const relationship of financialEntity.relationships) {
     relationship.finEntityId = financialEntity.id;
@@ -329,7 +329,7 @@ export async function saveDeclaration(knex, userId, disclosureId, record) {
       comments: record.comments ? record.comments : null
     }, 'id');
 
-  record.id = id[0];
+  record.id = parseInt(id[0]);
   return record;
 }
 
@@ -375,7 +375,7 @@ export async function saveNewQuestionAnswer(knex, userId, disclosureId, body) {
       answer: JSON.stringify(body.answer)
     }, 'id');
 
-  answer.id = result[0];
+  answer.id = parseInt(result[0]);
   await knex('disclosure_answer')
     .insert({
       disclosure_id: disclosureId,
@@ -1073,7 +1073,7 @@ export async function getAnnualDisclosure(
     config_id: configId
   };
   const id = await knex('disclosure').insert(newDisclosure, 'id');
-  newDisclosure.id = id[0];
+  newDisclosure.id = parseInt(id[0]);
   newDisclosure.answers = [];
   newDisclosure.entities = [];
   newDisclosure.declarations = [];
@@ -1590,7 +1590,7 @@ export async function approve(
     authHeader
   );
 
-  return archivedDisclosure[0];
+  return parseInt(archivedDisclosure[0]);
 }
 
 function updateStatus(knex, name, disclosureId) {
@@ -1630,7 +1630,7 @@ async function addAdditionalReviewer(knex, reviewer, disclosureId) {
         assigned_by: SYSTEM_USER
       }, 'id');
 
-    return newId[0];
+    return parseInt(newId[0]);
   } catch (err) {
     Log.info(
       `reviewer ${reviewer.userId} already added to disclosure ${disclosureId}`
@@ -2019,7 +2019,7 @@ export async function createEmptyDeclarations(
         project_id: project.id
       }, 'id');
 
-    declarationIds.push(id[0]);
+    declarationIds.push(parseInt(id[0]));
   }
 
   return declarationIds;

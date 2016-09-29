@@ -99,7 +99,7 @@ export function getTravelLogEntries(
 async function createAnnualDisclosure(knex, userInfo) {
   const latestConfigId = await getLatestConfigsId(knex);
 
-  return await knex('disclosure')
+  const id = await knex('disclosure')
     .insert({
       type_cd: 2,
       status_cd: 1,
@@ -108,15 +108,19 @@ async function createAnnualDisclosure(knex, userInfo) {
       submitted_by: userInfo.name,
       config_id: latestConfigId
     }, 'id');
+
+  return parseInt(id[0]);
 }
 
 async function createNewEntity(knex, disclosureId, entry, status) {
-  return await knex('fin_entity').insert({
+  const id = await knex('fin_entity').insert({
     disclosure_id: disclosureId,
     name: entry.entityName,
     active: true,
     status
   }, 'id');
+
+  return parseInt(id[0]);
 }
 
 async function createNewRelationship(knex, entityId, entry, status) {
@@ -128,7 +132,7 @@ async function createNewRelationship(knex, entityId, entry, status) {
   }, 'id');
 
   const travelRelationshipId = await knex('travel_relationship').insert({
-    relationship_id: relationshipId[0],
+    relationship_id: parseInt(relationshipId[0]),
     amount: entry.amount,
     destination: entry.destination,
     start_date: new Date(entry.startDate),
@@ -136,8 +140,8 @@ async function createNewRelationship(knex, entityId, entry, status) {
     reason: entry.reason
   }, 'id');
 
-  entry.id = travelRelationshipId[0];
-  entry.relationshipId = relationshipId[0];
+  entry.id = parseInt(travelRelationshipId[0]);
+  entry.relationshipId = parseInt(relationshipId[0]);
   return entry;
 }
 
