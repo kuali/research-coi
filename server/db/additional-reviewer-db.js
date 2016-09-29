@@ -111,7 +111,7 @@ export async function createAdditionalReviewer(knex, reviewer, userInfo) {
       assigned_by: userInfo.name
     }, 'id');
 
-  reviewer.id = id[0];
+  reviewer.id = parseInt(id[0]);
   return reviewer;
 }
 
