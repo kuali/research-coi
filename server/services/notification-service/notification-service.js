@@ -108,7 +108,7 @@ const NOTIFICATION_TEMPLATES = {
   RETURN_TO_REPORTER: {
     ID: 11,
     SUBJECT: 'Annual COI Disclosure was Returned to Reporter',
-    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was returned on {{NOW}} for the following reason {{RETURN_REASON}}. Please login to Kuali Research COI and access your disclosure at {{REPORTER_DASHBOARD}} to revise and resubmit your disclosure.'//eslint-disable-line max-len
+    BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was returned on {{NOW}} for the following reason {{RETURN_REASON}}. Please login to Kuali Research COI and access your disclosure at {{REPORTER_DASHBOARD}} to update and submit your disclosure.'//eslint-disable-line max-len
   },
 };
 
