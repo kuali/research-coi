@@ -303,12 +303,15 @@ describe('Project DB', () => {
     });
   });
 
-  describe('shouldUpdateStatus', () => {
+  describe('entitiesNeedDeclaration', () => {
     it(
       'should always return true if the "no entities" config is off',
       async function() {
         const configId = await setNoEntityConfig(false);
-        assert.equal(await ProjectDB.shouldUpdateStatus(knex, 3), true);
+        assert.equal(
+          await ProjectDB.entitiesNeedDeclaration(knex, 3),
+          true
+        );
         await deleteConfig(configId);
       }
     );
@@ -335,7 +338,7 @@ describe('Project DB', () => {
           }, 'id');
 
         assert.equal(
-          await ProjectDB.shouldUpdateStatus(knex, disclosureId[0]),
+          await ProjectDB.entitiesNeedDeclaration(knex, disclosureId[0]),
           true
         );
 
@@ -356,7 +359,7 @@ describe('Project DB', () => {
 
         const disclosureId = randomInteger();
         assert.equal(
-          await ProjectDB.shouldUpdateStatus(knex, disclosureId),
+          await ProjectDB.entitiesNeedDeclaration(knex, disclosureId),
           false
         );
         await deleteConfig(configId);
@@ -365,7 +368,7 @@ describe('Project DB', () => {
 
     it('should throw errors for invalid parameters', async function() {
       assert(
-        await asyncThrows(ProjectDB.shouldUpdateStatus, knex, 'foo')
+        await asyncThrows(ProjectDB.entitiesNeedDeclaration, knex, 'foo')
       );
     });
   });
@@ -895,7 +898,7 @@ describe('Project DB', () => {
     });
   });
 
-  describe('getExistingProjectId', () => {
+  describe('getExistingProject', () => {
     let project_id;
 
     before(async function() {
@@ -916,7 +919,7 @@ describe('Project DB', () => {
     });
 
     it('should return the correct id', async function() {
-      const result = await ProjectDB.getExistingProjectId(
+      const result = await ProjectDB.getExistingProject(
         knex,
         {
           sourceSystem: 'ss3',
@@ -924,12 +927,12 @@ describe('Project DB', () => {
         }
       );
 
-      assert.equal(result, project_id);
+      assert.equal(result.id, project_id);
     });
 
     it('should throw an error with invalid arguments', async function() {
       assert(
-        await asyncThrows(ProjectDB.getExistingProjectId, 'foo')
+        await asyncThrows(ProjectDB.getExistingProject, 'foo')
       );
     });
   });
