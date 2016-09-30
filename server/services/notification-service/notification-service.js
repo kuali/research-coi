@@ -30,12 +30,11 @@ import {
 } from '../../db/disclosure-db';
 import { getProjects } from '../../db/project-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
-import { getDeclarationWithProjectId, getAdminProjectDisposition } from '../../db/pi-review-db';
+import { getAdminProjectDisposition } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import * as VariableService from './variables-service';
 import getKnex from '../../db/connection-manager';
 import Log from '../../log';
-import {flagIsOn} from '../../feature-flags';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
@@ -290,91 +289,63 @@ async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
   const projects = await getProjects(knex, disclosure.userId);
   const config = await getConfig(dbinfo, knex, hostname);
 
-  if (await flagIsOn(knex, 'RESCOI-932')) {
-    let dispositionHeader = '';
-    if (config.general.dispositionsEnabled === true) {
-      dispositionHeader = '<th>Project Disposition</th>';
-    }
-    let projectInformation = `
-      <table>
-        <tr style="text-align: left;">
-          <th>Project Number</th>
-          <th>Title</th>
-          <th>Sponsors</th>
-          <th>Project Type</th>
-          ${dispositionHeader}
-        </tr>
-    `;
-    for (const project of projects) {
-      let sponsorString = '';
-      project.sponsors.forEach(sponsor => {
-        sponsorString += `${sponsor.sponsorName}, `;
-      });
-      sponsorString = sponsorString.replace(/, $/, '');
+  let dispositionHeader = '';
+  if (config.general.dispositionsEnabled === true) {
+    dispositionHeader = '<th>Project Disposition</th>';
+  }
+  let projectInformation = `
+    <table>
+      <tr style="text-align: left;">
+        <th>Project Number</th>
+        <th>Title</th>
+        <th>Sponsors</th>
+        <th>Project Type</th>
+        ${dispositionHeader}
+      </tr>
+  `;
+  for (const project of projects) {
+    let sponsorString = '';
+    project.sponsors.forEach(sponsor => {
+      sponsorString += `${sponsor.sponsorName}, `;
+    });
+    sponsorString = sponsorString.replace(/, $/, '');
 
-      const projectType = await getProjectTypeDescription(knex, project.typeCd);
+    const projectType = await getProjectTypeDescription(knex, project.typeCd);
 
-      let disposition = '';
-      if (config.general.dispositionsEnabled) {
-        const adminDisposition = await getAdminProjectDisposition(
-          knex,
-          project.id,
-          disclosure.userId
-        );
-
-        let description = '';
-        let dispositionType;
-        if (adminDisposition) {
-          dispositionType = config.dispositionTypes.find(
-            type => type.typeCd === adminDisposition.dispositionTypeCd
-          );
-          if (dispositionType) {
-            description = dispositionType.description;
-          }
-        }
-
-        disposition = `<td>${description}</td>`;
-      }
-
-      projectInformation += `
-        <tr>
-          <td>${project.sourceIdentifier}</td>
-          <td>${project.name}</td>
-          <td>${sponsorString}</td>
-          <td>${projectType}</td>
-          ${disposition}
-        </tr>
-      `;
-    }
-    projectInformation += '</table>';
-    return projectInformation;
-  } else { // eslint-disable-line no-else-return
-    let projectInformation = '<table><tr><th>Project Number</th><th>Title</th><th>Sponsors</th><th>Project Type</th><th>Project Disposition</th></tr>'; // eslint-disable-line max-len
-    for (const project of projects) {
-      let sponsorString = '';
-      project.sponsors.forEach(sponsor => {
-        sponsorString += `${sponsor.sponsorName}, `;
-      });
-      sponsorString = sponsorString.replace(/, $/, '');
-
-      const projectType = await getProjectTypeDescription(knex, project.typeCd);
-      const declaration = await getDeclarationWithProjectId(knex, project.id);
+    let disposition = '';
+    if (config.general.dispositionsEnabled) {
+      const adminDisposition = await getAdminProjectDisposition(
+        knex,
+        project.id,
+        disclosure.userId
+      );
 
       let description = '';
       let dispositionType;
-      if (declaration[0]) {
-        dispositionType = config.dispositionTypes.find(type => type.typeCd === declaration[0].adminRelationshipCd);
+      if (adminDisposition) {
+        dispositionType = config.dispositionTypes.find(
+          type => type.typeCd === adminDisposition.dispositionTypeCd
+        );
         if (dispositionType) {
-          description = dispositionType.description ? dispositionType.description : '';
+          description = dispositionType.description;
         }
       }
 
-      projectInformation += `<tr><td>${project.sourceIdentifier}</td><td>${project.name}</td><td>${sponsorString}</td>`;
-      projectInformation += `<td>${projectType}</td><td> ${description}</td></tr>`;
+      disposition = `<td>${description}</td>`;
     }
-    projectInformation += '</table>';
-    return projectInformation;
+
+    projectInformation += `
+      <tr>
+        <td>${project.sourceIdentifier}</td>
+        <td>${project.name}</td>
+        <td>${sponsorString}</td>
+        <td>${projectType}</td>
+        ${disposition}
+      </tr>
+    `;
   }
+  projectInformation += '</table>';
+  return projectInformation;
 }
 
 async function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
@@ -383,14 +354,12 @@ async function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
 
   if (disclosure) {
     const knex = getKnex(dbInfo);
-    if (await flagIsOn(knex, 'RESCOI-932')) {
-      const generalConfig = await getGeneralConfig(knex);
-      if (generalConfig.dispositionsEnabled) {
-        disclosure.disposition = await getDisclosuresAdminDisposition(
-          knex,
-          disclosure.id
-        );
-      }
+    const generalConfig = await getGeneralConfig(knex);
+    if (generalConfig.dispositionsEnabled) {
+      disclosure.disposition = await getDisclosuresAdminDisposition(
+        knex,
+        disclosure.id
+      );
     }
     variables = VariableService.getDisclosureVariables(disclosure, url, variables);
   }

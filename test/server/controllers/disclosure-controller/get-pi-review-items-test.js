@@ -33,13 +33,11 @@ import {
 import { RELATIONSHIP_STATUS } from '../../../../coi-constants';
 import hashCode from '../../../../hash';
 import { OK } from '../../../../http-status-codes';
-import { setFeatureFlagState } from '../../../../server/db/features-db';
 const knex = getKnex({});
 
 describe('get /api/coi/disclosures/:id/pi-review-items', async () => {
   let disclosureId;
   before(async() => {
-    await setFeatureFlagState(knex, 'RESCOI-941', true);
     await knex('project_type')
       .update({req_disclosure: true})
       .where({type_cd: 1});

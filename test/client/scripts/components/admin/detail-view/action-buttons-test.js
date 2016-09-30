@@ -22,8 +22,6 @@ import sd from 'skin-deep';
 import { ROLES } from '../../../../../../coi-constants';
 import ActionButtons from '../../../../../../client/scripts/components/admin/detail-view/action-buttons';
 
-/*global describe, it */
-
 describe('ActionButtons', () => {
   it('show attachments false readOnly false admin true no financial entities', () => {
     const tree = sd.shallowRender(
@@ -32,7 +30,6 @@ describe('ActionButtons', () => {
         readonly={false}
         role={ROLES.ADMIN}
         hasFinancialEntities={false}
-        sendToReporterEnabled={false}
       />
     );
 
@@ -43,8 +40,8 @@ describe('ActionButtons', () => {
     assert.equal(children[0], undefined);
     assert.equal(children[1], undefined);
     assert.equal(children[2].props.name, 'Approve Button');
-    assert.equal(children[3].props.name, 'Send Back For Revisions Button');
-    assert.equal(children[4], undefined);
+    assert.equal(children[3], undefined);
+    assert.equal(children[4].props.name, 'Return To Reporter Button');
     assert.equal(children[5].props.name, 'Additional Review Button');
     assert.equal(children[6].props.name, 'Review Comments Button');
     assert.equal(children[7].props.name, 'Upload Attachments Button');
@@ -57,7 +54,6 @@ describe('ActionButtons', () => {
         readonly={false}
         role={ROLES.ADMIN}
         hasFinancialEntities={false}
-        sendToReporterEnabled={false}
       />
     );
 
@@ -68,8 +64,8 @@ describe('ActionButtons', () => {
     assert.equal(children[0].props.name, 'General Attachments Button');
     assert.equal(children[1], undefined);
     assert.equal(children[2].props.name, 'Approve Button');
-    assert.equal(children[3].props.name, 'Send Back For Revisions Button');
-    assert.equal(children[4], undefined);
+    assert.equal(children[3], undefined);
+    assert.equal(children[4].props.name, 'Return To Reporter Button');
     assert.equal(children[5].props.name, 'Additional Review Button');
     assert.equal(children[6].props.name, 'Review Comments Button');
     assert.equal(children[7].props.name, 'Upload Attachments Button');
@@ -82,7 +78,6 @@ describe('ActionButtons', () => {
         readonly={true}
         role={ROLES.ADMIN}
         hasFinancialEntities={false}
-        sendToReporterEnabled={false}
       />
     );
 
@@ -107,7 +102,6 @@ describe('ActionButtons', () => {
         readonly={true}
         role={ROLES.ADMIN}
         hasFinancialEntities={false}
-        sendToReporterEnabled={false}
       />
     );
 
@@ -132,7 +126,6 @@ describe('ActionButtons', () => {
         readonly={true}
         role={ROLES.REVIEWER}
         hasFinancialEntities={false}
-        sendToReporterEnabled={false}
       />
     );
 
@@ -157,7 +150,6 @@ describe('ActionButtons', () => {
         readonly={true}
         role={ROLES.REVIEWER}
         hasFinancialEntities={false}
-        sendToReporterEnabled={false}
       />
     );
 

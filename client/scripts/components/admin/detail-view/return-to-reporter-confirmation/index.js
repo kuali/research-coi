@@ -45,7 +45,7 @@ export default function ReturnToReporterConfirmation(props) {
           </div>
           <BlueButton
             onClick={AdminActions.returnToReporter}
-            className={`${styles.override} ${styles.yesButton}`}
+            className={`${styles.override} ${styles.button}`}
           >
             YES, SUBMIT
           </BlueButton>
@@ -61,7 +61,7 @@ export default function ReturnToReporterConfirmation(props) {
       returnToReporterSection = (
         <div className={classNames(styles.container)}>
           <div className={styles.question}>
-            There are review comments set as visible to the reporter. To Return the disclosure, please set these as
+            There are review comments set as visible to the reporter. To return the disclosure, please set these as
             not visible to the reporter.
           </div>
           <GreyButton

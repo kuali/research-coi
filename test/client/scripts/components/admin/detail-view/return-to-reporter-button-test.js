@@ -22,17 +22,14 @@ import sd from 'skin-deep';
 import { ROLES } from '../../../../../../coi-constants';
 import ActionButtons from '../../../../../../client/scripts/components/admin/detail-view/action-buttons';
 
-/*global describe, it */
-
 describe('ActionButtons', () => {
-  it('show attachments false readOnly false admin true no financial entities return to reporter on', () => {
+  it('show attachments false readOnly false admin true no financial entities', () => {
     const tree = sd.shallowRender(
       <ActionButtons
         showAttachments={false}
         readonly={false}
         role={ROLES.ADMIN}
         hasFinancialEntities={false}
-        sendToReporterEnabled={true}
       />
     );
 
@@ -50,64 +47,13 @@ describe('ActionButtons', () => {
     assert.equal(children[7].props.name, 'Upload Attachments Button');
   });
 
-  it('show attachments false readOnly false admin true has financial entities return to reporter on', () => {
+  it('show attachments false readOnly false admin true has financial entities', () => {
     const tree = sd.shallowRender(
       <ActionButtons
         showAttachments={false}
         readonly={false}
         role={ROLES.ADMIN}
         hasFinancialEntities={true}
-        sendToReporterEnabled={false}
-      />
-    );
-
-    const vdom = tree.getRenderOutput();
-    assert.equal(vdom.props.name, 'Action Buttons');
-    const children = vdom.props.children;
-    assert.equal(children.length, 8);
-    assert.equal(children[0], undefined);
-    assert.equal(children[1], undefined);
-    assert.equal(children[2].props.name, 'Approve Button');
-    assert.equal(children[3].props.name, 'Send Back For Revisions Button');
-    assert.equal(children[4], undefined);
-    assert.equal(children[5].props.name, 'Additional Review Button');
-    assert.equal(children[6].props.name, 'Review Comments Button');
-    assert.equal(children[7].props.name, 'Upload Attachments Button');
-  });
-
-  it('show attachments false readOnly false admin true has financial entities return to reporter on', () => {
-    const tree = sd.shallowRender(
-      <ActionButtons
-        showAttachments={false}
-        readonly={false}
-        role={ROLES.ADMIN}
-        hasFinancialEntities={true}
-        sendToReporterEnabled={true}
-      />
-    );
-
-    const vdom = tree.getRenderOutput();
-    assert.equal(vdom.props.name, 'Action Buttons');
-    const children = vdom.props.children;
-    assert.equal(children.length, 8);
-    assert.equal(children[0], undefined);
-    assert.equal(children[1], undefined);
-    assert.equal(children[2].props.name, 'Approve Button');
-    assert.equal(children[3].props.name, 'Send Back For Revisions Button');
-    assert.equal(children[4], undefined);
-    assert.equal(children[5].props.name, 'Additional Review Button');
-    assert.equal(children[6].props.name, 'Review Comments Button');
-    assert.equal(children[7].props.name, 'Upload Attachments Button');
-  });
-
-  it('show attachments false readOnly false admin true no financial entities return to reporter off', () => {
-    const tree = sd.shallowRender(
-      <ActionButtons
-        showAttachments={false}
-        readonly={false}
-        role={ROLES.ADMIN}
-        hasFinancialEntities={false}
-        sendToReporterEnabled={false}
       />
     );
 

@@ -32,7 +32,6 @@ import {
   default as ConfigStore,
   getDispositionsEnabled
 } from './config-store';
-import {flagIsOn} from '../feature-flags';
 
 function defaultStatusFilters() {
   return [2, 4, 5, 6];
@@ -189,11 +188,9 @@ class _AdminStore {
   }
 
   loadDisclosureData(disclosure) {
-    if (flagIsOn('RESCOI-940')) {
-      disclosure.comments = disclosure.comments.filter(
-        comment => comment.current != true
-      );
-    }
+    disclosure.comments = disclosure.comments.filter(
+      comment => comment.current != true
+    );
     this.applicationState.selectedDisclosure = disclosure;
     this.applicationState.loadingDisclosure = false;
     ConfigActions.loadConfig(disclosure.configId);

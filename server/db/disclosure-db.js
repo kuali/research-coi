@@ -43,7 +43,6 @@ import {
   STATE_TYPE
 } from '../../coi-constants';
 import Log from '../log';
-import {flagIsOn} from '../feature-flags';
 
 const MILLIS = 1000;
 const SECONDS = 60;
@@ -425,28 +424,7 @@ async function retrieveComments(knex, userInfo, disclosureId) {
     criteria.pi_visible = true;
   }
 
-  let query;
-  if (await flagIsOn(knex, 'RESCOI-940')) {
-    query = knex.select(
-        'id',
-        'disclosure_id as disclosureId',
-        'topic_section as topicSection',
-        'topic_id as topicId',
-        'text',
-        'author',
-        'editable',
-        'user_role as userRole',
-        'user_id as userId',
-        'date',
-        'pi_visible as piVisible',
-        'reviewer_visible as reviewerVisible',
-        'current'
-      )
-      .from('comment')
-      .where(criteria);
-  }
-  else {
-    query = knex.select(
+  const query = knex.select(
       'id',
       'disclosure_id as disclosureId',
       'topic_section as topicSection',
@@ -458,11 +436,11 @@ async function retrieveComments(knex, userInfo, disclosureId) {
       'user_id as userId',
       'date',
       'pi_visible as piVisible',
-      'reviewer_visible as reviewerVisible'
+      'reviewer_visible as reviewerVisible',
+      'current'
     )
     .from('comment')
     .where(criteria);
-  }
 
   if (userInfo.coiRole === ROLES.REVIEWER) {
     query.andWhere(function() {

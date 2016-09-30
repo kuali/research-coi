@@ -25,7 +25,6 @@ import {EntityForm} from '../../entities/entity-form';
 import {DisclosureStore} from '../../../../stores/disclosure-store';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
 import PIReviewActions from '../../../../actions/pi-review-actions';
-import {flagIsOn} from '../../../../feature-flags';
 
 let nextFakeEntityId = -1;
 
@@ -100,7 +99,7 @@ export default class EntitySection extends React.Component {
     }
 
     let addSection;
-    if (flagIsOn('RESCOI-921') && this.state.appState.newEntityFormStep < 0) {
+    if (this.state.appState.newEntityFormStep < 0) {
       addSection = (
         <div className={styles.addSection}>
           <BlueButton onClick={DisclosureActions.newEntityInitiated}>
