@@ -1,3 +1,33 @@
+##coi-1609
+Enhancements:
+* Reporter can revise other sections in a Sent Back disclosure
+* Admin can Return disclosure to have reporter start over if they do not have financial entities (FEs) 
+* New notification for Return to Reporter
+* Send notification when new project requires an annual disclosure and reporter does not have an existing disclosure in COI
+* Send notify reporter when a new project’s creation needs to be declared regardless of status of their disclosure
+* Do not send new project notification to researchers without FEs when  "Do not require researchers with no entities to update their annual disclosure when they have a new project" is enabled 
+ 
+Issues Fixed:
+* When revising a disclosure, if the reporter revises a question that triggers a subquestion, an error results
+* When revising a disclosure, a reporter could resubmit before addressing a review on a project declaration
+* Changes in disclosure configurations incorrectly being applied to disclosures requiring revisions
+* Multiple new projects notifications sent to the same recipient for the same project
+* Not having disposition types configured causes approval notifications to fail when trying to pull the project information
+* New project notifications not being sent on project submission when submitted status is a disclosure requirement 
+* Notify an additional reviewer when they are assigned a disclosure to review not being sent when reviewer is re-assigned
+* Change in COI Due Date in configuration not getting applied to approved disclosures
+* Reviewer filter in Admin Dashboard not using suggestions 
+* Resubmitted Date not displaying on screen or in resubmit notification 
+* Error in logs when project push has projects without sponsors
+* When configuration set to not require researchers without entities to update, on approval, disclosure with no FEs changed to Needs Updates when reporter added to project while their disclosure is in review/revise stage
+* When configuration set to not require researchers without entities to update, on approval, disclosure with FEs has Up to Date status when reporter added to  project while their disclosure was submitted
+* Project Disposition is not displaying in Approval email when Project Information Variable is being used and only the 'COI Admin can set Project Disposition' flag is set in Disposition configuration
+
+Generally Available Features formerly behind a feature flag:
+* Ability to filter admin list view whether a disclose is with an assigned reviewer
+* Approved and Archived Disclosures for Admins
+* Filter for disclosures assigned to reviewers
+
 ##coi-1608
 Enhancements:
 * UI Adjustment: Display "No Projects to Disclose" when the Reporter has no projects
@@ -23,7 +53,7 @@ Issues Fixed:
 * COI Reviewer unassigned notifications not being recevied
 
 In-progress features behind a Feature Flag:
-* Ability to filter admin list view whether a disclose is with an assigned reviewer
+* Ability to filter admin list view whether a disclosure is with an assigned reviewer
 * Approved and Archived Disclosures for Admins
 * Filter for disclosures assigned to reviewers
 
