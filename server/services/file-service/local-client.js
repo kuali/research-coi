@@ -25,12 +25,22 @@ function cleanKey(key) {
   return key.replace(/(\.\.)|\/|\\/g, '');
 }
 
-export function getFile(dbInfo, key, callback) {
-  const stream = fs.createReadStream(path.join(filePath, cleanKey(key)));
-  stream.on('error', err => {
-    callback(err);
+function canReadFile(fileName) {
+  return new Promise(resolve => {
+    fs.access(fileName, fs.R_OK, err => {
+      resolve(err == undefined);
+    });
   });
-  return stream;
+}
+
+export async function getFileStream(dbInfo, key) {
+  const fileName = path.join(filePath, cleanKey(key));
+  const canRead = await canReadFile(fileName);
+  if (canRead === false) {
+    throw Error(`cant access file with key ${key}`);
+  }
+
+  return fs.createReadStream(fileName);
 }
 
 export function deleteFile(dbInfo, key, callback) {

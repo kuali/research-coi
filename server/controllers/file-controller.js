@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as FileService from '../services/file-service/file-service';
+import {getFileStream} from '../services/file-service/file-service';
 import {
   isDisclosureUsers,
   isFinancialEntityUsers,
@@ -132,12 +132,12 @@ export const init = app => {
         'Content-disposition',
         `attachment; filename="${result.name}"`
       );
-      FileService.getFile(dbInfo, result.key, error => {
-        if (error) {
-          Log.error(error, req);
-          next(error);
-        }
-      }).pipe(res);
+      const stream = await getFileStream(dbInfo, result.key);
+      stream.on('error', err => {
+        next(err);
+      });
+
+      stream.pipe(res);
     }
   ));
 
@@ -174,12 +174,10 @@ export const init = app => {
       const archive = archiver('zip');
 
       const names = {};
-      files.forEach(file => {
-        const stream = FileService.getFile(dbInfo, file.key, error => {
-          if (error) {
-            Log.error(error, req);
-            next(error);
-          }
+      for (const file of files) {
+        const stream = await getFileStream(dbInfo, file.key);
+        stream.on('error', err => {
+          next(err);
         });
 
         let {name} = file;
@@ -191,7 +189,7 @@ export const init = app => {
           name = handleDuplicateFileName(name, count);
         }
         archive.append(stream, {name});
-      });
+      }
       archive.finalize();
       archive.pipe(res);
     }
