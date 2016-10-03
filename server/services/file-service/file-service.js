@@ -34,14 +34,6 @@ catch (err) {
   }
 }
 
-export function getFile(dbInfo, key, callback) {
-  if (!client) {
-    Log.error('No file service configured');
-    return;
-  }
-  return client.getFile(dbInfo, key, callback);
-}
-
 export async function getFileStream(dbInfo, key) {
   if (!client) {
     Log.error('No file service configured');

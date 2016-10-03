@@ -25,14 +25,6 @@ function cleanKey(key) {
   return key.replace(/(\.\.)|\/|\\/g, '');
 }
 
-export function getFile(dbInfo, key, callback) {
-  const stream = fs.createReadStream(path.join(filePath, cleanKey(key)));
-  stream.on('error', err => {
-    callback(err);
-  });
-  return stream;
-}
-
 function canReadFile(fileName) {
   return new Promise(resolve => {
     fs.access(fileName, fs.R_OK, err => {
