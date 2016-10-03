@@ -42,6 +42,14 @@ export function getFile(dbInfo, key, callback) {
   return client.getFile(dbInfo, key, callback);
 }
 
+export async function getFileStream(dbInfo, key) {
+  if (!client) {
+    Log.error('No file service configured');
+    return;
+  }
+  return await client.getFileStream(dbInfo, key);
+}
+
 export function deleteFile(dbInfo, key, callback) {
   if (!client) {
     Log.error('No file service configured');

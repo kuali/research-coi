@@ -33,6 +33,24 @@ export function getFile(dbInfo, key, callback) {
   return stream;
 }
 
+function canReadFile(fileName) {
+  return new Promise(resolve => {
+    fs.access(fileName, fs.R_OK, err => {
+      resolve(err == undefined);
+    });
+  });
+}
+
+export async function getFileStream(dbInfo, key) {
+  const fileName = path.join(filePath, cleanKey(key));
+  const canRead = await canReadFile(fileName);
+  if (canRead === false) {
+    throw Error(`cant access file with key ${key}`);
+  }
+
+  return fs.createReadStream(fileName);
+}
+
 export function deleteFile(dbInfo, key, callback) {
   fs.unlink(path.join(filePath, cleanKey(key)), err => {
     callback(err);
