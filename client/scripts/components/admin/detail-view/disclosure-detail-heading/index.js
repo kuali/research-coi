@@ -26,6 +26,7 @@ import {
 } from '../../../../stores/config-store';
 import {formatDate, formatDateTime} from '../../../../format-date';
 import {DISCLOSURE_STATUS, ROLES} from '../../../../../../coi-constants';
+const {UP_TO_DATE, UPDATE_REQUIRED, RESUBMITTED, RETURNED} = DISCLOSURE_STATUS;
 import Dropdown from '../../../dropdown';
 import {BlueButton} from '../../../blue-button';
 import {AdminActions} from '../../../../actions/admin-actions';
@@ -70,7 +71,9 @@ export class DisclosureDetailHeading extends React.Component {
         <div className={styles.details}>
           <span className={styles.label}>Revised On:</span>
           <span className={styles.value}>
-            <span style={{marginRight: 3}}>{formatDate(disclosure.revisedDate)}</span>
+            <span style={{marginRight: 3}}>
+              {formatDate(disclosure.revisedDate)}
+            </span>
             <span style={{marginRight: 3}}>•</span>
             {disclosureStatus}
           </span>
@@ -87,7 +90,9 @@ export class DisclosureDetailHeading extends React.Component {
         <div className={styles.details}>
           <span className={styles.label}>Submitted On:</span>
           <span className={styles.value}>
-            <span style={{marginRight: 3}}>{formatDate(disclosure.submittedDate)}</span>
+            <span style={{marginRight: 3}}>
+              {formatDate(disclosure.submittedDate)}
+            </span>
             <span style={{marginRight: 3}}>•</span>
             {disclosureStatus}
           </span>
@@ -97,33 +102,39 @@ export class DisclosureDetailHeading extends React.Component {
 
     let approvedDate;
     if (
-      (disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE ||
-      disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED) &&
+      (disclosure.statusCd === UP_TO_DATE ||
+      disclosure.statusCd === UPDATE_REQUIRED) &&
       disclosure.lastReviewDate
     ) {
       approvedDate = (
         <div className={styles.details}>
           <span className={styles.label}>Approved On:</span>
-          <span className={styles.value}>{formatDateTime(disclosure.lastReviewDate)}</span>
+          <span className={styles.value}>
+            {formatDateTime(disclosure.lastReviewDate)}
+          </span>
         </div>
       );
     }
 
     let returnedDate;
-    if (disclosure.statusCd === DISCLOSURE_STATUS.RETURNED && disclosure.returnedDate) {
+    if (disclosure.statusCd === RETURNED && disclosure.returnedDate) {
       returnedDate = (
         <div className={styles.details}>
           <span className={styles.label}>Returned On:</span>
-          <span className={styles.value}>{formatDate(disclosure.returnedDate)}</span>
+          <span className={styles.value}>
+            {formatDate(disclosure.returnedDate)}
+          </span>
         </div>
       );
     }
     let resubmissionDate;
-    if (disclosure.statusCd === DISCLOSURE_STATUS.RESUBMITTED && disclosure.resubmissionDate) {
+    if (disclosure.statusCd === RESUBMITTED && disclosure.resubmissionDate) {
       resubmissionDate = (
         <div className={styles.details}>
           <span className={styles.label}>Resubmitted On:</span>
-          <span className={styles.value}>{formatDate(disclosure.resubmissionDate)}</span>
+          <span className={styles.value}>
+            {formatDate(disclosure.resubmissionDate)}
+          </span>
         </div>
       );
     }
@@ -172,7 +183,11 @@ export class DisclosureDetailHeading extends React.Component {
               onChange={this.archiveChosen}
             />
             <BlueButton
-              style={{minWidth: 'initial', fontSize: 10, padding: '4px 9px 3px 9px'}}
+              style={{
+                minWidth: 'initial',
+                fontSize: 10,
+                padding: '4px 9px 3px 9px'
+              }}
               onClick={this.showArchive}
               disabled={get(this.state, 'archiveId') === undefined}
             >
