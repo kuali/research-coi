@@ -110,16 +110,36 @@ function createUpdateQueries(knex, collection, tableProps) {
   );
 }
 
+async function rowExists(knex, table, primaryKeyColumn, value) {
+  const result = await knex
+    .first(primaryKeyColumn)
+    .from(table)
+    .where({[primaryKeyColumn]: value});
+
+  return result !== undefined;
+}
+
 async function createCollectionQueries(knex, collection, tableProps) {
   const updates = [];
   const inserts = [];
-  collection.forEach(line => {
+  for (const line of collection) {
     if (line[tableProps.pk] === undefined) {
       inserts.push(line);
     } else {
-      updates.push(line);
+      const exists = await rowExists(
+        knex,
+        tableProps.table,
+        tableProps.pk,
+        line[tableProps.pk]
+      );
+      if (exists) {
+        updates.push(line);
+      }
+      else {
+        inserts.push(line);
+      }
     }
-  });
+  }
 
   const results = await Promise.all([
     createDeleteQueries(knex, collection, tableProps),
