@@ -161,9 +161,11 @@ export class DisclosureDetailHeading extends React.Component {
           };
         });
 
+        const archiveId = get(this, 'state.archiveId');
         versionControls = (
           <div>
             <Dropdown
+              value={archiveId}
               options={versionOptions}
               className={styles.dropDown}
               id={'archivedVersionPicker'}
