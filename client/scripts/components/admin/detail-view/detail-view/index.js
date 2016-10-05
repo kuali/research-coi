@@ -223,9 +223,7 @@ export class DetailView extends React.Component {
             className={`inline-flexbox column ${styles.override} ${styles.list}`}
             summaries={this.filterDisclosures()}
             selected={this.state.applicationState.selectedDisclosure}
-            query={this.state.applicationState.query}
             filters={this.state.applicationState.filters}
-            sortDirection={this.state.applicationState.sortDirection}
             reviewerFilterValues={this.state.applicationState.reviewerFilterValues}
             count={this.state.applicationState.summaryCount}
             searchTerm={this.state.applicationState.effectiveSearchValue}

@@ -49,9 +49,7 @@ export class ListView extends React.Component {
       data: AdminStore.getState()
     };
 
-    this.changeSearch = this.changeSearch.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.doSearch = this.doSearch.bind(this);
   }
 
   componentDidMount() {
@@ -78,10 +76,6 @@ export class ListView extends React.Component {
     });
   }
 
-  loadMore() {
-    AdminActions.loadMore();
-  }
-
   componentWillUnmount() {
     AdminStore.unlisten(this.onChange);
   }
@@ -92,41 +86,25 @@ export class ListView extends React.Component {
     });
   }
 
-  doSearch() {
-    AdminActions.doSearch();
-  }
-
-  changeType(newType) {
-    AdminActions.changeTypeFilter(newType);
-  }
-
-  changeSearch(newSearch) {
-    AdminActions.changeSearch(newSearch);
-  }
-
-  toggleFilters() {
-    AdminActions.toggleFilters();
-  }
-
   render() {
-    const filtered = this.state.data.disclosureSummaries;
-    let loadMoreButton;
-    if (
-      !this.state.data.applicationState.loadedAll &&
-      !this.state.data.applicationState.loadingMore
-    ) {
-      loadMoreButton = (
-        <div className={styles.loadMoreButton}>
-          <BlueButton onClick={this.loadMore}>Load more</BlueButton>
-        </div>
-      );
-    }
+    const {
+      applicationState,
+      disclosureSummaries
+    } = this.state.data;
 
+    let loadMoreButton;
     let loadingIndicator;
-    if (this.state.data.applicationState.loadingMore) {
+    if (applicationState.loadingMore) {
       loadingIndicator = (
         <div className={styles.loadingIndicator}>
           <span>Loading more...</span>
+        </div>
+      );
+    }
+    else if (!applicationState.loadedAll) {
+      loadMoreButton = (
+        <div className={styles.loadMoreButton}>
+          <BlueButton onClick={AdminActions.loadMore}>Load more</BlueButton>
         </div>
       );
     }
@@ -146,14 +124,7 @@ export class ListView extends React.Component {
         label: getStatusDescription(configState, 8)
       });
     }
-
-    const possibleTypes = [];
-    if (configState.config.disclosureTypes) {
-      configState.config.disclosureTypes.map(type => {
-        return type.description;
-      });
-    }
-
+    
     let possibleDispositions = [];
     if (getDispositionsEnabled(configState)) {
       possibleDispositions = configState.config.dispositionTypes;
@@ -165,15 +136,15 @@ export class ListView extends React.Component {
       'row',
       styles.container,
       this.props.className,
-      {[styles.showFilters]: this.state.data.applicationState.showFilters}
+      {[styles.showFilters]: applicationState.showFilters}
     );
 
     let heading;
-    if (filtered.length === this.state.data.applicationState.summaryCount) {
+    if (disclosureSummaries.length === applicationState.summaryCount) {
       heading = (
-        <div className={styles.heading} onClick={this.toggleFilters}>
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
           <span style={{paddingRight: 3}}>
-            {this.state.data.applicationState.summaryCount}
+            {applicationState.summaryCount}
           </span>
           Disclosures Shown
           <span className={styles.filterArrow}>&#9660;</span>
@@ -182,13 +153,13 @@ export class ListView extends React.Component {
     }
     else {
       heading = (
-        <div className={styles.heading} onClick={this.toggleFilters}>
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
           <span style={{paddingRight: 3}}>
-            {filtered.length}
+            {disclosureSummaries.length}
           </span>
           <span style={{paddingRight: 3}}>of</span>
           <span style={{paddingRight: 3}}>
-            {this.state.data.applicationState.summaryCount}
+            {applicationState.summaryCount}
           </span>
           Disclosures Shown
           <span className={styles.filterArrow}>&#9660;</span>
@@ -209,21 +180,20 @@ export class ListView extends React.Component {
           <span className={styles.sidebar}>
             <AdminMenu />
             <DisclosureFilterSearch
-              query={this.state.data.applicationState.filters.search}
-              onChange={this.changeSearch}
-              onSearch={this.doSearch}
+              query={applicationState.filters.search}
+              onChange={AdminActions.changeSearch}
+              onSearch={AdminActions.doSearch}
             />
             {heading}
             <SearchFilterGroup
               className={`${styles.override} ${styles.filterGroup}`}
-              filters={this.state.data.applicationState.filters}
-              reviewerFilterValues={this.state.data.applicationState.reviewerFilterValues}
+              filters={applicationState.filters}
+              reviewerFilterValues={applicationState.reviewerFilterValues}
               lane={configState.config.lane}
               possibleStatuses={possibleStatuses}
-              possibleTypes={possibleTypes}
               possibleDispositions={possibleDispositions}
               showDateSort={false}
-              visible={this.state.data.applicationState.showFilters}
+              visible={applicationState.showFilters}
             />
           </span>
           <span className={`fill ${styles.content}`} ref="rightPanel">
@@ -234,12 +204,12 @@ export class ListView extends React.Component {
             </div>
             <div style={{padding: '33px 38px'}}>
               <DisclosureTable
-                sort={this.state.data.applicationState.sort}
-                sortDirection={this.state.data.applicationState.sortDirection}
-                page={this.state.data.applicationState.page}
+                sort={applicationState.sort}
+                sortDirection={applicationState.sortDirection}
+                page={applicationState.page}
                 className={`${styles.override} ${styles.table}`}
-                disclosures={filtered}
-                searchTerm={this.state.data.applicationState.effectiveSearchValue}
+                disclosures={disclosureSummaries}
+                searchTerm={applicationState.effectiveSearchValue}
               />
               {loadMoreButton}
               {loadingIndicator}
@@ -254,4 +224,8 @@ export class ListView extends React.Component {
 ListView.contextTypes = {
   configState: React.PropTypes.object,
   userInfo: React.PropTypes.object
+};
+
+ListView.propTypes = {
+  className: React.PropTypes.string
 };

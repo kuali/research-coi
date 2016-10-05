@@ -77,10 +77,12 @@ export default function SearchFilterGroup(props, context) {
       />
     );
 
-    if (!isReviewer) {
-      reviewStatusFilter = (
-        <DisclosureFilterByReviewStatus activeFilters={filters.reviewStatus} />
-      );
+    reviewStatusFilter = (
+      <DisclosureFilterByReviewStatus activeFilters={filters.reviewStatus} />
+    );
+
+    if (!visible) {
+      height += 64;
     }
   }
 
