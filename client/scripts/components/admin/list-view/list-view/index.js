@@ -31,6 +31,7 @@ import {
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 import {AppHeader} from '../../../app-header';
+import {flagIsOn} from '../../../../feature-flags';
 
 export class ListView extends React.Component {
   constructor() {
@@ -125,6 +126,9 @@ export class ListView extends React.Component {
       {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)},
       {code: 7, label: getAdminDisclosureStatusString(configState, 7, configState.config.id)}
     ];
+    if (flagIsOn('RESCOI-995')) {
+      possibleStatuses.push({code: 8, label: getAdminDisclosureStatusString(configState, 8, configState.config.id)});
+    }
 
     const possibleTypes = [];
     if (configState.config.disclosureTypes) {

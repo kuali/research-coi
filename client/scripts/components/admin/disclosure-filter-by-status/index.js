@@ -71,7 +71,13 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
     const options = this.props.possibleStatuses
-      .filter(status => status.code !== APPROVED && status.code !== DISCLOSURE_STATUS.UPDATE_REQUIRED)
+      .filter(status => {
+        return (
+          status.code !== APPROVED &&
+          status.code !== DISCLOSURE_STATUS.UPDATE_REQUIRED &&
+          status.code !== DISCLOSURE_STATUS.RETURNED
+        );
+      })
       .sort((a, b) => a.label.localeCompare(b.label))
       .map((status) => {
         const id = `statFilt${status.code}`;
@@ -89,7 +95,14 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       });
 
     const approved = this.props.possibleStatuses
-      .filter(status => status.code === APPROVED || status.code === DISCLOSURE_STATUS.UPDATE_REQUIRED)
+      .filter(status => {
+        return (
+          status.code === APPROVED ||
+          status.code === DISCLOSURE_STATUS.UPDATE_REQUIRED ||
+          status.code === DISCLOSURE_STATUS.RETURNED
+        );
+      })
+      .sort((a, b) => a.label.localeCompare(b.label))
       .map(status => {
         const id = `statFilt${status.code}`;
         return (

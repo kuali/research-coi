@@ -29,6 +29,7 @@ import {
   getDispositionsEnabled
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
+import {flagIsOn} from '../../../../feature-flags';
 
 export class DisclosureList extends React.Component {
   componentDidMount() {
@@ -98,8 +99,12 @@ export class DisclosureList extends React.Component {
       {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
       {code: 4, label: getAdminDisclosureStatusString(configState, 4, configState.config.id)},
       {code: 5, label: getAdminDisclosureStatusString(configState, 5, configState.config.id)},
-      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)}
+      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)},
+      {code: 7, label: getAdminDisclosureStatusString(configState, 7, configState.config.id)}
     ];
+    if (flagIsOn('RESCOI-995')) {
+      possibleStatuses.push({code: 8, label: getAdminDisclosureStatusString(configState, 8, configState.config.id)});
+    }
 
     const possibleTypes = [];
     if (configState.config.disclosureTypes) {
