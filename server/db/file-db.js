@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as FileService from '../services/file-service/file-service';
 import {ROLES, FILE_TYPE} from '../../coi-constants';
 import {isDisclosureUsers} from './common-db';
 
@@ -165,21 +164,7 @@ export async function deleteFiles(dbInfo, knex, userInfo, fileId) {
     criteria.user_id = userInfo.schoolId;
   }
 
-  const file = await knex('file')
-    .first('key')
-    .where(criteria);
-
   await knex('file')
     .del()
     .where(criteria);
-
-  await new Promise((resolve, reject) => {
-    FileService.deleteFile(dbInfo, file.key, err => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
 }
