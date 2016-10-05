@@ -25,10 +25,10 @@ else {
   moment.locale('en');
 }
 
-export function formatDate(date: number) {
+export function formatDate(date) {
   return moment(date).format('ll');
 }
 
-export function formatDateTime(date: number) {
+export function formatDateTime(date) {
   return moment(date).format('lll');
 }
