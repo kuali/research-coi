@@ -24,7 +24,64 @@ import {AdminActions} from '../../../actions/admin-actions';
 import DisclosureFilter from '../disclosure-filter';
 import DoneWithFilterButton from '../done-with-filter-button';
 import {DISCLOSURE_STATUS} from '../../../../../coi-constants';
-const APPROVED = DISCLOSURE_STATUS.UP_TO_DATE;
+const {
+  UPDATE_REQUIRED,
+  RETURNED,
+  SUBMITTED_FOR_APPROVAL,
+  REVISION_REQUIRED,
+  EXPIRED,
+  RESUBMITTED,
+  UP_TO_DATE
+} = DISCLOSURE_STATUS;
+const APPROVED = UP_TO_DATE;
+
+class StatusOption extends React.Component {
+  constructor() {
+    super();
+    this.onChange = this.onChange.bind(this);
+  }
+  
+  onChange() {
+    this.props.onChange(this.props.code);
+  }
+
+  render() {
+    const {label, code, checked} = this.props;
+    const id = `statusFilter${code}`;
+
+    return (
+      <label className={styles.checkbox}>
+        <input
+          id={id}
+          type="checkbox"
+          checked={checked}
+          onChange={this.onChange}
+        />
+        <span style={{paddingLeft: 9}}>{label}</span>
+      </label>
+    );
+  }
+}
+
+StatusOption.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  code: React.PropTypes.number.isRequired,
+  checked: React.PropTypes.bool,
+  onChange: React.PropTypes.func.isRequired
+};
+
+const LOWER_OPTIONS = [APPROVED, UPDATE_REQUIRED, RETURNED];
+
+function isInDefaultState(activeFilters) {
+  return (
+    Array.isArray(activeFilters) &&
+    activeFilters.length === 4 &&
+    activeFilters.includes(SUBMITTED_FOR_APPROVAL) &&
+    activeFilters.includes(REVISION_REQUIRED) &&
+    activeFilters.includes(EXPIRED) &&
+    activeFilters.includes(RESUBMITTED)
+  );
+}
 
 export class DisclosureFilterByStatus extends DisclosureFilter {
   constructor() {
@@ -37,19 +94,8 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
   }
 
   // This method must be implemented. It will be called by DisclosureFilter.
-  setActiveStatus({ activeFilters }) {
-    let active = true;
-    if (
-      Array.isArray(activeFilters) &&
-      activeFilters.length === 4 &&
-      activeFilters[0] === DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL &&
-      activeFilters[1] === DISCLOSURE_STATUS.REVISION_REQUIRED &&
-      activeFilters[2] === DISCLOSURE_STATUS.EXPIRED &&
-      activeFilters[3] === DISCLOSURE_STATUS.RESUBMITTED
-    ) {
-      active = false;
-    }
-    this.setState({ active });
+  setActiveStatus({activeFilters}) {
+    this.setState({active: !isInDefaultState(activeFilters)});
   }
 
   clear(e) {
@@ -57,10 +103,10 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
     e.stopPropagation();
   }
 
-  toggleFilter(evt) {
-    const code = Number(evt.target.id.replace('statFilt', ''));
-    const theStatus = this.props.possibleStatuses
-      .find(status => status.code === code);
+  toggleFilter(code) {
+    const theStatus = this.props.possibleStatuses.find(
+      status => status.code === code
+    );
     AdminActions.toggleStatusFilter(theStatus);
   }
 
@@ -70,64 +116,45 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
 
   // render() is implemented in DisclosureFilter, which will call renderFilter
   renderFilter() {
-    const options = this.props.possibleStatuses
-      .filter(status => {
-        return (
-          status.code !== APPROVED &&
-          status.code !== DISCLOSURE_STATUS.UPDATE_REQUIRED &&
-          status.code !== DISCLOSURE_STATUS.RETURNED
-        );
-      })
+    const {possibleStatuses} = this.props;
+
+    const upperSection = possibleStatuses
+      .filter(status => !LOWER_OPTIONS.includes(status.code))
       .sort((a, b) => a.label.localeCompare(b.label))
-      .map((status) => {
-        const id = `statFilt${status.code}`;
+      .map(status => {
         return (
-          <div className={styles.checkbox} key={status.code}>
-            <input
-              id={id}
-              type="checkbox"
-              checked={this.isChecked(status.code)}
-              onChange={this.toggleFilter}
-            />
-            <label htmlFor={id} style={{paddingLeft: 9}}>{status.label}</label>
-          </div>
+          <StatusOption
+            key={status.code}
+            label={status.label}
+            code={status.code}
+            checked={this.isChecked(status.code)}
+            onChange={this.toggleFilter}
+          />
         );
       });
 
-    const approved = this.props.possibleStatuses
-      .filter(status => {
-        return (
-          status.code === APPROVED ||
-          status.code === DISCLOSURE_STATUS.UPDATE_REQUIRED ||
-          status.code === DISCLOSURE_STATUS.RETURNED
-        );
-      })
+    const lowerSection = possibleStatuses
+      .filter(status => LOWER_OPTIONS.includes(status.code))
       .sort((a, b) => a.label.localeCompare(b.label))
       .map(status => {
-        const id = `statFilt${status.code}`;
         return (
-          <div
-            className={styles.checkbox}
-            style={{padding: '10px 0'}} key={status.code}
-          >
-            <input
-              id={id}
-              type="checkbox"
-              checked={this.isChecked(status.code)}
-              onChange={this.toggleFilter}
-            />
-            <label htmlFor={id} style={{paddingLeft: 9}}>{status.label}</label>
-          </div>
+          <StatusOption
+            key={status.code}
+            label={status.label}
+            code={status.code}
+            checked={this.isChecked(status.code)}
+            onChange={this.toggleFilter}
+          />
         );
       });
 
     return (
       <div className={styles.container}>
         <DoneWithFilterButton onClick={this.close} />
-        {options}
+        {upperSection}
 
         <div className={styles.approvedStatus}>
-          {approved}
+          {lowerSection}
         </div>
 
         <GreyButton

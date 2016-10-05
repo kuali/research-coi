@@ -26,6 +26,7 @@
   text-align: left;
   padding: 10px;
   font-size: 15px;
+  display: block;
 }
 
 .override.clearButton {
@@ -47,5 +48,5 @@
   border-top: 1px solid #AAA;
   border-bottom: 1px solid #AAA;
   padding: 6px 0;
-  margin: 0 10px 12px 10px;
+  margin: 0 0 12px 0;
 }
