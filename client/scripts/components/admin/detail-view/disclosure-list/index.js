@@ -31,6 +31,14 @@ import {
 import AdminMenu from '../../../admin-menu';
 import {flagIsOn} from '../../../../feature-flags';
 
+function getStatusDescription(configState, code) {
+  return getAdminDisclosureStatusString(
+    configState,
+    code,
+    configState.config.id
+  );
+}
+
 export class DisclosureList extends React.Component {
   componentDidMount() {
     const theList = this.refs.theList;
@@ -42,7 +50,10 @@ export class DisclosureList extends React.Component {
           enabled = true;
         }, 100);
 
-        if ((theList.clientHeight + theList.scrollTop) > (theList.scrollHeight - 300)) {
+        if (
+          (theList.clientHeight + theList.scrollTop) >
+          (theList.scrollHeight - 300)
+        ) {
           if (!this.props.loadingMore) {
             AdminActions.loadMore();
           }
@@ -95,15 +106,18 @@ export class DisclosureList extends React.Component {
     const { configState } = this.context;
 
     const possibleStatuses = [
-      {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
-      {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
-      {code: 4, label: getAdminDisclosureStatusString(configState, 4, configState.config.id)},
-      {code: 5, label: getAdminDisclosureStatusString(configState, 5, configState.config.id)},
-      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)},
-      {code: 7, label: getAdminDisclosureStatusString(configState, 7, configState.config.id)}
+      {code: 2, label: getStatusDescription(configState, 2)},
+      {code: 3, label: getStatusDescription(configState, 3)},
+      {code: 4, label: getStatusDescription(configState, 4)},
+      {code: 5, label: getStatusDescription(configState, 5)},
+      {code: 6, label: getStatusDescription(configState, 6)},
+      {code: 7, label: getStatusDescription(configState, 7)}
     ];
     if (flagIsOn('RESCOI-995')) {
-      possibleStatuses.push({code: 8, label: getAdminDisclosureStatusString(configState, 8, configState.config.id)});
+      possibleStatuses.push({
+        code: 8,
+        label: getStatusDescription(configState, 8)
+      });
     }
 
     const possibleTypes = [];

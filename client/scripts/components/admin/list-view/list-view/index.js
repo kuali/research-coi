@@ -33,6 +33,14 @@ import AdminMenu from '../../../admin-menu';
 import {AppHeader} from '../../../app-header';
 import {flagIsOn} from '../../../../feature-flags';
 
+function getStatusDescription(configState, code) {
+  return getAdminDisclosureStatusString(
+    configState,
+    code,
+    configState.config.id
+  );
+}
+
 export class ListView extends React.Component {
   constructor() {
     super();
@@ -58,7 +66,10 @@ export class ListView extends React.Component {
           enabled = true;
         }, 100);
 
-        if ((rightPanel.clientHeight + rightPanel.scrollTop) > (rightPanel.scrollHeight - 300)) {
+        if (
+          (rightPanel.clientHeight + rightPanel.scrollTop) >
+          (rightPanel.scrollHeight - 300)
+        ) {
           if (!this.state.data.applicationState.loadingMore) {
             AdminActions.loadMore();
           }
@@ -100,7 +111,10 @@ export class ListView extends React.Component {
   render() {
     const filtered = this.state.data.disclosureSummaries;
     let loadMoreButton;
-    if (!this.state.data.applicationState.loadedAll && !this.state.data.applicationState.loadingMore) {
+    if (
+      !this.state.data.applicationState.loadedAll &&
+      !this.state.data.applicationState.loadingMore
+    ) {
       loadMoreButton = (
         <div className={styles.loadMoreButton}>
           <BlueButton onClick={this.loadMore}>Load more</BlueButton>
@@ -119,15 +133,18 @@ export class ListView extends React.Component {
 
     const { configState } = this.context;
     const possibleStatuses = [
-      {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
-      {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
-      {code: 4, label: getAdminDisclosureStatusString(configState, 4, configState.config.id)},
-      {code: 5, label: getAdminDisclosureStatusString(configState, 5, configState.config.id)},
-      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)},
-      {code: 7, label: getAdminDisclosureStatusString(configState, 7, configState.config.id)}
+      {code: 2, label: getStatusDescription(configState, 2)},
+      {code: 3, label: getStatusDescription(configState, 3)},
+      {code: 4, label: getStatusDescription(configState, 4)},
+      {code: 5, label: getStatusDescription(configState, 5)},
+      {code: 6, label: getStatusDescription(configState, 6)},
+      {code: 7, label: getStatusDescription(configState, 7)}
     ];
     if (flagIsOn('RESCOI-995')) {
-      possibleStatuses.push({code: 8, label: getAdminDisclosureStatusString(configState, 8, configState.config.id)});
+      possibleStatuses.push({
+        code: 8,
+        label: getStatusDescription(configState, 8)
+      });
     }
 
     const possibleTypes = [];
@@ -180,8 +197,14 @@ export class ListView extends React.Component {
     }
 
     return (
-      <div className={'flexbox column'} style={{minHeight: '100%', overflowX: 'hidden'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
+      <div
+        className={'flexbox column'}
+        style={{minHeight: '100%', overflowX: 'hidden'}}
+      >
+        <AppHeader
+          className={`${styles.override} ${styles.header}`}
+          moduleName={'Conflict Of Interest'}
+        />
         <div className={classes}>
           <span className={styles.sidebar}>
             <AdminMenu />
@@ -205,7 +228,9 @@ export class ListView extends React.Component {
           </span>
           <span className={`fill ${styles.content}`} ref="rightPanel">
             <div className={styles.header2}>
-              <h2 className={styles.title}>{`COI ${this.context.userInfo.coiRole} DASHBOARD`}</h2>
+              <h2 className={styles.title}>
+                {`COI ${this.context.userInfo.coiRole} DASHBOARD`}
+              </h2>
             </div>
             <div style={{padding: '33px 38px'}}>
               <DisclosureTable

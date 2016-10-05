@@ -106,7 +106,10 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
       .map(status => {
         const id = `statFilt${status.code}`;
         return (
-          <div className={styles.checkbox} style={{padding: '10px 0'}} key={status.code}>
+          <div
+            className={styles.checkbox}
+            style={{padding: '10px 0'}} key={status.code}
+          >
             <input
               id={id}
               type="checkbox"
@@ -127,7 +130,10 @@ export class DisclosureFilterByStatus extends DisclosureFilter {
           {approved}
         </div>
 
-        <GreyButton className={`${styles.override} ${styles.clearButton}`} onClick={this.clear}>
+        <GreyButton
+          className={`${styles.override} ${styles.clearButton}`}
+          onClick={this.clear}
+        >
           <i className={classNames('fa', 'fa-times', styles.x)} />
           RESET FILTER
         </GreyButton>
