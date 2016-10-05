@@ -26,10 +26,46 @@ import {
 } from '../../../../stores/config-store';
 import {formatDate, formatDateTime} from '../../../../format-date';
 import {DISCLOSURE_STATUS, ROLES} from '../../../../../../coi-constants';
+const {ADMIN} = ROLES;
 const {UP_TO_DATE, UPDATE_REQUIRED, RESUBMITTED, RETURNED} = DISCLOSURE_STATUS;
 import Dropdown from '../../../dropdown';
 import {BlueButton} from '../../../blue-button';
 import {AdminActions} from '../../../../actions/admin-actions';
+
+function DateAndStatusHeader({label, date, status}) {
+  return (
+    <div className={styles.details}>
+      <span className={styles.label}>{label}</span>
+      <span className={styles.value}>
+        <span style={{marginRight: 3}}>
+          {formatDate(date)}
+        </span>
+        <span style={{marginRight: 3}}>•</span>
+        {status}
+      </span>
+    </div>
+  );
+}
+
+DateAndStatusHeader.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  date: React.PropTypes.string,
+  status: React.PropTypes.string
+};
+
+function Header({label, value}) {
+  return (
+    <div className={styles.details}>
+      <span className={styles.label}>{label}</span>
+      <span className={styles.value}>{value}</span>
+    </div>
+  );
+}
+
+Header.propTypes = {
+  label: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string
+};
 
 export class DisclosureDetailHeading extends React.Component {
   constructor() {
@@ -39,133 +75,110 @@ export class DisclosureDetailHeading extends React.Component {
     this.showArchive = this.showArchive.bind(this);
   }
 
-  archiveChosen(id) {
-    let idToUse = id;
-    if (id === '') {
-      idToUse = undefined;
+  archiveChosen(archiveId) {
+    if (archiveId === '') {
+      this.setState({archiveId: undefined});
     }
-
-    this.setState({
-      archiveId: idToUse
-    });
+    else {
+      this.setState({archiveId});
+    }
   }
 
   showArchive() {
-    if (get(this.state, 'archiveId') !== undefined) {
+    if (get(this, 'state.archiveId') !== undefined) {
       AdminActions.showArchivedDisclosure(this.state.archiveId);
     }
   }
 
   render() {
-    const {disclosure} = this.props;
-    const {configState} = this.context;
+    const {
+      revisedDate,
+      statusCd,
+      configId,
+      lastReviewDate,
+      typeCd,
+      archivedVersions,
+      id,
+      submittedBy,
+      submittedDate,
+      returnedDate,
+      resubmissionDate,
+      disposition
+    } = this.props.disclosure;
+    const {configState, userInfo} = this.context;
 
-    let submittedDate;
-    if (disclosure.revisedDate) {
-      const disclosureStatus = getAdminDisclosureStatusString(
-        configState,
-        disclosure.statusCd,
-        disclosure.configId
-      );
-      submittedDate = (
-        <div className={styles.details}>
-          <span className={styles.label}>Revised On:</span>
-          <span className={styles.value}>
-            <span style={{marginRight: 3}}>
-              {formatDate(disclosure.revisedDate)}
-            </span>
-            <span style={{marginRight: 3}}>•</span>
-            {disclosureStatus}
-          </span>
-        </div>
+    const status = getAdminDisclosureStatusString(
+      configState,
+      statusCd,
+      configId
+    );
+    let DateStatusJsx;
+    if (revisedDate) {
+      DateStatusJsx = (
+        <DateAndStatusHeader
+          label="Revised On:"
+          date={revisedDate}
+          status={status}
+        />
       );
     }
     else {
-      const disclosureStatus = getAdminDisclosureStatusString(
-        configState,
-        disclosure.statusCd,
-        disclosure.configId
-      );
-      submittedDate = (
-        <div className={styles.details}>
-          <span className={styles.label}>Submitted On:</span>
-          <span className={styles.value}>
-            <span style={{marginRight: 3}}>
-              {formatDate(disclosure.submittedDate)}
-            </span>
-            <span style={{marginRight: 3}}>•</span>
-            {disclosureStatus}
-          </span>
-        </div>
+      DateStatusJsx = (
+        <DateAndStatusHeader
+          label="Submitted On:"
+          date={submittedDate}
+          status={status}
+        />
       );
     }
 
-    let approvedDate;
+    let approvedDateJsx;
     if (
-      (disclosure.statusCd === UP_TO_DATE ||
-      disclosure.statusCd === UPDATE_REQUIRED) &&
-      disclosure.lastReviewDate
+      (
+        statusCd === UP_TO_DATE ||
+        statusCd === UPDATE_REQUIRED
+      ) &&
+      lastReviewDate
     ) {
-      approvedDate = (
-        <div className={styles.details}>
-          <span className={styles.label}>Approved On:</span>
-          <span className={styles.value}>
-            {formatDateTime(disclosure.lastReviewDate)}
-          </span>
-        </div>
+      approvedDateJsx = (
+        <Header label="Approved On:" value={formatDateTime(lastReviewDate)} />
       );
     }
 
-    let returnedDate;
-    if (disclosure.statusCd === RETURNED && disclosure.returnedDate) {
-      returnedDate = (
-        <div className={styles.details}>
-          <span className={styles.label}>Returned On:</span>
-          <span className={styles.value}>
-            {formatDate(disclosure.returnedDate)}
-          </span>
-        </div>
+    let returnedDateJsx;
+    if (statusCd === RETURNED && returnedDate) {
+      returnedDateJsx = (
+        <Header label="Returned On:" value={formatDate(returnedDate)} />
       );
     }
-    let resubmissionDate;
-    if (disclosure.statusCd === RESUBMITTED && disclosure.resubmissionDate) {
-      resubmissionDate = (
-        <div className={styles.details}>
-          <span className={styles.label}>Resubmitted On:</span>
-          <span className={styles.value}>
-            {formatDate(disclosure.resubmissionDate)}
-          </span>
-        </div>
+    let resubmissionDateJsx;
+    if (statusCd === RESUBMITTED && resubmissionDate) {
+      resubmissionDateJsx = (
+        <Header label="Resubmitted On:" value={formatDate(resubmissionDate)} />
       );
     }
 
-    let disposition;
-    if (
-      getDispositionsEnabled(configState) &&
-      disclosure.disposition
-    ) {
-      disposition = (
+    let dispositionJsx;
+    if (getDispositionsEnabled(configState) && disposition) {
+      dispositionJsx = (
         <span>
           <span style={{margin: '0 3px'}}>•</span>
-          {disclosure.disposition}
+          {disposition}
         </span>
       );
     }
 
     const disclosureType = getDisclosureTypeString(
       configState,
-      disclosure.typeCd,
-      disclosure.configId
+      typeCd,
+      configId
     );
 
     let versionPicker;
-    let versionOptions;
-
-    const isAdmin = this.context.userInfo.coiRole === ROLES.ADMIN;
-    if (isAdmin) {
+    if (userInfo.coiRole === ADMIN) {
       let versionControls;
-      if (disclosure.archivedVersions.length > 0) {
-        versionOptions = disclosure.archivedVersions.map(version => {
+      if (archivedVersions.length > 0) {
+        const versionOptions = archivedVersions.map(version => {
           return {
             label: `Approved ${formatDateTime(version.approvedDate)}`,
             value: version.id
@@ -189,7 +202,7 @@ export class DisclosureDetailHeading extends React.Component {
                 padding: '4px 9px 3px 9px'
               }}
               onClick={this.showArchive}
-              disabled={get(this.state, 'archiveId') === undefined}
+              disabled={archiveId === undefined}
             >
               View
             </BlueButton>
@@ -222,17 +235,14 @@ export class DisclosureDetailHeading extends React.Component {
               •
             </span>
             <span>ID</span>
-            <span className={styles.id}>#{disclosure.id}</span>
-            {disposition}
+            <span className={styles.id}>#{id}</span>
+            {dispositionJsx}
           </div>
-          <div className={styles.details}>
-            <span className={styles.label}>Submitted By:</span>
-            <span className={styles.value}>{disclosure.submittedBy}</span>
-          </div>
-          {submittedDate}
-          {approvedDate}
-          {returnedDate}
-          {resubmissionDate}
+          <Header label="Submitted By:" value={submittedBy} />
+          {DateStatusJsx}
+          {approvedDateJsx}
+          {returnedDateJsx}
+          {resubmissionDateJsx}
         </span>
         {versionPicker}
       </div>
@@ -243,4 +253,8 @@ export class DisclosureDetailHeading extends React.Component {
 DisclosureDetailHeading.contextTypes = {
   configState: React.PropTypes.object,
   userInfo: React.PropTypes.object
+};
+
+DisclosureDetailHeading.propTypes = {
+  disclosure: React.PropTypes.object.isRequired
 };
