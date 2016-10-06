@@ -35,6 +35,7 @@
 .buttons {
   border-top: 2px solid lightgray;
   min-height: 20px;
+  padding: 5px 0 10px 25px;
 }
 
 .name {

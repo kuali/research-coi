@@ -30,13 +30,15 @@ import classNames from 'classnames';
 export default function AdditionalReviewPanel(props) {
   let additionalReview;
   if (props.reviewers.length > 0) {
-    const reviewers = props.reviewers.map((reviewer, index) => {
+    const reviewers = props.reviewers.map(reviewer => {
       return (
         <AdditionalReviewer
-          index={index}
           key={reviewer.userId}
           readOnly={props.readonly}
-          {...reviewer}
+          id={reviewer.id}
+          dates={reviewer.dates}
+          name={reviewer.name}
+          email={reviewer.email}
         />
       );
     });
