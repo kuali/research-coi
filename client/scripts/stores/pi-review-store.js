@@ -348,12 +348,28 @@ class _PIReviewStore {
       entity => entityId === entity.id
     );
     if (entityToRevise) {
-      const theAnswer = entityToRevise.answers.find(
-        answer => answer.questionId === questionId
-      );
+      if (Array.isArray(entityToRevise.answers)) {
+        const theAnswer = entityToRevise.answers.find(
+          answer => answer.questionId === questionId
+        );
 
-      if (theAnswer) {
-        theAnswer.answer = {value};
+        if (theAnswer) {
+          theAnswer.answer = {value};
+        }
+        else {
+          entityToRevise.answers.push({
+            answer: {value},
+            finEntityId: entityId,
+            questionId
+          });
+        }
+      }
+      else {
+        entityToRevise.answers = [{
+          answer: {value},
+          finEntityId: entityId,
+          questionId
+        }];
       }
 
       entityToRevise.reviewedOn = new Date();
