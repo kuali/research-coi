@@ -43,7 +43,8 @@ function updateComment(reviewItem, text, commentFieldName = 'comments') {
       text,
       topicId: reviewItem.reviewId,
       userRole: ROLES.USER,
-      id: 'temp'
+      id: 'temp',
+      current: true
     });
   }
 }
