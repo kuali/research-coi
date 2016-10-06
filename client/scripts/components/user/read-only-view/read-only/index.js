@@ -27,6 +27,7 @@ import {
 } from '../../../../stores/config-store';
 import {Link} from 'react-router';
 import ReadOnlyDetail from '../read-only-detail';
+import UserInfoStore from '../../../../stores/user-info-store';
 import {formatDateTime} from '../../../../format-date';
 import {
   DISCLOSURE_TYPE, DISCLOSURE_STATUS
@@ -56,7 +57,8 @@ export default class ReadOnly extends React.Component {
   onChange() {
     const storeState = DisclosureStore.getState();
     this.setState({
-      disclosure: storeState.disclosureDetail
+      disclosure: storeState.disclosureDetail,
+      activeDeclarations: storeState.activeDeclarations
     });
   }
 
@@ -112,6 +114,10 @@ export default class ReadOnly extends React.Component {
         </div>
       );
 
+      let userInfo = UserInfoStore.getState().userInfo;
+      //let activeDeclarations = DisclosureStore.getDeclarationsWithActiveProjects(userInfo.userId);
+      console.log(' activeDeclarations ' + JSON.stringify(this.state.activeDeclarations));
+
       detail = (
         <ReadOnlyDetail disclosure={this.state.disclosure} />
       );
@@ -162,5 +168,7 @@ export default class ReadOnly extends React.Component {
 }
 
 ReadOnly.contextTypes = {
-  configState: React.PropTypes.object
+  configState: React.PropTypes.object,
+  userInfo: React.PropTypes.object
+
 };

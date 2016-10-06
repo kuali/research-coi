@@ -652,7 +652,10 @@ async function getDeclarations(dbInfo, knex, disclosureId, authHeader) {
       this.on('fe.id', 'd.fin_entity_id')
         .andOn('di.id', 'fe.disclosure_id');
     })
-    .where('d.disclosure_id', disclosureId);
+    .where({
+      'd.disclosure_id': disclosureId,
+      'pp.active': 1
+    });
 
   if (declarations.length === 0) {
     return declarations;
