@@ -364,7 +364,7 @@ async function updateEntityQuestionAnswer(
   return true;
 }
 
-async function updateEntityQuestionAnswerById(
+async function upsertEntityQuestionAnswerById(
   knex,
   entityId,
   questionId,
@@ -384,12 +384,11 @@ async function updateEntityQuestionAnswerById(
     });
 
   if (!row) {
-    return false;
+    await insertEntityQuestionAnswer(knex, entityId, questionId, newAnswer);
+    return;
   }
 
   await updateQuestionnaireAnswer(knex, row.id, newAnswer);
-
-  return true;
 }
 
 async function updateScreeningQuestionAnswer(knex, reviewId, answer) {
@@ -434,7 +433,7 @@ export async function reviseEntityQuestionById(
   questionId,
   newAnswer
 ) {
-  await updateEntityQuestionAnswerById(knex, entityId, questionId, newAnswer);
+  await upsertEntityQuestionAnswerById(knex, entityId, questionId, newAnswer);
 
   const disclosureId = await getDisclosureIdForEntity(knex, entityId);
 
@@ -476,6 +475,27 @@ async function updateQuestionnaireAnswer(knex, id, value) {
   await knex('questionnaire_answer')
     .update('answer', JSON.stringify({value}))
     .where('id', id);
+}
+
+async function insertEntityQuestionAnswer(
+  knex,
+  fin_entity_id,
+  question_id,
+  newAnswer
+) {
+  const result = await knex('questionnaire_answer')
+    .insert({
+      question_id,
+      answer: JSON.stringify({value: newAnswer})
+    }, 'id');
+
+  const questionnaire_answer_id = parseInt(result[0]);
+
+  await knex('fin_entity_answer')
+    .insert({
+      fin_entity_id,
+      questionnaire_answer_id
+    });
 }
 
 async function getQuestionnaireAnswerId(knex, disclosureId, questionId) {
@@ -594,7 +614,7 @@ async function getRelationships(knex, disclosureId) {
     .where('fe.disclosure_id', disclosureId)
     .andWhereNot('r.status', RELATIONSHIP_STATUS.PENDING);
 
-  const travels = await knex('travel_relationship')
+  const travels = await knex
     .select(
       'amount',
       'destination',
@@ -603,9 +623,10 @@ async function getRelationships(knex, disclosureId) {
       'reason',
       'relationship_id as relationshipId'
     )
+    .from('travel_relationship')
     .whereIn(
       'relationship_id',
-      relationships.map(relationship => { return relationship.id; })
+      relationships.map(relationship => relationship.id)
     );
 
   relationships.forEach(relationship => {
