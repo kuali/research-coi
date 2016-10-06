@@ -29,6 +29,15 @@ import {
   getDispositionsEnabled
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
+import {flagIsOn} from '../../../../feature-flags';
+
+function getStatusDescription(configState, code) {
+  return getAdminDisclosureStatusString(
+    configState,
+    code,
+    configState.config.id
+  );
+}
 
 export class DisclosureList extends React.Component {
   componentDidMount() {
@@ -41,7 +50,10 @@ export class DisclosureList extends React.Component {
           enabled = true;
         }, 100);
 
-        if ((theList.clientHeight + theList.scrollTop) > (theList.scrollHeight - 300)) {
+        if (
+          (theList.clientHeight + theList.scrollTop) >
+          (theList.scrollHeight - 300)
+        ) {
           if (!this.props.loadingMore) {
             AdminActions.loadMore();
           }
@@ -50,31 +62,48 @@ export class DisclosureList extends React.Component {
     });
   }
 
-  changeSearch(newSearch) {
-    AdminActions.changeSearch(newSearch);
-  }
-
   render() {
+    const {
+      summaries,
+      selected,
+      searchTerm,
+      loadedAll,
+      loadingMore,
+      className,
+      showFilters,
+      count,
+      filters,
+      reviewerFilterValues
+    } = this.props;
+
     let disclosuresJsx;
-    if (this.props.summaries) {
-      disclosuresJsx = this.props.summaries.map(disclosure => {
+    if (summaries) {
+      disclosuresJsx = summaries.map(disclosure => {
         let selectedId;
-        if (this.props.selected) {
-          selectedId = this.props.selected.id;
+        if (selected) {
+          selectedId = selected.id;
         }
         return (
           <DisclosureListItem
             key={disclosure.id}
             disclosure={disclosure}
             selected={disclosure.id === selectedId}
-            searchTerm={this.props.searchTerm}
+            searchTerm={searchTerm}
           />
         );
       });
     }
 
     let loadMoreButton;
-    if (!this.props.loadedAll && !this.props.loadingMore) {
+    let loadingIndicator;
+    if (loadingMore) {
+      loadingIndicator = (
+        <div className={styles.loadingIndicator}>
+          <span>Loading more...</span>
+        </div>
+      );
+    }
+    else if (!loadedAll) {
       loadMoreButton = (
         <div className={styles.loadMoreButton}>
           <BlueButton onClick={AdminActions.loadMore}>Load more</BlueButton>
@@ -82,29 +111,20 @@ export class DisclosureList extends React.Component {
       );
     }
 
-    let loadingIndicator;
-    if (this.props.loadingMore) {
-      loadingIndicator = (
-        <div className={styles.loadingIndicator}>
-          <span>Loading more...</span>
-        </div>
-      );
-    }
-
     const { configState } = this.context;
 
     const possibleStatuses = [
-      {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
-      {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
-      {code: 4, label: getAdminDisclosureStatusString(configState, 4, configState.config.id)},
-      {code: 5, label: getAdminDisclosureStatusString(configState, 5, configState.config.id)},
-      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)}
+      {code: 2, label: getStatusDescription(configState, 2)},
+      {code: 3, label: getStatusDescription(configState, 3)},
+      {code: 4, label: getStatusDescription(configState, 4)},
+      {code: 5, label: getStatusDescription(configState, 5)},
+      {code: 6, label: getStatusDescription(configState, 6)},
+      {code: 7, label: getStatusDescription(configState, 7)}
     ];
-
-    const possibleTypes = [];
-    if (configState.config.disclosureTypes) {
-      configState.config.disclosureTypes.map(type => {
-        return type.description;
+    if (flagIsOn('RESCOI-995')) {
+      possibleStatuses.push({
+        code: 8,
+        label: getStatusDescription(configState, 8)
       });
     }
 
@@ -114,61 +134,61 @@ export class DisclosureList extends React.Component {
       possibleDispositions = this.props.possibleDispositions;
     }
 
+    let heading;
+    if (summaries) {
+      if (summaries.length === count) {
+        heading = (
+          <div className={styles.heading} onClick={AdminActions.toggleFilters}>
+            <span style={{paddingRight: 3}}>{count}</span>
+            Disclosures Shown
+            <span className={styles.filterArrow}>&#9660;</span>
+          </div>
+        );
+      }
+      else {
+        heading = (
+          <div className={styles.heading} onClick={AdminActions.toggleFilters}>
+            <span style={{paddingRight: 3}}>{summaries.length}</span>
+            <span style={{paddingRight: 3}}>of</span>
+            <span style={{paddingRight: 3}}>{count}</span>
+            Disclosures Shown
+            <span className={styles.filterArrow}>&#9660;</span>
+          </div>
+        );
+      }
+    }
+
     const classes = classNames(
       'flexbox',
       'column',
       styles.container,
-      this.props.className,
-      {[styles.showFilters]: this.props.showFilters}
+      className,
+      {[styles.showFilters]: showFilters}
     );
-
-    let heading;
-    if (this.props.summaries.length === this.props.count) {
-      heading = (
-        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
-          <span style={{paddingRight: 3}}>{this.props.count}</span>
-          Disclosures Shown
-          <span className={styles.filterArrow}>&#9660;</span>
-        </div>
-      );
-    }
-    else {
-      heading = (
-        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
-          <span style={{paddingRight: 3}}>{this.props.summaries.length}</span>
-          <span style={{paddingRight: 3}}>of</span>
-          <span style={{paddingRight: 3}}>{this.props.count}</span>
-          Disclosures Shown
-          <span className={styles.filterArrow}>&#9660;</span>
-        </div>
-      );
-    }
 
     return (
       <div className={classes}>
         <AdminMenu style={{padding: '32px 0px'}} />
         <div style={{width: 320}}>
           <DisclosureFilterSearch
-            query={this.props.filters.search}
-            onChange={this.changeSearch}
+            query={filters.search}
+            onChange={AdminActions.changeSearch}
             onSearch={AdminActions.doSearch}
           />
           {heading}
           <SearchFilterGroup
             className={`${styles.override} ${styles.filterGroup}`}
-            filters={this.props.filters}
-            reviewerFilterValues={this.props.reviewerFilterValues}
+            filters={filters}
+            reviewerFilterValues={reviewerFilterValues}
             lane={configState.config.lane}
             possibleStatuses={possibleStatuses}
-            possibleTypes={possibleTypes}
             possibleDispositions={possibleDispositions}
             showDateSort={false}
-            visible={this.props.showFilters}
+            visible={showFilters}
           />
         </div>
         <ul className={classNames('fill', styles.list)} ref="theList">
           {disclosuresJsx}
-
           {loadMoreButton}
           {loadingIndicator}
         </ul>
@@ -180,4 +200,18 @@ export class DisclosureList extends React.Component {
 DisclosureList.contextTypes = {
   configState: React.PropTypes.object,
   userInfo: React.PropTypes.object
+};
+
+DisclosureList.propTypes = {
+  summaries: React.PropTypes.array,
+  selected: React.PropTypes.object,
+  className: React.PropTypes.string,
+  filters: React.PropTypes.object,
+  reviewerFilterValues: React.PropTypes.array,
+  count: React.PropTypes.number,
+  searchTerm: React.PropTypes.string,
+  loadingMore: React.PropTypes.bool,
+  loadedAll: React.PropTypes.bool,
+  showFilters: React.PropTypes.bool,
+  possibleDispositions: React.PropTypes.array
 };

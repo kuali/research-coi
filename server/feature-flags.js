@@ -40,6 +40,7 @@ async function initFeatureFlags(flags) {
               key: flag,
               active: false
             });
+          Log.info(`Added feature flag: ${flag} (Default off)`);
         }
       }
     });
@@ -63,7 +64,7 @@ export default function init(flags) {
     initFunction = initFeatureFlags;
   }
 
-  initFunction(flags);
+  initFunction(flags).then();
 }
 
 export async function flagIsOn(knex, key) {

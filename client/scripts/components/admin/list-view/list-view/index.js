@@ -31,6 +31,15 @@ import {
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 import {AppHeader} from '../../../app-header';
+import {flagIsOn} from '../../../../feature-flags';
+
+function getStatusDescription(configState, code) {
+  return getAdminDisclosureStatusString(
+    configState,
+    code,
+    configState.config.id
+  );
+}
 
 export class ListView extends React.Component {
   constructor() {
@@ -40,9 +49,7 @@ export class ListView extends React.Component {
       data: AdminStore.getState()
     };
 
-    this.changeSearch = this.changeSearch.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.doSearch = this.doSearch.bind(this);
   }
 
   componentDidMount() {
@@ -57,17 +64,16 @@ export class ListView extends React.Component {
           enabled = true;
         }, 100);
 
-        if ((rightPanel.clientHeight + rightPanel.scrollTop) > (rightPanel.scrollHeight - 300)) {
+        if (
+          (rightPanel.clientHeight + rightPanel.scrollTop) >
+          (rightPanel.scrollHeight - 300)
+        ) {
           if (!this.state.data.applicationState.loadingMore) {
             AdminActions.loadMore();
           }
         }
       }
     });
-  }
-
-  loadMore() {
-    AdminActions.loadMore();
   }
 
   componentWillUnmount() {
@@ -80,59 +86,45 @@ export class ListView extends React.Component {
     });
   }
 
-  doSearch() {
-    AdminActions.doSearch();
-  }
-
-  changeType(newType) {
-    AdminActions.changeTypeFilter(newType);
-  }
-
-  changeSearch(newSearch) {
-    AdminActions.changeSearch(newSearch);
-  }
-
-  toggleFilters() {
-    AdminActions.toggleFilters();
-  }
-
   render() {
-    const filtered = this.state.data.disclosureSummaries;
-    let loadMoreButton;
-    if (!this.state.data.applicationState.loadedAll && !this.state.data.applicationState.loadingMore) {
-      loadMoreButton = (
-        <div className={styles.loadMoreButton}>
-          <BlueButton onClick={this.loadMore}>Load more</BlueButton>
-        </div>
-      );
-    }
+    const {
+      applicationState,
+      disclosureSummaries
+    } = this.state.data;
 
+    let loadMoreButton;
     let loadingIndicator;
-    if (this.state.data.applicationState.loadingMore) {
+    if (applicationState.loadingMore) {
       loadingIndicator = (
         <div className={styles.loadingIndicator}>
           <span>Loading more...</span>
         </div>
       );
     }
+    else if (!applicationState.loadedAll) {
+      loadMoreButton = (
+        <div className={styles.loadMoreButton}>
+          <BlueButton onClick={AdminActions.loadMore}>Load more</BlueButton>
+        </div>
+      );
+    }
 
     const { configState } = this.context;
     const possibleStatuses = [
-      {code: 2, label: getAdminDisclosureStatusString(configState, 2, configState.config.id)},
-      {code: 3, label: getAdminDisclosureStatusString(configState, 3, configState.config.id)},
-      {code: 4, label: getAdminDisclosureStatusString(configState, 4, configState.config.id)},
-      {code: 5, label: getAdminDisclosureStatusString(configState, 5, configState.config.id)},
-      {code: 6, label: getAdminDisclosureStatusString(configState, 6, configState.config.id)},
-      {code: 7, label: getAdminDisclosureStatusString(configState, 7, configState.config.id)}
+      {code: 2, label: getStatusDescription(configState, 2)},
+      {code: 3, label: getStatusDescription(configState, 3)},
+      {code: 4, label: getStatusDescription(configState, 4)},
+      {code: 5, label: getStatusDescription(configState, 5)},
+      {code: 6, label: getStatusDescription(configState, 6)},
+      {code: 7, label: getStatusDescription(configState, 7)}
     ];
-
-    const possibleTypes = [];
-    if (configState.config.disclosureTypes) {
-      configState.config.disclosureTypes.map(type => {
-        return type.description;
+    if (flagIsOn('RESCOI-995')) {
+      possibleStatuses.push({
+        code: 8,
+        label: getStatusDescription(configState, 8)
       });
     }
-
+    
     let possibleDispositions = [];
     if (getDispositionsEnabled(configState)) {
       possibleDispositions = configState.config.dispositionTypes;
@@ -144,15 +136,15 @@ export class ListView extends React.Component {
       'row',
       styles.container,
       this.props.className,
-      {[styles.showFilters]: this.state.data.applicationState.showFilters}
+      {[styles.showFilters]: applicationState.showFilters}
     );
 
     let heading;
-    if (filtered.length === this.state.data.applicationState.summaryCount) {
+    if (disclosureSummaries.length === applicationState.summaryCount) {
       heading = (
-        <div className={styles.heading} onClick={this.toggleFilters}>
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
           <span style={{paddingRight: 3}}>
-            {this.state.data.applicationState.summaryCount}
+            {applicationState.summaryCount}
           </span>
           Disclosures Shown
           <span className={styles.filterArrow}>&#9660;</span>
@@ -161,13 +153,13 @@ export class ListView extends React.Component {
     }
     else {
       heading = (
-        <div className={styles.heading} onClick={this.toggleFilters}>
+        <div className={styles.heading} onClick={AdminActions.toggleFilters}>
           <span style={{paddingRight: 3}}>
-            {filtered.length}
+            {disclosureSummaries.length}
           </span>
           <span style={{paddingRight: 3}}>of</span>
           <span style={{paddingRight: 3}}>
-            {this.state.data.applicationState.summaryCount}
+            {applicationState.summaryCount}
           </span>
           Disclosures Shown
           <span className={styles.filterArrow}>&#9660;</span>
@@ -176,41 +168,48 @@ export class ListView extends React.Component {
     }
 
     return (
-      <div className={'flexbox column'} style={{minHeight: '100%', overflowX: 'hidden'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
+      <div
+        className={'flexbox column'}
+        style={{minHeight: '100%', overflowX: 'hidden'}}
+      >
+        <AppHeader
+          className={`${styles.override} ${styles.header}`}
+          moduleName={'Conflict Of Interest'}
+        />
         <div className={classes}>
           <span className={styles.sidebar}>
             <AdminMenu />
             <DisclosureFilterSearch
-              query={this.state.data.applicationState.filters.search}
-              onChange={this.changeSearch}
-              onSearch={this.doSearch}
+              query={applicationState.filters.search}
+              onChange={AdminActions.changeSearch}
+              onSearch={AdminActions.doSearch}
             />
             {heading}
             <SearchFilterGroup
               className={`${styles.override} ${styles.filterGroup}`}
-              filters={this.state.data.applicationState.filters}
-              reviewerFilterValues={this.state.data.applicationState.reviewerFilterValues}
+              filters={applicationState.filters}
+              reviewerFilterValues={applicationState.reviewerFilterValues}
               lane={configState.config.lane}
               possibleStatuses={possibleStatuses}
-              possibleTypes={possibleTypes}
               possibleDispositions={possibleDispositions}
               showDateSort={false}
-              visible={this.state.data.applicationState.showFilters}
+              visible={applicationState.showFilters}
             />
           </span>
           <span className={`fill ${styles.content}`} ref="rightPanel">
             <div className={styles.header2}>
-              <h2 className={styles.title}>{`COI ${this.context.userInfo.coiRole} DASHBOARD`}</h2>
+              <h2 className={styles.title}>
+                {`COI ${this.context.userInfo.coiRole} DASHBOARD`}
+              </h2>
             </div>
             <div style={{padding: '33px 38px'}}>
               <DisclosureTable
-                sort={this.state.data.applicationState.sort}
-                sortDirection={this.state.data.applicationState.sortDirection}
-                page={this.state.data.applicationState.page}
+                sort={applicationState.sort}
+                sortDirection={applicationState.sortDirection}
+                page={applicationState.page}
                 className={`${styles.override} ${styles.table}`}
-                disclosures={filtered}
-                searchTerm={this.state.data.applicationState.effectiveSearchValue}
+                disclosures={disclosureSummaries}
+                searchTerm={applicationState.effectiveSearchValue}
               />
               {loadMoreButton}
               {loadingIndicator}
@@ -225,4 +224,8 @@ export class ListView extends React.Component {
 ListView.contextTypes = {
   configState: React.PropTypes.object,
   userInfo: React.PropTypes.object
+};
+
+ListView.propTypes = {
+  className: React.PropTypes.string
 };
