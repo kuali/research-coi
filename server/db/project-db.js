@@ -81,6 +81,30 @@ export async function getActiveProjectsForUser(knex, userId) {
     });
 }
 
+export async function getDeclarationsForUser(knex, userId) {
+  logArguments('getActiveProjectDeclarationsForUser', {userId});
+
+  if (!Number.isInteger(userId) && typeof userId !== 'string') {
+    throw Error('invalid user id');
+  }
+
+  return await knex
+    .select(
+      'p.id as id',
+      'p.source_identifier as sourceIdentifier',
+      'p.title as name',
+      'p.type_cd as typeCd',
+      'p.source_status as statusCd'
+    )
+    .from('project as p')
+    .innerJoin('declaration as d', 'p.id', 'd.project_id')
+    .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
+    .where({
+      'pp.person_id': userId,
+      'pp.active': true
+    });
+}
+
 export function associateSponsorsWithProject(sponsors, projects) {
   logArguments('associateSponsorsWithProject', {sponsors, projects});
 
@@ -109,10 +133,14 @@ export function associateSponsorsWithProject(sponsors, projects) {
   return projects;
 }
 
-export async function getProjects (knex, userId) {
-  logArguments('getProjects', {userId});
+export async function getActiveProjectsWithDeclarationsForUser(knex, userId) {
+  logArguments('getActiveProjectsWithDeclarations', {userId});
 
-  let projects = await getActiveProjectsForUser(knex, userId);
+  let projects = await getDeclarationsForUser(knex, userId);
+  return await aggregateProjectData(projects, knex);
+}
+
+async function aggregateProjectData(projects, knex) {
   logVariable({projects});
   const projectIds = projects.map(project => project.id);
   logVariable({projectIds});
@@ -124,6 +152,13 @@ export async function getProjects (knex, userId) {
   projects = associateSponsorsWithProject(sponsors, projects);
 
   return projects;
+}
+
+export async function getProjects (knex, userId) {
+  logArguments('getProjects', {userId});
+
+  let projects = await getActiveProjectsForUser(knex, userId);
+  return await aggregateProjectData(projects, knex);
 }
 
 export async function entitiesNeedDeclaration(knex, disclosure_id) {
