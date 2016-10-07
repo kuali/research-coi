@@ -36,7 +36,8 @@ import { getAdminProjectDisposition } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import * as VariableService from './variables-service';
 import getKnex from '../../db/connection-manager';
-import Log from '../../log';
+import Log, {logArguments} from '../../log';
+import {flagIsOn} from '../../feature-flags';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
@@ -111,6 +112,11 @@ const NOTIFICATION_TEMPLATES = {
     SUBJECT: 'Annual COI Disclosure was Returned to Reporter',
     BODY: 'Dear {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}}, Your annual disclosure submitted on {{SUBMISSION_DATE}} was returned on {{NOW}} for the following reason {{RETURN_REASON}}. Please login to Kuali Research COI and access your disclosure at {{REPORTER_DASHBOARD}} to update and submit your disclosure.'//eslint-disable-line max-len
   },
+  NEW_PROJECT_WITHOUT_DISCLOSURE: {
+    ID: 12,
+    SUBJECT: 'Action Required: Create COI disclosure due to a new project',
+    BODY: '<p>Hello {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}},</p> <p> You must complete a Conflict of Interest (COI) disclosure immediately because you have been added as {{PROJECT_ROLE}} on <b>{{PROJECT_TYPE}} {{PROJECT_NUMBER}} <i>{{PROJECT_TITLE}}</i>. </b> Login to Kuali Research and creat a COI disclosure at: {{REPORTER_DASHBOARD}}. </p> <p>If you have any questions, please contact your COI Administrator.</p> <p>Thank you, <br> Your COI Admin</p>' //eslint-disable-line max-len
+  }
 };
 
 export function getDefaults(notificationTemplate) {
@@ -158,6 +164,10 @@ export function getDefaults(notificationTemplate) {
     case NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.ID:
       notificationTemplate.subject = NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.SUBJECT;
       notificationTemplate.body = NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.BODY;
+      return notificationTemplate;
+    case NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID:
+      notificationTemplate.subject = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.SUBJECT;
+      notificationTemplate.body = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';
@@ -500,12 +510,29 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
 
 const debounced = {};
 export async function createAndSendNewProjectNotification(dbInfo, hostname, userInfo, disclosureId, project, person) {
+  logArguments(
+    'createAndSendNewProjectNotification',
+    {hostname, userInfo, disclosureId, project, person}
+  );
+
   if (debounced[`${person.sourceIdentifier}:${person.personId}`]) {
     clearTimeout(debounced[`${person.sourceIdentifier}:${person.personId}`]);
   }
 
   const timeoutId = setTimeout(async () => {
-    const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.NEW_PROJECT.ID);
+    let templateId;
+    const knex = getKnex(dbInfo);
+    if (await flagIsOn(knex, 'RESCOI-981')) {
+      if (disclosureId) {
+        templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
+      } else {
+        templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
+      }
+    } else {
+      templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
+    }
+
+    const template = await getTemplate(dbInfo, templateId);
     if (!template) {
       return;
     }
