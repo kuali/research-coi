@@ -28,7 +28,9 @@ import {
   getDisclosuresAdminDisposition,
   getGeneralComment
 } from '../../db/disclosure-db';
-import { getProjects } from '../../db/project-db';
+import {
+  getActiveProjectsWithDeclarationsForUser
+} from '../../db/project-db';
 import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
 import { getAdminProjectDisposition } from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
@@ -286,7 +288,7 @@ async function getProject(dbInfo, hostname, project, person) {
 }
 
 async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
-  const projects = await getProjects(knex, disclosure.userId);
+  const projects = await getActiveProjectsWithDeclarationsForUser(knex, disclosure.userId);
   const config = await getConfig(dbinfo, knex, hostname);
 
   let dispositionHeader = '';
