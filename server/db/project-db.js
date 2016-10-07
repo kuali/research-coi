@@ -136,7 +136,7 @@ export function associateSponsorsWithProject(sponsors, projects) {
 export async function getActiveProjectsWithDeclarationsForUser(knex, userId) {
   logArguments('getActiveProjectsWithDeclarations', {userId});
 
-  let projects = await getDeclarationsForUser(knex, userId);
+  const projects = await getDeclarationsForUser(knex, userId);
   return await aggregateProjectData(projects, knex);
 }
 
@@ -149,15 +149,15 @@ async function aggregateProjectData(projects, knex) {
 
   const sponsors = await getSponsorsForProjects(knex, uniqueProjectIds);
   logVariable(sponsors);
-  projects = associateSponsorsWithProject(sponsors, projects);
+  const projectsWithData = associateSponsorsWithProject(sponsors, projects);
 
-  return projects;
+  return projectsWithData;
 }
 
 export async function getProjects (knex, userId) {
   logArguments('getProjects', {userId});
 
-  let projects = await getActiveProjectsForUser(knex, userId);
+  const projects = await getActiveProjectsForUser(knex, userId);
   return await aggregateProjectData(projects, knex);
 }
 
