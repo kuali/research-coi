@@ -36,10 +36,11 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  user-select: none;
 }
 
 .DayPicker:focus {
-  outline: 0;
+  outline: 1px solid black;
 }
 
 .DayPicker-Month {
