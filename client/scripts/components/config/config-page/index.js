@@ -27,7 +27,7 @@ export default function ConfigPage(props) {
   return (
     <div className={'flexbox column'} style={{minHeight: '100%'}}>
       <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
-      <span className={classNames('fill', 'flexbox', 'row', styles.container, props.className)}>
+      <span className={classNames('fill', 'flexbox', 'row', props.className)}>
         <Sidebar active={props.routeName} />
         <span className={`inline-flexbox column fill ${styles.content}`}>
           <div className={styles.stepTitle}>

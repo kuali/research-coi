@@ -42,7 +42,7 @@ export default class TravelLogSort extends React.Component {
 
   render() {
     return (
-      <div className={styles.container} name='Travel Log Sort'>
+      <div name='Travel Log Sort'>
         <div>
           <span className={styles.label}>Sort By:</span>
           <select className={styles.select} onChange={this.sortColumnChanged}>

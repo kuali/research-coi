@@ -16,8 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -435,7 +433,7 @@ class QuestionnaireConfig extends React.Component {
     });
 
     return (
-      <div className={classNames(styles.container, this.props.className)}>
+      <div className={this.props.className}>
         {newQuestionSection}
         {newQuestion}
 

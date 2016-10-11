@@ -17,7 +17,6 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
 import EditableList from '../../editable-list';
 import {BlueButton} from '../../../blue-button';
@@ -137,7 +136,7 @@ export default class RelationshipType extends React.Component {
     }
 
     return (
-      <div className={classNames('flexbox', 'row', styles.container, this.props.className)}>
+      <div className={`flexbox row ${this.props.className}`}>
         <span style={{margin: '0 10px 0 20px'}}>
           <input
             type="checkbox"

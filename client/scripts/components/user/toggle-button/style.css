@@ -24,6 +24,11 @@
   position: relative;
 }
 
+.button:focus {
+  border-color: #9e9e9e;
+  outline-width: 0;
+}
+
 .selected {
   background-color: #0095A0;
   font-weight: bold;

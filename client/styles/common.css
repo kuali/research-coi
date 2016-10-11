@@ -41,7 +41,7 @@ a {
 }
 
 button:focus {
-  outline-color: black;
+  outline-color: #666;
   outline-offset: -3px;
   outline-width: 2px;
 }
@@ -53,8 +53,8 @@ button {
 select:focus,
 input:focus,
 textarea:focus {
-  outline-color: black;
-  outline-width: 2px;
+  border-color: #666;
+  outline: none;
 }
 
 span {
@@ -109,6 +109,7 @@ span {
 .fill {
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
+  -ms-box-flex: 1;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
 }
