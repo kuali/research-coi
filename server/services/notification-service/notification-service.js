@@ -56,7 +56,7 @@ const {
   areNotificationsEnabled
 } = client;
 
-const NOTIFICATION_TEMPLATES = {
+const TEMPLATES = {
   SUBMITTED: {
     ID: 1,
     SUBJECT: 'Annual Disclosure Submitted for Review',
@@ -69,7 +69,7 @@ const NOTIFICATION_TEMPLATES = {
   },
   NEW_PROJECT: {
     ID: 3,
-    SUBJECT: 'Annual COI Disclosure Needs Update due to new project to disclose',
+    SUBJECT: 'Annual COI Disclosure Needs Update due to new project to disclose', //eslint-disable-line max-len
     BODY: 'Dear {{PROJECT_PERSON_FIRST_NAME}} {{PROJECT_PERSON_LAST_NAME}}, Your annual disclosure needs to be updated because you have the role {{PROJECT_ROLE}} on the {{PROJECT_TYPE}} {{PROJECT_NUMBER}} {{PROJECT_TITLE}} (PI: {{PI_FIRST_NAME}} {{PI_LAST_NAME}} ) must be disclosed. To update your annual disclosure, please login to Kuali Research COI and access your annual disclosure at {{REPORTER_DASHBOARD}}. If you have any questions, please contact your COI Admin.' //eslint-disable-line max-len
   },
   SENT_BACK: {
@@ -121,53 +121,53 @@ const NOTIFICATION_TEMPLATES = {
 
 export function getDefaults(notificationTemplate) {
   switch (notificationTemplate.templateId) {
-    case NOTIFICATION_TEMPLATES.SUBMITTED.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.SUBMITTED.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.SUBMITTED.BODY;
+    case TEMPLATES.SUBMITTED.ID:
+      notificationTemplate.subject = TEMPLATES.SUBMITTED.SUBJECT;
+      notificationTemplate.body = TEMPLATES.SUBMITTED.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.REVIEW_COMPLETE.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.REVIEW_COMPLETE.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.REVIEW_COMPLETE.BODY;
+    case TEMPLATES.REVIEW_COMPLETE.ID:
+      notificationTemplate.subject = TEMPLATES.REVIEW_COMPLETE.SUBJECT;
+      notificationTemplate.body = TEMPLATES.REVIEW_COMPLETE.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.NEW_PROJECT.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.NEW_PROJECT.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.NEW_PROJECT.BODY;
+    case TEMPLATES.NEW_PROJECT.ID:
+      notificationTemplate.subject = TEMPLATES.NEW_PROJECT.SUBJECT;
+      notificationTemplate.body = TEMPLATES.NEW_PROJECT.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.SENT_BACK.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.SENT_BACK.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.SENT_BACK.BODY;
+    case TEMPLATES.SENT_BACK.ID:
+      notificationTemplate.subject = TEMPLATES.SENT_BACK.SUBJECT;
+      notificationTemplate.body = TEMPLATES.SENT_BACK.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.BODY;
+    case TEMPLATES.REVIEW_ASSIGNED.ID:
+      notificationTemplate.subject = TEMPLATES.REVIEW_ASSIGNED.SUBJECT;
+      notificationTemplate.body = TEMPLATES.REVIEW_ASSIGNED.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.APPROVED.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.APPROVED.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.APPROVED.BODY;
+    case TEMPLATES.APPROVED.ID:
+      notificationTemplate.subject = TEMPLATES.APPROVED.SUBJECT;
+      notificationTemplate.body = TEMPLATES.APPROVED.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.BODY;
+    case TEMPLATES.REVIEW_UNASSIGNED.ID:
+      notificationTemplate.subject = TEMPLATES.REVIEW_UNASSIGNED.SUBJECT;
+      notificationTemplate.body = TEMPLATES.REVIEW_UNASSIGNED.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.BODY;
+    case TEMPLATES.EXPIRATION_REMINDER.ID:
+      notificationTemplate.subject = TEMPLATES.EXPIRATION_REMINDER.SUBJECT;
+      notificationTemplate.body = TEMPLATES.EXPIRATION_REMINDER.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.EXPIRED.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.EXPIRED.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.EXPIRED.BODY;
+    case TEMPLATES.EXPIRED.ID:
+      notificationTemplate.subject = TEMPLATES.EXPIRED.SUBJECT;
+      notificationTemplate.body = TEMPLATES.EXPIRED.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.RESUBMITTED.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.RESUBMITTED.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.RESUBMITTED.BODY;
+    case TEMPLATES.RESUBMITTED.ID:
+      notificationTemplate.subject = TEMPLATES.RESUBMITTED.SUBJECT;
+      notificationTemplate.body = TEMPLATES.RESUBMITTED.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.BODY;
+    case TEMPLATES.RETURN_TO_REPORTER.ID:
+      notificationTemplate.subject = TEMPLATES.RETURN_TO_REPORTER.SUBJECT;
+      notificationTemplate.body = TEMPLATES.RETURN_TO_REPORTER.BODY;
       return notificationTemplate;
-    case NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID:
-      notificationTemplate.subject = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.SUBJECT;
-      notificationTemplate.body = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.BODY;
+    case TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID:
+      notificationTemplate.subject = TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.SUBJECT; // eslint-disable-line max-len
+      notificationTemplate.body = TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.BODY;
       return notificationTemplate;
     default:
       notificationTemplate.subject = '';
@@ -189,8 +189,12 @@ export async function handleTemplates(dbInfo, hostname, templates) {
   return templates.map(async (template) => {
     if (template.active === 1) {
       if (!template.core_template_id) { //eslint-disable-line camelcase
-        const coreTemplateId = await createNewTemplate(dbInfo, hostname, template);
-        template.core_template_id = coreTemplateId; //eslint-disable-line camelcase
+        const coreTemplateId = await createNewTemplate(
+          dbInfo,
+          hostname,
+          template
+        );
+        template.core_template_id = coreTemplateId; //eslint-disable-line camelcase, max-len
         return cleanTemplate(template);
       }
       await updateTemplateData(dbInfo, hostname, template);
@@ -200,12 +204,21 @@ export async function handleTemplates(dbInfo, hostname, templates) {
   });
 }
 
-export async function populateTemplateData(dbInfo, hostname, notificationTemplates) {
+export async function populateTemplateData(
+  dbInfo,
+  hostname,
+  notificationTemplates
+) {
   const templates = await getTemplates(dbInfo, hostname);
   return notificationTemplates.map(notificationTemplate => {
     const template = templates.find(t => {
-      return String(t.id) === String(notificationTemplate.coreTemplateId) ||
-        t.displayName === createDisplayName(hostname, notificationTemplate.description);
+      return (
+        String(t.id) === String(notificationTemplate.coreTemplateId) ||
+        t.displayName === createDisplayName(
+          hostname,
+          notificationTemplate.description
+        )
+      );
     });
 
     if (!template) {
@@ -248,7 +261,11 @@ async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
     archiveId
   );
   try {
-    disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+    disclosure.reporterInfo = await getUserInfo(
+      dbInfo,
+      hostname,
+      disclosure.userId
+    );
   } catch (err) {
     Log.error(err);
   }
@@ -264,7 +281,11 @@ async function getDisclosure(dbInfo, hostname, disclosureId) {
     disclosureId
   );
   try {
-    disclosure.reporterInfo = await getUserInfo(dbInfo, hostname, disclosure.userId);
+    disclosure.reporterInfo = await getUserInfo(
+      dbInfo,
+      hostname,
+      disclosure.userId
+    );
   } catch (err) {
     Log.error(err);
   }
@@ -276,7 +297,11 @@ async function getReviewer(dbInfo, hostname, reviewerId) {
   const reviewer = await getAdditionalReviewer(knex, reviewerId);
   if (reviewer) {
     try {
-      reviewer.reviewerInfo = await getUserInfo(dbInfo, hostname, reviewer.userId);
+      reviewer.reviewerInfo = await getUserInfo(
+        dbInfo,
+        hostname,
+        reviewer.userId
+      );
     } catch (err) {
       Log.error(err);
     }
@@ -289,7 +314,11 @@ async function getProject(dbInfo, hostname, project, person) {
   const projectInfo = JSON.parse(JSON.stringify(project));
   projectInfo.type = await getProjectTypeDescription(knex, project.typeCode);
   projectInfo.person = JSON.parse(JSON.stringify(person));
-  projectInfo.person.info = await getUserInfo(dbInfo, hostname, person.personId);
+  projectInfo.person.info = await getUserInfo(
+    dbInfo,
+    hostname,
+    person.personId
+  );
   const pi = projectInfo.persons.find(p => p.roleCode === PI_ROLE_CODE);
   if (pi) {
     projectInfo.piInfo = await getUserInfo(dbInfo, hostname, pi.personId);
@@ -298,7 +327,10 @@ async function getProject(dbInfo, hostname, project, person) {
 }
 
 async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
-  const projects = await getActiveProjectsWithDeclarationsForUser(knex, disclosure.userId);
+  const projects = await getActiveProjectsWithDeclarationsForUser(
+    knex,
+    disclosure.userId
+  );
   const config = await getConfig(dbinfo, knex, hostname);
 
   let dispositionHeader = '';
@@ -373,14 +405,32 @@ async function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
         disclosure.id
       );
     }
-    variables = VariableService.getDisclosureVariables(disclosure, url, variables);
+    variables = VariableService.getDisclosureVariables(
+      disclosure,
+      url,
+      variables
+    );
   }
-  variables = reviewer ? VariableService.getReviewerVariables(reviewer, variables) : variables;
-  variables = project ? VariableService.getProjectVariables(project, variables) : variables;
+
+  if (reviewer) {
+    variables = VariableService.getReviewerVariables(reviewer, variables);
+  }
+
+  if (project) {
+    variables = VariableService.getProjectVariables(project, variables);
+  }
+
   return variables;
 }
 
-export async function createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, templateId) {
+export async function createAndSendAdminNotification(
+  dbInfo,
+  hostname,
+  authHeader,
+  userInfo,
+  disclosureId,
+  templateId
+) {
   const template = await getTemplate(dbInfo, templateId);
 
   if (!template) {
@@ -389,42 +439,118 @@ export async function createAndSendAdminNotification(dbInfo, hostname, authHeade
   const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
   const variables = await getVariables(dbInfo, hostname, disclosure);
   const adminEmails = await getAdminRecipients(dbInfo, authHeader);
-  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, adminEmails);
+  const notification = createCoreNotification(
+    template.coreTemplateId,
+    variables,
+    userInfo.id,
+    adminEmails
+  );
   return await sendNotification(dbInfo, hostname, notification);
 }
 
-export async function createAndSendSubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
-  return await createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, NOTIFICATION_TEMPLATES.SUBMITTED.ID);
+export async function createAndSendSubmitNotification(
+  dbInfo,
+  hostname,
+  authHeader,
+  userInfo,
+  disclosureId
+) {
+  return await createAndSendAdminNotification(
+    dbInfo,
+    hostname,
+    authHeader,
+    userInfo,
+    disclosureId,
+    TEMPLATES.SUBMITTED.ID
+  );
 }
 
-export async function createAndSendResubmitNotification(dbInfo, hostname, authHeader, userInfo, disclosureId) {
-  return await createAndSendAdminNotification(dbInfo, hostname, authHeader, userInfo, disclosureId, NOTIFICATION_TEMPLATES.RESUBMITTED.ID);
+export async function createAndSendResubmitNotification(
+  dbInfo,
+  hostname,
+  authHeader,
+  userInfo,
+  disclosureId
+) {
+  return await createAndSendAdminNotification(
+    dbInfo,
+    hostname,
+    authHeader,
+    userInfo,
+    disclosureId,
+    TEMPLATES.RESUBMITTED.ID
+  );
 }
 
-export async function createAndSendApproveNotification(dbInfo, knex, hostname, userInfo, archiveId) {
-  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.APPROVED.ID);
+export async function createAndSendApproveNotification(
+  dbInfo,
+  knex,
+  hostname,
+  userInfo,
+  archiveId
+) {
+  const template = await getTemplate(
+    dbInfo,
+    TEMPLATES.APPROVED.ID
+  );
   if (!template) {
     return;
   }
 
   const disclosure = await getArchivedDisclosure(dbInfo, hostname, archiveId);
   let variables = await getVariables(dbInfo, hostname, disclosure);
-  const projectInformation = await getProjectsInformation(dbInfo, knex, hostname, disclosure);
-  variables = VariableService.addProjectInformation(projectInformation, variables);
+  const projectInformation = await getProjectsInformation(
+    dbInfo,
+    knex,
+    hostname,
+    disclosure
+  );
+  variables = VariableService.addProjectInformation(
+    projectInformation,
+    variables
+  );
   const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
-  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  const notification = createCoreNotification(
+    template.coreTemplateId,
+    variables,
+    userInfo.id,
+    recipients
+  );
   return await sendNotification(dbInfo, hostname, notification);
 }
 
-export async function createAndSendExpirationNotification(dbInfo, hostname, disclosureId) {
-  return await createAndSendExpireNotification(dbInfo, hostname, disclosureId, NOTIFICATION_TEMPLATES.EXPIRED.ID);
+export async function createAndSendExpirationNotification(
+  dbInfo,
+  hostname,
+  disclosureId
+) {
+  return await createAndSendExpireNotification(
+    dbInfo,
+    hostname,
+    disclosureId,
+    TEMPLATES.EXPIRED.ID
+  );
 }
 
-export async function createAndSendExpirationReminderNotification(dbInfo, hostname, disclosureId) {
-  return await createAndSendExpireNotification(dbInfo, hostname, disclosureId, NOTIFICATION_TEMPLATES.EXPIRATION_REMINDER.ID);
+export async function createAndSendExpirationReminderNotification(
+  dbInfo,
+  hostname,
+  disclosureId
+) {
+  return await createAndSendExpireNotification(
+    dbInfo,
+    hostname,
+    disclosureId,
+    TEMPLATES.EXPIRATION_REMINDER.ID
+  );
 }
 
-export async function createAndSendExpireNotification(dbInfo, hostname, disclosureId, templateId) {
+export async function createAndSendExpireNotification(
+  dbInfo,
+  hostname,
+  disclosureId,
+  templateId
+) {
   const template = await getTemplate(dbInfo, templateId);
   if (!template) {
     return;
@@ -432,25 +558,51 @@ export async function createAndSendExpireNotification(dbInfo, hostname, disclosu
   const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
   const variables = await getVariables(dbInfo, hostname, disclosure);
   const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
-  const notification = createCoreNotification(template.coreTemplateId, variables, disclosure.reporterInfo.id, recipients);
+  const notification = createCoreNotification(
+    template.coreTemplateId,
+    variables,
+    disclosure.reporterInfo.id,
+    recipients
+  );
   return await sendNotification(dbInfo, hostname, notification);
 }
 
-export async function createAndSendSentBackNotification(dbInfo, hostname, userInfo, disclosureId) {
-  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.SENT_BACK.ID);
+export async function createAndSendSentBackNotification(
+  dbInfo,
+  hostname,
+  userInfo,
+  disclosureId
+) {
+  const template = await getTemplate(
+    dbInfo,
+    TEMPLATES.SENT_BACK.ID
+  );
   if (!template) {
     return;
   }
   const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
   const variables = await getVariables(dbInfo, hostname, disclosure);
   const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
-  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  const notification = createCoreNotification(
+    template.coreTemplateId,
+    variables,
+    userInfo.id,
+    recipients
+  );
   return await sendNotification(dbInfo, hostname, notification);
 }
 
-export async function returnToReporterNotification(dbInfo, hostname, userInfo, disclosureId) {
+export async function returnToReporterNotification(
+  dbInfo,
+  hostname,
+  userInfo,
+  disclosureId
+) {
   const knex = getKnex(dbInfo);
-  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.RETURN_TO_REPORTER.ID);
+  const template = await getTemplate(
+    dbInfo,
+    TEMPLATES.RETURN_TO_REPORTER.ID
+  );
   if (!template) {
     return;
   }
@@ -458,13 +610,27 @@ export async function returnToReporterNotification(dbInfo, hostname, userInfo, d
   let variables = await getVariables(dbInfo, hostname, disclosure);
   const comment = await getGeneralComment(knex, userInfo, disclosureId);
   const returnReason = comment === undefined ? '' : comment.slice(-1)[0].text;
-  variables = VariableService.addReturnedToReporterInformation(returnReason, variables);
+  variables = VariableService.addReturnedToReporterInformation(
+    returnReason,
+    variables
+  );
   const recipients = getRecipients(dbInfo, disclosure.reporterInfo.email);
-  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  const notification = createCoreNotification(
+    template.coreTemplateId,
+    variables,
+    userInfo.id,
+    recipients
+  );
   return await sendNotification(dbInfo, hostname, notification);
 }
 
-export async function createAndSendReviewerNotification(dbInfo, hostname, userInfo, reviewerId, templateId) {
+export async function createAndSendReviewerNotification(
+  dbInfo,
+  hostname,
+  userInfo,
+  reviewerId,
+  templateId
+) {
   const template = await getTemplate(dbInfo, templateId);
   if (!template) {
     return;
@@ -475,23 +641,63 @@ export async function createAndSendReviewerNotification(dbInfo, hostname, userIn
   if (!reviewer) {
     return;
   }
-  const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
+  const disclosure = await getDisclosure(
+    dbInfo,
+    hostname,
+    reviewer.disclosureId
+  );
   const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
   const recipients = getRecipients(dbInfo, reviewer.email);
-  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  const notification = createCoreNotification(
+    template.coreTemplateId,
+    variables,
+    userInfo.id,
+    recipients
+  );
   return await sendNotification(dbInfo, hostname, notification);
 }
 
-export async function createAndSendReviewerAssignedNotification(dbInfo, hostname, userInfo, reviewerId) {
-  return await createAndSendReviewerNotification(dbInfo, hostname, userInfo, reviewerId, NOTIFICATION_TEMPLATES.REVIEW_ASSIGNED.ID);
+export async function createAndSendReviewerAssignedNotification(
+  dbInfo,
+  hostname,
+  userInfo,
+  reviewerId
+) {
+  return await createAndSendReviewerNotification(
+    dbInfo,
+    hostname,
+    userInfo,
+    reviewerId,
+    TEMPLATES.REVIEW_ASSIGNED.ID
+  );
 }
 
-export async function createAndSendReviewerUnassignNotification(dbInfo, hostname, userInfo, reviewerId) {
-  return await createAndSendReviewerNotification(dbInfo, hostname, userInfo, reviewerId, NOTIFICATION_TEMPLATES.REVIEW_UNASSIGNED.ID);
+export async function createAndSendReviewerUnassignNotification(
+  dbInfo,
+  hostname,
+  userInfo,
+  reviewerId
+) {
+  return await createAndSendReviewerNotification(
+    dbInfo,
+    hostname,
+    userInfo,
+    reviewerId,
+    TEMPLATES.REVIEW_UNASSIGNED.ID
+  );
 }
 
-export async function createAndSendReviewCompleteNotification(dbInfo, hostname, authHeader, userInfo, reviewerId) {
-  const template = await getTemplate(dbInfo, NOTIFICATION_TEMPLATES.REVIEW_COMPLETE.ID);
+export async function createAndSendReviewCompleteNotification(
+  dbInfo,
+  hostname,
+  authHeader,
+  userInfo,
+  reviewerId
+) {
+  const template = await getTemplate(
+    dbInfo,
+    TEMPLATES.REVIEW_COMPLETE.ID
+  );
   if (!template) {
     return;
   }
@@ -501,10 +707,19 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
   if (!reviewer) {
     return;
   }
-  const disclosure = await getDisclosure(dbInfo, hostname, reviewer.disclosureId);
+  const disclosure = await getDisclosure(
+    dbInfo,
+    hostname,
+    reviewer.disclosureId
+  );
   const variables = await getVariables(dbInfo, hostname, disclosure, reviewer);
   const recipients = await getAdminRecipients(dbInfo, authHeader);
-  const notification = createCoreNotification(template.coreTemplateId, variables, userInfo.id, recipients);
+  const notification = createCoreNotification(
+    template.coreTemplateId,
+    variables,
+    userInfo.id,
+    recipients
+  );
   return await sendNotification(dbInfo, hostname, notification);
 }
 
@@ -525,12 +740,12 @@ export async function sendNewProjectNotification(
   const flagOn = await flagIsOn(knex, 'RESCOI-981');
   if (flagOn) {
     if (disclosureId) {
-      templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
+      templateId = TEMPLATES.NEW_PROJECT.ID;
     } else {
-      templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
+      templateId = TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
     }
   } else {
-    templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
+    templateId = TEMPLATES.NEW_PROJECT.ID;
   }
 
   const template = await getTemplate(dbInfo, templateId);

@@ -33,7 +33,10 @@ try {
   }
   getNotificationsInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
-      notificationsUrl: process.env.NOTIFICATIONS_URL || 'https://uit.kuali.dev/res',
+      notificationsUrl: (
+        process.env.NOTIFICATIONS_URL ||
+        'https://uit.kuali.dev/res'
+      ),
       applicationId: process.env.APPLICATION_ID,
       systemAuthToken: process.env.SYSTEM_AUTH_TOKEN,
       notificationsMode: process.env.NOTIFICATION_MODE,
@@ -50,7 +53,9 @@ const END_POINTS = {
 };
 
 export function areNotificationsEnabled(dbInfo) {
-  return getNotificationsInfo(dbInfo).notificationsMode > NOTIFICATIONS_MODE.OFF;
+  return (
+    getNotificationsInfo(dbInfo).notificationsMode > NOTIFICATIONS_MODE.OFF
+  );
 }
 
 export function getRecipients(dbInfo, recipients) {
@@ -64,8 +69,12 @@ export function getRecipients(dbInfo, recipients) {
 
 export async function getTemplates(dbInfo, hostname) {
   const notificationsInfo = getNotificationsInfo(dbInfo);
-  const url = notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname;
-  const response = await request.get(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
+  const url = (
+    notificationsInfo.notificationsUrl ||
+    (useSSL ? 'https://' : 'http://') + hostname
+  );
+  const response = await request
+    .get(`${url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
     .set('Authorization',`Bearer ${notificationsInfo.systemAuthToken}`);
 
   return response.body;
@@ -78,7 +87,10 @@ export function createDisplayName(hostname, description) {
 export function getRequestInfo(dbInfo, hostname) {
   const notificationsInfo = getNotificationsInfo(dbInfo);
   return {
-    url: notificationsInfo.notificationsUrl || (useSSL ? 'https://' : 'http://') + hostname,
+    url: (
+      notificationsInfo.notificationsUrl ||
+      (useSSL ? 'https://' : 'http://') + hostname
+    ),
     applicationId: notificationsInfo.applicationId,
     systemAuthToken: notificationsInfo.systemAuthToken
   };
@@ -102,18 +114,36 @@ function createCoreTemplate(notificationTemplate, hostname, applicationId) {
   };
 }
 
-export async function updateTemplateData(dbInfo, hostname, notificationTemplate) {
+export async function updateTemplateData(
+  dbInfo,
+  hostname,
+  notificationTemplate
+) {
   const requestInfo = getRequestInfo(dbInfo, hostname);
-  const template = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
-  await request.put(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}/${notificationTemplate.core_template_id}`)
+  const template = createCoreTemplate(
+    notificationTemplate,
+    hostname,
+    requestInfo.applicationId
+  );
+  await request
+    .put(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}/${notificationTemplate.core_template_id}`) // eslint-disable-line max-len
     .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
     .send(template);
 }
 
-export async function createNewTemplate(dbInfo, hostname, notificationTemplate) {
+export async function createNewTemplate(
+  dbInfo,
+  hostname,
+  notificationTemplate
+) {
   const requestInfo = getRequestInfo(dbInfo, hostname);
-  const coreTemplate = createCoreTemplate(notificationTemplate, hostname, requestInfo.applicationId);
-  const response = await request.post(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
+  const coreTemplate = createCoreTemplate(
+    notificationTemplate,
+    hostname,
+    requestInfo.applicationId
+  );
+  const response = await request
+    .post(`${requestInfo.url}${END_POINTS.NOTIFICATION_TEMPLATES}`)
     .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
     .send(coreTemplate);
 
@@ -132,7 +162,8 @@ export async function getUserInfo(dbInfo, hostname, userId) {
   if (!Array.isArray(userInfos) || userInfos.length === 0) {
     throw Error(`NotificationClient.getUserInfo: User id ${userId} not found`);
   }
-  //user info query can bring back multiple results we want the one that has the userId
+  // user info query can bring back multiple results
+  // we want the one that has the userId
   return userInfos.find(user => user.schoolId === userId);
 }
 
