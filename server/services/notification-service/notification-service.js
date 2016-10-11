@@ -508,8 +508,82 @@ export async function createAndSendReviewCompleteNotification(dbInfo, hostname, 
   return await sendNotification(dbInfo, hostname, notification);
 }
 
+export async function sendNewProjectNotification(
+  dbInfo,
+  hostname,
+  disclosureId,
+  project,
+  person
+) {
+  logArguments(
+    'sendNewProjectNotification',
+    {hostname, disclosureId, project, person}
+  );
+
+  let templateId;
+  const knex = getKnex(dbInfo);
+  const flagOn = await flagIsOn(knex, 'RESCOI-981');
+  if (flagOn) {
+    if (disclosureId) {
+      templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
+    } else {
+      templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
+    }
+  } else {
+    templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
+  }
+
+  const template = await getTemplate(dbInfo, templateId);
+  if (!template) {
+    return;
+  }
+
+  try {
+    const projectInfo = await getProject(dbInfo, hostname, project, person);
+    let disclosure;
+    if (disclosureId) {
+      disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
+    }
+    const variables = await getVariables(
+      dbInfo,
+      hostname,
+      disclosure,
+      undefined,
+      projectInfo
+    );
+    if (!disclosureId) {
+      const reporterInfo = await getUserInfo(dbInfo, hostname, person.personId);
+      if (reporterInfo) {
+        VariableService.setReporterDetails(
+          variables,
+          reporterInfo.firstName,
+          reporterInfo.lastName
+        );
+      }
+    }
+
+    const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
+    const notification = createCoreNotification(
+      template.coreTemplateId,
+      variables,
+      projectInfo.person.info.id,
+      recipients
+    );
+    return await sendNotification(dbInfo, hostname, notification);
+  } catch (err) {
+    Log.error(err);
+  }
+}
+
 const debounced = {};
-export async function createAndSendNewProjectNotification(dbInfo, hostname, userInfo, disclosureId, project, person) {
+export function createAndSendNewProjectNotification(
+  dbInfo,
+  hostname,
+  userInfo,
+  disclosureId,
+  project,
+  person
+) {
   logArguments(
     'createAndSendNewProjectNotification',
     {hostname, userInfo, disclosureId, project, person}
@@ -519,48 +593,14 @@ export async function createAndSendNewProjectNotification(dbInfo, hostname, user
     clearTimeout(debounced[`${person.sourceIdentifier}:${person.personId}`]);
   }
 
-  const timeoutId = setTimeout(async () => {
-    let templateId;
-    const knex = getKnex(dbInfo);
-    if (await flagIsOn(knex, 'RESCOI-981')) {
-      if (disclosureId) {
-        templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
-      } else {
-        templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
-      }
-    } else {
-      templateId = NOTIFICATION_TEMPLATES.NEW_PROJECT.ID;
-    }
-
-    const template = await getTemplate(dbInfo, templateId);
-    if (!template) {
-      return;
-    }
-
-    try {
-      const projectInfo = await getProject(dbInfo, hostname, project, person);
-      let disclosure;
-      if (disclosureId) {
-        disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
-      }
-      const variables = await getVariables(dbInfo, hostname, disclosure, undefined, projectInfo);
-      if (!disclosureId) {
-        const reporterInfo = await getUserInfo(dbInfo, hostname, person.personId);
-        if (reporterInfo) {
-          VariableService.setReporterDetails(
-            variables,
-            reporterInfo.firstName,
-            reporterInfo.lastName
-          );
-        }
-      }
-
-      const recipients = getRecipients(dbInfo, projectInfo.person.info.email);
-      const notification = createCoreNotification(template.coreTemplateId, variables, projectInfo.person.info.id, recipients);
-      return await sendNotification(dbInfo, hostname, notification);
-    } catch (err) {
-      Log.error(err);
-    }
+  const timeoutId = setTimeout(() => {
+    sendNewProjectNotification(
+      dbInfo,
+      hostname,
+      disclosureId,
+      project,
+      person
+    );
   }, 20000);
   debounced[`${person.sourceIdentifier}:${person.personId}`] = timeoutId;
 }

@@ -21,7 +21,11 @@ export async function getFeatureFlags(knex) {
 }
 
 export async function setFeatureFlagState(knex, key, active) {
-  await knex('feature_flag')
+  const rowsUpdated = await knex('feature_flag')
     .update({active})
     .where({key});
+
+  if (rowsUpdated === 0) {
+    await knex('feature_flag').insert({key, active});
+  }
 }
