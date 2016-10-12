@@ -21,7 +21,10 @@
 
  */
 
-import { getAdmins, getUserInfosByQuery } from '../auth-service/mock-auth-client';
+import {
+  getAdmins,
+  getUserInfosByQuery
+} from '../auth-service/mock-auth-client';
 
 export function createDisplayName(hostname, description) {
   return `COI-${hostname}-${description}`;
@@ -32,7 +35,7 @@ export function getTemplates(dbInfo, hostname) {
     {
       id: '1',
       applicationId: '1',
-      displayName: 'COI-test.com-Notify COI admin when a new disclosure is submitted by a reporter.',
+      displayName: 'COI-test.com-Notify COI admin when a new disclosure is submitted by a reporter.', // eslint-disable-line max-len
       subject: 'submitted',
       defaults: {
         email: true,
@@ -47,7 +50,7 @@ export function getTemplates(dbInfo, hostname) {
     {
       id: '2',
       applicationId: '1',
-      displayName: 'COI-test.com-Notify COI admin when an additional reviewer has completed their review',
+      displayName: 'COI-test.com-Notify COI admin when an additional reviewer has completed their review', // eslint-disable-line max-len
       subject: 'completed their review',
       defaults: {
         email: true,
@@ -67,11 +70,19 @@ export async function getUserInfo(dbInfo, hostname, userId) {
   return userInfos.find(user => user.username === userId);
 }
 
-export async function updateTemplateData(dbInfo, hostname, notificationTemplate) {
+export async function updateTemplateData(
+  dbInfo,
+  hostname,
+  notificationTemplate
+) {
   // no-op
 }
 
-export function createNewTemplate(dbInfo, hostname, notificationTemplate) {
+export function createNewTemplate(
+  dbInfo,
+  hostname,
+  notificationTemplate
+) {
   return Math.ceil(Math.random() * 50);
 }
 

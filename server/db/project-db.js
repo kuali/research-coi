@@ -306,7 +306,7 @@ async function sendNotification(
     }
 
     if (hasNotSubmitted || entitiesNeedDeclaring) {
-      await createAndSendNewProjectNotification(
+      createAndSendNewProjectNotification(
         dbInfo,
         hostname,
         userInfo,

@@ -21,19 +21,23 @@ import * as NotificationService from '../../../../server/services/notification-s
 import { DISCLOSURE_STATUS, DISCLOSURE_TYPE, DATE_TYPE } from '../../../../coi-constants';
 import { formatDate } from '../../../../server/date-utils';
 import getKnex from '../../../../server/db/connection-manager';
+import {setFeatureFlagState} from '../../../../server/db/features-db';
 
 const knex = getKnex({});
 
 const populatedTemplates = [
-  { template_id: 1,
+  {
+    template_id: 1,
     description: 'Notify COI admin when a new disclosure is submitted by a reporter.',
     type: 'Admin Notifications',
     active: 1,
     subject: 'submitted',
     body: 'submitted',
     index: 0,
-    editing: false },
-  { template_id: 2,
+    editing: false
+  },
+  {
+    template_id: 2,
     description: 'Notify COI admin when an additional reviewer has completed their review',
     type: 'Admin Notifications',
     active: 1,
@@ -41,6 +45,17 @@ const populatedTemplates = [
     subject: 'completed their review',
     body: 'completed their review',
     index: 1,
+    editing: false
+  },
+  {
+    template_id: 12,
+    description: 'Notify reporter when a new project’s creation requires an annual disclosure.',
+    type: 'Reporter Notifications',
+    active: 1,
+    core_template_id: '9876',
+    subject: 'need a disclosure',
+    body: 'need a disclosure',
+    index: 3,
     editing: false
   }
 ];
@@ -64,10 +79,20 @@ const dbTemplates = [
     description: 'Notify reporter when a new project’s creation requires an annual disclosure update.',
     type: 'Reporter Notifications',
     active: 1
+  },
+  {
+    templateId: 12,
+    description: 'Notify reporter when a new project’s creation requires an annual disclosure.',
+    type: 'Reporter Notifications',
+    active: 1
   }
 ];
 
-describe('NotificationService', () => {
+describe('NotificationService', async () => {
+  before(async () => {
+    await setFeatureFlagState(knex, 'RESCOI-981', true);
+  });
+
   describe('getDefaults', () => {
     let populatedTemplate;
     before('should populate', () => {
@@ -895,10 +920,44 @@ describe('NotificationService', () => {
     });
   });
 
-  describe.skip('createAndSendNewProjectNotification', () => {
-    let results;
+  describe('sendNewProjectNotification', async () => {
     let disclosureId;
     const now = new Date();
+
+    const person = {
+      sourceSystem: 'KC-PD',
+      sourceIdentifier: '1239',
+      personId: '1234',
+      sourcePersonType: 'EMPLOYEE',
+      roleCode: 'PI'
+    };
+    
+    const project = {
+      title: 'TEST',
+      typeCode: 1,
+      sourceSystem: 'KC-PD',
+      sourceIdentifier: '1239',
+      sourceStatus: '1',
+      persons: [
+        {
+          sourceSystem: 'KC-PD',
+          sourceIdentifier: '1239',
+          personId: 'PI',
+          sourcePersonType: 'EMPLOYEE',
+          roleCode: 'PI'
+        }
+      ],
+      sponsors: [
+        {
+          sourceSystem: 'KC-PD',
+          sourceIdentifier: '1239',
+          sponsorCode: '000340',
+          sponsorName: 'NIH'
+        }
+      ],
+      startDate: '2016-07-01',
+      endDate: '2018-06-30'
+    };
 
     before(async () => {
       await knex('notification_template')
@@ -908,70 +967,40 @@ describe('NotificationService', () => {
         })
         .where({template_id: 3});
 
-      const dislcosureIds = await knex('disclosure').insert({
-        type_cd: DISCLOSURE_TYPE.ANNUAL,
-        status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
-        user_id: '1234',
-        start_date: now,
-        expired_date: now,
-        submitted_date: now,
-        config_id: 1
-      }, 'id');
+      await knex('notification_template')
+        .update({
+          core_template_id: '9876',
+          active: 1
+        })
+        .where({template_id: 12});
+
+      const dislcosureIds = await knex('disclosure')
+        .insert({
+          type_cd: DISCLOSURE_TYPE.ANNUAL,
+          status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
+          user_id: '1234',
+          start_date: now,
+          expired_date: now,
+          submitted_date: now,
+          config_id: 1
+        }, 'id');
 
       disclosureId = dislcosureIds[0];
-
-      const person = {
-        sourceSystem: 'KC-PD',
-        sourceIdentifier: '1239',
-        personId: '1234',
-        sourcePersonType: 'EMPLOYEE',
-        roleCode: 'PI'
-      };
-      
-      const project = {
-        title: 'TEST',
-        typeCode: 1,
-        sourceSystem: 'KC-PD',
-        sourceIdentifier: '1239',
-        sourceStatus: '1',
-        persons: [
-          {
-            sourceSystem: 'KC-PD',
-            sourceIdentifier: '1239',
-            personId: 'PI',
-            sourcePersonType: 'EMPLOYEE',
-            roleCode: 'PI'
-          }
-        ],
-        sponsors: [
-          {
-            sourceSystem: 'KC-PD',
-            sourceIdentifier: '1239',
-            sponsorCode: '000340',
-            sponsorName: 'NIH'
-          }
-        ],
-        startDate: '2016-07-01',
-        endDate: '2018-06-30'
-      };
-
-      results = await NotificationService.createAndSendNewProjectNotification({}, 'test.com', {id: '5678'}, disclosureId, project, person );
     });
 
-    it('should pull the correct core template id from the db', () => {
+    it('should create the notification', async () => {
+      const results = await NotificationService.sendNewProjectNotification(
+        {},
+        'test.com',
+        disclosureId,
+        project,
+        person
+      );
+
       assert.equal('1234', results.templateId);
-    });
-
-    it('should get the creator id from the request', () => {
       assert.equal('1509442', results.creatorId);
-    });
-
-    it('should get the correct recipients', () => {
       assert.equal(1, results.addresses.length);
       assert.equal('1234@email.com', results.addresses[0]);
-    });
-
-    it('should populate the variables', () => {
       assert.equal('test.com/coi/admin', results.variables['{{ADMIN_DASHBOARD}}']);
       assert.equal('test.com/coi', results.variables['{{REPORTER_DASHBOARD}}']);
       assert.equal('User', results.variables['{{REPORTER_FIRST_NAME}}']);
@@ -992,7 +1021,43 @@ describe('NotificationService', () => {
       assert.equal('TEST', results.variables['{{PROJECT_TITLE}}']);
       assert.equal('Proposal', results.variables['{{PROJECT_TYPE}}']);
       assert.equal('NIH', results.variables['{{PROJECT_SPONSOR}}']);
-      assert.equal('1239', results.variables['{{PROJECT_NUMBER}}']);
+      assert.equal(project.sourceIdentifier, results.variables['{{PROJECT_NUMBER}}']);
+      assert.equal('User', results.variables['{{PROJECT_PERSON_FIRST_NAME}}']);
+      assert.equal('1234', results.variables['{{PROJECT_PERSON_LAST_NAME}}']);
+    });
+
+    it('should create the notification for no disclosure', async () => {
+      const results = await NotificationService.sendNewProjectNotification(
+        {},
+        'test.com',
+        undefined,
+        project,
+        person
+      );
+
+      assert.equal('9876', results.templateId);
+      assert.equal('1509442', results.creatorId);
+      assert.equal(1, results.addresses.length);
+      assert.equal('1234@email.com', results.addresses[0]);
+      assert.equal('test.com/coi/admin', results.variables['{{ADMIN_DASHBOARD}}']);
+      assert.equal('test.com/coi', results.variables['{{REPORTER_DASHBOARD}}']);
+      assert.equal('User', results.variables['{{REPORTER_FIRST_NAME}}']);
+      assert.equal('1234', results.variables['{{REPORTER_LAST_NAME}}']);
+      assert.equal(undefined, results.variables['{{APPROVER_FIRST_NAME}}']);
+      assert.equal(undefined, results.variables['{{APPROVER_LAST_NAME}}']);
+      assert.equal(formatDate(now), results.variables['{{NOW}}']);
+      assert.equal(undefined, results.variables['{{REVIEW_ASSIGNED}}']);
+      assert.equal(undefined, results.variables['{{REVIEW_COMPLETED}}']);
+      assert.equal(undefined, results.variables['{{ASSIGNER_FIRST_NAME}}']);
+      assert.equal(undefined, results.variables['{{ASSIGNER_LAST_NAME}}']);
+      assert.equal(undefined, results.variables['{{REVIEWER_FIRST_NAME}}']);
+      assert.equal(undefined, results.variables['{{REVIEWER_LAST_NAME}}']);
+      assert.equal('User', results.variables['{{PI_FIRST_NAME}}']);
+      assert.equal('PI', results.variables['{{PI_LAST_NAME}}']);
+      assert.equal('TEST', results.variables['{{PROJECT_TITLE}}']);
+      assert.equal('Proposal', results.variables['{{PROJECT_TYPE}}']);
+      assert.equal('NIH', results.variables['{{PROJECT_SPONSOR}}']);
+      assert.equal(project.sourceIdentifier, results.variables['{{PROJECT_NUMBER}}']);
       assert.equal('User', results.variables['{{PROJECT_PERSON_FIRST_NAME}}']);
       assert.equal('1234', results.variables['{{PROJECT_PERSON_LAST_NAME}}']);
     });
@@ -1008,5 +1073,9 @@ describe('NotificationService', () => {
       await knex('additional_reviewer').del();
       await knex('disclosure').del();
     });
+  });
+
+  after(async () => {
+    await setFeatureFlagState(knex, 'RESCOI-981', false);
   });
 });
