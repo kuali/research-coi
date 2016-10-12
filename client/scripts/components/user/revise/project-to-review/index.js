@@ -52,7 +52,7 @@ export default function ProjectToReview({project, last, configId, className}) {
         <span className={styles.titleSegment}>{project.sourceIdentifier}</span>
         <span className={styles.titleSegment}>-</span>
         <span className={styles.titleSegment}>{project.projectType}</span>
-        <span className={styles.titleSegment}>({project.title})</span>
+        <span className={styles.titleSegment}>({project.name})</span>
       </div>
       <div className={'flexbox row'}>
         <span className={`fill ${styles.headings}`}>

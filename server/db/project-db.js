@@ -71,10 +71,12 @@ export async function getActiveProjectsForUser(knex, userId) {
       'p.type_cd as typeCd',
       'person.role_cd as roleCd',
       'p.source_status as statusCd',
-      'person.new as new'
+      'person.new as new',
+      'type.description as projectType'
     )
     .from('project as p')
     .innerJoin('project_person as person', 'p.id', 'person.project_id')
+    .innerJoin('project_type as type', 'p.type_cd', 'type.type_cd')
     .where({
       'person.person_id': userId,
       'person.active': 1

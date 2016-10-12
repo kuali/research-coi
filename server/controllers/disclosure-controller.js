@@ -666,12 +666,14 @@ export const init = app => {
     '/api/coi/disclosures/:id/pi-review-items',
     allowedRoles('ANY'),
     useKnex,
-    wrapAsync(async ({knex, userInfo, params}, res) =>
+    wrapAsync(async ({knex, userInfo, params, headers, dbInfo}, res) =>
     {
       const result = await PIReviewDB.getPIReviewItems(
         knex,
         userInfo,
-        params.id
+        params.id,
+        headers.authorization,
+        dbInfo
       );
       const fileType = 'disclosure';
       const files = await FileDB.getFilesForReview(
