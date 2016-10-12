@@ -207,8 +207,8 @@ async function getRequiredSponsors(researchCoreUrl, coiHierarchy, authHeader) {
   }
 }
 
-async function getRequirements(dbInfo, authHeader) {
-  const knex = getKnex(dbInfo);
+async function getRequirements(dbInfo, authHeader, trx) {
+  const knex = trx ? trx : getKnex(dbInfo);
   const authInfo = getAuthorizationInfo(dbInfo);
   const requirements = {};
   requirements.types = await getRequiredProjectTypes(knex);
@@ -274,8 +274,8 @@ export function isDeclarationRequired(requirements, declaration) {
   return isTypeRequired && isRoleRequired && isStatusRequired && isSponsorRequired;
 }
 
-export async function filterProjects(dbInfo, projects, authHeader) {
-  const requirements = await getRequirements(dbInfo, authHeader);
+export async function filterProjects(dbInfo, projects, authHeader, trx) {
+  const requirements = await getRequirements(dbInfo, authHeader, trx);
   return projects.filter(project => {
     return isRequired(requirements, project);
   });

@@ -24,6 +24,8 @@ import {
   DISCLOSURE_STATUS
 } from '../../coi-constants';
 import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
+import { getProjects } from '../db/project-db';
+import { filterProjects } from '../services/project-service/project-service';
 import * as DisclosureDB from './disclosure-db';
 import Log from '../log';
 
@@ -718,24 +720,19 @@ async function getEntitiesToReview(knex, disclosureId, userId, reviewItems) {
   return entities;
 }
 
-function getAllProjects(knex, userId) {
-  return knex.distinct(
-      'p.title',
-      'p.id',
-      'p.source_identifier as sourceIdentifier',
-      'type.description as projectType'
-    )
-    .from('project_person as pp')
-    .innerJoin('project as p', 'p.id', 'pp.project_id')
-    .innerJoin('project_type as type', 'p.type_cd', 'type.type_cd')
-    .andWhere({
-      'pp.person_id': userId
-    });
+async function getAllProjects(knex, userId, authHeader, dbInfo) {
+  const projects = await getProjects(knex, userId);
+  return await filterProjects(
+    dbInfo,
+    projects,
+    authHeader,
+    knex
+  );
 }
 
-function getProjects(knex, disclosureId) {
+function getProjectsForDisclosure(knex, disclosureId) {
   return knex.distinct(
-    'p.title',
+    'p.title as name',
     'p.id',
     'p.source_identifier as sourceIdentifier',
     'type.description as projectType'
@@ -848,7 +845,9 @@ async function getDeclarationsToReview(
   knex,
   disclosureId,
   userId,
-  reviewItems
+  reviewItems,
+  authHeader,
+  dbInfo
 ) {
   const declarationIDs = extractTargetIDs(reviewItems);
 
@@ -860,8 +859,8 @@ async function getDeclarationsToReview(
     declarations,
     allEntities
   ] = await Promise.all([
-    getProjects(knex, disclosureId),
-    getAllProjects(knex, userId),
+    getProjectsForDisclosure(knex, disclosureId),
+    getAllProjects(knex, userId, authHeader, dbInfo),
     getEntitesWithTheseDeclarations(knex, disclosureId),
     getDeclarationComments(knex, disclosureId, declarationIDs),
     getDeclarations(knex, disclosureId),
@@ -921,7 +920,13 @@ async function getDeclarationsToReview(
   return projects;
 }
 
-export async function getPIReviewItems(knex, userInfo, disclosureId) {
+export async function getPIReviewItems(
+  knex,
+  userInfo,
+  disclosureId,
+  authHeader,
+  dbInfo
+) {
   const isSubmitter = await isDisclosureUsers(
     knex,
     disclosureId,
@@ -964,7 +969,9 @@ export async function getPIReviewItems(knex, userInfo, disclosureId) {
       knex,
       disclosureId,
       userInfo.schoolId,
-      rows.filter(row => row.targetType === DISCLOSURE_STEP.PROJECTS)
+      rows.filter(row => row.targetType === DISCLOSURE_STEP.PROJECTS),
+      authHeader,
+      dbInfo
     ),
     knex('disclosure')
       .first(
