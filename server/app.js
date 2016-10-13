@@ -85,8 +85,13 @@ function configureProxy(app) {
   }
 }
 
+let app;
 export function run() {
-  const app = express();
+  if (app !== undefined) {
+    return app;
+  }
+
+  app = express();
   app.disable('x-powered-by');
   app.set('view engine', 'pug');
   app.set('views', './views');
