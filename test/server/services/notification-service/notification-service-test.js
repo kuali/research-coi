@@ -89,10 +89,6 @@ const dbTemplates = [
 ];
 
 describe('NotificationService', async () => {
-  before(async () => {
-    await setFeatureFlagState(knex, 'RESCOI-981', true);
-  });
-
   describe('getDefaults', () => {
     let populatedTemplate;
     before('should populate', () => {
@@ -1073,9 +1069,5 @@ describe('NotificationService', async () => {
       await knex('additional_reviewer').del();
       await knex('disclosure').del();
     });
-  });
-
-  after(async () => {
-    await setFeatureFlagState(knex, 'RESCOI-981', false);
   });
 });

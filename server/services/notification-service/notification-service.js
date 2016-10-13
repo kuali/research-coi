@@ -736,16 +736,10 @@ export async function sendNewProjectNotification(
   );
 
   let templateId;
-  const knex = getKnex(dbInfo);
-  const flagOn = await flagIsOn(knex, 'RESCOI-981');
-  if (flagOn) {
-    if (disclosureId) {
-      templateId = TEMPLATES.NEW_PROJECT.ID;
-    } else {
-      templateId = TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
-    }
-  } else {
+  if (disclosureId) {
     templateId = TEMPLATES.NEW_PROJECT.ID;
+  } else {
+    templateId = TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
   }
 
   const template = await getTemplate(dbInfo, templateId);
