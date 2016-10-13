@@ -37,7 +37,6 @@ import { PI_ROLE_CODE } from '../../../coi-constants';
 import * as VariableService from './variables-service';
 import getKnex from '../../db/connection-manager';
 import Log, {logArguments} from '../../log';
-import {flagIsOn} from '../../feature-flags';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
@@ -736,16 +735,10 @@ export async function sendNewProjectNotification(
   );
 
   let templateId;
-  const knex = getKnex(dbInfo);
-  const flagOn = await flagIsOn(knex, 'RESCOI-981');
-  if (flagOn) {
-    if (disclosureId) {
-      templateId = TEMPLATES.NEW_PROJECT.ID;
-    } else {
-      templateId = TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
-    }
-  } else {
+  if (disclosureId) {
     templateId = TEMPLATES.NEW_PROJECT.ID;
+  } else {
+    templateId = TEMPLATES.NEW_PROJECT_WITHOUT_DISCLOSURE.ID;
   }
 
   const template = await getTemplate(dbInfo, templateId);

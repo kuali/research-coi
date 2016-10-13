@@ -273,48 +273,60 @@ async function sendNotification(
     {person, project, dbInfo, hostname, userInfo}
   );
   
+  if (person.notified) {
+    return;
+  }
+
   const disclosure = await getDisclosureForUser(knex, person.personId);
   logVariable({disclosure});
 
-  let entitiesNeedDeclaring = false;
-  if (disclosure) {
-    entitiesNeedDeclaring = await entitiesNeedDeclaration(
-      knex,
-      disclosure.id
+  if (!disclosure) {
+    createAndSendNewProjectNotification(
+      dbInfo,
+      hostname,
+      userInfo,
+      undefined,
+      project,
+      person
     );
+    return;
   }
+
+  if (
+    disclosure.statusCd === DISCLOSURE_STATUS.IN_PROGRESS ||
+    disclosure.statusCd === DISCLOSURE_STATUS.EXPIRED ||
+    disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+  ) {
+    createAndSendNewProjectNotification(
+      dbInfo,
+      hostname,
+      userInfo,
+      disclosure.id,
+      project,
+      person
+    );
+    return;
+  }
+
+  if (project.statusChange === true && onlyStatusChanged(project)) {
+    return;
+  }
+
+  const entitiesNeedDeclaring = await entitiesNeedDeclaration(
+    knex,
+    disclosure.id
+  );
   logVariable({entitiesNeedDeclaring});
 
-  const previouslyNotified = person.notified;
-  if (!previouslyNotified) {
-    const hasNotSubmitted = (
-      !disclosure ||
-      disclosure.statusCd === DISCLOSURE_STATUS.IN_PROGRESS ||
-      disclosure.statusCd === DISCLOSURE_STATUS.EXPIRED ||
-      disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED ||
-      disclosure.statusCd === DISCLOSURE_STATUS.UP_TO_DATE
+  if (entitiesNeedDeclaring) {
+    createAndSendNewProjectNotification(
+      dbInfo,
+      hostname,
+      userInfo,
+      disclosure.id,
+      project,
+      person
     );
-    logVariable({hasNotSubmitted});
-    const hasSubmitted = !hasNotSubmitted;
-
-    if (
-      project.statusChange === true &&
-      onlyStatusChanged(project) &&
-      hasSubmitted
-    ) {
-      return;
-    }
-
-    if (hasNotSubmitted || entitiesNeedDeclaring) {
-      createAndSendNewProjectNotification(
-        dbInfo,
-        hostname,
-        userInfo,
-        disclosure ? disclosure.id : undefined,
-        project,
-        person
-      );
-    }
   }
 }
 
