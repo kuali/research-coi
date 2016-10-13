@@ -37,7 +37,6 @@ import { PI_ROLE_CODE } from '../../../coi-constants';
 import * as VariableService from './variables-service';
 import getKnex from '../../db/connection-manager';
 import Log, {logArguments} from '../../log';
-import {flagIsOn} from '../../feature-flags';
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :

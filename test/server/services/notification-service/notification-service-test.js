@@ -21,7 +21,6 @@ import * as NotificationService from '../../../../server/services/notification-s
 import { DISCLOSURE_STATUS, DISCLOSURE_TYPE, DATE_TYPE } from '../../../../coi-constants';
 import { formatDate } from '../../../../server/date-utils';
 import getKnex from '../../../../server/db/connection-manager';
-import {setFeatureFlagState} from '../../../../server/db/features-db';
 
 const knex = getKnex({});
 
