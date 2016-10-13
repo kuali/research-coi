@@ -129,7 +129,7 @@ export class EntityFormInformationStep extends React.Component {
     }
 
     return (
-      <span className={`${styles.container} ${this.props.className}`}>
+      <span className={`${this.props.className}`}>
         {heading}
         <div style={{color: '#333'}}>
           {questions}

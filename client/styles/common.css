@@ -40,15 +40,21 @@ a {
   color: black;
 }
 
+button:focus {
+  outline-color: #666;
+  outline-offset: -3px;
+  outline-width: 2px;
+}
+
 button {
-  outline: 0;
   cursor: pointer;
 }
 
-select,
-input,
-textarea {
-  outline: 0;
+select:focus,
+input:focus,
+textarea:focus {
+  border-color: #666;
+  outline: none;
 }
 
 span {
@@ -103,6 +109,7 @@ span {
 .fill {
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
+  -ms-box-flex: 1;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
 }

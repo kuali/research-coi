@@ -16,9 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.container {
-}
-
 .select {
   font-size: 16px;
   height: 30px;
@@ -76,6 +73,5 @@
   height: 30px;
   font-size: 16px;
   background: white;
-  outline: 0;
   font-family: Lato;
 }

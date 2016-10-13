@@ -17,7 +17,6 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
 import EditLink from '../../edit-link';
 import DoneLink from '../../done-link';
@@ -106,7 +105,7 @@ export default class DisclosureType extends React.Component {
     }
 
     return (
-      <span className={classNames('fill', styles.container, this.props.className)}>
+      <span className={`fill ${this.props.className}`}>
         {checkbox}
         {jsx}
       </span>

@@ -59,7 +59,7 @@ export class ToggleSet extends React.Component {
     });
 
     return (
-      <div className={`${styles.container} ${this.props.className}`}>
+      <div className={`${this.props.className}`}>
         {toggles}
       </div>
     );

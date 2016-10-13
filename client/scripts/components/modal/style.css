@@ -27,8 +27,12 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: 4px;
-  outline: none;
   padding: 0 25px 25px 25px;
+}
+
+.modal:focus {
+  outline-color: black;
+  outline-width: 2px;
 }
 
 .overlay {
@@ -37,6 +41,7 @@
   left: 0;
   right: 0;
   bottom: 0;
+  background-color: rgb(60, 60, 60);
   background-color: rgba(60, 60, 60, 0.9);
 }
 

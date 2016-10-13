@@ -14,6 +14,8 @@ engines:
         enabled: false
       errors:
         enabled: false
+      universal-selector:
+        enabled: false
 ratings:
   paths:
   - "**.js"

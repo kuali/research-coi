@@ -49,7 +49,6 @@ export class EntityFormNameStep extends React.Component {
     const htmlId = Math.floor(Math.random() * 1000000000);
 
     const classes = classNames(
-      styles.container,
       {[styles.errors]: validating && validationErrors.name},
       className
     );

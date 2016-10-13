@@ -48,7 +48,6 @@ export default class VerticalSlider extends React.Component {
 
   render() {
     const classes = classNames(
-      styles.container,
       {[styles.collapsed]: this.state.collapsed},
       this.props.className
     );

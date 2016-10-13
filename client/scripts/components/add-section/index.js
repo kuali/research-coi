@@ -21,8 +21,10 @@ import React from 'react';
 import classNames from 'classnames';
 
 export default function AddSection (props) {
-  const messageClasses = classNames(styles.messageContainer,
-    {[styles.hideWarning]: !props.message});
+  const messageClasses = classNames(
+    styles.messageContainer,
+    {[styles.hideWarning]: !props.message}
+  );
 
   let level;
   if (props.level) {
@@ -38,7 +40,7 @@ export default function AddSection (props) {
       </div>
       <div className={styles.right}>
         <div id='message' className={messageClasses}>
-          <div className={styles.message}>
+          <div>
             <span>
               {level}
               <span className={styles.text}>{props.message}</span>

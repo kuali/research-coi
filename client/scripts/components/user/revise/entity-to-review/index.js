@@ -213,7 +213,7 @@ export default class EntityToReview extends React.Component {
     }
 
     return (
-      <div className={`flexbox row ${styles.container} ${className}`}>
+      <div className={`flexbox row ${className}`}>
         <span className={styles.statusIcon}>
           {icon}
         </span>

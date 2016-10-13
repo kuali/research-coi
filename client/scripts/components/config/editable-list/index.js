@@ -17,7 +17,6 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
 import CheckmarkIcon from '../../dynamic-icons/checkmark-icon';
 import {RETURN_KEY} from '../../../../../coi-constants';
@@ -137,7 +136,7 @@ export default class EditableList extends React.Component {
     }
 
     return (
-      <div className={classNames(styles.container, this.props.className)}>
+      <div className={this.props.className}>
         <div className={styles.items}>
           {items}
         </div>

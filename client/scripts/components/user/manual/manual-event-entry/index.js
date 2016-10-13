@@ -126,7 +126,7 @@ export class ManualEventEntry extends React.Component {
     }
 
     return (
-      <div className={`${styles.container} ${this.props.className}`}>
+      <div className={`${this.props.className}`}>
         <div className={styles.label} >EVENT TYPE:</div>
         <div>
           <select ref="manualType" onChange={this.typeSelected} className={styles.select} value={this.props.selected}>
