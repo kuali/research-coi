@@ -16,30 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import styles from './style';
 import React from 'react';
-import Control from '../control';
 
-export class TextAreaControl extends Control {
-  isValid(answer) {
-    return answer !== undefined && answer.length > 0;
+export default class Control extends React.Component {
+  constructor(props) {
+    super();
+
+    const validity = this.isValid(props.answer);
+    this.state = {
+      valid: validity
+    };
+
+    this.onChange = this.onChange.bind(this);
   }
 
-  onChange(evt) {
-    this.props.onChange(evt.target.value, this.props.questionId);
+  componentDidMount() {
+    const validity = this.isValid(this.props.answer);
+    this.props.onValidityChange(this.props.questionId, validity);
   }
 
-  render() {
-    return (
-      <div>
-        <textarea
-          id={`qn${this.props.questionId}`}
-          ref="textarea"
-          className={styles.textarea}
-          value={this.props.answer}
-          onChange={this.onChange}
-        />
-      </div>
-    );
+  componentWillReceiveProps(nextProps) {
+    const validity = this.isValid(nextProps.answer);
+    if (validity !== this.state.valid) {
+      this.setState({
+        valid: validity
+      });
+      this.props.onValidityChange(this.props.questionId, validity);
+    }
   }
 }
