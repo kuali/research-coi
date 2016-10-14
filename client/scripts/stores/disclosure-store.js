@@ -167,6 +167,35 @@ export function getYesNoYeses(answers, questions) {
   });
 }
 
+function recordAnswerToMultiple(target, question) {
+  if (!target.answers) {
+    target.answers = [];
+  }
+
+  const existingAnswer = target.answers.find(answer => {
+    return answer.questionId === question.id;
+  });
+
+  if (existingAnswer) {
+    if (question.checked) {
+      if (!existingAnswer.answer.value.includes(question.answer.value)) {
+        existingAnswer.answer.value.push(question.answer.value);
+      }
+    } else {
+      const index = existingAnswer.answer.value.indexOf(question.answer.value);
+      if (index > -1) {
+        existingAnswer.answer.value.splice(index, 1);
+      }
+    }
+  }
+  else {
+    const answers = [];
+    answers.push(question.answer.value);
+    const newAnswer = {questionId: question.id, answer: {value: answers}};
+    target.answers.push(newAnswer);
+  }
+}
+
 class _DisclosureStore {
   constructor() {
     this.bindActions(DisclosureActions);
@@ -391,90 +420,51 @@ class _DisclosureStore {
   }
 
   submitQuestion(question) {
-    if (!this.applicationState.currentDisclosureState.disclosure.answers) {
-      this.applicationState.currentDisclosureState.disclosure.answers = [];
-    }
-    let answer = this.applicationState.currentDisclosureState.disclosure.answers.find(ans => {
-      return ans.questionId === question.id;
-    });
-
-    if (answer) {
-      answer.answer.value = question.answer.value;
-    } else {
-      answer = {questionId: question.id, answer: question.answer};
-      this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
-    }
+    const answer = this.answerQuestion(question);
 
     if (question.advance) {
       this.advanceQuestion();
     }
 
+    let request;
     if (answer.id) {
-      createRequest()
-        .put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers/${answer.questionId}`)
-        .send(answer)
-        .type('application/json')
-        .end(processResponse((err, res) => {
-          if (!err) {
-            answer.id = res.body.id;
-            this.emitChange();
-          }
-        }));
+      request = createRequest().put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers/${answer.questionId}`); // eslint-disable-line max-len
     } else {
-      createRequest()
-        .post(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers`)
-        .send(answer)
-        .type('application/json')
-        .end(processResponse((err, res) => {
-          if (!err) {
-            answer.id = res.body.id;
-            this.emitChange();
-          }
-        }));
+      request = createRequest().post(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers`);
     }
+    request
+      .send(answer)
+      .type('application/json')
+      .end(processResponse((err, res) => {
+        if (!err) {
+          answer.id = res.body.id;
+          this.emitChange();
+        }
+      }));
   }
 
   answerQuestion(question) {
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
-    const existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
-      return answer.questionId === question.id;
-    });
-    if (existingAnswer) {
-      existingAnswer.answer.value = question.answer.value;
+    let answer = this.applicationState.currentDisclosureState.disclosure.answers.find(
+      ans => ans.questionId === question.id
+    );
+
+    if (answer) {
+      answer.answer.value = question.answer.value;
     }
     else {
-      const newAnswer = {questionId: question.id, answer: question.answer};
-      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
+      answer = {questionId: question.id, answer: question.answer};
+      this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
     }
+
+    return answer;
   }
 
   answerMultiple(question) {
-    if (!this.applicationState.currentDisclosureState.disclosure.answers) {
-      this.applicationState.currentDisclosureState.disclosure.answers = [];
-    }
-    const existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
-      return answer.questionId === question.id;
-    });
-    if (existingAnswer) {
-      if (question.checked) {
-        if (!existingAnswer.answer.value.includes(question.answer.value)) {
-          existingAnswer.answer.value.push(question.answer.value);
-        }
-      } else {
-        const index = existingAnswer.answer.value.indexOf(question.answer.value);
-        if (index > -1) {
-          existingAnswer.answer.value.splice(index, 1);
-        }
-      }
-    }
-    else {
-      const answers = [];
-      answers.push(question.answer.value);
-      const newAnswer = {questionId: question.id, answer: {value: answers}};
-      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
-    }
+    const {disclosure} = this.applicationState.currentDisclosureState;
+    recordAnswerToMultiple(disclosure, question);
   }
 
   advanceQuestion() {
@@ -561,30 +551,7 @@ class _DisclosureStore {
 
   answerEntityMultiple(question) {
     const entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
-    if (!entity.answers) {
-      entity.answers = [];
-    }
-    const existingAnswer = entity.answers.find(answer => {
-      return answer.questionId === question.id;
-    });
-    if (existingAnswer) {
-      if (question.checked) {
-        if (!existingAnswer.answer.value.includes(question.answer.value)) {
-          existingAnswer.answer.value.push(question.answer.value);
-        }
-      } else {
-        const index = existingAnswer.answer.value.indexOf(question.answer.value);
-        if (index > -1) {
-          existingAnswer.answer.value.splice(index, 1);
-        }
-      }
-    }
-    else {
-      const answers = [];
-      answers.push(question.answer.value);
-      const newAnswer = {questionId: question.id, answer: {value: answers}};
-      entity.answers.push(newAnswer);
-    }
+    recordAnswerToMultiple(entity, question);
   }
 
   addEntityAttachments([files, entityId]) {
@@ -1358,16 +1325,17 @@ class _DisclosureStore {
       disclosureId: this.applicationState.currentDisclosureState.disclosure.id
     }));
 
-    createRequest().post('/api/coi/files')
+    createRequest()
+      .post('/api/coi/files')
       .send(formData)
       .end(processResponse((err, res) => {
         if (!err) {
-          res.body.forEach(file => {
-            this.files.push(file);
-            this.emitChange();
-          });
+          for (const fileData of res.body) {
+            this.files.push(fileData);
+          }
 
           PIReviewActions.loadDisclosure(this.applicationState.currentDisclosureState.disclosure.id);
+          this.emitChange();
         }
       }));
   }

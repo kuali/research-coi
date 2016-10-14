@@ -18,34 +18,9 @@
 
 import styles from './style';
 import React from 'react';
+import Control from '../control';
 
-export class RadioControl extends React.Component {
-  constructor(props) {
-    super();
-
-    const validity = this.isValid(props.answer);
-    this.state = {
-      valid: validity
-    };
-
-    this.onChange = this.onChange.bind(this);
-  }
-
-  componentDidMount() {
-    const validity = this.isValid(this.props.answer);
-    this.props.onValidityChange(this.props.questionId, validity);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const validity = this.isValid(nextProps.answer);
-    if (validity !== this.state.valid) {
-      this.setState({
-        valid: validity
-      });
-      this.props.onValidityChange(this.props.questionId, validity);
-    }
-  }
-
+export class RadioControl extends Control {
   isValid(answer) {
     return answer !== undefined && answer.length > 0;
   }

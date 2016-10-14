@@ -4,6 +4,8 @@ engines:
     checks:
       Similar code:
         enabled: false
+      Identical code:
+        enabled: false
     config:
       languages:
         - javascript
@@ -22,6 +24,7 @@ ratings:
   - "**.css"
 exclude_paths:
   - db/
+  - loadtest/
   - /node_modules/
   - /client/build/
   - scripts/lib/
