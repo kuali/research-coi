@@ -438,29 +438,21 @@ class _DisclosureStore {
       this.advanceQuestion();
     }
 
+    let request;
     if (answer.id) {
-      createRequest()
-        .put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers/${answer.questionId}`)
-        .send(answer)
-        .type('application/json')
-        .end(processResponse((err, res) => {
-          if (!err) {
-            answer.id = res.body.id;
-            this.emitChange();
-          }
-        }));
+      request = createRequest().put(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers/${answer.questionId}`); // eslint-disable-line max-len
     } else {
-      createRequest()
-        .post(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers`)
-        .send(answer)
-        .type('application/json')
-        .end(processResponse((err, res) => {
-          if (!err) {
-            answer.id = res.body.id;
-            this.emitChange();
-          }
-        }));
+      request = createRequest().post(`/api/coi/disclosures/${this.applicationState.currentDisclosureState.disclosure.id}/question-answers`);
     }
+    request
+      .send(answer)
+      .type('application/json')
+      .end(processResponse((err, res) => {
+        if (!err) {
+          answer.id = res.body.id;
+          this.emitChange();
+        }
+      }));
   }
 
   answerQuestion(question) {
