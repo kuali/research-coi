@@ -1325,16 +1325,17 @@ class _DisclosureStore {
       disclosureId: this.applicationState.currentDisclosureState.disclosure.id
     }));
 
-    createRequest().post('/api/coi/files')
+    createRequest()
+      .post('/api/coi/files')
       .send(formData)
       .end(processResponse((err, res) => {
         if (!err) {
-          res.body.forEach(file => {
-            this.files.push(file);
-            this.emitChange();
-          });
+          for (const fileData of res.body) {
+            this.files.push(fileData);
+          }
 
           PIReviewActions.loadDisclosure(this.applicationState.currentDisclosureState.disclosure.id);
+          this.emitChange();
         }
       }));
   }
