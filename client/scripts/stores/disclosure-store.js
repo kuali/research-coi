@@ -420,19 +420,7 @@ class _DisclosureStore {
   }
 
   submitQuestion(question) {
-    if (!this.applicationState.currentDisclosureState.disclosure.answers) {
-      this.applicationState.currentDisclosureState.disclosure.answers = [];
-    }
-    let answer = this.applicationState.currentDisclosureState.disclosure.answers.find(ans => {
-      return ans.questionId === question.id;
-    });
-
-    if (answer) {
-      answer.answer.value = question.answer.value;
-    } else {
-      answer = {questionId: question.id, answer: question.answer};
-      this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
-    }
+    const answer = this.answerQuestion(question);
 
     if (question.advance) {
       this.advanceQuestion();
@@ -459,16 +447,19 @@ class _DisclosureStore {
     if (!this.applicationState.currentDisclosureState.disclosure.answers) {
       this.applicationState.currentDisclosureState.disclosure.answers = [];
     }
-    const existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
-      return answer.questionId === question.id;
-    });
-    if (existingAnswer) {
-      existingAnswer.answer.value = question.answer.value;
+    let answer = this.applicationState.currentDisclosureState.disclosure.answers.find(
+      ans => ans.questionId === question.id
+    );
+
+    if (answer) {
+      answer.answer.value = question.answer.value;
     }
     else {
-      const newAnswer = {questionId: question.id, answer: question.answer};
-      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
+      answer = {questionId: question.id, answer: question.answer};
+      this.applicationState.currentDisclosureState.disclosure.answers.push(answer);
     }
+
+    return answer;
   }
 
   answerMultiple(question) {
