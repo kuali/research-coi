@@ -344,15 +344,20 @@ class _AdminStore {
     this.applicationState.showReturnToReporterConfirmation = !this.applicationState.showReturnToReporterConfirmation;
   }
 
+  makeAllCommentsNotEditable() {
+    const {selectedDisclosure} = this.applicationState;
+    selectedDisclosure.comments = selectedDisclosure.comments.map(comment => {
+      comment.editable = false;
+      return comment;
+    });
+  }
+
   returnToReporter() {
     createRequest().put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/return`)
       .send(this.applicationState.returnToReporterComment)
       .end(processResponse((err) => {
         if (!err) {
-          this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
-            comment.editable = false;
-            return comment;
-          });
+          this.makeAllCommentsNotEditable();
           this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.RETURNED;
           this.applicationState.selectedDisclosure.returnedDate = new Date();
           this.applicationState.showReturnToReporterConfirmation = !this.applicationState.showReturnToReporterConfirmation;
@@ -366,10 +371,7 @@ class _AdminStore {
       .put(`/api/coi/disclosures/${this.applicationState.selectedDisclosure.id}/reject`)
       .end(processResponse((err) => {
         if (!err) {
-          this.applicationState.selectedDisclosure.comments = this.applicationState.selectedDisclosure.comments.map(comment => {
-            comment.editable = false;
-            return comment;
-          });
+          this.makeAllCommentsNotEditable();
           this.applicationState.selectedDisclosure.statusCd = DISCLOSURE_STATUS.REVISION_REQUIRED;
           this.applicationState.showingRejection = !this.applicationState.showingRejection;
           this.emitChange();
