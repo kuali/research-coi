@@ -167,6 +167,35 @@ export function getYesNoYeses(answers, questions) {
   });
 }
 
+function recordAnswerToMultiple(target, question) {
+  if (!target.answers) {
+    target.answers = [];
+  }
+
+  const existingAnswer = target.answers.find(answer => {
+    return answer.questionId === question.id;
+  });
+
+  if (existingAnswer) {
+    if (question.checked) {
+      if (!existingAnswer.answer.value.includes(question.answer.value)) {
+        existingAnswer.answer.value.push(question.answer.value);
+      }
+    } else {
+      const index = existingAnswer.answer.value.indexOf(question.answer.value);
+      if (index > -1) {
+        existingAnswer.answer.value.splice(index, 1);
+      }
+    }
+  }
+  else {
+    const answers = [];
+    answers.push(question.answer.value);
+    const newAnswer = {questionId: question.id, answer: {value: answers}};
+    target.answers.push(newAnswer);
+  }
+}
+
 class _DisclosureStore {
   constructor() {
     this.bindActions(DisclosureActions);
@@ -451,30 +480,8 @@ class _DisclosureStore {
   }
 
   answerMultiple(question) {
-    if (!this.applicationState.currentDisclosureState.disclosure.answers) {
-      this.applicationState.currentDisclosureState.disclosure.answers = [];
-    }
-    const existingAnswer = this.applicationState.currentDisclosureState.disclosure.answers.find(answer => {
-      return answer.questionId === question.id;
-    });
-    if (existingAnswer) {
-      if (question.checked) {
-        if (!existingAnswer.answer.value.includes(question.answer.value)) {
-          existingAnswer.answer.value.push(question.answer.value);
-        }
-      } else {
-        const index = existingAnswer.answer.value.indexOf(question.answer.value);
-        if (index > -1) {
-          existingAnswer.answer.value.splice(index, 1);
-        }
-      }
-    }
-    else {
-      const answers = [];
-      answers.push(question.answer.value);
-      const newAnswer = {questionId: question.id, answer: {value: answers}};
-      this.applicationState.currentDisclosureState.disclosure.answers.push(newAnswer);
-    }
+    const {disclosure} = this.applicationState.currentDisclosureState;
+    recordAnswerToMultiple(disclosure, question);
   }
 
   advanceQuestion() {
@@ -561,30 +568,7 @@ class _DisclosureStore {
 
   answerEntityMultiple(question) {
     const entity = question.entityId ? this.getEntity(question.entityId) : this.applicationState.entityInProgress;
-    if (!entity.answers) {
-      entity.answers = [];
-    }
-    const existingAnswer = entity.answers.find(answer => {
-      return answer.questionId === question.id;
-    });
-    if (existingAnswer) {
-      if (question.checked) {
-        if (!existingAnswer.answer.value.includes(question.answer.value)) {
-          existingAnswer.answer.value.push(question.answer.value);
-        }
-      } else {
-        const index = existingAnswer.answer.value.indexOf(question.answer.value);
-        if (index > -1) {
-          existingAnswer.answer.value.splice(index, 1);
-        }
-      }
-    }
-    else {
-      const answers = [];
-      answers.push(question.answer.value);
-      const newAnswer = {questionId: question.id, answer: {value: answers}};
-      entity.answers.push(newAnswer);
-    }
+    recordAnswerToMultiple(entity, question);
   }
 
   addEntityAttachments([files, entityId]) {
