@@ -35,16 +35,20 @@ import getKnex from '../../../server/db/connection-manager';
 const knex = getKnex({});
 
 async function updateConfig(autoApprove, addReviewers) {
+  const maxConfigRow = await knex
+    .max('id as id')
+    .from('config');
+
   const configResult = await knex('config')
     .select('config')
-    .where({id: 1});
+    .where({id: maxConfigRow[0].id});
   const config = JSON.parse(configResult[0].config);
 
   config.general.autoApprove = autoApprove;
   config.general.autoAddAdditionalReviewer = addReviewers;
   await knex('config')
     .update({config: JSON.stringify(config)})
-    .where({id: 1});
+    .where({id: maxConfigRow[0].id});
 }
 
 async function addFinancialEntity(id) {

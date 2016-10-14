@@ -17,107 +17,41 @@
  */
 
 import assert from 'assert';
-import {saveConfig} from '../../../server/controllers/config-controller';
-import sinon from 'sinon';
-import * as ConfigDB from '../../../server/db/config-db';
-import Log from '../../../server/log';
+import * as app from '../../../server/app';
+import request from 'supertest';
+import {OK} from '../../../http-status-codes';
+import configJSON from '../../client/config-context';
+const config = configJSON.configState.config;
 
-let req;
-let res;
-let callback;
-let config;
-let archiveCalled;
-
-function stubSetConfig(sandbox) {
-  sandbox.stub(ConfigDB, 'setConfig', (dbInfo, knex, schoolId, newConfig) => {
-    return new Promise(resolve => {
-      config = newConfig;
-      resolve();
-    });
-  });
-}
-
-function stubGetConfig(sandbox) {
-  sandbox.stub(ConfigDB, 'getConfig', () => {
-    return new Promise(resolve => {
-      resolve(config);
-    });
-  });
-}
-
-function stubArchiveConfig(sandbox) {
-  sandbox.stub(ConfigDB, 'archiveConfig', () => {
-    return new Promise(resolve => {
-      archiveCalled = true;
-      resolve();
-    });
-  });
-}
+let previousConfig;
 
 describe('ConfigController', () => {
   describe('saveConfig', () => {
-    let sandbox;
-    before(() => {
-      sandbox = sinon.sandbox.create();
-      sandbox.stub(Log, 'error', () => {});
-      stubSetConfig(sandbox);
-      stubArchiveConfig(sandbox);
-      stubGetConfig(sandbox);
+    before(async function() {
+      const response = await request(app.run())
+        .get('/api/coi/config/')
+        .set('Authorization', 'Bearer admin')
+        .expect(OK);
+
+      previousConfig = response.body;
     });
 
-    beforeEach(() => {
-      req = {
-        userInfo: {
-          coiRole: 'admin'
-        },
-        body: {
-          message: 'hello!'
-        },
-        knex: {
-          transaction(cb) {
-            return new Promise((resolve) => {
-              cb().then(() => {
-                resolve();
-              });
-            });
-          }
-        }
-      };
+    it('saves config', async function() {
+      const response = await request(app.run())
+        .post('/api/coi/config/')
+        .send(config)
+        .set('Authorization', 'Bearer admin')
+        .expect(OK);
 
-      res = {
-        sendStatus(statusCode) {
-          this.status = statusCode;
-          callback();
-        },
-
-        send(body) {
-          this.body = body;
-          callback();
-        }
-      };
-      callback = () => {};
-      config = undefined;
-      archiveCalled = false;
+      assert.equal(config.matrixTypes.length, response.body.matrixTypes.length);
     });
 
-    it('saves config', done => {
-      callback = () => {
-        try {
-          assert.equal(config, req.body);
-          assert.equal(res.body, req.body);
-          assert(archiveCalled);
-          done();
-        }
-        catch (err) {
-          done(err);
-        }
-      };
-
-      saveConfig(req, res);
-    });
-
-    after(() => {
-      sandbox.restore();
+    after(async function() {
+      await request(app.run())
+        .post('/api/coi/config/')
+        .send(previousConfig)
+        .set('Authorization', 'Bearer admin')
+        .expect(OK);
     });
   });
 });
