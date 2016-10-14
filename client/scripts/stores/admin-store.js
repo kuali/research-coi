@@ -121,15 +121,22 @@ class _AdminStore {
       }));
   }
 
+  getDisclosureSummariesQuery() {
+    return {
+      sortColumn: this.applicationState.sort,
+      sortDirection: this.applicationState.sortDirection,
+      filters: encodeURIComponent(JSON.stringify(this.applicationState.filters)),
+      start: this.applicationState.offset
+    };
+  }
+
   refreshDisclosures() {
     this.applicationState.offset = 0;
     this.applicationState.loadingMore = true;
 
-    createRequest().get('/api/coi/disclosure-summaries')
-      .query({sortColumn: this.applicationState.sort})
-      .query({sortDirection: this.applicationState.sortDirection})
-      .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
-      .query({start: this.applicationState.offset})
+    createRequest()
+      .get('/api/coi/disclosure-summaries')
+      .query(this.getDisclosureSummariesQuery())
       .end(processResponse((err, summaries) => {
         if (!err) {
           this.disclosureSummaries = summaries.body;
@@ -467,10 +474,7 @@ class _AdminStore {
 
     createRequest()
       .get('/api/coi/disclosure-summaries')
-      .query({sortColumn: this.applicationState.sort})
-      .query({sortDirection: this.applicationState.sortDirection})
-      .query({filters: encodeURIComponent(JSON.stringify(this.applicationState.filters))})
-      .query({start: this.applicationState.offset})
+      .query(this.getDisclosureSummariesQuery())
       .end(processResponse((err, summaries) => {
         if (!err) {
           this.disclosureSummaries = this.disclosureSummaries.concat(summaries.body);
