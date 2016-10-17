@@ -273,8 +273,10 @@ async function sendNotification(
     {person, project, dbInfo, hostname, userInfo}
   );
   
-  if (person.notified) {
-    return;
+  if (project.statusChange === true && onlyStatusChanged(project)) {
+    if (person.notified) {
+      return;
+    }
   }
 
   const disclosure = await getDisclosureForUser(knex, person.personId);
@@ -294,8 +296,7 @@ async function sendNotification(
 
   if (
     disclosure.statusCd === DISCLOSURE_STATUS.IN_PROGRESS ||
-    disclosure.statusCd === DISCLOSURE_STATUS.EXPIRED ||
-    disclosure.statusCd === DISCLOSURE_STATUS.UPDATE_REQUIRED
+    disclosure.statusCd === DISCLOSURE_STATUS.EXPIRED
   ) {
     createAndSendNewProjectNotification(
       dbInfo,
@@ -305,10 +306,6 @@ async function sendNotification(
       project,
       person
     );
-    return;
-  }
-
-  if (project.statusChange === true && onlyStatusChanged(project)) {
     return;
   }
 
@@ -470,7 +467,7 @@ async function insertProjectPerson(knex, person, project, isRequired, req) {
       person_id: person.personId,
       source_person_type: person.sourcePersonType,
       project_id: project.id,
-      notified: true
+      notified: isRequired
     }, 'id');
   logVariable({id});
 
