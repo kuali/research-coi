@@ -114,7 +114,7 @@ const TEMPLATES = {
   NEW_PROJECT_WITHOUT_DISCLOSURE: {
     ID: 12,
     SUBJECT: 'Action Required: Create COI disclosure due to a new project',
-    BODY: '<p>Hello {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}},</p> <p> You must complete a Conflict of Interest (COI) disclosure immediately because you have been added as {{PROJECT_ROLE}} on <b>{{PROJECT_TYPE}} {{PROJECT_NUMBER}} <i>{{PROJECT_TITLE}}</i>. </b> Login to Kuali Research and creat a COI disclosure at: {{REPORTER_DASHBOARD}}. </p> <p>If you have any questions, please contact your COI Administrator.</p> <p>Thank you, <br> Your COI Admin</p>' //eslint-disable-line max-len
+    BODY: '<p>Hello {{REPORTER_FIRST_NAME}} {{REPORTER_LAST_NAME}},</p> <p> You must complete a Conflict of Interest (COI) disclosure immediately because you have been added as {{PROJECT_ROLE}} on <b>{{PROJECT_TYPE}} {{PROJECT_NUMBER}} <i>{{PROJECT_TITLE}}</i>. </b> Login to Kuali Research and create a COI disclosure at: {{REPORTER_DASHBOARD}}. </p> <p>If you have any questions, please contact your COI Administrator.</p> <p>Thank you, <br> Your COI Admin</p>' //eslint-disable-line max-len
   }
 };
 

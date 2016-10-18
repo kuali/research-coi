@@ -220,6 +220,22 @@ export async function getDisclosureForUser(knex, user_id) {
     });
 }
 
+function projectChangedForPerson(project, person) {
+  logArguments('projectChangedForPerson', {project, person});
+
+  if (Array.isArray(project.peopleWhoChanged)) {
+    if (project.peopleWhoChanged.includes(person.personId)) {
+      return true;
+    }
+  }
+
+  return (
+    project.isNewProject ||
+    project.sponsorsChanged ||
+    project.statusChange
+  );
+}
+
 function onlyStatusChanged(project) {
   if (
     project.isNewProject ||
@@ -273,8 +289,14 @@ async function sendNotification(
     {person, project, dbInfo, hostname, userInfo}
   );
   
+  if (!projectChangedForPerson(project, person)) {
+    Log.info('Not sending notification because project didn\'t change');
+    return;
+  }
+
   if (project.statusChange === true && onlyStatusChanged(project)) {
     if (person.notified) {
+      Log.info('Not sending notification because only status changed and the person was already notified'); // eslint-disable-line max-len
       return;
     }
   }
@@ -324,6 +346,9 @@ async function sendNotification(
       project,
       person
     );
+  }
+  else {
+    Log.info('Not sending notification because no entities need declaring');
   }
 }
 
@@ -755,7 +780,8 @@ async function getPeopleWhoChanged(knex, project) {
     )
     .from('project_person')
     .where({
-      project_id: project.id
+      project_id: project.id,
+      active: true
     });
   logVariable({currentPeople});
 
