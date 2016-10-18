@@ -211,6 +211,29 @@ export async function sendNotification(dbInfo, hostname, notification) {
       receiptIds
     );
     Log.verbose('done recording receipts');
+
+    setTimeout(async () => {
+      checkStatuses(dbInfo, hostname, receiptIds);
+    }, 90000);
+  }
+}
+
+async function checkStatuses(dbInfo, hostname, receiptIds) {
+  for (const receiptId of receiptIds) {
+    const detail = await getNotificationReceiptDetail(
+      dbInfo,
+      hostname,
+      receiptId
+    );
+
+    if (detail.status === 'FAILED') {
+      Log.error(
+        `Notification to ${detail.address} failed. ID: ${detail.id}`
+      );
+    }
+    else if (detail.status === 'PENDING') {
+      Log.error(`Notification to ${detail.address} still pending after 90 seconds. ID: ${detail.id}`); // eslint-disable-line max-len
+    }
   }
 }
 

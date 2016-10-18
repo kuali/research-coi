@@ -78,13 +78,13 @@ module.exports = {
 
 This will create the tables and insert bootstrap data needed for the application to run.
 ```
-node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
+node research-coi/node_modules/knex/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> migrate:latest --env kc_coi
 ```
 
 
 
 >######**Step 6.5: Optionally Apply Demo Data**
-> ```node research-coi/node_modules/knex/lib/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo```
+> ```node research-coi/node_modules/knex/bin/cli.js --cwd=db/migration --knexfile <replace with knexfile.js path> seed:run --env kc_coi demo```
 >
 > This will add some demonstration data to play with.
 
