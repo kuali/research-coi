@@ -28,7 +28,8 @@ const queuedChanges = {
   screeningQuestions: {},
   subQuestions: {},
   deletedQuestions: {},
-  entityQuestions: {}
+  entityQuestions: {},
+  entityNameChanges: {}
 };
 
 function updateComment(reviewItem, text, commentFieldName = 'comments') {
@@ -672,6 +673,40 @@ class _PIReviewStore {
 
   addEntity(entity) {
     this.disclosure.entities.push(entity);
+  }
+
+  setEntityName([entityId, name]) {
+    const entity = this.disclosure.entities.find(e => e.id === entityId);
+
+    if (entity) {
+      entity.name = name;
+
+      if (this.disclosure.declarations) {
+        this.disclosure.declarations.forEach(declaration => {
+          declaration.entities
+            .filter(e => e.id === entityId)
+            .forEach(e => {
+              e.name = name;
+            });
+        });
+      }
+
+      queuedChanges.entityNameChanges[entityId] = name;
+    }
+  }
+
+  sendQueuedEntityNameChanges(entityId) {
+    this.updateCanSubmit();
+
+    const name = queuedChanges.entityNameChanges[entityId];
+
+    createRequest()
+      .put(`/api/coi/entities/${entityId}/name`)
+      .send({name})
+      .type('application/json')
+      .end(processResponse(() => {}));
+
+    delete queuedChanges.entityNameChanges[entityId];
   }
 }
 

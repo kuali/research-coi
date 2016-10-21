@@ -38,5 +38,7 @@ export default alt.generateActions(
   'sendQueuedScreeningQuestionRevisions',
   'sendQueuedSubQuestionRevisions',
   'sendQueuedQuestionDeletions',
-  'sendQueuedEntityQuestionRevisions'
+  'sendQueuedEntityQuestionRevisions',
+  'sendQueuedEntityNameChanges',
+  'setEntityName'
 );

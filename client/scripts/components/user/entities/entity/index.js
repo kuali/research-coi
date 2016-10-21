@@ -34,6 +34,7 @@ export class Entity extends React.Component {
 
     this.toggleStatus = this.toggleStatus.bind(this);
     this.showForm = this.showForm.bind(this);
+    this.nameChanged = this.nameChanged.bind(this);
   }
 
   shouldComponentUpdate() { return true; }
@@ -45,6 +46,13 @@ export class Entity extends React.Component {
   toggleStatus() {
     const active = this.props.entity.active === 1 ? 0 : 1;
     DisclosureActions.setEntityActiveStatus(active, this.props.id);
+  }
+
+  nameChanged() {
+    DisclosureActions.setEntityName(
+      this.props.entity.id,
+      this.refs.entityName.value
+    );
   }
 
   render() {
@@ -103,10 +111,28 @@ export class Entity extends React.Component {
       {[styles.showForm]: this.props.step >= 0}
     );
 
+    let entityName;
+    if (this.props.editing) {
+      entityName = (
+        <input
+          type="text"
+          className={styles.nameTextBox}
+          value={this.props.entity.name}
+          ref="entityName"
+          onChange={this.nameChanged}
+        />
+      );
+    }
+    else {
+      entityName = this.props.entity.name;
+    }
+
     return (
       <div className={classes}>
         <div className={styles.content}>
-          <div className={styles.name}>{this.props.entity.name}</div>
+          <div className={styles.name}>
+            {entityName}
+          </div>
           {warning}
           <div style={{margin: '10px 0 0 20px'}} className={'flexbox row'}>
             <span className={`fill ${styles.dataitem}`}>

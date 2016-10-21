@@ -1428,6 +1428,13 @@ class _DisclosureStore {
     }
     return undefined;
   }
+
+  setEntityName([entityId, name]) {
+    const entity = this.entities.find(e => e.id === entityId);
+    if (entity) {
+      entity.name = name;
+    }
+  }
 }
 
 export const DisclosureStore = alt.createStore(_DisclosureStore, 'DisclosureStore');

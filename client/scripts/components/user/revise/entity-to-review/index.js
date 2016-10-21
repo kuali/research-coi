@@ -52,6 +52,14 @@ export default class EntityToReview extends React.Component {
     this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
     this.addEntityAttachments = this.addEntityAttachments.bind(this);
     this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
+    this.nameChanged = this.nameChanged.bind(this);
+  }
+
+  nameChanged() {
+    PIReviewActions.setEntityName(
+      this.props.entity.id,
+      this.refs.entityName.value
+    );
   }
 
   onRemoveRelationship(relationshipId) {
@@ -103,6 +111,7 @@ export default class EntityToReview extends React.Component {
     if (this.state.revising && this.hasBeenRevised()) {
       newState.revised = true;
       PIReviewActions.sendQueuedEntityQuestionRevisions(this.props.entity.id);
+      PIReviewActions.sendQueuedEntityNameChanges(this.props.entity.id);
     }
 
     if (this.state.responding) {
@@ -222,13 +231,31 @@ export default class EntityToReview extends React.Component {
       );
     }
 
+    let entityName;
+    if (this.state.revising) {
+      entityName = (
+        <input
+          type="text"
+          className={styles.nameTextBox}
+          value={entity.name}
+          ref="entityName"
+          onChange={this.nameChanged}
+        />
+      );
+    }
+    else {
+      entityName = entity.name;
+    }
+
     return (
       <div className={`flexbox row ${className}`}>
         <span className={styles.statusIcon}>
           {icon}
         </span>
         <span style={{marginRight: 25}} className={'fill'}>
-          <div className={styles.entityName}>{entity.name}</div>
+          <div className={styles.entityName}>
+            {entityName}
+          </div>
           <div style={{marginBottom: 10}}>
             <EntityFormInformationStep
               id={entity.id}
