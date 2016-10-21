@@ -67,7 +67,7 @@ describe('Comments', () => {
       await knex('pi_review')
         .where('disclosure_id', disclosureId)
         .delete();
-      await knex('comment')
+      await knex('review_comment')
         .where('id', comment.id)
         .delete();
       comment = undefined;
@@ -93,7 +93,7 @@ describe('Comments', () => {
       await knex('pi_review')
         .where('disclosure_id', disclosureId)
         .delete();
-      await knex('comment')
+      await knex('review_comment')
         .where('id', comment.id)
         .delete();
       comment = undefined;

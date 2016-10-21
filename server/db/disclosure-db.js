@@ -439,7 +439,7 @@ async function retrieveComments(knex, userInfo, disclosureId) {
       'reviewer_visible as reviewerVisible',
       'current'
     )
-    .from('comment')
+    .from('review_comment')
     .where(criteria);
 
   if (userInfo.coiRole === ROLES.REVIEWER) {
@@ -489,7 +489,7 @@ async function flagPIReviewNeeded(knex, disclosureId, section, id) {
 }
 
 async function unflagPIReviewNeeded(knex, disclosureId, section, id) {
-  const result = await knex('comment')
+  const result = await knex('review_comment')
     .count()
     .where({
       disclosure_id: disclosureId,
@@ -530,7 +530,7 @@ export async function getGeneralComment(knex, userInfo, disclosureId) {
 }
 
 export async function addComment(knex, userInfo, comment) {
-  await knex('comment')
+  await knex('review_comment')
     .insert({
       disclosure_id: comment.disclosureId,
       topic_section: comment.topicSection,
@@ -564,7 +564,7 @@ export async function addComment(knex, userInfo, comment) {
 }
 
 export async function updateComment(knex, userInfo, comment) {
-  await knex('comment')
+  await knex('review_comment')
     .update({
       text: comment.text,
       date: new Date(),
@@ -1452,7 +1452,7 @@ async function archiveDisclosure(knex, disclosureId, approverName, disclosure) {
 }
 
 async function deleteComments(knex, disclosureId) {
-  await knex('comment')
+  await knex('review_comment')
     .del()
     .where('disclosure_id', disclosureId);
 }
@@ -1735,7 +1735,7 @@ export async function submit(
 }
 
 async function updateEditableComments(knex, disclosureId) {
-  await knex('comment')
+  await knex('review_comment')
     .update({editable: false})
     .where({disclosure_id: disclosureId});
 }
