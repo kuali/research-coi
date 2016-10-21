@@ -131,6 +131,9 @@ describe('EntityDeclaration', () => {
     instance.refs = {
       responseText: {
         value: 'fdsfds'
+      },
+      declarationComment: {
+        value: entityWithComments.comments
       }
     };
     instance.done();

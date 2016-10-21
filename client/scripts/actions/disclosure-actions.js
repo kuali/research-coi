@@ -80,5 +80,6 @@ export const DisclosureActions = alt.generateActions(
   'deleteEntityAttachment',
   'resetPotentialRelationship',
   'setStateForTest',
-  'setCurrentDisclosureId'
+  'setCurrentDisclosureId',
+  'setEntityName'
 );

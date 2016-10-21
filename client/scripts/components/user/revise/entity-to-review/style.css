@@ -99,3 +99,11 @@
   padding: 6px 8px;
   background-color: #EEEEEE;
 }
+
+.nameTextBox {
+  border-radius: 5px;
+  border: 1px solid #AAA;
+  padding: 5px;
+  font-size: 23px;
+  min-width: 400px;
+}

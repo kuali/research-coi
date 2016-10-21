@@ -24,6 +24,14 @@ import {processResponse, createRequest} from '../http-utils';
 import ConfigActions from '../actions/config-actions';
 import {FILE_TYPE, ROLES} from '../../../coi-constants';
 
+const queuedChanges = {
+  screeningQuestions: {},
+  subQuestions: {},
+  deletedQuestions: {},
+  entityQuestions: {},
+  entityNameChanges: {}
+};
+
 function updateComment(reviewItem, text, commentFieldName = 'comments') {
   if (reviewItem.piResponse) {
     const commentToEdit = reviewItem[commentFieldName].find(
@@ -331,17 +339,35 @@ class _PIReviewStore {
     );
     if (questionToRevise) {
       questionToRevise.answer = {value: answer};
+    }
+
+    queuedChanges.screeningQuestions[questionId] = {
+      disclosureId: this.disclosure.id,
+      answer
+    };
+  }
+
+  sendQueuedScreeningQuestionRevisions(questionId) {
+    const questionToRevise = this.disclosure.questions.find(
+      question => questionId === question.id
+    );
+    if (questionToRevise) {
       questionToRevise.reviewedOn = new Date();
     }
 
     this.updateCanSubmit();
 
-    createRequest()
-      .put(
-        `/api/coi/disclosures/${this.disclosure.id}/pi-revise-by-question-id/${questionId}`
-      )
-      .send({answer})
-      .end(processResponse(() => {}));
+    const toSend = queuedChanges.screeningQuestions[questionId];
+    if (toSend) {
+      createRequest()
+        .put(
+          `/api/coi/disclosures/${toSend.disclosureId}/pi-revise-by-question-id/${questionId}`
+        )
+        .send({answer: toSend.answer})
+        .end(processResponse(() => {}));
+    }
+
+    delete queuedChanges.screeningQuestions[questionId];
   }
 
   reviseEntityQuestion([entityId, questionId, value]) {
@@ -373,18 +399,46 @@ class _PIReviewStore {
         }];
       }
 
-      entityToRevise.reviewedOn = new Date();
       entityToRevise.revised = 1;
+    }
+
+    if (!queuedChanges.entityQuestions[entityId]) {
+      queuedChanges.entityQuestions[entityId] = {
+        questions: []
+      };
+    }
+    const queue = queuedChanges.entityQuestions[entityId];
+
+    queue.questions = queue.questions.filter(
+      question => question.questionId !== questionId
+    );
+    queue.questions.push({
+      questionId,
+      value
+    });
+  }
+
+  sendQueuedEntityQuestionRevisions(entityId) {
+    const entityToRevise = this.disclosure.entities.find(
+      entity => entityId === entity.id
+    );
+    if (entityToRevise) {
+      entityToRevise.reviewedOn = new Date();
     }
 
     this.updateCanSubmit();
 
-    createRequest()
-      .put(
-        `/api/coi/entities/${entityId}/entity-question/${questionId}`
-      )
-      .send({answer: value})
-      .end(processResponse(() => {}));
+    const toSend = queuedChanges.entityQuestions[entityId];
+    if (toSend) {
+      for (const question of toSend.questions) {
+        createRequest()
+          .put(
+            `/api/coi/entities/${entityId}/entity-question/${question.questionId}`
+          )
+          .send({answer: question.value})
+          .end(processResponse(() => {}));
+      }
+    }
   }
 
   addRelationship([entityId, newRelationship]) {
@@ -482,15 +536,29 @@ class _PIReviewStore {
       subQuestionToRevise.answer = {value};
     }
 
+    queuedChanges.subQuestions[subQuestionId] = {
+      disclosureId: this.disclosure.id,
+      value
+    };
+  }
+
+  sendQueuedSubQuestionRevisions(questionIds) {
     this.updateCanSubmit();
 
-    createRequest()
-      .put(`/api/coi/disclosures/${this.disclosure.id}/subquestion-answer/${subQuestionId}`)
-      .send({
-        answer: {value}
-      })
-      .type('application/json')
-      .end(processResponse(() => {}));
+    for (const questionId of questionIds) {
+      const toSend = queuedChanges.subQuestions[questionId];
+      if (toSend) {
+        createRequest()
+          .put(`/api/coi/disclosures/${toSend.disclosureId}/subquestion-answer/${questionId}`)
+          .send({
+            answer: {value: toSend.value}
+          })
+          .type('application/json')
+          .end(processResponse(() => {}));
+      }
+
+      delete queuedChanges.subQuestions[questionId];
+    }
   }
 
   deleteAnswers([questionId, newAnswer]) {
@@ -513,11 +581,24 @@ class _PIReviewStore {
       return;
     }
 
-    createRequest()
-      .del(`/api/coi/disclosures/${this.disclosure.id}/question-answers`)
-      .send({toDelete})
-      .type('application/json')
-      .end(processResponse(() => {}));
+    queuedChanges.deletedQuestions[questionId] = {
+      disclosureId: this.disclosure.id,
+      toDelete
+    };
+  }
+
+  sendQueuedQuestionDeletions(questionId) {
+    const toSend = queuedChanges.deletedQuestions[questionId];
+
+    if (toSend) {
+      createRequest()
+        .del(`/api/coi/disclosures/${toSend.disclosureId}/question-answers`)
+        .send({toDelete: toSend.toDelete})
+        .type('application/json')
+        .end(processResponse(() => {}));
+
+      delete queuedChanges.deletedQuestions[questionId];
+    }
   }
 
   submit() {
@@ -592,6 +673,40 @@ class _PIReviewStore {
 
   addEntity(entity) {
     this.disclosure.entities.push(entity);
+  }
+
+  setEntityName([entityId, name]) {
+    const entity = this.disclosure.entities.find(e => e.id === entityId);
+
+    if (entity) {
+      entity.name = name;
+
+      if (this.disclosure.declarations) {
+        this.disclosure.declarations.forEach(declaration => {
+          declaration.entities
+            .filter(e => e.id === entityId)
+            .forEach(e => {
+              e.name = name;
+            });
+        });
+      }
+
+      queuedChanges.entityNameChanges[entityId] = name;
+    }
+  }
+
+  sendQueuedEntityNameChanges(entityId) {
+    this.updateCanSubmit();
+
+    const name = queuedChanges.entityNameChanges[entityId];
+
+    createRequest()
+      .put(`/api/coi/entities/${entityId}/name`)
+      .send({name})
+      .type('application/json')
+      .end(processResponse(() => {}));
+
+    delete queuedChanges.entityNameChanges[entityId];
   }
 }
 

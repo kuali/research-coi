@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import {isEqual, cloneDeep} from 'lodash';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import {QUESTION_TYPE} from '../../../../../../coi-constants';
@@ -37,7 +38,9 @@ export default class Question extends React.Component {
       responding: false,
       responded: props.respondedTo,
       revised: props.revised,
-      isValid: true
+      isValid: true,
+      originalAnswer: props.answer,
+      originalSubquestions: cloneDeep(props.question.subQuestions)
     };
 
     this.revise = this.revise.bind(this);
@@ -63,13 +66,14 @@ export default class Question extends React.Component {
       this.props.question.id,
       newAnswer
     );
-    this.setState({
-      revised: true
-    });
   }
 
   answer(newAnswer, questionId) {
     const isParentQuestion = this.props.question.id === questionId;
+    if (newAnswer === this.props.answer && isParentQuestion) {
+      return;
+    }
+
     if (isParentQuestion) {
       PIReviewActions.deleteAnswers(questionId, newAnswer);
       this.changeAnswer(newAnswer);
@@ -117,9 +121,11 @@ export default class Question extends React.Component {
   }
 
   controlValidityChanged(questionId, isValid) {
-    this.setState({
-      isValid
-    });
+    if (questionId === this.props.question.id) {
+      this.setState({
+        isValid
+      });
+    }
   }
 
   getControl(question, answer) {
@@ -215,10 +221,30 @@ export default class Question extends React.Component {
       responding: false
     };
 
-    if (this.state.revising) {
+    const answerChanged = !isEqual(this.state.originalAnswer, this.props.answer);
+    const subQuestionsChanged = !isEqual(
+      this.props.question.subQuestions,
+      this.state.originalSubquestions
+    );
+
+    if (this.state.revising && (answerChanged || subQuestionsChanged)) {
       newState.revised = true;
+      PIReviewActions.sendQueuedScreeningQuestionRevisions(
+        this.props.question.id
+      );
+      PIReviewActions.sendQueuedQuestionDeletions(this.props.question.id);
+      
+      if (this.props.question.subQuestions) {
+        const subQuestionIds = this.props.question.subQuestions.map(
+          subQuestion => subQuestion.id
+        );
+        PIReviewActions.sendQueuedSubQuestionRevisions(
+          subQuestionIds
+        );
+      }
     }
-    else if (this.state.responding) {
+
+    if (this.state.responding) {
       const textarea = this.refs.responseText;
       if (textarea.value.length > 0) {
         newState.responded = true;

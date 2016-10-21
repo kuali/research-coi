@@ -26,7 +26,7 @@ import {
 import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
-import { FORBIDDEN, NO_CONTENT } from '../../http-status-codes';
+import { FORBIDDEN, NO_CONTENT, ACCEPTED } from '../../http-status-codes';
 import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
 import {
   createAndSendResubmitNotification
@@ -544,6 +544,30 @@ export const init = app => {
         params.id
       );
       res.send(result);
+    }
+  ));
+
+  /**
+    User can only rename their own entities
+  */
+  app.put(
+    '/api/coi/entities/:entityId/name',
+    allowedRoles('ANY'),
+    useKnex,
+    wrapAsync(async ({knex, params, userInfo, body}, res) => {
+      const isOwner = await isFinancialEntityUsers(
+        knex,
+        params.entityId,
+        userInfo.schoolId
+      );
+
+      if (!isOwner) {
+        res.sendStatus(FORBIDDEN);
+        return;
+      }
+
+      await PIReviewDB.setEntityName(knex, params.entityId, body.name);
+      res.sendStatus(ACCEPTED);
     }
   ));
 };

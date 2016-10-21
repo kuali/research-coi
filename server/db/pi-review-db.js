@@ -1351,3 +1351,9 @@ export async function getPIResponseInfo(knex, disclosureId) {
     .from('pi_review')
     .where('disclosure_id', disclosureId);
 }
+
+export async function setEntityName(knex, entityId, name) {
+  await knex('fin_entity')
+    .update({name})
+    .where({id: entityId});
+}

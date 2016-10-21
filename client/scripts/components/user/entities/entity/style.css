@@ -85,3 +85,12 @@
 :global(.color-blind) .attention {
   color: black;
 }
+
+.nameTextBox {
+  border-radius: 5px;
+  border: 1px solid #AAA;
+  padding: 5px;
+  font-size: 23px;
+  font-weight: bold;
+  min-width: 400px;
+}

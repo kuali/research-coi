@@ -19,6 +19,7 @@
 import styles from './style';
 import React from 'react';
 import classNames from 'classnames';
+import {isEqual, cloneDeep} from 'lodash';
 import {formatDate} from '../../../../format-date';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
@@ -35,8 +36,13 @@ export default class EntityToReview extends React.Component {
       responding: false,
       responded: props.respondedTo,
       revised: props.revised,
-      isValid: true
+      isValid: true,
+      originalEntity: cloneDeep(props.entity)
     };
+
+    delete this.state.originalEntity.revised;
+    delete this.state.originalEntity.reviewedOn;
+    delete this.state.originalEntity.respondedTo;
 
     this.revise = this.revise.bind(this);
     this.respond = this.respond.bind(this);
@@ -46,6 +52,14 @@ export default class EntityToReview extends React.Component {
     this.onRemoveRelationship = this.onRemoveRelationship.bind(this);
     this.addEntityAttachments = this.addEntityAttachments.bind(this);
     this.deleteEntityAttachment = this.deleteEntityAttachment.bind(this);
+    this.nameChanged = this.nameChanged.bind(this);
+  }
+
+  nameChanged() {
+    PIReviewActions.setEntityName(
+      this.props.entity.id,
+      this.refs.entityName.value
+    );
   }
 
   onRemoveRelationship(relationshipId) {
@@ -58,16 +72,10 @@ export default class EntityToReview extends React.Component {
       questionId,
       newValue
     );
-    this.setState({
-      revised: true
-    });
   }
 
   onAddRelationship(newRelationship) {
     PIReviewActions.addRelationship(this.props.entity.id, newRelationship);
-    this.setState({
-      revised: true
-    });
   }
 
   revise() {
@@ -82,6 +90,14 @@ export default class EntityToReview extends React.Component {
     });
   }
 
+  hasBeenRevised() {
+    const clonedEntity = cloneDeep(this.props.entity);
+    delete clonedEntity.revised;
+    delete clonedEntity.reviewedOn;
+    delete clonedEntity.respondedTo;
+    return !isEqual(this.state.originalEntity, clonedEntity);
+  }
+
   done() {
     if (!this.state.isValid) {
       return;
@@ -92,10 +108,13 @@ export default class EntityToReview extends React.Component {
       responding: false
     };
 
-    if (this.state.revising) {
+    if (this.state.revising && this.hasBeenRevised()) {
       newState.revised = true;
+      PIReviewActions.sendQueuedEntityQuestionRevisions(this.props.entity.id);
+      PIReviewActions.sendQueuedEntityNameChanges(this.props.entity.id);
     }
-    else if (this.state.responding) {
+
+    if (this.state.responding) {
       const textarea = this.refs.responseText;
       if (textarea.value.length > 0) {
         newState.responded = true;
@@ -212,13 +231,31 @@ export default class EntityToReview extends React.Component {
       );
     }
 
+    let entityName;
+    if (this.state.revising) {
+      entityName = (
+        <input
+          type="text"
+          className={styles.nameTextBox}
+          value={entity.name}
+          ref="entityName"
+          onChange={this.nameChanged}
+        />
+      );
+    }
+    else {
+      entityName = entity.name;
+    }
+
     return (
       <div className={`flexbox row ${className}`}>
         <span className={styles.statusIcon}>
           {icon}
         </span>
         <span style={{marginRight: 25}} className={'fill'}>
-          <div className={styles.entityName}>{entity.name}</div>
+          <div className={styles.entityName}>
+            {entityName}
+          </div>
           <div style={{marginBottom: 10}}>
             <EntityFormInformationStep
               id={entity.id}
