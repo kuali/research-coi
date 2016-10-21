@@ -866,9 +866,10 @@ async function getStatus(knex, projectPerson, dbInfo, authHeader) {
     projectId
   } = projectPerson;
 
-  const disclosureStatus = {
+  const disclosureInfo = {
     userId,
-    disposition: disposition ? disposition : NO_DISPOSITION_DESCRIPTION
+    disposition: disposition ? disposition : NO_DISPOSITION_DESCRIPTION,
+    annualDisclosureStatus: projectPerson.disclosureStatus
   };
 
   const isRequired = await ProjectService.isProjectRequired(
@@ -879,15 +880,15 @@ async function getStatus(knex, projectPerson, dbInfo, authHeader) {
   logVariable({isRequired});
 
   if (!isRequired) {
-    disclosureStatus.status = DISCLOSURE_NOT_REQUIRED;
-    return disclosureStatus;
+    disclosureInfo.status = DISCLOSURE_NOT_REQUIRED;
+    return disclosureInfo;
   }
 
   const disclosureRecord = await getDisclosureStatusForUser(knex, userId);
   logVariable({disclosureRecord});
   if (!disclosureRecord) {
-    disclosureStatus.status = NOT_YET_DISCLOSED;
-    return disclosureStatus;
+    disclosureInfo.status = NOT_YET_DISCLOSED;
+    return disclosureInfo;
   }
 
   const hasDeclarations = await projectHasDeclarations(
@@ -900,12 +901,11 @@ async function getStatus(knex, projectPerson, dbInfo, authHeader) {
   logVariable({hasEntities});
   const shouldUseDisclosuresStatus = hasDeclarations || !hasEntities;
   if (shouldUseDisclosuresStatus) {
-    disclosureStatus.status = disclosureRecord.status;
+    disclosureInfo.status = disclosureRecord.status;
   } else {
-    disclosureStatus.status = UPDATE_NEEDED;
+    disclosureInfo.status = UPDATE_NEEDED;
   }
-
-  return disclosureStatus;
+  return disclosureInfo;
 }
 
 export async function getProjectInfos(
@@ -931,6 +931,7 @@ export async function getProjectInfos(
       'p.id as id',
       'p.id as projectId',
       'd.id as disclosureId',
+      'ds.description as disclosureStatus',
       'p.source_status as statusCd',
       'p.type_cd as typeCd',
       'pp.role_cd as roleCd',
@@ -939,6 +940,7 @@ export async function getProjectInfos(
     .from('project as p')
     .innerJoin('project_person as pp', 'p.id', 'pp.project_id')
     .leftJoin('disclosure as d', 'd.user_id', 'pp.person_id')
+    .innerJoin('disclosure_status as ds', 'd.status_cd', 'ds.status_cd')
     .leftJoin('disposition_type as dt', 'dt.type_cd', 'pp.disposition_type_cd')
     .where(criteria);
   logVariable({projectInfos});
