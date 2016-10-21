@@ -34,5 +34,9 @@ export default alt.generateActions(
   'deleteEntityAttachment',
   'addEntity',
   'addDisclosureAttachment',
-  'deleteDisclosureAttachment'
+  'deleteDisclosureAttachment',
+  'sendQueuedScreeningQuestionRevisions',
+  'sendQueuedSubQuestionRevisions',
+  'sendQueuedQuestionDeletions',
+  'sendQueuedEntityQuestionRevisions'
 );

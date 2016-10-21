@@ -19,6 +19,7 @@
 import styles from './style';
 import React from 'react';
 import classNames from 'classnames';
+import {isEqual, cloneDeep} from 'lodash';
 import {formatDate} from '../../../../format-date';
 import CheckLink from '../check-link';
 import PIReviewActions from '../../../../actions/pi-review-actions';
@@ -35,8 +36,13 @@ export default class EntityToReview extends React.Component {
       responding: false,
       responded: props.respondedTo,
       revised: props.revised,
-      isValid: true
+      isValid: true,
+      originalEntity: cloneDeep(props.entity)
     };
+
+    delete this.state.originalEntity.revised;
+    delete this.state.originalEntity.reviewedOn;
+    delete this.state.originalEntity.respondedTo;
 
     this.revise = this.revise.bind(this);
     this.respond = this.respond.bind(this);
@@ -58,16 +64,10 @@ export default class EntityToReview extends React.Component {
       questionId,
       newValue
     );
-    this.setState({
-      revised: true
-    });
   }
 
   onAddRelationship(newRelationship) {
     PIReviewActions.addRelationship(this.props.entity.id, newRelationship);
-    this.setState({
-      revised: true
-    });
   }
 
   revise() {
@@ -82,6 +82,14 @@ export default class EntityToReview extends React.Component {
     });
   }
 
+  hasBeenRevised() {
+    const clonedEntity = cloneDeep(this.props.entity);
+    delete clonedEntity.revised;
+    delete clonedEntity.reviewedOn;
+    delete clonedEntity.respondedTo;
+    return !isEqual(this.state.originalEntity, clonedEntity);
+  }
+
   done() {
     if (!this.state.isValid) {
       return;
@@ -92,10 +100,12 @@ export default class EntityToReview extends React.Component {
       responding: false
     };
 
-    if (this.state.revising) {
+    if (this.state.revising && this.hasBeenRevised()) {
       newState.revised = true;
+      PIReviewActions.sendQueuedEntityQuestionRevisions(this.props.entity.id);
     }
-    else if (this.state.responding) {
+
+    if (this.state.responding) {
       const textarea = this.refs.responseText;
       if (textarea.value.length > 0) {
         newState.responded = true;

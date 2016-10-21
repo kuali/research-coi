@@ -69,23 +69,30 @@ export default class EntityDeclaration extends React.Component {
       responding: false
     };
 
-    if (this.state.revising) {
-      newState.revised = true;
-      const radios = document.querySelectorAll(`[name="decType${this.props.entity.id}:${this.props.entity.projectId}"]`);
-      let selectedRadio = {};
-      for (let i = 0; i < radios.length; i++) {
-        if (radios[i].checked) {
-          selectedRadio = radios[i];
-          break;
-        }
+    const radios = document.querySelectorAll(`[name="decType${this.props.entity.id}:${this.props.entity.projectId}"]`);
+    let selectedRadio = {};
+    for (let i = 0; i < radios.length; i++) {
+      if (radios[i].checked) {
+        selectedRadio = radios[i];
+        break;
       }
-      const declarationComment = this.refs.declarationComment ? this.refs.declarationComment : {};
+    }
+    const declarationComment = this.refs.declarationComment ? this.refs.declarationComment : {};
+    if (
+      this.state.revising &&
+      (
+        this.props.entity.relationshipCd != selectedRadio.value ||
+        this.props.entity.comments !== declarationComment.value
+      )
+    ) {
       PIReviewActions.reviseDeclaration(
         this.props.entity.id,
         this.props.entity.projectId,
         selectedRadio.value,
         declarationComment.value
       );
+
+      newState.revised = true;
     }
     else if (this.state.responding) {
       const textarea = this.refs.responseText ? this.refs.responseText : { value: ''};
