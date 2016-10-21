@@ -53,7 +53,7 @@ async function updatePIResponseComment(
   const {schoolId: user_id} = userInfo;
   const commentRow = await knex
     .first('c.id')
-    .from('comment as c')
+    .from('review_comment as c')
     .where({
       disclosure_id,
       topic_section,
@@ -63,7 +63,7 @@ async function updatePIResponseComment(
     });
 
   if (commentRow) {
-    await knex('comment as c')
+    await knex('review_comment as c')
       .update({
         text: comment,
         date: new Date()
@@ -76,7 +76,7 @@ async function updatePIResponseComment(
         current: true
       });
   } else {
-    await knex('comment').insert({
+    await knex('review_comment').insert({
       disclosure_id,
       topic_section,
       topic_id,
@@ -226,7 +226,7 @@ async function getComments(knex, disclosureId, topicIDs, section) {
       'user_role as userRole',
       'current'
     )
-    .from('comment as c')
+    .from('review_comment as c')
     .where({
       disclosure_id: disclosureId,
       topic_section: section,
@@ -1334,7 +1334,7 @@ export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
     .where({disclosure_id});
 
   await updateProjects(knex, schoolId);
-  await knex('comment')
+  await knex('review_comment')
     .update({
       current: false
     })

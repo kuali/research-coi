@@ -122,7 +122,7 @@ export function createComment(disclosureId, user) {
 }
 
 export async function insertComment(knex, disclosure_id, user, text) {
-  const id = await knex('comment').insert({
+  const id = await knex('review_comment').insert({
     disclosure_id,
     text: text || 'I like this.',
     topic_section: DISCLOSURE_STEP.QUESTIONNAIRE,
@@ -138,7 +138,7 @@ export async function insertComment(knex, disclosure_id, user, text) {
 }
 
 export async function getComment(knex, id) {
-  const comments = await knex('comment')
+  const comments = await knex('review_comment')
     .select(
       'id',
       'disclosure_id as disclosureId',

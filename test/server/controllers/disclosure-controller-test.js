@@ -399,7 +399,7 @@ describe('DisclosureController',async () => {
     await knex('project_person').del();
     await knex('project_sponsor').del();
     await knex('project').del();
-    await knex('comment').del();
+    await knex('review_comment').del();
     await knex('additional_reviewer').del();
     await knex('disclosure_archive').del();
     await knex('disclosure').del();
