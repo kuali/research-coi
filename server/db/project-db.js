@@ -1003,8 +1003,8 @@ export async function getProjectInfos(
       'p.id as id',
       'p.id as projectId',
       'd.id as disclosureId',
-      'ds.description as disclosureStatus',
       'p.source_status as statusCd',
+      'd.status_cd as disclosureStatusCd',
       'p.type_cd as typeCd',
       'pp.role_cd as roleCd',
       'dt.description as disposition'
@@ -1012,7 +1012,6 @@ export async function getProjectInfos(
     .from('project as p')
     .innerJoin('project_person as pp', 'p.id', 'pp.project_id')
     .leftJoin('disclosure as d', 'd.user_id', 'pp.person_id')
-    .innerJoin('disclosure_status as ds', 'd.status_cd', 'ds.status_cd')
     .leftJoin('disposition_type as dt', 'dt.type_cd', 'pp.disposition_type_cd')
     .where(criteria);
   logVariable({projectInfos});
@@ -1027,6 +1026,19 @@ export async function getProjectInfos(
   const sponsors = await getSponsorsForProjects(knex, uniqueProjectIds);
   logVariable({sponsors});
   projectInfos = associateSponsorsWithProject(sponsors, projectInfos);
+
+  for (const projectInfo of projectInfos) {
+    if (!projectInfo.disclosureStatusCd) {
+      projectInfo.disclosureStatus = NOT_YET_DISCLOSED;
+    }
+    else {
+      const disclosureStatus = await knex
+        .select('description as status')
+        .from('disclosure_status')
+        .where({status_cd: projectInfo.disclosureStatusCd});
+      projectInfo.disclosureStatus = disclosureStatus[0].status;
+    }
+  }
 
   return projectInfos;
 }

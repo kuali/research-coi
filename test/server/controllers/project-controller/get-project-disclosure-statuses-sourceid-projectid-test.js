@@ -142,6 +142,53 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     });
   });
 
+  describe('get disclosure status', () => {
+    let status;
+    before(async () => {
+      const projectId = await insertProject(knex, createProject(10));
+      await insertProjectPerson(knex, createPerson(10, 'PI', true), projectId);
+      const disclosureId = await insertDisclosure(knex, createDisclosure(DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL),10);
+      const finEntityId = await insertEntity(knex, createEntity(disclosureId,RELATIONSHIP_STATUS.IN_PROGRESS, true));
+      await insertDeclaration(knex, createDeclaration(disclosureId, finEntityId, projectId));
+    });
+
+    it('should return OK status', async () => {
+      const response = await request(app.run())
+        .get('/api/coi/project-disclosure-statuses/KC-PD/10')
+        .set('Authorization', 'Bearer admin')
+        .expect(OK);
+
+      status = response.body;
+    });
+
+    it('should return submitted for approval', () => {
+      assert.equal('Submitted for Approval', status[0].status);
+      assert.equal(NO_DISPOSITION_DESCRIPTION, status[0].disposition);
+      assert.equal('Submitted for Approval', status[0].annualDisclosureStatus);
+    });
+  });
+
+  describe('get disclosure status when no disclosure', () => {
+    let status;
+    before(async () => {
+      const projectId = await insertProject(knex, createProject(11));
+      await insertProjectPerson(knex, createPerson(11, 'PI', true), projectId);
+    });
+
+    it('should return OK status', async () => {
+      const response = await request(app.run())
+        .get('/api/coi/project-disclosure-statuses/KC-PD/11')
+        .set('Authorization', 'Bearer admin')
+        .expect(OK);
+
+      status = response.body;
+    });
+
+    it('should return not yet disclosed', () => {
+      assert.equal('Not Yet Disclosed', status[0].annualDisclosureStatus);
+    });
+  });
+
   after(async function() {
     await knex('declaration').del();
     await knex('project_type').update({req_disclosure: false});
