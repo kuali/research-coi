@@ -196,6 +196,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
       assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
   });
+
   describe('test errors and permissions', () => {
     it('should return empty object', async function() {
       const response = await request(app.run())
