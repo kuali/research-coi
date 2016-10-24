@@ -23,6 +23,7 @@ import {AdminActions} from '../../../../actions/admin-actions';
 import {formatDateTime} from '../../../../format-date';
 import classNames from 'classnames';
 import {DATE_TYPE} from '../../../../../../coi-constants';
+import {flagIsOn} from '../../../../feature-flags';
 
 export default class AdditionalReviewer extends React.Component {
   constructor() {
@@ -49,11 +50,19 @@ export default class AdditionalReviewer extends React.Component {
 
     const datesJsx = sortedDates.map((date, index) => {
       let message;
-      if (date.type === DATE_TYPE.COMPLETED) {
-        message = 'Review Completed on';
-      }
-      else {
-        message = 'Reviewer Assigned on';
+      switch (date.type) {
+        case DATE_TYPE.COMPLETED:
+          message = 'Review Completed on';
+          break;
+        case DATE_TYPE.ASSIGNED:
+          message = 'Reviewer Assigned on';
+          break;
+        case DATE_TYPE.UNASSIGNED:
+          message = 'Reviewer Unassigned on';
+          break;
+        default:
+          message = 'Unknown event on ';
+          break;
       }
 
       return (
@@ -65,30 +74,57 @@ export default class AdditionalReviewer extends React.Component {
 
     const completedReview = last(sortedDates).type === DATE_TYPE.COMPLETED;
     let removeButton;
-    if (!completedReview && !props.readOnly) {
-      removeButton = (
-        <button
-          id="remove_button"
-          className={styles.button}
-          onClick={this.removeAdditionalReviewer}
-        >
-          <i className={'fa fa-times'} style={{marginRight: 5}} />
-          Remove Reviewer
-        </button>
-      );
-    }
-
     let reassignButton;
-    if (completedReview && !props.readOnly) {
-      reassignButton = (
-        <button
-          id="reassign_button"
-          className={styles.button}
-          onClick={this.reassignReviewer}
-        >
-          Reassign
-        </button>
-      );
+    if (flagIsOn('RESCOI-1013')) {
+      if (!props.readOnly) {
+        if (props.active) {
+          removeButton = (
+            <button
+              id="remove_button"
+              className={styles.button}
+              onClick={this.removeAdditionalReviewer}
+            >
+              <i className={'fa fa-times'} style={{marginRight: 5}} />
+              Unassign Reviewer
+            </button>
+          );
+        } else {
+          reassignButton = (
+            <button
+              id="reassign_button"
+              className={styles.button}
+              onClick={this.reassignReviewer}
+            >
+              Reassign
+            </button>
+          );
+        }
+      }
+    } else {
+      if (!completedReview && !props.readOnly) {
+        removeButton = (
+          <button
+            id="remove_button"
+            className={styles.button}
+            onClick={this.removeAdditionalReviewer}
+          >
+            <i className={'fa fa-times'} style={{marginRight: 5}} />
+            Remove Reviewer
+          </button>
+        );
+      }
+
+      if (completedReview && !props.readOnly) {
+        reassignButton = (
+          <button
+            id="reassign_button"
+            className={styles.button}
+            onClick={this.reassignReviewer}
+          >
+            Reassign
+          </button>
+        );
+      }
     }
 
     let check;
@@ -103,8 +139,16 @@ export default class AdditionalReviewer extends React.Component {
       {[styles.check]: completedReview}
     );
 
+    const containerClass = classNames(
+      {
+        [styles.container]: !flagIsOn('RESCOI-1013'),
+        [styles.containerNew]: flagIsOn('RESCOI-1013'),
+        [styles.inactive]: !props.active && flagIsOn('RESCOI-1013')
+      }
+    );
+
     return (
-      <div className={styles.container}>
+      <div className={containerClass}>
         <div className={styles.content}>
           <div className={nameClasses}>
             {check}{props.name}
@@ -131,10 +175,12 @@ AdditionalReviewer.propTypes = {
   dates: React.PropTypes.array.isRequired,
   readOnly: React.PropTypes.bool.isRequired,
   name: React.PropTypes.string.isRequired,
-  email: React.PropTypes.string
+  email: React.PropTypes.string,
+  active: React.PropTypes.bool.isRequired
 };
 
 AdditionalReviewer.defaultProps = {
   dates: [],
-  readOnly: false
+  readOnly: false,
+  active: false
 };

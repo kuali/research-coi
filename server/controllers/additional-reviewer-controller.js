@@ -18,7 +18,7 @@
 
 import {
   createAdditionalReviewer,
-  deleteAdditionalReviewer,
+  unassignAdditionalReviewer,
   updateAdditionalReviewer,
   getReviewerForDisclosureAndUser,
   getDisclosuresForReviewer,
@@ -78,7 +78,7 @@ export const init = app => {
       );
 
       await knex.transaction(async (knexTrx) => {
-        await deleteAdditionalReviewer(knexTrx, params.id);
+        await unassignAdditionalReviewer(knexTrx, params.id);
       });
       res.sendStatus(OK);
     }
@@ -187,11 +187,13 @@ export const init = app => {
         headers.authorization
       );
 
-      const existingReviewerIds = await getReviewerForDisclosureAndUser(
+      const existingReviewerIds = (
+        await getReviewerForDisclosureAndUser(
           knex,
           undefined,
           params.disclosureId
-        ).map(reviewer => reviewer.userId);
+        )
+      ).map(reviewer => reviewer.userId);
 
       const queryTerm = query.term.toLowerCase();
 

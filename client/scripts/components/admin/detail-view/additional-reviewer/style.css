@@ -16,6 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+.containerNew {
+  display: inline-block;
+  min-height: 80px;
+  width: 100%;
+  background-color: white;
+  border-radius: 5px;
+  margin-top: 20px;
+  border: 1px solid #AAA;
+}
+
 .container {
   display: inline-block;
   min-height: 80px;
@@ -33,7 +43,7 @@
 }
 
 .buttons {
-  border-top: 2px solid lightgray;
+  border-top: 1px solid #BBB;
   min-height: 20px;
   padding: 5px 0 10px 25px;
 }
@@ -55,6 +65,10 @@
   color: #0095A0;
   background-color: transparent;
   font-weight: 500;
+}
+
+.button:focus {
+  outline-color: #DDD;
 }
 
 :global(.color-blind) .button {
@@ -80,4 +94,15 @@
 
 :global(.color-blind) .icon {
   background-color: black;
+}
+
+:global(.color-blind) .inactive {
+  background-color: white;
+  color: black;
+}
+
+.inactive {
+  background-color: #EEEEEE;
+  border: 1px solid #D3D3D3;
+  color: #555;
 }

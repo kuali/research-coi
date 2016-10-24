@@ -45,7 +45,8 @@ export const DISCLOSURE_STATUS = {
 
 export const DATE_TYPE = {
   ASSIGNED: 'Assigned',
-  COMPLETED: 'Completed'
+  COMPLETED: 'Completed',
+  UNASSIGNED: 'Unassigned'
 };
 
 export const FILE_TYPE = {
