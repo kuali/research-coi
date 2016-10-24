@@ -42,6 +42,7 @@ describe('AdditionalReviewer', () => {
     const wrapper = shallow(
       <AdditionalReviewer
         readOnly={false}
+        active={true}
         {...getReviewer()}
       />
     );
@@ -50,14 +51,24 @@ describe('AdditionalReviewer', () => {
     assert.equal(wrapper.find('#remove_button').length, 1);
   });
 
-  it('should remove button should not render if readOnly', () => {
-    const wrapper = shallow(
+  it('remove button should not render if readOnly', () => {
+    let wrapper = shallow(
       <AdditionalReviewer
         readOnly={true}
+        active={true}
         {...getReviewer()}
       />
     );
+    assert.equal(wrapper.find('#check_icon').length, 0);
+    assert.equal(wrapper.find('#remove_button').length, 0);
 
+    wrapper = shallow(
+      <AdditionalReviewer
+        readOnly={true}
+        active={false}
+        {...getReviewer()}
+      />
+    );
     assert.equal(wrapper.find('#check_icon').length, 0);
     assert.equal(wrapper.find('#remove_button').length, 0);
   });

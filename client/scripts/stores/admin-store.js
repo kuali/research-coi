@@ -32,6 +32,7 @@ import {
   default as ConfigStore,
   getDispositionsEnabled
 } from './config-store';
+import {flagIsOn} from '../feature-flags';
 
 function defaultStatusFilters() {
   return [2, 4, 5, 6];
@@ -51,8 +52,7 @@ function resetComment(comment) {
 class _AdminStore {
   constructor() {
     this.exportPublicMethods({
-      createAdminAttachmentFormData: this.createAdminAttachmentFormData,
-      populateReviewer: this.populateReviewer
+      createAdminAttachmentFormData: this.createAdminAttachmentFormData
     });
 
     this.bindActions(AdminActions);
@@ -723,6 +723,9 @@ class _AdminStore {
   populateReviewer(disclosureId, reviewer) {
     reviewer.disclosureId = disclosureId;
     reviewer.name = reviewer.value;
+    if (flagIsOn('RESCOI-1013')) {
+      reviewer.active = true;
+    }
     return reviewer;
   }
 
@@ -736,7 +739,12 @@ class _AdminStore {
 
   addAdditionalReviewer(suggestion) {
     createRequest().post('/api/coi/additional-reviewers')
-      .send(this.populateReviewer(this.applicationState.selectedDisclosure.id, suggestion))
+      .send(
+        this.populateReviewer(
+          this.applicationState.selectedDisclosure.id,
+          suggestion
+        )
+      )
       .end(processResponse((err, res) => {
         if (!err) {
           this.addReviewerToState(res.body);
@@ -766,23 +774,43 @@ class _AdminStore {
   }
 
   removeReviewerFromState(id) {
-    const reviewers = get(this, 'applicationState.selectedDisclosure.reviewers');
-    if (!reviewers) {
-      return;
-    }
+    if (flagIsOn('RESCOI-1013')) {
+      const reviewers = get(this, 'applicationState.selectedDisclosure.reviewers');
+      if (!reviewers) {
+        return;
+      }
 
-    remove(reviewers, reviewer => reviewer.id === id);
+      const theReviewer = reviewers.find(reviewer => reviewer.id === id);
+      if (!theReviewer) {
+        return;
+      }
+
+      if (!theReviewer.dates) {
+        theReviewer.dates = [];
+      }
+
+      theReviewer.dates.push({
+        date: new Date(),
+        type: DATE_TYPE.UNASSIGNED
+      });
+      theReviewer.active = false;
+    }
+    else {
+      const reviewers = get(this, 'applicationState.selectedDisclosure.reviewers');
+      if (!reviewers) {
+        return;
+      }
+
+      remove(reviewers, reviewer => reviewer.id === id);
+    }
   }
 
   removeAdditionalReviewer(id) {
     createRequest()
       .del(`/api/coi/additional-reviewers/${id}`)
-      .end(processResponse(err => {
-        if (!err) {
-          this.removeReviewerFromState(id);
-          this.emitChange();
-        }
-      }));
+      .end(processResponse(() => {}));
+
+    this.removeReviewerFromState(id);
   }
 
   completeReview() {

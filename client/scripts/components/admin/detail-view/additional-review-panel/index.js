@@ -24,6 +24,7 @@ import AutoSuggest from '../../../auto-suggest';
 import Suggestion from '../reviewer-suggestion';
 import AdditionalReviewer from '../additional-reviewer';
 import { DISCLOSURE_STATUS } from '../../../../../../coi-constants';
+const {SUBMITTED_FOR_APPROVAL, RESUBMITTED} = DISCLOSURE_STATUS;
 
 import classNames from 'classnames';
 
@@ -39,6 +40,7 @@ export default function AdditionalReviewPanel(props) {
           dates={reviewer.dates}
           name={reviewer.name}
           email={reviewer.email}
+          active={reviewer.active == true}
         />
       );
     });
@@ -59,11 +61,14 @@ export default function AdditionalReviewPanel(props) {
   }
 
   let reviewerSearch;
-  if ([DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL, DISCLOSURE_STATUS.RESUBMITTED].includes(props.statusCd) &&
+  if (
+    [SUBMITTED_FOR_APPROVAL, RESUBMITTED].includes(props.statusCd) &&
     props.displayAdditionalReviewers) {
     reviewerSearch = (
       <div>
-        <label style={{fontSize: '12px', paddingBottom: '5px', color: '#777'}}>SEARCH REVIEWERS</label>
+        <label style={{fontSize: '12px', paddingBottom: '5px', color: '#777'}}>
+          SEARCH REVIEWERS
+        </label>
         <AutoSuggest
           suggestion={Suggestion}
           endpoint={`/api/coi/reviewers/${props.disclosureId}/`}
@@ -92,7 +97,10 @@ export default function AdditionalReviewPanel(props) {
   return (
     <div className={classNames(styles.container, props.className)}>
       <div style={{paddingBottom: 20}}>
-        <span className={styles.close} onClick={AdminActions.hideAdditionalReviewPanel}>
+        <span
+          className={styles.close}
+          onClick={AdminActions.hideAdditionalReviewPanel}
+        >
           <i className="fa fa-times" style={{fontSize: 23}} /> CLOSE
         </span>
         <span className={styles.title}>ADDITIONAL REVIEW</span>
@@ -112,7 +120,9 @@ export default function AdditionalReviewPanel(props) {
         className={`${styles.override} ${styles.fileUploadStyles}`}
       >
         <div>Drag and drop or upload your management plan</div>
-        <div style={{fontSize: 10, marginTop: 2}}>Acceptable Formats: .pdf, .png, .doc, .jpeg</div>
+        <div style={{fontSize: 10, marginTop: 2}}>
+          Acceptable Formats: .pdf, .png, .doc, .jpeg
+        </div>
       </FileUpload>
 
       {additionalReviewers}

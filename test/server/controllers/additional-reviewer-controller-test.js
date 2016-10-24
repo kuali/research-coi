@@ -126,9 +126,9 @@ describe('AdditionalReviewerControllerTest', () => {
 
       const reviewers = await knex('additional_reviewer')
         .select('id')
-        .where({id: reviewerId});
+        .where({id: reviewerId, active: true});
 
-      assert.equal(reviewers.length,0);
+      assert.equal(reviewers.length, 0);
     });
   });
 

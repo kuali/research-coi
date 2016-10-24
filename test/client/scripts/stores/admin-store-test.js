@@ -199,7 +199,7 @@ describe('AdminStore', () => {
 
       reviewers = AdminStore.getState().applicationState.selectedDisclosure.reviewers;
 
-      assert.equal(reviewers.length, 0);
+      assert(!reviewers.some(r => r.active === true));
     });
   });
 
