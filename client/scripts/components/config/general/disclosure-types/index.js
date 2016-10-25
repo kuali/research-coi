@@ -20,15 +20,19 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 import DisclosureType from '../disclosure-type';
+import {DISCLOSURE_TYPE} from '../../../../../../coi-constants';
 
 export default function DisclosureTypes(props) {
   let rows;
   if (props.types && props.types.length > 0) {
+    const annual = props.types.find(t => t.typeCd == DISCLOSURE_TYPE.ANNUAL);
+    const travel = props.types.find(t => t.typeCd == DISCLOSURE_TYPE.TRAVEL);
+
     rows = (
       <div>
         <div className={classNames(styles.optionRow, 'flexbox', 'row')}>
-          <DisclosureType type={props.types[1]} canToggle={true} />
-          <DisclosureType type={props.types[3]} canToggle={true} />
+          <DisclosureType type={annual} canToggle={true} />
+          <DisclosureType type={travel} canToggle={true} />
         </div>
         <div className={styles.optionRow} />
       </div>
