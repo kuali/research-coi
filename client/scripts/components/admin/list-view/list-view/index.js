@@ -31,7 +31,6 @@ import {
 } from '../../../../stores/config-store';
 import AdminMenu from '../../../admin-menu';
 import {AppHeader} from '../../../app-header';
-import {flagIsOn} from '../../../../feature-flags';
 
 function getStatusDescription(configState, code) {
   return getAdminDisclosureStatusString(
@@ -116,15 +115,10 @@ export class ListView extends React.Component {
       {code: 4, label: getStatusDescription(configState, 4)},
       {code: 5, label: getStatusDescription(configState, 5)},
       {code: 6, label: getStatusDescription(configState, 6)},
-      {code: 7, label: getStatusDescription(configState, 7)}
+      {code: 7, label: getStatusDescription(configState, 7)},
+      {code: 8, label: getStatusDescription(configState, 8)}
     ];
-    if (flagIsOn('RESCOI-995')) {
-      possibleStatuses.push({
-        code: 8,
-        label: getStatusDescription(configState, 8)
-      });
-    }
-    
+
     let possibleDispositions = [];
     if (getDispositionsEnabled(configState)) {
       possibleDispositions = configState.config.dispositionTypes;

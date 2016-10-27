@@ -17,7 +17,6 @@
  */
 
 import { DATE_TYPE } from '../../coi-constants';
-import {flagIsOn} from '../feature-flags';
 
 export async function getAdditionalReviewer(knex, id) {
   const reviewer = await knex('additional_reviewer')
@@ -82,18 +81,10 @@ export async function getReviewerForDisclosureAndUser(
   schoolId,
   disclosureId
 ) {
-  let criteria;
-  if (await flagIsOn(knex, 'RESCOI-1013')) {
-    criteria = {
-      disclosure_id: disclosureId,
-      active: true
-    };
-  }
-  else {
-    criteria = {
-      disclosure_id: disclosureId
-    };
-  }
+  const criteria = {
+    disclosure_id: disclosureId,
+    active: true
+  };
 
   if (schoolId) {
     criteria.user_id = schoolId;
@@ -130,36 +121,29 @@ export async function createAdditionalReviewer(knex, reviewer, userInfo) {
 }
 
 export async function unassignAdditionalReviewer(knex, id) {
-  if (await flagIsOn(knex, 'RESCOI-1013')) {
-    const preExistingDates = await knex
-      .first('dates as dates')
-      .from('additional_reviewer')
-      .where({id});
+  const preExistingDates = await knex
+    .first('dates as dates')
+    .from('additional_reviewer')
+    .where({id});
 
-    let dates;
-    if (!preExistingDates || preExistingDates.dates.length === 0) {
-      dates = [];
-    }
-    else {
-      dates = JSON.parse(preExistingDates.dates);
-    }
-    dates.push({
-      type: DATE_TYPE.UNASSIGNED,
-      date: new Date()
-    });
+  let dates;
+  if (!preExistingDates || preExistingDates.dates.length === 0) {
+    dates = [];
+  }
+  else {
+    dates = JSON.parse(preExistingDates.dates);
+  }
+  dates.push({
+    type: DATE_TYPE.UNASSIGNED,
+    date: new Date()
+  });
 
-    return knex('additional_reviewer')
-      .update({
-        active: false,
-        dates: JSON.stringify(dates)
-      })
-      .where({id});
-  }
-  else { // eslint-disable-line no-else-return
-    return knex('additional_reviewer')
-      .del()
-      .where({id});
-  }
+  return knex('additional_reviewer')
+    .update({
+      active: false,
+      dates: JSON.stringify(dates)
+    })
+    .where({id});
 }
 
 export function updateAdditionalReviewer(knex, id, updates) {

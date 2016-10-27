@@ -23,7 +23,6 @@ import {AdminActions} from '../../../../actions/admin-actions';
 import {formatDateTime} from '../../../../format-date';
 import classNames from 'classnames';
 import {DATE_TYPE} from '../../../../../../coi-constants';
-import {flagIsOn} from '../../../../feature-flags';
 
 export default class AdditionalReviewer extends React.Component {
   constructor() {
@@ -75,33 +74,8 @@ export default class AdditionalReviewer extends React.Component {
     const completedReview = last(sortedDates).type === DATE_TYPE.COMPLETED;
     let removeButton;
     let reassignButton;
-    if (flagIsOn('RESCOI-1013')) {
-      if (!props.readOnly) {
-        if (props.active) {
-          removeButton = (
-            <button
-              id="remove_button"
-              className={styles.button}
-              onClick={this.removeAdditionalReviewer}
-            >
-              <i className={'fa fa-times'} style={{marginRight: 5}} />
-              Unassign Reviewer
-            </button>
-          );
-        } else {
-          reassignButton = (
-            <button
-              id="reassign_button"
-              className={styles.button}
-              onClick={this.reassignReviewer}
-            >
-              Reassign
-            </button>
-          );
-        }
-      }
-    } else {
-      if (!completedReview && !props.readOnly) {
+    if (!props.readOnly) {
+      if (props.active) {
         removeButton = (
           <button
             id="remove_button"
@@ -109,12 +83,10 @@ export default class AdditionalReviewer extends React.Component {
             onClick={this.removeAdditionalReviewer}
           >
             <i className={'fa fa-times'} style={{marginRight: 5}} />
-            Remove Reviewer
+            Unassign Reviewer
           </button>
         );
-      }
-
-      if (completedReview && !props.readOnly) {
+      } else {
         reassignButton = (
           <button
             id="reassign_button"
@@ -140,10 +112,9 @@ export default class AdditionalReviewer extends React.Component {
     );
 
     const containerClass = classNames(
+      styles.container,
       {
-        [styles.container]: !flagIsOn('RESCOI-1013'),
-        [styles.containerNew]: flagIsOn('RESCOI-1013'),
-        [styles.inactive]: !props.active && flagIsOn('RESCOI-1013')
+        [styles.inactive]: !props.active
       }
     );
 

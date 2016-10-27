@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-.containerNew {
+.container {
   display: inline-block;
   min-height: 80px;
   width: 100%;
@@ -24,15 +24,6 @@
   border-radius: 5px;
   margin-top: 20px;
   border: 1px solid #AAA;
-}
-
-.container {
-  display: inline-block;
-  min-height: 80px;
-  width: 100%;
-  background-color: #EEEEEE;
-  border-radius: 5px;
-  margin-top: 20px;
 }
 
 .content {

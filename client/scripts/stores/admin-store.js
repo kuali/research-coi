@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {get, remove} from 'lodash';
+import {get} from 'lodash';
 import {AdminActions} from '../actions/admin-actions';
 import {
   NO_DISPOSITION,
@@ -32,7 +32,6 @@ import {
   default as ConfigStore,
   getDispositionsEnabled
 } from './config-store';
-import {flagIsOn} from '../feature-flags';
 
 function defaultStatusFilters() {
   return [2, 4, 5, 6];
@@ -723,9 +722,7 @@ class _AdminStore {
   populateReviewer(disclosureId, reviewer) {
     reviewer.disclosureId = disclosureId;
     reviewer.name = reviewer.value;
-    if (flagIsOn('RESCOI-1013')) {
-      reviewer.active = true;
-    }
+    reviewer.active = true;
     return reviewer;
   }
 
@@ -774,35 +771,25 @@ class _AdminStore {
   }
 
   removeReviewerFromState(id) {
-    if (flagIsOn('RESCOI-1013')) {
-      const reviewers = get(this, 'applicationState.selectedDisclosure.reviewers');
-      if (!reviewers) {
-        return;
-      }
-
-      const theReviewer = reviewers.find(reviewer => reviewer.id === id);
-      if (!theReviewer) {
-        return;
-      }
-
-      if (!theReviewer.dates) {
-        theReviewer.dates = [];
-      }
-
-      theReviewer.dates.push({
-        date: new Date(),
-        type: DATE_TYPE.UNASSIGNED
-      });
-      theReviewer.active = false;
+    const reviewers = get(this, 'applicationState.selectedDisclosure.reviewers');
+    if (!reviewers) {
+      return;
     }
-    else {
-      const reviewers = get(this, 'applicationState.selectedDisclosure.reviewers');
-      if (!reviewers) {
-        return;
-      }
 
-      remove(reviewers, reviewer => reviewer.id === id);
+    const theReviewer = reviewers.find(reviewer => reviewer.id === id);
+    if (!theReviewer) {
+      return;
     }
+
+    if (!theReviewer.dates) {
+      theReviewer.dates = [];
+    }
+
+    theReviewer.dates.push({
+      date: new Date(),
+      type: DATE_TYPE.UNASSIGNED
+    });
+    theReviewer.active = false;
   }
 
   removeAdditionalReviewer(id) {
