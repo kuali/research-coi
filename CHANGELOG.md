@@ -1,3 +1,20 @@
+##coi-1610
+Enhancements:
+* Added new notification to reporter when a new project requires creation of an annual disclosure.  This allows the COI Admin use different wording in ‘new project’ notifications based on whether the researcher has an existing disclosure or needs to create a disclosure for the first time.
+* Reporter can edit the name of a financial entity.  Previously, this was not editable after it was added. 
+* Admin filter on Status now includes new "Returned” status
+* Renamed database table “comment” to “review-comment” 
+
+Issues Fixed:
+* Revise without changing data appearing like a change was made
+* Projects that do not require disclosure being pulled into disclosures needing revision
+* Cannot unassign a reviewer who has been re-assigned
+* Remove reviewer action completely deleting reviewer from past review of the disclosure when really they should just be unassigned
+* New project notifications being sent to reporter with approved disclosure without financial entities, when configuration is set to not require update if reporter has no entities
+* Notification for new project needing update not being sent when status change of project should trigger the email
+* Notification for new project needing update being sent each time project saved
+* Projects not included in the approved disclosure getting listed in approval notification
+
 ##coi-1609
 Enhancements:
 * Reporter can revise other sections in a Sent Back disclosure
