@@ -27,7 +27,11 @@ import { ROLES, FILE_TYPE, LANES } from '../../coi-constants';
 import * as FileDb from '../db/file-db';
 import multer from 'multer';
 import Log from '../log';
-import {FORBIDDEN, ACCEPTED} from '../../http-status-codes';
+import {
+  FORBIDDEN,
+  ACCEPTED,
+  INTERNAL_SERVER_ERROR
+} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import archiver from 'archiver';
@@ -133,6 +137,12 @@ export const init = app => {
         `attachment; filename="${result.name}"`
       );
       const stream = await getFileStream(dbInfo, result.key);
+      if (!stream) {
+        res.sendStatus(INTERNAL_SERVER_ERROR);
+        next(Error(`No file stream for ${params.id}`));
+        return;
+      }
+
       stream.on('error', err => {
         next(err);
       });
@@ -176,6 +186,12 @@ export const init = app => {
       const names = {};
       for (const file of files) {
         const stream = await getFileStream(dbInfo, file.key);
+        if (!stream) {
+          res.sendStatus(INTERNAL_SERVER_ERROR);
+          next(Error(`No file stream for ${file.key}`));
+          return;
+        }
+
         stream.on('error', err => {
           next(err);
         });
