@@ -53,6 +53,136 @@ async function setNoEntityConfig(value) {
   );
 }
 
+async function insertProject(userId = randomInteger(), numberOfSponsors = 0) {
+  const projectInfo = { sponsorIds: [] };
+
+  const project = await knex('project')
+    .insert({
+      type_cd: 1,
+      source_system: 'ss',
+      source_identifier: 'si'
+    }, 'id');
+  projectInfo.projectId = project[0];
+
+  for (let i = 1; i <= numberOfSponsors; i++) {
+    const sponsorRow = await insertSponsorForProject(
+      projectInfo.projectId,
+      `sc${i}`,
+      `sn${i}`
+    );
+    projectInfo.sponsorIds.push(sponsorRow[0]);
+  }
+
+  const personRow = await knex('project_person')
+    .insert({
+      project_id: projectInfo.projectId,
+      person_id: userId,
+      source_person_type: 'spt',
+      role_cd: 'role',
+      active: true,
+      new: true
+    }, 'id');
+  projectInfo.projectPersonId = personRow[0];
+
+  return projectInfo;
+}
+
+async function insertSponsorForProject(projectId, sponsorCode, sponsorName) {
+  return await knex('project_sponsor')
+    .insert({
+      project_id: projectId,
+      source_system: 'ss',
+      source_identifier: 'si',
+      sponsor_cd: sponsorCode,
+      sponsor_name: sponsorName
+    }, 'id');
+}
+
+async function deleteProjectInfo(projectInfo) {
+  await knex('project_sponsor')
+    .del()
+    .whereIn('id', projectInfo.sponsorIds);
+
+  await knex('project_person')
+    .del()
+    .whereIn('id', [projectInfo.projectPersonId]);
+
+  await knex('project')
+    .del()
+    .where('id', projectInfo.projectId);
+}
+
+async function insertDisclosure(
+  userId = randomInteger(),
+  numberOfFinancialEntities = 0,
+  projectId = null,
+) {
+  const disclosureInfo = {};
+  disclosureInfo.configId = await setConfig('{}');
+
+  const disclosureRow = await knex('disclosure')
+    .insert({
+      type_cd: DISCLOSURE_TYPE.ANNUAL,
+      status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
+      user_id: userId,
+      start_date: new Date(),
+      config_id: disclosureInfo.configId
+    }, 'id');
+  disclosureInfo.disclosureId = disclosureRow[0];
+
+  disclosureInfo.entityIds = [];
+
+  for (let i = 1; i <= numberOfFinancialEntities; i++) {
+    const entityRow = await insertFinancialEntity(disclosureInfo.disclosureId);
+    disclosureInfo.entityIds.push(entityRow[0]);
+  }
+
+  if (projectId) {
+    for (const entityId of disclosureInfo.entityIds) {
+      await insertDeclaration(disclosureInfo.disclosureId, entityId, projectId);
+    }
+  }
+
+  return disclosureInfo;
+}
+
+async function insertFinancialEntity(disclosureId) {
+  return await knex('fin_entity')
+    .insert({
+      disclosure_id: disclosureId,
+      status: 'stat'
+    }, 'id');
+}
+
+async function insertDeclaration(disclosureId, entityId, projectId) {
+  const declarationRow = await knex('declaration')
+    .insert({
+      disclosure_id: disclosureId,
+      fin_entity_id: entityId,
+      project_id: projectId
+    }, 'id');
+
+  return declarationRow[0];
+}
+
+async function deleteDisclosureInfo(disclosureInfo) {
+  for (const entityId of disclosureInfo.entityIds) {
+    await knex('declaration')
+      .del()
+      .where({fin_entity_id: entityId});
+
+    await knex('fin_entity')
+      .del()
+      .where({id: entityId});
+  }
+
+  await knex('disclosure')
+    .del()
+    .where({id: disclosureInfo.disclosureId});
+
+  await deleteConfig(disclosureInfo.configId);
+}
+
 describe('Project DB', () => {
   describe('getSponsorsForProjects', () => {
     const sponsorIds = [];
@@ -66,7 +196,7 @@ describe('Project DB', () => {
           source_identifier: 'si'
         }, 'id');
       projectId = projectRow[0];
-      
+
       let sponsorRow = await knex('project_sponsor')
         .insert({
           project_id: projectId,
@@ -129,7 +259,7 @@ describe('Project DB', () => {
           source_identifier: 'si'
         }, 'id');
       projectId = projectRow[0];
-      
+
       const personRow = await knex('project_person')
         .insert({
           project_id: projectId,
@@ -165,6 +295,30 @@ describe('Project DB', () => {
       assert(
         await asyncThrows(ProjectDB.getActiveProjectsForUser, knex, {})
       );
+    });
+  });
+
+  describe('getDeclarationsForUser', () => {
+    context('for a user with two financial entities and one project', () => {
+      const userId = randomInteger();
+      let projectInfo;
+      let disclosureInfo;
+
+      beforeEach(async function() {
+        projectInfo = await insertProject(userId, 2);
+        const projectId = projectInfo.projectId;
+        disclosureInfo = await insertDisclosure(userId, 2, projectId);
+      });
+
+      it('should return only 1 project', async () => {
+        const projects = await ProjectDB.getDeclarationsForUser(knex, userId);
+        assert.equal(projects.length, 1);
+      });
+
+      afterEach(async function() {
+        await deleteDisclosureInfo(disclosureInfo);
+        await deleteProjectInfo(projectInfo);
+      });
     });
   });
 
@@ -225,70 +379,21 @@ describe('Project DB', () => {
   });
 
   describe('getProjects', () => {
-    let project_id;
-    const sponsorIds = [];
     const user_id = randomInteger();
-    let projectPersonId;
+    let projectInfo;
 
     before(async function() {
-      const projectRow = await knex('project')
-        .insert({
-          type_cd: 1,
-          source_system: 'ss',
-          source_identifier: 'si'
-        }, 'id');
-      project_id = projectRow[0];
-      
-      let sponsorRow = await knex('project_sponsor')
-        .insert({
-          project_id,
-          source_system: 'ss',
-          source_identifier: 'si',
-          sponsor_cd: 'sc1',
-          sponsor_name: 'sn1'
-        }, 'id');
-      sponsorIds.push(sponsorRow[0]);
-
-      sponsorRow = await knex('project_sponsor')
-        .insert({
-          project_id,
-          source_system: 'ss',
-          source_identifier: 'si',
-          sponsor_cd: 'sc2',
-          sponsor_name: 'sn2'
-        }, 'id');
-      sponsorIds.push(sponsorRow[0]);
-
-      const personRow = await knex('project_person')
-        .insert({
-          project_id,
-          person_id: user_id,
-          source_person_type: 'spt',
-          role_cd: 'role',
-          active: true,
-          new: true
-        }, 'id');
-      projectPersonId = personRow[0];
+      projectInfo = await insertProject(user_id, 2);
     });
 
     after(async function() {
-      await knex('project_sponsor')
-        .del()
-        .whereIn('id', sponsorIds);
-
-      await knex('project_person')
-        .del()
-        .whereIn('id', [projectPersonId]);
-
-      await knex('project')
-        .del()
-        .where('id', project_id);
+      await deleteProjectInfo(projectInfo);
     });
 
     it('should return the correct projects', async function() {
       const result = await ProjectDB.getProjects(knex, user_id);
       assert.equal(result.length, 1);
-      assert.equal(result[0].id, project_id);
+      assert.equal(result[0].id, projectInfo.projectId);
     });
 
     it('should return no project for an invalid user id', async function() {
@@ -1131,7 +1236,7 @@ describe('Project DB', () => {
           source_identifier: 'si'
         }, 'id');
       project_id = projectRow[0];
-      
+
       let sponsorRow = await knex('project_sponsor')
         .insert({
           project_id,

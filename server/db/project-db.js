@@ -91,7 +91,7 @@ export async function getDeclarationsForUser(knex, userId) {
   }
 
   return await knex
-    .select(
+    .distinct(
       'p.id as id',
       'p.source_identifier as sourceIdentifier',
       'p.title as name',
@@ -104,7 +104,8 @@ export async function getDeclarationsForUser(knex, userId) {
     .where({
       'pp.person_id': userId,
       'pp.active': true
-    });
+    })
+    .select();
 }
 
 export function associateSponsorsWithProject(sponsors, projects) {
@@ -249,7 +250,7 @@ function onlyStatusChanged(project) {
 
 async function updateDisclosureStatus(knex, person, isRequired) {
   logArguments('updateDisclosureStatus', {person, isRequired});
-  
+
   if (isRequired) {
     const disclosure = await getDisclosureForUser(knex, person.personId);
     logVariable({disclosure});
@@ -288,7 +289,7 @@ async function sendNotification(
     'sendNotification',
     {person, project, dbInfo, hostname, userInfo}
   );
-  
+
   if (!projectChangedForPerson(project, person)) {
     Log.info('Not sending notification because project didn\'t change');
     return;
