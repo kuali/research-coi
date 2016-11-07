@@ -219,13 +219,40 @@ async function deleteEntityRelationship(knex, relationshipId) {
     .where('id', relationshipId);
 }
 
+async function updateEntityRelationships(knex, entityId, newRelationships) {
+  const existingRelationships = await knex
+    .select('id')
+    .from('relationship')
+    .where('fin_entity_id', entityId);
+
+  const relationshipsToDelete = existingRelationships.filter(
+    existingRelationship => {
+      const match = newRelationships.some(
+        relationship => relationship.id === existingRelationship.id
+      );
+      return !match;
+    }
+  );
+  
+  for (const relationship of relationshipsToDelete) {
+    deleteEntityRelationship(knex, relationship.id);
+  }
+
+  for (const relationship of newRelationships) {
+    if (isNaN(relationship.id)) {
+      relationship.finEntityId = entityId;
+      await saveEntityRelationship(knex, relationship);
+    }
+  }
+}
+
 export async function saveExistingFinancialEntity(
   dbInfo,
   knex,
   userInfo,
   entityId,
   body,
-  files
+  uploadedFiles
 ) {
   const financialEntity = body;
 
@@ -246,33 +273,17 @@ export async function saveExistingFinancialEntity(
   await resetProjectDispositions(knex, entityRecord.disclosureId);
 
   await knex('fin_entity')
-    .where('id', entityId)
     .update({
       active: financialEntity.active,
       name: financialEntity.name
-    });
+    })
+    .where('id', entityId);
 
-  const dbRelationships = await knex('relationship')
-    .select('*')
-    .where('fin_entity_id', entityId);
-
-  const filteredRelationships = dbRelationships.filter(dbRelationship => {
-    const match = financialEntity.relationships.some(
-      relationship => relationship.id === dbRelationship.id
-    );
-    return !match;
-  });
-  
-  for (const dbRelationship of filteredRelationships) {
-    deleteEntityRelationship(knex, dbRelationship.id);
-  }
-
-  for (const relationship of financialEntity.relationships) {
-    if (isNaN(relationship.id)) {
-      relationship.finEntityId = entityId;
-      await saveEntityRelationship(knex, relationship);
-    }
-  }
+  await updateEntityRelationships(
+    knex,
+    entityId,
+    financialEntity.relationships
+  );
 
   for (const answer of financialEntity.answers) {
     if (answer.id) {
@@ -287,25 +298,26 @@ export async function saveExistingFinancialEntity(
     }
   }
 
-  const results = await knex.select('*')
+  const existingFiles = await knex
+    .select('id', 'key')
     .from('file')
     .where({
       ref_id: entityId,
       file_type: FILE_TYPE.FINANCIAL_ENTITY
     });
 
-  if (results) {
-    for (const result of results) {
-      const match = financialEntity.files.find(file => {
-        return result.id === file.id;
-      });
+  if (existingFiles) {
+    for (const existingFile of existingFiles) {
+      const match = financialEntity.files.find(
+        file => existingFile.id === file.id
+      );
       if (!match) {
-        await deleteEntityFile(knex, dbInfo, result.id, result.key);
+        await deleteEntityFile(knex, dbInfo, existingFile.id, existingFile.key);
       }
     }
   }
 
-  for (const file of files) {
+  for (const file of uploadedFiles) {
     const fileData = await saveEntityFile(knex, file, entityId, userInfo);
     financialEntity.files.push(fileData);
   }
@@ -921,7 +933,8 @@ async function addEntityQuestionAnswers(knex, disclosure) {
   const answers = await knex.select(
       'qa.question_id as questionId',
       'qa.answer as answer',
-      'fea.fin_entity_id as finEntityId'
+      'fea.fin_entity_id as finEntityId',
+      'qa.id as id'
     )
     .from('questionnaire_answer as qa' )
     .innerJoin(
@@ -1255,7 +1268,8 @@ export async function getSummariesForReviewCount(knex, filters) {
 }
 
 export async function getSummariesForUser(knex, userId) {
-  const summaries = await knex.select(
+  const summaries = await knex
+    .select(
       'expired_date',
       'type_cd as type',
       'title',
@@ -1267,9 +1281,10 @@ export async function getSummariesForUser(knex, userId) {
     .from('disclosure as d')
     .where('d.user_id', userId);
 
-  const entityCounts = await knex('fin_entity')
+  const entityCounts = await knex
     .count('disclosure_id as entityCount')
     .select('disclosure_id as disclosureId')
+    .from('fin_entity')
     .whereIn('disclosure_id', summaries.map(s => s.id))
     .andWhere('active', true)
     .groupBy('disclosure_id');
