@@ -44,6 +44,7 @@ export function getUserInfo(dbInfo, hostname, token) {
       resolve({
         id: hashCode(token),
         name: `Admin ${token}`,
+        displayName: `Admin ${token}`,
         username: token,
         email: `${token}@email.com`,
         createdAt: 1259218800,
@@ -62,6 +63,7 @@ export function getUserInfo(dbInfo, hostname, token) {
       resolve({
         id: hashCode(token),
         name: `Reviewer ${token}`,
+        displayName: `Reviewer ${token}`,
         username: token,
         email: `${token}@email.com`,
         createdAt: 1259218800,
@@ -79,6 +81,7 @@ export function getUserInfo(dbInfo, hostname, token) {
       resolve({
         id: hashCode(token),
         name: `User ${token}`,
+        displayName: `User ${token}`,
         username: token,
         email: `${token}@email.com`,
         createdAt: 1259218800,
