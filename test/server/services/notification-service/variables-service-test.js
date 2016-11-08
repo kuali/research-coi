@@ -297,6 +297,7 @@ describe('variable-service', () => {
       type: 'theType',
       person: {
         roleCode: 987,
+        roleDescription: 'The correct role',
         info: {
           firstName: 'firsty',
           lastName: 'lasty'
@@ -324,7 +325,7 @@ describe('variable-service', () => {
       const result = getProjectVariables(testProject);
       assert.equal(result['{{PROJECT_TITLE}}'], testProject.title);
       assert.equal(result['{{PROJECT_TYPE}}'], testProject.type);
-      assert.equal(result['{{PROJECT_ROLE}}'], 987);
+      assert.equal(result['{{PROJECT_ROLE}}'], 'The correct role');
       assert.equal(result['{{PROJECT_SPONSOR}}'], 'Hhh, Jjj, Kkk');
       assert.equal(result['{{PROJECT_NUMBER}}'], 4444);
       assert.equal(result['{{PROJECT_PERSON_FIRST_NAME}}'], 'firsty');
@@ -352,7 +353,7 @@ describe('variable-service', () => {
       );
       assert.equal(result['{{PROJECT_TITLE}}'], testProject.title);
       assert.equal(result['{{PROJECT_TYPE}}'], testProject.type);
-      assert.equal(result['{{PROJECT_ROLE}}'], 987);
+      assert.equal(result['{{PROJECT_ROLE}}'], 'The correct role');
       assert.equal(result['{{PROJECT_SPONSOR}}'], 'Hhh, Jjj, Kkk');
       assert.equal(result['{{PROJECT_NUMBER}}'], 4444);
       assert.equal(result['{{PROJECT_PERSON_FIRST_NAME}}'], 'firsty');

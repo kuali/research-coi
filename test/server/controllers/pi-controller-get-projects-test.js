@@ -181,7 +181,7 @@ async function insertProjectsAndPersons(user) {
 
   await insertProject({
     title: 'test project6',
-    type_cd: 3,
+    type_cd: 1,
     source_system: 'irb',
     source_identifier: 1,
     source_status: '1',
@@ -210,7 +210,7 @@ describe('ProjectControllerTest', async () => {
         .expect(OK);
 
       const projects = response.body;
-      assert.equal(6,projects.length);
+      assert.equal(6, projects.length);
     });
   });
 
