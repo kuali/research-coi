@@ -16,9 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-/*  eslint-disable
- no-console
- */
 import defaults from 'superagent-defaults';
 import cookies from 'cookies-js';
 import {UNAUTHORIZED} from '../../http-status-codes';
@@ -32,12 +29,19 @@ export function processResponse(callback) {
     }
     else {
       try {
-        alert(
-          `An error has occurred
-        ${res.error.message}`
-        );
+        if (window && window.alert) {
+          if (res) {
+            window.alert(
+              `An error has occurred
+            ${res.error.message}`
+            );
+          }
+          else {
+            window.alert('ERROR');
+          }
+        }
       } catch (error) {
-        console.log(error);
+        console.log(error); // eslint-disable-line no-console
       }
     }
   };
