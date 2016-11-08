@@ -19,7 +19,7 @@
 import { values, uniq, isDate } from 'lodash';
 import {isDisclosureUsers, usingMySql} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
-import { getProjects } from './project-db';
+import { getProjects, entitiesNeedDeclaration } from './project-db';
 import { getLatestConfigsId, getGeneralConfig } from './config-db';
 import {
   filterProjects,
@@ -43,6 +43,15 @@ import {
   STATE_TYPE
 } from '../../coi-constants';
 import Log from '../log';
+const {
+  IN_PROGRESS,
+  REVISION_REQUIRED,
+  UPDATE_REQUIRED,
+  UP_TO_DATE,
+  EXPIRED,
+  SUBMITTED_FOR_APPROVAL,
+  RETURNED
+} = DISCLOSURE_STATUS;
 
 const MILLIS = 1000;
 const SECONDS = 60;
@@ -194,6 +203,24 @@ export async function saveNewFinancialEntity(
     financialEntity.files.push(fileData);
   }
 
+  const currentStatus = await getDisclosureStatus(knex, disclosureId);
+  if (currentStatus !== IN_PROGRESS && currentStatus !== REVISION_REQUIRED) {
+    if (await entitiesNeedDeclaration(knex, parseInt(disclosureId))) {
+      await updateDisclosureStatus(
+        knex,
+        disclosureId,
+        UPDATE_REQUIRED
+      );
+    }
+    else {
+      await updateDisclosureStatus(
+        knex,
+        disclosureId,
+        UP_TO_DATE
+      );
+    }
+  }
+
   return financialEntity;
 }
 
@@ -219,13 +246,44 @@ async function deleteEntityRelationship(knex, relationshipId) {
     .where('id', relationshipId);
 }
 
+export async function updateEntityRelationships(
+  knex,
+  entityId,
+  newRelationships
+) {
+  const existingRelationships = await knex
+    .select('id')
+    .from('relationship')
+    .where('fin_entity_id', entityId);
+
+  const relationshipsToDelete = existingRelationships.filter(
+    existingRelationship => {
+      const match = newRelationships.some(
+        relationship => relationship.id === existingRelationship.id
+      );
+      return !match;
+    }
+  );
+  
+  for (const relationship of relationshipsToDelete) {
+    await deleteEntityRelationship(knex, relationship.id);
+  }
+
+  for (const relationship of newRelationships) {
+    if (isNaN(relationship.id)) {
+      relationship.finEntityId = entityId;
+      await saveEntityRelationship(knex, relationship);
+    }
+  }
+}
+
 export async function saveExistingFinancialEntity(
   dbInfo,
   knex,
   userInfo,
   entityId,
   body,
-  files
+  uploadedFiles
 ) {
   const financialEntity = body;
 
@@ -246,33 +304,17 @@ export async function saveExistingFinancialEntity(
   await resetProjectDispositions(knex, entityRecord.disclosureId);
 
   await knex('fin_entity')
-    .where('id', entityId)
     .update({
       active: financialEntity.active,
       name: financialEntity.name
-    });
+    })
+    .where('id', entityId);
 
-  const dbRelationships = await knex('relationship')
-    .select('*')
-    .where('fin_entity_id', entityId);
-
-  const filteredRelationships = dbRelationships.filter(dbRelationship => {
-    const match = financialEntity.relationships.some(
-      relationship => relationship.id === dbRelationship.id
-    );
-    return !match;
-  });
-  
-  for (const dbRelationship of filteredRelationships) {
-    deleteEntityRelationship(knex, dbRelationship.id);
-  }
-
-  for (const relationship of financialEntity.relationships) {
-    if (isNaN(relationship.id)) {
-      relationship.finEntityId = entityId;
-      await saveEntityRelationship(knex, relationship);
-    }
-  }
+  await updateEntityRelationships(
+    knex,
+    entityId,
+    financialEntity.relationships
+  );
 
   for (const answer of financialEntity.answers) {
     if (answer.id) {
@@ -287,30 +329,71 @@ export async function saveExistingFinancialEntity(
     }
   }
 
-  const results = await knex.select('*')
+  const existingFiles = await knex
+    .select('id', 'key')
     .from('file')
     .where({
       ref_id: entityId,
       file_type: FILE_TYPE.FINANCIAL_ENTITY
     });
 
-  if (results) {
-    for (const result of results) {
-      const match = financialEntity.files.find(file => {
-        return result.id === file.id;
-      });
+  if (existingFiles) {
+    for (const existingFile of existingFiles) {
+      const match = financialEntity.files.find(
+        file => existingFile.id === file.id
+      );
       if (!match) {
-        await deleteEntityFile(knex, dbInfo, result.id, result.key);
+        await deleteEntityFile(knex, dbInfo, existingFile.id, existingFile.key);
       }
     }
   }
 
-  for (const file of files) {
+  for (const file of uploadedFiles) {
     const fileData = await saveEntityFile(knex, file, entityId, userInfo);
     financialEntity.files.push(fileData);
   }
 
+  const currentStatus = await getDisclosureStatus(
+    knex,
+    entityRecord.disclosureId
+  );
+  if (currentStatus !== IN_PROGRESS && currentStatus !== REVISION_REQUIRED) {
+    if (await entitiesNeedDeclaration(knex, entityRecord.disclosureId)) {
+      await updateDisclosureStatus(
+        knex,
+        entityRecord.disclosureId,
+        UPDATE_REQUIRED
+      );
+    }
+    else {
+      await updateDisclosureStatus(
+        knex,
+        entityRecord.disclosureId,
+        UP_TO_DATE
+      );
+    }
+  }
+
   return financialEntity;
+}
+
+export async function getDisclosureStatus(knex, id) {
+  const row = await knex
+    .first('status_cd as statusCd')
+    .from('disclosure')
+    .where({id});
+
+  if (!row) {
+    return null;
+  }
+
+  return row.statusCd;
+}
+
+export async function updateDisclosureStatus(knex, id, status_cd) {
+  await knex('disclosure')
+    .update({status_cd})
+    .where({id});
 }
 
 export async function saveDeclaration(knex, userId, disclosureId, record) {
@@ -921,7 +1004,8 @@ async function addEntityQuestionAnswers(knex, disclosure) {
   const answers = await knex.select(
       'qa.question_id as questionId',
       'qa.answer as answer',
-      'fea.fin_entity_id as finEntityId'
+      'fea.fin_entity_id as finEntityId',
+      'qa.id as id'
     )
     .from('questionnaire_answer as qa' )
     .innerJoin(
@@ -1255,7 +1339,8 @@ export async function getSummariesForReviewCount(knex, filters) {
 }
 
 export async function getSummariesForUser(knex, userId) {
-  const summaries = await knex.select(
+  const summaries = await knex
+    .select(
       'expired_date',
       'type_cd as type',
       'title',
@@ -1267,9 +1352,10 @@ export async function getSummariesForUser(knex, userId) {
     .from('disclosure as d')
     .where('d.user_id', userId);
 
-  const entityCounts = await knex('fin_entity')
+  const entityCounts = await knex
     .count('disclosure_id as entityCount')
     .select('disclosure_id as disclosureId')
+    .from('fin_entity')
     .whereIn('disclosure_id', summaries.map(s => s.id))
     .andWhere('active', true)
     .groupBy('disclosure_id');
@@ -1319,7 +1405,7 @@ export async function updateExpirationToRollingDate(knex) {
         expired_date: knex.raw('submitted_date + interval 1 year')
       })
       .whereNot({
-        status_cd: DISCLOSURE_STATUS.EXPIRED
+        status_cd: EXPIRED
       });
   }
   else {
@@ -1328,7 +1414,7 @@ export async function updateExpirationToRollingDate(knex) {
         expired_date: knex.raw('"submitted_date" + interval \'1\' year')
       })
       .whereNot({
-        status_cd: DISCLOSURE_STATUS.EXPIRED
+        status_cd: EXPIRED
       });
   }
 }
@@ -1343,7 +1429,7 @@ export async function updateExpirationToStaticDate(knex, expirationDate) {
       expired_date: expirationDate
     })
     .whereNot({
-      status_cd: DISCLOSURE_STATUS.EXPIRED
+      status_cd: EXPIRED
     });
 }
 
@@ -1381,7 +1467,7 @@ async function approveDisclosure(
 
   const entities = await getEntities(knex, disclosureId);
   const activeEntitiesExist = entities.some(entity => entity.active === 1);
-  let status = DISCLOSURE_STATUS.UP_TO_DATE;
+  let status = UP_TO_DATE;
 
   const generalConfig = await getGeneralConfig(knex);
   if (!generalConfig.config.disableNewProjectStatusUpdateWhenNoEntities
@@ -1391,7 +1477,7 @@ async function approveDisclosure(
       project => project.new === 1
     );
     if (newActiveProjects.length > 0) {
-      status = DISCLOSURE_STATUS.UPDATE_REQUIRED;
+      status = UPDATE_REQUIRED;
     }
   }
 
@@ -1536,7 +1622,7 @@ export async function approve(
   disclosureId,
   authHeader
 ) {
-  disclosure.statusCd = DISCLOSURE_STATUS.UP_TO_DATE;
+  disclosure.statusCd = UP_TO_DATE;
   disclosure.lastReviewDate = new Date();
 
   const [config, archivedDisclosure] = await Promise.all([
@@ -1582,7 +1668,7 @@ export async function approve(
 function updateStatus(knex, name, disclosureId) {
   return knex('disclosure')
     .update({
-      status_cd: DISCLOSURE_STATUS.SUBMITTED_FOR_APPROVAL,
+      status_cd: SUBMITTED_FOR_APPROVAL,
       submitted_by: name,
       submitted_date: new Date()
     })
@@ -1748,7 +1834,7 @@ async function updateEditableComments(knex, disclosureId) {
 export async function reject(knex, userInfo, disclosureId) {
   await knex('disclosure')
     .update({
-      status_cd: DISCLOSURE_STATUS.REVISION_REQUIRED,
+      status_cd: REVISION_REQUIRED,
       last_review_date: new Date()
     })
     .where('id', disclosureId);
@@ -1759,7 +1845,7 @@ export async function reject(knex, userInfo, disclosureId) {
 export async function returnToReporter(knex, userInfo, disclosureId) {
   await knex('disclosure')
     .update({
-      status_cd: DISCLOSURE_STATUS.RETURNED,
+      status_cd: RETURNED,
       last_review_date: new Date(),
       returned_date: new Date()
     })
