@@ -48,7 +48,11 @@ export const init = app => {
       const {knex, body, userInfo, hostname, dbInfo} = req;
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await createAdditionalReviewer(knexTrx, body, userInfo);
+        result = await createAdditionalReviewer(
+          knexTrx,
+          body,
+          userInfo.displayName
+        );
       });
 
       await createAndSendReviewerAssignedNotification(

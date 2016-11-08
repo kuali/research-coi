@@ -133,7 +133,7 @@ export async function saveNewFiles(knex, body, files, userInfo) {
       key: file.filename,
       name: file.originalname,
       userId: userInfo.schoolId,
-      uploadedBy: userInfo.name,
+      uploadedBy: userInfo.displayName,
       uploadDate: new Date()
     };
     const fileId = await knex('file')

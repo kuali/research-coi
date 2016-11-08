@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import { values, uniq, isDate } from 'lodash';
+import { values, uniq, isDate, isString } from 'lodash';
 import {isDisclosureUsers, usingMySql} from './common-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { getProjects, entitiesNeedDeclaration } from './project-db';
@@ -122,7 +122,7 @@ async function saveEntityFile(knex, file, entityId, userInfo) {
     key: file.filename,
     name: file.originalname,
     user_id: userInfo.schoolId,
-    uploaded_by: userInfo.name,
+    uploaded_by: userInfo.displayName,
     upload_date: new Date()
   };
 
@@ -1666,6 +1666,13 @@ export async function approve(
 }
 
 function updateStatus(knex, name, disclosureId) {
+  if (!isString(name) || name.length === 0) {
+    throw Error(`Invalid name: ${name}`);
+  }
+  if (!Number.isInteger(disclosureId) || disclosureId < 0) {
+    throw Error(`Invalid disclosure id: ${disclosureId}`);
+  }
+
   return knex('disclosure')
     .update({
       status_cd: SUBMITTED_FOR_APPROVAL,
@@ -1755,7 +1762,7 @@ export async function submit(
 
   let reviewerIds;
 
-  await updateStatus(knex, userInfo.name, disclosureId);
+  await updateStatus(knex, userInfo.displayName, Number(disclosureId));
   await updateEntitiesAndRelationshipsStatuses(
     knex,
     disclosureId,
