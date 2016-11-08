@@ -163,7 +163,10 @@ export function getProjectVariables(project, variables) {
 
   results[`${LEFT}PROJECT_TITLE${RIGHT}`] = get(project, 'title');
   results[`${LEFT}PROJECT_TYPE${RIGHT}`] = get(project, 'type');
-  results[`${LEFT}PROJECT_ROLE${RIGHT}`] = get(project, 'person.roleCode');
+  results[`${LEFT}PROJECT_ROLE${RIGHT}`] = get(
+    project,
+    'person.roleDescription'
+  );
   if (project.sponsors && Array.isArray(project.sponsors)) {
     const names = project.sponsors.map(sponsor => sponsor.sponsorName);
     results[`${LEFT}PROJECT_SPONSOR${RIGHT}`] = names.join(', ');

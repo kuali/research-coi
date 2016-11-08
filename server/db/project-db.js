@@ -70,6 +70,7 @@ export async function getActiveProjectsForUser(knex, userId) {
       'p.title as name',
       'p.type_cd as typeCd',
       'person.role_cd as roleCd',
+      'role.description as roleDescription',
       'p.source_status as statusCd',
       'person.new as new',
       'type.description as projectType'
@@ -77,6 +78,10 @@ export async function getActiveProjectsForUser(knex, userId) {
     .from('project as p')
     .innerJoin('project_person as person', 'p.id', 'person.project_id')
     .innerJoin('project_type as type', 'p.type_cd', 'type.type_cd')
+    .innerJoin('project_role as role', function() {
+      this.on('role.source_role_cd', '=', 'person.role_cd').
+        andOn('role.project_type_cd', '=', 'p.type_cd');
+    })
     .where({
       'person.person_id': userId,
       'person.active': 1
@@ -276,6 +281,23 @@ async function updateDisclosureStatus(knex, person, isRequired) {
     }
   }
 }
+async function getRoleDescription(knex, projectTypeCd, roleCode) {
+  const result = await knex
+    .first('description')
+    .from('project_role')
+    .where({
+      project_type_cd: projectTypeCd,
+      source_role_cd: roleCode
+    });
+
+  if (!result) {
+    throw Error(
+      `Invalid project type / role code: ${projectTypeCd}/${roleCode}`
+    );
+  }
+
+  return result.description;
+}
 
 async function sendNotification(
   knex,
@@ -301,6 +323,12 @@ async function sendNotification(
       return;
     }
   }
+
+  person.roleDescription = await getRoleDescription(
+    knex,
+    project.typeCode,
+    person.roleCode
+  );
 
   const disclosure = await getDisclosureForUser(knex, person.personId);
   logVariable({disclosure});

@@ -78,7 +78,7 @@ async function insertProject(userId = randomInteger(), numberOfSponsors = 0) {
       project_id: projectInfo.projectId,
       person_id: userId,
       source_person_type: 'spt',
-      role_cd: 'role',
+      role_cd: 'COI',
       active: true,
       new: true
     }, 'id');
@@ -184,6 +184,24 @@ async function deleteDisclosureInfo(disclosureInfo) {
 }
 
 describe('Project DB', () => {
+  before(async () => {
+    await knex('project_role')
+      .insert({
+        project_type_cd: 1,
+        source_role_cd: 'COI',
+        description: 'COI INVESTIGATOR'
+      });
+  });
+
+  after(async () => {
+    await knex('project_role')
+      .delete()
+      .where({
+        project_type_cd: 1,
+        source_role_cd: 'COI'
+      });
+  });
+
   describe('getSponsorsForProjects', () => {
     const sponsorIds = [];
     let projectId;
@@ -265,7 +283,7 @@ describe('Project DB', () => {
           project_id: projectId,
           person_id,
           source_person_type: 'spt',
-          role_cd: 'rc',
+          role_cd: 'COI',
           active: true,
           new: true
         }, 'id');

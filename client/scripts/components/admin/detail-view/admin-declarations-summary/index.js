@@ -93,7 +93,7 @@ export class AdminDeclarationsSummary extends React.Component {
           name: declaration.projectTitle,
           type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
-          role: declaration.roleCd,
+          role: declaration.roleDescription,
           sponsors,
           dispositionTypeCd: declaration.dispositionTypeCd,
           projectPersonId: declaration.projectPersonId

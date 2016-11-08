@@ -191,7 +191,7 @@ export class Relationships extends React.Component {
               entities={entities}
               title={projects[i].name}
               type={projectType}
-              role={projects[i].roleCd}
+              roleDescription={projects[i].roleDescription}
               sponsorNames={sponsorNames}
               sourceIdentifier={projects[i].sourceIdentifier}
               projectId={projects[i].id}

@@ -64,7 +64,7 @@ export default class DeclarationsSummary extends React.Component {
           name: declaration.projectTitle,
           type: projectType,
           sourceIdentifier: declaration.sourceIdentifier,
-          role: declaration.roleCd,
+          role: declaration.roleDescription,
           sponsor,
           dispositionTypeCd: declaration.dispositionTypeCd,
           projectPersonId: declaration.projectPersonId

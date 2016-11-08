@@ -59,7 +59,6 @@ export class Project extends React.Component {
           className={`${styles.override} ${this.props.open ? styles.block : styles.none}`}
           title={this.props.title}
           type={this.props.type}
-          role={this.props.role}
           projectId={this.props.projectId}
           declarationTypes={this.props.declarationTypes}
           id={this.props.id}
@@ -113,7 +112,7 @@ export class Project extends React.Component {
               <div className={styles.item}>
                 Project Role:
                 <span className={styles.value}>
-                  {this.props.role}
+                  {this.props.roleDescription}
                 </span>
               </div>
               <div className={styles.item}>
