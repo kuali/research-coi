@@ -639,6 +639,7 @@ async function getDeclarations(dbInfo, knex, disclosureId, authHeader) {
       'fe.name as entityName',
       'p.type_cd as projectTypeCd',
       'pp.role_cd as roleCd',
+      'pr.description as roleDescription',
       'fe.active as finEntityActive',
       'pp.id as projectPersonId',
       'pp.disposition_type_cd as dispositionTypeCd',
@@ -647,6 +648,10 @@ async function getDeclarations(dbInfo, knex, disclosureId, authHeader) {
     .from('declaration as d')
     .innerJoin('project as p', 'p.id', 'd.project_id')
     .innerJoin('project_person as pp', 'pp.project_id', 'p.id')
+    .innerJoin('project_role as pr', function() {
+      this.on('pr.source_role_cd', '=', 'pp.role_cd').
+        andOn('pr.project_type_cd', '=', 'p.type_cd');
+    })
     .innerJoin('disclosure as di', 'di.user_id', 'pp.person_id')
     .innerJoin('fin_entity as fe', function() {
       this.on('fe.id', 'd.fin_entity_id')
