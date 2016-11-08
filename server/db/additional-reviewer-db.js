@@ -95,7 +95,7 @@ export async function getReviewerForDisclosureAndUser(
     .where(criteria);
 }
 
-export async function createAdditionalReviewer(knex, reviewer, userInfo) {
+export async function createAdditionalReviewer(knex, reviewer, displayName) {
   reviewer.dates = [
     {
       type: DATE_TYPE.ASSIGNED,
@@ -113,7 +113,7 @@ export async function createAdditionalReviewer(knex, reviewer, userInfo) {
       unit_name: reviewer.unitName ? reviewer.unitName : null,
       active: true,
       dates: JSON.stringify(reviewer.dates),
-      assigned_by: userInfo.name
+      assigned_by: displayName
     }, 'id');
 
   reviewer.id = parseInt(id[0]);

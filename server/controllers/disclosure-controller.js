@@ -168,7 +168,7 @@ export const init = app => {
           dbInfo,
           knexTrx,
           userInfo,
-          userInfo.name,
+          userInfo.displayName,
           headers.authorization
         );
       });
@@ -511,7 +511,7 @@ export const init = app => {
           dbInfo,
           knexTrx,
           body,
-          userInfo.name,
+          userInfo.displayName,
           params.id,
           headers.authorization
         );

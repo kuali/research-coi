@@ -105,7 +105,7 @@ async function createAnnualDisclosure(knex, userInfo) {
       status_cd: 1,
       start_date: new Date(),
       user_id: userInfo.schoolId,
-      submitted_by: userInfo.name,
+      submitted_by: userInfo.displayName,
       config_id: latestConfigId
     }, 'id');
 

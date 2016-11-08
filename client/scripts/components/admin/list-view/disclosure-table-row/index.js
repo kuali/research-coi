@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+import {isString} from 'lodash';
 import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
@@ -25,6 +26,12 @@ import {Link} from 'react-router';
 
 export class DisclosureTableRow extends React.Component {
   highlightSearchTerm(value) {
+    if (!isString(value)) {
+      return (
+        <span>---</span>
+      );
+    }
+
     const start = value.toLowerCase().indexOf(this.props.searchTerm.toLowerCase());
     if (start >= 0) {
       const matchingValue = value.substr(start, this.props.searchTerm.length);
