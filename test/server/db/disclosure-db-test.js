@@ -18,7 +18,11 @@
 
 import assert from 'assert';
 import * as DisclosureDB from '../../../server/db/disclosure-db';
-import { DISCLOSURE_STATUS } from '../../../coi-constants';
+import {
+  DISCLOSURE_STATUS,
+  DISCLOSURE_TYPE,
+  ENTITY_RELATIONSHIP
+} from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { insertDisclosure, createDisclosure, insertComment, getComment } from '../../test-utils';
 import getKnex from '../../../server/db/connection-manager';
@@ -135,6 +139,179 @@ describe('Comments', () => {
         const piReviewCount = results[0]['count(*)'];
         assert.equal(piReviewCount, 0);
       });
+    });
+  });
+});
+
+describe('DisclosureDb', () => {
+  describe('updateDisclosureStatus', () => {
+    let disclosureId;
+
+    before(async () => {
+      disclosureId = await knex('disclosure')
+        .insert({
+          type_cd: DISCLOSURE_TYPE.ANNUAL,
+          status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
+          user_id: 222333,
+          start_date: new Date(),
+          config_id: 1
+        }, 'id');
+    });
+
+    after(async () => {
+      await knex('disclosure')
+        .delete()
+        .where({
+          id: disclosureId
+        });
+    });
+
+    it('sets the status', async () => {
+      await DisclosureDB.updateDisclosureStatus(
+        knex,
+        disclosureId,
+        DISCLOSURE_STATUS.EXPIRED
+      );
+
+      const row = await knex
+        .first('status_cd')
+        .from('disclosure')
+        .where({
+          id: disclosureId
+        });
+
+      assert(row != undefined);
+      assert.equal(row.status_cd, DISCLOSURE_STATUS.EXPIRED);
+    });
+  });
+
+  describe('getDisclosureStatus', () => {
+    let disclosureId;
+
+    before(async () => {
+      disclosureId = await knex('disclosure')
+        .insert({
+          type_cd: DISCLOSURE_TYPE.ANNUAL,
+          status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
+          user_id: 222333,
+          start_date: new Date(),
+          config_id: 1
+        }, 'id');
+    });
+
+    after(async () => {
+      await knex('disclosure')
+        .delete()
+        .where({
+          id: disclosureId
+        });
+    });
+
+    it('gets the status', async () => {
+      let status = await DisclosureDB.getDisclosureStatus(
+        knex,
+        disclosureId
+      );
+
+      assert.equal(status, DISCLOSURE_STATUS.IN_PROGRESS);
+
+      await knex('disclosure')
+        .update({
+          status_cd: DISCLOSURE_STATUS.EXPIRED
+        })
+        .where({
+          id: disclosureId
+        });
+
+      status = await DisclosureDB.getDisclosureStatus(
+        knex,
+        disclosureId
+      );
+
+      assert.equal(status, DISCLOSURE_STATUS.EXPIRED);
+    });
+  });
+
+  describe('updateEntityRelationships', () => {
+    let disclosureId;
+    let entityId;
+
+    before(async () => {
+      disclosureId = await knex('disclosure')
+        .insert({
+          type_cd: DISCLOSURE_TYPE.ANNUAL,
+          status_cd: DISCLOSURE_STATUS.IN_PROGRESS,
+          user_id: 222333,
+          start_date: new Date(),
+          config_id: 1
+        }, 'id');
+
+      entityId = await knex('fin_entity')
+        .insert({
+          disclosure_id: disclosureId,
+          status: ''
+        }, 'id');
+    });
+
+    after(async () => {
+      await knex('relationship')
+        .delete()
+        .where({fin_entity_id: entityId});
+
+      await knex('fin_entity')
+        .delete()
+        .where({id: entityId});
+
+      await knex('disclosure')
+        .delete()
+        .where({id: disclosureId});
+    });
+
+    it('adds relationships', async () => {
+      await DisclosureDB.updateEntityRelationships(
+        knex,
+        entityId,
+        [
+          {
+            finEntityId: entityId,
+            relationshipCd: ENTITY_RELATIONSHIP.OWNERSHIP,
+            personCd: 1,
+            comments: 'comment 1'
+          },
+          {
+            finEntityId: entityId,
+            relationshipCd: ENTITY_RELATIONSHIP.OFFICES_POSITIONS,
+            personCd: 1,
+            comments: 'comment 2'
+          }
+        ]
+      );
+
+      const rows = await knex
+        .select('id')
+        .from('relationship')
+        .where({
+          fin_entity_id: entityId
+        });
+
+      assert.equal(rows.length, 2);
+    });
+
+    it('removes relationships', async () => {
+      await DisclosureDB.updateEntityRelationships(
+        knex,
+        entityId,
+        []
+      );
+
+      const rows = await knex
+        .select('id')
+        .from('relationship')
+        .where({
+          fin_entity_id: entityId
+        });
+
+      assert.equal(rows.length, 0);
     });
   });
 });

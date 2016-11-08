@@ -246,7 +246,11 @@ async function deleteEntityRelationship(knex, relationshipId) {
     .where('id', relationshipId);
 }
 
-async function updateEntityRelationships(knex, entityId, newRelationships) {
+export async function updateEntityRelationships(
+  knex,
+  entityId,
+  newRelationships
+) {
   const existingRelationships = await knex
     .select('id')
     .from('relationship')
@@ -262,7 +266,7 @@ async function updateEntityRelationships(knex, entityId, newRelationships) {
   );
   
   for (const relationship of relationshipsToDelete) {
-    deleteEntityRelationship(knex, relationship.id);
+    await deleteEntityRelationship(knex, relationship.id);
   }
 
   for (const relationship of newRelationships) {
@@ -373,7 +377,7 @@ export async function saveExistingFinancialEntity(
   return financialEntity;
 }
 
-async function getDisclosureStatus(knex, id) {
+export async function getDisclosureStatus(knex, id) {
   const row = await knex
     .first('status_cd as statusCd')
     .from('disclosure')
@@ -386,7 +390,7 @@ async function getDisclosureStatus(knex, id) {
   return row.statusCd;
 }
 
-async function updateDisclosureStatus(knex, id, status_cd) {
+export async function updateDisclosureStatus(knex, id, status_cd) {
   await knex('disclosure')
     .update({status_cd})
     .where({id});
