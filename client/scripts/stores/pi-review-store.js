@@ -700,6 +700,10 @@ class _PIReviewStore {
 
     const name = queuedChanges.entityNameChanges[entityId];
 
+    if (!name) {
+      return;
+    }
+
     createRequest()
       .put(`/api/coi/entities/${entityId}/name`)
       .send({name})
