@@ -650,14 +650,21 @@ class _AdminStore {
       }));
   }
 
-  deleteManagementPlan() {
-    const file = this.applicationState.selectedDisclosure.managementPlan[0];
+  deleteManagementPlan(fileId) {
+    const {managementPlan} = this.applicationState.selectedDisclosure;
+    const fileIndex = managementPlan.findIndex(
+      f => Number(f.id) === Number(fileId)
+    );
+    if (fileIndex < 0) {
+      return;
+    }
+    const file = managementPlan[fileIndex];
 
     createRequest()
       .del(`/api/coi/files/${file.id}`)
       .end(processResponse((err) => {
         if (!err) {
-          this.applicationState.selectedDisclosure.managementPlan.splice(0, 1);
+          managementPlan.splice(fileIndex, 1);
           this.emitChange();
         }
       }));

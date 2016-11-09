@@ -559,15 +559,24 @@ class _DisclosureStore {
     if (!entity.files) {
       entity.files = [];
     }
-
     files.forEach(file => {
       entity.files.push(file);
     });
   }
 
-  deleteEntityAttachment([index, entityId]) {
+  deleteEntityAttachment([fileId, entityId]) {
     const entity = entityId ? this.getEntity(entityId) : this.applicationState.entityInProgress;
-    entity.files.splice(index, 1);
+    const index = entity.files.findIndex(
+      file => {
+        if (file.id) {
+          return file.id === Number(fileId);
+        }
+        return file.preview === fileId;
+      }
+    );
+    if (index >= 0) {
+      entity.files.splice(index, 1);
+    }
   }
 
   nextStep() {
@@ -1343,7 +1352,8 @@ class _DisclosureStore {
   deleteDisclosureAttachment(id) {
     const index = this.files.findIndex(f => f.id === parseInt(id));
 
-    createRequest().del(`/api/coi/files/${id}`)
+    createRequest()
+      .del(`/api/coi/files/${id}`)
       .end(processResponse((err) => {
         if (!err) {
           this.files.splice(index, 1);

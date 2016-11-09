@@ -84,8 +84,22 @@ export class FileUpload extends React.Component {
 
         let deleteButton;
         if (!this.props.readonly) {
+          let value;
+          if (file.preview) {
+            value = file.preview;
+          }
+          else {
+            value = file.id;
+          }
+
           deleteButton = (
-            <GreyButton onClick={this.onDelete} className={`${styles.override} ${styles.deleteButton}`} value={file.id}>DELETE FILE</GreyButton>
+            <GreyButton
+              onClick={this.onDelete}
+              className={`${styles.override} ${styles.deleteButton}`}
+              value={value}
+            >
+              DELETE FILE
+            </GreyButton>
           );
         }
 

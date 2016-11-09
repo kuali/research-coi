@@ -108,7 +108,7 @@ export class EntityFormInformationStep extends React.Component {
     let attachmentSection;
     if (!this.props.readonly || this.props.files && this.props.files.length > 0) {
       attachmentSection = (
-        <div>
+        <div style={{marginBottom: 10}}>
           <div className={styles.attachmentLabel}>
             ATTACHMENTS
           </div>
