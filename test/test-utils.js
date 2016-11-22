@@ -209,3 +209,11 @@ export async function asyncThrows(fn, ...params) {
   }
   return errorThrown;
 }
+
+export async function cleanUp(knex, tableName, id, idColumnName = 'id') {
+  await knex(tableName)
+    .del()
+    .where({
+      [idColumnName]: id
+    });
+}

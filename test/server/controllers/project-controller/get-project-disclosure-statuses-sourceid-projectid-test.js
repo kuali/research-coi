@@ -107,7 +107,10 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     });
 
     it('should return submitted for Approval for user 3', () => {
-      assert.equal('Submitted for Approval', statuses.find(status => status.userId === '3').status);
+      assert.equal(
+        'Submitted for Approval',
+        statuses.find(status => status.userId === '3').annualDisclosureStatus
+      );
     });
 
     it('should return update needed for user 4', () => {
@@ -115,7 +118,10 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     });
 
     it('should return update needed for user 5', () => {
-      assert.equal('Submitted for Approval', statuses.find(status => status.userId === '5').status);
+      assert.equal(
+        'Submitted for Approval',
+        statuses.find(status => status.userId === '5').annualDisclosureStatus
+      );
     });
 
     it('should return disposition of test for user 1', () => {
@@ -162,7 +168,6 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId', () => 
     });
 
     it('should return submitted for approval', () => {
-      assert.equal('Submitted for Approval', status[0].status);
       assert.equal(NO_DISPOSITION_DESCRIPTION, status[0].disposition);
       assert.equal('Submitted for Approval', status[0].annualDisclosureStatus);
     });

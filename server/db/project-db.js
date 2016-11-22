@@ -26,7 +26,8 @@ import {
 const {
   NOT_YET_DISCLOSED,
   DISCLOSURE_NOT_REQUIRED,
-  UPDATE_NEEDED
+  UPDATE_NEEDED,
+  UP_TO_DATE
 } = PROJECT_DISCLOSURE_STATUSES;
 import * as ProjectService from '../services/project-service/project-service';
 import { getGeneralConfig } from '../db/config-db';
@@ -1002,7 +1003,7 @@ async function getStatus(knex, projectPerson, dbInfo, authHeader) {
   logVariable({hasEntities});
   const shouldUseDisclosuresStatus = hasDeclarations || !hasEntities;
   if (shouldUseDisclosuresStatus) {
-    disclosureInfo.status = disclosureRecord.status;
+    disclosureInfo.status = UP_TO_DATE;
   } else {
     disclosureInfo.status = UPDATE_NEEDED;
   }
