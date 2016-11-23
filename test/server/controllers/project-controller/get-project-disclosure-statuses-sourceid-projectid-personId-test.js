@@ -168,7 +168,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
 
     it('should return submitted for approval', () => {
       assert.equal(4, status.userId);
-      assert.equal('Submitted for Approval', status.status);
+      assert.equal('Submitted for Approval', status.annualDisclosureStatus);
       assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
   });
@@ -192,7 +192,7 @@ describe('GET /api/coi/project-disclosure-statuses/:sourceId/:projectId/:personI
 
     it('should return submitted for approval', () => {
       assert.equal(5, status.userId);
-      assert.equal('Submitted for Approval', status.status);
+      assert.equal('Submitted for Approval', status.annualDisclosureStatus);
       assert.equal(NO_DISPOSITION_DESCRIPTION, status.disposition);
     });
   });
