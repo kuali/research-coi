@@ -296,6 +296,7 @@ export async function getGeneralConfig(knex) {
   }
 
   const parsedConfig = JSON.parse(generalConfigRecords.config);
+  parsedConfig.id = mostRecentId;
   cachedConfigs[mostRecentId] = parsedConfig;
 
   return {
@@ -588,6 +589,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
 }
 
 export async function archiveConfig(knex, userId, userName, config) {
+  delete config.id;
   const id = await knex('config')
     .insert({
       config: JSON.stringify(config),

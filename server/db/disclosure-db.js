@@ -1890,7 +1890,9 @@ export async function getArchivedDisclosures(knex, userId) {
     });
 
     if (theConfig) {
-      archive.config = theConfig.config;
+      const configObject = JSON.parse(theConfig.config);
+      configObject.id = archivesConfigId;
+      archive.config = JSON.stringify(configObject);
     }
   });
 
