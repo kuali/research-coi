@@ -107,3 +107,10 @@
   font-size: 23px;
   min-width: 400px;
 }
+
+.needsAttention {
+  color: #D3121C;
+  margin-top: 5px;
+  float: right;
+  font-size: 20px;
+}

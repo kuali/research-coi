@@ -82,9 +82,12 @@ class _PIReviewStore {
     const {questions, entities, declarations} = this.disclosure;
 
     if (questions) {
-      const allQuestionsDone = questions.every(
-        question => question.reviewedOn !== null
-      );
+      const allQuestionsDone = questions.every(question => {
+        if (question.reviewId && question.reviewedOn == null) {
+          return false;
+        }
+        return true;
+      });
       if (!allQuestionsDone) {
         this.applicationState.canSubmit = false;
         return;
@@ -92,9 +95,15 @@ class _PIReviewStore {
     }
 
     if (entities) {
-      const allEntitiesDone = entities.every(
-        entity => entity.reviewedOn !== null
-      );
+      const allEntitiesDone = entities.every(entity => {
+        if (entity.reviewId && entity.reviewedOn == null) {
+          return false;
+        }
+        if (!entity.answers) {
+          return false;
+        }
+        return true;
+      });
       if (!allEntitiesDone) {
         this.applicationState.canSubmit = false;
         return;

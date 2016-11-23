@@ -247,6 +247,15 @@ export default class EntityToReview extends React.Component {
       entityName = entity.name;
     }
 
+    let needsAttention;
+    if (!entity.answers) {
+      needsAttention = (
+        <span className={styles.needsAttention}>
+          - Needs Attention -
+        </span>
+      );
+    }
+
     return (
       <div className={`flexbox row ${className}`}>
         <span className={styles.statusIcon}>
@@ -255,6 +264,7 @@ export default class EntityToReview extends React.Component {
         <span style={{marginRight: 25}} className={'fill'}>
           <div className={styles.entityName}>
             {entityName}
+            {needsAttention}
           </div>
           <div style={{marginBottom: 10}}>
             <EntityFormInformationStep
