@@ -1,3 +1,19 @@
+##coi-1611
+Improvements:
+* Display Description instead of Role ID in Project Declarations in COI disclosures and in COI Notifications
+
+Issues Fixed:
+* While editing a Financial Entity, changed answers to Financial Entity questions not saving 
+* Unable to delete attachment while editing a Financial Entity 
+* On revised disclosure disclosure that had a travel log financial entity added, get  path=/api/coi/entities/32/name, method=PUT, Error: update fin_entity
+* On Requires Review disclosure, new travel log should be highlighted as needing attention 
+* COI providing incorrect status for Project Status display in monolith in some scenarios
+* Approval Notification repeating project in {{PROJECT_INFORMATION}} variable for each financial entity
+* Inactive Financial Entity triggering “Update Needed” Annual status when "Do not require researchers with no entities to update their annual disclosure when they have a new project." is enabled
+* Error on disclosure review: cannot GET /api/coi/archived-config/null (500) when when viewing a submitted disclosure both as the reporter and as coi admin in a clean install of COI when disclosure was started before Disclosure Requirements were configured
+* Use displayName instead of name for users in COI to prevent cases where null was being used for submitter of a disclosure, which would result in the 'Error: invalid user id...' in the logs and a blank Admin page
+
+
 ##coi-1610
 Enhancements:
 * Added new notification to reporter when a new project requires creation of an annual disclosure.  This allows the COI Admin use different wording in ‘new project’ notifications based on whether the researcher has an existing disclosure or needs to create a disclosure for the first time.
