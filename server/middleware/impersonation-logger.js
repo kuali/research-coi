@@ -18,21 +18,8 @@
 
 /* eslint-disable camelcase */
 
-import { LANES } from '../../coi-constants';
 import getKnex from '../db/connection-manager';
 import Log from '../log';
-
-let lane;
-try {
-  const extensions = require('research-extensions').default;
-  lane = extensions.config.lane;
-}
-catch (err) {
-  if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
-  }
-  lane = process.env.LANE || LANES.PRODUCTION;
-}
 
 function getRequestInfo(req) {
   if (req) {
@@ -43,8 +30,8 @@ function getRequestInfo(req) {
 
 export default function(req, res, next) {
   try {
-    if (lane === LANES.TEST && req.userInfo.impersonatedBy) {
-      console.info(getRequestInfo(req)); //eslint-disable-line no-console
+    if (req.userInfo.impersonatedBy) {
+      Log.info(getRequestInfo(req));
       const knex = getKnex(req.dbInfo);
       knex('impersonation_audit')
         .insert({
@@ -62,7 +49,7 @@ export default function(req, res, next) {
         .then();
     }
   } catch (err) {
-    console.error(err); //eslint-disable-line no-console
+    Log.error(err);
   } finally {
     next();
   }

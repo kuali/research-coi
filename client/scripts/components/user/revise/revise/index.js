@@ -28,7 +28,6 @@ import DeclarationSection from '../declaration-section';
 import SidePanel from '../side-panel';
 import PIReviewActions from '../../../../actions/pi-review-actions';
 import {DisclosureActions} from '../../../../actions/disclosure-actions';
-import {LANES} from '../../../../../../coi-constants';
 
 export class Revise extends React.Component {
   constructor() {
@@ -75,13 +74,7 @@ export class Revise extends React.Component {
     let disclosureType, disclosureFiles;
     if (this.state.disclosure) {
       if (this.state.disclosure.questions) {
-        let questionsToDisplay = this.state.disclosure.questions;
-        if (configState.config.lane !== LANES.TEST) {
-          questionsToDisplay = questionsToDisplay.filter(question => {
-            return question.comments && question.comments.length > 0;
-          });
-        }
-
+        const questionsToDisplay = this.state.disclosure.questions;
         if (questionsToDisplay.length > 0) {
           questionnaire = (
             <QuestionnaireSection
@@ -92,13 +85,7 @@ export class Revise extends React.Component {
       }
 
       if (this.state.disclosure.entities) {
-        let entitiesToReview = this.state.disclosure.entities;
-        if (configState.config.lane !== LANES.TEST) {
-          entitiesToReview = entitiesToReview.filter(entity => {
-            return entity.comments && entity.comments.length > 0;
-          });
-        }
-
+        const entitiesToReview = this.state.disclosure.entities;
         if (entitiesToReview.length > 0) {
           entities = (
             <EntitySection
@@ -111,14 +98,6 @@ export class Revise extends React.Component {
 
       if (this.state.disclosure.declarations) {
         const declarationsToReview = this.state.disclosure.declarations;
-        if (configState.config.lane !== LANES.TEST) {
-          declarationsToReview.forEach(project => {
-            project.entities = project.entities.filter(entity => {
-              return entity.adminComments && entity.adminComments.length > 0;
-            });
-          });
-        }
-
         if (declarationsToReview.length > 0) {
           declarations = (
             <DeclarationSection
