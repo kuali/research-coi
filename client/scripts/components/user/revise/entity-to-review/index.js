@@ -178,6 +178,11 @@ export default class EntityToReview extends React.Component {
         );
       }
     }
+    else if (!entity.answers) {
+      icon = (
+        <i className={`fa fa-exclamation-circle ${styles.incomplete}`} />
+      );
+    }
 
     let actions;
     if (this.state.revising || this.state.responding) {

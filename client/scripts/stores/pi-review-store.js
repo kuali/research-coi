@@ -79,7 +79,7 @@ class _PIReviewStore {
   }
 
   updateCanSubmit() {
-    const {questions, entities, declarations} = this.disclosure;
+    const {questions, entities, declarations, projects} = this.disclosure;
 
     if (questions) {
       const allQuestionsDone = questions.every(question => {
@@ -110,32 +110,29 @@ class _PIReviewStore {
       }
     }
 
-    if (declarations) {
-      const allDeclarationsDone = declarations.every(declaration => {
-        const allEntitiesDone = declaration.entities.every(
-          entity => {
-            if (entity.relationshipCd == null) {
-              return false;
-            }
+    if (projects) {
+      const allDeclarationsDone = projects.every(project => {
+        return entities.every(entity => {
+          return declarations.some(declaration => {
+            return declaration.entities.some(d => {
+              if (
+                d.adminComments &&
+                d.adminComments.length > 0 &&
+                d.reviewedOn == null
+              ) {
+                return false;
+              }
 
-            const hasAdminComment = (
-              entity.adminComments &&
-              entity.adminComments.length > 0
-            );
-
-            if (!hasAdminComment) {
-              return true;
-            }
-
-            if (entity.reviewedOn == null) {
-              return false;
-            }
-
-            return true;
-          }
-        );
-        return allEntitiesDone;
+              return (
+                d.projectId === project.id &&
+                d.id === entity.id &&
+                d.relationshipCd != null
+              );
+            });
+          });
+        });
       });
+
       if (!allDeclarationsDone) {
         this.applicationState.canSubmit = false;
         return;
@@ -506,16 +503,23 @@ class _PIReviewStore {
   }
 
   reviseDeclaration([entityId, projectId, disposition, comment]) {
-    this.disclosure.declarations.forEach(project => {
-      project.entities.forEach(entity => {
-        if (entity.id === entityId && entity.projectId === projectId) {
-          entity.reviewedOn = new Date();
-          entity.revised = true;
-          entity.comments = comment;
-          entity.relationshipCd = parseInt(disposition);
-        }
+    const project = this.disclosure.declarations.find(p => p.id === projectId);
+    const entity = project.entities.find(e => e.id === entityId);
+
+    if (entity) {
+      entity.reviewedOn = new Date();
+      entity.revised = true;
+      entity.comments = comment;
+      entity.relationshipCd = parseInt(disposition);
+    } else {
+      project.entities.push({
+        adminComments: [],
+        comments: comment,
+        id: entityId,
+        projectId,
+        relationshipCd: parseInt(disposition)
       });
-    });
+    }
 
     this.updateCanSubmit();
     createRequest()
