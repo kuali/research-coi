@@ -20,7 +20,13 @@ import styles from './style';
 import React from 'react';
 import EntityDeclaration from '../entity-declaration';
 
-export default function ProjectToReview({project, last, configId, className}) {
+export default function ProjectToReview({
+  project,
+  last,
+  configId,
+  className,
+  necessaryEntities
+}) {
   let entityDeclarations;
   if (project.entities) {
     entityDeclarations = project.entities.map(entityDeclaration => {
@@ -46,6 +52,27 @@ export default function ProjectToReview({project, last, configId, className}) {
     );
   }
 
+  let undeclaredEntities;
+  if (necessaryEntities.length !== project.entities.length) {
+    undeclaredEntities = necessaryEntities.filter(necessaryEntity => {
+      return !project.entities.some(projectEntity => {
+        return projectEntity.id === necessaryEntity.id;
+      });
+    }).map(entity => {
+      entity.adminComments = [];
+      entity.projectId = project.id;
+      return (
+        <EntityDeclaration
+          key={entity.id}
+          entity={entity}
+          revised={false}
+          respondedTo={false}
+          configId={configId}
+        />
+      );
+    });
+  }
+  
   return (
     <div className={`${styles.container} ${className}`}>
       <div className={styles.projectTitle}>
@@ -63,8 +90,20 @@ export default function ProjectToReview({project, last, configId, className}) {
         <span className={styles.commentFiller} />
       </div>
       {entityDeclarations}
-
+      {undeclaredEntities}
       {bottomBorder}
     </div>
   );
 }
+
+ProjectToReview.propTypes = {
+  project: React.PropTypes.object.isRequired,
+  last: React.PropTypes.bool,
+  configId: React.PropTypes.number.isRequired,
+  className: React.PropTypes.string,
+  necessaryEntities: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+};
+
+ProjectToReview.defaultProps = {
+  last: false
+};

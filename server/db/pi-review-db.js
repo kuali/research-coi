@@ -952,7 +952,13 @@ export async function getPIReviewItems(
       'd.user_id': userInfo.schoolId
     });
 
-  const [questions, entities, declarations, disclosure] = await Promise.all([
+  const [
+    questions,
+    entities,
+    declarations,
+    disclosure,
+    projects
+  ] = await Promise.all([
     getQuestionsToReview(
       knex,
       disclosureId,
@@ -980,12 +986,14 @@ export async function getPIReviewItems(
         'last_review_date as lastReviewDate',
         'type_cd as typeCd'
       )
-      .where('id', disclosureId)
+      .where('id', disclosureId),
+    getAllProjects(knex, userInfo.schoolId, authHeader, dbInfo)
   ]);
 
   return {
     questions,
     entities,
+    projects,
     declarations,
     configId: disclosure.configId,
     submittedDate: disclosure.submittedDate,
@@ -1172,21 +1180,41 @@ export async function reviseDeclarationById(
       })
   ]);
 
-  return await Promise.all([
-    knex('declaration')
-      .update({
-        comments: declaration.comment,
-        type_cd: declaration.disposition
-      })
-      .where('id', declarationRow.id),
-    upsertReviewRecord(
+  if (!declarationRow) {
+    const declarationId = await knex('declaration')
+      .insert({
+        disclosure_id: disclosureId,
+        fin_entity_id: entityId,
+        project_id: projectId,
+        type_cd: declaration.disposition,
+        comments: declaration.comment
+      }, 'id');
+
+    await upsertReviewRecord(
       knex,
       disclosureId,
       DISCLOSURE_STEP.PROJECTS,
-      declarationRow.id,
+      declarationId,
       {revised: true}
-    )
-  ]);
+    );
+  }
+  else {
+    await Promise.all([
+      knex('declaration')
+        .update({
+          comments: declaration.comment,
+          type_cd: declaration.disposition
+        })
+        .where('id', declarationRow.id),
+      upsertReviewRecord(
+        knex,
+        disclosureId,
+        DISCLOSURE_STEP.PROJECTS,
+        declarationRow.id,
+        {revised: true}
+      )
+    ]);
+  }
 }
 
 export async function reviseSubQuestion(

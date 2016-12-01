@@ -20,7 +20,12 @@ import styles from './style';
 import React from 'react';
 import ProjectToReview from '../project-to-review';
 
-export default function DeclarationSection({declarationsToReview, configId, className}) {
+export default function DeclarationSection({
+  declarationsToReview,
+  configId,
+  className,
+  necessaryEntities
+}) {
   const projects = declarationsToReview;
 
   const projectsJSX = projects.map((project, index) => {
@@ -30,6 +35,7 @@ export default function DeclarationSection({declarationsToReview, configId, clas
         project={project}
         last={index === projects.length - 1}
         configId={configId}
+        necessaryEntities={necessaryEntities}
       />
     );
   });
@@ -45,3 +51,14 @@ export default function DeclarationSection({declarationsToReview, configId, clas
     </div>
   );
 }
+
+DeclarationSection.propTypes = {
+  declarationsToReview: React.PropTypes.arrayOf(React.PropTypes.object),
+  configId: React.PropTypes.number.isRequired,
+  className: React.PropTypes.string,
+  necessaryEntities: React.PropTypes.array.isRequired
+};
+
+DeclarationSection.defaultProps = {
+  declarationsToReview: []
+};

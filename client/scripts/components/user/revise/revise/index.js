@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import {isEmpty} from 'lodash';
 import {AppHeader} from '../../../app-header';
 import {PIReviewStore} from '../../../../stores/pi-review-store';
 import RevisionHeader from '../revision-header';
@@ -70,62 +71,74 @@ export class Revise extends React.Component {
   render() {
     const {configState} = this.context;
 
-    let questionnaire, entities, declarations, submittedDate, lastReviewDate;
-    let disclosureType, disclosureFiles;
+    let questionnaireJsx;
+    let entitiesJsx;
+    let declarationsJsx;
+    let submittedDate;
+    let lastReviewDate;
+    let disclosureType;
+    let disclosureFilesJsx;
     if (this.state.disclosure) {
-      if (this.state.disclosure.questions) {
-        const questionsToDisplay = this.state.disclosure.questions;
-        if (questionsToDisplay.length > 0) {
-          questionnaire = (
-            <QuestionnaireSection
-              questions={questionsToDisplay}
-            />
-          );
-        }
-      }
+      lastReviewDate = this.state.disclosure.lastReviewDate;
+      submittedDate = this.state.disclosure.submittedDate;
+      disclosureType = this.state.disclosure.typeCd;
 
-      if (this.state.disclosure.entities) {
-        const entitiesToReview = this.state.disclosure.entities;
-        if (entitiesToReview.length > 0) {
-          entities = (
-            <EntitySection
-              entitiesToReview={entitiesToReview}
-              disclosureId={parseInt(this.state.disclosure.id)}
-            />
-          );
-        }
-      }
+      const {
+        questions,
+        entities,
+        declarations,
+        id: disclosureId,
+        configId
+      } = this.state.disclosure;
 
-      if (this.state.disclosure.declarations) {
-        const declarationsToReview = this.state.disclosure.declarations;
-        if (declarationsToReview.length > 0) {
-          declarations = (
-            <DeclarationSection
-              declarationsToReview={declarationsToReview}
-              configId={this.state.disclosure.configId}
-            />
-          );
-        }
-      }
-
-      if (this.state.files) {
-        disclosureFiles = (
-          <FileSection
-            files={this.state.files}
-            disclosureId={this.state.disclosure.id}
+      if (!isEmpty(questions)) {
+        questionnaireJsx = (
+          <QuestionnaireSection
+            questions={questions}
           />
         );
       }
 
-      lastReviewDate = this.state.disclosure.lastReviewDate;
-      submittedDate = this.state.disclosure.submittedDate;
-      disclosureType = this.state.disclosure.typeCd;
+      if (!isEmpty(entities)) {
+        entitiesJsx = (
+          <EntitySection
+            entitiesToReview={entities}
+            disclosureId={parseInt(disclosureId)}
+          />
+        );
+      }
+
+      if (!isEmpty(declarations)) {
+        declarationsJsx = (
+          <DeclarationSection
+            declarationsToReview={declarations}
+            configId={configId}
+            necessaryEntities={entities}
+          />
+        );
+      }
+
+      if (this.state.files) {
+        disclosureFilesJsx = (
+          <FileSection
+            files={this.state.files}
+            disclosureId={disclosureId}
+          />
+        );
+      }
     }
 
     return (
       <div className={'flexbox column'} style={{height: '100%'}}>
-        <AppHeader className={`${styles.override} ${styles.header}`} moduleName={'Conflict Of Interest'} />
-        <div className={`fill flexbox column ${styles.container} ${this.props.className}`}>
+        <AppHeader
+          className={`${styles.override} ${styles.header}`}
+          moduleName={'Conflict Of Interest'}
+        />
+        <div
+          className={
+            `fill flexbox column ${styles.container} ${this.props.className}`
+          }
+        >
           <RevisionHeader
             disclosureType={disclosureType}
             submittedDate={submittedDate}
@@ -133,10 +146,10 @@ export class Revise extends React.Component {
           />
           <div className={'flexbox row fill'}>
             <span className={`fill ${styles.disclosure}`}>
-              {questionnaire}
-              {entities}
-              {declarations}
-              {disclosureFiles}
+              {questionnaireJsx}
+              {entitiesJsx}
+              {declarationsJsx}
+              {disclosureFilesJsx}
             </span>
 
             <SidePanel
