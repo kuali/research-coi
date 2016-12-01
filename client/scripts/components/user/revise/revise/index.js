@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import {isEmpty} from 'lodash';
 import {AppHeader} from '../../../app-header';
 import {PIReviewStore} from '../../../../stores/pi-review-store';
 import RevisionHeader from '../revision-header';
@@ -90,7 +91,7 @@ export class Revise extends React.Component {
         configId
       } = this.state.disclosure;
 
-      if (questions && questions.length > 0) {
+      if (!isEmpty(questions)) {
         questionnaireJsx = (
           <QuestionnaireSection
             questions={questions}
@@ -98,7 +99,7 @@ export class Revise extends React.Component {
         );
       }
 
-      if (entities && entities.length > 0) {
+      if (!isEmpty(entities)) {
         entitiesJsx = (
           <EntitySection
             entitiesToReview={entities}
@@ -107,7 +108,7 @@ export class Revise extends React.Component {
         );
       }
 
-      if (declarations && declarations.length > 0) {
+      if (!isEmpty(declarations)) {
         declarationsJsx = (
           <DeclarationSection
             declarationsToReview={declarations}
