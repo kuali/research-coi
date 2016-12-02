@@ -81,3 +81,23 @@
 :global(.color-blind) .done {
   color: black;
 }
+
+.button {
+  color: #0095A0;
+  border: none;
+  background-color: transparent;
+}
+
+:global(.color-blind) .button {
+  color: black;
+}
+
+.down {
+  transform: translateY(28px);
+  transition: transform 0.1s ease-out;
+}
+
+.up {
+  transform: translateY(-28px);
+  transition: transform 0.1s ease-out;
+}

@@ -22,6 +22,11 @@ import CheckmarkIcon from '../../dynamic-icons/checkmark-icon';
 import {RETURN_KEY} from '../../../../../coi-constants';
 import EditableItem from '../editable-item';
 
+function reassignOrders(items) {
+  items.forEach((item, index) => { item.order = index; });
+  return items;
+}
+
 export default class EditableList extends React.Component {
   constructor() {
     super();
@@ -34,6 +39,8 @@ export default class EditableList extends React.Component {
     this.cancel = this.cancel.bind(this);
     this.keyPressed = this.keyPressed.bind(this);
     this.edited = this.edited.bind(this);
+    this.moveUp = this.moveUp.bind(this);
+    this.moveDown = this.moveDown.bind(this);
   }
 
   add() {
@@ -49,10 +56,34 @@ export default class EditableList extends React.Component {
     });
   }
 
-  delete(id) {
-    const newItems = Array.from(this.props.items);
-    newItems.splice(id, 1);
+  moveUp(index) {
+    if (index > 0) {
+      const swapItem = this.props.items[index - 1];
+      this.props.items[index - 1] = this.props.items[index];
+      this.props.items[index] = swapItem;
 
+      reassignOrders(this.props.items);
+  
+      this.props.onChange(this.props.items);
+    }
+  }
+
+  moveDown(index) {
+    if (index >= 0 && index < this.props.items.length - 1) {
+      const swapItem = this.props.items[index + 1];
+      this.props.items[index + 1] = this.props.items[index];
+      this.props.items[index] = swapItem;
+
+      reassignOrders(this.props.items);
+
+      this.props.onChange(this.props.items);
+    }
+  }
+
+  delete(id) {
+    let newItems = Array.from(this.props.items);
+    newItems.splice(id, 1);
+    newItems = reassignOrders(newItems);
     this.props.onChange(newItems);
   }
 
@@ -88,11 +119,14 @@ export default class EditableList extends React.Component {
   addItem() {
     const textbox = this.refs.textbox;
     if (textbox.value.length > 0) {
-      const newItems = Array.from(this.props.items);
+      let newItems = Array.from(this.props.items);
 
       newItems.push({
         description: textbox.value
       });
+
+      newItems = reassignOrders(newItems);
+
       textbox.value = '';
 
       this.props.onChange(newItems);
@@ -100,30 +134,46 @@ export default class EditableList extends React.Component {
   }
 
   render() {
-    let items;
-    if (this.props.items) {
-      items = this.props.items.map((item, index) => {
+    const items = this.props.items
+      .sort((a, b) => a.order - b.order)
+      .map((item, index, array) => {
         return (
-          <EditableItem key={index} id={index} typeCd={item.typeCd} onDelete={this.delete} onEdit={this.edited}>
+          <EditableItem
+            key={index}
+            index={index}
+            typeCd={item.typeCd}
+            onDelete={this.delete}
+            onEdit={this.edited}
+            onMoveDown={this.moveDown}
+            onMoveUp={this.moveUp}
+            last={index === array.length - 1}
+          >
             {item.description}
           </EditableItem>
         );
       });
-    }
 
     let addAnother;
     if (this.state.adding) {
       addAnother = (
         <div style={{margin: '0 0 0 25px'}}>
           <span onClick={this.done} className={styles.done}>
-            <CheckmarkIcon className={`${styles.override} ${styles.checkmark}`} color="#32A03C" />
+            <CheckmarkIcon
+              className={`${styles.override} ${styles.checkmark}`}
+              color="#32A03C"
+            />
             Done
           </span>
           <span onClick={this.cancel} className={styles.cancel}>
             <span style={{fontWeight: 'bold', marginRight: 4}}>X</span>
             Cancel
           </span>
-          <input type="text" ref="textbox" className={styles.textbox} onKeyDown={this.keyPressed} />
+          <input
+            type="text"
+            ref="textbox"
+            className={styles.textbox}
+            onKeyDown={this.keyPressed}
+          />
         </div>
       );
     }
@@ -146,3 +196,15 @@ export default class EditableList extends React.Component {
     );
   }
 }
+
+EditableList.PropTypes = {
+  className: React.PropTypes.string,
+  items: React.PropTypes.array,
+  onChange: React.PropTypes.func
+};
+
+EditableList.defaultProps = {
+  className: '',
+  items: [],
+  onChange: () => {}
+};
