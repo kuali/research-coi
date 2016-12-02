@@ -34,7 +34,7 @@ exports.up = function(knex) {
       .orderBy('relationship_cd')
       .orderBy('type_cd');
   }).then(relationshipTypes => {
-    let i = -1;
+    var i = -1;
     return Promise.all(
       relationshipTypes.map(rt => {
         i++;
@@ -60,7 +60,7 @@ exports.up = function(knex) {
       .orderBy('relationship_cd')
       .orderBy('type_cd');
   }).then(amountTypes => {
-    let i = -1;
+    var i = -1;
     return Promise.all(
       amountTypes.map(rt => {
         i++;
@@ -82,7 +82,7 @@ exports.up = function(knex) {
       })
       .orderBy('type_cd');
   }).then(amountTypes => {
-    let i = -1;
+    var i = -1;
     return Promise.all(
       amountTypes.map(rt => {
         i++;
