@@ -210,11 +210,13 @@ async function createMatrixTypes(knex) {
   const relationshipTypes = await knex
     .select('*')
     .from('relationship_type')
-    .where('active', true);
+    .where('active', true)
+    .orderBy('order');
   const amountTypes = await knex
     .select('*')
     .from('relationship_amount_type')
-    .where('active', true);
+    .where('active', true)
+    .orderBy('order');
   return categories.map(type => {
     type.typeOptions = relationshipTypes.filter(relationType => {
       return relationType.relationship_cd === type.type_cd;
@@ -313,7 +315,8 @@ export async function getConfig(dbInfo, knex, hostname) {
   config.relationshipPersonTypes = await knex
     .select('*')
     .from('relationship_person_type')
-    .where('active', true);
+    .where('active', true)
+    .orderBy('order');
 
   config.declarationTypes = await knex
     .select('*')

@@ -17,7 +17,6 @@
 */
 
 import styles from './style';
-import classNames from 'classnames';
 import React from 'react';
 import CheckmarkIcon from '../../dynamic-icons/checkmark-icon';
 import {RETURN_KEY} from '../../../../../coi-constants';
@@ -34,6 +33,28 @@ export default class EditableItem extends React.Component {
     this.edit = this.edit.bind(this);
     this.keyPressed = this.keyPressed.bind(this);
     this.done = this.done.bind(this);
+    this.moveUp = this.moveUp.bind(this);
+    this.moveDown = this.moveDown.bind(this);
+  }
+
+  moveUp() {
+    this.refs.container.classList.add(styles.up);
+    this.refs.container.previousSibling.classList.add(styles.down);
+    setTimeout(() => {
+      this.refs.container.classList.remove(styles.up);
+      this.refs.container.previousSibling.classList.remove(styles.down);
+      this.props.onMoveUp(this.props.index);
+    }, 100);
+  }
+
+  moveDown() {
+    this.refs.container.classList.add(styles.down);
+    this.refs.container.nextSibling.classList.add(styles.up);
+    setTimeout(() => {
+      this.refs.container.classList.remove(styles.down);
+      this.refs.container.nextSibling.classList.remove(styles.up);
+      this.props.onMoveDown(this.props.index);
+    }, 100);
   }
 
   edit() {
@@ -50,7 +71,7 @@ export default class EditableItem extends React.Component {
   }
 
   delete() {
-    this.props.onDelete(this.props.id);
+    this.props.onDelete(this.props.index);
   }
 
   keyPressed(evt) {
@@ -65,14 +86,14 @@ export default class EditableItem extends React.Component {
       editing: false
     });
     const textbox = this.refs.textbox;
-    this.props.onEdit(this.props.id, this.props.typeCd, textbox.value);
+    this.props.onEdit(this.props.index, this.props.typeCd, textbox.value);
   }
 
   render() {
     let content;
     if (this.state.editing) {
       content = (
-        <div className={classNames(styles.container, this.props.className)}>
+        <div className={styles.container}>
           <span onClick={this.done} className={styles.done}>
             <CheckmarkIcon className={`${styles.override} ${styles.checkmark}`} color="#32A03C" />
             Done
@@ -88,8 +109,31 @@ export default class EditableItem extends React.Component {
       );
     }
     else {
+      let upSytle;
+      let downStyle;
+
+      if (this.props.index === 0) {
+        upSytle = {display: 'none'};
+      }
+
+      if (this.props.last) {
+        downStyle = {display: 'none'};
+      }
+
       content = (
-        <div className={classNames(styles.container, this.props.className)}>
+        <div className={styles.container} ref="container">
+          <div style={{width: '50px', float: 'left'}}>
+            <div style={{display: 'inline-block', width: '45%'}}>
+              <button className={styles.button} style={upSytle} onClick={this.moveUp}>
+                <i className={'fa fa-arrow-up'} />
+              </button>
+            </div>
+            <div style={{display: 'inline-block', width: '45%'}}>
+              <button className={styles.button} style={downStyle} onClick={this.moveDown}>
+                <i className={'fa fa-arrow-down'} />
+              </button>
+            </div>
+          </div>
           <i className={`fa fa-pencil ${styles.editIcon}`} onClick={this.edit} />
           <span className={styles.deleteIcon} onClick={this.delete}>X</span>
           <span className={styles.text}>{this.props.children}</span>
@@ -100,3 +144,23 @@ export default class EditableItem extends React.Component {
     return content;
   }
 }
+
+EditableItem.PropTypes = {
+  children: React.PropTypes.array,
+  index: React.PropTypes.number.isRequired,
+  last: React.PropTypes.bool,
+  onDelete: React.PropTypes.func,
+  onEdit: React.PropTypes.func,
+  onMoveDown: React.PropTypes.func,
+  onMoveUp: React.PropTypes.func,
+  typeCd: React.PropTypes.number.isRequired
+};
+
+EditableItem.defaultProps = {
+  children: [],
+  last: false,
+  onDelete: () => {},
+  onEdit: () => {},
+  onMoveDown: () => {},
+  onMoveUp: () => {}
+};
