@@ -190,8 +190,9 @@ async function getSubQuestions(knex, disclosureId) {
     .from('questionnaire_answer as qa')
     .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
     .where(function() {
-      this.where('da.disclosure_id', disclosureId)
-      .orWhereNull('da.disclosure_id');
+      this
+        .where('da.disclosure_id', disclosureId)
+        .orWhereNull('da.disclosure_id');
     });
 
   const config = await knex('config')

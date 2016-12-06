@@ -31,12 +31,13 @@ exports.up = function(knex) {
       var i = 0;
       function updateRow() {
         if (i < existingRows.length) {
-          knex('disposition_type').where('type_cd', existingRows[i].type_cd)
-              .update({description_copy: existingRows[i].description})
-              .then(function() {
-                i++;
-                updateRow();
-              }
+          knex('disposition_type')
+            .where('type_cd', existingRows[i].type_cd)
+            .update({description_copy: existingRows[i].description})
+            .then(function() {
+              i++;
+              updateRow();
+            }
           );
         } else {
           resolve();

@@ -58,11 +58,11 @@ describe('get /api/coi/disclosure-summaries', async () => {
     }, 'id');
 
     const dispositionType = await knex('disposition_type')
-      .insert(
-        {description: 'test',
-          order: 1,
-          active: 1
-        },'type_cd');
+      .insert({
+        description: 'test',
+        order: 1,
+        active: 1
+      }, 'type_cd');
 
     dispositionTypeCd = dispositionType[0];
 

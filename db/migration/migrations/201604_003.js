@@ -19,22 +19,23 @@
 /* eslint-disable prefer-arrow-callback, camelcase */
 
 exports.up = function(knex) {
-  return knex.schema.table('notification_template', function(table) {
-    table.integer('value');
-  })
-  .table('notification_template', function(table) {
-    table.text('period');
-  })
-  .then(function() {
-    return knex('notification_template')
-      .insert({
-        template_id: 9,
-        type: 'Reporter Notifications',
-        description: 'Notify reporter when their expiration is about to expire.',
-        value: 30,
-        period: 'days'
-      });
-  });
+  return knex.schema
+    .table('notification_template', function(table) {
+      table.integer('value');
+    })
+    .table('notification_template', function(table) {
+      table.text('period');
+    })
+    .then(function() {
+      return knex('notification_template')
+        .insert({
+          template_id: 9,
+          type: 'Reporter Notifications',
+          description: 'Notify reporter when their expiration is about to expire.',
+          value: 30,
+          period: 'days'
+        });
+    });
 };
 
 exports.down = function() {

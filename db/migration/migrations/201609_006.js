@@ -20,10 +20,10 @@
 
 exports.up = function(knex) {
   return knex('disclosure_status')
-      .insert({
-        status_cd: 8,
-        description: 'Returned'
-      });
+    .insert({
+      status_cd: 8,
+      description: 'Returned'
+    });
 };
 
 exports.down = function() {
