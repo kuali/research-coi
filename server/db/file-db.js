@@ -24,6 +24,8 @@ const FileDB = {};
 export default FileDB;
 
 FileDB.getFile = async function getFile(knex, userInfo, id) {
+  this.log.logArguments({id});
+
   const criteria = {
     id
   };
@@ -58,6 +60,8 @@ FileDB.getFile = async function getFile(knex, userInfo, id) {
 };
 
 FileDB.getFiles = function (knex, userInfo, refId, fileType) {
+  this.log.logArguments({refId, fileType});
+
   const query = knex
     .select('name', 'key')
     .from('file')
@@ -93,6 +97,8 @@ FileDB.getFiles = function (knex, userInfo, refId, fileType) {
 };
 
 FileDB.getFilesForReview = function (knex, userInfo, refId, fileType) {
+  this.log.logArguments({refId, fileType});
+
   const query = knex
       .select('name', 'key', 'id')
       .from('file')
@@ -160,6 +166,8 @@ FileDB.saveNewFiles = async function(knex, body, files, userInfo) {
 };
 
 FileDB.deleteFiles = async function(dbInfo, knex, userInfo, fileId) {
+  this.log.logArguments({fileId});
+
   const criteria = {
     id: fileId
   };

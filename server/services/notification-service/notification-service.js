@@ -108,6 +108,8 @@ const TEMPLATES = {
 };
 
 export function getDefaults(notificationTemplate) {
+  log.logArguments('getDefaults', {notificationTemplate});
+
   switch (notificationTemplate.templateId) {
     case TEMPLATES.SUBMITTED.ID:
       notificationTemplate.subject = TEMPLATES.SUBMITTED.SUBJECT;
@@ -229,6 +231,8 @@ function createCoreNotification(templateId, variables, creatorId, addresses) {
 }
 
 async function getTemplate(dbInfo, templateId) {
+  log.logArguments('getTemplate', {templateId});
+
   if (!areNotificationsEnabled(dbInfo)) {
     return;
   }
@@ -246,6 +250,8 @@ async function getTemplate(dbInfo, templateId) {
 }
 
 async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
+  log.logArguments('getArchivedDisclosure', {archiveId});
+
   const knex = getKnex(dbInfo);
   const disclosure = await DisclosureDB.getArchivedDisclosureInfoForNotifications( // eslint-disable-line max-len
     knex,
@@ -265,6 +271,8 @@ async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
 }
 
 async function getDisclosure(dbInfo, hostname, disclosureId) {
+  log.logArguments('getDisclosure', {disclosureId});
+
   const knex = getKnex(dbInfo);
 
   const disclosure = await DisclosureDB.getDisclosureInfoForNotifications(
@@ -284,6 +292,8 @@ async function getDisclosure(dbInfo, hostname, disclosureId) {
 }
 
 async function getReviewer(dbInfo, hostname, reviewerId) {
+  log.logArguments('getReviewer', {reviewerId});
+
   const knex = getKnex(dbInfo);
   const reviewer = await ReviewerDB.getAdditionalReviewer(knex, reviewerId);
   if (reviewer) {
@@ -428,6 +438,11 @@ export async function createAndSendAdminNotification(
   disclosureId,
   templateId
 ) {
+  log.logArguments(
+    'createAndSendAdminNotification',
+    {disclosureId, templateId}
+  );
+
   const template = await getTemplate(dbInfo, templateId);
 
   if (!template) {
@@ -486,6 +501,8 @@ export async function createAndSendApproveNotification(
   userInfo,
   archiveId
 ) {
+  log.logArguments('createAndSendApproveNotification', {archiveId});
+
   const template = await getTemplate(
     dbInfo,
     TEMPLATES.APPROVED.ID
@@ -521,6 +538,8 @@ export async function createAndSendExpirationNotification(
   hostname,
   disclosureId
 ) {
+  log.logArguments('createAndSendExpirationNotification', {disclosureId});
+
   return await createAndSendExpireNotification(
     dbInfo,
     hostname,
@@ -534,6 +553,11 @@ export async function createAndSendExpirationReminderNotification(
   hostname,
   disclosureId
 ) {
+  log.logArguments(
+    'createAndSendExpirationReminderNotification',
+    {disclosureId}
+  );
+
   return await createAndSendExpireNotification(
     dbInfo,
     hostname,
@@ -548,6 +572,11 @@ export async function createAndSendExpireNotification(
   disclosureId,
   templateId
 ) {
+  log.logArguments(
+    'createAndSendExpireNotification',
+    {disclosureId, templateId}
+  );
+
   const template = await getTemplate(dbInfo, templateId);
   if (!template) {
     return;
@@ -570,6 +599,8 @@ export async function createAndSendSentBackNotification(
   userInfo,
   disclosureId
 ) {
+  log.logArguments('createAndSendSentBackNotification', {disclosureId});
+
   const template = await getTemplate(
     dbInfo,
     TEMPLATES.SENT_BACK.ID
@@ -595,6 +626,8 @@ export async function returnToReporterNotification(
   userInfo,
   disclosureId
 ) {
+  log.logArguments('returnToReporterNotification', {disclosureId});
+
   const knex = getKnex(dbInfo);
   const template = await getTemplate(
     dbInfo,
@@ -632,6 +665,11 @@ export async function createAndSendReviewerNotification(
   reviewerId,
   templateId
 ) {
+  log.logVariable(
+    'createAndSendReviewerNotification',
+    {reviewerId, templateId}
+  );
+
   const template = await getTemplate(dbInfo, templateId);
   if (!template) {
     return;
@@ -664,6 +702,8 @@ export async function createAndSendReviewerAssignedNotification(
   userInfo,
   reviewerId
 ) {
+  log.logVariable('createAndSendReviewerAssignedNotification', {reviewerId});
+
   return await createAndSendReviewerNotification(
     dbInfo,
     hostname,
@@ -679,6 +719,8 @@ export async function createAndSendReviewerUnassignNotification(
   userInfo,
   reviewerId
 ) {
+  log.logVariable('createAndSendReviewerUnassignNotification', {reviewerId});
+
   return await createAndSendReviewerNotification(
     dbInfo,
     hostname,
@@ -695,6 +737,8 @@ export async function createAndSendReviewCompleteNotification(
   userInfo,
   reviewerId
 ) {
+  log.logVariable('createAndSendReviewCompleteNotification', {reviewerId});
+
   const template = await getTemplate(
     dbInfo,
     TEMPLATES.REVIEW_COMPLETE.ID

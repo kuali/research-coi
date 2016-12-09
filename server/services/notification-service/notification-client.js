@@ -98,6 +98,8 @@ export function getRequestInfo(dbInfo, hostname) {
 }
 
 function createCoreTemplate(notificationTemplate, hostname, applicationId) {
+  log.logArguments('createCoreTemplate', {notificationTemplate, applicationId});
+
   return {
     applicationId,
     displayName: createDisplayName(hostname, notificationTemplate.description),
@@ -120,6 +122,8 @@ export async function updateTemplateData(
   hostname,
   notificationTemplate
 ) {
+  log.logArguments('updateTemplateData', {notificationTemplate});
+
   const requestInfo = getRequestInfo(dbInfo, hostname);
   const template = createCoreTemplate(
     notificationTemplate,
@@ -137,6 +141,8 @@ export async function createNewTemplate(
   hostname,
   notificationTemplate
 ) {
+  log.logArguments('createNewTemplate', {notificationTemplate});
+
   const requestInfo = getRequestInfo(dbInfo, hostname);
   const coreTemplate = createCoreTemplate(
     notificationTemplate,
@@ -152,6 +158,8 @@ export async function createNewTemplate(
 }
 
 export async function getUserInfo(dbInfo, hostname, userId) {
+  log.logArguments('getUserInfo', {userId});
+
   const notificationsInfo = getNotificationsInfo(dbInfo);
   const userInfos = await getUserInfosByQuery(
     dbInfo,
@@ -180,8 +188,8 @@ export async function getAdminRecipients(dbInfo, authHeader) {
 export async function sendNotification(dbInfo, hostname, notification) {
   const requestInfo = getRequestInfo(dbInfo, hostname);
 
-  log.info('Requesting notification be sent:');
-  log.info(JSON.stringify(notification));
+  log.logValue('Requesting notification be sent:', notification);
+
   let response;
   try {
     response = await request
@@ -220,6 +228,8 @@ export async function sendNotification(dbInfo, hostname, notification) {
 }
 
 async function checkStatuses(dbInfo, hostname, receiptIds) {
+  log.logArguments('checkStatuses', {receiptIds});
+
   for (const receiptId of receiptIds) {
     const detail = await getNotificationReceiptDetail(
       dbInfo,
@@ -240,6 +250,7 @@ async function checkStatuses(dbInfo, hostname, receiptIds) {
 
 async function recordNotificationRequest(knex, addresses, receiptIds) {
   log.logArguments('recordNotificationRequest', {addresses, receiptIds});
+
   await knex('notification_request')
     .insert({
       timestamp: new Date(),
@@ -249,6 +260,8 @@ async function recordNotificationRequest(knex, addresses, receiptIds) {
 }
 
 export async function getNotificationReceiptDetail(dbInfo, hostname, id) {
+  log.logArguments('getNotificationReceiptDetail', {id});
+
   const requestInfo = getRequestInfo(dbInfo, hostname);
 
   let response;

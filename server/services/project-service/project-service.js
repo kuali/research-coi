@@ -55,6 +55,8 @@ const END_POINTS = {
 const REQUIRED_SPONSORS_KEY = 'requiredSponsors';
 
 async function callEndPoint(researchCoreUrl, authHeader, endPoint) {
+  log.logArguments('callEndPoint', {endPoint});
+
   try {
     const response = await request.get(`${researchCoreUrl}${endPoint}`)
       .set('Authorization', `Bearer ${getAuthToken(authHeader)}`);
@@ -70,6 +72,8 @@ async function callEndPoint(researchCoreUrl, authHeader, endPoint) {
 }
 
 export function getSourceRoleCd(projectTypeCd, role) {
+  log.logArguments('getSourceRoleCd', {projectTypeCd, role});
+
   switch (projectTypeCd) {
     case '3':
       return role.protocolPersonRoleId;
@@ -81,6 +85,8 @@ export function getSourceRoleCd(projectTypeCd, role) {
 }
 
 export function getSourceStatusCd(projectTypeCd, status) {
+  log.logArguments('getSourceStatusCd', {projectTypeCd, status});
+
   switch (projectTypeCd) {
     case '2':
       return status.proposalStatusCode;
@@ -101,6 +107,8 @@ export function getSourceStatusCd(projectTypeCd, status) {
   include all the descriptions from roles that had that role code.
 */
 export function filterProposalRoles(roles) {
+  log.logArguments('filterProposalRoles', {roles});
+
   const roleMap = {};
   roles.forEach(role => {
     if (roleMap[role.sourceRoleCd] === undefined) {
@@ -124,6 +132,8 @@ export function filterProposalRoles(roles) {
 }
 
 function filterRoles(roles, projectTypeCd) {
+  log.logArguments('filterRoles', {projectTypeCd});
+
   switch (projectTypeCd) {
     case '3':
       return roles;
@@ -135,6 +145,11 @@ function filterRoles(roles, projectTypeCd) {
 }
 
 async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoint, statusEndPoint) {
+  log.logArguments(
+    'prepareProjectData',
+    {projectTypeCd, roleEndPoint, statusEndPoint}
+  );
+
   const authInfo = getAuthorizationInfo(dbInfo);
   const monolithProjectRoles = await callEndPoint(authInfo.researchCoreUrl, authHeader, roleEndPoint);
   const unfilteredRoles = monolithProjectRoles.map(monolithRole => {
@@ -161,6 +176,8 @@ async function prepareProjectData(dbInfo, authHeader, projectTypeCd, roleEndPoin
 }
 
 export async function getProjectData(dbInfo, authHeader, projectTypeCd) {
+  log.logArguments('getProjectData', {projectTypeCd});
+
   switch (projectTypeCd) {
     case '1': //proposal
       return await prepareProjectData(dbInfo, authHeader, projectTypeCd, END_POINTS.PROPOSAL_AWARD_IP_ROLES, END_POINTS.PROPOSAL_STATUS);
@@ -218,6 +235,8 @@ async function getRequirements(dbInfo, authHeader, trx) {
 }
 
 export function isRequired(requirements, project) {
+  log.logArguments('isRequired', {requirements, project});
+
   const isTypeRequired = requirements.types.some(
     type => type.typeCd == project.typeCd
   );
@@ -243,6 +262,8 @@ export function isRequired(requirements, project) {
 }
 
 export function isDeclarationRequired(requirements, declaration) {
+  log.logArguments('isDeclarationRequired', {requirements, declaration});
+
   const isTypeRequired = requirements.types.some(
     type => type.typeCd == declaration.projectTypeCd
   );

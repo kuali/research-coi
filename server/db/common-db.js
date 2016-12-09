@@ -26,6 +26,8 @@ CommonDB.usingMySql = function(knex) {
 };
 
 CommonDB.isDisclosureUsers = async function (knex, disclosureId, userId) {
+  this.log.logArguments({disclosureId, userId});
+
   const result = await knex
     .first('user_id')
     .from('disclosure')
@@ -38,6 +40,8 @@ CommonDB.isDisclosureUsers = async function (knex, disclosureId, userId) {
 };
 
 CommonDB.isFinancialEntityUsers = async function (knex, id, userId) {
+  this.log.logArguments({id, userId});
+
   const result = await knex
     .first('d.user_id')
     .from('fin_entity as fe')
@@ -51,6 +55,8 @@ CommonDB.isFinancialEntityUsers = async function (knex, id, userId) {
 };
 
 CommonDB.isProjectUsers = async function (knex, projectId, userId) {
+  this.log.logArguments({projectId, userId});
+
   const result = await knex
     .first('id')
     .from('project_person')
@@ -63,6 +69,8 @@ CommonDB.isProjectUsers = async function (knex, projectId, userId) {
 };
 
 CommonDB.getDisclosureForFinancialEntity = async function (knex, id) {
+  this.log.logArguments({id});
+
   const entity = await knex('fin_entity')
     .first('disclosure_id as disclosureId')
     .where({id});
@@ -75,6 +83,8 @@ CommonDB.verifyRelationshipIsUsers = async function (
     userId,
     relationshipId
   ) {
+  this.log.logArguments({userId, relationshipId});
+
   const rows = await knex
     .first('r.id')
     .from('relationship as r')

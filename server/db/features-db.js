@@ -26,6 +26,8 @@ FeaturesDB.getFeatureFlags = async function(knex) {
 };
 
 FeaturesDB.setFeatureFlagState = async function(knex, key, active) {
+  this.log.logArguments({key, active});
+
   const rowsUpdated = await knex('feature_flag')
     .update({active})
     .where({key});

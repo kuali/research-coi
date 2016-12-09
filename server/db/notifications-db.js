@@ -38,6 +38,8 @@ NotificationsDB.notificationTemplateIsForCOI = async function(
     knex,
     templateId
   ) {
+  this.log.logArguments({templateId});
+
   const row = await knex
     .first('template_id')
     .from('notification_template')

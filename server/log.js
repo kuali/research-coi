@@ -27,7 +27,6 @@ debug.formatArgs = function(...originalArgs) {
     const c = this.color;
 
     args[0] = `${new Date().toISOString()} \u001b[3${c};1m${this.namespace} \u001b[0m${args[0]}`;
-    args.push(`\u001b[3${c}m+${debug.humanize(this.diff)}\u001b[0m`);
   } else {
     args[0] = `${new Date().toISOString()} ${this.namespace} ${args[0]}`;
   }
@@ -102,6 +101,7 @@ export function createLogger(loggerName) {
 
     log.logArguments = (functionName, parameters) => {
       logger(`${functionName}`);
+      logger('ARGUMENTS:');
       for (const param in parameters) {
         logger(`\t${param} =`);
         logger(`\t\t${JSON.stringify(parameters[param])}`);
@@ -130,7 +130,7 @@ function createContext(moduleName, functionName) {
 
   if (logLevel <= LOG_LEVEL.VERBOSE) {
     context.log.logArguments = (parameters) => {
-      context.log.logger(`${functionName}`);
+      context.log.logger('ARGUMENTS:');
       for (const param in parameters) {
         context.log.logger(`\t${param} =`);
         context.log.logger(`\t\t${JSON.stringify(parameters[param])}`);
@@ -159,7 +159,7 @@ export function addLoggers(container) {
           result = container[moduleName][`__${functionName}`].apply(context, args);
         }
         context.log.verbose(
-          `Completed ${moduleName}:${functionName} in ${Date.now() - startTime} millis`
+          `Completed ${moduleName}:${functionName} in ${Date.now() - startTime}ms`
         );
         return result;
       };

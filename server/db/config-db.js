@@ -55,6 +55,8 @@ const SCREENING_QUESTIONNAIRE_TYPE_CD = 1;
 const FIN_ENTITY_QUESTIONNAIRE_TYPE_CD = 2;
 
 ConfigDB.createDeleteQueries = async function (knex, collection, tableProps) {
+  this.log.logArguments({collection, tableProps});
+
   let sel = knex(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where);
@@ -80,6 +82,8 @@ ConfigDB.createDeleteQueries = async function (knex, collection, tableProps) {
 };
 
 ConfigDB.createInsertQueries = async function(knex, collection, tableProps) {
+  this.log.logArguments({collection, tableProps});
+
   return await Promise.all(
     collection.map(async (line) => {
       const tmpId = line.tmpId;
@@ -99,6 +103,8 @@ ConfigDB.createInsertQueries = async function(knex, collection, tableProps) {
 };
 
 ConfigDB.createUpdateQueries = function(knex, collection, tableProps) {
+  this.log.logArguments({collection, tableProps});
+
   return Promise.all(
     collection.map(line => {
       delete line.tmpId;
@@ -111,6 +117,8 @@ ConfigDB.createUpdateQueries = function(knex, collection, tableProps) {
 };
 
 ConfigDB.rowExists = async function(knex, table, primaryKeyColumn, value) {
+  this.log.logArguments({table, primaryKeyColumn, value});
+
   const result = await knex
     .first(primaryKeyColumn)
     .from(table)
@@ -124,6 +132,8 @@ ConfigDB.createCollectionQueries = async function(
     collection,
     tableProps
   ) {
+  this.log.logArguments({collection, tableProps});
+
   const updates = [];
   const inserts = [];
   for (const line of collection) {
@@ -166,6 +176,8 @@ ConfigDB.createCollectionQueries = async function(
 };
 
 ConfigDB.convertQuestionFormat = function(questions, questionnaireId) {
+  this.log.logArguments({questions, questionnaireId});
+
   return questions.map(question => {
     question.question = JSON.stringify(question.question);
     question.questionnaire_id = questionnaireId;
@@ -183,6 +195,8 @@ ConfigDB.getNotificationTemplates = async function(
     hostname,
     notificationsMode
   ) {
+  this.log.logArguments({hostname, notificationsMode});
+
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
     const templates = await knex.select(
         'template_id as templateId',
@@ -233,6 +247,8 @@ ConfigDB.createMatrixTypes = async function(knex) {
 };
 
 ConfigDB.getQuestionnaireQuestions = async function (knex, typeCd) {
+  this.log.logArguments({typeCd});
+
   const questionnaire = await knex
     .first('id')
     .from('questionnaire')
@@ -312,6 +328,8 @@ ConfigDB.getGeneralConfig = async function (knex) {
 };
 
 ConfigDB.getConfig = async function (dbInfo, knex, hostname) {
+  this.log.logArguments({hostname});
+
   let config = {};
   const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
 
@@ -354,6 +372,8 @@ ConfigDB.getConfig = async function (dbInfo, knex, hostname) {
 };
 
 ConfigDB.updateParentIdOnChildren = function (children, updatedParents) {
+  this.log.logArguments({children, updatedParents});
+
   return children.map(question => {
     if (isNaN(question.parent)) {
       const parent = updatedParents.find(p => {
@@ -369,6 +389,8 @@ ConfigDB.updateParentIdOnChildren = function (children, updatedParents) {
 };
 
 ConfigDB.saveScreeningQuestionnaire = async function(knex, questions) {
+  this.log.logArguments({questions});
+
   const questionnaire = await knex
     .first('id')
     .from('questionnaire')
@@ -412,6 +434,8 @@ ConfigDB.saveScreeningQuestionnaire = async function(knex, questions) {
 };
 
 ConfigDB.saveEntityQuestionnaire = async function(knex, questions) {
+  this.log.logArguments({questions});
+
   const result = await knex
     .first('*')
     .from('questionnaire')
@@ -444,6 +468,8 @@ ConfigDB.saveEntityQuestionnaire = async function(knex, questions) {
 };
 
 ConfigDB.setConfig = async function(dbInfo, knex, userId, body, hostname) {
+  this.log.logArguments({userId, body, hostname});
+
   const config = snakeizeJson(body);
 
   if (config.disposition_types && Array.isArray(config.disposition_types)) {
@@ -596,6 +622,8 @@ ConfigDB.setConfig = async function(dbInfo, knex, userId, body, hostname) {
 };
 
 ConfigDB.archiveConfig = async function(knex, userId, userName, config) {
+  this.log.logArguments({userId, userName, config});
+
   delete config.id;
   const id = await knex('config')
     .insert({
@@ -609,6 +637,8 @@ ConfigDB.archiveConfig = async function(knex, userId, userName, config) {
 };
 
 ConfigDB.getArchivedConfig = async function (knex, id) {
+  this.log.logArguments({id});
+
   if (cachedConfigs[id]) {
     return cachedConfigs[id];
   }
@@ -650,6 +680,8 @@ ConfigDB.getRequiredProjectTypes = function (knex) {
 };
 
 ConfigDB.getProjectTypeDescription = async function (knex, typeCd) {
+  this.log.logArguments({typeCd});
+
   const projectType = await knex('project_type')
     .first('description')
     .where({type_cd: typeCd});
@@ -658,6 +690,8 @@ ConfigDB.getProjectTypeDescription = async function (knex, typeCd) {
 };
 
 ConfigDB.getCoreTemplateIdByTemplateId = async function (knex, templateId) {
+  this.log.logArguments({templateId});
+
   const template = await knex('notification_template')
     .first('core_template_id as coreTemplateId', 'active')
     .where({template_id: templateId});

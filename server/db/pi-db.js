@@ -25,6 +25,8 @@ const PIDB = {};
 export default PIDB;
 
 PIDB.queryUsingIndexOracle = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
@@ -33,6 +35,8 @@ PIDB.queryUsingIndexOracle = function(knex, term) {
 };
 
 PIDB.queryWithoutIndexOracle = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
@@ -41,6 +45,8 @@ PIDB.queryWithoutIndexOracle = function(knex, term) {
 };
 
 PIDB.queryUsingIndexMySQL = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
@@ -49,6 +55,8 @@ PIDB.queryUsingIndexMySQL = function(knex, term) {
 };
 
 PIDB.queryWithoutIndexMySQL = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
@@ -57,17 +65,23 @@ PIDB.queryWithoutIndexMySQL = function(knex, term) {
 };
 
 PIDB.addReviewerCriteria = function(query, schoolId) {
+  this.log.logArguments({schoolId});
+
   return query
     .leftJoin('additional_reviewer as ar', 'ar.disclosure_id', 'd.id')
     .andWhere({'ar.user_id': schoolId});
 };
 
 PIDB.checkTerm = function(term) {
+  this.log.logArguments({term});
+
   const reg = new RegExp('^[-\'.a-zA-Z ]+$');
   return reg.test(term);
 };
 
 PIDB.getSuggestions = async function(knex, term, userInfo) {
+  this.log.logArguments({term});
+
   let indexQuery;
   let noIndexQuery;
   if (knex.dbType === 'mysql') {

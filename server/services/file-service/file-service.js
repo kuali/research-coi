@@ -36,6 +36,8 @@ catch (err) {
 }
 
 export async function getFileStream(dbInfo, key) {
+  log.logArguments('getFileStream', {key});
+
   if (!client) {
     log.error('No file service configured');
     return;
@@ -44,6 +46,8 @@ export async function getFileStream(dbInfo, key) {
 }
 
 export function deleteFile(dbInfo, key, callback) {
+  log.logArguments('deleteFile', {key});
+
   if (!client) {
     log.error('No file service configured');
     return;

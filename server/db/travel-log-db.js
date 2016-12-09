@@ -38,6 +38,8 @@ TravelLogDB.getTravelLogEntries = function(
     sortDirection,
     filter
   ) {
+  this.log.logArguments({userId, sortColumn, sortDirection, filter});
+
   let dbSortColumn;
   const dbSortDirection = sortDirection === 'DESCENDING' ? 'desc' : undefined;
   switch (sortColumn) {
@@ -122,6 +124,8 @@ TravelLogDB.createNewEntity = async function(
     entry,
     status
   ) {
+  this.log.logArguments({disclosureId, entry, status});
+
   const id = await knex('fin_entity').insert({
     disclosure_id: disclosureId,
     name: entry.entityName,
@@ -138,6 +142,8 @@ TravelLogDB.createNewRelationship = async function(
     entry,
     status
   ) {
+  this.log.logArguments({entityId, entry, status});
+
   const relationshipId = await knex('relationship').insert({
     fin_entity_id: entityId,
     relationship_cd: ENTITY_RELATIONSHIP.TRAVEL,
@@ -160,6 +166,8 @@ TravelLogDB.createNewRelationship = async function(
 };
 
 TravelLogDB.isSubmitted = function(status) {
+  this.log.logArguments({status});
+
   if (EDITABLE_STATUSES.includes(status)) {
     return false;
   }
@@ -172,6 +180,8 @@ TravelLogDB.getExistingFinancialEntity = function(
     entityName,
     disclosureId
   ) {
+  this.log.logArguments({entityName, disclosureId});
+
   return knex('fin_entity')
     .first('id')
     .where({
@@ -186,6 +196,8 @@ TravelLogDB.handleTravelLogEntry = async function(
     entry,
     status
   ) {
+  this.log.logArguments({disclosureId, entry, status});
+
   const entity = await TravelLogDB.getExistingFinancialEntity(
     knex,
     entry.entityName,
@@ -216,6 +228,8 @@ TravelLogDB.handleTravelLogEntry = async function(
 };
 
 TravelLogDB.getAnnualDisclosureForUser = function(knex, schoolId) {
+  this.log.logArguments({schoolId});
+
   return knex('disclosure')
     .first(
       'status_cd',
@@ -228,6 +242,8 @@ TravelLogDB.getAnnualDisclosureForUser = function(knex, schoolId) {
 };
 
 TravelLogDB.createTravelLogEntry = async function(knex, entry, userInfo) {
+  this.log.logArguments({entry});
+
   const disclosure = await TravelLogDB.getAnnualDisclosureForUser(
     knex,
     userInfo.schoolId
@@ -267,6 +283,8 @@ TravelLogDB.createTravelLogEntry = async function(knex, entry, userInfo) {
 };
 
 TravelLogDB.getRelationshipsEntity = async function(knex, id) {
+  this.log.logArguments({id});
+
   const relationship = await knex('relationship')
     .first('fin_entity_id')
     .where('id', id);
@@ -275,18 +293,24 @@ TravelLogDB.getRelationshipsEntity = async function(knex, id) {
 };
 
 TravelLogDB.deleteTravelRelationship = function(knex, id) {
+  this.log.logArguments({id});
+
   return knex('travel_relationship')
     .del()
     .where('relationship_id', id);
 };
 
 TravelLogDB.deleteRelationship = function(knex, id) {
+  this.log.logArguments({id});
+
   return knex('relationship')
     .del()
     .where('id', id);
 };
 
 TravelLogDB.getQuestionnaireAnswerIds = async function(knex, id) {
+  this.log.logArguments({id});
+
   const answers = await knex('fin_entity_answer')
     .select('questionnaire_answer_id')
     .where('fin_entity_id', id);
@@ -297,24 +321,32 @@ TravelLogDB.getQuestionnaireAnswerIds = async function(knex, id) {
 };
 
 TravelLogDB.deleteFinEntityAnswers = function(knex, id) {
+  this.log.logArguments({id});
+
   return knex('fin_entity_answer')
     .del()
     .where('fin_entity_id', id);
 };
 
 TravelLogDB.deleteQuestionnaireAnswers = function(knex, answerIds) {
+  this.log.logArguments({answerIds});
+
   return knex('questionnaire_answer')
     .del()
     .whereIn('id', answerIds);
 };
 
 TravelLogDB.deleteEntityAnswers = async function(knex, id) {
+  this.log.logArguments({id});
+
   const answerIds = await TravelLogDB.getQuestionnaireAnswerIds(knex, id);
   await TravelLogDB.deleteFinEntityAnswers(knex, id);
   return await TravelLogDB.deleteQuestionnaireAnswers(knex, answerIds);
 };
 
 TravelLogDB.getEntityFiles = function(knex, id) {
+  this.log.logArguments({id});
+
   return knex('file')
     .select('id', 'key')
     .where({
@@ -324,6 +356,8 @@ TravelLogDB.getEntityFiles = function(knex, id) {
 };
 
 TravelLogDB.deleteDbFiles = function(knex, id) {
+  this.log.logArguments({id});
+
   return knex('file')
     .del()
     .where({
@@ -349,12 +383,16 @@ TravelLogDB.deleteFileData = function(dbInfo, files) {
 };
 
 TravelLogDB.deleteEntityFiles = async function(knex, dbInfo, id) {
+  this.log.logArguments({id});
+
   const files = await TravelLogDB.getEntityFiles(knex, id);
   await TravelLogDB.deleteDbFiles(knex, id);
   return await TravelLogDB.deleteFileData(dbInfo, files);
 };
 
 TravelLogDB.deleteEntity = function(knex, id) {
+  this.log.logArguments({id});
+
   return knex('fin_entity')
     .del()
     .where('id', id);
@@ -365,6 +403,8 @@ TravelLogDB.deleteEntityIfAllRelationshipsAreDeleted = async function(
     knex,
     entityId
   ) {
+  this.log.logArguments({entityId});
+
   const row = await knex('relationship')
     .first('id')
     .where('fin_entity_id', entityId);
@@ -377,6 +417,8 @@ TravelLogDB.deleteEntityIfAllRelationshipsAreDeleted = async function(
 };
 
 TravelLogDB.deleteTravelLogEntry = async function(dbInfo, knex, id, userInfo) {
+  this.log.logArguments({id});
+
   const isAllowed = await CommonDB.verifyRelationshipIsUsers(
     knex,
     userInfo.schoolId,
@@ -400,6 +442,8 @@ TravelLogDB.deleteTravelLogEntry = async function(dbInfo, knex, id, userInfo) {
 };
 
 TravelLogDB.createTravelRelationshipFromEntry = function(entry) {
+  this.log.logArguments({entry});
+
   const travelRelationship = {};
   if (entry.amount) {
     travelRelationship.amount = entry.amount;
@@ -424,6 +468,8 @@ TravelLogDB.createTravelRelationshipFromEntry = function(entry) {
 };
 
 TravelLogDB.createRelationshipFromEntry = function(entry) {
+  this.log.logArguments({entry});
+
   const relationship = {};
   if (entry.active !== undefined) {
     relationship.active = entry.active;
@@ -432,6 +478,8 @@ TravelLogDB.createRelationshipFromEntry = function(entry) {
 };
 
 TravelLogDB.updateTravelRelationship = function(knex, entry, id) {
+  this.log.logArguments({entry, id});
+
   const travelRelationship = TravelLogDB.createTravelRelationshipFromEntry(
     entry
   );
@@ -445,6 +493,8 @@ TravelLogDB.updateTravelRelationship = function(knex, entry, id) {
 };
 
 TravelLogDB.updateRelationship = function(knex, entry, id) {
+  this.log.logArguments({entry, id});
+
   const relationship = TravelLogDB.createRelationshipFromEntry(entry);
   if (Object.keys(relationship).length > 0) {
     return knex('relationship')
@@ -456,6 +506,8 @@ TravelLogDB.updateRelationship = function(knex, entry, id) {
 };
 
 TravelLogDB.handleOldEntity = function(knex, dbInfo, entityId) {
+  this.log.logArguments({entityId});
+
   return TravelLogDB.deleteEntityIfAllRelationshipsAreDeleted(
     dbInfo,
     knex,
@@ -464,6 +516,8 @@ TravelLogDB.handleOldEntity = function(knex, dbInfo, entityId) {
 };
 
 TravelLogDB.getEntityNameFromId = async function(knex, id) {
+  this.log.logArguments({id});
+
   const entity = await knex('fin_entity')
     .first('name')
     .where('id', id);
@@ -471,6 +525,8 @@ TravelLogDB.getEntityNameFromId = async function(knex, id) {
 };
 
 TravelLogDB.getEntityIdFromName = async function(knex, name, disclosureId) {
+  this.log.logArguments({name, disclosureId});
+
   const entity = await knex('fin_entity')
     .first('id')
     .where({
@@ -486,18 +542,24 @@ TravelLogDB.getEntityIdFromName = async function(knex, name, disclosureId) {
 };
 
 TravelLogDB.getRelationship = function(knex, id) {
+  this.log.logArguments({id});
+
   return knex('relationship')
     .first('fin_entity_id')
     .where('id', id);
 };
 
 TravelLogDB.updateRelationshipEntityId = function(knex, id, entityId) {
+  this.log.logArguments({id, entityId});
+
   return knex('relationship')
     .update({fin_entity_id: entityId})
     .where('id', id);
 };
 
 TravelLogDB.updateEntity = async function(knex, dbInfo, entry, id, schoolId) {
+  this.log.logArguments({entry, id, schoolId});
+
   const relationship = await TravelLogDB.getRelationship(knex, id);
 
   const entityName = await TravelLogDB.getEntityNameFromId(
@@ -547,6 +609,8 @@ TravelLogDB.updateTravelLogEntry = async function(
     id,
     userInfo
   ) {
+  this.log.logArguments({entry, id});
+
   const isAllowed = await CommonDB.verifyRelationshipIsUsers(
     knex,
     userInfo.schoolId,

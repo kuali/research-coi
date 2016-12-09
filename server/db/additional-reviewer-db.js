@@ -23,6 +23,8 @@ const AdditionalReviewerDB = {};
 export default AdditionalReviewerDB;
 
 AdditionalReviewerDB.getAdditionalReviewer = async function (knex, id) {
+  this.log.logArguments({id});
+
   const reviewer = await knex('additional_reviewer')
     .first(
       'name',
@@ -36,6 +38,7 @@ AdditionalReviewerDB.getAdditionalReviewer = async function (knex, id) {
       'assigned_by as assignedBy'
     )
     .where({id});
+
   if (reviewer && reviewer.dates) {
     reviewer.dates = JSON.parse(reviewer.dates);
   }
@@ -46,6 +49,8 @@ AdditionalReviewerDB.getDisclosuresForReviewer = async function(
     knex,
     schoolId
   ) {
+  this.log.logArguments({schoolId});
+
   return await knex('additional_reviewer as ar')
     .select(
       'd.type_cd as typeCd',
@@ -74,6 +79,8 @@ AdditionalReviewerDB.getDisclosureIdsForReviewer = async function(
     knex,
     schoolId
   ) {
+  this.log.logArguments({schoolId});
+
   const reviewers = await knex('additional_reviewer')
     .select('disclosure_id as disclosureId')
     .where({
@@ -91,6 +98,8 @@ AdditionalReviewerDB.getReviewerForDisclosureAndUser = async function (
     schoolId,
     disclosureId
   ) {
+  this.log.logArguments({schoolId, disclosureId});
+
   const criteria = {
     disclosure_id: disclosureId,
     active: true
@@ -110,6 +119,8 @@ AdditionalReviewerDB.createAdditionalReviewer = async function (
     reviewer,
     displayName
   ) {
+  this.log.logArguments({reviewer, displayName});
+
   reviewer.dates = [
     {
       type: DATE_TYPE.ASSIGNED,
@@ -135,6 +146,8 @@ AdditionalReviewerDB.createAdditionalReviewer = async function (
 };
 
 AdditionalReviewerDB.unassignAdditionalReviewer = async function (knex, id) {
+  this.log.logArguments({id});
+
   const preExistingDates = await knex
     .first('dates as dates')
     .from('additional_reviewer')
@@ -161,6 +174,8 @@ AdditionalReviewerDB.unassignAdditionalReviewer = async function (knex, id) {
 };
 
 AdditionalReviewerDB.updateAdditionalReviewer = function (knex, id, updates) {
+  this.log.logArguments({id, updates});
+
   if (updates.dates) {
     updates.dates = JSON.stringify(updates.dates);
   }
@@ -178,6 +193,8 @@ AdditionalReviewerDB.findAdditionalReviewer = async function (
     userId,
     disclosureId
   ) {
+  this.log.logArguments({userId, disclosureId});
+
   return await knex('additional_reviewer')
     .first('id')
     .where({
@@ -193,6 +210,13 @@ AdditionalReviewerDB.saveRecommendation = async function (
     declarationId,
     dispositionType
   ) {
+  this.log.logArguments({
+    schoolId,
+    disclosureId,
+    declarationId,
+    dispositionType
+  });
+
   const additionalReviewer = await AdditionalReviewerDB.findAdditionalReviewer(
     knex,
     schoolId,
@@ -239,6 +263,13 @@ AdditionalReviewerDB.saveProjectRecommendation = async function (
     projectPersonId,
     dispositionType
   ) {
+  this.log.logArguments({
+    schoolId,
+    disclosureId,
+    projectPersonId,
+    dispositionType
+  });
+
   const additionalReviewer = await AdditionalReviewerDB.findAdditionalReviewer(
     knex,
     schoolId,

@@ -75,6 +75,8 @@ catch (err) {
 }
 
 DisclosureDB.saveEntityRelationship = async function(knex, relationship) {
+  this.log.logArguments({relationship});
+
   const relationshipId = await knex('relationship')
     .insert({
       fin_entity_id: relationship.finEntityId,
@@ -102,6 +104,8 @@ DisclosureDB.saveEntityRelationship = async function(knex, relationship) {
 };
 
 DisclosureDB.saveEntityAnswer = async function(knex, answer, entityId) {
+  this.log.logArguments({answer, entityId});
+
   const result = await knex('questionnaire_answer')
     .insert({
       question_id: answer.questionId,
@@ -118,6 +122,8 @@ DisclosureDB.saveEntityAnswer = async function(knex, answer, entityId) {
 };
 
 DisclosureDB.saveEntityFile = async function(knex, file, entityId, userInfo) {
+  this.log.logArguments({entityId, userInfo});
+
   const fileData = {
     file_type: FILE_TYPE.FINANCIAL_ENTITY,
     ref_id: entityId,
@@ -137,6 +143,8 @@ DisclosureDB.saveEntityFile = async function(knex, file, entityId, userInfo) {
 };
 
 DisclosureDB.deleteEntityFile = async function(knex, dbInfo, fileId, fileKey) {
+  this.log.logArguments({fileId, fileKey});
+
   await knex('file')
     .where('id', fileId)
     .del();
@@ -161,6 +169,8 @@ DisclosureDB.saveNewFinancialEntity = async function(
     financialEntity,
     files
   ) {
+  this.log.logArguments({disclosureId, financialEntity});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -231,6 +241,8 @@ DisclosureDB.saveNewFinancialEntity = async function(
 };
 
 DisclosureDB.isEntityUsers = async function(knex, entityId, userId) {
+  this.log.logArguments({entityId, userId});
+
   const rows = await knex.select('e.id')
     .from('fin_entity as e')
     .innerJoin('disclosure as d', 'd.id', 'e.disclosure_id')
@@ -243,6 +255,8 @@ DisclosureDB.isEntityUsers = async function(knex, entityId, userId) {
 };
 
 DisclosureDB.deleteEntityRelationship = async function(knex, relationshipId) {
+  this.log.logArguments({relationshipId});
+
   await knex('travel_relationship')
     .del()
     .where('relationship_id', relationshipId);
@@ -257,6 +271,8 @@ DisclosureDB.updateEntityRelationships = async function(
     entityId,
     newRelationships
   ) {
+  this.log.logArguments({entityId, newRelationships});
+
   const existingRelationships = await knex
     .select('id')
     .from('relationship')
@@ -291,6 +307,8 @@ DisclosureDB.saveExistingFinancialEntity = async function(
     body,
     uploadedFiles
   ) {
+  this.log.logArguments({userInfo, entityId, body});
+
   const financialEntity = body;
 
   const isOwner = await DisclosureDB.isEntityUsers(
@@ -400,6 +418,8 @@ DisclosureDB.saveExistingFinancialEntity = async function(
 };
 
 DisclosureDB.getDisclosureStatus = async function(knex, id) {
+  this.log.logArguments({id});
+
   const row = await knex
     .first('status_cd as statusCd')
     .from('disclosure')
@@ -413,6 +433,8 @@ DisclosureDB.getDisclosureStatus = async function(knex, id) {
 };
 
 DisclosureDB.updateDisclosureStatus = async function(knex, id, status_cd) {
+  this.log.logArguments({id, status_cd});
+
   await knex('disclosure')
     .update({status_cd})
     .where({id});
@@ -424,6 +446,8 @@ DisclosureDB.saveDeclaration = async function(
     disclosureId,
     record
   ) {
+  this.log.logArguments({userId, disclosureId, record});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -453,6 +477,8 @@ DisclosureDB.saveExistingDeclaration = async function(
     declarationId,
     record
   ) {
+  this.log.logArguments({disclosureId, declarationId, record});
+
   const {typeCd, comments, adminRelationshipCd} = record;
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
@@ -481,6 +507,8 @@ DisclosureDB.saveNewQuestionAnswer = async function(
     disclosureId,
     body
   ) {
+  this.log.logArguments({userId, disclosureId, body});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -514,6 +542,8 @@ DisclosureDB.saveExistingQuestionAnswer = async function(
     questionId,
     body
   ) {
+  this.log.logArguments({userId, disclosureId, questionId, body});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -543,6 +573,8 @@ DisclosureDB.saveExistingQuestionAnswer = async function(
 };
 
 DisclosureDB.retrieveComments = async function(knex, userInfo, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const criteria = {
     disclosure_id: disclosureId
   };
@@ -594,6 +626,8 @@ DisclosureDB.flagPIReviewNeeded = async function(
     section,
     id
   ) {
+  this.log.logArguments({disclosureId, section, id});
+
   const rows = await knex.select('*')
     .from('pi_review')
     .where({
@@ -626,6 +660,8 @@ DisclosureDB.unflagPIReviewNeeded = async function(
     section,
     id
   ) {
+  this.log.logArguments({disclosureId, section, id});
+
   const result = await knex('review_comment')
     .count()
     .where({
@@ -648,6 +684,8 @@ DisclosureDB.unflagPIReviewNeeded = async function(
 };
 
 DisclosureDB.addGeneralComment = async function(knex, userInfo, comment) {
+  this.log.logArguments({comment});
+
   await knex('general_comment')
     .insert({
       disclosure_id: comment.disclosureId,
@@ -660,6 +698,8 @@ DisclosureDB.addGeneralComment = async function(knex, userInfo, comment) {
 };
 
 DisclosureDB.getGeneralComment = async function(knex, userInfo, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return await knex
     .select('text as text')
     .from('general_comment')
@@ -667,6 +707,8 @@ DisclosureDB.getGeneralComment = async function(knex, userInfo, disclosureId) {
 };
 
 DisclosureDB.addComment = async function(knex, userInfo, comment) {
+  this.log.logArguments({comment});
+
   await knex('review_comment')
     .insert({
       disclosure_id: comment.disclosureId,
@@ -701,6 +743,8 @@ DisclosureDB.addComment = async function(knex, userInfo, comment) {
 };
 
 DisclosureDB.updateComment = async function(knex, userInfo, comment) {
+  this.log.logArguments({comment});
+
   await knex('review_comment')
     .update({
       text: comment.text,
@@ -740,6 +784,8 @@ DisclosureDB.updateComment = async function(knex, userInfo, comment) {
 };
 
 DisclosureDB.getDisclosure = async function(knex, userInfo, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const criteria = {
     id: disclosureId
   };
@@ -773,6 +819,8 @@ DisclosureDB.getDeclarations = async function(
     disclosureId,
     authHeader
   ) {
+  this.log.logArguments({disclosureId});
+
   const declarations = await knex.select(
       'd.id as id',
       'd.project_id as projectId',
@@ -834,6 +882,8 @@ DisclosureDB.getDeclarations = async function(
 };
 
 DisclosureDB.getArchivedVersionList = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return await knex.select(
       'id',
       'approved_date as approvedDate'
@@ -843,6 +893,8 @@ DisclosureDB.getArchivedVersionList = async function(knex, disclosureId) {
 };
 
 DisclosureDB.getEntities = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return await knex.select(
       'e.id',
       'e.disclosure_id as disclosureId',
@@ -855,6 +907,8 @@ DisclosureDB.getEntities = async function(knex, disclosureId) {
 };
 
 DisclosureDB.getQuestionAnswers = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return await knex.select(
       'qa.id as id',
       'qa.question_id as questionId',
@@ -870,6 +924,8 @@ DisclosureDB.getQuestionAnswers = async function(knex, disclosureId) {
 };
 
 DisclosureDB.getFileRecords = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return await knex.select('id', 'name', 'key', 'file_type as fileType')
     .from('file')
     .whereIn('file_type', [FILE_TYPE.DISCLOSURE, FILE_TYPE.ADMIN])
@@ -879,6 +935,8 @@ DisclosureDB.getFileRecords = async function(knex, disclosureId) {
 };
 
 DisclosureDB.getManagementPlans = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return await knex.select('id', 'name', 'key')
     .from('file')
     .where({
@@ -892,6 +950,8 @@ DisclosureDB.addRecommendationsForReviewer = async function(
     disclosure,
     userId
   ) {
+  this.log.logArguments({userId});
+
   const recommendations = await knex.select(
       'r.declaration_id as declarationId',
       'r.project_person_id as projectPersonId',
@@ -983,6 +1043,8 @@ DisclosureDB.addRecommendationsForAdmin = async function(knex, disclosure) {
 };
 
 DisclosureDB.getAdditionalReviewers = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const reviewers = await knex('additional_reviewer')
     .select(
       'id',
@@ -1104,6 +1166,8 @@ DisclosureDB.get = async function(
     disclosureId,
     authHeader
   ) {
+  this.log.logArguments({disclosureId});
+
   const [
     disclosureRecord,
     entityRecords,
@@ -1195,6 +1259,8 @@ DisclosureDB.getAnnualDisclosure = async function(
     piName,
     authHeader
   ) {
+  this.log.logArguments({piName});
+
   const result = await knex('disclosure')
     .first('id as id')
     .where('type_cd', 2)
@@ -1231,6 +1297,15 @@ DisclosureDB.getSummariesForReview = async function(
     reviewerDisclosures,
     pageSize
   ) {
+  this.log.logArguments({
+    sortColumn,
+    sortDirection,
+    start,
+    filters,
+    reviewerDisclosures,
+    pageSize
+  });
+
   const query = knex('disclosure as d');
   const columnsToSelect = [
     'd.submitted_by',
@@ -1397,6 +1472,8 @@ DisclosureDB.getSummariesForReview = async function(
 };
 
 DisclosureDB.getSummariesForReviewCount = async function(knex, filters) {
+  this.log.logArguments({filters});
+
   const results = await DisclosureDB.getSummariesForReview(
     knex,
     null,
@@ -1410,6 +1487,8 @@ DisclosureDB.getSummariesForReviewCount = async function(knex, filters) {
 };
 
 DisclosureDB.getSummariesForUser = async function(knex, userId) {
+  this.log.logArguments({userId});
+
   const summaries = await knex
     .select(
       'expired_date',
@@ -1444,6 +1523,8 @@ DisclosureDB.updateEntitiesAndRelationshipsStatuses = async function(
     oldStatus,
     newStatus
   ) {
+  this.log.logArguments({disclosureId, oldStatus, newStatus});
+
   await knex('fin_entity')
     .update({status: newStatus})
     .where('disclosure_id', disclosureId)
@@ -1494,6 +1575,8 @@ DisclosureDB.updateExpirationToStaticDate = async function(
     knex,
     expirationDate
   ) {
+  this.log.logArguments({expirationDate});
+
   if (!isDate(expirationDate)) {
     throw Error('Invalid expiration date');
   }
@@ -1508,10 +1591,14 @@ DisclosureDB.updateExpirationToStaticDate = async function(
 };
 
 DisclosureDB.getRollingExpirationDate = function(date) {
+  this.log.logArguments({date});
+
   return new Date(date.setFullYear(date.getFullYear() + 1));
 };
 
 DisclosureDB.getStaticExpirationDate = function(date, dueDate) {
+  this.log.logArguments({date, dueDate});
+
   const dueMonthDay = dueDate.getMonth() + dueDate.getDay();
   const approveMonthDay = date.getMonth() + date.getDay();
 
@@ -1530,6 +1617,8 @@ DisclosureDB.approveDisclosure = async function(
     dbInfo,
     authHeader
   ) {
+  this.log.logArguments({disclosureId, expiredDate, userId});
+
   const disclosure = await knex('disclosure')
     .first('user_id as userId')
     .where({id: disclosureId});
@@ -1565,6 +1654,8 @@ DisclosureDB.approveDisclosure = async function(
 };
 
 DisclosureDB.getDisclosureDisposition = async function(knex, declarations, id) {
+  this.log.logArguments({declarations, id});
+
   const config = await knex('config')
     .first('config')
     .where({id});
@@ -1606,6 +1697,8 @@ DisclosureDB.archiveDisclosure = async function(
     approverName,
     disclosure
   ) {
+  this.log.logArguments({disclosureId, approverName});
+
   disclosure.disposition = await DisclosureDB.getDisclosureDisposition(
     knex,
     disclosure.declarations,
@@ -1622,12 +1715,16 @@ DisclosureDB.archiveDisclosure = async function(
 };
 
 DisclosureDB.deleteComments = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   await knex('review_comment')
     .del()
     .where('disclosure_id', disclosureId);
 };
 
 DisclosureDB.deleteAnswersForDisclosure = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const result = await knex('disclosure_answer')
     .select('questionnaire_answer_id')
     .where('disclosure_id', disclosureId);
@@ -1646,12 +1743,16 @@ DisclosureDB.deleteAnswersForDisclosure = async function(knex, disclosureId) {
 };
 
 DisclosureDB.deletePIReviewsForDisclsoure = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex('pi_review')
     .del()
     .where('disclosure_id', disclosureId);
 };
 
 DisclosureDB.deleteAdditionalReviewers = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   await knex('reviewer_recommendation')
     .del()
     .whereIn('additional_reviewer_id', function() {
@@ -1668,6 +1769,8 @@ DisclosureDB.deleteAdditionalReviewers = async function(knex, disclosureId) {
 };
 
 DisclosureDB.resetProjectDispositions = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const disclosure = await knex('disclosure')
     .first('user_id')
     .where({
@@ -1684,6 +1787,8 @@ DisclosureDB.resetProjectDispositions = async function(knex, disclosureId) {
 };
 
 DisclosureDB.resetAdminRelationships = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex('declaration')
     .update({
       admin_relationship_cd: null
@@ -1701,6 +1806,8 @@ DisclosureDB.approve = async function(
     disclosureId,
     authHeader
   ) {
+  this.log.logArguments({displayName, disclosureId});
+
   disclosure.statusCd = UP_TO_DATE;
   disclosure.lastReviewDate = new Date();
 
@@ -1752,6 +1859,8 @@ DisclosureDB.approve = async function(
 };
 
 DisclosureDB.updateStatus = function(knex, name, disclosureId) {
+  this.log.logArguments({name, disclosureId});
+
   if (!isString(name) || name.length === 0) {
     throw Error(`Invalid name: ${name}`);
   }
@@ -1769,6 +1878,8 @@ DisclosureDB.updateStatus = function(knex, name, disclosureId) {
 };
 
 DisclosureDB.updateProjects = async function(knex, schoolId) {
+  this.log.logArguments({schoolId});
+
   await knex('project_person')
     .update({
       new: false
@@ -1784,6 +1895,8 @@ DisclosureDB.addAdditionalReviewer = async function(
     reviewer,
     disclosureId
   ) {
+  this.log.logArguments({reviewer, disclosureId});
+
   try {
     const newId = await knex('additional_reviewer')
       .insert({
@@ -1815,6 +1928,8 @@ DisclosureDB.addAdditionalReviewers = async function(
     disclosureId,
     userInfo
   ) {
+  this.log.logArguments({disclosureId});
+
   const reviewers = await getReviewers(
     dbInfo,
     authHeader,
@@ -1840,6 +1955,8 @@ DisclosureDB.submit = async function(
     authHeader,
     hostName
   ) {
+  this.log.logArguments({disclosureId, hostName});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -1927,12 +2044,16 @@ DisclosureDB.submit = async function(
 };
 
 DisclosureDB.updateEditableComments = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   await knex('review_comment')
     .update({editable: false})
     .where({disclosure_id: disclosureId});
 };
 
 DisclosureDB.reject = async function(knex, userInfo, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   await knex('disclosure')
     .update({
       status_cd: REVISION_REQUIRED,
@@ -1944,6 +2065,8 @@ DisclosureDB.reject = async function(knex, userInfo, disclosureId) {
 };
 
 DisclosureDB.returnToReporter = async function(knex, userInfo, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   await knex('disclosure')
     .update({
       status_cd: RETURNED,
@@ -1956,6 +2079,8 @@ DisclosureDB.returnToReporter = async function(knex, userInfo, disclosureId) {
 };
 
 DisclosureDB.getArchivedDisclosures = async function(knex, userId) {
+  this.log.logArguments({userId});
+
   const [archives, configs] = await Promise.all([
     knex
       .select(
@@ -1998,6 +2123,8 @@ DisclosureDB.getLatestArchivedDisclosure = function(
     userId,
     disclosureId
   ) {
+  this.log.logArguments({userId, disclosureId});
+
   return knex
     .first('disclosure')
     .from('disclosure_archive')
@@ -2006,6 +2133,8 @@ DisclosureDB.getLatestArchivedDisclosure = function(
 };
 
 DisclosureDB.getArchivedDisclosure = function(knex, archiveId) {
+  this.log.logArguments({archiveId});
+
   return knex
     .first('disclosure')
     .from('disclosure_archive')
@@ -2018,6 +2147,8 @@ DisclosureDB.deleteAnswers = async function(
     disclosureId,
     answersToDelete
   ) {
+  this.log.logArguments({disclosureId, answersToDelete});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -2058,6 +2189,8 @@ DisclosureDB.deleteAllAnswers = async function(
     userInfo,
     disclosureId
   ) {
+  this.log.logArguments({disclosureId});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -2093,6 +2226,8 @@ DisclosureDB.deleteAllAnswers = async function(
 };
 
 DisclosureDB.getCurrentState = async function(knex, userInfo, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
@@ -2123,6 +2258,8 @@ DisclosureDB.saveCurrentState = async function(
     disclosureId,
     state
   ) {
+  this.log.logArguments({disclosureId});
+
   const currentState = await DisclosureDB.getCurrentState(
     knex,
     userInfo,
@@ -2150,6 +2287,8 @@ DisclosureDB.saveCurrentState = async function(
 };
 
 DisclosureDB.getDisclosureInfoForNotifications = async function(knex, id) {
+  this.log.logArguments({id});
+
   const disclosure = await knex('disclosure')
     .first(
       'id',
@@ -2169,6 +2308,8 @@ DisclosureDB.getArchivedDisclosureInfoForNotifications = async function(
     knex,
     id
   ) {
+  this.log.logArguments({id});
+
   const results = await knex('disclosure_archive as da')
     .first(
       'd.user_id as userId',
@@ -2187,6 +2328,8 @@ DisclosureDB.getArchivedDisclosureInfoForNotifications = async function(
 };
 
 DisclosureDB.getProjectIdsForPerson = async function(knex, userId) {
+  this.log.logArguments({userId});
+
   return await knex
     .select('project_id as id')
     .from('project_person')
@@ -2199,6 +2342,8 @@ DisclosureDB.createEmptyDeclarations = async function(
     userId,
     entityId
   ) {
+  this.log.logArguments({disclosureId, userId, entityId});
+
   const projects = await DisclosureDB.getProjectIdsForPerson(
     knex,
     userId
@@ -2223,6 +2368,8 @@ DisclosureDB.getDisclosuresAdminDisposition = async function(
     knex,
     disclosureId
   ) {
+  this.log.logArguments({disclosureId});
+
   const disclosureRecord = await knex
     .first('user_id as userId')
     .from('disclosure')

@@ -52,6 +52,8 @@ const DEFAULT_PORT = 8090;
 initFeatureFlags(flags);
 
 function conditionallyLogRequests(app, logLevel) {
+  log.logArguments('conditionallyLogRequests', {logLevel});
+
   if (logLevel <= LOG_LEVEL.INFO) {
     app.use((req, res, next) => {
       const startTime = new Date().getTime();
