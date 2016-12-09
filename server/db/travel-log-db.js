@@ -23,17 +23,21 @@ import {
   DISCLOSURE_TYPE,
   FILE_TYPE
 } from '../../coi-constants';
-import {verifyRelationshipIsUsers} from './common-db';
-import {getLatestConfigsId} from './config-db';
+import CommonDB from './common-db';
+import ConfigDB from './config-db';
 import * as FileService from '../services/file-service/file-service';
+import {addLoggers} from '../log';
 
-export function getTravelLogEntries(
-  knex,
-  userId,
-  sortColumn,
-  sortDirection,
-  filter
-) {
+const TravelLogDB = {};
+export default TravelLogDB;
+
+TravelLogDB.getTravelLogEntries = function(
+    knex,
+    userId,
+    sortColumn,
+    sortDirection,
+    filter
+  ) {
   let dbSortColumn;
   const dbSortDirection = sortDirection === 'DESCENDING' ? 'desc' : undefined;
   switch (sortColumn) {
@@ -94,10 +98,10 @@ export function getTravelLogEntries(
   }
 
   return query;
-}
+};
 
-async function createAnnualDisclosure(knex, userInfo) {
-  const latestConfigId = await getLatestConfigsId(knex);
+TravelLogDB.createAnnualDisclosure = async function(knex, userInfo) {
+  const latestConfigId = await ConfigDB.getLatestConfigsId(knex);
 
   const id = await knex('disclosure')
     .insert({
@@ -110,9 +114,14 @@ async function createAnnualDisclosure(knex, userInfo) {
     }, 'id');
 
   return parseInt(id[0]);
-}
+};
 
-async function createNewEntity(knex, disclosureId, entry, status) {
+TravelLogDB.createNewEntity = async function(
+    knex,
+    disclosureId,
+    entry,
+    status
+  ) {
   const id = await knex('fin_entity').insert({
     disclosure_id: disclosureId,
     name: entry.entityName,
@@ -121,9 +130,14 @@ async function createNewEntity(knex, disclosureId, entry, status) {
   }, 'id');
 
   return parseInt(id[0]);
-}
+};
 
-async function createNewRelationship(knex, entityId, entry, status) {
+TravelLogDB.createNewRelationship = async function(
+    knex,
+    entityId,
+    entry,
+    status
+  ) {
   const relationshipId = await knex('relationship').insert({
     fin_entity_id: entityId,
     relationship_cd: ENTITY_RELATIONSHIP.TRAVEL,
@@ -143,41 +157,65 @@ async function createNewRelationship(knex, entityId, entry, status) {
   entry.id = parseInt(travelRelationshipId[0]);
   entry.relationshipId = parseInt(relationshipId[0]);
   return entry;
-}
+};
 
-function isSubmitted(status) {
+TravelLogDB.isSubmitted = function(status) {
   if (EDITABLE_STATUSES.includes(status)) {
     return false;
   }
 
   return true;
-}
+};
 
-function getExistingFinancialEntity(knex, entityName, disclosureId) {
+TravelLogDB.getExistingFinancialEntity = function(
+    knex,
+    entityName,
+    disclosureId
+  ) {
   return knex('fin_entity')
     .first('id')
     .where({
       name: entityName,
       disclosure_id: disclosureId
     });
-}
+};
 
-async function handleTravelLogEntry(knex, disclosureId, entry, status) {
-  const entity = await getExistingFinancialEntity(
+TravelLogDB.handleTravelLogEntry = async function(
+    knex,
+    disclosureId,
+    entry,
+    status
+  ) {
+  const entity = await TravelLogDB.getExistingFinancialEntity(
     knex,
     entry.entityName,
     disclosureId
   );
 
   if (entity) {
-    return await createNewRelationship(knex, entity.id, entry, status);
+    return await TravelLogDB.createNewRelationship(
+      knex,
+      entity.id,
+      entry,
+      status
+    );
   }
 
-  const newEntityId = await createNewEntity(knex, disclosureId, entry, status);
-  return await createNewRelationship(knex, newEntityId, entry, status);
-}
+  const newEntityId = await TravelLogDB.createNewEntity(
+    knex,
+    disclosureId,
+    entry,
+    status
+  );
+  return await TravelLogDB.createNewRelationship(
+    knex,
+    newEntityId,
+    entry,
+    status
+  );
+};
 
-function getAnnualDisclosureForUser(knex, schoolId) {
+TravelLogDB.getAnnualDisclosureForUser = function(knex, schoolId) {
   return knex('disclosure')
     .first(
       'status_cd',
@@ -187,13 +225,16 @@ function getAnnualDisclosureForUser(knex, schoolId) {
       user_id: schoolId,
       type_cd: DISCLOSURE_TYPE.ANNUAL
     });
-}
+};
 
-export async function createTravelLogEntry(knex, entry, userInfo) {
-  const disclosure = await getAnnualDisclosureForUser(knex, userInfo.schoolId);
+TravelLogDB.createTravelLogEntry = async function(knex, entry, userInfo) {
+  const disclosure = await TravelLogDB.getAnnualDisclosureForUser(
+    knex,
+    userInfo.schoolId
+  );
   if (disclosure) {
-    if (isSubmitted(disclosure.status_cd) === true) {
-      return await handleTravelLogEntry(
+    if (TravelLogDB.isSubmitted(disclosure.status_cd) === true) {
+      return await TravelLogDB.handleTravelLogEntry(
         knex,
         disclosure.id,
         entry,
@@ -201,7 +242,7 @@ export async function createTravelLogEntry(knex, entry, userInfo) {
       );
     }
 
-    return await handleTravelLogEntry(
+    return await TravelLogDB.handleTravelLogEntry(
       knex,
       disclosure.id,
       entry,
@@ -209,43 +250,43 @@ export async function createTravelLogEntry(knex, entry, userInfo) {
     );
   }
 
-  const disclosureId = await createAnnualDisclosure(knex, userInfo);
-  const entityId = await createNewEntity(
+  const disclosureId = await TravelLogDB.createAnnualDisclosure(knex, userInfo);
+  const entityId = await TravelLogDB.createNewEntity(
     knex,
     disclosureId,
     entry,
     RELATIONSHIP_STATUS.IN_PROGRESS
   );
 
-  return await createNewRelationship(
+  return await TravelLogDB.createNewRelationship(
     knex,
     entityId,
     entry,
     RELATIONSHIP_STATUS.IN_PROGRESS
   );
-}
+};
 
-async function getRelationshipsEntity(knex, id) {
+TravelLogDB.getRelationshipsEntity = async function(knex, id) {
   const relationship = await knex('relationship')
     .first('fin_entity_id')
     .where('id', id);
 
   return relationship.fin_entity_id;
-}
+};
 
-function deleteTravelRelationship(knex, id) {
+TravelLogDB.deleteTravelRelationship = function(knex, id) {
   return knex('travel_relationship')
     .del()
     .where('relationship_id', id);
-}
+};
 
-function deleteRelationship(knex, id) {
+TravelLogDB.deleteRelationship = function(knex, id) {
   return knex('relationship')
     .del()
     .where('id', id);
-}
+};
 
-async function getQuestionnaireAnswerIds(knex, id) {
+TravelLogDB.getQuestionnaireAnswerIds = async function(knex, id) {
   const answers = await knex('fin_entity_answer')
     .select('questionnaire_answer_id')
     .where('fin_entity_id', id);
@@ -253,45 +294,45 @@ async function getQuestionnaireAnswerIds(knex, id) {
   return answers.map(answer => {
     return answer.questionnaire_answer_id;
   });
-}
+};
 
-function deleteFinEntityAnswers(knex, id) {
+TravelLogDB.deleteFinEntityAnswers = function(knex, id) {
   return knex('fin_entity_answer')
     .del()
     .where('fin_entity_id', id);
-}
+};
 
-function deleteQuestionnaireAnswers(knex, answerIds) {
+TravelLogDB.deleteQuestionnaireAnswers = function(knex, answerIds) {
   return knex('questionnaire_answer')
     .del()
     .whereIn('id', answerIds);
-}
+};
 
-async function deleteEntityAnswers(knex, id) {
-  const answerIds = await getQuestionnaireAnswerIds(knex, id);
-  await deleteFinEntityAnswers(knex, id);
-  return await deleteQuestionnaireAnswers(knex, answerIds);
-}
+TravelLogDB.deleteEntityAnswers = async function(knex, id) {
+  const answerIds = await TravelLogDB.getQuestionnaireAnswerIds(knex, id);
+  await TravelLogDB.deleteFinEntityAnswers(knex, id);
+  return await TravelLogDB.deleteQuestionnaireAnswers(knex, answerIds);
+};
 
-function getEntityFiles(knex, id) {
+TravelLogDB.getEntityFiles = function(knex, id) {
   return knex('file')
     .select('id', 'key')
     .where({
       ref_id: id,
       file_type: FILE_TYPE.FINANCIAL_ENTITY
     });
-}
+};
 
-function deleteDbFiles(knex, id) {
+TravelLogDB.deleteDbFiles = function(knex, id) {
   return knex('file')
     .del()
     .where({
       ref_id: id,
       file_type: FILE_TYPE.FINANCIAL_ENTITY
     });
-}
+};
 
-function deleteFileData(dbInfo, files) {
+TravelLogDB.deleteFileData = function(dbInfo, files) {
   return Promise.all(
     files.map(file => {
       return new Promise((resolve, reject) => {
@@ -305,48 +346,48 @@ function deleteFileData(dbInfo, files) {
       });
     })
   );
-}
+};
 
-async function deleteEntityFiles(knex, dbInfo, id) {
-  const files = await getEntityFiles(knex, id);
-  await deleteDbFiles(knex, id);
-  return await deleteFileData(dbInfo, files);
-}
+TravelLogDB.deleteEntityFiles = async function(knex, dbInfo, id) {
+  const files = await TravelLogDB.getEntityFiles(knex, id);
+  await TravelLogDB.deleteDbFiles(knex, id);
+  return await TravelLogDB.deleteFileData(dbInfo, files);
+};
 
-function deleteEntity(knex, id) {
+TravelLogDB.deleteEntity = function(knex, id) {
   return knex('fin_entity')
     .del()
     .where('id', id);
-}
+};
 
-async function deleteEntityIfAllRelationshipsAreDeleted(
-  dbInfo,
-  knex,
-  entityId
-) {
+TravelLogDB.deleteEntityIfAllRelationshipsAreDeleted = async function(
+    dbInfo,
+    knex,
+    entityId
+  ) {
   const row = await knex('relationship')
     .first('id')
     .where('fin_entity_id', entityId);
 
   if (!row) {
-    await deleteEntityAnswers(knex, entityId);
-    await deleteEntityFiles(knex, dbInfo, entityId);
-    return await deleteEntity(knex, entityId);
+    await TravelLogDB.deleteEntityAnswers(knex, entityId);
+    await TravelLogDB.deleteEntityFiles(knex, dbInfo, entityId);
+    return await TravelLogDB.deleteEntity(knex, entityId);
   }
-}
+};
 
-export async function deleteTravelLogEntry(dbInfo, knex, id, userInfo) {
-  const isAllowed = await verifyRelationshipIsUsers(
+TravelLogDB.deleteTravelLogEntry = async function(dbInfo, knex, id, userInfo) {
+  const isAllowed = await CommonDB.verifyRelationshipIsUsers(
     knex,
     userInfo.schoolId,
     id
   );
 
   if (isAllowed) {
-    const entityId = await getRelationshipsEntity(knex, id);
-    await deleteTravelRelationship(knex, id);
-    await deleteRelationship(knex, id);
-    return await deleteEntityIfAllRelationshipsAreDeleted(
+    const entityId = await TravelLogDB.getRelationshipsEntity(knex, id);
+    await TravelLogDB.deleteTravelRelationship(knex, id);
+    await TravelLogDB.deleteRelationship(knex, id);
+    return await TravelLogDB.deleteEntityIfAllRelationshipsAreDeleted(
       dbInfo,
       knex,
       entityId
@@ -356,9 +397,9 @@ export async function deleteTravelLogEntry(dbInfo, knex, id, userInfo) {
   throw new Error(
     `${userInfo.userName} is unauthorized to edit this record`
   );
-}
+};
 
-function createTravelRelationshipFromEntry(entry) {
+TravelLogDB.createTravelRelationshipFromEntry = function(entry) {
   const travelRelationship = {};
   if (entry.amount) {
     travelRelationship.amount = entry.amount;
@@ -380,18 +421,20 @@ function createTravelRelationshipFromEntry(entry) {
     travelRelationship.destination = entry.destination;
   }
   return travelRelationship;
-}
+};
 
-function createRelationshipFromEntry(entry) {
+TravelLogDB.createRelationshipFromEntry = function(entry) {
   const relationship = {};
   if (entry.active !== undefined) {
     relationship.active = entry.active;
   }
   return relationship;
-}
+};
 
-function updateTravelRelationship(knex, entry, id) {
-  const travelRelationship = createTravelRelationshipFromEntry(entry);
+TravelLogDB.updateTravelRelationship = function(knex, entry, id) {
+  const travelRelationship = TravelLogDB.createTravelRelationshipFromEntry(
+    entry
+  );
   if (Object.keys(travelRelationship).length > 0) {
     return knex('travel_relationship')
       .update(travelRelationship)
@@ -399,10 +442,10 @@ function updateTravelRelationship(knex, entry, id) {
   }
 
   return undefined;
-}
+};
 
-function updateRelationship(knex, entry, id) {
-  const relationship = createRelationshipFromEntry(entry);
+TravelLogDB.updateRelationship = function(knex, entry, id) {
+  const relationship = TravelLogDB.createRelationshipFromEntry(entry);
   if (Object.keys(relationship).length > 0) {
     return knex('relationship')
       .update(relationship)
@@ -410,20 +453,24 @@ function updateRelationship(knex, entry, id) {
   }
 
   return undefined;
-}
+};
 
-function handleOldEntity(knex, dbInfo, entityId) {
-  return deleteEntityIfAllRelationshipsAreDeleted(dbInfo, knex, entityId);
-}
+TravelLogDB.handleOldEntity = function(knex, dbInfo, entityId) {
+  return TravelLogDB.deleteEntityIfAllRelationshipsAreDeleted(
+    dbInfo,
+    knex,
+    entityId
+  );
+};
 
-async function getEntityNameFromId(knex, id) {
+TravelLogDB.getEntityNameFromId = async function(knex, id) {
   const entity = await knex('fin_entity')
     .first('name')
     .where('id', id);
   return entity.name;
-}
+};
 
-async function getEntityIdFromName(knex, name, disclosureId) {
+TravelLogDB.getEntityIdFromName = async function(knex, name, disclosureId) {
   const entity = await knex('fin_entity')
     .first('id')
     .where({
@@ -436,24 +483,24 @@ async function getEntityIdFromName(knex, name, disclosureId) {
   }
 
   return undefined;
-}
+};
 
-function getRelationship(knex, id) {
+TravelLogDB.getRelationship = function(knex, id) {
   return knex('relationship')
     .first('fin_entity_id')
     .where('id', id);
-}
+};
 
-function updateRelationshipEntityId(knex, id, entityId) {
+TravelLogDB.updateRelationshipEntityId = function(knex, id, entityId) {
   return knex('relationship')
     .update({fin_entity_id: entityId})
     .where('id', id);
-}
+};
 
-async function updateEntity(knex, dbInfo, entry, id, schoolId) {
-  const relationship = await getRelationship(knex, id);
+TravelLogDB.updateEntity = async function(knex, dbInfo, entry, id, schoolId) {
+  const relationship = await TravelLogDB.getRelationship(knex, id);
 
-  const entityName = await getEntityNameFromId(
+  const entityName = await TravelLogDB.getEntityNameFromId(
     knex,
     relationship.fin_entity_id
   );
@@ -461,37 +508,46 @@ async function updateEntity(knex, dbInfo, entry, id, schoolId) {
     return undefined;
   }
 
-  const disclosure = await getAnnualDisclosureForUser(knex, schoolId);
-  const entityId = await getEntityIdFromName(
+  const disclosure = await TravelLogDB.getAnnualDisclosureForUser(
+    knex,
+    schoolId
+  );
+  const entityId = await TravelLogDB.getEntityIdFromName(
     knex,
     entry.entityName, disclosure.id
   );
   if (entityId) {
-    await updateRelationshipEntityId(knex, id, entityId);
-    return await handleOldEntity(
+    await TravelLogDB.updateRelationshipEntityId(knex, id, entityId);
+    return await TravelLogDB.handleOldEntity(
       knex,
       dbInfo,
       relationship.fin_entity_id
     );
   }
 
-  const newEntityId = await createNewEntity(
+  const newEntityId = await TravelLogDB.createNewEntity(
     knex,
     disclosure.id,
     entry,
     RELATIONSHIP_STATUS.IN_PROGRESS
   );
 
-  await updateRelationshipEntityId(knex, id, newEntityId);
-  return await handleOldEntity(
+  await TravelLogDB.updateRelationshipEntityId(knex, id, newEntityId);
+  return await TravelLogDB.handleOldEntity(
     knex,
     dbInfo,
     relationship.fin_entity_id
   );
-}
+};
 
-export async function updateTravelLogEntry(dbInfo, knex, entry, id, userInfo) {
-  const isAllowed = await verifyRelationshipIsUsers(
+TravelLogDB.updateTravelLogEntry = async function(
+    dbInfo,
+    knex,
+    entry,
+    id,
+    userInfo
+  ) {
+  const isAllowed = await CommonDB.verifyRelationshipIsUsers(
     knex,
     userInfo.schoolId,
     id
@@ -499,13 +555,15 @@ export async function updateTravelLogEntry(dbInfo, knex, entry, id, userInfo) {
 
   if (isAllowed) {
     await Promise.all([
-      updateTravelRelationship(knex, entry, id),
-      updateRelationship(knex, entry, id),
-      updateEntity(knex, dbInfo, entry, id, userInfo.schoolId)
+      TravelLogDB.updateTravelRelationship(knex, entry, id),
+      TravelLogDB.updateRelationship(knex, entry, id),
+      TravelLogDB.updateEntity(knex, dbInfo, entry, id, userInfo.schoolId)
     ]);
 
     return entry;
   }
 
   throw new Error(`${userInfo.userName} is unauthorized to edit this record`);
-}
+};
+
+addLoggers({TravelLogDB});

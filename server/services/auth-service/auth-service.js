@@ -16,7 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from '../../log';
+import {createLogger} from '../../log';
+const log = createLogger('AuthService');
 
 let client;
 try {
@@ -28,7 +29,7 @@ try {
   }
 } catch (e) {
   if (e.code !== 'MODULE_NOT_FOUND') {
-    Log.error(e);
+    log.error(e);
   }
   client = process.env.AUTH_ENABLED && process.env.AUTH_ENABLED === 'true' ? require('./auth-client') : require('./mock-auth-client');
 }

@@ -17,7 +17,8 @@
 */
 
 import * as authService from '../services/auth-service/auth-service';
-import Log from '../log';
+import {createLogger} from '../log';
+const log = createLogger('Authentication');
 
 export default function authentication(req, res, next) {
   authService.getUserInfo(req.dbInfo, req.hostname, req.cookies.authToken)
@@ -30,7 +31,7 @@ export default function authentication(req, res, next) {
       }
     })
     .catch(err => {
-      Log.error(err, req);
+      log.error(err, req);
       next(err);
     });
 }

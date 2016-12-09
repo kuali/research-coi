@@ -16,41 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {
-  getLatestArchivedDisclosure,
-  getArchivedDisclosures,
-  getSummariesForUser,
-  getAnnualDisclosure,
-  get,
-  getSummariesForReview,
-  getSummariesForReviewCount,
-  saveExistingFinancialEntity,
-  saveNewFinancialEntity,
-  saveDeclaration,
-  saveExistingDeclaration,
-  saveNewQuestionAnswer,
-  saveExistingQuestionAnswer,
-  submit,
-  approve,
-  reject,
-  returnToReporter,
-  addComment,
-  addGeneralComment,
-  updateComment,
-  deleteAnswers,
-  deleteAllAnswers,
-  getCurrentState,
-  saveCurrentState,
-  getArchivedDisclosure,
-  createEmptyDeclarations,
-} from '../db/disclosure-db';
-import * as PIReviewDB from '../db/pi-review-db';
-import * as FileDB from '../db/file-db';
-import {isDisclosureUsers} from '../db/common-db';
+import DisclosureDB from '../db/disclosure-db';
+import PIReviewDB from '../db/pi-review-db';
+import FileDB from '../db/file-db';
+import CommonDB from '../db/common-db';
 import wrapAsync from './wrap-async';
-import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
+import ReviewerDB from '../db/additional-reviewer-db';
 import multer from 'multer';
-import Log from '../log';
 import {
   ROLES,
   ADMIN_PAGE_SIZE,
@@ -72,6 +44,8 @@ import {
   returnToReporterNotification
 } from '../services/notification-service/notification-service';
 import useKnex from '../middleware/request-knex';
+import {createLogger} from '../log';
+const log = createLogger('DisclosureController');
 
 let upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 try {
@@ -83,7 +57,7 @@ try {
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    log.error(err);
   }
 }
 
@@ -108,7 +82,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo, params}, res) =>
     {
-      const result = await getLatestArchivedDisclosure(
+      const result = await DisclosureDB.getLatestArchivedDisclosure(
         knex,
         userInfo.schoolid,
         params.id
@@ -134,7 +108,10 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo}, res) =>
     {
-      const result = await getArchivedDisclosures(knex, userInfo.schoolId);
+      const result = await DisclosureDB.getArchivedDisclosures(
+        knex,
+        userInfo.schoolId
+      );
       res.send(result);
     }
   ));
@@ -148,7 +125,10 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo}, res) =>
     {
-      const result = await getSummariesForUser(knex, userInfo.schoolId);
+      const result = await DisclosureDB.getSummariesForUser(
+        knex,
+        userInfo.schoolId
+      );
       res.send(result);
     }
   ));
@@ -164,7 +144,7 @@ export const init = app => {
     {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await getAnnualDisclosure(
+        result = await DisclosureDB.getAnnualDisclosure(
           dbInfo,
           knexTrx,
           userInfo,
@@ -187,12 +167,12 @@ export const init = app => {
     wrapAsync(async ({dbInfo, userInfo, params, headers, knex}, res) =>
     {
       if (userInfo.coiRole === REVIEWER) {
-        const reviewerDisclosures = await getDisclosureIdsForReviewer(
+        const reviewerDisclosures = await ReviewerDB.getDisclosureIdsForReviewer( // eslint-disable-line max-len
           knex,
           userInfo.schoolId
         );
         if (!reviewerDisclosures.includes(params.id)) {
-          const isSubmitter = await isDisclosureUsers(
+          const isSubmitter = await CommonDB.isDisclosureUsers(
             knex,
             params.id,
             userInfo.schoolId
@@ -205,7 +185,7 @@ export const init = app => {
         }
       }
 
-      const result = await get(
+      const result = await DisclosureDB.get(
         dbInfo,
         knex,
         userInfo,
@@ -229,7 +209,7 @@ export const init = app => {
 
       let reviewerDisclosureIds;
       if (userInfo.coiRole === REVIEWER) {
-        reviewerDisclosureIds = await getDisclosureIdsForReviewer(
+        reviewerDisclosureIds = await ReviewerDB.getDisclosureIdsForReviewer(
           knex,
           userInfo.schoolId
         );
@@ -248,8 +228,8 @@ export const init = app => {
           filters = potentialFilter;
         }
         catch (parseErr) {
-          Log.error('invalid filters supplied to disclosure-summaries', req);
-          Log.error(parseErr, req);
+          log.error('invalid filters supplied to disclosure-summaries', req);
+          log.error(parseErr, req);
           throw Error('invalid filters supplied to disclosure-summaries');
         }
       }
@@ -258,7 +238,7 @@ export const init = app => {
       if (query.start && !isNaN(query.start)) {
         start = query.start;
       }
-      const result = await getSummariesForReview(
+      const result = await DisclosureDB.getSummariesForReview(
         knex,
         sortColumn,
         sortDirection,
@@ -286,16 +266,19 @@ export const init = app => {
           filters = potentialFilter;
         }
         catch (parseErr) {
-          Log.error(
+          log.error(
             'invalid filters supplied to disclosure-summaries/count',
             req
           );
-          Log.error(parseErr, req);
+          log.error(parseErr, req);
           throw Error('invalid filters supplied to disclosure-summaries/count');
         }
       }
 
-      const result = await getSummariesForReviewCount(knex, filters);
+      const result = await DisclosureDB.getSummariesForReviewCount(
+        knex,
+        filters
+      );
       res.send(result);
     }
   ));
@@ -311,7 +294,7 @@ export const init = app => {
     wrapAsync(async ({knex, dbInfo, userInfo, params, body, files}, res) => {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await saveExistingFinancialEntity(
+        result = await DisclosureDB.saveExistingFinancialEntity(
           dbInfo,
           knexTrx,
           userInfo,
@@ -336,7 +319,7 @@ export const init = app => {
     {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await saveNewFinancialEntity(
+        result = await DisclosureDB.saveNewFinancialEntity(
           knexTrx,
           userInfo,
           params.disclosureId,
@@ -353,7 +336,7 @@ export const init = app => {
             {revised: true}
           );
 
-          const declarationIds = await createEmptyDeclarations(
+          const declarationIds = await DisclosureDB.createEmptyDeclarations(
             knexTrx,
             params.disclosureId,
             userInfo.schoolId,
@@ -387,7 +370,7 @@ export const init = app => {
       body.disclosure_id = params.id; //eslint-disable-line camelcase
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await saveDeclaration(
+        result = await DisclosureDB.saveDeclaration(
           knexTrx,
           userInfo.schoolId,
           params.id,
@@ -408,7 +391,7 @@ export const init = app => {
     wrapAsync(async ({knex, userInfo, params, body}, res) =>
     {
       await knex.transaction(async (knexTrx) => {
-        await saveExistingDeclaration(
+        await DisclosureDB.saveExistingDeclaration(
           knexTrx,
           userInfo,
           params.id,
@@ -431,7 +414,7 @@ export const init = app => {
     {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await saveNewQuestionAnswer(
+        result = await DisclosureDB.saveNewQuestionAnswer(
           knexTrx,
           userInfo.schoolId,
           params.id,
@@ -453,7 +436,7 @@ export const init = app => {
     {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await saveExistingQuestionAnswer(
+        result = await DisclosureDB.saveExistingQuestionAnswer(
           knexTrx,
           userInfo.schoolId,
           params.id,
@@ -476,7 +459,7 @@ export const init = app => {
     {
       const {knex, dbInfo, userInfo, params, headers, hostname} = req;
       await knex.transaction(async (knexTrx) => {
-        await submit(
+        await DisclosureDB.submit(
           dbInfo,
           knexTrx,
           userInfo,
@@ -507,7 +490,7 @@ export const init = app => {
       const {knex, dbInfo, body, userInfo, params, headers, hostname} = req;
       let archiveId;
       await knex.transaction(async (knexTrx) => {
-        archiveId = await approve(
+        archiveId = await DisclosureDB.approve(
           dbInfo,
           knexTrx,
           body,
@@ -537,7 +520,7 @@ export const init = app => {
     {
       const {knex, userInfo, params, dbInfo, hostname} = req;
       await knex.transaction(async (knexTrx) => {
-        await reject(knexTrx, userInfo, params.id);
+        await DisclosureDB.reject(knexTrx, userInfo, params.id);
       });
 
       await createAndSendSentBackNotification(
@@ -566,18 +549,18 @@ export const init = app => {
           body: comment
           } = req;
         await knex.transaction(async (knexTrx) => {
-          await returnToReporter(knexTrx, userInfo, params.id);
+          await DisclosureDB.returnToReporter(knexTrx, userInfo, params.id);
         });
 
         await knex.transaction(async (knexTrx) => {
-          await deleteAllAnswers(
+          await DisclosureDB.deleteAllAnswers(
             knexTrx,
             userInfo,
             params.id
           );
 
           comment.disclosureId = params.id;
-          await addGeneralComment(knexTrx, userInfo, comment);
+          await DisclosureDB.addGeneralComment(knexTrx, userInfo, comment);
         });
 
         await returnToReporterNotification(
@@ -603,7 +586,7 @@ export const init = app => {
       let result;
       await knex.transaction(async (knexTrx) => {
         if (userInfo.coiRole === REVIEWER) {
-          const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          const reviewerDisclosures = await ReviewerDB.getDisclosureIdsForReviewer( // eslint-disable-line max-len
             knexTrx,
             userInfo.schoolId
           );
@@ -620,7 +603,7 @@ export const init = app => {
           return;
         }
 
-        result = await addComment(knexTrx, userInfo, comment);
+        result = await DisclosureDB.addComment(knexTrx, userInfo, comment);
       });
       res.send(result[0]);
     }
@@ -638,7 +621,7 @@ export const init = app => {
       let result;
       await knex.transaction(async (knexTrx) => {
         if (userInfo.coiRole === REVIEWER) {
-          const reviewerDisclosures = await getDisclosureIdsForReviewer(
+          const reviewerDisclosures = await ReviewerDB.getDisclosureIdsForReviewer( // eslint-disable-line max-len
             knexTrx,
             userInfo.schoolId
           );
@@ -653,7 +636,7 @@ export const init = app => {
           return;
         }
 
-        result = await updateComment(knexTrx, userInfo, comment);
+        result = await DisclosureDB.updateComment(knexTrx, userInfo, comment);
       });
       res.send(result);
     }
@@ -713,7 +696,7 @@ export const init = app => {
       }
 
       await knex.transaction(async (knexTrx) => {
-        await deleteAnswers(
+        await DisclosureDB.deleteAnswers(
           knexTrx,
           userInfo,
           params.id,
@@ -734,7 +717,11 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo, params}, res) =>
     {
-      const result = await getCurrentState(knex, userInfo, params.id);
+      const result = await DisclosureDB.getCurrentState(
+        knex,
+        userInfo,
+        params.id
+      );
       res.send(result);
     }
   ));
@@ -749,7 +736,7 @@ export const init = app => {
     wrapAsync(async ({knex, userInfo, params, body}, res) =>
     {
       res.status(ACCEPTED).end();
-      await saveCurrentState(knex, userInfo, params.id, body);
+      await DisclosureDB.saveCurrentState(knex, userInfo, params.id, body);
     }
   ));
 
@@ -759,7 +746,10 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, params}, res) =>
     {
-      const result = await getArchivedDisclosure(knex, params.archiveId);
+      const result = await DisclosureDB.getArchivedDisclosure(
+        knex,
+        params.archiveId
+      );
       const archive = JSON.parse(result.disclosure);
       res.send(archive);
     }

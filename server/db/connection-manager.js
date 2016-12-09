@@ -17,7 +17,8 @@
 */
 
 import knex from 'knex';
-import Log from '../log';
+import {createLogger} from '../log';
+const log = createLogger('ConnectionManager');
 
 const DEFAULT_CONNECTION_POOL_SIZE = 70;
 
@@ -61,7 +62,7 @@ try {
 catch (err) {
   let knexInstance;
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    log.error(err);
   }
   else {
     knexInstance = knex({

@@ -17,8 +17,9 @@
 */
 
 import * as localClient from './local-client';
-import Log from '../../log';
 import {LANES} from '../../../coi-constants';
+import {createLogger} from '../../log';
+const log = createLogger('FileService');
 
 let client = localClient;
 try {
@@ -30,13 +31,13 @@ try {
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    log.error(err);
   }
 }
 
 export async function getFileStream(dbInfo, key) {
   if (!client) {
-    Log.error('No file service configured');
+    log.error('No file service configured');
     return;
   }
   return await client.getFileStream(dbInfo, key);
@@ -44,7 +45,7 @@ export async function getFileStream(dbInfo, key) {
 
 export function deleteFile(dbInfo, key, callback) {
   if (!client) {
-    Log.error('No file service configured');
+    log.error('No file service configured');
     return;
   }
   client.deleteFile(dbInfo, key, callback);

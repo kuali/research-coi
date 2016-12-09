@@ -16,18 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import * as PIDB from '../db/pi-db';
-import * as PIReviewDB from '../db/pi-review-db';
-import {
-  isDisclosureUsers,
-  isFinancialEntityUsers,
-  isProjectUsers
-} from '../db/common-db';
+import PIDB from '../db/pi-db';
+import PIReviewDB from '../db/pi-review-db';
+import CommonDB from '../db/common-db';
 import { ROLES } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import { FORBIDDEN, NO_CONTENT, ACCEPTED } from '../../http-status-codes';
-import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
+import ReviewerDB from '../db/additional-reviewer-db';
 import {
   createAndSendResubmitNotification
 } from '../services/notification-service/notification-service';
@@ -119,7 +115,7 @@ export const init = app => {
     allowedRoles('ANY'),
     useKnex,
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const isSubmitter = await isDisclosureUsers(
+      const isSubmitter = await CommonDB.isDisclosureUsers(
         knex,
         params.disclosureId,
         userInfo.schoolId
@@ -178,7 +174,7 @@ export const init = app => {
     allowedRoles('ANY'),
     useKnex,
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const isOwner = await isFinancialEntityUsers(
+      const isOwner = await CommonDB.isFinancialEntityUsers(
         knex,
         params.entityId,
         userInfo.schoolId
@@ -238,7 +234,7 @@ export const init = app => {
     allowedRoles('ANY'),
     useKnex,
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const isOwner = await isFinancialEntityUsers(
+      const isOwner = await CommonDB.isFinancialEntityUsers(
         knex,
         params.entityId,
         userInfo.schoolId
@@ -296,7 +292,7 @@ export const init = app => {
     allowedRoles('ANY'),
     useKnex,
     wrapAsync(async ({knex, params, userInfo}, res) => {
-      const isOwner = await isFinancialEntityUsers(
+      const isOwner = await CommonDB.isFinancialEntityUsers(
         knex,
         params.entityId,
         userInfo.schoolId
@@ -354,12 +350,12 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
       const [isEntityOwner, isProjectOwner] = await Promise.all([
-        isFinancialEntityUsers(
+        CommonDB.isFinancialEntityUsers(
           knex,
           params.entityId,
           userInfo.schoolId
         ),
-        isProjectUsers(
+        CommonDB.isProjectUsers(
           knex,
           params.projectId,
           userInfo.schoolId
@@ -419,7 +415,7 @@ export const init = app => {
     allowedRoles('ANY'),
     useKnex,
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const isSubmitter = await isDisclosureUsers(
+      const isSubmitter = await CommonDB.isDisclosureUsers(
         knex,
         params.disclosureId,
         userInfo.schoolId
@@ -478,7 +474,7 @@ export const init = app => {
     wrapAsync(async (req, res) => {
       const {dbInfo, params, userInfo, hostname, headers, body, knex} = req;
 
-      const isSubmitter = isDisclosureUsers(
+      const isSubmitter = CommonDB.isDisclosureUsers(
         knex,
         params.disclosureId,
         userInfo.schoolId
@@ -529,7 +525,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, params, userInfo}, res) => {
       if (userInfo.coiRole === REVIEWER) {
-        const reviewerDisclosureIds = await getDisclosureIdsForReviewer(
+        const reviewerDisclosureIds = await ReviewerDB.getDisclosureIdsForReviewer( // eslint-disable-line max-len
           knex,
           userInfo.schoolId
         );
@@ -555,7 +551,7 @@ export const init = app => {
     allowedRoles('ANY'),
     useKnex,
     wrapAsync(async ({knex, params, userInfo, body}, res) => {
-      const isOwner = await isFinancialEntityUsers(
+      const isOwner = await CommonDB.isFinancialEntityUsers(
         knex,
         params.entityId,
         userInfo.schoolId

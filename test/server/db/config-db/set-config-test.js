@@ -17,7 +17,7 @@
  */
 
 import assert from 'assert';
-import * as ConfigDB from '../../../../server/db/config-db';
+import ConfigDB from '../../../../server/db/config-db';
 import getKnex from '../../../../server/db/connection-manager';
 
 const knex = getKnex({});

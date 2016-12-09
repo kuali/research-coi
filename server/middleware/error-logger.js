@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from '../log';
 import {INTERNAL_SERVER_ERROR} from '../../http-status-codes';
+import {logError} from '../log';
 
 export default function(err, req, res, next) {
-  Log.error(err, req);
+  logError(err, req, 'ErrorLogger');
 
   if (res.headersSent) {
     return next(err);

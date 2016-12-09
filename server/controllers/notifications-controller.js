@@ -21,10 +21,7 @@ const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import useKnex from '../middleware/request-knex';
-import {
-  getLatestNotifications,
-  notificationTemplateIsForCOI
-} from '../db/notifications-db';
+import NotificationsDB from '../db/notifications-db';
 import {FORBIDDEN, NOT_FOUND} from '../../http-status-codes';
 import {
   getNotificationReceiptDetail
@@ -36,7 +33,9 @@ export const init = app => {
     allowedRoles(ADMIN),
     useKnex,
     wrapAsync(async ({knex}, res) => {
-      const notificationRequests = await getLatestNotifications(knex);
+      const notificationRequests = await NotificationsDB.getLatestNotifications(
+        knex
+      );
       res.send(notificationRequests);
     })
   );
@@ -57,7 +56,10 @@ export const init = app => {
         return;
       }
 
-      const valid = await notificationTemplateIsForCOI(knex, detail.templateId);
+      const valid = await NotificationsDB.notificationTemplateIsForCOI(
+        knex,
+        detail.templateId
+      );
       if (!valid) {
         res.sendStatus(FORBIDDEN);
         return;

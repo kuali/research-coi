@@ -18,7 +18,8 @@
 
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
-import Log from '../log';
+import {createLogger} from '../log';
+const log = createLogger('UserController');
 
 let getAuthorizationInfo;
 try {
@@ -26,7 +27,7 @@ try {
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
   if (e.code !== 'MODULE_NOT_FOUND') {
-    Log.error(e);
+    log.error(e);
   }
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {

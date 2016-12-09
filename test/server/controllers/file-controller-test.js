@@ -29,7 +29,8 @@ import {
 } from '../../../coi-constants';
 import hashCode from '../../../hash';
 import { OK, FORBIDDEN, ACCEPTED } from '../../../http-status-codes';
-import Log from '../../../server/log';
+import {createLogger} from '../../../server/log';
+const log = createLogger('FileControllerTest');
 
 let getKnex;
 try {
@@ -38,7 +39,7 @@ try {
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    log.error(err);
   }
   getKnex = require('../../../server/db/connection-manager').default;
 }

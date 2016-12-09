@@ -16,7 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-export async function getLatestNotifications(knex) {
+import {addLoggers} from '../log';
+
+const NotificationsDB = {};
+export default NotificationsDB;
+
+NotificationsDB.getLatestNotifications = async function(knex) {
   return await knex
     .select(
       'id',
@@ -27,9 +32,12 @@ export async function getLatestNotifications(knex) {
     .from('notification_request')
     .orderBy('id', 'desc')
     .limit(100);
-}
+};
 
-export async function notificationTemplateIsForCOI(knex, templateId) {
+NotificationsDB.notificationTemplateIsForCOI = async function(
+    knex,
+    templateId
+  ) {
   const row = await knex
     .first('template_id')
     .from('notification_template')
@@ -38,4 +46,6 @@ export async function notificationTemplateIsForCOI(knex, templateId) {
     });
 
   return row !== undefined;
-}
+};
+
+addLoggers({NotificationsDB});

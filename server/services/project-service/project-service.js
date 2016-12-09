@@ -18,14 +18,11 @@
 
 import { getAuthToken } from '../auth-service/auth-service';
 import request from 'superagent';
-import {
-  getRequiredProjectTypes,
-  getRequiredProjectStatuses,
-  getRequiredProjectRoles
-} from '../../db/config-db';
-import Log from '../../log';
+import ConfigDB from '../../db/config-db';
 import cache from '../../lru-cache';
 import getKnex from '../../db/connection-manager';
+import {createLogger} from '../../log';
+const log = createLogger('ProjectService');
 
 let getAuthorizationInfo;
 try {
@@ -33,7 +30,7 @@ try {
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
   if (e.code !== 'MODULE_NOT_FOUND') {
-    Log.error(e);
+    log.error(e);
   }
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
@@ -67,7 +64,7 @@ async function callEndPoint(researchCoreUrl, authHeader, endPoint) {
     }
     return [];
   } catch (err) {
-    Log.error(`cannot access ${researchCoreUrl}${endPoint}`);
+    log.error(`cannot access ${researchCoreUrl}${endPoint}`);
     return [];
   }
 }
@@ -211,9 +208,9 @@ async function getRequirements(dbInfo, authHeader, trx) {
   const knex = trx ? trx : getKnex(dbInfo);
   const authInfo = getAuthorizationInfo(dbInfo);
   const requirements = {};
-  requirements.types = await getRequiredProjectTypes(knex);
-  requirements.roles = await getRequiredProjectRoles(knex);
-  requirements.statuses = await getRequiredProjectStatuses(knex);
+  requirements.types = await ConfigDB.getRequiredProjectTypes(knex);
+  requirements.roles = await ConfigDB.getRequiredProjectRoles(knex);
+  requirements.statuses = await ConfigDB.getRequiredProjectStatuses(knex);
   requirements.sponsors = process.env.NODE_ENV === 'test' ?
     ['000340','000500'] :
     await getRequiredSponsors(authInfo.researchCoreUrl, authInfo.coiHierarchy, authHeader);

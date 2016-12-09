@@ -19,7 +19,9 @@
 import cache from '../../lru-cache';
 import { ROLES, SYSTEM_USER } from '../../../coi-constants';
 import request from 'superagent';
-import Log from '../../log';
+import {createLogger} from '../../log';
+const log = createLogger('AuthClient');
+
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const REVIEWER_CACHE_KEY = 'reviewers';
 const ADMIN_CACHE_KEY = 'admins';
@@ -30,7 +32,7 @@ try {
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
   if (e.code !== 'MODULE_NOT_FOUND') {
-    Log.error(e);
+    log.error(e);
   }
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
@@ -56,7 +58,7 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
     }
     return false;
   } catch (err) {
-    Log.warn(`user ${schoolId} is not a member of the ${role} role`);
+    log.warn(`user ${schoolId} is not a member of the ${role} role`);
     return false;
   }
 }

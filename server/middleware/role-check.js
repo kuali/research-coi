@@ -18,7 +18,8 @@
 
 import {ROLES} from '../../coi-constants';
 import {FORBIDDEN} from '../../http-status-codes';
-import Log from '../log';
+import {createLogger} from '../log';
+const log = createLogger('RoleCheck');
 
 export function configCheck(req, res, next) {
   roleCheck([ROLES.ADMIN], req.userInfo.coiRole, res, next);
@@ -57,7 +58,7 @@ export function allowedRoles(rolesToAllow) {
 
   return (req, res, next) => {
     if (!valid(req)) {
-      Log.error('Unauthorized to access', req);
+      log.error('Unauthorized to access', req);
       res.sendStatus(FORBIDDEN);
       return;
     }

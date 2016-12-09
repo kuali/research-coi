@@ -22,11 +22,11 @@ import {
   handleTemplates
 } from '../services/notification-service/notification-service';
 import { NOTIFICATIONS_MODE, LANES } from '../../coi-constants';
-import {
-  updateExpirationToRollingDate,
-  updateExpirationToStaticDate
-} from './disclosure-db';
-import Log from '../log';
+import DisclosureDB from './disclosure-db';
+import {addLoggers, logError} from '../log';
+
+const ConfigDB = {};
+export default ConfigDB;
 
 const cachedConfigs = {};
 
@@ -39,7 +39,7 @@ try {
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    logError(err, null, 'ConfigDB');
   }
   lane = process.env.LANE || LANES.PRODUCTION;
   getNotificationsInfo = () => {
@@ -54,7 +54,7 @@ catch (err) {
 const SCREENING_QUESTIONNAIRE_TYPE_CD = 1;
 const FIN_ENTITY_QUESTIONNAIRE_TYPE_CD = 2;
 
-async function createDeleteQueries(knex, collection, tableProps) {
+ConfigDB.createDeleteQueries = async function (knex, collection, tableProps) {
   let sel = knex(tableProps.table).select(tableProps.pk);
   if (tableProps.where) {
     sel = sel.where(tableProps.where);
@@ -77,9 +77,9 @@ async function createDeleteQueries(knex, collection, tableProps) {
         .where(tableProps.pk, result[tableProps.pk]);
     })
   );
-}
+};
 
-async function createInsertQueries(knex, collection, tableProps) {
+ConfigDB.createInsertQueries = async function(knex, collection, tableProps) {
   return await Promise.all(
     collection.map(async (line) => {
       const tmpId = line.tmpId;
@@ -96,9 +96,9 @@ async function createInsertQueries(knex, collection, tableProps) {
       return line;
     })
   );
-}
+};
 
-function createUpdateQueries(knex, collection, tableProps) {
+ConfigDB.createUpdateQueries = function(knex, collection, tableProps) {
   return Promise.all(
     collection.map(line => {
       delete line.tmpId;
@@ -108,25 +108,29 @@ function createUpdateQueries(knex, collection, tableProps) {
         .where(tableProps.pk, line[tableProps.pk]);
     })
   );
-}
+};
 
-async function rowExists(knex, table, primaryKeyColumn, value) {
+ConfigDB.rowExists = async function(knex, table, primaryKeyColumn, value) {
   const result = await knex
     .first(primaryKeyColumn)
     .from(table)
     .where({[primaryKeyColumn]: value});
 
   return result !== undefined;
-}
+};
 
-async function createCollectionQueries(knex, collection, tableProps) {
+ConfigDB.createCollectionQueries = async function(
+    knex,
+    collection,
+    tableProps
+  ) {
   const updates = [];
   const inserts = [];
   for (const line of collection) {
     if (line[tableProps.pk] === undefined) {
       inserts.push(line);
     } else {
-      const exists = await rowExists(
+      const exists = await ConfigDB.rowExists(
         knex,
         tableProps.table,
         tableProps.pk,
@@ -142,9 +146,9 @@ async function createCollectionQueries(knex, collection, tableProps) {
   }
 
   const results = await Promise.all([
-    createDeleteQueries(knex, collection, tableProps),
-    createInsertQueries(knex, inserts, tableProps),
-    createUpdateQueries(knex, updates, tableProps)
+    ConfigDB.createDeleteQueries(knex, collection, tableProps),
+    ConfigDB.createInsertQueries(knex, inserts, tableProps),
+    ConfigDB.createUpdateQueries(knex, updates, tableProps)
   ]);
 
   const insertResults = results[1];
@@ -159,9 +163,9 @@ async function createCollectionQueries(knex, collection, tableProps) {
     }
     return line;
   });
-}
+};
 
-function convertQuestionFormat(questions, questionnaireId) {
+ConfigDB.convertQuestionFormat = function(questions, questionnaireId) {
   return questions.map(question => {
     question.question = JSON.stringify(question.question);
     question.questionnaire_id = questionnaireId;
@@ -171,14 +175,14 @@ function convertQuestionFormat(questions, questionnaireId) {
     }
     return question;
   });
-}
+};
 
-async function getNotificationTemplates(
-  knex,
-  dbInfo,
-  hostname,
-  notificationsMode
-) {
+ConfigDB.getNotificationTemplates = async function(
+    knex,
+    dbInfo,
+    hostname,
+    notificationsMode
+  ) {
   if (notificationsMode > NOTIFICATIONS_MODE.OFF) {
     const templates = await knex.select(
         'template_id as templateId',
@@ -201,9 +205,9 @@ async function getNotificationTemplates(
     }
   }
   return [];
-}
+};
 
-async function createMatrixTypes(knex) {
+ConfigDB.createMatrixTypes = async function(knex) {
   const categories = await knex
     .select('*')
     .from('relationship_category_type');
@@ -226,9 +230,9 @@ async function createMatrixTypes(knex) {
     });
     return type;
   });
-}
+};
 
-async function getQuestionnaireQuestions(knex, typeCd) {
+ConfigDB.getQuestionnaireQuestions = async function (knex, typeCd) {
   const questionnaire = await knex
     .first('id')
     .from('questionnaire')
@@ -245,38 +249,38 @@ async function getQuestionnaireQuestions(knex, typeCd) {
       return question;
     });
   }
-}
+};
 
-async function getScreeningQuestions(knex) {
-  return await getQuestionnaireQuestions(
+ConfigDB.getScreeningQuestions = async function(knex) {
+  return await ConfigDB.getQuestionnaireQuestions(
     knex,
     SCREENING_QUESTIONNAIRE_TYPE_CD
   );
-}
+};
 
-async function getEntityQuestions(knex) {
-  return await getQuestionnaireQuestions(
+ConfigDB.getEntityQuestions = async function (knex) {
+  return await ConfigDB.getQuestionnaireQuestions(
     knex,
     FIN_ENTITY_QUESTIONNAIRE_TYPE_CD
   );
-}
+};
 
-async function getQuestions(knex) {
-  const screening = await getScreeningQuestions(knex);
-  const entities = await getEntityQuestions(knex);
+ConfigDB.getQuestions = async function (knex) {
+  const screening = await ConfigDB.getScreeningQuestions(knex);
+  const entities = await ConfigDB.getEntityQuestions(knex);
   return {
     screening,
     entities
   };
-}
+};
 
-export async function getLatestConfigsId(knex) {
+ConfigDB.getLatestConfigsId = async function (knex) {
   const record = await knex('config').max('id as id');
   return record[0].id;
-}
+};
 
-export async function getGeneralConfig(knex) {
-  const mostRecentId = await getLatestConfigsId(knex);
+ConfigDB.getGeneralConfig = async function (knex) {
+  const mostRecentId = await ConfigDB.getLatestConfigsId(knex);
 
   if (cachedConfigs[mostRecentId]) {
     return {
@@ -305,13 +309,13 @@ export async function getGeneralConfig(knex) {
     config: parsedConfig.general,
     id: mostRecentId
   };
-}
+};
 
-export async function getConfig(dbInfo, knex, hostname) {
+ConfigDB.getConfig = async function (dbInfo, knex, hostname) {
   let config = {};
   const notificationsMode = getNotificationsInfo(dbInfo).notificationsMode;
 
-  config.matrixTypes = await createMatrixTypes(knex);
+  config.matrixTypes = await ConfigDB.createMatrixTypes(knex);
   config.relationshipPersonTypes = await knex
     .select('*')
     .from('relationship_person_type')
@@ -329,12 +333,12 @@ export async function getConfig(dbInfo, knex, hostname) {
     .orderBy('order');
 
   config.disclosureTypes = await knex.select('*').from('disclosure_type');
-  config.questions = await getQuestions(knex);
+  config.questions = await ConfigDB.getQuestions(knex);
   config.disclosureStatus = await knex.select('*').from('disclosure_status');
   config.projectTypes = await knex.select('*').from('project_type');
   config.projectRoles = await knex.select('*').from('project_role');
   config.projectStatuses = await knex.select('*').from('project_status');
-  config.notificationTemplates = await getNotificationTemplates(
+  config.notificationTemplates = await ConfigDB.getNotificationTemplates(
     knex,
     dbInfo,
     hostname,
@@ -343,13 +347,13 @@ export async function getConfig(dbInfo, knex, hostname) {
   config.notificationsMode = notificationsMode;
   config.lane = lane;
   config = camelizeJson(config);
-  const generalConfig = await getGeneralConfig(knex);
+  const generalConfig = await ConfigDB.getGeneralConfig(knex);
   config.id = generalConfig.id;
   config.general = generalConfig.config;
   return config;
-}
+};
 
-function updateParentIdOnChildren(children, updatedParents) {
+ConfigDB.updateParentIdOnChildren = function (children, updatedParents) {
   return children.map(question => {
     if (isNaN(question.parent)) {
       const parent = updatedParents.find(p => {
@@ -362,23 +366,23 @@ function updateParentIdOnChildren(children, updatedParents) {
     }
     return question;
   });
-}
+};
 
-export async function saveScreeningQuestionnaire(knex, questions) {
+ConfigDB.saveScreeningQuestionnaire = async function(knex, questions) {
   const questionnaire = await knex
     .first('id')
     .from('questionnaire')
     .where('type_cd', 1)
     .orderBy('version', 'desc');
 
-  const convertedQuestions = convertQuestionFormat(
+  const convertedQuestions = ConfigDB.convertQuestionFormat(
     questions,
     questionnaire.id
   );
   const parents = convertedQuestions.filter(question => !question.parent);
   const children = convertedQuestions.filter(question => question.parent);
 
-  const updatedParents = await createCollectionQueries(knex, parents, {
+  const updatedParents = await ConfigDB.createCollectionQueries(knex, parents, {
     pk: 'id',
     table: 'questionnaire_question',
     where() {
@@ -390,9 +394,9 @@ export async function saveScreeningQuestionnaire(knex, questions) {
     }
   });
 
-  await createCollectionQueries(
+  await ConfigDB.createCollectionQueries(
     knex,
-    updateParentIdOnChildren(children, updatedParents),
+    ConfigDB.updateParentIdOnChildren(children, updatedParents),
     {
       pk: 'id',
       table: 'questionnaire_question',
@@ -405,9 +409,9 @@ export async function saveScreeningQuestionnaire(knex, questions) {
       }
     }
   );
-}
+};
 
-export async function saveEntityQuestionnaire(knex, questions) {
+ConfigDB.saveEntityQuestionnaire = async function(knex, questions) {
   const result = await knex
     .first('*')
     .from('questionnaire')
@@ -428,18 +432,18 @@ export async function saveEntityQuestionnaire(knex, questions) {
     idToUse = parseInt(id[0]);
   }
 
-  return await createCollectionQueries(
+  return await ConfigDB.createCollectionQueries(
     knex,
-    convertQuestionFormat(questions, idToUse),
+    ConfigDB.convertQuestionFormat(questions, idToUse),
     {
       pk: 'id',
       table: 'questionnaire_question',
       where: {questionnaire_id: idToUse}
     }
   );
-}
+};
 
-export async function setConfig(dbInfo, knex, userId, body, hostname) {
+ConfigDB.setConfig = async function(dbInfo, knex, userId, body, hostname) {
   const config = snakeizeJson(body);
 
   if (config.disposition_types && Array.isArray(config.disposition_types)) {
@@ -473,7 +477,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
     );
 
     queries.push(
-      createCollectionQueries(knex, type.type_options, {
+      ConfigDB.createCollectionQueries(knex, type.type_options, {
         pk: 'type_cd',
         table: 'relationship_type',
         where: {relationship_cd: type.type_cd}
@@ -481,7 +485,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
     );
 
     queries.push(
-      createCollectionQueries(knex, type.amount_options, {
+      ConfigDB.createCollectionQueries(knex, type.amount_options, {
         pk: 'type_cd',
         table: 'relationship_amount_type',
         where: {relationship_cd: type.type_cd}
@@ -490,7 +494,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   });
 
   queries.push(
-    createCollectionQueries(
+    ConfigDB.createCollectionQueries(
       knex,
       config.declaration_types,
       {pk: 'type_cd', table: 'declaration_type'}
@@ -498,7 +502,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   );
 
   queries.push(
-    createCollectionQueries(
+    ConfigDB.createCollectionQueries(
       knex,
       config.disposition_types,
       {pk: 'type_cd', table: 'disposition_type'}
@@ -506,14 +510,14 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   );
 
   queries.push(
-    createCollectionQueries(knex, config.relationship_person_types, {
+    ConfigDB.createCollectionQueries(knex, config.relationship_person_types, {
       pk: 'type_cd',
       table: 'relationship_person_type'
     })
   );
 
   queries.push(
-    createCollectionQueries(
+    ConfigDB.createCollectionQueries(
       knex,
       config.disclosure_types,
       {pk: 'type_cd', table: 'disclosure_type'}
@@ -521,7 +525,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   );
 
   queries.push(
-    createCollectionQueries(
+    ConfigDB.createCollectionQueries(
       knex,
       config.project_types,
       {pk: 'type_cd', table: 'project_type'}
@@ -529,7 +533,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   );
 
   queries.push(
-    createCollectionQueries(
+    ConfigDB.createCollectionQueries(
       knex,
       config.project_roles,
       {pk: 'type_cd', table: 'project_role'}
@@ -537,37 +541,37 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
   );
 
   queries.push(
-    createCollectionQueries(
+    ConfigDB.createCollectionQueries(
       knex,
       config.project_statuses,
       {pk: 'type_cd', table: 'project_status'}
     )
   );
 
-  const previousGeneralConfig = await getGeneralConfig(knex);
+  const previousGeneralConfig = await ConfigDB.getGeneralConfig(knex);
   if (config.general.is_rolling_due_date) {
     if (!previousGeneralConfig.config.isRollingDueDate) {
-      await updateExpirationToRollingDate(knex);
+      await DisclosureDB.updateExpirationToRollingDate(knex);
     }
   }
   else if (
     previousGeneralConfig.config.isRollingDueDate ||
     previousGeneralConfig.config.dueDate !== config.general.due_date
   ) {
-    await updateExpirationToStaticDate(
+    await DisclosureDB.updateExpirationToStaticDate(
       knex,
       new Date(config.general.due_date)
     );
   }
 
-  await saveScreeningQuestionnaire(knex, config.questions.screening);
-  await saveEntityQuestionnaire(knex, config.questions.entities);
+  await ConfigDB.saveScreeningQuestionnaire(knex, config.questions.screening);
+  await ConfigDB.saveEntityQuestionnaire(knex, config.questions.entities);
 
   const notificationErrors = config.notification_templates.some(
     template => template.error === true
   );
   if (notificationErrors) {
-    Log.error(
+    this.log.error(
       'Not saving notification templates because of configuration errors'
     );
   }
@@ -579,7 +583,7 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
     );
     const templates = await Promise.all(results);
     queries.push(
-      createCollectionQueries(
+      ConfigDB.createCollectionQueries(
         knex,
         templates,
         {pk: 'template_id', table: 'notification_template'}
@@ -589,9 +593,9 @@ export async function setConfig(dbInfo, knex, userId, body, hostname) {
 
   await Promise.all(queries);
   return camelizeJson(config);
-}
+};
 
-export async function archiveConfig(knex, userId, userName, config) {
+ConfigDB.archiveConfig = async function(knex, userId, userName, config) {
   delete config.id;
   const id = await knex('config')
     .insert({
@@ -602,9 +606,9 @@ export async function archiveConfig(knex, userId, userName, config) {
     }, 'id');
 
   return parseInt(id[0]);
-}
+};
 
-export async function getArchivedConfig(knex, id) {
+ConfigDB.getArchivedConfig = async function (knex, id) {
   if (cachedConfigs[id]) {
     return cachedConfigs[id];
   }
@@ -622,41 +626,43 @@ export async function getArchivedConfig(knex, id) {
 
   cachedConfigs[id] = config;
   return config;
-}
+};
 
-export function getRequiredProjectRoles(knex) {
+ConfigDB.getRequiredProjectRoles = function (knex) {
   return knex('project_role')
     .select('source_role_cd as sourceRoleCd','project_type_cd as projectTypeCd')
     .where({req_disclosure: true});
-}
+};
 
-export function getRequiredProjectStatuses(knex) {
+ConfigDB.getRequiredProjectStatuses = function (knex) {
   return knex('project_status')
     .select(
       'source_status_cd as sourceStatusCd',
       'project_type_cd as projectTypeCd'
     )
     .where({req_disclosure: true});
-}
+};
 
-export function getRequiredProjectTypes(knex) {
+ConfigDB.getRequiredProjectTypes = function (knex) {
   return knex('project_type')
     .select('type_cd as typeCd')
     .where({req_disclosure: true});
-}
+};
 
-export async function getProjectTypeDescription(knex, typeCd) {
+ConfigDB.getProjectTypeDescription = async function (knex, typeCd) {
   const projectType = await knex('project_type')
     .first('description')
     .where({type_cd: typeCd});
 
   return projectType.description;
-}
+};
 
-export async function getCoreTemplateIdByTemplateId(knex, templateId) {
+ConfigDB.getCoreTemplateIdByTemplateId = async function (knex, templateId) {
   const template = await knex('notification_template')
     .first('core_template_id as coreTemplateId', 'active')
     .where({template_id: templateId});
 
   return template;
-}
+};
+
+addLoggers({ConfigDB});

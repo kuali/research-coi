@@ -16,11 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-export function usingMySql(knex) {
-  return knex.client.config.client === 'mysql';
-}
+import {addLoggers} from '../log';
 
-export async function isDisclosureUsers(knex, disclosureId, userId) {
+const CommonDB = {};
+export default CommonDB;
+
+CommonDB.usingMySql = function(knex) {
+  return knex.client.config.client === 'mysql';
+};
+
+CommonDB.isDisclosureUsers = async function (knex, disclosureId, userId) {
   const result = await knex
     .first('user_id')
     .from('disclosure')
@@ -30,9 +35,9 @@ export async function isDisclosureUsers(knex, disclosureId, userId) {
     });
 
   return result !== undefined;
-}
+};
 
-export async function isFinancialEntityUsers(knex, id, userId) {
+CommonDB.isFinancialEntityUsers = async function (knex, id, userId) {
   const result = await knex
     .first('d.user_id')
     .from('fin_entity as fe')
@@ -43,9 +48,9 @@ export async function isFinancialEntityUsers(knex, id, userId) {
     });
 
   return result !== undefined;
-}
+};
 
-export async function isProjectUsers(knex, projectId, userId) {
+CommonDB.isProjectUsers = async function (knex, projectId, userId) {
   const result = await knex
     .first('id')
     .from('project_person')
@@ -55,17 +60,21 @@ export async function isProjectUsers(knex, projectId, userId) {
     });
 
   return result !== undefined;
-}
+};
 
-export async function getDisclosureForFinancialEntity(knex, id) {
+CommonDB.getDisclosureForFinancialEntity = async function (knex, id) {
   const entity = await knex('fin_entity')
     .first('disclosure_id as disclosureId')
     .where({id});
 
   return entity.disclosureId;
-}
+};
 
-export async function verifyRelationshipIsUsers(knex, userId, relationshipId) {
+CommonDB.verifyRelationshipIsUsers = async function (
+    knex,
+    userId,
+    relationshipId
+  ) {
   const rows = await knex
     .first('r.id')
     .from('relationship as r')
@@ -77,4 +86,6 @@ export async function verifyRelationshipIsUsers(knex, userId, relationshipId) {
     });
 
   return rows !== undefined;
-}
+};
+
+addLoggers({CommonDB});

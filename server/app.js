@@ -34,7 +34,6 @@ import authentication from './middleware/authentication';
 import apiAuthentication from './middleware/api-authentication';
 import renderView from './middleware/render-view';
 import {noCache} from './middleware/cache';
-import Log from './log';
 import methodChecker from './middleware/method-checker';
 import ErrorLogger from './middleware/error-logger';
 import { LOG_LEVEL } from '../coi-constants';
@@ -45,6 +44,8 @@ import scheduleExpirationCheck from './expiration-check';
 import impersonationLogger from './middleware/impersonation-logger';
 import flags from '../feature-flags.json'; // eslint-disable-line
 import initFeatureFlags from './feature-flags';
+import {createLogger} from './log';
+const log = createLogger('App');
 
 const DEFAULT_PORT = 8090;
 
@@ -54,14 +55,14 @@ function conditionallyLogRequests(app, logLevel) {
   if (logLevel <= LOG_LEVEL.INFO) {
     app.use((req, res, next) => {
       const startTime = new Date().getTime();
-      Log.info('request received', req);
+      log.info('request received', req);
       res.on('finish', () => {
         const elapsedTime = new Date().getTime() - startTime;
-        Log.info(`request finished - ${elapsedTime}ms`, req);
+        log.info(`request finished - ${elapsedTime}ms`, req);
       });
       res.on('close', () => {
         const elapsedTime = new Date().getTime() - startTime;
-        Log.info(`request closed - ${elapsedTime}ms`, req);
+        log.info(`request closed - ${elapsedTime}ms`, req);
       });
       next();
     });
@@ -71,7 +72,7 @@ function conditionallyLogRequests(app, logLevel) {
 function configureProxy(app) {
   const TRUST_PROXY = process.env.TRUST_PROXY;
   if (TRUST_PROXY) {
-    Log.info(`Using TRUST_PROXY value of ${TRUST_PROXY}`);
+    log.info(`Using TRUST_PROXY value of ${TRUST_PROXY}`);
 
     if (TRUST_PROXY.toLowerCase() === 'true') {
       app.set('trust proxy', true);
@@ -106,11 +107,11 @@ export function run() {
     logLevel = config.logLevel;
   } catch (e) {
     if (e.code !== 'MODULE_NOT_FOUND') {
-      Log.error(e);
+      log.error(e);
     }
     else {
       logLevel = process.env.LOG_LEVEL;
-      Log.info('extensions not found');
+      log.info('extensions not found');
     }
   }
 

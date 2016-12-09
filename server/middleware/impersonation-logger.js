@@ -19,7 +19,8 @@
 /* eslint-disable camelcase */
 
 import getKnex from '../db/connection-manager';
-import Log from '../log';
+import {createLogger} from '../log';
+const log = createLogger('ImpersonationLogger');
 
 function getRequestInfo(req) {
   if (req) {
@@ -31,7 +32,7 @@ function getRequestInfo(req) {
 export default function(req, res, next) {
   try {
     if (req.userInfo.impersonatedBy) {
-      Log.info(getRequestInfo(req));
+      log.info(getRequestInfo(req));
       const knex = getKnex(req.dbInfo);
       knex('impersonation_audit')
         .insert({
@@ -49,7 +50,7 @@ export default function(req, res, next) {
         .then();
     }
   } catch (err) {
-    Log.error(err);
+    log.error(err);
   } finally {
     next();
   }
