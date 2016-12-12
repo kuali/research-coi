@@ -17,7 +17,7 @@
 */
 
 import assert from 'assert';
-import * as DisclosureDB from '../../../server/db/disclosure-db';
+import DisclosureDB from '../../../server/db/disclosure-db';
 import {
   DISCLOSURE_STATUS,
   DISCLOSURE_TYPE,

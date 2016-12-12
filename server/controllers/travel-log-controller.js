@@ -16,12 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {
-  getTravelLogEntries,
-  createTravelLogEntry,
-  deleteTravelLogEntry,
-  updateTravelLogEntry
-} from '../db/travel-log-db';
+import TravelLogDB from '../db/travel-log-db';
 import {OK} from '../../http-status-codes';
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
@@ -43,7 +38,7 @@ export const init = app => {
         filter = 'all'
       } = query;
 
-      const result = await getTravelLogEntries(
+      const result = await TravelLogDB.getTravelLogEntries(
         knex,
         userInfo.schoolId,
         sortColumn,
@@ -65,7 +60,11 @@ export const init = app => {
     {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await createTravelLogEntry(knexTrx, body, userInfo);
+        result = await TravelLogDB.createTravelLogEntry(
+          knexTrx,
+          body,
+          userInfo
+        );
       });
       res.send(result);
     }
@@ -81,7 +80,7 @@ export const init = app => {
     wrapAsync(async ({knex, dbInfo, params, userInfo}, res) =>
     {
       await knex.transaction(async (knexTrx) => {
-        await deleteTravelLogEntry(
+        await TravelLogDB.deleteTravelLogEntry(
           dbInfo,
           knexTrx,
           params.id,
@@ -103,7 +102,7 @@ export const init = app => {
     {
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await updateTravelLogEntry(
+        result = await TravelLogDB.updateTravelLogEntry(
           dbInfo,
           knexTrx,
           body,

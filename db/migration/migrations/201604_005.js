@@ -19,23 +19,24 @@
 /* eslint-disable prefer-arrow-callback, camelcase */
 
 exports.up = function(knex) {
-  return knex.schema.table('disclosure', function(table) {
-    table.dropForeign('disposition_type_cd');
-  })
-  .table('disclosure', function(table) {
-    table.dropColumn('disposition_type_cd');
-  })
-  .dropTableIfExists('disposition_type')
-  .createTable('disposition_type', function(table) {
-    table.increments('type_cd').notNullable().primary();
-    table.string('description', 50).notNullable();
-    table.integer('order').notNullable();
-    table.boolean('active').notNullable();
-    table.engine('InnoDB');
-  }).
-  table('declaration', function(table) {
-    table.integer('disposition_type_cd').unsigned().references('type_cd').inTable('disposition_type');
-  });
+  return knex.schema
+    .table('disclosure', function(table) {
+      table.dropForeign('disposition_type_cd');
+    })
+    .table('disclosure', function(table) {
+      table.dropColumn('disposition_type_cd');
+    })
+    .dropTableIfExists('disposition_type')
+    .createTable('disposition_type', function(table) {
+      table.increments('type_cd').notNullable().primary();
+      table.string('description', 50).notNullable();
+      table.integer('order').notNullable();
+      table.boolean('active').notNullable();
+      table.engine('InnoDB');
+    })
+    .table('declaration', function(table) {
+      table.integer('disposition_type_cd').unsigned().references('type_cd').inTable('disposition_type');
+    });
 };
 
 exports.down = function() {

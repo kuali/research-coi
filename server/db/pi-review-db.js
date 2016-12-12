@@ -23,13 +23,18 @@ import {
   FILE_TYPE,
   DISCLOSURE_STATUS
 } from '../../coi-constants';
-import {isDisclosureUsers, verifyRelationshipIsUsers} from './common-db';
-import { getProjects } from '../db/project-db';
+import CommonDB from './common-db';
+import ProjectDB from '../db/project-db';
 import { filterProjects } from '../services/project-service/project-service';
-import * as DisclosureDB from './disclosure-db';
-import Log from '../log';
+import DisclosureDB from './disclosure-db';
+import {addLoggers} from '../log';
 
-export async function verifyReviewIsForUser(knex, reviewId, userId) {
+const PIReviewDB = {};
+export default PIReviewDB;
+
+PIReviewDB.verifyReviewIsForUser = async function(knex, reviewId, userId) {
+  this.log.logArguments({reviewId, userId});
+
   const rows = await knex
     .count('d.user_id as theCount')
     .from('pi_review as p')
@@ -40,16 +45,18 @@ export async function verifyReviewIsForUser(knex, reviewId, userId) {
     });
 
   return rows[0].theCount === 1;
-}
+};
 
-async function updatePIResponseComment(
-  knex,
-  userInfo,
-  disclosure_id,
-  topic_section,
-  topic_id,
-  comment
-) {
+PIReviewDB.updatePIResponseComment = async function(
+    knex,
+    userInfo,
+    disclosure_id,
+    topic_section,
+    topic_id,
+    comment
+  ) {
+  this.log.logArguments({disclosure_id, topic_section, topic_id, comment});
+
   const {schoolId: user_id} = userInfo;
   const commentRow = await knex
     .first('c.id')
@@ -91,9 +98,11 @@ async function updatePIResponseComment(
       current: true
     }, 'id');
   }
-}
+};
 
-async function updateReviewRecord(knex, reviewId, values) {
+PIReviewDB.updateReviewRecord = async function(knex, reviewId, values) {
+  this.log.logArguments({reviewId, values});
+
   const newValues = {
     reviewed_on: new Date()
   };
@@ -109,9 +118,16 @@ async function updateReviewRecord(knex, reviewId, values) {
     .where({
       id: reviewId
     });
-}
+};
 
-export async function recordPIResponse(knex, userInfo, reviewId, comment) {
+PIReviewDB.recordPIResponse = async function(
+    knex,
+    userInfo,
+    reviewId,
+    comment
+  ) {
+  this.log.logArguments({reviewId, comment});
+
   const reviewItem = await knex
     .first(
       'disclosure_id as disclosureId',
@@ -121,7 +137,7 @@ export async function recordPIResponse(knex, userInfo, reviewId, comment) {
     .from('pi_review')
     .where('id', reviewId);
 
-  const isSubmitter = await isDisclosureUsers(
+  const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     reviewItem.disclosureId,
     userInfo.schoolId
@@ -130,9 +146,9 @@ export async function recordPIResponse(knex, userInfo, reviewId, comment) {
     return 'Unauthorized';
   }
 
-  await updateReviewRecord(knex, reviewId, {respondedTo: true});
+  await PIReviewDB.updateReviewRecord(knex, reviewId, {respondedTo: true});
 
-  await updatePIResponseComment(
+  await PIReviewDB.updatePIResponseComment(
     knex,
     userInfo,
     reviewItem.disclosureId,
@@ -140,16 +156,20 @@ export async function recordPIResponse(knex, userInfo, reviewId, comment) {
     reviewItem.targetId,
     comment
   );
-}
+};
 
-function extractTargetIDs(reviewItems) {
+PIReviewDB.extractTargetIDs = function(reviewItems) {
+  this.log.logArguments({reviewItems});
+
   return reviewItems.reduce((previous, current) => {
     previous.push(current.targetId);
     return previous;
   }, []);
-}
+};
 
-async function getQuestions(knex, disclosureId) {
+PIReviewDB.getQuestions = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const disclosure = await knex('disclosure')
     .first('config_id as configId')
     .where('id', disclosureId);
@@ -179,9 +199,11 @@ async function getQuestions(knex, disclosureId) {
       }
       return retVal;
     });
-}
+};
 
-async function getSubQuestions(knex, disclosureId) {
+PIReviewDB.getSubQuestions = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const disclosure = await knex('disclosure')
     .first('config_id as configId')
     .where('id', disclosureId);
@@ -190,8 +212,9 @@ async function getSubQuestions(knex, disclosureId) {
     .from('questionnaire_answer as qa')
     .innerJoin('disclosure_answer as da', 'da.questionnaire_answer_id', 'qa.id')
     .where(function() {
-      this.where('da.disclosure_id', disclosureId)
-      .orWhereNull('da.disclosure_id');
+      this
+        .where('da.disclosure_id', disclosureId)
+        .orWhereNull('da.disclosure_id');
     });
 
   const config = await knex('config')
@@ -213,9 +236,11 @@ async function getSubQuestions(knex, disclosureId) {
 
     return retVal;
   });
-}
+};
 
-async function getComments(knex, disclosureId, topicIDs, section) {
+PIReviewDB.getComments = async function(knex, disclosureId, topicIDs, section) {
+  this.log.logArguments({disclosureId, topicIDs, section});
+
   return await knex.select(
       'id',
       'topic_id as topicId',
@@ -233,18 +258,30 @@ async function getComments(knex, disclosureId, topicIDs, section) {
       pi_visible: true
     })
     .andWhere('topic_id', 'in', topicIDs);
-}
+};
 
-async function getQuestionnaireComments(knex, disclosureId, topicIDs) {
-  return await getComments(
+PIReviewDB.getQuestionnaireComments = async function(
+    knex,
+    disclosureId,
+    topicIDs
+  ) {
+  this.log.logArguments({disclosureId, topicIDs});
+
+  return await PIReviewDB.getComments(
     knex,
     disclosureId,
     topicIDs,
     DISCLOSURE_STEP.QUESTIONNAIRE
   );
-}
+};
 
-export async function getAdminProjectDisposition(knex, projectId, personId) {
+PIReviewDB.getAdminProjectDisposition = async function(
+    knex,
+    projectId,
+    personId
+  ) {
+  this.log.logArguments({projectId, personId});
+
   return await knex
     .first('disposition_type_cd as dispositionTypeCd')
     .from('project_person')
@@ -252,27 +289,37 @@ export async function getAdminProjectDisposition(knex, projectId, personId) {
       project_id: projectId,
       person_id: personId
     });
-}
+};
 
-async function getEntityComments(knex, disclosureId, topicIDs) {
-  return await getComments(
+PIReviewDB.getEntityComments = async function(knex, disclosureId, topicIDs) {
+  this.log.logArguments({disclosureId, topicIDs});
+
+  return await PIReviewDB.getComments(
     knex,
     disclosureId,
     topicIDs,
     DISCLOSURE_STEP.ENTITIES
   );
-}
+};
 
-async function getDeclarationComments(knex, disclosureId, topicIDs) {
-  return await getComments(
+PIReviewDB.getDeclarationComments = async function(
+    knex,
+    disclosureId,
+    topicIDs
+  ) {
+  this.log.logArguments({disclosureId, topicIDs});
+
+  return await PIReviewDB.getComments(
     knex,
     disclosureId,
     topicIDs,
     DISCLOSURE_STEP.PROJECTS
   );
-}
+};
 
-function setAdminCommentsForTopics(topics, comments) {
+PIReviewDB.setAdminCommentsForTopics = function(topics, comments) {
+  this.log.logArguments({topics, comments});
+
   comments.forEach(comment => {
     const topic = topics.find(topicToTest => {
       return topicToTest.id === comment.topicId;
@@ -285,9 +332,11 @@ function setAdminCommentsForTopics(topics, comments) {
       topic.comments.push(comment);
     }
   });
-}
+};
 
-function setPIReviewDataForTopics(topics, reviewItems) {
+PIReviewDB.setPIReviewDataForTopics = function(topics, reviewItems) {
+  this.log.logArguments({topics, reviewItems});
+
   topics.forEach(topic => {
     const piReviewRecord = reviewItems.find(item => {
       return item.targetId === topic.id;
@@ -300,9 +349,11 @@ function setPIReviewDataForTopics(topics, reviewItems) {
       topic.respondedTo = piReviewRecord.respondedTo;
     }
   });
-}
+};
 
-function associateSubQuestions(questions, subQuestions) {
+PIReviewDB.associateSubQuestions = function(questions, subQuestions) {
+  this.log.logArguments({questions, subQuestions});
+
   subQuestions.forEach(subQuestion => {
     const parent = questions.find(question => {
       return question.id === subQuestion.parent;
@@ -315,29 +366,38 @@ function associateSubQuestions(questions, subQuestions) {
       parent.subQuestions.push(subQuestion);
     }
   });
-}
+};
 
-async function getQuestionsToReview (knex, disclosureId, userId, reviewItems) {
-  const questionIDs = extractTargetIDs(reviewItems);
+PIReviewDB.getQuestionsToReview = async function (
+    knex,
+    disclosureId,
+    userId,
+    reviewItems
+  ) {
+  this.log.logArguments({disclosureId, userId, reviewItems});
+
+  const questionIDs = PIReviewDB.extractTargetIDs(reviewItems);
 
   const [questions, comments, subQuestions] = await Promise.all([
-    getQuestions(knex, disclosureId),
-    getQuestionnaireComments(knex, disclosureId, questionIDs),
-    getSubQuestions(knex, disclosureId)
+    PIReviewDB.getQuestions(knex, disclosureId),
+    PIReviewDB.getQuestionnaireComments(knex, disclosureId, questionIDs),
+    PIReviewDB.getSubQuestions(knex, disclosureId)
   ]);
 
-  associateSubQuestions(questions, subQuestions);
-  setAdminCommentsForTopics(questions, comments);
-  setPIReviewDataForTopics(questions, reviewItems);
+  PIReviewDB.associateSubQuestions(questions, subQuestions);
+  PIReviewDB.setAdminCommentsForTopics(questions, comments);
+  PIReviewDB.setPIReviewDataForTopics(questions, reviewItems);
   return questions;
-}
+};
 
-async function updateEntityQuestionAnswer(
-  knex,
-  reviewId,
-  questionId,
-  newAnswer
-) {
+PIReviewDB.updateEntityQuestionAnswer = async function(
+    knex,
+    reviewId,
+    questionId,
+    newAnswer
+  ) {
+  this.log.logArguments({reviewId, questionId, newAnswer});
+
   const row = await knex
     .first('qa.id')
     .from('pi_review as pr')
@@ -361,17 +421,19 @@ async function updateEntityQuestionAnswer(
     return false;
   }
 
-  await updateQuestionnaireAnswer(knex, row.id, newAnswer);
+  await PIReviewDB.updateQuestionnaireAnswer(knex, row.id, newAnswer);
 
   return true;
-}
+};
 
-async function upsertEntityQuestionAnswerById(
-  knex,
-  entityId,
-  questionId,
-  newAnswer
-) {
+PIReviewDB.upsertEntityQuestionAnswerById = async function(
+    knex,
+    entityId,
+    questionId,
+    newAnswer
+  ) {
+  this.log.logArguments({entityId, questionId, newAnswer});
+
   const row = await knex
     .first('qa.id')
     .from('fin_entity_answer as fea')
@@ -386,14 +448,25 @@ async function upsertEntityQuestionAnswerById(
     });
 
   if (!row) {
-    await insertEntityQuestionAnswer(knex, entityId, questionId, newAnswer);
+    await PIReviewDB.insertEntityQuestionAnswer(
+      knex,
+      entityId,
+      questionId,
+      newAnswer
+    );
     return;
   }
 
-  await updateQuestionnaireAnswer(knex, row.id, newAnswer);
-}
+  await PIReviewDB.updateQuestionnaireAnswer(knex, row.id, newAnswer);
+};
 
-async function updateScreeningQuestionAnswer(knex, reviewId, answer) {
+PIReviewDB.updateScreeningQuestionAnswer = async function(
+    knex,
+    reviewId,
+    answer
+  ) {
+  this.log.logArguments({reviewId, answer});
+
   const row = await knex
     .first('qa.id')
     .from('pi_review as pr')
@@ -412,43 +485,62 @@ async function updateScreeningQuestionAnswer(knex, reviewId, answer) {
     return false;
   }
 
-  await updateQuestionnaireAnswer(knex, row.id, answer);
-}
+  await PIReviewDB.updateQuestionnaireAnswer(knex, row.id, answer);
+};
 
-export async function reviseEntityQuestion(
-  knex,
-  userInfo,
-  reviewId,
-  questionId,
-  newAnswer
-) {
+PIReviewDB.reviseEntityQuestion = async function(
+    knex,
+    userInfo,
+    reviewId,
+    questionId,
+    newAnswer
+  ) {
+  this.log.logArguments({reviewId, questionId, newAnswer});
+
   return await Promise.all([
-    updateEntityQuestionAnswer(knex, reviewId, questionId, newAnswer),
-    updateReviewRecord(knex, reviewId, {revised: true})
+    PIReviewDB.updateEntityQuestionAnswer(
+      knex,
+      reviewId,
+      questionId,
+      newAnswer
+    ),
+    PIReviewDB.updateReviewRecord(knex, reviewId, {revised: true})
   ]);
-}
+};
 
-export async function reviseEntityQuestionById(
-  knex,
-  userInfo,
-  entityId,
-  questionId,
-  newAnswer
-) {
-  await upsertEntityQuestionAnswerById(knex, entityId, questionId, newAnswer);
+PIReviewDB.reviseEntityQuestionById = async function(
+    knex,
+    userInfo,
+    entityId,
+    questionId,
+    newAnswer
+  ) {
+  this.log.logArguments({entityId, questionId, newAnswer});
 
-  const disclosureId = await getDisclosureIdForEntity(knex, entityId);
+  await PIReviewDB.upsertEntityQuestionAnswerById(
+    knex,
+    entityId,
+    questionId,
+    newAnswer
+  );
 
-  await upsertReviewRecord(
+  const disclosureId = await PIReviewDB.getDisclosureIdForEntity(
+    knex,
+    entityId
+  );
+
+  await PIReviewDB.upsertReviewRecord(
     knex,
     disclosureId,
     DISCLOSURE_STEP.ENTITIES,
     entityId,
     {revised: true}
   );
-}
+};
 
-async function getDisclosureIdForEntity(knex, entityId) {
+PIReviewDB.getDisclosureIdForEntity = async function(knex, entityId) {
+  this.log.logArguments({entityId});
+
   const entityRow = await knex
     .first('disclosure_id as disclosureId')
     .from('fin_entity')
@@ -459,32 +551,38 @@ async function getDisclosureIdForEntity(knex, entityId) {
   }
 
   return entityRow.disclosureId;
-}
+};
 
-export async function reviseScreeningQuestion(
-  knex,
-  userInfo,
-  reviewId,
-  answer
-) {
+PIReviewDB.reviseScreeningQuestion = async function(
+    knex,
+    userInfo,
+    reviewId,
+    answer
+  ) {
+  this.log.logArguments({reviewId, answer});
+
   return await Promise.all([
-    updateScreeningQuestionAnswer(knex, reviewId, answer),
-    updateReviewRecord(knex, reviewId, {revised: true})
+    PIReviewDB.updateScreeningQuestionAnswer(knex, reviewId, answer),
+    PIReviewDB.updateReviewRecord(knex, reviewId, {revised: true})
   ]);
-}
+};
 
-async function updateQuestionnaireAnswer(knex, id, value) {
+PIReviewDB.updateQuestionnaireAnswer = async function(knex, id, value) {
+  this.log.logArguments({id, value});
+
   await knex('questionnaire_answer')
     .update('answer', JSON.stringify({value}))
     .where('id', id);
-}
+};
 
-async function insertEntityQuestionAnswer(
-  knex,
-  fin_entity_id,
-  question_id,
-  newAnswer
-) {
+PIReviewDB.insertEntityQuestionAnswer = async function(
+    knex,
+    fin_entity_id,
+    question_id,
+    newAnswer
+  ) {
+  this.log.logArguments({fin_entity_id, question_id, newAnswer});
+
   const result = await knex('questionnaire_answer')
     .insert({
       question_id,
@@ -498,9 +596,15 @@ async function insertEntityQuestionAnswer(
       fin_entity_id,
       questionnaire_answer_id
     });
-}
+};
 
-async function getQuestionnaireAnswerId(knex, disclosureId, questionId) {
+PIReviewDB.getQuestionnaireAnswerId = async function(
+    knex,
+    disclosureId,
+    questionId
+  ) {
+  this.log.logArguments({disclosureId, questionId});
+
   const row = await knex
     .first('qa.id')
     .from('disclosure_answer as da')
@@ -517,15 +621,17 @@ async function getQuestionnaireAnswerId(knex, disclosureId, questionId) {
   if (row) {
     return row.id;
   }
-}
+};
 
-export async function upsertReviewRecord(
-  knex,
-  disclosureId,
-  type,
-  targetId,
-  values
-) {
+PIReviewDB.upsertReviewRecord = async function(
+    knex,
+    disclosureId,
+    type,
+    targetId,
+    values
+  ) {
+  this.log.logArguments({disclosureId, type, targetId, values});
+
   const existingRow = await knex
     .first('id')
     .from('pi_review')
@@ -560,34 +666,44 @@ export async function upsertReviewRecord(
     await knex('pi_review')
       .insert(newValues);
   }
-}
+};
 
-export async function reviseScreeningQuestionById(
-  knex,
-  userInfo,
-  disclosureId,
-  questionId,
-  answer
-) {
-  const qaId = await getQuestionnaireAnswerId(knex, disclosureId, questionId);
-  await updateQuestionnaireAnswer(knex, qaId, answer);
-  await upsertReviewRecord(
+PIReviewDB.reviseScreeningQuestionById = async function(
+    knex,
+    userInfo,
+    disclosureId,
+    questionId,
+    answer
+  ) {
+  this.log.logArguments({disclosureId, questionId, answer});
+
+  const qaId = await PIReviewDB.getQuestionnaireAnswerId(
+    knex,
+    disclosureId,
+    questionId
+  );
+  await PIReviewDB.updateQuestionnaireAnswer(knex, qaId, answer);
+  await PIReviewDB.upsertReviewRecord(
     knex,
     disclosureId,
     DISCLOSURE_STEP.QUESTIONNAIRE,
     questionId,
     {revised: true}
   );
-}
+};
 
-function getEntityNames(knex, disclosureId) {
+PIReviewDB.getEntityNames = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex
     .select('fe.id', 'fe.name', 'fe.disclosure_id as disclosureId')
     .from('fin_entity as fe')
     .where('fe.disclosure_id', disclosureId);
-}
+};
 
-function getEntitiesAnswers(knex, disclosureId) {
+PIReviewDB.getEntitiesAnswers = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex.select(
       'qq.id as questionId',
       'qa.answer',
@@ -598,9 +714,11 @@ function getEntitiesAnswers(knex, disclosureId) {
     .innerJoin('fin_entity_answer as fa', 'fa.questionnaire_answer_id', 'qa.id')
     .innerJoin('fin_entity as fe', 'fe.id', 'fa.fin_entity_id')
     .where('fe.disclosure_id', disclosureId);
-}
+};
 
-async function getRelationships(knex, disclosureId) {
+PIReviewDB.getRelationships = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   const relationships = await knex
     .select(
       'r.id',
@@ -638,9 +756,11 @@ async function getRelationships(knex, disclosureId) {
     relationship.travel = travel ? travel : {};
   });
   return relationships;
-}
+};
 
-function getFiles(knex, disclosureId) {
+PIReviewDB.getFiles = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex
     .select(
       'f.id',
@@ -652,9 +772,14 @@ function getFiles(knex, disclosureId) {
     .innerJoin('fin_entity as fe', 'fe.id', 'f.ref_id')
     .andWhere('fe.disclosure_id', disclosureId)
     .andWhere('file_type', FILE_TYPE.FINANCIAL_ENTITY);
-}
+};
 
-function setQuestionAnswersForEntities(entities, entityQuestionAnswers) {
+PIReviewDB.setQuestionAnswersForEntities = function(
+    entities,
+    entityQuestionAnswers
+  ) {
+  this.log.logArguments({entities, entityQuestionAnswers});
+
   entityQuestionAnswers.forEach(answer => {
     const targetEntity = entities.find(entity => {
       return entity.id === answer.finEntityId;
@@ -668,9 +793,11 @@ function setQuestionAnswersForEntities(entities, entityQuestionAnswers) {
       targetEntity.answers.push(answer);
     }
   });
-}
+};
 
-function setRelationshipsForEntities(entities, relationships) {
+PIReviewDB.setRelationshipsForEntities = function(entities, relationships) {
+  this.log.logArguments({entities, relationships});
+
   relationships.forEach(relationship => {
     const entity = entities.find(entityToTest => {
       return entityToTest.id === relationship.finEntityId;
@@ -683,9 +810,11 @@ function setRelationshipsForEntities(entities, relationships) {
       entity.relationships.push(relationship);
     }
   });
-}
+};
 
-function setFilesForEntities(entities, files) {
+PIReviewDB.setFilesForEntities = function(entities, files) {
+  this.log.logArguments({entities, files});
+
   files.forEach(file => {
     const entity = entities.find(entityToTest => {
       return entityToTest.id === file.refId;
@@ -698,39 +827,50 @@ function setFilesForEntities(entities, files) {
       entity.files.push(file);
     }
   });
-}
+};
 
-async function getEntitiesToReview(knex, disclosureId, userId, reviewItems) {
-  const entityIDs = extractTargetIDs(reviewItems);
+PIReviewDB.getEntitiesToReview = async function(
+    knex,
+    disclosureId,
+    userId,
+    reviewItems
+  ) {
+  this.log.logArguments({disclosureId, userId, reviewItems});
+
+  const entityIDs = PIReviewDB.extractTargetIDs(reviewItems);
 
   const [entities, entityQuestionAnswers, comments, relationships, files] =
     await Promise.all([
-      getEntityNames(knex, disclosureId),
-      getEntitiesAnswers(knex, disclosureId),
-      getEntityComments(knex, disclosureId, entityIDs),
-      getRelationships(knex, disclosureId),
-      getFiles(knex, disclosureId)
+      PIReviewDB.getEntityNames(knex, disclosureId),
+      PIReviewDB.getEntitiesAnswers(knex, disclosureId),
+      PIReviewDB.getEntityComments(knex, disclosureId, entityIDs),
+      PIReviewDB.getRelationships(knex, disclosureId),
+      PIReviewDB.getFiles(knex, disclosureId)
     ]);
 
-  setQuestionAnswersForEntities(entities, entityQuestionAnswers);
-  setRelationshipsForEntities(entities, relationships);
-  setAdminCommentsForTopics(entities, comments);
-  setPIReviewDataForTopics(entities, reviewItems);
-  setFilesForEntities(entities, files);
+  PIReviewDB.setQuestionAnswersForEntities(entities, entityQuestionAnswers);
+  PIReviewDB.setRelationshipsForEntities(entities, relationships);
+  PIReviewDB.setAdminCommentsForTopics(entities, comments);
+  PIReviewDB.setPIReviewDataForTopics(entities, reviewItems);
+  PIReviewDB.setFilesForEntities(entities, files);
   return entities;
-}
+};
 
-async function getAllProjects(knex, userId, authHeader, dbInfo) {
-  const projects = await getProjects(knex, userId);
+PIReviewDB.getAllProjects = async function(knex, userId, authHeader, dbInfo) {
+  this.log.logArguments({userId});
+
+  const projects = await ProjectDB.getProjects(knex, userId);
   return await filterProjects(
     dbInfo,
     projects,
     authHeader,
     knex
   );
-}
+};
 
-function getProjectsForDisclosure(knex, disclosureId) {
+PIReviewDB.getProjectsForDisclosure = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex.distinct(
     'p.title as name',
     'p.id',
@@ -743,18 +883,22 @@ function getProjectsForDisclosure(knex, disclosureId) {
     .andWhere({
       'd.disclosure_id': disclosureId
     });
-}
+};
 
-function getEntitesWithTheseDeclarations(knex, disclosureId) {
+PIReviewDB.getEntitesWithTheseDeclarations = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex.distinct('fe.name', 'fe.id', 'd.project_id as projectId')
     .from('declaration as d')
     .innerJoin('fin_entity as fe', 'fe.id', 'd.fin_entity_id')
     .where({
       'd.disclosure_id': disclosureId
     });
-}
+};
 
-function getDeclarations (knex, disclosureId) {
+PIReviewDB.getDeclarations = function (knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex.select(
       'd.id',
       'd.fin_entity_id as finEntityId',
@@ -766,9 +910,15 @@ function getDeclarations (knex, disclosureId) {
     .andWhere({
       'd.disclosure_id': disclosureId
     });
-}
+};
 
-function setPIReviewDataForDeclaration(target, declaration, reviewItems) {
+PIReviewDB.setPIReviewDataForDeclaration = function(
+    target,
+    declaration,
+    reviewItems
+  ) {
+  this.log.logArguments({target, declaration, reviewItems});
+
   const piReviewRecord = reviewItems.find(item => {
     return item.targetId === declaration.id;
   });
@@ -779,9 +929,11 @@ function setPIReviewDataForDeclaration(target, declaration, reviewItems) {
     target.revised = piReviewRecord.revised;
     target.respondedTo = piReviewRecord.respondedTo;
   }
-}
+};
 
-function getAllActiveEntitiesForDisclosure(knex, disclosureId) {
+PIReviewDB.getAllActiveEntitiesForDisclosure = function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return knex.select(
       'id',
       'name'
@@ -791,9 +943,16 @@ function getAllActiveEntitiesForDisclosure(knex, disclosureId) {
       disclosure_id: disclosureId,
       active: true
     });
-}
+};
 
-async function handleNewDeclaration(knex, entity, project, disclosureId) {
+PIReviewDB.handleNewDeclaration = async function(
+    knex,
+    entity,
+    project,
+    disclosureId
+  ) {
+  this.log.logArguments({entity, project, disclosureId});
+
   const newDeclaration = {
     disclosure_id: disclosureId,
     fin_entity_id: entity.id,
@@ -802,7 +961,7 @@ async function handleNewDeclaration(knex, entity, project, disclosureId) {
 
   await knex('declaration').insert(newDeclaration);
 
-  Log.info(
+  this.log.info(
     `inserted declaration new declaration ${JSON.stringify(newDeclaration)}`
   );
 
@@ -812,24 +971,28 @@ async function handleNewDeclaration(knex, entity, project, disclosureId) {
     projectId: project.id,
     adminComments: []
   };
-}
+};
 
-async function handleNewProject(
-  knex,
-  project,
-  entities,
-  declarations,
-  disclosureId
-) {
+PIReviewDB.handleNewProject = async function(
+    knex,
+    project,
+    entities,
+    declarations,
+    disclosureId
+  ) {
+  this.log.logArguments({project, entities, declarations, disclosureId});
+
   const declarationExists = declarations.some(declaration => {
     return declaration.projectId === project.id;
   });
 
   if (!declarationExists) {
-    Log.info(`project: ${JSON.stringify(project)} exists with no declaration`);
+    this.log.info(
+      `project: ${JSON.stringify(project)} exists with no declaration`
+    );
     project.entities = await Promise.all(
       entities.map(
-        entity => handleNewDeclaration(
+        entity => PIReviewDB.handleNewDeclaration(
           knex,
           entity,
           project,
@@ -839,17 +1002,19 @@ async function handleNewProject(
     );
   }
   return project;
-}
+};
 
-async function getDeclarationsToReview(
-  knex,
-  disclosureId,
-  userId,
-  reviewItems,
-  authHeader,
-  dbInfo
-) {
-  const declarationIDs = extractTargetIDs(reviewItems);
+PIReviewDB.getDeclarationsToReview = async function(
+    knex,
+    disclosureId,
+    userId,
+    reviewItems,
+    authHeader,
+    dbInfo
+  ) {
+  this.log.logArguments({disclosureId, userId, reviewItems});
+
+  const declarationIDs = PIReviewDB.extractTargetIDs(reviewItems);
 
   const [
     declaredProjects,
@@ -859,19 +1024,19 @@ async function getDeclarationsToReview(
     declarations,
     allEntities
   ] = await Promise.all([
-    getProjectsForDisclosure(knex, disclosureId),
-    getAllProjects(knex, userId, authHeader, dbInfo),
-    getEntitesWithTheseDeclarations(knex, disclosureId),
-    getDeclarationComments(knex, disclosureId, declarationIDs),
-    getDeclarations(knex, disclosureId),
-    getAllActiveEntitiesForDisclosure(knex, disclosureId)
+    PIReviewDB.getProjectsForDisclosure(knex, disclosureId),
+    PIReviewDB.getAllProjects(knex, userId, authHeader, dbInfo),
+    PIReviewDB.getEntitesWithTheseDeclarations(knex, disclosureId),
+    PIReviewDB.getDeclarationComments(knex, disclosureId, declarationIDs),
+    PIReviewDB.getDeclarations(knex, disclosureId),
+    PIReviewDB.getAllActiveEntitiesForDisclosure(knex, disclosureId)
   ]);
 
   let projects;
   if (Array.isArray(allEntities) && allEntities.length > 0) {
     projects = await Promise.all(
       allProjects.map(
-        project => handleNewProject(
+        project => PIReviewDB.handleNewProject(
           knex,
           project,
           allEntities,
@@ -902,7 +1067,11 @@ async function getDeclarationsToReview(
         return a.date - b.date;
       });
 
-      setPIReviewDataForDeclaration(entity, declaration, reviewItems);
+      PIReviewDB.setPIReviewDataForDeclaration(
+        entity,
+        declaration,
+        reviewItems
+      );
     }
 
     const project = projects.find(projectToCheck => {
@@ -918,16 +1087,18 @@ async function getDeclarationsToReview(
   });
 
   return projects;
-}
+};
 
-export async function getPIReviewItems(
-  knex,
-  userInfo,
-  disclosureId,
-  authHeader,
-  dbInfo
-) {
-  const isSubmitter = await isDisclosureUsers(
+PIReviewDB.getPIReviewItems = async function(
+    knex,
+    userInfo,
+    disclosureId,
+    authHeader,
+    dbInfo
+  ) {
+  this.log.logArguments({disclosureId});
+
+  const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosureId,
     userInfo.schoolId
@@ -959,19 +1130,19 @@ export async function getPIReviewItems(
     disclosure,
     projects
   ] = await Promise.all([
-    getQuestionsToReview(
+    PIReviewDB.getQuestionsToReview(
       knex,
       disclosureId,
       userInfo.schoolId,
       rows.filter(row => row.targetType === DISCLOSURE_STEP.QUESTIONNAIRE)
     ),
-    getEntitiesToReview(
+    PIReviewDB.getEntitiesToReview(
       knex,
       disclosureId,
       userInfo.schoolId,
       rows.filter(row => row.targetType === DISCLOSURE_STEP.ENTITIES)
     ),
-    getDeclarationsToReview(
+    PIReviewDB.getDeclarationsToReview(
       knex,
       disclosureId,
       userInfo.schoolId,
@@ -987,7 +1158,7 @@ export async function getPIReviewItems(
         'type_cd as typeCd'
       )
       .where('id', disclosureId),
-    getAllProjects(knex, userInfo.schoolId, authHeader, dbInfo)
+    PIReviewDB.getAllProjects(knex, userInfo.schoolId, authHeader, dbInfo)
   ]);
 
   return {
@@ -1000,9 +1171,11 @@ export async function getPIReviewItems(
     lastReviewDate: disclosure.lastReviewDate,
     typeCd: disclosure.typeCd
   };
-}
+};
 
-async function getReviewTarget(knex, reviewId) {
+PIReviewDB.getReviewTarget = async function(knex, reviewId) {
+  this.log.logArguments({reviewId});
+
   const row = await knex
     .first(
       'target_type as targetType',
@@ -1015,15 +1188,17 @@ async function getReviewTarget(knex, reviewId) {
     });
 
   return row;
-}
+};
 
-export async function addRelationship(
-  knex,
-  userInfo,
-  reviewId,
-  newRelationship
-) {
-  const reviewTarget = await getReviewTarget(knex, reviewId);
+PIReviewDB.addRelationship = async function(
+    knex,
+    userInfo,
+    reviewId,
+    newRelationship
+  ) {
+  this.log.logArguments({reviewId, newRelationship});
+
+  const reviewTarget = await PIReviewDB.getReviewTarget(knex, reviewId);
 
   await knex('relationship')
     .insert({
@@ -1037,20 +1212,25 @@ export async function addRelationship(
     }, 'id');
 
   const [relationships] = await Promise.all([
-    getRelationships(knex, reviewTarget.disclosureId),
-    updateReviewRecord(knex, reviewId, {revised: true})
+    PIReviewDB.getRelationships(knex, reviewTarget.disclosureId),
+    PIReviewDB.updateReviewRecord(knex, reviewId, {revised: true})
   ]);
 
   return relationships;
-}
+};
 
-export async function addRelationshipById(
-  knex,
-  userInfo,
-  entityId,
-  newRelationship
-) {
-  const disclosureId = await getDisclosureIdForEntity(knex, entityId);
+PIReviewDB.addRelationshipById = async function(
+    knex,
+    userInfo,
+    entityId,
+    newRelationship
+  ) {
+  this.log.logArguments({entityId, newRelationship});
+
+  const disclosureId = await PIReviewDB.getDisclosureIdForEntity(
+    knex,
+    entityId
+  );
 
   await knex('relationship')
     .insert({
@@ -1064,8 +1244,8 @@ export async function addRelationshipById(
     }, 'id');
 
   const [relationships] = await Promise.all([
-    getRelationships(knex, disclosureId),
-    upsertReviewRecord(
+    PIReviewDB.getRelationships(knex, disclosureId),
+    PIReviewDB.upsertReviewRecord(
       knex,
       disclosureId,
       DISCLOSURE_STEP.ENTITIES,
@@ -1077,15 +1257,17 @@ export async function addRelationshipById(
   return relationships.filter(
     relationship => relationship.finEntityId === Number(entityId)
   );
-}
+};
 
-export async function removeRelationship(
-  knex,
-  userInfo,
-  reviewId,
-  relationshipId
-) {
-  const isAllowed = await verifyRelationshipIsUsers(
+PIReviewDB.removeRelationship = async function(
+    knex,
+    userInfo,
+    reviewId,
+    relationshipId
+  ) {
+  this.log.logArguments({reviewId, relationshipId});
+
+  const isAllowed = await CommonDB.verifyRelationshipIsUsers(
     knex,
     userInfo.schoolId,
     relationshipId
@@ -1093,7 +1275,7 @@ export async function removeRelationship(
 
   if (isAllowed) {
     return await Promise.all([
-      updateReviewRecord(knex, reviewId, {revised: true}),
+      PIReviewDB.updateReviewRecord(knex, reviewId, {revised: true}),
       knex('relationship')
         .where('id', relationshipId)
         .del()
@@ -1101,21 +1283,25 @@ export async function removeRelationship(
   }
 
   return 'Unauthorized';
-}
+};
 
-async function deleteRelationship(knex, relationshipId) {
+PIReviewDB.deleteRelationship = async function(knex, relationshipId) {
+  this.log.logArguments({relationshipId});
+
   await knex('relationship')
     .where('id', relationshipId)
     .del();
-}
+};
 
-export async function removeRelationshipById(
-  knex,
-  userInfo,
-  entityId,
-  relationshipId
-) {
-  const isAllowed = await verifyRelationshipIsUsers(
+PIReviewDB.removeRelationshipById = async function(
+    knex,
+    userInfo,
+    entityId,
+    relationshipId
+  ) {
+  this.log.logArguments({entityId, relationshipId});
+
+  const isAllowed = await CommonDB.verifyRelationshipIsUsers(
     knex,
     userInfo.schoolId,
     relationshipId
@@ -1123,11 +1309,11 @@ export async function removeRelationshipById(
 
   if (isAllowed) {
     const [disclosureId] = await Promise.all([
-      getDisclosureIdForEntity(knex, entityId),
-      deleteRelationship(knex, relationshipId)
+      PIReviewDB.getDisclosureIdForEntity(knex, entityId),
+      PIReviewDB.deleteRelationship(knex, relationshipId)
     ]);
 
-    await upsertReviewRecord(
+    await PIReviewDB.upsertReviewRecord(
       knex,
       disclosureId,
       DISCLOSURE_STEP.ENTITIES,
@@ -1137,14 +1323,16 @@ export async function removeRelationshipById(
   }
 
   return 'Unauthorized';
-}
+};
 
-export async function reviseDeclaration(
-  knex,
-  userInfo,
-  reviewId,
-  declaration
-) {
+PIReviewDB.reviseDeclaration = async function(
+    knex,
+    userInfo,
+    reviewId,
+    declaration
+  ) {
+  this.log.logArguments({reviewId, declaration});
+
   const targetId = await knex
     .first('target_id as targetId')
     .from('pi_review')
@@ -1159,19 +1347,21 @@ export async function reviseDeclaration(
       .where({
         id: targetId.targetId
       }),
-    updateReviewRecord(knex, reviewId, {revised: true})
+    PIReviewDB.updateReviewRecord(knex, reviewId, {revised: true})
   ]);
-}
+};
 
-export async function reviseDeclarationById(
-  knex,
-  userInfo,
-  entityId,
-  projectId,
-  declaration
-) {
+PIReviewDB.reviseDeclarationById = async function(
+    knex,
+    userInfo,
+    entityId,
+    projectId,
+    declaration
+  ) {
+  this.log.logArguments({entityId, projectId, declaration});
+
   const [disclosureId, declarationRow] = await Promise.all([
-    getDisclosureIdForEntity(knex, entityId),
+    PIReviewDB.getDisclosureIdForEntity(knex, entityId),
     knex('declaration')
       .first('id')
       .where({
@@ -1190,7 +1380,7 @@ export async function reviseDeclarationById(
         comments: declaration.comment
       }, 'id');
 
-    await upsertReviewRecord(
+    await PIReviewDB.upsertReviewRecord(
       knex,
       disclosureId,
       DISCLOSURE_STEP.PROJECTS,
@@ -1206,7 +1396,7 @@ export async function reviseDeclarationById(
           type_cd: declaration.disposition
         })
         .where('id', declarationRow.id),
-      upsertReviewRecord(
+      PIReviewDB.upsertReviewRecord(
         knex,
         disclosureId,
         DISCLOSURE_STEP.PROJECTS,
@@ -1215,15 +1405,17 @@ export async function reviseDeclarationById(
       )
     ]);
   }
-}
+};
 
-export async function reviseSubQuestion(
-  knex,
-  userInfo,
-  reviewId,
-  subQuestionId,
-  answer
-) {
+PIReviewDB.reviseSubQuestion = async function(
+    knex,
+    userInfo,
+    reviewId,
+    subQuestionId,
+    answer
+  ) {
+  this.log.logArguments({reviewId, subQuestionId, answer});
+
   const row = await knex
     .first(
       'disclosure_id as disclosureId',
@@ -1247,7 +1439,7 @@ export async function reviseSubQuestion(
         'qa.question_id': subQuestionId,
         'da.disclosure_id': row.disclosureId
       }),
-    updateReviewRecord(knex, reviewId, {revised: true})
+    PIReviewDB.updateReviewRecord(knex, reviewId, {revised: true})
   ]);
 
   if (rowCount[0].answerCount > 0) {
@@ -1269,15 +1461,17 @@ export async function reviseSubQuestion(
       answer
     }
   );
-}
+};
 
-export async function reviseSubQuestionByQuestionId(
-  knex,
-  userInfo,
-  disclosureId,
-  subQuestionId,
-  answer
-) {
+PIReviewDB.reviseSubQuestionByQuestionId = async function(
+    knex,
+    userInfo,
+    disclosureId,
+    subQuestionId,
+    answer
+  ) {
+  this.log.logArguments({disclosureId, subQuestionId, answer});
+
   const qaRow = await knex
     .first('qa.id')
     .from('questionnaire_answer as qa')
@@ -1310,9 +1504,11 @@ export async function reviseSubQuestionByQuestionId(
       answer: answer.answer
     }
   );
-}
+};
 
-export async function deleteAnswers(knex, userInfo, reviewId, toDelete) {
+PIReviewDB.deleteAnswers = async function(knex, userInfo, reviewId, toDelete) {
+  this.log.logArguments({reviewId, toDelete});
+
   const row = await knex
     .first('p.disclosure_id as disclosureId')
     .from('pi_review as p')
@@ -1324,9 +1520,11 @@ export async function deleteAnswers(knex, userInfo, reviewId, toDelete) {
     row.disclosureId,
     toDelete
   );
-}
+};
 
-async function updateProjects(knex, schoolId) {
+PIReviewDB.updateProjects = async function(knex, schoolId) {
+  this.log.logArguments({schoolId});
+
   await knex('project_person')
     .update({
       new: false
@@ -1335,10 +1533,16 @@ async function updateProjects(knex, schoolId) {
       person_id: schoolId,
       active: true
     });
-}
+};
 
-export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
-  const isSubmitter = await isDisclosureUsers(
+PIReviewDB.reSubmitDisclosure = async function(
+    knex,
+    {schoolId},
+    disclosure_id
+  ) {
+  this.log.logArguments({schoolId, disclosure_id});
+
+  const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     disclosure_id,
     schoolId
@@ -1361,15 +1565,17 @@ export async function reSubmitDisclosure(knex, {schoolId}, disclosure_id) {
     })
     .where({disclosure_id});
 
-  await updateProjects(knex, schoolId);
+  await PIReviewDB.updateProjects(knex, schoolId);
   await knex('review_comment')
     .update({
       current: false
     })
     .where({disclosure_id});
-}
+};
 
-export async function getPIResponseInfo(knex, disclosureId) {
+PIReviewDB.getPIResponseInfo = async function(knex, disclosureId) {
+  this.log.logArguments({disclosureId});
+
   return await knex
     .select(
       'target_id as targetId',
@@ -1378,10 +1584,14 @@ export async function getPIResponseInfo(knex, disclosureId) {
     )
     .from('pi_review')
     .where('disclosure_id', disclosureId);
-}
+};
 
-export async function setEntityName(knex, entityId, name) {
+PIReviewDB.setEntityName = async function(knex, entityId, name) {
+  this.log.logArguments({entityId, name});
+
   await knex('fin_entity')
     .update({name})
     .where({id: entityId});
-}
+};
+
+addLoggers({PIReviewDB});

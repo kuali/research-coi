@@ -21,7 +21,7 @@ const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import useKnex from '../middleware/request-knex';
-import {getFeatureFlags, setFeatureFlagState} from '../db/features-db';
+import FeaturesDB from '../db/features-db';
 import {ACCEPTED} from '../../http-status-codes';
 
 export const init = app => {
@@ -30,7 +30,7 @@ export const init = app => {
     allowedRoles(ADMIN),
     useKnex,
     wrapAsync(async ({knex}, res) => {
-      const flags = await getFeatureFlags(knex);
+      const flags = await FeaturesDB.getFeatureFlags(knex);
       res.send(flags);
     })
   );
@@ -41,7 +41,11 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, params, body}, res) =>
     {
-      await setFeatureFlagState(knex, params.key, body.active === true);
+      await FeaturesDB.setFeatureFlagState(
+        knex,
+        params.key,
+        body.active === true
+      );
       res.sendStatus(ACCEPTED);
     }
   ));

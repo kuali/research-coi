@@ -17,7 +17,7 @@
 */
 
 import getKnex from '../db/connection-manager';
-import {getFeatureFlags} from '../db/features-db';
+import FeaturesDB from '../db/features-db';
 import wrapAsync from '../controllers/wrap-async';
 
 export default function renderView(viewName) {
@@ -31,7 +31,7 @@ export default function renderView(viewName) {
       const { schoolId, firstName, lastName, coiRole } = req.userInfo;
 
       const knex = getKnex(req.dbInfo);
-      const featureFlags = await getFeatureFlags(knex);
+      const featureFlags = await FeaturesDB.getFeatureFlags(knex);
 
       data = {
         reportUsage,

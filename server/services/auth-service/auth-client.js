@@ -19,7 +19,9 @@
 import cache from '../../lru-cache';
 import { ROLES, SYSTEM_USER } from '../../../coi-constants';
 import request from 'superagent';
-import Log from '../../log';
+import {createLogger} from '../../log';
+const log = createLogger('AuthClient');
+
 const useSSL = process.env.AUTH_OVER_SSL !== 'false';
 const REVIEWER_CACHE_KEY = 'reviewers';
 const ADMIN_CACHE_KEY = 'admins';
@@ -30,7 +32,7 @@ try {
   getAuthorizationInfo = extensions.getAuthorizationInfo;
 } catch (e) {
   if (e.code !== 'MODULE_NOT_FOUND') {
-    Log.error(e);
+    log.error(e);
   }
   getAuthorizationInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
@@ -47,6 +49,8 @@ const END_POINTS = {
 };
 
 async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
+  log.logArguments('isUserInRole', {role, schoolId});
+
   try {
     const response = await request.get(`${researchCoreUrl}/research-sys/api/v1/roles/${role}/principals/${schoolId}?qualification=unitNumber:*`)
       .set('Authorization', `Bearer ${authToken}`);
@@ -56,12 +60,14 @@ async function isUserInRole(researchCoreUrl, role, schoolId, authToken) {
     }
     return false;
   } catch (err) {
-    Log.warn(`user ${schoolId} is not a member of the ${role} role`);
+    log.warn(`user ${schoolId} is not a member of the ${role} role`);
     return false;
   }
 }
 
 async function getUserRoles(dbInfo, schoolId, authToken) {
+  log.logArguments('getUserRoles', {schoolId});
+
   const authInfo = getAuthorizationInfo(dbInfo);
   const isAdmin = await isUserInRole(authInfo.researchCoreUrl, authInfo.adminRole, schoolId, authToken);
   if (isAdmin) {
@@ -125,6 +131,8 @@ export async function getUserInfo(dbInfo, hostname, authToken) {
   will need to further filter once returned.
  */
 export async function getUserInfosByQuery(dbInfo, hostname, authToken, queryValue) {
+  log.logArguments('getUserInfosByQuery', {queryValue});
+
   try {
     const cachedUserInfo = queryValue ? cache.get(queryValue) : undefined;
     if (cachedUserInfo) {
@@ -154,16 +162,22 @@ export function getAuthLink(req) {
 }
 
 export async function getReviewers(dbInfo, authToken, unit) {
+  log.logArguments('getReviewers', {unit});
+
   const authInfo = getAuthorizationInfo(dbInfo);
   return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.reviewerRole, REVIEWER_CACHE_KEY, unit);
 }
 
 export async function getAdmins(dbInfo, authToken, unit) {
+  log.logArguments('getAdmins', {unit});
+
   const authInfo = getAuthorizationInfo(dbInfo);
   return await getUsersInRole(authInfo.researchCoreUrl, authToken, authInfo.adminRole, ADMIN_CACHE_KEY, unit);
 }
 
 export async function getUsersInRole(url, authToken, role, cacheKey, unit) {
+  log.logArguments('getUsersInRole', {role, cacheKey, unit});
+
   try {
     const query = {};
 

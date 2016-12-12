@@ -15,8 +15,23 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-/* eslint-disable no-console */
+
+import {noop, defaultTo} from 'lodash';
 import {LOG_LEVEL} from '../coi-constants';
+import debug from 'debug';
+
+debug.formatArgs = function(...originalArgs) {
+  const args = Array.from(originalArgs);
+
+  if (this.useColors) {
+    const c = this.color;
+
+    args[0] = `${new Date().toISOString()} \u001b[3${c};1m${this.namespace} \u001b[0m${args[0]}`;
+  } else {
+    args[0] = `${new Date().toISOString()} ${this.namespace} ${args[0]}`;
+  }
+  return args;
+};
 
 let logLevel;
 let reportError;
@@ -26,72 +41,128 @@ try {
   logLevel = extensions.config.logLevel;
 } catch (e) {
   if (e.code !== 'MODULE_NOT_FOUND') {
-    console.error(e);
+    console.error(e); // eslint-disable-line no-console
   }
 
   logLevel = process.env.LOG_LEVEL;
 }
 
-class Log {
-  verbose(message, req) {
-    if (logLevel <= LOG_LEVEL.VERBOSE) {
-      console.info(this.create(message, 'VERBOSE', req));
+export function logError(message, req, loggerName) {
+  let toLog = `${new Date().toISOString()} ${defaultTo(loggerName, '')} ${create(message, 'ERROR', req)}`;
+  console.error(toLog); // eslint-disable-line no-console
+  if (reportError !== undefined) {
+    if (message.stack !== undefined) {
+      toLog += `\n${message.stack}`;
     }
+    reportError(toLog);
   }
+}
 
-  info(message, req) {
-    if (logLevel <= LOG_LEVEL.INFO) {
-      console.info(this.create(message, 'INFO', req));
+function create(message, type, req) {
+  return `${type} ${getRequestInfo(req)} ${message}`;
+}
+
+function getRequestInfo(req) {
+  if (req) {
+    return `host=${req.hostname}, path=${req.url}, method=${req.method}, userName=${req.userInfo ? req.userInfo.username : ''} - `;
+  }
+  return '';
+}
+
+export function createLogger(loggerName) {
+  const logger = debug(`coi:${loggerName}`);
+  const log = {
+    logger,
+    logVariable: noop,
+    logValue: noop,
+    logArguments: noop,
+    verbose: noop,
+    info: noop,
+    warn: noop,
+    error: (msg, req) => {
+      logError(msg, req, loggerName);
     }
-  }
+  };
 
-  warn(message, req) {
-    if (logLevel <= LOG_LEVEL.WARN) {
-      console.warn(this.create(message, 'WARN', req));
-    }
-  }
+  if (logLevel <= LOG_LEVEL.VERBOSE) {
+    log.verbose = (msg, req) => {
+      logger(create(msg, 'VERBOSE', req));
+    };
 
-  error(message, req) {
-    let toLog = this.create(message, 'ERROR', req);
-    console.error(toLog);
-    if (reportError !== undefined) {
-      if (message.stack !== undefined) {
-        toLog += `\n${message.stack}`;
+    log.logVariable = names => {
+      for (const name in names) {
+        logger(`\t${name} = ${JSON.stringify(names[name])}`);
       }
-      reportError(toLog);
+    };
+
+    log.logValue = (name, value) => {
+      logger(`\t${name} = ${JSON.stringify(value)}`);
+    };
+
+    log.logArguments = (functionName, parameters) => {
+      logger(`${functionName}`);
+      logger('ARGUMENTS:');
+      for (const param in parameters) {
+        logger(`\t${param} =`);
+        logger(`\t\t${JSON.stringify(parameters[param])}`);
+      }
+    };
+  }
+
+  if (logLevel <= LOG_LEVEL.INFO) {
+    log.info = (msg, req) => {
+      logger(create(msg, 'INFO', req));
+    };
+  }
+
+  if (logLevel <= LOG_LEVEL.WARN) {
+    log.warn = (msg, req) => {
+      logger(create(msg, 'WARN', req));
+    };
+  }
+
+  return log;
+}
+
+function createContext(moduleName, functionName) {
+  const log = createLogger(`${moduleName}:${functionName}`);
+  const context = {log};
+
+  if (logLevel <= LOG_LEVEL.VERBOSE) {
+    context.log.logArguments = (parameters) => {
+      context.log.logger('ARGUMENTS:');
+      for (const param in parameters) {
+        context.log.logger(`\t${param} =`);
+        context.log.logger(`\t\t${JSON.stringify(parameters[param])}`);
+      }
+    };
+  }
+
+  return context;
+}
+
+export function addLoggers(container) {
+  for (const moduleName in container) {
+    for (const functionName in container[moduleName]) {
+      container[moduleName][`__${functionName}`] = container[moduleName][functionName];
+      const context = createContext(moduleName, functionName);
+
+      container[moduleName][functionName] = function (...args) {
+        context.log.verbose(`Calling ${moduleName}:${functionName}`);
+        const startTime = Date.now();
+        let result;
+        if (this) {
+          this.log = context.log;
+          result = container[moduleName][`__${functionName}`].apply(this, args);
+        }
+        else {
+          result = container[moduleName][`__${functionName}`].apply(context, args);
+        }
+        context.log.verbose(
+          `Completed ${moduleName}:${functionName} in ${Date.now() - startTime}ms`
+        );
+        return result;
+      };
     }
   }
-
-  create(message, type, req) {
-    const date = new Date().toISOString();
-    return `${date} ${type} ${this.getRequestInfo(req)} ${message}`;
-  }
-
-  getRequestInfo(req) {
-    if (req) {
-      return `host=${req.hostname}, path=${req.url}, method=${req.method}, userName=${req.userInfo ? req.userInfo.username : ''} - `;
-    }
-    return '';
-  }
-}
-
-const log = new Log();
-export default log;
-
-export function logArguments(functionName, parameters) {
-  log.verbose(`${functionName}`);
-  for (const param in parameters) {
-    log.verbose(`\t${param} =`);
-    log.verbose(`\t\t${JSON.stringify(parameters[param])}`);
-  }
-}
-
-export function logVariable(names) {
-  for (const name in names) {
-    log.verbose(`\t${name} = ${JSON.stringify(names[name])}`);
-  }
-}
-
-export function logValue(name, value) {
-  log.verbose(`\t${name} = ${JSON.stringify(value)}`);
 }

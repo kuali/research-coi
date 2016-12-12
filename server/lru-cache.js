@@ -17,7 +17,8 @@
 */
 
 import LRU from 'lru-cache';
-import Log from './log';
+import {createLogger} from './log';
+const log = createLogger('LRUCache');
 
 const ONE_MINUTE = 60000;
 const MAX_ENTRIES_IN_CACHE = 500;
@@ -34,7 +35,7 @@ try {
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    log.error(err);
   }
   options.max = process.env.CACHE_MAX || MAX_ENTRIES_IN_CACHE;
   options.maxAge = process.env.CACHE_MAX_AGE || ONE_MINUTE;

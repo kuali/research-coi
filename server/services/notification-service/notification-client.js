@@ -19,9 +19,10 @@
 import request from 'superagent';
 import { getUserInfosByQuery, getAdmins } from '../auth-service/auth-service';
 import { NOTIFICATIONS_MODE } from '../../../coi-constants';
-import Log, {logArguments, logValue} from '../../log';
 import {OK} from '../../../http-status-codes';
 import getKnex from '../../db/connection-manager';
+import {createLogger} from '../../log';
+const log = createLogger('NotificationClient');
 
 let getNotificationsInfo;
 try {
@@ -29,7 +30,7 @@ try {
   getNotificationsInfo = extensions.getNotificationsInfo;
 } catch (e) {
   if (e.code !== 'MODULE_NOT_FOUND') {
-    Log.error(e);
+    log.error(e);
   }
   getNotificationsInfo = (dbInfo) => { //eslint-disable-line no-unused-vars
     return {
@@ -97,6 +98,8 @@ export function getRequestInfo(dbInfo, hostname) {
 }
 
 function createCoreTemplate(notificationTemplate, hostname, applicationId) {
+  log.logArguments('createCoreTemplate', {notificationTemplate, applicationId});
+
   return {
     applicationId,
     displayName: createDisplayName(hostname, notificationTemplate.description),
@@ -119,6 +122,8 @@ export async function updateTemplateData(
   hostname,
   notificationTemplate
 ) {
+  log.logArguments('updateTemplateData', {notificationTemplate});
+
   const requestInfo = getRequestInfo(dbInfo, hostname);
   const template = createCoreTemplate(
     notificationTemplate,
@@ -136,6 +141,8 @@ export async function createNewTemplate(
   hostname,
   notificationTemplate
 ) {
+  log.logArguments('createNewTemplate', {notificationTemplate});
+
   const requestInfo = getRequestInfo(dbInfo, hostname);
   const coreTemplate = createCoreTemplate(
     notificationTemplate,
@@ -151,6 +158,8 @@ export async function createNewTemplate(
 }
 
 export async function getUserInfo(dbInfo, hostname, userId) {
+  log.logArguments('getUserInfo', {userId});
+
   const notificationsInfo = getNotificationsInfo(dbInfo);
   const userInfos = await getUserInfosByQuery(
     dbInfo,
@@ -179,8 +188,8 @@ export async function getAdminRecipients(dbInfo, authHeader) {
 export async function sendNotification(dbInfo, hostname, notification) {
   const requestInfo = getRequestInfo(dbInfo, hostname);
 
-  Log.info('Requesting notification be sent:');
-  Log.info(JSON.stringify(notification));
+  log.logValue('Requesting notification be sent:', notification);
+
   let response;
   try {
     response = await request
@@ -188,29 +197,29 @@ export async function sendNotification(dbInfo, hostname, notification) {
       .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`)
       .send(notification);
   } catch (err) {
-    Log.error('Notification request failed');
-    Log.error(err);
+    log.error('Notification request failed');
+    log.error(err);
   }
 
   if (!response || response.status !== OK) {
-    Log.error('Notification may not have been sent successfully');
-    Log.error(JSON.stringify(notification));
+    log.error('Notification may not have been sent successfully');
+    log.error(JSON.stringify(notification));
     if (response) {
-      Log.error(JSON.stringify(response.status));
+      log.error(JSON.stringify(response.status));
     }
   }
   else {
-    Log.info('Notification requested successfully');
-    Log.info(JSON.stringify(response.body));
+    log.info('Notification requested successfully');
+    log.info(JSON.stringify(response.body));
 
     const receiptIds = response.body.map(receipt => receipt.notificationId);
-    logValue('receiptIds', receiptIds);
+    log.logValue('receiptIds', receiptIds);
     await recordNotificationRequest(
       getKnex(dbInfo),
       JSON.stringify(notification.addresses),
       receiptIds
     );
-    Log.verbose('done recording receipts');
+    log.verbose('done recording receipts');
 
     setTimeout(async () => {
       checkStatuses(dbInfo, hostname, receiptIds);
@@ -219,6 +228,8 @@ export async function sendNotification(dbInfo, hostname, notification) {
 }
 
 async function checkStatuses(dbInfo, hostname, receiptIds) {
+  log.logArguments('checkStatuses', {receiptIds});
+
   for (const receiptId of receiptIds) {
     const detail = await getNotificationReceiptDetail(
       dbInfo,
@@ -227,18 +238,19 @@ async function checkStatuses(dbInfo, hostname, receiptIds) {
     );
 
     if (detail.status === 'FAILED') {
-      Log.error(
+      log.error(
         `Notification to ${detail.address} failed. ID: ${detail.id}`
       );
     }
     else if (detail.status === 'PENDING') {
-      Log.error(`Notification to ${detail.address} still pending after 90 seconds. ID: ${detail.id}`); // eslint-disable-line max-len
+      log.error(`Notification to ${detail.address} still pending after 90 seconds. ID: ${detail.id}`); // eslint-disable-line max-len
     }
   }
 }
 
 async function recordNotificationRequest(knex, addresses, receiptIds) {
-  logArguments('recordNotificationRequest', {addresses, receiptIds});
+  log.logArguments('recordNotificationRequest', {addresses, receiptIds});
+
   await knex('notification_request')
     .insert({
       timestamp: new Date(),
@@ -248,6 +260,8 @@ async function recordNotificationRequest(knex, addresses, receiptIds) {
 }
 
 export async function getNotificationReceiptDetail(dbInfo, hostname, id) {
+  log.logArguments('getNotificationReceiptDetail', {id});
+
   const requestInfo = getRequestInfo(dbInfo, hostname);
 
   let response;
@@ -256,8 +270,8 @@ export async function getNotificationReceiptDetail(dbInfo, hostname, id) {
       .get(`${requestInfo.url}${END_POINTS.NOTIFICATIONS}/${id}`)
       .set('Authorization', `Bearer ${requestInfo.systemAuthToken}`);
   } catch (err) {
-    Log.error('Notification detail request failed');
-    Log.error(err);
+    log.error('Notification detail request failed');
+    log.error(err);
   }
 
   if (response && response.status === OK) {

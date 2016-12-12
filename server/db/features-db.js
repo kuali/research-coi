@@ -16,11 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-export async function getFeatureFlags(knex) {
-  return await knex('feature_flag').select('key', 'active');
-}
+import {addLoggers} from '../log';
 
-export async function setFeatureFlagState(knex, key, active) {
+const FeaturesDB = {};
+export default FeaturesDB;
+
+FeaturesDB.getFeatureFlags = async function(knex) {
+  return await knex('feature_flag').select('key', 'active');
+};
+
+FeaturesDB.setFeatureFlagState = async function(knex, key, active) {
+  this.log.logArguments({key, active});
+
   const rowsUpdated = await knex('feature_flag')
     .update({active})
     .where({key});
@@ -28,4 +35,6 @@ export async function setFeatureFlagState(knex, key, active) {
   if (rowsUpdated === 0) {
     await knex('feature_flag').insert({key, active});
   }
-}
+};
+
+addLoggers({FeaturesDB});

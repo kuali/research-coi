@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from '../log';
+import {createLogger} from '../log';
+const log = createLogger('Unauthorized');
 
 export default function unauthorized(req, res) {
-  Log.error(`Unauthorized page request by ${req.userInfo.username}`, req);
+  log.error(`Unauthorized page request by ${req.userInfo.username}`, req);
   res.render('unauthorized');
 }

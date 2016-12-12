@@ -16,15 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import {
-  createAdditionalReviewer,
-  unassignAdditionalReviewer,
-  updateAdditionalReviewer,
-  getReviewerForDisclosureAndUser,
-  getDisclosuresForReviewer,
-  saveRecommendation,
-  saveProjectRecommendation
-} from '../db/additional-reviewer-db';
+import ReviewerDB from '../db/additional-reviewer-db';
 import { getReviewers } from '../services/auth-service/auth-service';
 import { ROLES, DATE_TYPE } from '../../coi-constants';
 const { ADMIN, REVIEWER } = ROLES;
@@ -48,7 +40,7 @@ export const init = app => {
       const {knex, body, userInfo, hostname, dbInfo} = req;
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await createAdditionalReviewer(
+        result = await ReviewerDB.createAdditionalReviewer(
           knexTrx,
           body,
           userInfo.displayName
@@ -82,7 +74,10 @@ export const init = app => {
       );
 
       await knex.transaction(async (knexTrx) => {
-        await unassignAdditionalReviewer(knexTrx, params.id);
+        await ReviewerDB.unassignAdditionalReviewer(
+          knexTrx,
+          params.id
+        );
       });
       res.sendStatus(OK);
     }
@@ -96,7 +91,11 @@ export const init = app => {
     {
       const {knex, body, userInfo, hostname, dbInfo, params} = req;
       await knex.transaction(async (knexTrx) => {
-        await updateAdditionalReviewer(knexTrx, params.id, body);
+        await ReviewerDB.updateAdditionalReviewer(
+          knexTrx,
+          params.id,
+          body
+        );
       });
       
       await createAndSendReviewerAssignedNotification(
@@ -119,7 +118,7 @@ export const init = app => {
       const {knex, userInfo, params, dbInfo, hostname, headers} = req;
       let additionalReviewer;
       await knex.transaction(async (knexTrx) => {
-        additionalReviewer = await getReviewerForDisclosureAndUser(
+        additionalReviewer = await ReviewerDB.getReviewerForDisclosureAndUser( // eslint-disable-line max-len
           knexTrx,
           userInfo.schoolId,
           params.disclosureId
@@ -130,7 +129,7 @@ export const init = app => {
           active: false,
           dates
         };
-        await updateAdditionalReviewer(
+        await ReviewerDB.updateAdditionalReviewer(
           knexTrx,
           additionalReviewer[0].id,
           updates
@@ -171,7 +170,10 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo}, res) =>
     {
-      const results = await getDisclosuresForReviewer(knex, userInfo.schoolId);
+      const results = await ReviewerDB.getDisclosuresForReviewer(
+        knex,
+        userInfo.schoolId
+      );
       res.send(results);
     }
   ));
@@ -192,7 +194,7 @@ export const init = app => {
       );
 
       const existingReviewerIds = (
-        await getReviewerForDisclosureAndUser(
+        await ReviewerDB.getReviewerForDisclosureAndUser(
           knex,
           undefined,
           params.disclosureId
@@ -218,7 +220,7 @@ export const init = app => {
     wrapAsync(async ({knex, userInfo, params, body}, res) =>
     {
       await knex.transaction(async (knexTrx) => {
-        await saveRecommendation(
+        await ReviewerDB.saveRecommendation(
           knexTrx,
           userInfo.schoolId,
           params.disclosureId,
@@ -237,7 +239,7 @@ export const init = app => {
     wrapAsync(async ({knex, userInfo, params, body}, res) =>
     {
       await knex.transaction(async (knexTrx) => {
-        await saveProjectRecommendation(
+        await ReviewerDB.saveProjectRecommendation(
           knexTrx,
           userInfo.schoolId,
           params.disclosureId,

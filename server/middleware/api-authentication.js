@@ -17,8 +17,9 @@
 */
 
 import {getUserInfo, getAuthToken} from '../services/auth-service/auth-service';
-import Log from '../log';
 import {UNAUTHORIZED} from '../../http-status-codes';
+import {createLogger} from '../log';
+const log = createLogger('APIAuthentication');
 
 export default function authentication(req, res, next) {
   let authToken = getAuthToken(req.headers.authorization);
@@ -35,7 +36,7 @@ export default function authentication(req, res, next) {
         } else {
           ipAddresses = req.ip;
         }
-        Log.warn(`unauthenticated request from ${ipAddresses}`, req);
+        log.warn(`unauthenticated request from ${ipAddresses}`, req);
         res.sendStatus(UNAUTHORIZED);
       } else {
         req.userInfo = userInfo;
@@ -43,7 +44,7 @@ export default function authentication(req, res, next) {
       }
     })
     .catch(err => {
-      Log.error(err);
+      log.error(err);
       next(err);
     });
 }

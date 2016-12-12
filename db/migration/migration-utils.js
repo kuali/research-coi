@@ -128,8 +128,7 @@ module.exports = {
       }),
       query.select('status_cd as statusCd', 'description').from('disclosure_status'),
       query.select('type_cd as typeCd', 'description').from('project_type')
-    ])
-    .then(function (result) {
+    ]).then(function (result) {
       var config = {};
       config.matrixTypes = result[0];
       config.matrixTypes.map(function (type) {

@@ -17,79 +17,97 @@
 */
 
 import { ROLES } from '../../coi-constants';
+import {addLoggers} from '../log';
 
 const MAX_ROWS = 10;
 
-function queryUsingIndexOracle(knex, term) {
+const PIDB = {};
+export default PIDB;
+
+PIDB.queryUsingIndexOracle = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
     .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
     .limit(MAX_ROWS);
-}
+};
 
-function queryWithoutIndexOracle(knex, term) {
+PIDB.queryWithoutIndexOracle = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
     .whereRaw('LOWER("submitted_by") LIKE ?', `%${term.toLowerCase()}%`)
     .limit(MAX_ROWS);
-}
+};
 
-function queryUsingIndexMySQL(knex, term) {
+PIDB.queryUsingIndexMySQL = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `${term}%`)
     .limit(MAX_ROWS);
-}
+};
 
-function queryWithoutIndexMySQL(knex, term) {
+PIDB.queryWithoutIndexMySQL = function(knex, term) {
+  this.log.logArguments({term});
+
   return knex
     .distinct('submitted_by as value')
     .from('disclosure as d')
     .andWhere('submitted_by', 'LIKE', `%${term}%`)
     .limit(MAX_ROWS);
-}
+};
 
-function addReviewerCriteria(query, schoolId) {
+PIDB.addReviewerCriteria = function(query, schoolId) {
+  this.log.logArguments({schoolId});
+
   return query
     .leftJoin('additional_reviewer as ar', 'ar.disclosure_id', 'd.id')
     .andWhere({'ar.user_id': schoolId});
-}
+};
 
-function checkTerm(term) {
+PIDB.checkTerm = function(term) {
+  this.log.logArguments({term});
+
   const reg = new RegExp('^[-\'.a-zA-Z ]+$');
   return reg.test(term);
-}
+};
 
-export async function getSuggestions(knex, term, userInfo) {
+PIDB.getSuggestions = async function(knex, term, userInfo) {
+  this.log.logArguments({term});
+
   let indexQuery;
   let noIndexQuery;
   if (knex.dbType === 'mysql') {
-    indexQuery = queryUsingIndexMySQL(knex, term);
-    noIndexQuery = queryWithoutIndexMySQL(knex, term);
-  } else if (checkTerm(term)) {
-    indexQuery = queryUsingIndexOracle(knex, term);
-    noIndexQuery = queryWithoutIndexOracle(knex, term);
+    indexQuery = PIDB.queryUsingIndexMySQL(knex, term);
+    noIndexQuery = PIDB.queryWithoutIndexMySQL(knex, term);
+  } else if (PIDB.checkTerm(term)) {
+    indexQuery = PIDB.queryUsingIndexOracle(knex, term);
+    noIndexQuery = PIDB.queryWithoutIndexOracle(knex, term);
   }
-  return await addReviewerCriteriaAndSearch(
+  return await PIDB.addReviewerCriteriaAndSearch(
     userInfo,
     indexQuery,
     noIndexQuery
   );
-}
+};
 
-async function addReviewerCriteriaAndSearch(
-  userInfo,
-  indexQueryWithoutReviewer,
-  noIndexQueryWithoutReviewer
-) {
+PIDB.addReviewerCriteriaAndSearch = async function(
+    userInfo,
+    indexQueryWithoutReviewer,
+    noIndexQueryWithoutReviewer
+  ) {
   let indexQuery = indexQueryWithoutReviewer;
   let noIndexQuery = noIndexQueryWithoutReviewer;
   if (userInfo.coiRole === ROLES.REVIEWER) {
-    indexQuery = addReviewerCriteria(indexQuery, userInfo.schoolId);
-    noIndexQuery = addReviewerCriteria(noIndexQuery, userInfo.schoolId);
+    indexQuery = PIDB.addReviewerCriteria(indexQuery, userInfo.schoolId);
+    noIndexQuery = PIDB.addReviewerCriteria(noIndexQuery, userInfo.schoolId);
   }
 
   const result = await indexQuery;
@@ -97,4 +115,6 @@ async function addReviewerCriteriaAndSearch(
     return await noIndexQuery;
   }
   return result;
-}
+};
+
+addLoggers({PIDB});

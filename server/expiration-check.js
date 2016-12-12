@@ -18,7 +18,6 @@
 
 /* eslint-disable camelcase */
 
-import Log from './log';
 import {DISCLOSURE_STATUS} from '../coi-constants';
 import moment from 'moment';
 import {
@@ -26,13 +25,15 @@ import {
   createAndSendExpirationReminderNotification
 } from './services/notification-service/notification-service';
 import getKnex from './db/connection-manager';
+import {createLogger} from './log';
+const log = createLogger('ExpirationCheck');
 
 const MILLIS_IN_A_DAY = 86400000;
 const REMINDER_TEMPLATE_ID = 9;
 
 async function checkForExpiredDisclosures(expiredCode) {
   try {
-    Log.info('Checking for disclosures which have expired');
+    log.info('Checking for disclosures which have expired');
     const knex = getKnex();
 
     const reminderNotification = await knex('notification_template')
@@ -86,7 +87,7 @@ async function checkForExpiredDisclosures(expiredCode) {
     };
   }
   catch (err) {
-    Log.error(err);
+    log.error(err);
   }
 }
 
@@ -97,7 +98,7 @@ try {
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    log.error(err);
   }
   expirationCheck = checkForExpiredDisclosures;
 }
@@ -112,7 +113,7 @@ export async function handleNotifications() {
         disclosure.disclosureId
       );
     } catch (err) {
-      Log.error(err);
+      log.error(err);
       return Promise.resolve();
     }
   });
@@ -125,7 +126,7 @@ export async function handleNotifications() {
         disclosure.disclosureId
       );
     } catch (err) {
-      Log.error(err);
+      log.error(err);
       return Promise.resolve();
     }
   });
@@ -134,7 +135,7 @@ export async function handleNotifications() {
 export default function scheduleExpirationCheck() {
   const waitUntilToRun = Math.random() * MILLIS_IN_A_DAY;
   setTimeout(async () => {
-    Log.info(
+    log.info(
       'Scheduled the expired disclosures check to run every 24 hours from now'
     );
     handleNotifications();

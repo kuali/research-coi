@@ -18,6 +18,8 @@
 
 import fs from 'fs';
 import path from 'path';
+import {createLogger} from '../../log';
+const log = createLogger('FileService');
 
 const filePath = process.env.LOCAL_FILE_DESTINATION || 'uploads/';
 
@@ -34,6 +36,8 @@ function canReadFile(fileName) {
 }
 
 export async function getFileStream(dbInfo, key) {
+  log.logArguments('getFileStream', {key});
+
   const fileName = path.join(filePath, cleanKey(key));
   const canRead = await canReadFile(fileName);
   if (canRead === false) {
@@ -44,6 +48,8 @@ export async function getFileStream(dbInfo, key) {
 }
 
 export function deleteFile(dbInfo, key, callback) {
+  log.logArguments('deleteFile', {key});
+
   fs.unlink(path.join(filePath, cleanKey(key)), err => {
     callback(err);
   });

@@ -19,12 +19,13 @@
 /* eslint-disable prefer-arrow-callback */
 
 exports.up = function(knex) {
-  return knex.schema.table('additional_reviewer', function(table) {
-    table.boolean('active').notNullable().defaultTo(true);
-  })
-  .table('additional_reviewer', function(table) {
-    table.text('dates'); //-- json collection of dates
-  });
+  return knex.schema
+    .table('additional_reviewer', function(table) {
+      table.boolean('active').notNullable().defaultTo(true);
+    })
+    .table('additional_reviewer', function(table) {
+      table.text('dates'); //-- json collection of dates
+    });
 };
 
 exports.down = function() {

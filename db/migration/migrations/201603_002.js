@@ -31,13 +31,13 @@ exports.up = function(knex) {
   return knex('disclosure_status')
     .update({description: 'Revision Required'})
     .where({status_cd: 4})
-  .then(function() {
-    return knex('disclosure_status')
-    .insert({
-      status_cd: 7,
-      description: 'Update Needed'
+    .then(function() {
+      return knex('disclosure_status')
+        .insert({
+          status_cd: 7,
+          description: 'Update Needed'
+        });
     });
-  });
 };
 
 exports.down = function() {

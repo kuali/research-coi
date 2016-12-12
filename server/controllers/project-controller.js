@@ -16,13 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {
-  saveProject,
-  getProjects,
-  updateProjectPersonDispositionType,
-  getProjectStatuses,
-  getProjectStatus
-} from '../db/project-db';
+import ProjectDB from '../db/project-db';
 import { ROLES } from '../../coi-constants';
 import { OK, BAD_REQUEST } from '../../http-status-codes';
 const { ADMIN } = ROLES;
@@ -30,8 +24,9 @@ import { allowedRoles } from '../middleware/role-check';
 import { filterProjects } from '../services/project-service/project-service';
 import wrapAsync from './wrap-async';
 import projectIsValid from '../validators/project';
-import Log from '../log';
 import useKnex from '../middleware/request-knex';
+import {createLogger} from '../log';
+const log = createLogger('ProjectController');
 
 export const init = app => {
   app.post(
@@ -44,7 +39,7 @@ export const init = app => {
       if (!projectIsValid(body)) {
         res.status(BAD_REQUEST);
         res.json(projectIsValid.errors);
-        Log.error(
+        log.error(
           `An invalid project was pushed to /api/coi/projects
           ${JSON.stringify(projectIsValid.errors)}`
         );
@@ -53,7 +48,7 @@ export const init = app => {
 
       let result;
       await knex.transaction(async (knexTrx) => {
-        result = await saveProject(knexTrx, req, body);
+        result = await ProjectDB.saveProject(knexTrx, req, body);
       });
       if (!result) {
         res.sendStatus(OK);
@@ -72,7 +67,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, userInfo, query, dbInfo, headers}, res) =>
     {
-      const projects = await getProjects(knex, userInfo.schoolId);
+      const projects = await ProjectDB.getProjects(knex, userInfo.schoolId);
       if (query.filter) {
         const result = await filterProjects(
           dbInfo,
@@ -94,7 +89,7 @@ export const init = app => {
     wrapAsync(async ({body, params, knex}, res) =>
     {
       await knex.transaction(async (knexTrx) => {
-        await updateProjectPersonDispositionType(
+        await ProjectDB.updateProjectPersonDispositionType(
           knexTrx,
           body,
           parseInt(params.id)
@@ -110,7 +105,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({dbInfo, knex, params, headers}, res) => {
       const {sourceId, projectId} = params;
-      const result = await getProjectStatuses(
+      const result = await ProjectDB.getProjectStatuses(
         dbInfo,
         knex,
         sourceId,
@@ -128,7 +123,7 @@ export const init = app => {
     wrapAsync(async ({dbInfo, knex, params, headers}, res) =>
     {
       const {sourceId, projectId, personId} = params;
-      const result = await getProjectStatus(
+      const result = await ProjectDB.getProjectStatus(
         dbInfo,
         knex,
         sourceId,

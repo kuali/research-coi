@@ -17,9 +17,15 @@
 */
 
 import {ROLES, FILE_TYPE} from '../../coi-constants';
-import {isDisclosureUsers} from './common-db';
+import CommonDB from './common-db';
+import {addLoggers} from '../log';
 
-export async function getFile(knex, userInfo, id) {
+const FileDB = {};
+export default FileDB;
+
+FileDB.getFile = async function getFile(knex, userInfo, id) {
+  this.log.logArguments({id});
+
   const criteria = {
     id
   };
@@ -51,9 +57,11 @@ export async function getFile(knex, userInfo, id) {
   return await query.andWhere({
     user_id: userInfo.schoolId
   });
-}
+};
 
-export function getFiles(knex, userInfo, refId, fileType) {
+FileDB.getFiles = function (knex, userInfo, refId, fileType) {
+  this.log.logArguments({refId, fileType});
+
   const query = knex
     .select('name', 'key')
     .from('file')
@@ -86,9 +94,11 @@ export function getFiles(knex, userInfo, refId, fileType) {
   return query.andWhere({
     user_id: userInfo.schoolId
   });
-}
+};
 
-export function getFilesForReview(knex, userInfo, refId, fileType) {
+FileDB.getFilesForReview = function (knex, userInfo, refId, fileType) {
+  this.log.logArguments({refId, fileType});
+
   const query = knex
       .select('name', 'key', 'id')
       .from('file')
@@ -99,9 +109,9 @@ export function getFilesForReview(knex, userInfo, refId, fileType) {
   return query.andWhere({
     user_id: userInfo.schoolId
   });
-}
+};
 
-export async function saveNewFiles(knex, body, files, userInfo) {
+FileDB.saveNewFiles = async function(knex, body, files, userInfo) {
   if (
     body.type !== FILE_TYPE.DISCLOSURE &&
     body.type !== FILE_TYPE.MANAGEMENT_PLAN &&
@@ -113,7 +123,7 @@ export async function saveNewFiles(knex, body, files, userInfo) {
     );
   }
 
-  const isSubmitter = await isDisclosureUsers(
+  const isSubmitter = await CommonDB.isDisclosureUsers(
     knex,
     body.disclosureId,
     userInfo.schoolId
@@ -153,9 +163,11 @@ export async function saveNewFiles(knex, body, files, userInfo) {
   }
 
   return fileData;
-}
+};
 
-export async function deleteFiles(dbInfo, knex, userInfo, fileId) {
+FileDB.deleteFiles = async function(dbInfo, knex, userInfo, fileId) {
+  this.log.logArguments({fileId});
+
   const criteria = {
     id: fileId
   };
@@ -167,4 +179,6 @@ export async function deleteFiles(dbInfo, knex, userInfo, fileId) {
   await knex('file')
     .del()
     .where(criteria);
-}
+};
+
+addLoggers({FileDB});

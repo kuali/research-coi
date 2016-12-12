@@ -18,9 +18,22 @@
 
 /* eslint-disable no-var, prefer-arrow-callback, prefer-template, no-console */
 
+var _ = require('lodash');
+
+function defaultAppLoggers() {
+  if (_.isEmpty(process.env.DEBUG)) {
+    process.env.DEBUG = 'coi:*';
+    var debug = require('debug');
+    debug.enable(process.env.DEBUG);
+  }
+}
+
+defaultAppLoggers();
+
 require('babel-polyfill');
 var app = require('./app');
-var Log = require('./log').default;
+var createLogger = require('./log').createLogger;
+const log = createLogger('Bootstrap');
 
 var application = app.run();
 var portNumber = application.get('portNumber');
@@ -29,11 +42,11 @@ var server = application.listen(portNumber);
 console.log('Listening on port ' + portNumber + ' in ' + application.get('env') + ' mode');
 
 process.on('uncaughtException', function(err) {
-  Log.error('Uncaught exception: ' + err);
-  Log.error(err);
-  Log.error('waiting for pending connections to clear');
+  log.error('Uncaught exception: ' + err);
+  log.error(err);
+  log.error('waiting for pending connections to clear');
   server.close(function() {
-    Log.error('shutting down');
+    log.error('shutting down');
     process.exit(1);
   });
 });

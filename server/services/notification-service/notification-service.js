@@ -16,27 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-import {
-  getCoreTemplateIdByTemplateId,
-  getProjectTypeDescription,
-  getConfig,
-  getGeneralConfig
-} from '../../db/config-db';
-import {
-  getDisclosureInfoForNotifications,
-  getArchivedDisclosureInfoForNotifications,
-  getDisclosuresAdminDisposition,
-  getGeneralComment
-} from '../../db/disclosure-db';
-import {
-  getActiveProjectsWithDeclarationsForUser
-} from '../../db/project-db';
-import { getAdditionalReviewer } from '../../db/additional-reviewer-db';
-import { getAdminProjectDisposition } from '../../db/pi-review-db';
+import ConfigDB from '../../db/config-db';
+import DisclosureDB from '../../db/disclosure-db';
+import ProjectDB from '../../db/project-db';
+import ReviewerDB from '../../db/additional-reviewer-db';
+import PIReviewDB from '../../db/pi-review-db';
 import { PI_ROLE_CODE } from '../../../coi-constants';
 import * as VariableService from './variables-service';
 import getKnex from '../../db/connection-manager';
-import Log, {logArguments} from '../../log';
+import {createLogger} from '../../log';
+const log = createLogger('NotificationService');
 
 const client = process.env.NODE_ENV === 'test' ?
   require('./mock-notification-client') :
@@ -119,6 +108,8 @@ const TEMPLATES = {
 };
 
 export function getDefaults(notificationTemplate) {
+  log.logArguments('getDefaults', {notificationTemplate});
+
   switch (notificationTemplate.templateId) {
     case TEMPLATES.SUBMITTED.ID:
       notificationTemplate.subject = TEMPLATES.SUBMITTED.SUBJECT;
@@ -240,11 +231,16 @@ function createCoreNotification(templateId, variables, creatorId, addresses) {
 }
 
 async function getTemplate(dbInfo, templateId) {
+  log.logArguments('getTemplate', {templateId});
+
   if (!areNotificationsEnabled(dbInfo)) {
     return;
   }
   const knex = getKnex(dbInfo);
-  const template = await getCoreTemplateIdByTemplateId(knex, templateId);
+  const template = await ConfigDB.getCoreTemplateIdByTemplateId(
+    knex,
+    templateId
+  );
 
   if (template.active === 0) {
     return;
@@ -254,8 +250,10 @@ async function getTemplate(dbInfo, templateId) {
 }
 
 async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
+  log.logArguments('getArchivedDisclosure', {archiveId});
+
   const knex = getKnex(dbInfo);
-  const disclosure = await getArchivedDisclosureInfoForNotifications(
+  const disclosure = await DisclosureDB.getArchivedDisclosureInfoForNotifications( // eslint-disable-line max-len
     knex,
     archiveId
   );
@@ -266,16 +264,18 @@ async function getArchivedDisclosure(dbInfo, hostname, archiveId) {
       disclosure.userId
     );
   } catch (err) {
-    Log.error(err);
+    log.error(err);
   }
 
   return disclosure;
 }
 
 async function getDisclosure(dbInfo, hostname, disclosureId) {
+  log.logArguments('getDisclosure', {disclosureId});
+
   const knex = getKnex(dbInfo);
 
-  const disclosure = await getDisclosureInfoForNotifications(
+  const disclosure = await DisclosureDB.getDisclosureInfoForNotifications(
     knex,
     disclosureId
   );
@@ -286,14 +286,16 @@ async function getDisclosure(dbInfo, hostname, disclosureId) {
       disclosure.userId
     );
   } catch (err) {
-    Log.error(err);
+    log.error(err);
   }
   return disclosure;
 }
 
 async function getReviewer(dbInfo, hostname, reviewerId) {
+  log.logArguments('getReviewer', {reviewerId});
+
   const knex = getKnex(dbInfo);
-  const reviewer = await getAdditionalReviewer(knex, reviewerId);
+  const reviewer = await ReviewerDB.getAdditionalReviewer(knex, reviewerId);
   if (reviewer) {
     try {
       reviewer.reviewerInfo = await getUserInfo(
@@ -302,7 +304,7 @@ async function getReviewer(dbInfo, hostname, reviewerId) {
         reviewer.userId
       );
     } catch (err) {
-      Log.error(err);
+      log.error(err);
     }
   }
   return reviewer;
@@ -311,7 +313,10 @@ async function getReviewer(dbInfo, hostname, reviewerId) {
 async function getProject(dbInfo, hostname, project, person) {
   const knex = getKnex(dbInfo);
   const projectInfo = JSON.parse(JSON.stringify(project));
-  projectInfo.type = await getProjectTypeDescription(knex, project.typeCode);
+  projectInfo.type = await ConfigDB.getProjectTypeDescription(
+    knex,
+    project.typeCode
+  );
   projectInfo.person = JSON.parse(JSON.stringify(person));
   projectInfo.person.info = await getUserInfo(
     dbInfo,
@@ -326,11 +331,11 @@ async function getProject(dbInfo, hostname, project, person) {
 }
 
 async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
-  const projects = await getActiveProjectsWithDeclarationsForUser(
+  const projects = await ProjectDB.getActiveProjectsWithDeclarationsForUser(
     knex,
     disclosure.userId
   );
-  const config = await getConfig(dbinfo, knex, hostname);
+  const config = await ConfigDB.getConfig(dbinfo, knex, hostname);
 
   let dispositionHeader = '';
   if (config.general.dispositionsEnabled === true) {
@@ -353,11 +358,14 @@ async function getProjectsInformation(dbinfo, knex, hostname, disclosure) {
     });
     sponsorString = sponsorString.replace(/, $/, '');
 
-    const projectType = await getProjectTypeDescription(knex, project.typeCd);
+    const projectType = await ConfigDB.getProjectTypeDescription(
+      knex,
+      project.typeCd
+    );
 
     let disposition = '';
     if (config.general.dispositionsEnabled) {
-      const adminDisposition = await getAdminProjectDisposition(
+      const adminDisposition = await PIReviewDB.getAdminProjectDisposition(
         knex,
         project.id,
         disclosure.userId
@@ -397,9 +405,9 @@ async function getVariables(dbInfo, hostname, disclosure, reviewer, project) {
 
   if (disclosure) {
     const knex = getKnex(dbInfo);
-    const generalConfig = await getGeneralConfig(knex);
+    const generalConfig = await ConfigDB.getGeneralConfig(knex);
     if (generalConfig.dispositionsEnabled) {
-      disclosure.disposition = await getDisclosuresAdminDisposition(
+      disclosure.disposition = await DisclosureDB.getDisclosuresAdminDisposition( // eslint-disable-line max-len
         knex,
         disclosure.id
       );
@@ -430,6 +438,11 @@ export async function createAndSendAdminNotification(
   disclosureId,
   templateId
 ) {
+  log.logArguments(
+    'createAndSendAdminNotification',
+    {disclosureId, templateId}
+  );
+
   const template = await getTemplate(dbInfo, templateId);
 
   if (!template) {
@@ -488,6 +501,8 @@ export async function createAndSendApproveNotification(
   userInfo,
   archiveId
 ) {
+  log.logArguments('createAndSendApproveNotification', {archiveId});
+
   const template = await getTemplate(
     dbInfo,
     TEMPLATES.APPROVED.ID
@@ -523,6 +538,8 @@ export async function createAndSendExpirationNotification(
   hostname,
   disclosureId
 ) {
+  log.logArguments('createAndSendExpirationNotification', {disclosureId});
+
   return await createAndSendExpireNotification(
     dbInfo,
     hostname,
@@ -536,6 +553,11 @@ export async function createAndSendExpirationReminderNotification(
   hostname,
   disclosureId
 ) {
+  log.logArguments(
+    'createAndSendExpirationReminderNotification',
+    {disclosureId}
+  );
+
   return await createAndSendExpireNotification(
     dbInfo,
     hostname,
@@ -550,6 +572,11 @@ export async function createAndSendExpireNotification(
   disclosureId,
   templateId
 ) {
+  log.logArguments(
+    'createAndSendExpireNotification',
+    {disclosureId, templateId}
+  );
+
   const template = await getTemplate(dbInfo, templateId);
   if (!template) {
     return;
@@ -572,6 +599,8 @@ export async function createAndSendSentBackNotification(
   userInfo,
   disclosureId
 ) {
+  log.logArguments('createAndSendSentBackNotification', {disclosureId});
+
   const template = await getTemplate(
     dbInfo,
     TEMPLATES.SENT_BACK.ID
@@ -597,6 +626,8 @@ export async function returnToReporterNotification(
   userInfo,
   disclosureId
 ) {
+  log.logArguments('returnToReporterNotification', {disclosureId});
+
   const knex = getKnex(dbInfo);
   const template = await getTemplate(
     dbInfo,
@@ -607,7 +638,11 @@ export async function returnToReporterNotification(
   }
   const disclosure = await getDisclosure(dbInfo, hostname, disclosureId);
   let variables = await getVariables(dbInfo, hostname, disclosure);
-  const comment = await getGeneralComment(knex, userInfo, disclosureId);
+  const comment = await DisclosureDB.getGeneralComment(
+    knex,
+    userInfo,
+    disclosureId
+  );
   const returnReason = comment === undefined ? '' : comment.slice(-1)[0].text;
   variables = VariableService.addReturnedToReporterInformation(
     returnReason,
@@ -630,6 +665,11 @@ export async function createAndSendReviewerNotification(
   reviewerId,
   templateId
 ) {
+  log.logVariable(
+    'createAndSendReviewerNotification',
+    {reviewerId, templateId}
+  );
+
   const template = await getTemplate(dbInfo, templateId);
   if (!template) {
     return;
@@ -662,6 +702,8 @@ export async function createAndSendReviewerAssignedNotification(
   userInfo,
   reviewerId
 ) {
+  log.logVariable('createAndSendReviewerAssignedNotification', {reviewerId});
+
   return await createAndSendReviewerNotification(
     dbInfo,
     hostname,
@@ -677,6 +719,8 @@ export async function createAndSendReviewerUnassignNotification(
   userInfo,
   reviewerId
 ) {
+  log.logVariable('createAndSendReviewerUnassignNotification', {reviewerId});
+
   return await createAndSendReviewerNotification(
     dbInfo,
     hostname,
@@ -693,6 +737,8 @@ export async function createAndSendReviewCompleteNotification(
   userInfo,
   reviewerId
 ) {
+  log.logVariable('createAndSendReviewCompleteNotification', {reviewerId});
+
   const template = await getTemplate(
     dbInfo,
     TEMPLATES.REVIEW_COMPLETE.ID
@@ -729,7 +775,7 @@ export async function sendNewProjectNotification(
   project,
   person
 ) {
-  logArguments(
+  log.logArguments(
     'sendNewProjectNotification',
     {hostname, disclosureId, project, person}
   );
@@ -779,7 +825,7 @@ export async function sendNewProjectNotification(
     );
     return await sendNotification(dbInfo, hostname, notification);
   } catch (err) {
-    Log.error(err);
+    log.error(err);
   }
 }
 
@@ -792,7 +838,7 @@ export function createAndSendNewProjectNotification(
   project,
   person
 ) {
-  logArguments(
+  log.logArguments(
     'createAndSendNewProjectNotification',
     {hostname, userInfo, disclosureId, project, person}
   );

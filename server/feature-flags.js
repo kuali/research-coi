@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import Log from './log';
 import getKnex from './db/connection-manager';
+import {createLogger} from './log';
+const log = createLogger('FeatureFlags');
 
 async function initFeatureFlags(flags) {
   try {
@@ -40,14 +41,14 @@ async function initFeatureFlags(flags) {
               key: flag,
               active: false
             });
-          Log.info(`Added feature flag: ${flag} (Default off)`);
+          log.info(`Added feature flag: ${flag} (Default off)`);
         }
       }
     });
   }
   catch (err) {
-    Log.error('Failed to initialize feature flags');
-    Log.error(err);
+    log.error('Failed to initialize feature flags');
+    log.error(err);
   }
 }
 
@@ -59,7 +60,7 @@ export default function init(flags) {
   }
   catch (err) {
     if (err.code !== 'MODULE_NOT_FOUND') {
-      Log.error(err);
+      log.error(err);
     }
     initFunction = initFeatureFlags;
   }
@@ -80,7 +81,7 @@ export async function flagIsOn(knex, key) {
     return false;
   }
   catch (err) {
-    Log.error(err);
+    log.error(err);
     return false;
   }
 }

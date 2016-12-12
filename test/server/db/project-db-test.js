@@ -19,7 +19,7 @@
 /* eslint {max-len: [2, 80]} */
 
 import assert from 'assert';
-import * as ProjectDB from '../../../server/db/project-db';
+import ProjectDB from '../../../server/db/project-db';
 import {
   RELATIONSHIP_STATUS,
   DISCLOSURE_TYPE,

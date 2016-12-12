@@ -16,15 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {
-  getConfig,
-  archiveConfig,
-  setConfig,
-  getArchivedConfig
-} from '../db/config-db';
-import {
-  updateAllProjectPersons
-} from '../db/project-db';
+import ConfigDB from '../db/config-db';
+import ProjectDB from '../db/project-db';
 import { ROLES } from '../../coi-constants';
 const { ADMIN } = ROLES;
 import { allowedRoles } from '../middleware/role-check';
@@ -38,15 +31,26 @@ export async function saveConfig(req, res) {
 
   let config;
   await knex.transaction(async (knexTrx) => {
-    await setConfig(dbInfo, knexTrx, userInfo.schoolId, body, hostname);
-    config = await getConfig(dbInfo, knexTrx, hostname);
+    await ConfigDB.setConfig(
+      dbInfo,
+      knexTrx,
+      userInfo.schoolId,
+      body,
+      hostname
+    );
+    config = await ConfigDB.getConfig(dbInfo, knexTrx, hostname);
     config.general = body.general;
-    await archiveConfig(knexTrx, userInfo.schoolId, userInfo.username, config);
+    await ConfigDB.archiveConfig(
+      knexTrx,
+      userInfo.schoolId,
+      userInfo.username,
+      config
+    );
   });
 
   res.send(config);
 
-  await updateAllProjectPersons(knex, req);
+  await ProjectDB.updateAllProjectPersons(knex, req);
   await handleNotifications();
 }
 
@@ -57,7 +61,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({dbInfo, knex, hostname}, res) =>
     {
-      const result = await getConfig(dbInfo, knex, hostname);
+      const result = await ConfigDB.getConfig(dbInfo, knex, hostname);
       res.send(result);
     }
   ));
@@ -68,7 +72,7 @@ export const init = app => {
     useKnex,
     wrapAsync(async ({knex, params}, res) =>
     {
-      const result = await getArchivedConfig(knex, params.id);
+      const result = await ConfigDB.getArchivedConfig(knex, params.id);
       res.send(result);
     }
   ));

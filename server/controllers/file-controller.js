@@ -17,16 +17,11 @@
 */
 
 import {getFileStream} from '../services/file-service/file-service';
-import {
-  isDisclosureUsers,
-  isFinancialEntityUsers,
-  getDisclosureForFinancialEntity
-} from '../db/common-db';
-import { getDisclosureIdsForReviewer } from '../db/additional-reviewer-db';
+import CommonDB from '../db/common-db';
+import ReviewerDB from '../db/additional-reviewer-db';
 import { ROLES, FILE_TYPE, LANES } from '../../coi-constants';
-import * as FileDb from '../db/file-db';
+import FileDb from '../db/file-db';
 import multer from 'multer';
-import Log from '../log';
 import {
   FORBIDDEN,
   ACCEPTED,
@@ -36,6 +31,8 @@ import { allowedRoles } from '../middleware/role-check';
 import wrapAsync from './wrap-async';
 import archiver from 'archiver';
 import useKnex from '../middleware/request-knex';
+import {createLogger} from '../log';
+const log = createLogger('FileController');
 
 let upload = multer({dest: process.env.LOCAL_FILE_DESTINATION || 'uploads/' });
 try {
@@ -47,7 +44,7 @@ try {
 }
 catch (err) {
   if (err.code !== 'MODULE_NOT_FOUND') {
-    Log.error(err);
+    log.error(err);
   }
 }
 
@@ -66,7 +63,7 @@ async function userHasPermissionForMultiFileUpload(
 ) {
   if (fileType === FILE_TYPE.FINANCIAL_ENTITY) {
     if (userInfo.coiRole === ROLES.USER) {
-      const permitted = await isFinancialEntityUsers(
+      const permitted = await CommonDB.isFinancialEntityUsers(
         knex,
         refId,
         userInfo.schoolId
@@ -77,11 +74,11 @@ async function userHasPermissionForMultiFileUpload(
     }
 
     if (userInfo.coiRole === ROLES.REVIEWER) {
-      const disclosureId = await getDisclosureForFinancialEntity(
+      const disclosureId = await CommonDB.getDisclosureForFinancialEntity(
         knex,
         refId
       );
-      const reviewerDisclosures = await getDisclosureIdsForReviewer(
+      const reviewerDisclosures = await ReviewerDB.getDisclosureIdsForReviewer(
         knex,
         userInfo.schoolId
       );
@@ -91,7 +88,7 @@ async function userHasPermissionForMultiFileUpload(
     }
   } else {
     if (userInfo.coiRole === ROLES.USER) {
-      const permitted = await isDisclosureUsers(
+      const permitted = await CommonDB.isDisclosureUsers(
         knex,
         refId,
         userInfo.schoolId
@@ -102,7 +99,7 @@ async function userHasPermissionForMultiFileUpload(
     }
 
     if (userInfo.coiRole === ROLES.REVIEWER) {
-      const reviewerDisclosures = await getDisclosureIdsForReviewer(
+      const reviewerDisclosures = await ReviewerDB.getDisclosureIdsForReviewer(
         knex,
         userInfo.schoolId
       );
