@@ -18,307 +18,150 @@
 
 import styles from './style';
 import React from 'react';
-import DeclarationSummary from '../declaration-summary';
+import ProjectDeclarationSummary from '../project-declaration-summary';
 import {
-  getProjectTypeString,
-  getDispositionTypeString
+  getProjectTypeString
 } from '../../../../stores/config-store';
-import { ROLES } from '../../../../../../coi-constants';
 import classNames from 'classnames';
+import PopOver from '../../../pop-over';
 import Dropdown from '../../../dropdown';
 import {AdminActions} from '../../../../actions/admin-actions';
-import PopOver from '../../../pop-over';
+import { ROLES } from '../../../../../../coi-constants';
+import {flagIsOn} from '../../../../feature-flags';
+
+function getUniqueProjects(declarations, configState) {
+  const projects = [];
+  const alreadyAdded = {};
+
+  declarations.forEach(declaration => {
+    if (!alreadyAdded[declaration.projectId]) {
+      const projectType = getProjectTypeString(
+        configState,
+        declaration.projectTypeCd,
+        configState.config.id
+      );
+
+      let sponsors;
+      if (declaration.sponsors && Array.isArray(declaration.sponsors)) {
+        sponsors = declaration.sponsors
+          .map(sponsor => sponsor.sponsorName)
+          .join(', ');
+      }
+
+      projects.push({
+        id: declaration.projectId,
+        name: declaration.projectTitle,
+        type: projectType,
+        sourceIdentifier: declaration.sourceIdentifier,
+        role: declaration.roleDescription,
+        sponsors,
+        dispositionTypeCd: declaration.dispositionTypeCd,
+        projectPersonId: declaration.projectPersonId
+      });
+      alreadyAdded[declaration.projectId] = true;
+    }
+  });
+
+  projects.sort((a, b) => {
+    return a.name.localeCompare(b.name);
+  });
+
+  return projects;
+}
 
 export class AdminDeclarationsSummary extends React.Component {
   constructor() {
     super();
-    this.getCommentCount = this.getCommentCount.bind(this);
-    this.wasRespondedTo = this.wasRespondedTo.bind(this);
-    this.onProjectDispositionChanged = this.onProjectDispositionChanged.bind(this);
+
+    this.setAllProjectDispositions = this.setAllProjectDispositions.bind(this);
   }
 
-  onProjectDispositionChanged(dispositionTypeCd, projectPersonId) {
-    AdminActions.updateProjectDisposition(
-      {
-        projectPersonId,
-        dispositionTypeCd
-      }
-    );
-  }
-  
-  onRecommendedDispositionChanged(dispositionTypeCd, projectPersonId) {
-    AdminActions.recommendProjectDisposition({
-      projectPersonId,
-      dispositionTypeCd
-    });
-  }
-
-  wasRespondedTo(id) {
-    if (this.props.piResponses && Array.isArray(this.props.piResponses)) {
-      return this.props.piResponses.some(response => {
-        return response.targetId === id;
-      });
+  setAllProjectDispositions(newValue) {
+    if (this.context.userInfo.coiRole === ROLES.ADMIN) {
+      AdminActions.setAllProjectDispositions(newValue);
+    }
+    else if (this.context.userInfo.coiRole === ROLES.REVIEWER) {
+      AdminActions.setAllRecommendedProjectDispositions(newValue);
     }
 
-    return false;
-  }
-
-  getCommentCount(id) {
-    return this.props.comments.filter(comment => {
-      return comment.topicId === id;
-    }).length;
-  }
-
-  getUniqueProjects(declarations) {
-    const projects = [];
-    const alreadyAdded = {};
-
-    declarations.forEach(declaration => {
-      if (!alreadyAdded[declaration.projectId]) {
-        const projectType = getProjectTypeString(
-          this.context.configState,
-          declaration.projectTypeCd,
-          this.context.configState.config.id
-        );
-
-        let sponsors;
-        if (declaration.sponsors && Array.isArray(declaration.sponsors)) {
-          sponsors = declaration.sponsors
-            .map(sponsor => sponsor.sponsorName)
-            .join(', ');
-        }
-
-        projects.push({
-          id: declaration.projectId,
-          name: declaration.projectTitle,
-          type: projectType,
-          sourceIdentifier: declaration.sourceIdentifier,
-          role: declaration.roleDescription,
-          sponsors,
-          dispositionTypeCd: declaration.dispositionTypeCd,
-          projectPersonId: declaration.projectPersonId
-        });
-        alreadyAdded[declaration.projectId] = true;
-      }
-    });
-
-    projects.sort((a, b) => {
-      return a.name.localeCompare(b.name);
-    });
-
-    return projects;
-  }
-
-  getRecommendationFor(projectPersonId) {
-    if (this.props.projectRecommendations) {
-      const rec = this.props.projectRecommendations.find(recommendation => {
-        return recommendation.projectPersonId === projectPersonId;
-      });
-      if (rec) {
-        return rec.disposition;
-      }
-    }
-    
-    return -1;
+    document.body.click();
   }
 
   render() {
     const {
       declarations,
-      readonly,
       className,
+      comments,
       configId,
-      projectRecommendations
+      piResponses,
+      projectRecommendations,
+      readonly
     } = this.props;
 
     let projects = [];
-    if (Array.isArray(declarations) && declarations.length > 0) {
-      const uniqueProjects = this.getUniqueProjects(declarations);
 
-      let dispositionTypeOptions;
-      const { config } = this.context.configState;
+    let dispositionTypeOptions = [];
+    const { config } = this.context.configState;
+    let setAllButton;
+
+    const isAdmin = this.context.userInfo.coiRole === ROLES.ADMIN;
+    const isReviewer = this.context.userInfo.coiRole === ROLES.REVIEWER;
+
+    if (
+      config.general.dispositionsEnabled &&
+      Array.isArray(config.dispositionTypes)
+    ) {
+      dispositionTypeOptions = config.dispositionTypes
+        .filter(type => Boolean(type.active))
+        .map(type => {
+          return {
+            value: type.typeCd,
+            label: type.description
+          };
+        });
+      
       if (
-        config.general.dispositionsEnabled &&
-        Array.isArray(config.dispositionTypes)
+        !readonly &&
+        (
+          isAdmin ||
+          (
+            isReviewer &&
+            config.general.reviewerDispositionsEnabled
+          )
+        ) && flagIsOn('RESCOI-1126')
       ) {
-        dispositionTypeOptions = config.dispositionTypes
-          .filter(type => Boolean(type.active))
-          .map(type => {
-            return {
-              value: type.typeCd,
-              label: type.description
-            };
-          });
+        setAllButton = (
+          <button id="setAllProjectDispositions" className={styles.setAllLink}>
+            Set All Project Dispositions
+          </button>
+        );
       }
+    }
 
-      const isAdmin = this.context.userInfo.coiRole === ROLES.ADMIN;
-      const isReviewer = this.context.userInfo.coiRole === ROLES.REVIEWER;
+    if (declarations.length > 0) {
+      const uniqueProjects = getUniqueProjects(
+        declarations,
+        this.context.configState
+      );
 
       projects = uniqueProjects.map((project, index) => {
-        const declarationSummaries = declarations.filter(declaration => {
-          return declaration.projectId === project.id && declaration.finEntityActive === 1;
-        }).map(declaration => {
-          return (
-            <DeclarationSummary
-              key={`decl${declaration.id}`}
-              declaration={declaration}
-              configId={configId}
-              readonly={readonly}
-              options={dispositionTypeOptions}
-              commentCount={this.getCommentCount(declaration.id)}
-              changedByPI={this.wasRespondedTo(declaration.id)}
-            />
-          );
-        });
-
-        let dispositionTypeSelector;
-
-        if (isAdmin && config.general.dispositionsEnabled) {
-          let recommendationLink;
-          if (projectRecommendations) {
-            const recommendations = projectRecommendations.filter(recommendation => {
-              return recommendation.projectPersonId === project.projectPersonId;
-            }).map(recommendation => {
-              const answer = getDispositionTypeString(
-                this.context.configState,
-                recommendation.disposition,
-                configId
-              );
-              return (
-                <div key={recommendation.usersName}>
-                  <span className={styles.userName}>{recommendation.usersName}:</span>
-                  <span className={styles.reviewerRecommendation}>{answer}</span>
-                </div>
-              );
-            });
-
-            recommendationLink = (
-              <div style={{position: 'relative', fontSize: 12}}>
-                <button
-                  id={`proj${project.projectPersonId}`}
-                  className={styles.reviewerRecommendations}
-                >
-                  View Reviewer Recommendations
-                </button>
-                <PopOver triggerId={`proj${project.projectPersonId}`} style={{top: 32}}>
-                  {recommendations}
-                </PopOver>
-              </div>
-            );
-          }
-
-          if (readonly) {
-            let dispositionType = getDispositionTypeString(
-              this.context.configState,
-              project.dispositionTypeCd,
-              configId
-            );
-            if (dispositionType === null || dispositionType.length === 0) {
-              dispositionType = 'None';
-            }
-            dispositionTypeSelector = (
-              <div className={styles.field}>
-                <label className={styles.label}>Project Disposition:</label>
-                <span style={{fontWeight: 'bold'}}>
-                  {dispositionType}
-                </span>
-                {recommendationLink}
-              </div>
-            );
-          } else {
-            dispositionTypeSelector = (
-              <div>
-                <label style={{display: 'block'}} htmlFor="disposition">
-                  Project Disposition
-                </label>
-
-                <Dropdown
-                  options={dispositionTypeOptions}
-                  id="disposition"
-                  value={project.dispositionTypeCd}
-                  onChange={this.onProjectDispositionChanged}
-                  context={project.projectPersonId}
-                />
-                {recommendationLink}
-              </div>
-            );
-          }
-        } else if (isReviewer &&
-          config.general.reviewerDispositionsEnabled &&
-          config.general.dispositionsEnabled) {
-          if (!readonly) {
-            dispositionTypeSelector = (
-              <div>
-                <label style={{display: 'block'}} htmlFor="disposition">
-                  Recommended Project Disposition
-                </label>
-
-                <Dropdown
-                  options={dispositionTypeOptions}
-                  value={this.getRecommendationFor(project.projectPersonId)}
-                  onChange={this.onRecommendedDispositionChanged}
-                  context={project.projectPersonId}
-                />
-              </div>
-            );
-          }
-        }
-
-        let commentClass = styles.comment;
-        let relationhipLabel;
-        if (config.general.dispositionsEnabled) {
-          if (isAdmin && config.general.adminRelationshipEnabled) {
-            relationhipLabel = (
-              <span className={styles.adminRelationship}>ADMIN RELATIONSHIP</span>
-            );
-            commentClass = classNames(styles.comments, styles.shortComment);
-          } else if (isReviewer &&
-            config.general.reviewerDispositionsEnabled &&
-            config.general.reviewerEntityProjectDispositionsEnabled) {
-            relationhipLabel = (
-              <span className={styles.adminRelationship}>RECOMMENDED RELATIONSHIP</span>
-            );
-            commentClass = classNames(styles.comments, styles.shortComment);
-          }
-        }
+        const declarationSummaries = declarations.filter(
+          d => d.projectId === project.id && d.finEntityActive === 1
+        );
 
         return (
-          <div
-            key={`proj${project.id}`}
-            className={index === uniqueProjects.length - 1 ? styles.lastrelationship : styles.relationship}
-          >
-            <div>
-              <div className={styles.name}>{project.name}</div>
-              <div style={{display: 'inline-block', width: '50%'}}>
-                <div className={styles.field}>
-                  <label className={styles.label}>Project Type:</label>
-                  <span style={{fontWeight: 'bold'}}>{project.type}</span>
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.label}>Project Number:</label>
-                  <span style={{fontWeight: 'bold'}}>{project.sourceIdentifier}</span>
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.label}>Project Role:</label>
-                  <span style={{fontWeight: 'bold'}}>{project.role}</span>
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.label}>Sponsor:</label>
-                  <span style={{fontWeight: 'bold'}}>{project.sponsors}</span>
-                </div>
-              </div>
-              <div style={{display: 'inline-block', width: '50%', verticalAlign: 'top'}}>
-                {dispositionTypeSelector}
-              </div>
-            </div>
-            <div className={styles.titles}>
-              <span className={styles.entityName}>FINANCIAL ENTITY</span>
-              <span className={styles.conflict}>REPORTER RELATIONSHIP</span>
-              {relationhipLabel}
-              <span className={commentClass}>REPORTER COMMENTS</span>
-            </div>
-            {declarationSummaries}
-          </div>
+          <ProjectDeclarationSummary
+            key={project.id}
+            comments={comments}
+            configId={configId}
+            declarations={declarationSummaries}
+            dispositionTypeOptions={dispositionTypeOptions}
+            last={index === uniqueProjects.length - 1}
+            piResponses={piResponses}
+            project={project}
+            projectRecommendations={projectRecommendations}
+            readonly={readonly}
+          />
         );
       });
     }
@@ -332,7 +175,20 @@ export class AdminDeclarationsSummary extends React.Component {
 
     return (
       <div className={classNames(styles.container, className)} >
-        <div className={styles.heading}>PROJECT DECLARATIONS</div>
+        <div className={styles.heading}>
+          <span>PROJECT DECLARATIONS</span>
+          {setAllButton}
+          <PopOver
+            triggerId="setAllProjectDispositions"
+            style={{top: 43, right: 30}}
+          >
+            <Dropdown
+              options={dispositionTypeOptions}
+              onChange={this.setAllProjectDispositions}
+              className={styles.setAllDropdown}
+            />
+          </PopOver>
+        </div>
         <div className={styles.body}>
           {projects}
         </div>
@@ -344,4 +200,21 @@ export class AdminDeclarationsSummary extends React.Component {
 AdminDeclarationsSummary.contextTypes = {
   configState: React.PropTypes.object,
   userInfo: React.PropTypes.object
+};
+
+AdminDeclarationsSummary.propTypes = {
+  declarations: React.PropTypes.array,
+  className: React.PropTypes.string,
+  comments: React.PropTypes.array,
+  configId: React.PropTypes.number.isRequired,
+  piResponses: React.PropTypes.array,
+  projectRecommendations: React.PropTypes.array,
+  readonly: React.PropTypes.bool
+};
+
+AdminDeclarationsSummary.defaultProps = {
+  declarations: [],
+  comments: [],
+  piResponses: [],
+  readonly: false
 };

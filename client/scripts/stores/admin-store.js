@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
-import {get} from 'lodash';
+import {get, uniq} from 'lodash';
 import {AdminActions} from '../actions/admin-actions';
 import {
   NO_DISPOSITION,
@@ -858,6 +858,16 @@ class _AdminStore {
     this.applicationState.editingComment = false;
   }
 
+  setAllProjectDispositions(dispositionTypeCd) {
+    uniq(
+      this.applicationState.selectedDisclosure.declarations.map(
+        d => d.projectPersonId
+      )
+    ).forEach(projectPersonId => {
+      this.updateProjectDisposition({projectPersonId, dispositionTypeCd});
+    });
+  }
+
   updateProjectDisposition(data) {
     createRequest().put(`/api/coi/project-persons-disposition-types/${data.projectPersonId}`)
       .send({dispositionTypeCd: data.dispositionTypeCd})
@@ -871,6 +881,12 @@ class _AdminStore {
           this.emitChange();
         }
       }));
+  }
+
+  setAllAdminRelationships([declarationIds, adminRelationshipCd]) {
+    for (const declarationId of declarationIds) {
+      this.updateAdminRelationship({declarationId, adminRelationshipCd});
+    }
   }
 
   updateAdminRelationship({declarationId, adminRelationshipCd}) {
@@ -887,6 +903,12 @@ class _AdminStore {
       }));
   }
 
+  setAllRecommendedDispositions([declarationIds, dispositionCd]) {
+    for (const declarationId of declarationIds) {
+      this.updateReviewerRelationship({declarationId, dispositionCd});
+    }
+  }
+
   updateReviewerRelationship({declarationId, dispositionCd}) {
     const { id, declarations } = this.applicationState.selectedDisclosure;
     const declaration = declarations.find(d => d.id === declarationId);
@@ -896,6 +918,16 @@ class _AdminStore {
       .put(`/api/coi/reviewers/${id}/recommend/${declarationId}`)
       .send({dispositionCd})
       .end(processResponse(() => {}));
+  }
+
+  setAllRecommendedProjectDispositions(dispositionTypeCd) {
+    uniq(
+      this.applicationState.selectedDisclosure.declarations.map(
+        d => d.projectPersonId
+      )
+    ).forEach(projectPersonId => {
+      this.recommendProjectDisposition({projectPersonId, dispositionTypeCd});
+    });
   }
 
   recommendProjectDisposition({projectPersonId, dispositionTypeCd}) {
