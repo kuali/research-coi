@@ -18,6 +18,7 @@
 
 import styles from './style';
 import React from 'react';
+import { autobind } from 'core-decorators';
 import DeclarationSummary from '../declaration-summary';
 import {getDispositionTypeString} from '../../../../stores/config-store';
 import { ROLES } from '../../../../../../coi-constants';
@@ -27,16 +28,8 @@ import {AdminActions} from '../../../../actions/admin-actions';
 import PopOver from '../../../pop-over';
 import {flagIsOn} from '../../../../feature-flags';
 
+@autobind
 export default class ProjectDeclarationsSummary extends React.Component {
-  constructor() {
-    super();
-    this.getCommentCount = this.getCommentCount.bind(this);
-    this.wasRespondedTo = this.wasRespondedTo.bind(this);
-    this.onProjectDispositionChanged = this.onProjectDispositionChanged.bind(this);
-    this.onSetAllAdminRelationships = this.onSetAllAdminRelationships.bind(this);
-    this.onSetAllRecommendedDispositions = this.onSetAllRecommendedDispositions.bind(this);
-  }
-
   onSetAllAdminRelationships(dispositionTypeCd) {
     const allDeclarationIds = this.props.declarations.map(d => d.id);
     AdminActions.setAllAdminRelationships([

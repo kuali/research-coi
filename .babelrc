@@ -8,5 +8,6 @@
     "test": {
       "plugins": ["rewire"]
     }
-  }
+  },
+  "plugins": ["transform-decorators-legacy"]
 }
