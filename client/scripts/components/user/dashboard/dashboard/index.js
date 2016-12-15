@@ -141,7 +141,10 @@ export class Dashboard extends React.Component {
       ) {
         annualDisclosureButton = (
           <div>
-            <NewDisclosureButton type={DISCLOSURE_TYPE.ANNUAL} />
+            <NewDisclosureButton
+              type={DISCLOSURE_TYPE.ANNUAL}
+              update={disclosureSummaries.length > 0}
+            />
           </div>
         );
       }

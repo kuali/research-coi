@@ -20,7 +20,6 @@ import styles from './style';
 import React from 'react';
 import {Link} from 'react-router';
 import {getDisclosureTypeString} from '../../../../stores/config-store';
-import {DISCLOSURE_TYPE} from '../../../../../../coi-constants';
 
 export function NewDisclosureButton(props, {configState}) {
   return (
@@ -31,7 +30,7 @@ export function NewDisclosureButton(props, {configState}) {
       <div>
         <span>
           <div className={styles.primary}>
-            {props.type === DISCLOSURE_TYPE.ANNUAL ? 'Update' : 'New'}
+            {props.update ? 'Update' : 'Create'}
           </div>
           <div className={styles.secondary}>
             {getDisclosureTypeString(configState, props.type, configState.config.id)}
@@ -44,4 +43,15 @@ export function NewDisclosureButton(props, {configState}) {
 
 NewDisclosureButton.contextTypes = {
   configState: React.PropTypes.object
+};
+
+NewDisclosureButton.propTypes = {
+  type: React.PropTypes.string.isRequired,
+  className: React.PropTypes.string,
+  update: React.PropTypes.bool
+};
+
+NewDisclosureButton.defaultProps = {
+  className: '',
+  update: false
 };
