@@ -51,3 +51,9 @@
   z-index: 9;
   position: relative;
 }
+
+@media (max-width: 950px) {
+  .override.sidebar {
+    min-width: 230px;
+  }
+}

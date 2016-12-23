@@ -66,3 +66,9 @@
   transform: translateY(43px);
   transition: transform 0.1s ease-out;
 }
+
+@media (max-width: 950px) {
+  .container {
+    margin: 15px 10px 12px 10px;
+  }
+}

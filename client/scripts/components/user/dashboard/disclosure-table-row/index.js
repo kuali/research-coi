@@ -151,15 +151,15 @@ export default function DisclosureTableRow(props, {configState}) {
   let button;
   if (updateable) {
     button = wrapWithUpdateLink((
-      <GreyButton>Update &gt;</GreyButton>
+      <GreyButton className={styles.button}>Update &gt;</GreyButton>
     ), type);
   } else if (revisable) {
     button = wrapWithReviseLink((
-      <GreyButton>Revise &gt;</GreyButton>
+      <GreyButton className={styles.button}>Revise &gt;</GreyButton>
     ), disclosureId);
   } else {
     button = wrapWithReadOnlyLink((
-      <GreyButton>View &gt;</GreyButton>
+      <GreyButton className={styles.button}>View &gt;</GreyButton>
     ), disclosureId);
   }
 

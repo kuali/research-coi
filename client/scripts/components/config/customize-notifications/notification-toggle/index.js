@@ -20,7 +20,7 @@ import styles from './style';
 import classNames from 'classnames';
 import React from 'react';
 
-export default class ToggleSwitch extends React.Component {
+export default class NotificationToggle extends React.Component {
   constructor(props) {
     super();
 
@@ -57,7 +57,7 @@ export default class ToggleSwitch extends React.Component {
     return (
       <div className={styles.container}>
         <span onClick={this.onClick} className={classes}>
-          <span style={{margin: '0 20px'}}>
+          <span className={styles.spacer}>
             <span className={baseClasses}>
               <span className={styles.label}>OFF</span>
               <span className={styles.label}>ON</span>

@@ -23,3 +23,14 @@
 .checkbox {
   padding: 13px 20px;
 }
+
+@media (max-width: 950px) {
+  .checkbox {
+    padding: 13px 7px;
+  }
+
+  .label {
+    max-width: 280px;
+    display: inline-block;
+  }
+}

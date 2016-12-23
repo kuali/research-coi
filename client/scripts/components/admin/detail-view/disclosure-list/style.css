@@ -81,3 +81,21 @@
 .showFilters .filterArrow {
   transform: rotateZ(0);
 }
+
+.filters {
+  width: 320px;
+}
+
+@media (max-width: 950px) {
+  .filters {
+    width: 230px;
+  }
+
+  .list {
+    min-width: 230px;
+  }
+
+  .heading {
+    padding: 8px 47px 8px 0;
+  }
+}

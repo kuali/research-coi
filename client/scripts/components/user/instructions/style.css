@@ -48,3 +48,9 @@
   right: 25px;
   z-index: 11;
 }
+
+@media (max-width: 950px) {
+  .container {
+    padding: 35px 25px 15px 25px;
+  }
+}

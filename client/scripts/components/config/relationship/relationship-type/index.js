@@ -91,7 +91,7 @@ export default class RelationshipType extends React.Component {
             </BlueButton>
             <label htmlFor={`rtcb${this.props.typeCd}`} className={styles.name}>{this.props.name}</label>
           </div>
-          <div className={'flexbox row'} style={{paddingLeft: 27}}>
+          <div className={`flexbox row ${styles.typeSection}`}>
             <span className={styles.left}>
               <input id="typeCheckbox" type="checkbox" ref="typeEnabled" checked={this.props.typeEnabled === 1} onChange={this.typeEnabledChanged} />
               <label htmlFor="typeCheckbox" className={styles.checkboxLabel}>Type</label>
@@ -137,7 +137,7 @@ export default class RelationshipType extends React.Component {
 
     return (
       <div className={`flexbox row ${this.props.className}`}>
-        <span style={{margin: '0 10px 0 20px'}}>
+        <span className={styles.container}>
           <input
             type="checkbox"
             id={`rtcb${this.props.typeCd}`}

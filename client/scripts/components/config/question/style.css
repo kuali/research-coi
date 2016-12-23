@@ -115,3 +115,19 @@
 :global(.color-blind) .warning {
   color: black;
 }
+
+@media (max-width: 950px) {
+  .override.button,
+  .override.nonFloatButton {
+    min-width: 60px;
+  }
+
+  .subQuestion.container {
+    margin-left: 25px;
+  }
+
+  .bottom {
+    padding: 10px 5px 10px 5px;
+    font-size: 12px;
+  }
+}

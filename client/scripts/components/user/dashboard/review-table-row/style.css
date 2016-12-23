@@ -57,3 +57,36 @@
 .extra {
   font-size: 14px;
 }
+
+.button {
+  min-width: 100px;
+}
+
+@media (max-width: 950px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .one {
+    width: 33%;
+  }
+
+  .two,
+  .three {
+    width: 23%;
+  }
+
+  .four {
+    width: 21%;
+  }
+
+  .button {
+    min-width: 80px;
+  }
+
+  .one,
+  .two,
+  .three {
+    font-size: 15px;
+  }
+}

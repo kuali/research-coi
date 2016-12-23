@@ -21,14 +21,13 @@ import React from 'react';
 import {GreyButton} from '../../../grey-button';
 import {BlueButton} from '../../../blue-button';
 import {AdminActions} from '../../../../actions/admin-actions';
-import classNames from 'classnames';
 
 export default function ReturnToReporterConfirmation(props) {
   let returnToReporterSection;
   if (props.showReturnToReporterConfirmation) {
     if (!props.areReviewCommentsvisibleToReporter) {
       returnToReporterSection = (
-        <div className={classNames(styles.container)}>
+        <div className={styles.container}>
           <div className={styles.question}>
             Are you sure you want to return this disclosure to the reporter?
           </div>
@@ -59,7 +58,7 @@ export default function ReturnToReporterConfirmation(props) {
       );
     } else {
       returnToReporterSection = (
-        <div className={classNames(styles.container)}>
+        <div className={styles.container}>
           <div className={styles.question}>
             There are review comments set as visible to the reporter. To return the disclosure, please set these as
             not visible to the reporter.

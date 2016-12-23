@@ -28,6 +28,17 @@
   box-shadow: 0 0 10px #CCC;
 }
 
+.label {
+  margin-left: 15px;
+}
+
 :global(.color-blind) .container {
   color: black;
+}
+
+@media (max-width: 950px) {
+  .label {
+    margin-left: 10px;
+    font-size: 18px;
+  }
 }

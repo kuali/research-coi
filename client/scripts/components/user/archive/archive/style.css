@@ -118,3 +118,9 @@
     height: initial;
   }
 }
+
+@media (max-width: 950px) {
+  .sidebar {
+    min-width: 230px;
+  }
+}

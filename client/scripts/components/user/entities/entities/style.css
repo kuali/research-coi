@@ -56,3 +56,13 @@
   background-color: #AAA;
   cursor: default;
 }
+
+@media (max-width: 950px) {
+  .content {
+    padding: 46px 0 0 10px;
+  }
+
+  .override.placeholder {
+    margin-top: -20px;
+  }
+}

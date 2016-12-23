@@ -37,17 +37,17 @@
 }
 
 .one {
-  width: 35%;
+  width: 33%;
 }
 
 .two,
 .three {
-  width: 25%;
+  width: 23%;
   font-size: 17px;
 }
 
 .four {
-  width: 15%;
+  width: 21%;
 }
 
 .type {
@@ -56,4 +56,24 @@
 
 .extra {
   font-size: 14px;
+}
+
+.button {
+  min-width: 100px;
+}
+
+@media (max-width: 950px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  button.button {
+    min-width: 80px;
+  }
+
+  .type,
+  .two,
+  .three {
+    font-size: 15px;
+  }
 }

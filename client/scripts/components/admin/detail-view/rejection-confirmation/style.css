@@ -76,4 +76,17 @@
   padding-bottom: 17px;
   border-bottom: 1px solid #AAA;
   margin-bottom: 17px;
+  text-align: center;
+}
+
+@media (max-width: 950px) {
+  .container {
+    min-width: 150px;
+    padding: 10px;
+  }
+
+  .override.button,
+  .override.yesButton {
+    min-width: 130px;
+  }
 }

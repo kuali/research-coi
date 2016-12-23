@@ -47,3 +47,17 @@
   font-weight: 300;
   color: #444;
 }
+
+@media (max-width: 950px) {
+  .container {
+    padding: 17px 0 17px 10px;
+  }
+
+  .instructionButton {
+    right: 0;
+  }
+
+  .heading {
+    font-size: 32px;
+  }
+}

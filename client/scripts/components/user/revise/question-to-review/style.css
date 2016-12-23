@@ -89,3 +89,21 @@
 :global(.color-blind) .incomplete {
   color: black;
 }
+
+@media (max-width: 950px) {
+  .questionNumber {
+    min-width: 50px;
+  }
+
+  .comments {
+    padding: 1px;
+  }
+
+  .comment {
+    margin: 7px;
+  }
+
+  .commentSection {
+    min-width: 250px;
+  }
+}

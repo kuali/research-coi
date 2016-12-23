@@ -32,3 +32,9 @@
   text-align: center;
   margin-top: 80px;
 }
+
+@media (max-width: 950px) {
+  .content {
+    padding: 20px 10px;
+  }
+}

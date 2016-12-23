@@ -77,3 +77,13 @@
   color: black;
   border: 1px solid #E6E6E6;
 }
+
+.spacer {
+  margin: 0 20px;
+}
+
+@media (max-width: 950px) {
+  .spacer {
+    margin: 0;
+  }
+}

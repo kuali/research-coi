@@ -134,7 +134,7 @@ export class Entity extends React.Component {
             {entityName}
           </div>
           {warning}
-          <div style={{margin: '10px 0 0 20px'}} className={'flexbox row'}>
+          <div className={`flexbox row ${styles.summary}`}>
             <span className={`fill ${styles.dataitem}`}>
               <span className={styles.relationshipLabel}>Relationship:</span>
               <span className={styles.relationships}>

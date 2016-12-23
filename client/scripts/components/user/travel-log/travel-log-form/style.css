@@ -24,3 +24,9 @@
 .row {
   margin-bottom: 25px;
 }
+
+@media (max-width: 950px) {
+  .container {
+    margin: 15px 10px;
+  }
+}

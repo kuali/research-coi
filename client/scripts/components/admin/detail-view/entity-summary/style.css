@@ -112,3 +112,10 @@
   color: black;
   border-bottom: 1px dashed black;
 }
+
+@media (max-width: 950px) {
+  .relations,
+  .left {
+    width: initial;
+  }
+}

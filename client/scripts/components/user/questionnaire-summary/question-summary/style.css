@@ -85,3 +85,18 @@
 :global(.color-blind) .answerLabel {
   color: black;
 }
+
+@media (max-width: 950px) {
+  .counter {
+    min-width: 50px;
+  }
+
+  .subquestion .counter {
+    min-width: 110px;
+    padding-left: 40px;
+  }
+
+  .nums {
+    margin-left: 5px;
+  }
+}

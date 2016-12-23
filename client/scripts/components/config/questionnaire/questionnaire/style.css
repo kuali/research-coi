@@ -42,7 +42,8 @@
   color: #525252;
   font-weight: 300;
   background-color: white;
-  min-height: 70px;
+  min-height: 75px;
+  border-bottom: 1px solid #e3e3e3;
 }
 
 .configurationArea {
@@ -53,4 +54,10 @@
 
 .configSection {
   min-width: 200px;
+}
+
+@media (max-width: 950px) {
+  .configurationArea {
+    padding: 25px 10px;
+  }
 }

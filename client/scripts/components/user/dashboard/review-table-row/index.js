@@ -38,7 +38,7 @@ export function ReviewTableRow({assignDate, reporter, type, id, statusCd}) {
           {assignDate ? formatDate(assignDate) : null}
         </span>
         <span role="gridcell" className={`${styles.cell} ${styles.four}`}>
-          <GreyButton>Review &gt;</GreyButton>
+          <GreyButton className={styles.button}>Review &gt;</GreyButton>
         </span>
       </a>
     </div>

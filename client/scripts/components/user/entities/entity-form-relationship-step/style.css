@@ -181,3 +181,9 @@
 :global(.color-blind) .commentStyle {
   color: black;
 }
+
+@media (max-width: 950px) {
+  .left {
+    padding-right: 10px;
+  }
+}

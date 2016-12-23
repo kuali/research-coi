@@ -31,3 +31,9 @@
   white-space: normal;
   vertical-align: top;
 }
+
+@media (max-width: 950px) {
+  .questionArea {
+    margin: 15px 0 0 10px;
+  }
+}

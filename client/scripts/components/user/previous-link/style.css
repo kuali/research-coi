@@ -40,3 +40,9 @@
 .stepLabel {
   vertical-align: middle;
 }
+
+@media (max-width: 950px) {
+  .container {
+    font-size: 13px;
+  }
+}

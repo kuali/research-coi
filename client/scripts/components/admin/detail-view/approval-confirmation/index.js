@@ -29,11 +29,11 @@ export default function ApprovalConfirmation(props) {
   if (props.showDispositionWarning) {
     dispositionWarning = 'A disposition has not been set for every project. ';
   }
+
   return (
     <div className={classNames(styles.container, props.className)} >
       <div className={styles.question}>
         {`${dispositionWarning}Are you sure you want to approve this disclosure?`}
-
       </div>
 
       <BlueButton

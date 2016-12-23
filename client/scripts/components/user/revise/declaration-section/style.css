@@ -35,3 +35,13 @@
 .body {
   padding: 10px 23px 23px 23px;
 }
+
+@media (max-width: 950px) {
+  .container {
+    margin: 15px 10px;
+  }
+
+  .body {
+    padding: 0 10px;
+  }
+}

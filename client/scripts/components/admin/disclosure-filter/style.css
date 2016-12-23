@@ -85,3 +85,9 @@
   border-bottom: 12px solid transparent;
   border-left: 17px solid transparent;
 }
+
+@media (max-width: 950px) {
+  .filter {
+    padding: 0 22px 0 10px;
+  }
+}

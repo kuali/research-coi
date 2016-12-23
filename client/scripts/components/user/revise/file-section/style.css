@@ -43,3 +43,9 @@
 .override.last {
   margin-bottom: 0;
 }
+
+@media (max-width: 950px) {
+  .container {
+    margin: 15px 10px;
+  }
+}

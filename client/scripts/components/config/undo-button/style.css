@@ -37,3 +37,9 @@
   font-size: 17px;
   color: #525252;
 }
+
+@media (max-width: 950px) {
+  .undoText {
+    padding-left: 7px;
+  }
+}

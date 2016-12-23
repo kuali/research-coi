@@ -35,3 +35,14 @@
 .override.saveButton {
   margin-bottom: 30px;
 }
+
+@media (max-width: 950px) {
+  .container {
+    padding: 0 0 0 10px;
+    min-width: 177px;
+  }
+
+  .saveAndUndo {
+    width: 169px;
+  }
+}

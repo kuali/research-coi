@@ -85,3 +85,24 @@
 :global(.color-blind) .answerLabel {
   color: black;
 }
+
+.questionText {
+  padding-right: 125px;
+  font-size: 14px;
+}
+
+@media (max-width: 950px) {
+  .questionText {
+    padding-right: 0;
+    padding-bottom: 5px;
+  }
+
+  .number {
+    min-width: 40px;
+  }
+
+  .subQuestionNumber {
+    min-width: 110px;
+    padding-left: 40px;
+  }
+}

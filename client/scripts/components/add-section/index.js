@@ -33,11 +33,9 @@ export default function AddSection (props) {
     );
   }
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.left}>
-        {props.button}
-      </div>
+  let message;
+  if (props.message) {
+    message = (
       <div className={styles.right}>
         <div id='message' className={messageClasses}>
           <div>
@@ -47,6 +45,15 @@ export default function AddSection (props) {
             </span>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      {message}
+      <div className={styles.left}>
+        {props.button}
       </div>
     </div>
   );

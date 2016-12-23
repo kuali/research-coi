@@ -76,3 +76,9 @@
   color: #555;
   display: block;
 }
+
+@media (max-width: 950px) {
+  .bottom {
+    padding: 15px 10px 12px 10px;
+  }
+}

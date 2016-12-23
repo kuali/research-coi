@@ -76,3 +76,9 @@
   min-width: 90px;
   width: initial;
 }
+
+@media (max-width: 950px) {
+  .content {
+    padding: 25px 10px 15px 10px;
+  }
+}

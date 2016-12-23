@@ -50,3 +50,13 @@
   border-top: 1px solid #CCC;
   padding-top: 44px;
 }
+
+@media (max-width: 950px) {
+  .sidebar {
+    min-width: 230px;
+  }
+
+  .entryList {
+    margin: 15px 10px;
+  }
+}

@@ -140,3 +140,13 @@
 .declarationType {
   padding: 3px 0;
 }
+
+@media (max-width: 950px) {
+  .entityName {
+    min-width: 150px;
+  }
+
+  .relationship {
+    min-width: 150px;
+  }
+}

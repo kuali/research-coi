@@ -42,3 +42,10 @@
   margin-bottom: 3px;
   display: inline-block;
 }
+
+@media (max-width: 950px) {
+  .content,
+  .cert {
+    padding: 15px 10px;
+  }
+}

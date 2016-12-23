@@ -31,3 +31,9 @@
 .override.entities {
   margin-bottom: 25px;
 }
+
+@media (max-width: 950px) {
+  .container {
+    padding: 15px 10px;
+  }
+}

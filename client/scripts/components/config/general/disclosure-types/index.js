@@ -34,7 +34,6 @@ export default function DisclosureTypes(props) {
           <DisclosureType type={annual} canToggle={true} />
           <DisclosureType type={travel} canToggle={true} />
         </div>
-        <div className={styles.optionRow} />
       </div>
     );
   }

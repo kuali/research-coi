@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+.container {
+  margin: 0 10px 0 20px;
+}
+
 .collapsedContent {
   border-bottom: 1px solid #E6E6E6;
   padding-bottom: 20px;
@@ -52,4 +56,18 @@
 .amountSection {
   padding-left: 27px;
   margin: 40px 0;
+}
+
+@media (max-width: 950px) {
+  .container {
+    margin: 0 10px 0 0;
+  }
+
+  .left {
+    padding-right: 0;
+  }
+
+  .amountSection {
+    padding-left: 0;
+  }
 }
