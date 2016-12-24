@@ -98,7 +98,13 @@ export class Questionnaire extends React.Component {
         />
 
         <div className={styles.questionArea}>
-          <div style={{transition: 'all .2s ease-in-out', transform: `translateX(${percentToSlide}%)`}}>
+          <div
+            style={{
+              transition: 'all .2s ease-in-out',
+              transform: `translateX(${percentToSlide}%)`,
+              '-webkit-transform': `translateX(${percentToSlide}%)`
+            }}
+          >
             {questions}
           </div>
         </div>
