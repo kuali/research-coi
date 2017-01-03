@@ -44,3 +44,9 @@
   height: 53px;
   border-top: 1px solid #AAA;
 }
+
+@media (max-width: 950px) {
+  .override.button {
+    min-width: 60px;
+  }
+}

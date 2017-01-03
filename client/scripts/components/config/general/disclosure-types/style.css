@@ -37,3 +37,13 @@
   font-size: 12px;
   margin-bottom: 10px;
 }
+
+@media (max-width: 950px) {
+  .optionRow {
+    flex-direction: column;
+  }
+
+  .container {
+    padding: 10px 10px 0 10px;
+  }
+}

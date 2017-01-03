@@ -120,7 +120,7 @@ export default class EntitySection extends React.Component {
         <div className={'flexbox row'}>
           <span style={{minWidth: 45}} />
           {entityForm}
-          <span style={{minWidth: 345}} />
+          <span className={styles.spacer} />
         </div>
         {addSection}
       </div>

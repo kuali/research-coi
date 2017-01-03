@@ -94,3 +94,22 @@
   font-weight: bold;
   min-width: 400px;
 }
+
+.summary {
+  margin: 10px 0 0 20px;
+}
+
+@media (max-width: 950px) {
+  .content {
+    padding: 10px;
+  }
+
+  .summary {
+    margin: 10px 0 0 5px;
+    flex-direction: column;
+  }
+
+  .name {
+    font-size: 23px;
+  }
+}

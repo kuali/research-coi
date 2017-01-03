@@ -41,3 +41,9 @@
 .submittedBy {
   font-weight: bold;
 }
+
+@media (max-width: 950px) {
+  .container {
+    padding-left: 10px;
+  }
+}

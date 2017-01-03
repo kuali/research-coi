@@ -65,3 +65,17 @@
   padding: 0 35px 0 3px;
   display: inline-block;
 }
+
+@media (max-width: 950px) {
+  .detailsFromPI {
+    padding-right: 10px;
+  }
+
+  .bottom {
+    padding-left: 10px;
+  }
+
+  .override.actionButtons {
+    margin-right: 10px;
+  }
+}

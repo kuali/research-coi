@@ -17,11 +17,11 @@
 */
 
 .container {
-  min-height: 100px;
+  padding: 7px 21px 15px 21px;
 }
 
 .peopleLeft {
-  padding-right: 25px;
+  padding: 0 25px 0 27px;
 }
 
 .panelInstructions {
@@ -33,4 +33,15 @@
   font-weight: bold;
   margin-left: 10px;
   vertical-align: middle;
+}
+
+@media (max-width: 950px) {
+  .container {
+    padding: 7px 0 15px 0;
+  }
+
+  .peopleLeft {
+    padding: 0 10px 0 0;
+    min-width: 95px;
+  }
 }

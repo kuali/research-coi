@@ -58,4 +58,17 @@
 
 .question {
   margin-bottom: 30px;
+  text-align: center;
+}
+
+@media (max-width: 950px) {
+  .container {
+    padding: 10px;
+    min-width: 150px;
+  }
+
+  .override.button,
+  .override.yesButton {
+    min-width: 130px;
+  }
 }

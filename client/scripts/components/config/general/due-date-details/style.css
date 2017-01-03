@@ -46,3 +46,17 @@
   font-size: 12px;
   margin-bottom: 10px;
 }
+
+@media (max-width: 950px) {
+  .container {
+    margin: 0 10px 15px 10px;
+  }
+
+  .notificationQuestion {
+    text-align: left;
+  }
+
+  .dueDateOptions {
+    flex-direction: column;
+  }
+}

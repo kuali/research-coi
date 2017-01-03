@@ -132,9 +132,9 @@ export default class Relationship extends React.Component {
         className={this.props.className}
       >
         <Panel title="Relationship Matrix People Configuration">
-          <div style={{padding: '7px 21px 15px 21px'}}>
+          <div className={styles.container}>
             <div className={styles.panelInstructions}>Configure the people types for your relationship matrix:</div>
-            <div className={'flexbox row'} style={{paddingLeft: 27}}>
+            <div className={'flexbox row'}>
               <span className={styles.peopleLeft}>
                 <input
                   id="peopleCheckbox"
@@ -155,7 +155,7 @@ export default class Relationship extends React.Component {
           </div>
         </Panel>
         <Panel title="Relationship Matrix Configuration">
-          <div style={{padding: '7px 21px 15px 21px'}}>
+          <div className={styles.container}>
             <div className={styles.panelInstructions}>Configure the relationship types for your relationship matrix:</div>
             {matrixTypes}
           </div>

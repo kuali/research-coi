@@ -26,7 +26,7 @@ export default function BackToDashboard(props) {
       <div className={`${styles.container} ${props.className}`}>
         <div>
           <i className={'fa fa-arrow-left'} />
-          <span style={{marginLeft: 15}}>BACK TO DASHBOARD</span>
+          <span className={styles.label}>BACK TO DASHBOARD</span>
         </div>
       </div>
     </Link>

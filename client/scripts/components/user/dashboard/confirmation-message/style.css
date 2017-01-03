@@ -45,3 +45,9 @@
   margin-left: 6px;
   margin-right: 12px;
 }
+
+@media (max-width: 950px) {
+  .container {
+    margin: 25px 10px 15px 10px;
+  }
+}

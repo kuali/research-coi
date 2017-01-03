@@ -89,3 +89,15 @@
 .override.none {
   display: none;
 }
+
+@media (max-width: 950px) {
+  .content {
+    padding: 15px 10px;
+  }
+
+  .left,
+  .right {
+    margin-left: 15px;
+    width: 100%;
+  }
+}

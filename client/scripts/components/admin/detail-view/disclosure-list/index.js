@@ -163,7 +163,7 @@ export class DisclosureList extends React.Component {
     return (
       <div className={classes}>
         <AdminMenu style={{padding: '32px 0px'}} />
-        <div style={{width: 320}}>
+        <div className={styles.filters}>
           <DisclosureFilterSearch
             query={filters.search}
             onChange={AdminActions.changeSearch}

@@ -86,3 +86,18 @@
 .override.none {
   display: none;
 }
+
+@media (max-width: 950px) {
+  .content {
+    padding: 15px 10px;
+  }
+
+  .left {
+    margin-left: 15px;
+    width: 100%;
+  }
+
+  .attention {
+    margin: 15px 0 15px 0;
+  }
+}

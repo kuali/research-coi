@@ -56,3 +56,22 @@
 .columnThree {
   width: 25%;
 }
+
+@media (max-width: 950px) {
+  .container {
+    margin: 30px 10px;
+  }
+
+  .headings {
+    padding: 0 10px;
+  }
+
+  .columnOne {
+    width: 33%;
+  }
+
+  .columnTwo,
+  .columnThree {
+    width: 23%;
+  }
+}

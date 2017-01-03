@@ -50,3 +50,18 @@
   margin-top: 10px;
   cursor: pointer;
 }
+
+@media (max-width: 950px) {
+  .container {
+    min-width: 139px;
+  }
+
+  .button {
+    margin-top: 22px;
+    white-space: nowrap;
+  }
+
+  .label {
+    white-space: normal;
+  }
+}

@@ -196,7 +196,7 @@ export class ListView extends React.Component {
                 {`COI ${this.context.userInfo.coiRole} DASHBOARD`}
               </h2>
             </div>
-            <div style={{padding: '33px 38px'}}>
+            <div className={styles.tableContainer}>
               <DisclosureTable
                 sort={applicationState.sort}
                 sortDirection={applicationState.sortDirection}

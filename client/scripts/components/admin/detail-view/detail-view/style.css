@@ -58,3 +58,9 @@
   margin: 200px auto;
   color: #AAA;
 }
+
+@media (max-width: 950px) {
+  .override.list {
+    min-width: 230px;
+  }
+}

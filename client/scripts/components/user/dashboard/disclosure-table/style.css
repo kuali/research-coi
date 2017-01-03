@@ -42,10 +42,20 @@
 }
 
 .columnOne {
-  width: 35%;
+  width: 33%;
 }
 
 .columnTwo,
 .columnThree {
-  width: 25%;
+  width: 23%;
+}
+
+@media (max-width: 950px) {
+  .container {
+    margin: 30px 10px;
+  }
+
+  .headings {
+    padding: 0 10px;
+  }
 }

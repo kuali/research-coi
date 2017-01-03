@@ -95,7 +95,7 @@ export default class QuestionSummary extends React.Component {
           <div>{question.numberToShow}</div>
         </span>
         <span className={'fill'} style={{display: 'inline-block'}}>
-          <div style={{paddingRight: 125, fontSize: 14}}>{question.text}</div>
+          <div className={styles.questionText}>{question.text}</div>
           <div className={'flexbox row'}>
             <span className={`fill ${styles.answerSection}`}>
               <div className={styles.answerLabel}>ANSWER:</div>

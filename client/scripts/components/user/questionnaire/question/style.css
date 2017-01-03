@@ -84,3 +84,10 @@
 :global(.color-blind) .numberToShow {
   color: black;
 }
+
+@media (max-width: 950px) {
+  .topPanel,
+  .subQuestionContent {
+    padding: 15px;
+  }
+}

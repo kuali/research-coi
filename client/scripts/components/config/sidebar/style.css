@@ -54,3 +54,21 @@
 :global(.color-blind) .active {
   border-right: 5px solid black;
 }
+
+@media (max-width: 950px) {
+  .container {
+    min-width: 230px;
+  }
+
+  .step {
+    padding: 20px 20px 20px 20px;
+  }
+
+  .firstWord {
+    font-size: 26px;
+  }
+
+  .rest {
+    font-size: 21px;
+  }
+}

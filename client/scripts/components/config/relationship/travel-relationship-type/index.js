@@ -120,7 +120,7 @@ export default class TravelRelationshipType extends RelationshipType {
 
     return (
       <div className={`flexbox row ${this.props.className}`}>
-        <span style={{margin: '0 10px 0 20px'}}>
+        <span className={styles.container}>
           <input
             type="checkbox"
             id={`rtcb${this.props.typeCd}`}

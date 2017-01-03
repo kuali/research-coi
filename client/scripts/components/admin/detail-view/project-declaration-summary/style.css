@@ -115,3 +115,9 @@
 :global(.color-blind) .setAllLink {
   color: black;
 }
+
+@media (max-width: 950px) {
+  .titles {
+    font-size: 10px;
+  }
+}

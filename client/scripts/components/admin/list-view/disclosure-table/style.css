@@ -40,3 +40,13 @@
 .headings .override.colTwoHeading {
   padding: 10px 50px 10px 0;
 }
+
+@media (max-width: 950px) {
+  .headings .override.colOneHeading {
+    padding: 10px 0 10px 20px;
+  }
+
+  .headings .override.colTwoHeading {
+    padding: 10px 20px 10px 0;
+  }
+}

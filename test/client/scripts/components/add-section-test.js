@@ -27,7 +27,7 @@ describe('AddSection', () => {
       <AddSection />
     );
 
-    assert(wrapper.find('#message').node.props.className.indexOf('hideWarning') > 0);
+    assert.equal(wrapper.find('#message').node, undefined);
   });
 
   it('should display message div if a message is provided', () => {

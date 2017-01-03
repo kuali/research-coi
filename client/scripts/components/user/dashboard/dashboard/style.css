@@ -129,3 +129,13 @@
 .disclosureTableLabel {
   margin-top: 20px;
 }
+
+@media (max-width: 950px) {
+  .sidebar {
+    min-width: 230px;
+  }
+
+  .bannerContainer {
+    margin: 15px 0 0 10px;
+  }
+}

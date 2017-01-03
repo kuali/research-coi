@@ -37,3 +37,9 @@
   color: #525252;
   padding-top: 3px;
 }
+
+@media (max-width: 950px) {
+  .saveText {
+    padding-left: 7px;
+  }
+}

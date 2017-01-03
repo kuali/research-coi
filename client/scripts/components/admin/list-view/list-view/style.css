@@ -109,3 +109,21 @@
 .showFilters .filterArrow {
   transform: rotateZ(0);
 }
+
+.tableContainer {
+  padding: 33px 38px;
+}
+
+@media (max-width: 950px) {
+  .sidebar {
+    min-width: 230px;
+  }
+
+  .heading {
+    padding: 8px 47px 8px 0;
+  }
+
+  .tableContainer {
+    padding: 10px;
+  }
+}

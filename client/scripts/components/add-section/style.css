@@ -18,14 +18,13 @@
 }
 
 .left {
-  float: left;
-  height: 175px;
+  min-height: 175px;
   min-width: 200px;
 }
 
 .right {
   width: auto;
-  height: 175px;
+  min-height: 130px;
   overflow: hidden;
 }
 
@@ -34,7 +33,7 @@
   border-radius: 5px;
   color: white;
   padding: 0 20px;
-  height: 100px;
+  min-height: 100px;
   font-size: 16px;
   display: flex;
   justify-content: center;
@@ -59,4 +58,7 @@
 
 .hideWarning {
   display: none;
+}
+
+@media (max-width: 950px) {
 }
