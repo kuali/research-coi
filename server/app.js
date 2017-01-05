@@ -121,6 +121,8 @@ export function run() {
 
   conditionallyLogRequests(app, logLevel);
 
+  app.use('/coi/new', express.static('newclient'));
+  app.use('/coi/new', express.static('client'));
   app.use('/coi', express.static('client'));
   app.use('/coi/build', (req, res) => { res.sendStatus(NOT_FOUND); }); // Static files that weren't found
   app.use('/api', noCache);
@@ -130,6 +132,20 @@ export function run() {
   app.use('/api/v1/coi/health', healthReport);
   app.use('/coi/health', healthReport);
   app.use('/api', apiAuthentication);
+
+  app.use('/coi/new', authentication);
+  app.use('/coi/new$', renderView('new/index'));
+  app.use('/coi/new/$', renderView('new/index'));
+  app.use('/coi/new/readonly', renderView('new/index'));
+  app.use('/coi/new/archiveview', renderView('new/index'));
+  app.use('/coi/new/dashboard', renderView('new/index'));
+  app.use('/coi/new/disclosure', renderView('new/index'));
+  app.use('/coi/new/travelLog', renderView('new/index'));
+  app.use('/coi/new/revise', renderView('new/index'));
+  app.use('/coi/new/about', renderView('new/about'));
+  app.use('/coi/new/admin', adminCheck, renderView('new/admin/admin'));
+  app.use('/coi/new/config', configCheck, renderView('new/admin/config'));
+
   app.use('/coi', authentication);
   app.use('/coi$', renderView('index'));
   app.use('/coi/$', renderView('index'));

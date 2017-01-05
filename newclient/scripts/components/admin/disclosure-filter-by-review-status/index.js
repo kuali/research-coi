@@ -1,0 +1,92 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+import styles from './style';
+import classNames from 'classnames';
+import React from 'react';
+import {GreyButton} from '../../grey-button';
+import {AdminActions} from '../../../actions/admin-actions';
+import DisclosureFilter from '../disclosure-filter';
+import DoneWithFilterButton from '../done-with-filter-button';
+
+export class DisclosureFilterByReviewStatus extends DisclosureFilter {
+  constructor() {
+    super();
+
+    this.label = 'REVIEW STATUS';
+  }
+
+  // This method must be implemented. It will be called by DisclosureFilter.
+  setActiveStatus({ activeFilters }) {
+    let active = true;
+    if (activeFilters.assigned && activeFilters.notAssigned) {
+      active = false;
+    }
+    this.setState({ active });
+  }
+
+  clear(e) {
+    AdminActions.clearReviewStatusFilter();
+    e.stopPropagation();
+  }
+
+  toggleFilter(evt) {
+    const value = evt.target.id.replace('reviewStatusFilter', '');
+    AdminActions.toggleReviewStatusFilter(value);
+  }
+
+  // render() is implemented in DisclosureFilter, which will call renderFilter
+  renderFilter() {
+    return (
+      <div className={styles.container}>
+        <DoneWithFilterButton onClick={this.close} />
+
+        <div className={styles.checkbox}>
+          <input
+            id={'reviewStatusFilterAssigned'}
+            type="checkbox"
+            checked={this.props.activeFilters.assigned}
+            onChange={this.toggleFilter}
+          />
+          <label htmlFor={'reviewStatusFilterAssigned'} style={{paddingLeft: 9}}>
+            Assigned
+          </label>
+        </div>
+        <div className={styles.checkbox}>
+          <input
+            id={'reviewStatusFilterNot'}
+            type="checkbox"
+            checked={this.props.activeFilters.notAssigned}
+            onChange={this.toggleFilter}
+          />
+          <label htmlFor={'reviewStatusFilterNot'} style={{paddingLeft: 9}}>
+            Not Assigned
+          </label>
+        </div>
+
+        <GreyButton
+          className={`${styles.override} ${styles.clearButton}`}
+          onClick={this.clear}
+        >
+          <i className={classNames('fa', 'fa-times', styles.x)} />
+          RESET FILTER
+        </GreyButton>
+      </div>
+    );
+  }
+}

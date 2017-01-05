@@ -1,0 +1,189 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  width: 100%;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 17px;
+  color: #0095A0;
+}
+
+.update .title {
+  font-weight: normal;
+}
+
+:global(.color-blind) .title {
+  color: black;
+}
+
+.instructions {
+  font-size: 14px;
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
+.left {
+  display: inline-block;
+  vertical-align: top;
+  width: 30%;
+  padding-right: 40px;
+}
+
+.right {
+  display: inline-block;
+  vertical-align: top;
+  width: 70%;
+}
+
+.personSection {
+  margin-bottom: 24px;
+  vertical-align: top;
+}
+
+.commentArea {
+  margin-top: 7px;
+}
+
+.addButtonSection {
+  text-align: right;
+}
+
+.textarea {
+  height: 90px;
+  width: 100%;
+  border: 1px solid #C7C7C7;
+  font-size: 16px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.top {
+  margin-bottom: 20px;
+}
+
+.override.addButton {
+  background-color: #0095A0;
+  color: white;
+  padding: 3px 9px 4px 7px;
+  margin-top: 10px;
+  cursor: pointer;
+  width: initial;
+  border-bottom: 2px solid #717171;
+}
+
+.removeButton {
+  background-color: #0095A0;
+  color: white;
+  padding: 3px 9px 4px 7px;
+  margin-top: 10px;
+  cursor: pointer;
+  width: initial;
+  border-bottom: 2px solid #717171;
+}
+
+:global(.color-blind) .override.addButton {
+  background-color: black;
+}
+
+.errors .override.addButton {
+  background-color: #E6E6E6;
+  color: #AAA;
+  text-shadow: none;
+  border-bottom: 2px solid #BBB;
+  cursor: default;
+}
+
+.submittedrelations {
+  border-top: 1px solid #DEDEDE;
+  padding-top: 20px;
+}
+
+.typeSection {
+  margin-bottom: 24px;
+  display: block;
+}
+
+.amountSection {
+  text-align: left;
+  display: block;
+}
+
+.dropDown {
+  width: 100%;
+  height: 27px;
+  background-color: transparent;
+  font-size: 14px;
+  border-bottom: 1px solid #aaa;
+}
+
+.invalidField {
+  border-bottom: 3px solid red;
+}
+
+.invalidText {
+  color: red;
+  display: block;
+  padding-bottom: 3px;
+}
+
+:global(.color-blind) .invalidText {
+  color: black;
+}
+
+.override.summary {
+  margin-bottom: 20px;
+}
+
+.labelStyle {
+  padding-bottom: 3px;
+  color: #888;
+  font-size: 12px;
+}
+
+:global(.color-blind) .labelStyle {
+  color: black;
+}
+
+.relationStyle {
+  color: #888;
+  font-size: 12px;
+}
+
+:global(.color-blind) .relationStyle {
+  color: black;
+}
+
+.commentStyle {
+  display: block;
+  padding-bottom: 3px;
+  color: #888;
+  font-size: 12px;
+}
+
+:global(.color-blind) .commentStyle {
+  color: black;
+}
+
+@media (max-width: 950px) {
+  .left {
+    padding-right: 10px;
+  }
+}

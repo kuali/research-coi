@@ -1,0 +1,152 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  margin: 17px 17px 17px 0;
+}
+
+.statusIcon {
+  min-width: 45px;
+}
+
+.commentTitle {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.commentDate {
+  font-style: italic;
+  font-size: 12px;
+  padding-top: 2px;
+}
+
+.commentText {
+  font-size: 14px;
+}
+
+.commentSection {
+  min-width: 300px;
+}
+
+.comments {
+  background-color: #D8E9EB;
+  color: black;
+  border-radius: 5px;
+  padding: 1px 10px;
+}
+
+:global(.color-blind) .comments {
+  background-color: black;
+  color: white;
+}
+
+.comment {
+  margin: 15px 10px;
+}
+
+.piComment {
+  text-align: right;
+  background-color: #edf9fb;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 15px 2px;
+}
+
+.completed {
+  color: green;
+  font-size: 35px;
+}
+
+:global(.color-blind) .completed {
+  color: black;
+}
+
+.incomplete {
+  color: #E85723;
+  font-size: 35px;
+}
+
+:global(.color-blind) .incomplete {
+  color: black;
+}
+
+.actions {
+  float: right;
+}
+
+.responseText {
+  min-width: 100%;
+  height: 120px;
+  border-radius: 5px;
+  border: 1px solid #AAA;
+  margin: 10px 0;
+  font-size: 16px;
+  padding: 6px 8px;
+  background-color: #EEEEEE;
+}
+
+.entityName {
+  display: inline-block;
+  min-width: 250px;
+  font-size: 14px;
+}
+
+.relationship {
+  display: inline-block;
+  min-width: 230px;
+  font-size: 14px;
+}
+
+.declarationComment {
+  display: inline-block;
+  font-size: 14px;
+}
+
+.declarationCommentPlaceHolder {
+  font-style: italic;
+  color: #CCC;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.declarationCommentTextbox {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 14px;
+  border: 1px solid #999;
+  height: 100px;
+  border-radius: 5px;
+}
+
+.declarationTypeLabel {
+  padding-left: 5px;
+}
+
+.declarationType {
+  padding: 3px 0;
+}
+
+@media (max-width: 950px) {
+  .entityName {
+    min-width: 150px;
+  }
+
+  .relationship {
+    min-width: 150px;
+  }
+}

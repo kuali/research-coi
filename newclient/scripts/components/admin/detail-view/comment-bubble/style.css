@@ -1,0 +1,123 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  background-color: white;
+  border: 1px solid #CCC;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 #CCC;
+  color: black;
+  display: inline-block;
+  margin-left: 0;
+  transform: translateY(0%);
+  transition: transform 0.2s ease-out;
+  width: 65%;
+}
+
+.container.new {
+  transform: translateY(125%);
+}
+
+.container.isUser {
+  background-color: #D0E3E5;
+  margin-left: 30%;
+}
+
+.comment {
+  padding: 8px 25px 15px 25px;
+  width: 100%;
+}
+
+:global(.color-blind) .container {
+  background-color: white;
+}
+
+.date {
+  float: right;
+  color: #666;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.author {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.text {
+  font-size: 12px;
+  margin-top: 7px;
+}
+
+.from {
+  font-weight: 300;
+  padding-right: 5px;
+}
+
+.blue {
+  background-color: #00949F;
+  border: 1px solid #00949F;
+}
+
+.bubble {
+  display: inline-block;
+  border-radius: 100px;
+  padding: 1px 10px;
+  font-size: 12px;
+  color: white;
+  margin-right: 5px;
+}
+
+.orange {
+  background-color: #F57B00;
+  border: 1px solid #F57B00;
+}
+
+:global(.color-blind) .bubble {
+  background-color: black;
+  border: 1px solid black;
+}
+
+.editSection {
+  border-top: 1px solid #CCCCCC;
+}
+
+.editButton,
+.viewableByReporterButton {
+  font-size: 13px;
+  margin: 7px 20px;
+  padding: 0;
+  color: #189EA8;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px dotted #189EA8;
+  text-transform: uppercase;
+}
+
+.editButton {
+  float: right;
+  margin-left: 10px;
+}
+
+.viewableByReporterButton {
+  margin-right: 10px;
+}
+
+.viewableByReporterButton i {
+  margin-right: 5px;
+}

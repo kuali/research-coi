@@ -1,0 +1,106 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  padding: 25px 30px;
+  background-color: white;
+  height: 100%;
+  box-shadow: 0 0 10px 0 #AAA;
+}
+
+.close {
+  float: right;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 8px;
+  color: #0095A0;
+  font-size: 20px;
+}
+
+:global(.color-blind) .close {
+  color: black;
+}
+
+.download {
+  float: right;
+  border: 0;
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+}
+
+.dragAndDrop {
+  margin: 25px 0;
+  border: 3px dashed #888;
+  padding: 10px 15px;
+  border-radius: 4px;
+}
+
+.complete {
+  padding-bottom: 15px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.additionalReviewerLabel {
+  border-top: 1px solid #BBB;
+  padding-top: 25px;
+}
+
+.searchLabel {
+  margin: 15px 0 5px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.searchBox {
+  width: 100%;
+  border: 1px solid #999;
+  padding: 10px 15px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 300;
+}
+
+.subLabel {
+  font-size: 15px;
+  width: 50%;
+  padding-bottom: 4px;
+}
+
+.override.fileUploadStyles {
+  font-size: 12px;
+}
+
+.reviewers {
+  margin-top: 20px;
+  border-top: 1px solid lightgray;
+  padding-top: 20px;
+}
+
+.noReviewers {
+  padding-top: 20px;
+  text-align: center;
+}
+
+.autoSuggest {
+  width: 100%;
+  margin-top: 5px;
+}

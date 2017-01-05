@@ -1,0 +1,115 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  display: block;
+  margin: 0 3px 25px 0;
+  background-color: white;
+  box-shadow: 0 0 3px 1px #CCC;
+  border-radius: 5px;
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  padding: 13px 16px;
+  box-shadow: 0 0 15px #E6E6E6;
+  font-size: 17px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.name {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.dataitem {
+  margin: 10px 0;
+  font-size: 20px;
+  display: inline-block;
+}
+
+.override.button {
+  margin: 7px 10px 7px 0;
+  min-width: 110px;
+}
+
+.relationships {
+  font-weight: bold;
+  margin-left: 7px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.override.entityForm {
+  display: none;
+  transition: margin-top 0.2s ease-in-out;
+}
+
+.showForm .entityForm {
+  display: block;
+}
+
+.buttonCell {
+  min-width: 268px;
+}
+
+.relationshipLabel {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.attention {
+  float: right;
+  color: #D3121C;
+  margin-right: 20px;
+}
+
+:global(.color-blind) .attention {
+  color: black;
+}
+
+.nameTextBox {
+  border-radius: 5px;
+  border: 1px solid #AAA;
+  padding: 5px;
+  font-size: 23px;
+  font-weight: bold;
+  min-width: 400px;
+}
+
+.summary {
+  margin: 10px 0 0 20px;
+}
+
+@media (max-width: 950px) {
+  .content {
+    padding: 10px;
+  }
+
+  .summary {
+    margin: 10px 0 0 5px;
+    flex-direction: column;
+  }
+
+  .name {
+    font-size: 23px;
+  }
+}

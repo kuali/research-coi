@@ -1,0 +1,146 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+#theApp {
+  height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+button:focus {
+  outline-color: #666;
+  outline-offset: -3px;
+  outline-width: 2px;
+}
+
+button {
+  cursor: pointer;
+}
+
+select:focus,
+input:focus,
+textarea:focus {
+  border-color: #666;
+  outline: none;
+}
+
+span {
+  display: inline-block;
+}
+
+.DraftEditor-root span {
+  display: inline;
+}
+
+.hoverable:hover {
+  background-color: #f9f9f9;
+}
+
+.autosuggest-results > li:hover {
+  background-color: #eee;
+}
+
+.fd .not-hovering {
+  display: block;
+}
+
+.fd .hovering {
+  display: none;
+}
+
+.file-drop .not-hovering {
+  display: none;
+}
+
+.file-drop .hovering {
+  display: block;
+}
+
+/* These classes allow us to use vendor prefixes for flexbox (can't do with React inline styles) */
+.flexbox {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;     /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Chrome */
+  display: flex;         /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+
+.inline-flexbox {
+  display: -webkit-inline-box;
+  display: -moz-inline-box;
+  display: -ms-inline-flexbox;
+  display: -webkit-inline-flex;
+  display: inline-flex;
+}
+
+.fill {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -ms-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+
+.row {
+  -webkit-flex-direction: row;
+  -moz-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.column {
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+@media print {
+  html,
+  body,
+  #theApp {
+    height: initial;
+  }
+
+  .inline-flexbox,
+  span {
+    display: inline;
+  }
+
+  .flexbox {
+    display: block;
+  }
+}

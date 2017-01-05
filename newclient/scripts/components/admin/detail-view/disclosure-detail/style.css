@@ -1,0 +1,81 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  width: 100%;
+}
+
+.override.actionButtons {
+  display: block;
+  margin-top: 25px;
+  margin-right: 25px;
+}
+
+.showApproval .override.actionButtons,
+.showRejection .override.actionButtons,
+.override.rejection,
+.override.confirmation {
+  display: none;
+}
+
+.bottom {
+  position: relative;
+  padding-left: 25px;
+  min-height: 0;
+  background-color: #EEEEEE;
+}
+
+.confirmation {
+  top: 186px;
+  right: 20px;
+}
+
+.showApproval .override.confirmation,
+.showRejection .override.rejection {
+  display: block;
+}
+
+.override.questionnaire {
+  margin-top: 25px;
+}
+
+.override.questionnaire,
+.override.entities,
+.override.declarations {
+  margin-bottom: 25px;
+}
+
+.detailsFromPI {
+  overflow-y: auto;
+  padding: 0 35px 0 3px;
+  display: inline-block;
+}
+
+@media (max-width: 950px) {
+  .detailsFromPI {
+    padding-right: 10px;
+  }
+
+  .bottom {
+    padding-left: 10px;
+  }
+
+  .override.actionButtons {
+    margin-right: 10px;
+  }
+}

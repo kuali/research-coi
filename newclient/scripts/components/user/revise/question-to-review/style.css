@@ -1,0 +1,109 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  margin-bottom: 40px;
+}
+
+.statusIcon {
+  min-width: 45px;
+}
+
+.questionNumber {
+  min-width: 60px;
+  font-size: 22px;
+}
+
+.commentSection {
+  min-width: 300px;
+}
+
+.comments {
+  background-color: #D8E9EB;
+  color: black;
+  border-radius: 5px;
+  padding: 1px 10px;
+}
+
+:global(.color-blind) .comments {
+  background-color: black;
+  color: white;
+}
+
+.comment {
+  margin: 15px 10px;
+}
+
+.piComment {
+  text-align: right;
+  background-color: #edf9fb;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 15px 2px;
+}
+
+.commentTitle {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.commentDate {
+  font-style: italic;
+  font-size: 12px;
+  padding-top: 2px;
+}
+
+.commentText {
+  font-size: 14px;
+}
+
+.completed {
+  color: green;
+  font-size: 35px;
+}
+
+:global(.color-blind) .completed {
+  color: black;
+}
+
+.incomplete {
+  color: #E85723;
+  font-size: 35px;
+}
+
+:global(.color-blind) .incomplete {
+  color: black;
+}
+
+@media (max-width: 950px) {
+  .questionNumber {
+    min-width: 50px;
+  }
+
+  .comments {
+    padding: 1px;
+  }
+
+  .comment {
+    margin: 7px;
+  }
+
+  .commentSection {
+    min-width: 250px;
+  }
+}

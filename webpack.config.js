@@ -40,7 +40,13 @@ module.exports = {
     config: './client/scripts/components/config/config.js',
     about: './client/scripts/components/about/about.js',
     features: './client/scripts/components/features/app.js',
-    notifications: './client/scripts/components/notifications/app.js'
+    notifications: './client/scripts/components/notifications/app.js',
+    usernew: './newclient/scripts/components/user/app.js',
+    adminnew: './newclient/scripts/components/admin/admin.js',
+    confignew: './newclient/scripts/components/config/config.js',
+    aboutnew: './newclient/scripts/components/about/about.js',
+    featuresnew: './newclient/scripts/components/features/app.js',
+    notificationsnew: './newclient/scripts/components/notifications/app.js'
   },
   output: {
     path: path.join(__dirname, 'client/build'),

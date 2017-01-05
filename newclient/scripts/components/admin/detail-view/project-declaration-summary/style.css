@@ -1,0 +1,123 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 11px;
+}
+
+.titles {
+  border-bottom: 1px solid #ccc;
+  color: #888;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+:global(.color-blind) .titles {
+  color: black;
+}
+
+.entityName {
+  width: 25%;
+  display: inline-block;
+}
+
+.adminRelationship {
+  width: 25%;
+  display: inline-block;
+  position: relative;
+}
+
+.conflict {
+  width: 25%;
+  display: inline-block;
+}
+
+.comments {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.shortComment {
+  width: 25%;
+}
+
+.relationship {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #666;
+}
+
+.lastrelationship {
+  padding-bottom: 15px;
+  border-bottom: 0;
+}
+
+.label {
+  padding-right: 5px;
+}
+
+.field {
+  display: inline-block;
+  width: 100%;
+  padding: 0 0 10px 10px;
+}
+
+.reviewerRecommendations {
+  text-align: left;
+  color: #0095A0;
+  padding-top: 7px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  display: block;
+}
+
+.userName {
+  color: #666;
+  margin-right: 5px;
+}
+
+:global(.color-blind) .userName {
+  color: black;
+}
+
+.reviewerRecommendation {
+  font-weight: bold;
+}
+
+.setAllLink {
+  color: rgb(0, 149, 160);
+  float: right;
+  margin-right: 20%;
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+
+:global(.color-blind) .setAllLink {
+  color: black;
+}
+
+@media (max-width: 950px) {
+  .titles {
+    font-size: 10px;
+  }
+}
