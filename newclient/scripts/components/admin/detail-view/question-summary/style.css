@@ -1,0 +1,108 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  margin-bottom: 10px;
+}
+
+.highlighted {
+  border-left: 10px solid #F57C00;
+  margin-left: -20px;
+  padding-left: 10px;
+}
+
+:global(.color-blind) .highlighted {
+  border-left: 10px solid black;
+}
+
+.number {
+  min-width: 50px;
+  font-size: 31px;
+  color: #666;
+}
+
+.subQuestionNumber {
+  min-width: 130px;
+  font-size: 31px;
+  padding-left: 50px;
+  color: #666;
+}
+
+.answer {
+  font-size: 13px;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.commentLink {
+  display: inline-block;
+  min-width: 102px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 7px;
+  text-align: right;
+  margin-right: 4px;
+}
+
+.answerSection {
+  display: inline-block;
+  padding-bottom: 12px;
+  margin: 7px 5px 15px 0;
+  font-size: 15px;
+}
+
+.commentLabel {
+  color: #0095A0;
+  border-bottom: 1px dashed #0095A0;
+  padding-bottom: 3px;
+}
+
+:global(.color-blind) .commentLabel {
+  color: black;
+  border-bottom: 1px dashed black;
+}
+
+.answerLabel {
+  color: #0095A0;
+  padding-bottom: 3px;
+}
+
+:global(.color-blind) .answerLabel {
+  color: black;
+}
+
+.questionText {
+  padding-right: 125px;
+  font-size: 14px;
+}
+
+@media (max-width: 950px) {
+  .questionText {
+    padding-right: 0;
+    padding-bottom: 5px;
+  }
+
+  .number {
+    min-width: 40px;
+  }
+
+  .subQuestionNumber {
+    min-width: 110px;
+    padding-left: 40px;
+  }
+}

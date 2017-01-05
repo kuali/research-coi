@@ -1,0 +1,78 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  background-color: white;
+  color: #0095A0;
+  padding: 25px 0;
+  font-size: 20px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 9;
+  position: relative;
+  box-shadow: 0 0 10px #CCC;
+}
+
+:global(.color-blind) .container {
+  color: black;
+}
+
+.menuItems {
+  text-align: left;
+  border-top: 1px solid #CCC;
+  padding: 15px 20px 0 20px;
+  margin: -140px 28px 0 28px;
+  transition: margin 0.1s ease-in-out;
+}
+
+.expanded .menuItems {
+  margin: 10px 28px 0 28px;
+  min-height: 170px;
+}
+
+.menuItem {
+  display: block;
+  color: #0095A0;
+  font-size: 16px;
+  line-height: 38px;
+  padding-left: 24px;
+}
+
+:global(.color-blind) .menuItem {
+  color: black;
+}
+
+.arrowIcon {
+  font-size: 15px;
+  margin-right: 10px;
+}
+
+@media (max-width: 950px) {
+  .expanded .menuItems {
+    margin: 10px 0 0 0;
+  }
+
+  .menuItems {
+    margin: -140px 0 0 0;
+    padding: 15px 10px 0 10px;
+  }
+
+  .menuItem {
+    padding-left: 12px;
+  }
+}

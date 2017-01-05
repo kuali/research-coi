@@ -1,0 +1,141 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  width: 100%;
+  background-color: #eeeeee;
+  min-height: 100px;
+  overflow-y: auto;
+}
+
+.sidebar {
+  min-width: 300px;
+  background-color: #eeeeee;
+  vertical-align: top;
+  padding-top: 122px;
+  box-shadow: 1px 0 6px #D1D1D1;
+}
+
+.isAdmin .sidebar {
+  padding-top: 0;
+}
+
+.content {
+  vertical-align: top;
+}
+
+.override.header {
+  box-shadow: 0 1px 6px #D1D1D1;
+  z-index: 10;
+  position: relative;
+}
+
+.header2 {
+  background-color: white;
+  padding: 17px 0 17px 50px;
+  position: relative;
+  border-bottom: 1px solid #e3e3e3;
+  box-shadow: 0 1px 6px #D1D1D1;
+}
+
+.heading {
+  font-size: 33px;
+  margin: 0 0 0 0;
+  text-transform: uppercase;
+  font-weight: 300;
+  color: #525252;
+}
+
+.override.borderBottom {
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.override.adminMenu {
+  margin-bottom: 45px;
+}
+
+.bannerContainer {
+  margin: 15px 0 0 50px;
+  display: inline-block;
+  width: 100%;
+}
+
+.expiresBanner {
+  float: left;
+  background-color: #00949F;
+  color: #E0E0E0;
+  height: 75px;
+  border-radius: 5px;
+  padding: 5px 25px;
+  font-size: 20px;
+  min-width: 433px;
+}
+
+.days {
+  font-size: 50px;
+  color: white;
+  margin: 0 7px 0 15px;
+  vertical-align: top;
+}
+
+.daysLabel {
+  color: white;
+  vertical-align: bottom;
+  margin-bottom: 7px;
+}
+
+.infoBanner {
+  float: right;
+  background-color: #F57C00;
+  color: white;
+  height: 75px;
+  border-radius: 5px;
+  margin-right: 100px;
+  padding: 25px 35px;
+  font-size: 20px;
+}
+
+:global(.color-blind) .infoBanner {
+  background-color: black;
+}
+
+:global(.color-blind) .expiresBanner {
+  background-color: black;
+}
+
+.disclosureTableLabel,
+.reviewTableLabel {
+  padding-left: 109px;
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: -15px;
+}
+
+.disclosureTableLabel {
+  margin-top: 20px;
+}
+
+@media (max-width: 950px) {
+  .sidebar {
+    min-width: 230px;
+  }
+
+  .bannerContainer {
+    margin: 15px 0 0 10px;
+  }
+}

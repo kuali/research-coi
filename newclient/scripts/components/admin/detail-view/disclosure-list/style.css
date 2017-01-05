@@ -1,0 +1,101 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  background-color: #EEEEEE;
+  border-left: 1px solid #6d6d6d;
+  vertical-align: top;
+  box-shadow: 3px 0 6px #CCC;
+  transition: width 0.2s ease-in-out;
+  z-index: 2;
+}
+
+.list {
+  list-style-type: none;
+  margin-top: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-width: 320px;
+}
+
+.override.filterGroup {
+  background-color: #0095A0;
+}
+
+:global(.color-blind) .override.filterGroup {
+  background-color: black;
+}
+
+.heading {
+  color: #0095A0;
+  background-color: #EEEEEE;
+  text-align: right;
+  padding: 8px 70px 8px 0;
+  font-weight: bold;
+  font-size: 17px;
+  position: relative;
+  z-index: 2;
+  border-right: 1px solid #DDD;
+  cursor: pointer;
+}
+
+:global(.color-blind) .heading {
+  color: black;
+}
+
+.loadMoreButton {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.loadingIndicator {
+  text-align: center;
+  margin: 10px 0;
+  color: #777;
+}
+
+.filterArrow {
+  font-size: 6px;
+  vertical-align: top;
+  margin: 7px 0 0 7px;
+  transition: transform 0.1s linear;
+  transform: rotateZ(180deg);
+}
+
+.showFilters .filterArrow {
+  transform: rotateZ(0);
+}
+
+.filters {
+  width: 320px;
+}
+
+@media (max-width: 950px) {
+  .filters {
+    width: 230px;
+  }
+
+  .list {
+    min-width: 230px;
+  }
+
+  .heading {
+    padding: 8px 47px 8px 0;
+  }
+}

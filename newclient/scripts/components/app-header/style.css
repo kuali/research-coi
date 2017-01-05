@@ -1,0 +1,101 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.override.logo {
+  min-width: 26px;
+  height: 26px;
+  vertical-align: middle;
+  color: black;
+}
+
+.kuali {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: -3px;
+}
+
+.product {
+  color: black;
+  font-size: 20px;
+  font-weight: 300;
+  vertical-align: middle;
+  padding-left: 5px;
+  padding-right: 18px;
+  border-right: 1px solid;
+  margin-right: 15px;
+}
+
+:global(.color-blind) .product {
+  font-weight: normal;
+}
+
+.modulename {
+  color: black;
+  font-size: 16px;
+  font-weight: 300;
+  padding-left: 5px;
+  padding-top: 7px;
+}
+
+:global(.color-blind) .modulename {
+  font-weight: normal;
+}
+
+.controls {
+  float: right;
+  padding: 10px;
+  font-size: 13px;
+}
+
+.mobileMenu {
+  color: white;
+  height: 100%;
+}
+
+.container {
+  background-color: white;
+  padding: 0 10px 0 50px;
+}
+
+.usersName {
+  text-transform: uppercase;
+  padding-left: 30px;
+  vertical-align: middle;
+  border-left: 1px solid #555555;
+}
+
+.colorToggle {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #BBB;
+  margin-bottom: 8px;
+}
+
+.icon {
+  font-size: 16px;
+  padding-right: 8px;
+}
+
+.menuItem {
+  padding: 7px 0 7px 20px;
+  display: block;
+  color: #555555;
+}
+
+:global(.color-blind) .menuItem {
+  color: black;
+}

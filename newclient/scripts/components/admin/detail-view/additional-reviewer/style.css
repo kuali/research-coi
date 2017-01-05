@@ -1,0 +1,99 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  display: inline-block;
+  min-height: 80px;
+  width: 100%;
+  background-color: white;
+  border-radius: 5px;
+  margin-top: 20px;
+  border: 1px solid #AAA;
+}
+
+.content {
+  padding: 10px 0 5px 35px;
+  font-size: 14px;
+  min-height: 60px;
+  display: inline-block;
+}
+
+.buttons {
+  border-top: 1px solid #BBB;
+  min-height: 20px;
+  padding: 5px 0 10px 25px;
+}
+
+.name {
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+
+.check {
+  margin-left: -35px;
+}
+
+.button {
+  float: right;
+  padding: 5px 10px;
+  margin-right: 10px;
+  border: none;
+  color: #0095A0;
+  background-color: transparent;
+  font-weight: 500;
+}
+
+.button:focus {
+  outline-color: #DDD;
+}
+
+:global(.color-blind) .button {
+  color: black;
+}
+
+.dates {
+  font-size: 11px;
+  padding: 3px 10px;
+  color: #666666;
+  display: block;
+}
+
+.icon {
+  color: white;
+  font-size: 10px;
+  padding: 2px;
+  display: inline-block;
+  border-radius: 60px;
+  margin: 0 10px;
+  background-color: #21B573;
+}
+
+:global(.color-blind) .icon {
+  background-color: black;
+}
+
+:global(.color-blind) .inactive {
+  background-color: white;
+  color: black;
+}
+
+.inactive {
+  background-color: #EEEEEE;
+  border: 1px solid #D3D3D3;
+  color: #555;
+}

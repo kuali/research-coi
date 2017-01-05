@@ -1,0 +1,133 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 0 10px #BBB;
+  overflow: hidden;
+  visibility: visible;
+  margin-left: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.subQuestion.container {
+  margin-left: 100px;
+}
+
+.dragging.container {
+  visibility: hidden;
+}
+
+.content {
+  display: inline-block;
+  vertical-align: top;
+  height: 100%;
+}
+
+.gripper {
+  background-color: #0095A0;
+  vertical-align: top;
+  display: inline-block;
+  min-width: 25px;
+}
+
+:global(.color-blind) .gripper {
+  background-color: #666;
+}
+
+.subQuestion .gripper {
+  background-color: #F57C00;
+}
+
+.override.gripperIcon {
+  margin-left: 5px;
+  width: 15px;
+  height: 42px;
+}
+
+.top {
+  padding: 10px;
+}
+
+.number {
+  font-size: 34px;
+  height: 100%;
+  vertical-align: top;
+  padding: 0 17px;
+}
+
+.text {
+  min-height: 3em;
+  line-height: 1.5em;
+  margin-top: 5px;
+  font-size: 12px;
+  vertical-align: top;
+  display: inline-block;
+}
+
+.bottom {
+  border-top: 1px solid #AAA;
+  padding: 10px 20px 10px 10px;
+  white-space: nowrap;
+  height: 54px;
+}
+
+.override.button {
+  float: right;
+  margin: 4px 0 3px 10px;
+  height: 27px;
+  min-width: 124px;
+}
+
+.override.nonFloatButton {
+  margin: 4px 0 3px 10px;
+  height: 27px;
+  min-width: 124px;
+}
+
+.dropdown {
+  margin-left: 5px;
+}
+
+.warning {
+  color: red;
+  font-size: 14px;
+  white-space: normal;
+  padding-left: 10px;
+}
+
+:global(.color-blind) .warning {
+  color: black;
+}
+
+@media (max-width: 950px) {
+  .override.button,
+  .override.nonFloatButton {
+    min-width: 60px;
+  }
+
+  .subQuestion.container {
+    margin-left: 25px;
+  }
+
+  .bottom {
+    padding: 10px 5px 10px 5px;
+    font-size: 12px;
+  }
+}

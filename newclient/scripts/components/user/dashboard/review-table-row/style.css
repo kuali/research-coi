@@ -1,0 +1,92 @@
+/*
+    The Conflict of Interest (COI) module of Kuali Research
+    Copyright © 2005-2016 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+.container {
+  padding: 20px 60px;
+  border-bottom: 5px solid white;
+  background-color: #F7F7F7;
+  color: #333;
+}
+
+.annual.container {
+  background-color: #E9E9E9;
+}
+
+:global(.color-blind) .container {
+  color: black;
+}
+
+.cell {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.one {
+  width: 35%;
+}
+
+.two,
+.three {
+  width: 25%;
+  font-size: 17px;
+}
+
+.four {
+  width: 15%;
+}
+
+.type {
+  font-size: 17px;
+}
+
+.extra {
+  font-size: 14px;
+}
+
+.button {
+  min-width: 100px;
+}
+
+@media (max-width: 950px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .one {
+    width: 33%;
+  }
+
+  .two,
+  .three {
+    width: 23%;
+  }
+
+  .four {
+    width: 21%;
+  }
+
+  .button {
+    min-width: 80px;
+  }
+
+  .one,
+  .two,
+  .three {
+    font-size: 15px;
+  }
+}
