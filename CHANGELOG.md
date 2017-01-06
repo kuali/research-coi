@@ -1,3 +1,12 @@
+##coi-1612
+Improvements:
+* The COI reporter's main menu now uses the wording "Create" (instead of "Update") Disclosure when the user has not yet created a disclosure in the system.
+* Added the ability for COI Admins and Reviewers to set dispositions in bulk.
+* Provided a way to order relationship matrix values in COI Configuration.
+
+Issue Fixed:
+* When preparing their disclosure on an iPad using Safari, Reporter could submit a COI disclosure with only one question answered.
+
 ##coi-1611
 Improvements:
 * Display Description instead of Role ID in Project Declarations in COI disclosures and in COI Notifications
