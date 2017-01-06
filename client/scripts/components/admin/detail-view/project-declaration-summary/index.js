@@ -26,7 +26,6 @@ import classNames from 'classnames';
 import Dropdown from '../../../dropdown';
 import {AdminActions} from '../../../../actions/admin-actions';
 import PopOver from '../../../pop-over';
-import {flagIsOn} from '../../../../feature-flags';
 
 @autobind
 export default class ProjectDeclarationsSummary extends React.Component {
@@ -203,7 +202,7 @@ export default class ProjectDeclarationsSummary extends React.Component {
 
         if (config.general.adminRelationshipEnabled) {
           let setAllButton;
-          if (!readonly && flagIsOn('RESCOI-1126')) {
+          if (!readonly) {
             setAllButton = (
               <button
                 id={`setAll${project.id}`}
@@ -236,7 +235,7 @@ export default class ProjectDeclarationsSummary extends React.Component {
       ) {
         if (config.general.reviewerEntityProjectDispositionsEnabled) {
           let setAllButton;
-          if (!readonly && flagIsOn('RESCOI-1126')) {
+          if (!readonly) {
             setAllButton = (
               <button
                 id={`setAll${project.id}`}

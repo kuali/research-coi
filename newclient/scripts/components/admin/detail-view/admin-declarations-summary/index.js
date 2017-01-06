@@ -27,7 +27,6 @@ import PopOver from '../../../pop-over';
 import Dropdown from '../../../dropdown';
 import {AdminActions} from '../../../../actions/admin-actions';
 import { ROLES } from '../../../../../../coi-constants';
-import {flagIsOn} from '../../../../feature-flags';
 
 function getUniqueProjects(declarations, configState) {
   const projects = [];
@@ -128,7 +127,7 @@ export class AdminDeclarationsSummary extends React.Component {
             isReviewer &&
             config.general.reviewerDispositionsEnabled
           )
-        ) && flagIsOn('RESCOI-1126')
+        )
       ) {
         setAllButton = (
           <button id="setAllProjectDispositions" className={styles.setAllLink}>
